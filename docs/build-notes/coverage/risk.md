@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Risk.jsx` (+ `Risk.css`) · gallery: `docs/gallery/risk/` · metric id: `contact_sales_submit`
 
 Open copy questions for James: dial labels not in `content/ui-strings.json` ("the line", "action", "reasons · tap one to set it back to neutral", "stage: '<stage>'", "Illustration. No figure on this page is a customer result."); chapter visual captions ("alert → case", "same call · same record · same model", "N of 4 facts"); the closing band repeats the h1's words.
-Shared changes requested: `docs/requests/templates.md` (covers every Business 2 page).
+Shared changes requested: `docs/build-notes/requests/templates.md` (covers every Business 2 page).
 Forks this page deleted: the framed dial card and its corner name, the 76px score and the ±weights (no invented digits), the floating dial and chapter pauses, the "+"-only openers (now labelled with Hanzo's words), the 26px caps "Next", the black "summon a person" pill (now underlined ink), every spring, the colour comments, the inert `data-cursor` attributes.
 
 ## 1. Strategy and conversion

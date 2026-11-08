@@ -3,7 +3,7 @@
 Page file: `components/pages/model/KaiGuide.jsx` (+ `KaiGuide.css`) · gallery: `docs/gallery/kai/guide/` · metric id: `api_key_created`
 
 Copy questions: none.
-Shared changes requested: `docs/requests/kai-guide.md` (phone sticky ask: the header keeps a solid "Try Hanzo" beside the hero's solid "Get an API key" and never swaps at 375; kit `CodeBlock` needs a `room` prop so a light code tile does not turn the header dark; kit `Band` is a black room with non-deck greys and no `data-cta`, so this page builds its close locally; a deck `tokens.css` for part 7). The footer's server HTML still logs a hydration warning on load (shared).
+Shared changes requested: `docs/build-notes/requests/kai-guide.md` (phone sticky ask: the header keeps a solid "Try Hanzo" beside the hero's solid "Get an API key" and never swaps at 375; kit `CodeBlock` needs a `room` prop so a light code tile does not turn the header dark; kit `Band` is a black room with non-deck greys and no `data-cta`, so this page builds its close locally; a deck `tokens.css` for part 7). The footer's server HTML still logs a hydration warning on load (shared).
 Forks this page deleted: its own tab strip with a layoutId ink and three hand-built `<pre>` panels (now kit `Tabs` + `TabPanel` + `CodeBlock`); raw `.x-btn` asks (now `Cta`); the floating Replay button over the terminal (now a control in the terminal bar); the looping session; every spring; the Motion tweens on the checker rulers (now one CSS transform, identical on server and client); the six-sentence recipe list (now one stage); round 3: the five stacked limit paragraphs (now one label row and one sentence slot), the checker's computed per-request price and free-running rulers (now the guide's own figures only), the status words "typing / sending / streaming", the `01 / 06` recipe numerals (now six ticks).
 
 ## 1. Strategy and conversion
@@ -64,7 +64,7 @@ Done here: Only the 12px Zen Mono capital labels sit under 13px; code is the kit
 - [x] One icon set; no icon in a rounded box
 - [x] Differs from neighbours in hero medium and room order
 
-Done here: Two dark surfaces only, never back to back: the graphite hero terminal and the black recipes room. The code (white tile on a full-width Quiet `#f5f5f5` room), the checker (Quiet tile, ink type, `#e4e4e7` tracks) and the Jev diff (Quiet tile, added lines on white, old tokens struck) are light. Room rhythm: Paper hero, Paper types, Quiet code, Paper limits, Black recipes, Paper Jev + proof, Quiet close. Radii 24 / 16 / 12 / 6 / full; no shadows. The repo has no deck `tokens.css` (app/system.css's tokens are off-deck, e.g. #6e6e73), so every deck colour is named once at the top of `.kg` and every rule below reads those names (requested in `docs/requests/kai-guide.md`). taste.py passes on all three files.
+Done here: Two dark surfaces only, never back to back: the graphite hero terminal and the black recipes room. The code (white tile on a full-width Quiet `#f5f5f5` room), the checker (Quiet tile, ink type, `#e4e4e7` tracks) and the Jev diff (Quiet tile, added lines on white, old tokens struck) are light. Room rhythm: Paper hero, Paper types, Quiet code, Paper limits, Black recipes, Paper Jev + proof, Quiet close. Radii 24 / 16 / 12 / 6 / full; no shadows. The repo has no deck `tokens.css` (app/system.css's tokens are off-deck, e.g. #6e6e73), so every deck colour is named once at the top of `.kg` and every rule below reads those names (requested in `docs/build-notes/requests/kai-guide.md`). taste.py passes on all three files.
 
 ## 8. UI component library
 - [x] Every control has hover, press, focus-visible, disabled, loading
@@ -148,6 +148,6 @@ Done here: JS off prints the full request and response, all five limit sentences
 - [x] `data-cta` on every primary; events only through `lib/track.js` (`Cta` sends `cta_click` through the shared event)
 - [x] Nothing identifier-bearing before consent
 - [x] `V2:` line in the page file's top comment
-- [ ] Review read: `docs/review/kai/guide.md` (round 2, 7/10); fixes 1–7 and 9 done here, fix 8 done page-locally (no deck `tokens.css` exists; requested); shared-chrome items requested in `docs/requests/kai-guide.md`; awaiting a new verdict
+- [ ] Review read: `docs/build-notes/review/kai/guide.md` (round 2, 7/10); fixes 1–7 and 9 done here, fix 8 done page-locally (no deck `tokens.css` exists; requested); shared-chrome items requested in `docs/build-notes/requests/kai-guide.md`; awaiting a new verdict
 
 Done here: Gallery: `docs/gallery/kai/guide/` (round-3 stills `round3-desktop.jpg` (hero at rest on the answer), `round3-phone.jpg` (phone terminal at rest), `round3-desktop-limits.jpg` added beside the earlier frames).

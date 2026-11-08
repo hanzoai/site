@@ -6,7 +6,7 @@ Verdict: 8/10 (ready on my checks; polish only)
 
 First complaint: "Good. The diamond and the decision demo sell it. Up top I see two black-and-white buttons at once, though."
 
-**Card:** `docs/coverage/kai.md` is now in MASTER format, 18/18 `Done here:` lines. Measured claims hold: layout shift 0.0003 at 1470 and 0.0007 at 375, the h1 in server HTML, 0 hidden blocks with JavaScript off, nothing running under reduced motion, the first-screen ask.
+**Card:** `docs/build-notes/coverage/kai.md` is now in MASTER format, 18/18 `Done here:` lines. Measured claims hold: layout shift 0.0003 at 1470 and 0.0007 at 375, the h1 in server HTML, 0 hidden blocks with JavaScript off, nothing running under reduced motion, the first-screen ask.
 
 **Floats over content (MASTER 3.2 rule 6):** passes since the shared fix (`d2b5ab8c`): no pill on desktop; on the phone the bar showed at no rest stop of 25.
 

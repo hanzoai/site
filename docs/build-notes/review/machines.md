@@ -75,7 +75,7 @@ Frames: [hero at 4x, quote is a dash](machines/r2-hero-dash.jpg) · [pinned cons
    - finish `.v2-in` under `html:not(.js)` (opacity 1, no offset);
    - on the phone, give "a working day" `white-space: nowrap` or a smaller dt, so the three quote values share one baseline;
    - give "Deploy to Cloud" in `.mc-close-acts` a 44px hit area;
-   - inset the `ShipPrompt` related-row hover fill to the gutter (page-local override in `Machines.css` under `.mc-ship`, or a request in `docs/requests/machines.md`).
+   - inset the `ShipPrompt` related-row hover fill to the gutter (page-local override in `Machines.css` under `.mc-ship`, or a request in `docs/build-notes/requests/machines.md`).
 7. **Shared, request only (not scored):**
    - the kit `Cta` has no press state (it should press to scale .97 or translateY(1px) in 90 ms);
    - on the phone, the header ask stays solid while the hero's solid ask is visible;

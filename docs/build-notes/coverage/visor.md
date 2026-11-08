@@ -155,6 +155,6 @@ Done here: Every word is in the server HTML (the six paragraphs too, in their ro
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/visor.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/visor.md` verdict 8 or more
 
 Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Visor.jsx`. Last critic verdict on file: 7/10 (walked round 1); this version (round 2) waits for the next walk.

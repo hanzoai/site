@@ -1,9 +1,9 @@
 # /<page> coverage (MASTER.md part 2, the 18 parts)
 
-Copy this file to `docs/coverage/<page>.md`. Page file: `components/pages/<Name>.jsx` · gallery: `docs/gallery/<page>/` · metric id: `<id>`
+Copy this file to `docs/build-notes/coverage/<page>.md`. Page file: `components/pages/<Name>.jsx` · gallery: `docs/gallery/<page>/` · metric id: `<id>`
 
 Open copy questions for James:
-Shared changes requested (`docs/requests/<page>.md`):
+Shared changes requested (`docs/build-notes/requests/<page>.md`):
 Forks this page deleted:
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here:
 - [ ] `data-cta` on every primary; events only through `lib/track.js`
 - [ ] Nothing identifier-bearing before consent; no field value in a payload
 - [ ] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/<page>.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more
 
 Done here:

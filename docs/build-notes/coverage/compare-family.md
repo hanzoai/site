@@ -3,7 +3,7 @@
 Page file: `components/pages/compare/Ledger.jsx` (+ `Ledger.css`, `compareData.js`, `app/compare/[slug]/page.jsx`) · gallery: `docs/gallery/compare/` · metric id: `api_key_created`. Member checked: `/compare/model-routing` (the family's only member).
 
 Open copy questions for James: none decided. "Models reachable" is Hanzo's own row label from hanzo.ai/compare; the switch label "Where they do differ" is the lede's own words.
-Shared changes requested (`docs/requests/<page>.md`): none filed. Noted: `components/pages/Compare.css` (the /compare index, another chat) had a CSS parse error that 500s that route in dev; the shared desktop ask bar floats over content.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none filed. Noted: `components/pages/Compare.css` (the /compare index, another chat) had a CSS parse error that 500s that route in dev; the shared desktop ask bar floats over content.
 Forks this page deleted: the hand-made role="table" ledger (now kit `DataTable`), the hand-made segmented control (now kit `Tabs` / `TabPanel`), the hand-made buttons (now kit `Cta`), the hand-written h1 mask (now `Lines`), `Magnetic` and every spring.
 
 ## 1. Strategy and conversion
@@ -144,6 +144,6 @@ Done here: both tab panels are in the server HTML (`hidden` until chosen).
 - [x] `data-cta` on both asks (kit `Cta` sends `cta_click`)
 - [x] Nothing before consent
 - [x] `V2:` line in the page file
-- [x] Review read: `docs/review/compare-family.md` (7/10 at `8c3aede`; its three fixes are in `02de55b`)
+- [x] Review read: `docs/build-notes/review/compare-family.md` (7/10 at `8c3aede`; its three fixes are in `02de55b`)
 
 Done here: film presses both controls; phone stills in `docs/gallery/compare/`.

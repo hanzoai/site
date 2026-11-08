@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Datastore.jsx` (+ `Datastore.css`) · gallery: `docs/gallery/datastore/` · metric id: `api_key_created` (developers; the click is `cta_click datastore.hero`)
 
 Open copy questions for James: "Which way in?" is our heading for the protocol picker, not Hanzo's (Hanzo's "SQL, on several protocols" sits under it as its caption); keep it or move it to `content/ui-strings.json`? The demo labels are ours too ("example" rows, "node", "replica", "partition", "TTL", "Raft quorum", the scene captions, "Reads N of 12 columns" past Hanzo's own "Reads 1 of 12 columns"). Live's "Get Datastore" line reads "Document datastore" on a column-store page; kept exactly as live. "4 stars" is the live page's static GitHub figure.
-Shared changes requested (`docs/requests/datastore.md`): none. Kit notes for the Cloud 1 owner: the kit `Flap` flips through other digits (banned by brief 2 rule 8), so this page no longer uses it; KeynoteClose's "Self-host" text link reads `--ink` in the dark room and the kit link asks are 21px tall (set white and 44px here).
+Shared changes requested (`docs/build-notes/requests/datastore.md`): none. Kit notes for the Cloud 1 owner: the kit `Flap` flips through other digits (banned by brief 2 rule 8), so this page no longer uses it; KeynoteClose's "Self-host" text link reads `--ink` in the dark room and the kit link asks are 21px tall (set white and 44px here).
 Forks this page deleted: the kit `Flap` split-flap (flipped 8128 → 8123 through foreign digits; now a page-local board where each true digit drops in from behind its tile's mask, 60 ms apart); the hero count's opacity rise (now a mask cut); 3 `setInterval` loops (phone chapter scenes, the exploded table's phone cycle; now one pass each with `setTimeout`); the fake tablist without panels on the exploded table's rail (now a nav of buttons with `aria-current`); the scrolling-by-`__lenis` jump (now `lib/scroll` `scrollToY`); the accent `--ac` and every off-deck grey (#fbfbfd, #e3e3e8, #f0f0f3, #f2f2f5, #e8e8ed, #f5f5f7, rgba 115/115/115 tints); 4 box-shadows; the 44px h1 (`size="md"`, now the kit's 52px), the 128px/96px port, the 40px port numbers, the 26px clamp SQL.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: Dropping every extra column returns the console to Hanzo's own "SELEC
 - [x] `data-cta` on every primary; events only through the kit's `Cta` (`cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: no `docs/review/datastore.md` yet
+- [ ] Review read: no `docs/build-notes/review/datastore.md` yet
 
 Done here: ids listed in part 4; metric `api_key_created`. Gallery: `docs/gallery/datastore/` (desktop.mp4, desktop.jpg, phone-1..3.jpg). Own score 8/10; the critic's verdict decides.

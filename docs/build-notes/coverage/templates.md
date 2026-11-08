@@ -3,7 +3,7 @@
 Page file: `components/pages/Templates.jsx` (+ `Templates.css`) · gallery: `docs/gallery/templates/` · metric id: `first_chat`
 
 Open copy questions for James: the terminal shows Hanzo's four setup commands only (its paraphrased `#` notes are gone); the closing band repeats the front template's name and address; the dark room's heading is now Hanzo's own strip label "Drop into any agent" (live copy) instead of a second "Open one. Edit it in Hanzo.", and the invented "Setup" label is gone. The strip's "+25 more" (live copy, five names shown) sits under the shared setup pill's "+26" (four marks shown): two counts of the same agent list; keep both, or show four names so the strip reads "+26 more"? The agent links' hidden "(opens in a new tab)" is not in `content/ui-strings.json` yet (request 6). "Filter agents...", "MCP client" and "No agents match." are Hanzo's own strip strings (live on /mcp and /solutions/agents), not new words.
-Shared changes requested (`docs/requests/templates.md`): on phones the shared header keeps a solid "Try Hanzo" and never takes "Edit in Hanzo" (request 5; the page outlines its own asks under 900px meanwhile); `SetupMenu` draws agent marks in brand colours (overridden page-locally to greys); a register string for new-tab links (request 6). No skip link change needed.
+Shared changes requested (`docs/build-notes/requests/templates.md`): on phones the shared header keeps a solid "Try Hanzo" and never takes "Edit in Hanzo" (request 5; the page outlines its own asks under 900px meanwhile); `SetupMenu` draws agent marks in brand colours (overridden page-locally to greys); a register string for new-tab links (request 6). No skip link change needed.
 Forks this page deleted: the 4×3 shelf with a sentence under every tile (now a titled wall; sentences live in the sheets), the unproven `git clone https://github.com/hanzo-apps/template-<slug>` line (now `hanzo template get <slug>`), the readout above the deck (now in the deck's own nav row), the floating pause, ten dots for twelve templates, the drag-then-open bug, the solid "Copy setup prompt" in the dark room, the black empty preview, the "orange accent" comment and self-score, every spring.
 
 ## 1. Strategy and conversion
@@ -149,7 +149,7 @@ Done here: `hanzo login`, `hanzo template list`, `hanzo template get <slug>`, `h
 - [x] n/a submit
 - [x] n/a
 
-Done here: Playwright console at 1470/375 over three fresh loads (no screenshot before load) shows only the sandbox's blocked hanzo.ai image requests; layout shift over a full scroll 0.003 desktop, 0.004 phone (the typing's text nodes); the two SetupMenu 404s (`/antigravity-icon.svg`, `/muse-icon.svg`) are fixed with greyscale stand-ins in `public/` (request 4 in `docs/requests/templates.md`).
+Done here: Playwright console at 1470/375 over three fresh loads (no screenshot before load) shows only the sandbox's blocked hanzo.ai image requests; layout shift over a full scroll 0.003 desktop, 0.004 phone (the typing's text nodes); the two SetupMenu 404s (`/antigravity-icon.svg`, `/muse-icon.svg`) are fixed with greyscale stand-ins in `public/` (request 4 in `docs/build-notes/requests/templates.md`).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary

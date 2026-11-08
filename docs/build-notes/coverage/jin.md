@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Jin.jsx` (+ `Jin.css`) · gallery: `docs/gallery/jin/` · metric id: `docs_click` (researchers: a GitHub or docs click)
 
 Open copy questions for James: none (Hanzo's "Read the docs" stays the ask; the live page's two buttons both remain, "View on GitHub" as a text link).
-Shared changes requested (`docs/requests/<page>.md`): `docs/requests/jin.md` (Cta hover off-ramp, phone header second solid, header glass smudges, FooterHTML hydration).
+Shared changes requested (`docs/build-notes/requests/<page>.md`): `docs/build-notes/requests/jin.md` (Cta hover off-ramp, phone header second solid, header glass smudges, FooterHTML hydration).
 Forks this page deleted: the raw `.x-btn` asks and `BizAsk` (now kit `Cta`), the v2 `AskBar`, the raw `<img>` and `<table>` (now kit `Img` and `DataTable`), Frame's fading `Paste` (now `BizPaste`), every `data-cursor` label, every spring (`useSpring`, `dragSnapToOrigin` bounce, `SPRING.*`) and hover lift.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: No live data; the page is whole in server HTML. Figure 1: playing, pa
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/<page>.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta="jin.hero"` and `"jin.close"`; `Cta` dispatches `cta_click` with the id only. `docs/review/jin.md` read (6/10); fixes 1-8 done in round 2, fix 9 (shared chrome) in `docs/requests/jin.md`; V2 line updated; awaiting a fresh critic. Round 4: review round 2 (7/10) fixes 1-3 and 5-10 verified in the round-3 build; fix 4 (phone header ask) is shared and filed in `docs/requests/jin.md`. Proof `docs/gallery/jin/round4-*.jpg`.
+Done here: `data-cta="jin.hero"` and `"jin.close"`; `Cta` dispatches `cta_click` with the id only. `docs/build-notes/review/jin.md` read (6/10); fixes 1-8 done in round 2, fix 9 (shared chrome) in `docs/build-notes/requests/jin.md`; V2 line updated; awaiting a fresh critic. Round 4: review round 2 (7/10) fixes 1-3 and 5-10 verified in the round-3 build; fix 4 (phone header ask) is shared and filed in `docs/build-notes/requests/jin.md`. Proof `docs/gallery/jin/round4-*.jpg`.

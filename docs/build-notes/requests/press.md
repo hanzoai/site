@@ -1,7 +1,7 @@
 # Request from /press (Wave 2 Company chat) to the shared-file owners
 
 ## 1. `components/Ask.jsx`: the sticky ask bar misses on some scrolls (owner: Chrome chat)
-From docs/review/press.md, answer 4. The hero ask counts as "gone" only when
+From docs/build-notes/review/press.md, answer 4. The hero ask counts as "gone" only when
 `!e.isIntersecting && e.boundingClientRect.top < 0` under a `-64px` root margin. A 48px hero button stops
 intersecting while its top is still around +14px, so `past` stays false and the bar never rises on a quick or touch
 scroll. The header's "Try Hanzo" then stays the only solid ask.

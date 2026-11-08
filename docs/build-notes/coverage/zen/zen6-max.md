@@ -3,7 +3,7 @@
 Page file: `components/pages/model/ZenMax.jsx` (+ `ZenMax.css`) · gallery: `docs/gallery/zen/zen6-max/` · metric id: `contact_sales_submit`
 
 Open copy questions for James: none for this page's words. The meta description's "3.7 trillion parameters" is not on the live page body, so it is not shown.
-Shared changes requested (`docs/requests/zen-zen6-max.md`): register strings "Breadcrumb" (crumb `nav` name) and "Server" (radiogroup name); both are unlabelled for now. `lib/cta.js` and `lib/track.js` do not exist yet. The desktop ask bar floats over content, which MASTER bans; that belongs to `Ask.jsx`.
+Shared changes requested (`docs/build-notes/requests/zen-zen6-max.md`): register strings "Breadcrumb" (crumb `nav` name) and "Server" (radiogroup name); both are unlabelled for now. `lib/cta.js` and `lib/track.js` do not exist yet. The desktop ask bar floats over content, which MASTER bans; that belongs to `Ask.jsx`.
 Forks this page deleted: the raw `<video>` (now kit `Film`), raw `.x-btn` links (now `Cta`), the hand-written spec grid (now `DataTable`), `Magnetic` springs, `useFilms`, a hand-made role=table sheet.
 
 ## 1. Strategy and conversion
@@ -39,7 +39,7 @@ Done here: On load the name cuts in (700 ms, ease-emphasis) over the playing Zen
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `data-cta` values are `zen6max.hero` (with `data-thumb="Talk to sales"`), `zen6max.hero.gpus` and `zen6max.close`. While the film is under the ask (desktop) the solid reads light and inverts to ink with a white ring on hover; once the film's edge has wiped past it, the ask reads ink. The page never shows two solids of its own at once. On phones the shared header's solid "Try Hanzo" still shows beside the hero ask: filed in `docs/requests/zen6-max.md`. The close has `data-ask-hide`, so the shared bar makes room beside the close's own ask.
+Done here: `data-cta` values are `zen6max.hero` (with `data-thumb="Talk to sales"`), `zen6max.hero.gpus` and `zen6max.close`. While the film is under the ask (desktop) the solid reads light and inverts to ink with a white ring on hover; once the film's edge has wiped past it, the ask reads ink. The page never shows two solids of its own at once. On phones the shared header's solid "Try Hanzo" still shows beside the hero ask: filed in `docs/build-notes/requests/zen6-max.md`. The close has `data-ask-hide`, so the shared bar makes room beside the close's own ask.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -153,6 +153,6 @@ Done here: The page fetches nothing at run time. With JS off it is complete: set
 - [x] `data-cta` on every primary; events only through `lib/track.js` (the kit `Cta` sends `cta_click`; `lib/track.js` is not built yet)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/<page>.md` verdict 8 or more (the last review, zen-family 7/10, asked for the lede and ask on the first screen: done here)
+- [ ] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more (the last review, zen-family 7/10, asked for the lede and ask on the first screen: done here)
 
-Done here: `V2: 8/10` is in ZenMax.jsx. The second 7 Nov review (7/10) fixes 1–8 are done in the page: sticky phone router, a compact rack per phone step, the card on the crumb baseline, the close rising 40px into the sheet's room (72px step, Sigil at black 55% on #e4e4e7), 44px phone targets, the clipped white twin instead of the difference blend, the arriving sheet figure, and a hydration-stable `--k`. The first 7 Nov zen6-max review (6/10) fixes 1, 2, 3, 5, 6, 7 and 8 are done in the page; fix 4 (header ask on phones) is filed in `docs/requests/zen6-max.md`. The zen-family review fixes are done: lede and ask on the first screen, 13px floor, kit `Film` with a pause, and `data-cta`. Proof in `docs/gallery/zen/zen6-max/` was refilmed after this rework.
+Done here: `V2: 8/10` is in ZenMax.jsx. The second 7 Nov review (7/10) fixes 1–8 are done in the page: sticky phone router, a compact rack per phone step, the card on the crumb baseline, the close rising 40px into the sheet's room (72px step, Sigil at black 55% on #e4e4e7), 44px phone targets, the clipped white twin instead of the difference blend, the arriving sheet figure, and a hydration-stable `--k`. The first 7 Nov zen6-max review (6/10) fixes 1, 2, 3, 5, 6, 7 and 8 are done in the page; fix 4 (header ask on phones) is filed in `docs/build-notes/requests/zen6-max.md`. The zen-family review fixes are done: lede and ask on the first screen, 13px floor, kit `Film` with a pause, and `data-cta`. Proof in `docs/gallery/zen/zen6-max/` was refilmed after this rework.

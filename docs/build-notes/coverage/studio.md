@@ -3,7 +3,7 @@
 Page file: `components/pages/Studio.jsx` (+ `Studio.css`, shared `components/v2/A2Lines`, `A2Paste`, `A2.css`, `components/Opener.jsx`) · gallery: `docs/gallery/studio/` · metric id: `studio.hero`, `studio.close` (cta_click)
 
 Open copy questions for James: Hanzo's "Open Studio" links to /studio, the page it sits on. The words and the /studio href are kept (parity), but with JavaScript on the link now takes you into the cutting room (the monitor) instead of reloading the page: should it point at studio.hanzo.ai instead?
-Shared changes requested (`docs/requests/studio.md`): header honours `data-thumb` at phone widths; A2Lines hydration mismatch under reduced motion; A2Paste Copy button 40px on desktop.
+Shared changes requested (`docs/build-notes/requests/studio.md`): header honours `data-thumb` at phone widths; A2Lines hydration mismatch under reduced motion; A2Paste Copy button 40px on desktop.
 Forks this page deleted: the six equal explainer cards (3x2 grid, now one node graph and one pane), the three equal spec columns (now one hairline list), the raw solid `.x-btn` hero ask and the solid "Open Studio" that looped to /studio (now kit `<Cta>`), the "REC" mark above the "Get Studio" h2 (now under it), the grayscale/brightness filter on the film-strip frames, the Apple greys (#f5f5f7, #a1a1a6, #6e6e73, #0d0d0f, #19191c, #1c1c20), off-deck durations (1.1 s, .45, .35, .25, .2, .6, .8 s) and off-scale type (12.5, 13.5, 14.5, 15, 19, 20, 22, 44 px).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -37,7 +37,7 @@ Done here: At 1470x801 the 52px h1 runs 140 to 306px (baseline at 38%), the moni
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in header and bar after the hero, same label (desktop: the header swaps to "Launch studio.hanzo.ai"; phone: requested, see `docs/requests/studio.md` item 1)
+- [x] Sticky ask in header and bar after the hero, same label (desktop: the header swaps to "Launch studio.hanzo.ai"; phone: requested, see `docs/build-notes/requests/studio.md` item 1)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (shared `A2Paste`)
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -155,6 +155,6 @@ Done here: No live calls; console errors: 0 over 12 fresh loads (1470 and 375, d
 - [x] `data-cta` on every primary; events only through `lib/track.js` (cta_click is dispatched by the kit `Cta`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/studio.md` verdict 8 or more (read; the last verdict was 6/10, re-review pending)
+- [ ] Review read: `docs/build-notes/review/studio.md` verdict 8 or more (read; the last verdict was 6/10, re-review pending)
 
-Done here: `data-cta="studio.hero"` and `"studio.close"` with `data-thumb`; the `V2:` line lists this pass. All ten review fixes were worked in order; item 9 (phone header ask) and the A2Lines/A2Paste items are in `docs/requests/studio.md`.
+Done here: `data-cta="studio.hero"` and `"studio.close"` with `data-thumb`; the `V2:` line lists this pass. All ten review fixes were worked in order; item 9 (phone header ask) and the A2Lines/A2Paste items are in `docs/build-notes/requests/studio.md`.

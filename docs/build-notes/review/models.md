@@ -4,7 +4,7 @@ Verdict: 6/10
 Ready: 7 Nov, GA item 15. Each model shows its own rate where Hanzo prints one (snapshots and /pricing's API tab; none guessed) and has a "Use it now" to /chat. Re-measured against this review: the 11 never touches its label (26 frames at 1470 and 375), Copy is 44px and legible, the code tabs sit on one row, catalogue cards are quiet (phone: 72px rows), no hero timer, 0 console errors in dev, no overlaps at 1470x801 or 375x812. Copy (COPY-RULE, 8 Nov): copycheck missing 0 of 134 against content/live/models.json, live.mjs's capture of hanzo.ai/models (hanzo.ai itself is blocked from the cloud session); "Explore Enso / Kai / Zen →" restored. Taste, unique and the build pass.
 First complaint: "The top is right. It's the real grid and it moves. Then the big 11 crashes into its own label, and after the black room it turns into a long wall of black text boxes. I'm scrolling a document again."
 
-Walked 7 Nov on main at `b8c4ac3` (`components/pages/ModelsPage.jsx`, `ModelsPage.css`, `components/v2/SpecCard.jsx`) on the dev server, judged against `docs/MASTER.md` (parts 1–18, section 3, 4.3), `docs/JAMES.md` and `docs/refs/hanzo-model-cards/SPEC.md`.
+Walked 7 Nov on main at `b8c4ac3` (`components/pages/ModelsPage.jsx`, `ModelsPage.css`, `components/v2/SpecCard.jsx`) on the dev server, judged against `docs/build-notes/MASTER.md` (parts 1–18, section 3, 4.3), `docs/JAMES.md` and `docs/build-notes/refs/hanzo-model-cards/SPEC.md`.
 - **Desktop 1470×801:** first-screen frames at 0, 500 and 1,000 ms, then a full scroll pass in 120px steps every 50 ms (19 frames). Hover, tilt and press on the grid, the chips and catalogue cards. A click on two flagship cards and one catalogue card, then Back.
 - **Phone 375×812 (touch):** the same walk (28 frames), plus a 320px pass.
 - Stills and scripts are in `/tmp/claude-0/critic2/`.
@@ -29,7 +29,7 @@ Walked 7 Nov on main at `b8c4ac3` (`components/pages/ModelsPage.jsx`, `ModelsPag
   - No floating bar over content on desktop or phone.
 
 ## Card check
-`docs/coverage/models.md` uses the 18-part format. No cap. Spot checks:
+`docs/build-notes/coverage/models.md` uses the 18-part format. No cap. Spot checks:
 - "The collapsed list links all 544 `/models/*` routes": **true**. I counted 544 distinct hrefs.
 - "At most 2 films playing": **true**. At load only `enso.webm` and `kai.webm` play.
 - "Contrast: on black, #fafafa…" and "Copy button copies exactly the displayed code": **false in practice**. The Copy button on "Your first request" is a white pill whose label is `#fafafa`, so it is invisible (1.04:1). It is also 30px tall, not 44px (`crop-code.png`).

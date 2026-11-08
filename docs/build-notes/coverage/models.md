@@ -7,7 +7,7 @@ Open copy questions for James:
 - The catalogue card reads "Zen6" (Hanzo's /models card) but the page it opens, `/models/hanzo/zen6`, has the h1 "zen6" (Hanzo's model page), so the Morph lands on a different case. Which spelling is right for both?
 - Several catalogue and shelf cards (other labs' batch variants, Claude Fable 5, GPT-3.5 Turbo 0613) link to model pages hanzo.ai has but this rebuild does not. They open hanzo.ai in a new tab and say so (↗ plus a spoken "opens in a new tab"). Keep them, or drop them from the shelves?
 
-Shared changes requested (`docs/requests/models.md`):
+Shared changes requested (`docs/build-notes/requests/models.md`):
 - Kit `Film` needs a `play` prop and a two-film page budget (until then, `components/v2/ModelFilm.jsx`).
 - One `ModelCard` for every context (`components/pages/model/ModelCards.jsx` and `components/v2/SpecCard.jsx` carry the same `SPEC.md` values).
 - Kit `DataTable` with filter, fold and bar options.
@@ -172,6 +172,6 @@ Done here: JS off shows every word (`NoScript`). Reduced motion shows final stat
 - [x] `data-cta` on every primary ~~events through `lib/track.js`~~ not on main yet
 - [x] Nothing identifier-bearing before consent
 - [x] `V2:` line in the page file
-- [ ] Review: waiting for a fresh critic (`docs/review/models.md`)
+- [ ] Review: waiting for a fresh critic (`docs/build-notes/review/models.md`)
 
 Done here: Fresh proof in `docs/gallery/models/` (first screens at 1470×801 and 375×812, film-strip sheets).

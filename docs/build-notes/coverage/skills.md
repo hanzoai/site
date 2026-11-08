@@ -3,7 +3,7 @@
 Page file: `components/pages/Skills.jsx` (+ `Skills.css`) · gallery: `docs/gallery/skills/` · metric id: `cta_click skills.hero`, `skills.close`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/skills.md`): A2Lines hydration mismatch under reduced motion; the phone header ask never swaps to "View on GitHub".
+Shared changes requested (`docs/build-notes/requests/skills.md`): A2Lines hydration mismatch under reduced motion; the phone header ask never swaps to "View on GitHub".
 Forks this page deleted: the 200px ghost numerals (now 12px `01 / 06` captions under each heading), the visible-by-accident repo kicker above the h1 (now a 13px caption link under the ask), the overshooting sheet curve `cubic-bezier(.34,1.4,.64,1)`, the solid "Deploy to Cloud" (now the quiet outline), the absolutely stacked thread cards, `setInterval`, every non-deck grey (#0b0b0c, #1c1c1f, #86868b, #2c2c2e, #3a3a3c, #f5f5f7, #e4e4e9, #707070, #a1a1a6, #d1d1d6).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: No network calls. 0 console errors and no dev issue badge on 10 fresh
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/skills.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/skills.md` verdict 8 or more
 
 Done here: `data-cta="skills.hero"` and `skills.close`; the page sends nothing itself. V2 line rewritten (yellow accent dropped). Review read (7/10, second critic, 7 Nov) and fixes 1-6 worked in order; awaiting a new verdict.

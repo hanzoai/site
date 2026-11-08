@@ -3,7 +3,7 @@
 Page file: `components/pages/McpPage.jsx` (+ `McpPage.css`) · gallery: `docs/gallery/mcp/` · metric id: `cta_click mcp.hero` (and `mcp.close`)
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/mcp.md`): the phone header should carry the page ask the way it does at 1470; the header ask clips at 320; the cookie card covers the phone hero; PageHero kit part.
+Shared changes requested (`docs/build-notes/requests/mcp.md`): the phone header should carry the page ask the way it does at 1470; the header ask clips at 320; the cookie card covers the phone hero; PageHero kit part.
 Forks this page deleted: the hand-written hero and close buttons (now kit Cta), the kit Band at the close (replaced by a page-local light close so the close holds one solid and a real object), the hand-built code panels (now kit CodeBlock), the orange tool stream and coloured bars, the 196px figures, sheet outlines and shadows, numbers above card titles, the drag cursor label, springs, setInterval, the stream's layout-animated rows (now transform-only).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: No live data, so nothing loads or fails; 0 console errors at 1470x801
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/mcp.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/mcp.md` verdict 8 or more
 
 Done here: data-cta on mcp.hero, mcp.close, mcp.close-deploy, mcp.close-selfhost, mcp.close-github, mcp.close-platform; Cta fires cta_click through the system event. V2 line in the header. Last review 6/10 (7 Nov) was on the older build; each of its five fixes is addressed, awaiting a new critic walk.

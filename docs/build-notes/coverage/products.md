@@ -3,7 +3,7 @@
 Family template: `components/pages/ProductPage.jsx` + `ProductPage.css`, data `components/pages/productsData.js`, route `app/products/[slug]/page.jsx` · seven members · checked: `/products/agents`, `/products/memory` (also `/products/models`, `/products/record`) · gallery: `docs/gallery/products/` · metric id: `signup_start` (then `api_key_created`)
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/<page>.md`): none. The kit (`components/v2/Fam*`, `fam.css`) is this family group's own.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none. The kit (`components/v2/Fam*`, `fam.css`) is this family group's own.
 Forks this page deleted: the dark console card and the pinned word+card chapters (the layout /oss and /solutions share), the separate spec sheet with its raw `<table>`, the repeated operation lists (said once now), the thin count, the empty no-figure card, the link-list ending, the per-product accent colours, the green live dot, syntax and method hues, the kicker over the h1, the coloured hover stripe, the invented "operations" and "Replay" labels, the word-lit 60-word paragraph, the Stage zoom that pushed the console under the fold, the console's endless replay, every hover nudge outside James's list, and the 96–200px type.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: JS off and reduced motion both show the final state (measured: 0 hidd
 - [x] `data-cta` on every primary (`products.hero`, `products.close`)
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file's top comment
-- [x] Review read: `docs/review/products.md` (7/10 on the walk before this build; in this build the request types in 1.8 s at most with the rows landing while it types, the table never paints then fades (it is hidden from first paint with JS on), the desktop strip is wide in CSS from the first paint, and the phone fixes above)
+- [x] Review read: `docs/build-notes/review/products.md` (7/10 on the walk before this build; in this build the request types in 1.8 s at most with the rows landing while it types, the table never paints then fades (it is hidden from first paint with JS on), the desktop strip is wide in CSS from the first paint, and the phone fixes above)
 
-Done here: round 6 answers docs/review/products-family.md (5/10): operations said once, the product as the first screen's big thing, phone fixes, a closing band, no empty card, a continuous open, and a layout of its own.
+Done here: round 6 answers docs/build-notes/review/products-family.md (5/10): operations said once, the product as the first screen's big thing, phone fixes, a closing band, no empty card, a continuous open, and a layout of its own.

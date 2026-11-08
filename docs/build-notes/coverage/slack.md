@@ -3,7 +3,7 @@
 Page file: `components/pages/Slack.jsx` (+ `Slack.css`, copy in `slackData.js`) · gallery: `docs/gallery/slack/` · metric id: `slack.hero`, `slack.close`
 
 Open copy questions for James: none; the copy is unchanged (parity 196/196 text, 10/10 links).
-Shared changes requested (`docs/requests/slack.md`): mirror the memoji, fix the shared A2Lines reduced-motion hydration, the phone header ask, the header solid shown beside the close's solid, cookie card height.
+Shared changes requested (`docs/build-notes/requests/slack.md`): mirror the memoji, fix the shared A2Lines reduced-motion hydration, the phone header ask, the header solid shown beside the close's solid, cookie card height.
 Forks this page deleted: the outlined "Explore" pill buttons and the solid black "Get Hanzo Tag" tile in the close (now text links and a quiet tile); the three numbered room cards (now one tile with three states).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: With hanzo.ai blocked the page is complete, with 0 console errors on 
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/<page>.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more
 
-Done here: The `V2:` line was rewritten for this pass, and `docs/review/slack.md` (7/10) was worked through fixes 1 to 7 in order; the two shared notes stay filed in `docs/requests/slack.md`. A fresh critic verdict is still to come.
+Done here: The `V2:` line was rewritten for this pass, and `docs/build-notes/review/slack.md` (7/10) was worked through fixes 1 to 7 in order; the two shared notes stay filed in `docs/build-notes/requests/slack.md`. A fresh critic verdict is still to come.

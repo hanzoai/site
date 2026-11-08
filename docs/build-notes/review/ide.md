@@ -74,7 +74,7 @@ First complaint: "Those little memory tags are still sitting on top of the code.
     - **The kit Band is still kit-owned and still off-deck.** Its words reveal through `blur()` (1.8px on the frames I caught, still easing in). Its text is #f5f5f7 and #a1a1a6, and its button has no `data-cta`.
 11. **Copy untouched?** Yes. No new words were seen. Parity was 75/75 last round, and the copy is unchanged since.
 
-## Card check (docs/coverage/ide.md)
+## Card check (docs/build-notes/coverage/ide.md)
 - **False, part 11:** "375×812 and 1470×801 pass with no overlap". The episodic chip covers line 5 by 6px at 1470 and by 26px at 375. A false claim caps the verdict at 7.
 - **False, part 18 round-7 note:** "memory chips never cover code". Same measurement.
 - **Partly false, part 18:** "the editor rests under the ask … no jump". The top holds at 490, but the editor scales from 1200 to 1248px wide at hydration.
@@ -107,7 +107,7 @@ First complaint: "Those little memory tags are still sitting on top of the code.
    - Either way, the first painted frame equals the first animated frame.
 3. **Uncut shadow under the stage.** Keep `.ide-stick` clipping horizontally but let the shadow breathe: `.ide-stick { overflow: clip; overflow-clip-margin: 64px; }`. Or move the shadow to a `::after` inside `.ide-win` with a smaller spread (`0 24px 60px -16px rgba(0,0,0,.18)`, the deck's floating shadow). Verify that no hard horizontal edge shows in a frame at a 1443px scroll.
 4. **Teach tiles quieter.** Drop the fills on `.ide-teach-c` (`background: none`) and divide the three columns with 1px black 10% hairlines, so they read as one sheet, not three boxes.
-5. **Kit Band (request, do not edit).** Re-file in `docs/requests/ide.md`:
+5. **Kit Band (request, do not edit).** Re-file in `docs/build-notes/requests/ide.md`:
    - a word reveal by line mask with no blur (4px or less);
    - #fafafa and #a3a3a3 for the text, in place of #f5f5f7 and #a1a1a6;
    - `data-cta="ide.close"` on its button.

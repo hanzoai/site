@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Engine.jsx` (+ `Engine.css`, on `components/v2/Keynote*`) · gallery: `docs/gallery/engine/` · metric id: `api_key_created`
 
 Open copy questions for James: none (no copy changed; the Beyond aid's heading is Hanzo's own line "One binary, three verbs").
-Shared changes requested (`docs/requests/engine.md`): none. `lib/cta.js` and `tokens.css` are not on main yet; the asks use the kit `<Cta>` with Hanzo's labels and the deck values are written out (taste.py checks them).
+Shared changes requested (`docs/build-notes/requests/engine.md`): none. `lib/cta.js` and `tokens.css` are not on main yet; the asks use the kit `<Cta>` with Hanzo's labels and the deck values are written out (taste.py checks them).
 Forks this page deleted: Frame `Hero`, `Paste`, `Get` and `Code` (replaced by KeynoteStage, KeynoteClose and the kit `CodeBlock`); the hand-made "Tech specs" section and its invented row labels; the "The moment" label; raw checkbox and input (now a switch button and the kit `Field`); the per-page red accent.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: The page fetches nothing live: every scene is scripted from Hanzo's c
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/<page>.md` verdict 8 or more
+- [x] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta="engine.hero"` and `engine.close`; the kit `Cta` sends `cta_click` through the shared event (no `lib/track.js` on main yet; nothing else is tracked, no field values). `V2: 8/10` line is at the top of `Engine.jsx`. `docs/review/engine.md` does not exist yet; this card is updated when the critic's verdict lands.
+Done here: `data-cta="engine.hero"` and `engine.close`; the kit `Cta` sends `cta_click` through the shared event (no `lib/track.js` on main yet; nothing else is tracked, no field values). `V2: 8/10` line is at the top of `Engine.jsx`. `docs/build-notes/review/engine.md` does not exist yet; this card is updated when the critic's verdict lands.

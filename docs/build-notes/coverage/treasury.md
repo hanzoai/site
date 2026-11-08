@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Treasury.jsx` (+ `Treasury.css`) · gallery: `docs/gallery/treasury/` · metric id: `api_key_created` (docs hand-off)
 
 Open copy questions for James: the wallet's four controls are icons with aria-labels ("Take at checkout", "Delivered: pay the seller", "Release the hold", "Reset"); visible labels would need `content/ui-strings.json`.
-Shared changes requested (`docs/requests/treasury.md`): the phone header ask and ask bar; `Settle` and `PinChapters` reading reduced motion during render; PinChapters' phone pin over text. Noted for shared owners: no skip link in shared chrome; `useEvery` uses `setInterval`; `tokens.css` not merged (page CSS uses deck values as literals).
+Shared changes requested (`docs/build-notes/requests/treasury.md`): the phone header ask and ask bar; `Settle` and `PinChapters` reading reduced motion during render; PinChapters' phone pin over text. Noted for shared owners: no skip link in shared chrome; `useEvery` uses `setInterval`; `tokens.css` not merged (page CSS uses deck values as literals).
 Forks this page deleted: the separate Hold section (its h2 and lede were cut and spliced from Hanzo's sentences), the static `.ts-say` statement screen (now the chapters' lead), the solid "Take at checkout" button, the floating hero pause, the gold comment and duplicate `.ts-ed`/`.ts-flow`/`pre` rules, every spring.
 
 ## 1. Strategy and conversion
@@ -35,7 +35,7 @@ Done here: the server paints the split finished and balanced; it holds, then re-
 
 ## 4. Conversion system
 - [x] Kit `A` + `.w2-cta`; no raw `.x-btn`
-- [x] Sticky ask: desktop header carries "Read the docs" after the hero; phones: the shared header keeps "Try Hanzo" and no bar shows (requested in `docs/requests/treasury.md`)
+- [x] Sticky ask: desktop header carries "Read the docs" after the hero; phones: the shared header keeps "Try Hanzo" and no bar shows (requested in `docs/build-notes/requests/treasury.md`)
 - [x] n/a copy button
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -153,6 +153,6 @@ Done here: Playwright walk at 1470x801 and 375x812 (7 Nov 22:25): 0 console erro
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in `components/pages/apps/Treasury.jsx`
-- [x] Review read: Ready line in docs/review/treasury.md
+- [x] Review read: Ready line in docs/build-notes/review/treasury.md
 
 Done here: Ready 7 Nov (James's bar: holds up next to /api and /affiliate, no score). The round-3 complaints are gone with the rebuild: desktop is alive end to end (0 still screens), postings draw real arrows, the count-up never blinks, no pin tail. This pass: account names whole in the carousel cards, the editor pause inverts on hover. taste/parity/unique OK.

@@ -3,7 +3,7 @@
 Page file: `components/pages/solutions/Solution.jsx` (+ `Solution.css`, `solData.js`; 18 members: 7 teams, 7 industries, 3 use cases, the reserved tier) · gallery: `docs/gallery/solutions/finance-*`, `reserved-*` (the other files there belong to the /solutions index) · metric id: `signup_start` (second ask `contact_sales_submit`)
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/solutions-family.md`): none filed. Noted for the shell owner: at the closing room the header's "Try Hanzo" can show solid beside the room's white button.
+Shared changes requested (`docs/build-notes/requests/solutions-family.md`): none filed. Noted for the shell owner: at the closing room the header's "Try Hanzo" can show solid beside the room's white button.
 Forks this page deleted: the title-left / black-card-right hero and the pinned word-and-card chapters it shared with /oss/* and /products/* (now a full-bleed film under an 8/5 title row and a horizontal strip), the sibling contour rail with filled arrow discs (now a block of film stills), raw `<img>`/`<video>` (kit `Img` + `Film`), the per-member accent, coloured scrims, the eyebrow over the h1, chapter counters, the empty "More solutions" section on the reserved tier, the black zero box in the overlap finder, the standalone "What it runs on" and "Security and compliance" sections (now sheets), springs and object shadows.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: members without security, capacity or siblings simply have no sheet, 
 - [x] `data-cta` on every primary (`lib/track.js` does not exist yet)
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file's top comment
-- [x] Review read: `docs/review/solutions-family.md` 6/10 at a4af13e; fixes in this commit
+- [x] Review read: `docs/build-notes/review/solutions-family.md` 6/10 at a4af13e; fixes in this commit
 
 Done here: (7 Nov, 22:30) the sheet rises over the site header (no stacking context on the sheet row); a card's name travels to the h1's own box at 52px with its line breaks and the h1 skips its second cut-in, settled in about 0.8 s; the open lands on the destination film band, which is the film you clicked; no film shown twice on a page; overlap zero state; phone strip peeks 16%. Earlier: (1) five jobs, five pictures (own framing and moment each); (2) the sheets now open above the header (their triggers sit outside the pinned strip); (3) one page-owned solid at the close, hover on its buttons and the overlap controls; (4) no empty "More solutions" on the reserved tier (heading and link in the close); (5) triggers show the section title whole; (6) no zero box in the overlap; own hero medium and layout (full-bleed film, horizontal strip, film-still teams).

@@ -9,7 +9,7 @@ Walked on build `9eec64ee` (the page files are unchanged since `70d1547e`) on th
 - **Desktop 1470×801:** recorded on video. I watched the first screen with no input and probed the arrival timeline every ~95 ms. I wheel-scrolled the whole page in 200 px steps with dwells, and hovered and pressed both asks, the plate, the case tabs, index rows, year chips and backer links. I filtered by year and cleared it, and opened the Damon plate (doorway) and came back.
 - **Phone 375×812** (isMobile, hasTouch): recorded on video. I touch-dragged the whole page in 260 px swipes, tapped a year chip, tapped the KANOA tab, measured tap targets and watched for any bottom bar.
 - **Also checked:** reduced motion and JS off at both sizes, layout shift (PerformanceObserver), console errors across about 22 loads, `scripts/parity.py /customers` (OK, text 72/72, links 10/10) and `scripts/taste.py` on `components/pages/Customers.jsx` and `.css` (OK).
-- **Stills:** `docs/review/customers/desktop-walk.jpg` and `docs/review/customers/phone-walk.jpg`.
+- **Stills:** `docs/build-notes/review/customers/desktop-walk.jpg` and `docs/build-notes/review/customers/phone-walk.jpg`.
 
 Remote hanzo.ai covers and logos are blocked in this sandbox, so I judged the fallbacks: a Sigil line drawing on the plate, and names in place of logos.
 

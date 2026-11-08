@@ -3,7 +3,7 @@
 Family template `/blog/*` (3 members; checked `/blog/kai-decision-models`, `/blog/pareto-frontier`, `/blog/synthesis`). Page file: `components/pages/post/Post.jsx` (+ `postData.js`, `Frontier.jsx`, `Life.jsx`, `Post.css`) · gallery: `docs/gallery/blog/` · metric id: `cta_click blog-post.hero` (journey: `api_key_created`)
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/<page>.md`): `docs/requests/families-b.md` (status board names `[slug]` families like their index pages; the desktop ask bar floats over content).
+Shared changes requested (`docs/build-notes/requests/<page>.md`): `docs/build-notes/requests/families-b.md` (status board names `[slug]` families like their index pages; the desktop ask bar floats over content).
 Forks this page deleted: its own code tabs and copy button (now kit `Tabs` + `CodeBlock`), its own film player (now kit `Film`), raw `<img>` (now kit `Img`), raw `.x-btn` on the Life board (now kit `Cta`), the closing big rows (now the kit `Band`), the spring on the reading spine, the per-post accent colours, the cursor labels ("Open", "Draw").
 
 ## 1. Strategy and conversion
@@ -82,7 +82,7 @@ Done here: the back link drops 1px on press, next-post cards press to .98, and o
 - [x] Reduced motion shows the final state (stacked layout, no pin); no `setInterval` (Life and the GPQA walk run on rAF clocks)
 - [x] n/a: sound belongs to the shared kit
 
-Done here: `variety.py` OK (sigil, scroll scrub, clip reveal); the chapter numeral is read on every scroll (heading above 60% of the screen; the last chapter once finished), so it never lags at "02 / 03 · Finished"; the closing band is page-local (`Close`: the kit Band's look and words, but the headline cuts in by line mask with no blur, the ask a magnetic kit `Cta`; request in `docs/requests/blog-family.md`), its headline balanced; Kai's plate figures sit on a gradient under their column; no springs (the spine follows scroll directly; tab pill is the kit's); figures arrive at 84px and settle to 64px as the plate opens.
+Done here: `variety.py` OK (sigil, scroll scrub, clip reveal); the chapter numeral is read on every scroll (heading above 60% of the screen; the last chapter once finished), so it never lags at "02 / 03 · Finished"; the closing band is page-local (`Close`: the kit Band's look and words, but the headline cuts in by line mask with no blur, the ask a magnetic kit `Cta`; request in `docs/build-notes/requests/blog-family.md`), its headline balanced; Kai's plate figures sit on a gradient under their column; no springs (the spine follows scroll directly; tab pill is the kit's); figures arrive at 84px and settle to 64px as the plate opens.
 
 ## 10. Media
 - [x] `Film` and `Img` from the kit only; sizes and posters set (1200×1500)
@@ -154,4 +154,4 @@ Done here: reduced motion, JS off and phones get the stacked layout with every w
 - [x] Nothing before consent (no tracker of our own)
 - [x] `V2:` line and this card
 
-Done here: `V2: 8/10` line in `Post.jsx`; proof in `docs/gallery/blog/v3-post-*` (desktop at 250 ms and settled, desktop gist, phone first screen, phone Limits bars, phone code, desktop walk webm); the intermittent footer hydration warning is shared (`docs/requests/blog-family.md`); events: `cta_click` with `blog-post.hero`, `blog-post.next-n`, `blog-post.close-n`.
+Done here: `V2: 8/10` line in `Post.jsx`; proof in `docs/gallery/blog/v3-post-*` (desktop at 250 ms and settled, desktop gist, phone first screen, phone Limits bars, phone code, desktop walk webm); the intermittent footer hydration warning is shared (`docs/build-notes/requests/blog-family.md`); events: `cta_click` with `blog-post.hero`, `blog-post.next-n`, `blog-post.close-n`.

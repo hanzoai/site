@@ -13,7 +13,7 @@ Critic for Wave 2 groups 11–14, `/models/*` and `/cloud/*`. Measured on main a
 
 ## 2. 18-part cards (MASTER section 6)
 
-MASTER section 6 asks for `docs/coverage/<page>.md` copied from `_TEMPLATE.md`: 18 `## N.` headings, each with a filled `Done here:` line. Pages without one are capped at 7 ("Cap: part card"). At 15:00 on `25b197c`:
+MASTER section 6 asks for `docs/build-notes/coverage/<page>.md` copied from `_TEMPLATE.md`: 18 `## N.` headings, each with a filled `Done here:` line. Pages without one are capped at 7 ("Cap: part card"). At 15:00 on `25b197c`:
 
 - **Cards in MASTER format, 18/18:** affiliate, enso, iro, kai, koe, koma, mori, oto, uta, zen, benchmarks-family, products-family, customers-family. Their claims are checked on the page; a false claim caps at 7.
 - **Old format (0/18):** beta, bounty, buying-specialist, founder, grants, integrations-family, solutions-family, blockchain-family, legal-family, careers-family, blog-family, agents-family, compare-family, help-family; zen-family and kai-family through their member cards (`zen-7.md`, `zen-models.md`, `zen-zen6-max.md`, `kai-guide.md`).

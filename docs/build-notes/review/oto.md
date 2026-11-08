@@ -6,7 +6,7 @@ Verdict: 8/10 (ready on my checks; polish only)
 
 First complaint: "Good. The Foley console is the best thing on it. Up top I see two black-and-white buttons at once, though."
 
-**Card:** `docs/coverage/oto.md` is now in MASTER format, 18/18 `Done here:` lines. Measured claims hold: layout shift 0.0002 at 1470 and 0 at 375, the h1 in server HTML, 0 hidden blocks with JavaScript off, nothing running under reduced motion, "Request access" on the first screen. The 10px model-card pills follow `SPEC.md`, which MASTER says wins; no longer raised.
+**Card:** `docs/build-notes/coverage/oto.md` is now in MASTER format, 18/18 `Done here:` lines. Measured claims hold: layout shift 0.0002 at 1470 and 0 at 375, the h1 in server HTML, 0 hidden blocks with JavaScript off, nothing running under reduced motion, "Request access" on the first screen. The 10px model-card pills follow `SPEC.md`, which MASTER says wins; no longer raised.
 
 **Floats over content (MASTER 3.2 rule 6):** passes: no pill on desktop; on the phone the bar showed at 1 of 33 rest stops and covered nothing.
 

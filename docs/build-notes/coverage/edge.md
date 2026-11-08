@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Edge.jsx` (+ `Edge.css`) · gallery: `docs/gallery/edge/` · metric id: `api_key_created` (proxy on this page: the `edge.hero` click)
 
 Open copy questions for James: (1) "What runs on yours" (the Beyond picker's h2) is not Hanzo copy; it was added by the earlier rebuild and is kept as the section's name, with Hanzo's "It uses what it finds" set under it as the caption (it used to sit above it). (2) The picker's six machine names and its answers are assembled from Hanzo's own runtime lines ("Metal on Apple Silicon." + "Detected at startup rather than configured by you."): the wording of each piece is Hanzo's, the joins are ours. (3) The field's band labels ("macOS", "Linux", "WebAssembly", "Hugging Face repo") and the live caption ("There is no request", "After that, offline") are fragments of Hanzo's sentences. (4) CTA labels are Hanzo's live ones; `lib/cta.js` does not exist yet.
-Shared changes requested (`docs/requests/edge.md`): none filed; kit gaps reported to the Cloud 1 lead: `KeynoteOpen` shuts on Esc without returning focus (fixed here page-locally) and does not trap Tab in the open card; its card details are `hidden` with JS off (shown here page-locally); the stage's text-link secondary is 21px tall on phones (given 44px here).
+Shared changes requested (`docs/build-notes/requests/edge.md`): none filed; kit gaps reported to the Cloud 1 lead: `KeynoteOpen` shuts on Esc without returning focus (fixed here page-locally) and does not trap Tab in the open card; its card details are `hidden` with JS off (shown here page-locally); the stage's text-link secondary is 21px tall on phones (given 44px here).
 Forks this page deleted: Frame's `Related` (now page-local hairline rows in the close), Frame's hooks (`useEvery` with its `setInterval`, `useFrame`, `useSteps`, `useLive`: now one page-local animation-frame loop and single timeouts), the lime canvas (`rgba(132, 204, 22)`), the `--ac` lime and the deep-lime accent words, the pill and labels floating over the field, the spring on the picker pill, the fade-up answer panel.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: Console errors: none (film, sweep, look script; desk and phone). Paus
 - [x] `data-cta` on every primary; events only through the kit `Cta`'s `cta_click` (`hz-event`; `lib/track.js` is not built yet)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: `docs/review/edge.md` does not exist yet (no critic verdict to answer)
+- [ ] Review read: `docs/build-notes/review/edge.md` does not exist yet (no critic verdict to answer)
 
 Done here: `data-cta` ids in part 4; metric `api_key_created`. Gallery: `docs/gallery/edge/desktop.mp4`, `desktop.jpg`, `phone-1.jpg` to `phone-3.jpg`, filmed with 0 console errors and no sideways scroll.

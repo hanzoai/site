@@ -3,9 +3,9 @@
 Page file: `components/pages/crew/AgentRoom.jsx` (+ `AgentRoom.css`, `agentsData.js`, `app/agents/[slug]/page.jsx`) · gallery: `docs/gallery/agents/` · metric ids: `install_copy` (agents-sdk), `signup_start` (agents-crew). Members checked: `/agents/crew`, `/agents/sdk`.
 
 Open copy questions for James: none (the ask labels are the pages' own: "Launch a bot", "Read the docs").
-Shared changes requested (`docs/requests/<page>.md`): none filed. Noted: the shared desktop ask bar floats at the bottom centre over content (MASTER §3.2 rule 6 bans floating pills on desktop); it is the shared chat's to change.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none filed. Noted: the shared desktop ask bar floats at the bottom centre over content (MASTER §3.2 rule 6 bans floating pills on desktop); it is the shared chat's to change.
 Forks this page deleted: the hand-made buttons (now kit `Cta`), the hand-made `<pre>` code block (now kit `CodeBlock`), `Magnetic` and every spring.
-Page-local on purpose (round 2, docs/review/agents.md): the h1 uses the shared `.x-line` / `.x-line-in` mask markup but its cut-in is CSS under `html.js` (the shared `Lines` writes `translateY(110%)` inline into the server HTML, which hid the h1 until hydration); the find field uses the kit Field's markup and classes (`x-field`, `x-input2`) with a fixed id, because the kit `Field`'s `useId` differed between server and client here (hydration mismatch).
+Page-local on purpose (round 2, docs/build-notes/review/agents.md): the h1 uses the shared `.x-line` / `.x-line-in` mask markup but its cut-in is CSS under `html.js` (the shared `Lines` writes `translateY(110%)` inline into the server HTML, which hid the h1 until hydration); the find field uses the kit Field's markup and classes (`x-field`, `x-input2`) with a fixed id, because the kit `Field`'s `useId` differed between server and client here (hydration mismatch).
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -152,6 +152,6 @@ Done here: no console errors and no hydration mismatch at 1470×801 and 375×812
 - [x] `data-cta` on every primary (kit `Cta` sends `cta_click`)
 - [x] Nothing identifier-bearing before consent
 - [x] `V2:` line in the page file's top comment
-- [x] Review read: `docs/review/agents-family.md` (8/10 at `fca5513`)
+- [x] Review read: `docs/build-notes/review/agents-family.md` (8/10 at `fca5513`)
 
 Done here: films and phone stills in `docs/gallery/agents/`; round 2 first screens: `crew-desktop-r2.jpg`, `crew-phone-r2.jpg`, `sdk-desktop-r2.jpg`, `sdk-phone-r2.jpg`.

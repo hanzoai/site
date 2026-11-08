@@ -125,7 +125,7 @@ Claims that checked out:
 
 1. **One solid on the desktop first screen (lifts the cap together with fix 2).** Pick one of these:
    - (a) Make `zen.first` solid white on the film and leave the header quiet. That is the old behaviour, and the header then goes solid when `zen.first` leaves.
-   - (b) Keep the page asks outlined and ask the `Ask.jsx` owner (`docs/requests/zen-names.md`) to quiet the header only when the visible twin is solid.
+   - (b) Keep the page asks outlined and ask the `Ask.jsx` owner (`docs/build-notes/requests/zen-names.md`) to quiet the header only when the visible twin is solid.
 
    Then check frames at 0.5, 2, 5 s and at scrollY 0, 881 and 1203. Each must show exactly one solid "Try Hanzo".
 2. **Correct the card.** Part 1 must describe the asks as they are now. Part 4 must say which one is solid on each screen at each width, and drop the stale `visibility: hidden` sentence.

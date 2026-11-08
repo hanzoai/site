@@ -5,5 +5,4 @@ out/
 *.log
 .next-dev/
 shots/
-docs/status.html
 __pycache__/

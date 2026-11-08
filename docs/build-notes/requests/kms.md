@@ -1,4 +1,4 @@
-# /kms: shared-chrome requests (rounds 2 and 3, from docs/review/kms.md)
+# /kms: shared-chrome requests (rounds 2 and 3, from docs/build-notes/review/kms.md)
 
 Done page-local instead where possible; these need the shared owners.
 

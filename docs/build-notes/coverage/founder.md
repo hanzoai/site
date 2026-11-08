@@ -3,7 +3,7 @@
 Page file: `components/pages/Founder.jsx` · gallery: `docs/gallery/founder/` · metric id: `lead_submit`
 
 Open copy questions for James: none (the claim states now use Hanzo's own sentences only).
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none.
 Forks this page deleted: `x-btn` buttons (now kit `Cta`), raw inputs (now kit `Field`), the looping hero merge and its solid fake Merge button, the lone icon tile, "Sent.", "Sending…" and the refusal sentence, box-plus-shadow on lit level cards.
 
 
@@ -36,7 +36,7 @@ Done here: Nothing above the h1. "Merge a pull request. / Get Pro." (52px) cuts 
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in the header after the hero, same label (desktop: the shared Ask; phones: the header keeps "Try Hanzo" (the page's ask does not fit), outlined via `html[data-pq]` (page-local `usePhoneAsk`) while a page solid is on screen; shared request in `docs/requests/founder.md`)
+- [x] Sticky ask in the header after the hero, same label (desktop: the shared Ask; phones: the header keeps "Try Hanzo" (the page's ask does not fit), outlined via `html[data-pq]` (page-local `usePhoneAsk`) while a page solid is on screen; shared request in `docs/build-notes/requests/founder.md`)
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -59,7 +59,7 @@ Done here: No figures but Hanzo's thresholds; no logos or seals; "Privacy Policy
 Done here: Parity 37/37 text. Type from MASTER: h1 52px, section heads 26px, the count 64→112px only while it is the moment (84px phone), the level you reach 44px, org names 44px, level titles 26px, body 16–17px; Faq is the kit's.
 
 ## 7. Visual design system
-- [x] `python3 scripts/taste.py <files>` passes; white and ink are tokens (`--hz-white`, `--ink`); 7 deck greys stay literal because the shared tokens hold Apple greys, not the deck's (#fafafa, #a3a3a3, #525252; noted in `docs/requests/founder.md`)
+- [x] `python3 scripts/taste.py <files>` passes; white and ink are tokens (`--hz-white`, `--ink`); 7 deck greys stay literal because the shared tokens hold Apple greys, not the deck's (#fafafa, #a3a3a3, #525252; noted in `docs/build-notes/requests/founder.md`)
 - [x] No label, tag, badge or pill above a headline
 - [x] Radii, shadows and sizes from tokens; never box plus shadow
 - [x] One icon set; no icon in a rounded box
@@ -154,6 +154,6 @@ Done here: Reading, empty and unreachable states for the open bounties in Hanzo'
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/founder.md` verdict 8 or more (read: 7/10; round 3 answers it, awaiting the next walk)
+- [ ] Review read: `docs/build-notes/review/founder.md` verdict 8 or more (read: 7/10; round 3 answers it, awaiting the next walk)
 
 Done here: `data-cta` ids `founder.hero`, `founder.claim`, `founder.bounties` (kit Cta fires `cta_click`); the lead carries only what the visitor typed, on submit; V2 line in the route header; critic review (6/10 at `9afe46a`): reserved list height, merge once, ask kept in the dark room, counter tile, Hanzo-only claim states, Field and normalised address, phone moment, ending on the claim, hovers, kit and no-JS all fixed.

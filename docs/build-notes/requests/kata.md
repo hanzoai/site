@@ -6,7 +6,7 @@ UI strings for `content/ui-strings.json` (James's approval). Until approved, eac
 - `The suite turns` (the dark room's name)
 - `Pause` is already listed (`pause`).
 
-Shared: the kit `Band` button has no `data-cta` (see `docs/requests/ide.md`); the shared ask bar floats over the dark room on desktop (same file). Kit parts this page waits for: `Terminal` (the session is page-owned until then), `PageHero`.
+Shared: the kit `Band` button has no `data-cta` (see `docs/build-notes/requests/ide.md`); the shared ask bar floats over the dark room on desktop (same file). Kit parts this page waits for: `Terminal` (the session is page-owned until then), `PageHero`.
 
 Re-filed 8 Nov (review round 8):
 - Kit `Band`: please give its button `data-cta` (here `kata.band`) and send `cta_click` like `Cta`. Until then Kata.jsx (`useBandAsk`) marks it from the page; drop that hook once the kit does it.

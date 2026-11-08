@@ -6,7 +6,7 @@ Open copy questions for James:
 - The conductor's note lists "Open Hanzo" and "Read docs" in the hero. Those are live hanzo.ai's signed-in hero. The captured live home (`content/live/index.json`) is signed out and carries "Continue with Google", "Continue with GitHub" and "Continue with email", so the hero keeps those until a signed-in swap exists (PLAN-COMPONENTS 1.2, a cookie the app already sets).
 - "Backed by" names ship only with documented permission (PLAN-COMPONENTS 1.3 #3). They are kept as live has them until James decides.
 
-Shared changes requested (`docs/requests/home.md`): none needed. The site ask bar is turned off for this page with `data-ask="off"`, and the cursor label is silenced with `data-cursor=""`. Both are documented options of the shared layers.
+Shared changes requested (`docs/build-notes/requests/home.md`): none needed. The site ask bar is turned off for this page with `data-ask="off"`, and the cursor label is silenced with `data-cursor=""`. Both are documented options of the shared layers.
 
 Forks this page deleted:
 - Two scroll-velocity `Marquee` strips (now still logo walls).
@@ -176,6 +176,6 @@ Done here: The `scripting: none` rules keep every word visible. 8 Nov: with JS o
 - [x] `data-cta="home.*"` on every action
 - [x] Nothing identifier-bearing
 - [ ] `V2: <score>/10`: pending the critic
-- [ ] Review read: pending `docs/review/home.md`
+- [ ] Review read: pending `docs/build-notes/review/home.md`
 
 Done here: Proof is in `docs/gallery/home/` (desktop-hero, phone-1..3, 8 Nov). Ready by the new bar, no score.

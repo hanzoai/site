@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Dashboards.jsx` (+ `Dashboards.css`) · gallery: `docs/gallery/dashboards/` · metric id: `api_key_created` (proxy on this page: `cta_click dashboards.hero`)
 
 Open copy questions for James: (1) the Monitors section used an invented headline, "The alert and the chart / cannot disagree" (a cut of Hanzo's sentence) under a "Monitors" kicker; it now uses Hanzo's own "Monitors" as its heading and keeps the full sentence as body: confirm. (2) The hero's only ask on live is "GitHub" (to the repo); kept, no label change. (3) "4 stars" is Hanzo's static figure.
-Shared changes requested (`docs/requests/dashboards.md`): none filed; kit gaps go to the kit owners in the report (CodeBlock's 12px label and 12.5px Copy under the 14px phone floor).
+Shared changes requested (`docs/build-notes/requests/dashboards.md`): none filed; kit gaps go to the kit owners in the report (CodeBlock's 12px label and 12.5px Copy under the 14px phone floor).
 Forks this page deleted: Frame's `Console` (8 `title=` tooltips, a spring, a `setInterval`; now the page-local `ExampleConsole` shared with /authz and /base); Frame's `useLive`/`useSteps` (now a page-local timeout cycle gated on the Stage's pause); the hand-made `kn-btn` ask (now kit `Cta`); the motion `pathLength` draw (now CSS from first paint); the browser-default range input (now drawn on the deck); the yellow accent; the "01 / 06" counts above each part's h3 (now under the words).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: No fetch on the page; film and sweep: 0 console errors at desk and ph
 - [x] `data-cta` on every primary; events only through the kit `Cta`
 - [x] Nothing identifier-bearing before consent
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: no `docs/review/dashboards.md` yet
+- [ ] Review read: no `docs/build-notes/review/dashboards.md` yet
 
 Done here: Gallery `docs/gallery/dashboards/` (desktop.mp4, desktop.jpg, phone-1..3.jpg). Own score 8/10; the critic's verdict decides.

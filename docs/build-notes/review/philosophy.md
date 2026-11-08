@@ -80,7 +80,7 @@ Stills (new): `philosophy/desk-sequence-titles-break-midword.jpg`, `philosophy/d
     - Data note, carried over: the Lenses copy says "four modern minds", but `LENSES` has one entry (Zen, 6), so the view shows "All lensed patterns" plus a single "Zen 6" chip.
     - If live hanzo.ai has four, the data is short. Otherwise it is a copy question for James and should be on the card.
 
-## Card check (`docs/coverage/philosophy.md`)
+## Card check (`docs/build-notes/coverage/philosophy.md`)
 The card exists, has 18 headings and every `Done here:` line filled. Most claims now hold: the native dialog, no scroll jump, the focus trap, CLS 0.005, Matrix by default, and no overlap at 375. These are wrong or overstated:
 - **Part 11:** "Tile titles wrap instead of colliding at 1470." They wrap by snapping words in half.
 - **Part 3:** "The hexagram's first change at 900 ms." Measured here: no movement before about 1.9 s on either size, on a loaded dev server. Re-measure on a build, or render the h1 unmasked in server HTML so arrival doesn't wait for hydration.

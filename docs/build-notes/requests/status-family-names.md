@@ -1,7 +1,7 @@
 # Request: scripts/status.py family names collide with index pages (7 Nov)
 
 `row()` names a family `/x/*` as `x` (`key.strip("/").replace("/*", "")`), so the family and its index read the
-same `docs/review/x.md`, `docs/coverage/x.md` and `docs/gallery/x/`. Every family card and review in the repo is
+same `docs/build-notes/review/x.md`, `docs/build-notes/coverage/x.md` and `docs/gallery/x/`. Every family card and review in the repo is
 written as `x-family.md`, so the board shows a family with its index's verdict and card.
 
 Affected: /agents/*, /benchmarks/*, /blockchain/*, /blog/*, /careers/*, /compare/*, /customers/*, /integrations/*,

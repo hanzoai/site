@@ -1,6 +1,6 @@
 # /authz — James-eye review
 
-Reviewed 2026-11-07 (late), walked moving at 1470x801 and 375x812 (wheel steps of 400px every 700ms, rest shots at 0.25/1/2/5 s, hover and press on callers, locations, chapter numbers, picker pills, expiry switch, related rows, console rows, GitHub link; 3 solo reloads per size for the hydration check). Proof: `docs/review/authz/`.
+Reviewed 2026-11-07 (late), walked moving at 1470x801 and 375x812 (wheel steps of 400px every 700ms, rest shots at 0.25/1/2/5 s, hover and press on callers, locations, chapter numbers, picker pills, expiry switch, related rows, console rows, GitHub link; 3 solo reloads per size for the hydration check). Proof: `docs/build-notes/review/authz/`.
 
 Verdict: 7.5/10
 Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). The decision panel never sits empty (the last answer stays quiet under the next check), the location rows hold their height through every pick with chips 16px in, phones get the answer right under the asks, Hanzo's console caption is restored, and reduced motion no longer breaks hydration (hero here; shared KeynoteRoom 3 lines). copycheck missing 0 of 33; taste/unique OK; 0 console errors (also under reduced motion), no overflow at 1470 and 375. Usable: the hero is the check itself, with Read the docs, GitHub and the agent prompt.

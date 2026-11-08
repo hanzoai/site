@@ -51,7 +51,7 @@ Stills: `sdks/d-f2.jpg` (desktop hero 1.1 s in, the changed lines lit mid-flip),
     - "SDKs docs → →" shows a doubled arrow: the copy's own → plus the `More` arrow. It appears twice, in the modules room and the close.
 11. **Copy untouched.** Yes, parity 217/217 and 69/69.
 
-## Card check (`docs/coverage/sdks.md`)
+## Card check (`docs/build-notes/coverage/sdks.md`)
 It exists with 18 parts, all filled. These claims are not true today:
 - **Part 11, "375×812 and 1470×801 pass with no overlap" and "hscroll 0":** at 375 and 320 the hero console overflows its column and is clipped. hscroll is 0 only because `main` clips.
 - **Part 11, "Every target 44px or more":** the phone module links are 26px tall, and "hanzoai/sdk" and "Docs" are 21–22px.

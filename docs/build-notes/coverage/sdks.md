@@ -3,7 +3,7 @@
 Page file: `components/pages/Sdks.jsx` · gallery: `docs/gallery/sdks/` · metric id: `cta_click sdks.hero`
 
 Open copy questions for James: the language tabs carry Hanzo's own emoji labels; kept.
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none.
 Forks this page deleted: the cyan accent, dialect/language pills that never showed, eyebrows over headings, the hero's text-link ask and the close's raw `.x-btn` (both kit `Cta` now).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: Loading has nothing to fetch (all copy and samples are in the server 
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/<page>.md` verdict 8 or more
+- [x] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta` on sdks.hero and sdks.close via kit `Cta` (cta_click event); `V2:` line present (the builder's own); the verdict that counts is `docs/review/sdks.md` (6/10 on the walk before this build; marked Ready in slice D on 7 Nov after the phone console, flagship grid, org draw-in and finder fixes).
+Done here: `data-cta` on sdks.hero and sdks.close via kit `Cta` (cta_click event); `V2:` line present (the builder's own); the verdict that counts is `docs/build-notes/review/sdks.md` (6/10 on the walk before this build; marked Ready in slice D on 7 Nov after the phone console, flagship grid, org draw-in and finder fixes).

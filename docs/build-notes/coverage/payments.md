@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Payments.jsx` · gallery: `docs/gallery/payments/` · metric id: `signup_start`
 
 Open copy questions for James: none new. ("Try Hanzo" is kept as the ask until `lib/cta.js` lands; the order "6735", amount 2000 and connector 'adyen' on the phone are Hanzo's own request sample, not new figures.)
-Shared changes requested (`docs/requests/payments.md`): none.
+Shared changes requested (`docs/build-notes/requests/payments.md`): none.
 Forks this page deleted: the raw `.x-btn` hero and close asks and the interim `BizAsk` (now the kit `Cta`), the v1 `Get` block and `Rise` fade-ups (24), the hand-written step list beside the phone, the `data-cursor` label, the page-level AskBar, every spring.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: no live data; the checkout shows every state it narrates (method, vau
 - [x] `data-cta` on every primary; events only through `lib/track.js` (data-cta set; `lib/track.js` not on main yet)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/payments.md` verdict 8 or more (no review written yet)
+- [ ] Review read: `docs/build-notes/review/payments.md` verdict 8 or more (no review written yet)
 
 Done here: `data-cta="payments.hero"` and `"payments.close"`; no tracking code of the page's own. Gallery: `desktop.mp4`, `desktop-hero.jpg`, `phone-1..3.jpg`, filmed at 1470×801 and 375×812 with no console errors. Slice D, 7 Nov: check.mjs at 1470×801 and 375×812: 0 console errors, no Next issue badge, scrollWidth 1470/1470 and 375/375; `desktop-hero.jpg`, `desktop-checkout.jpg`, `phone-1..3.jpg` refreshed from those runs.

@@ -67,7 +67,7 @@ First complaint: "It's alive now and the top sells it. The cards slide past one 
    - **anthropic launch:** half there. N:1 / 1:M / 0 are cut-in figures, but the four hero points are 21px text stepping every 3.6 s.
    - **motion.dev patterns:** typing, magnetic, the line mask and the scroll scrub are all present (`variety.py` OK).
 8. **Different from its neighbours?** Yes in object and signature: a byte buffer against a JSON line, sidecars against one daemon. It is no in frame. The hero is still the house "title left, lede and ask right, dark product panel on the fold" composition shared with /treasury, /ui and /tabs.
-9. **Are all 18 parts covered?** No (see below). `docs/coverage/zap.md` also states things the page does not do:
+9. **Are all 18 parts covered?** No (see below). `docs/build-notes/coverage/zap.md` also states things the page does not do:
    - "One solid fill per viewport" is false at 375 and with JS off (header pill).
    - "Phone text 14px+" is false: the active buffer label renders at 11px lowercase mono.
    - "Reduced motion rests" is true for motion, but reduced motion also raises a red Next issue badge (see 10).
@@ -156,4 +156,4 @@ First complaint: "It's alive now and the top sells it. The cards slide past one 
    - Anchor the diagram's "…" inside their rows.
    - Close the gap between the band and the footer.
 8. **Give the page one scale moment.** For example, let N:1 / 1:M / 0 arrive at hero size and settle to 64px, or let the landed packet's header grow as it lands. Then James's "some start big and shrink" is there. Ask James whether the "0" may stay at figure size (MASTER part 5).
-9. **Correct `docs/coverage/zap.md`.** Fix the four rows in answer 9, and register the demo labels in `content/ui-strings.json` once James answers the copy questions.
+9. **Correct `docs/build-notes/coverage/zap.md`.** Fix the four rows in answer 9, and register the demo labels in `content/ui-strings.json` once James answers the copy questions.

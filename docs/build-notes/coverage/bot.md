@@ -3,7 +3,7 @@
 Page file: `components/pages/Bot.jsx` (+ `Bot.css`, `Bot.data.js`, shared `components/v2/AppType.css`, `AppScenes`, `AppSheet`) · gallery: `docs/gallery/bot/` · metric id: `signup_start`
 
 Open copy questions for James: none decided. Two of Hanzo's own figures disagree and both are kept word for word: the pricing-model drawer says "Why a $100/mo entry floor?" while the FAQ says "Why is there a $15/mo floor for cloud resident bots?" (and plans start at $15). Which is right?
-Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own Band markup with `<Cta id>` until then). The header ask and the phone ask bar landed in the shared system, so `data-ask="off"` is gone from `<main>`.
+Shared changes requested (`docs/build-notes/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own Band markup with `<Cta id>` until then). The header ask and the phone ask bar landed in the shared system, so `data-ask="off"` is gone from `<main>`.
 Forks this page deleted: the centred kicker-over-display hero, three equal hero asks, the Stage wrapper, the ten-row workflow index (now one drawer), the FAQ section (now one drawer), the separate "Need more than one resident bot?" and "Three steps" sections (folded into pricing and install), the solid "Deploy to Cloud" after the close, the floating verifier chip over the chart, raw `<img>` (now kit `Img`), every kicker over a headline (11), spring transitions, the drawn `Tick` in the drawer, the tangerine and green hues.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: With hanzo.ai assets blocked in this sandbox the page is complete; a 
 - [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta` sends `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/bot.md` verdict 8 or more (round 1 verdict 6/10; every item in its Fixes list is addressed in round 2, awaiting the next review)
+- [ ] Review read: `docs/build-notes/review/bot.md` verdict 8 or more (round 1 verdict 6/10; every item in its Fixes list is addressed in round 2, awaiting the next review)
 
 Done here: `data-cta` ids: bot-hero-try, bot-hero-install, bot-hero-sales, bot-plan-pro/dev/max/ultra, bot-deploy, bot-band-try, bot-band-sales. The V2 line reads "8/10 round 4: … Round 5: …". The terminal's own Copy (`TermCopy`) reads "Copied" 200 ms after a click with a `role=status` line, and only after the clipboard took the text (Playwright: clipboard holds both commands).

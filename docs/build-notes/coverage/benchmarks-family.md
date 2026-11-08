@@ -154,6 +154,6 @@ Done here: nothing else on the page depends on the network.
 - [x] `data-cta` on every primary (n/a `lib/track.js`: not on main; the kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing; no field values
 - [x] `V2:` line in the file's top comment
-- [ ] Review read: `docs/review/benchmarks-family.md` verdict 8 or more (waiting on the critic's walk of this version)
+- [ ] Review read: `docs/build-notes/review/benchmarks-family.md` verdict 8 or more (waiting on the critic's walk of this version)
 
 Done here: every review complaint so far is addressed (layout shift, looping card, invented counter, first-screen figure).

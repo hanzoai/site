@@ -156,4 +156,4 @@ Walked 7 Nov. I started on `927bd19` (pinned perks, Ask bar on). Then `38cf09d` 
 6. **Smaller items:**
    - Give the dark sheet's solid a hover state (to white, as the close's does).
    - Let a sliver of the next section show at 1470×801.
-   - Correct the `Careers.jsx` header and `docs/coverage/careers.md` with the numbers above.
+   - Correct the `Careers.jsx` header and `docs/build-notes/coverage/careers.md` with the numbers above.

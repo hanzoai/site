@@ -1,7 +1,7 @@
 # Shared requests from the Cloud 2 / Wave 2 chat (/extension /flow /functions /gateway /guard /gui /help/privacy/model-training /hsm /iam /identity /idv)
 
 ## 1. Shell hydration mismatch: the red "1 Issue" badge (owner: layout / Chrome chat)
-Same issue as `docs/requests/press.md` section 2, with the exact diff (7 Nov, main at `f244a55c`). Loading six cloud pages at once
+Same issue as `docs/build-notes/requests/press.md` section 2, with the exact diff (7 Nov, main at `f244a55c`). Loading six cloud pages at once
 on the dev server, /iam failed hydration in the root layout, not in page code:
 
 ```
@@ -67,5 +67,5 @@ Invented strings inside shared components (not this group's files):
 
 ## 2. Header ask (shared chrome)
 Critics of /functions, /gui, /guard, /gateway and /flow asked for one solid fill on the phone's first screen: the header's
-"Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/review/_shared.md` section 1: let a page name its
+"Try Hanzo" stays solid beside each page's own hero ask. Same ask as `docs/build-notes/review/_shared.md` section 1: let a page name its
 header ask, or outline the header button while a page solid is on screen. At 320px the header "Try Hanzo" is cut at the right edge.

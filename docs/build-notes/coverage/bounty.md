@@ -3,7 +3,7 @@
 Page file: `components/pages/Bounty.jsx` · gallery: `docs/gallery/bounty/` · metric id: `github_click`
 
 Open copy questions for James: none (Hanzo's words and live GitHub data only).
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none.
 Forks this page deleted: forked `x-btn solid` / `x-btn xp-ghost` buttons (now kit `Cta`), tile hover lifts with shadows, the stepper's box-plus-shadow, oversized 10rem/8rem/6rem figures.
 
 
@@ -14,7 +14,7 @@ Forks this page deleted: forked `x-btn solid` / `x-btn xp-ghost` buttons (now ki
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header comment in `app/bounty/page.jsx` names Persona, Goal, CTA, Metric `github_click`, Signature, Beyond. One solid per screen: kit `Cta` "Every open bounty" (`bounty.hero`). Desktop: the header's button is an outline while it shows, then carries "Every open bounty" down to the footer (`useHoldHeaderAsk` re-asserts it if the header's text is reset under the shell; see `docs/requests/bounty.md`), and goes outline again while the closing band's ask shows. Phone: the page sets the shell's `html[data-ask=quiet]` while the hero ask is on screen, so the header's Try Hanzo is an outline there and solid after; the phone bar is the shell's quiet one. No copy questions.
+Done here: Header comment in `app/bounty/page.jsx` names Persona, Goal, CTA, Metric `github_click`, Signature, Beyond. One solid per screen: kit `Cta` "Every open bounty" (`bounty.hero`). Desktop: the header's button is an outline while it shows, then carries "Every open bounty" down to the footer (`useHoldHeaderAsk` re-asserts it if the header's text is reset under the shell; see `docs/build-notes/requests/bounty.md`), and goes outline again while the closing band's ask shows. Phone: the page sets the shell's `html[data-ask=quiet]` while the hero ask is on screen, so the header's Try Hanzo is an outline there and solid after; the phone bar is the shell's quiet one. No copy questions.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -154,6 +154,6 @@ Done here: The live window shows the build snapshot (`Bounty.snapshot.js`, refre
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/bounty.md` verdict 8 or more
+- [x] Review read: `docs/build-notes/review/bounty.md` verdict 8 or more
 
-Done here: `data-cta` ids `bounty.hero`, `bounty.leaderboard`, `bounty.contributing`, `bounty.window`, `bounty.propose`, `bounty.band` (kit Cta fires `cta_click`); V2 line in the page file and route header; review `docs/review/bounty.md` (6/10 at `c2fa6e5`): no eyebrow, 0 hues (checked computed), idle move added, awards as one deck, take as the PR itself, press states, phone one solid. Round 2 (7/10): reduced-motion hydration fixed, header ask held to the footer, race pinned as one scene, propose card and closing band, hero lands by CSS, step nudge removed, last row fades, security link hover, phone range on one line.
+Done here: `data-cta` ids `bounty.hero`, `bounty.leaderboard`, `bounty.contributing`, `bounty.window`, `bounty.propose`, `bounty.band` (kit Cta fires `cta_click`); V2 line in the page file and route header; review `docs/build-notes/review/bounty.md` (6/10 at `c2fa6e5`): no eyebrow, 0 hues (checked computed), idle move added, awards as one deck, take as the PR itself, press states, phone one solid. Round 2 (7/10): reduced-motion hydration fixed, header ask held to the footer, race pinned as one scene, propose card and closing band, hero lands by CSS, step nudge removed, last row fades, security link hover, phone range on one line.

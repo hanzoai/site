@@ -26,7 +26,7 @@ Walked 7 Nov at about 15:07 UTC, page file at `94b550d0` (`components/pages/Team
 10. **Banned tells?** Clutter: an explaining sentence under every tile, twice in a row (handoffs, then rooms).
 11. **Copy untouched?** Yes (parity clean).
 
-## Card check (`docs/coverage/team.md`)
+## Card check (`docs/build-notes/coverage/team.md`)
 - **Format.** Template format with 18 `Done here:` lines.
 - **Part 11 is false.** "Every target 44px or more" and "Arrow links are 44px": Pause is 36px, "Open →" 21px and "Open Hanzo Team" 22px on the phone.
 - **Part 13 is false.** "Transform and opacity only": the phone board widens its column (`1.7fr`), which moves layout (CLS 0.020).

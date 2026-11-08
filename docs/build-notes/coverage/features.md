@@ -3,7 +3,7 @@
 Page file: `components/pages/Features.jsx` (+ `Features.css`) · gallery: `docs/gallery/features/` · metric id: `first_chat`
 
 Open copy questions for James: "Find a feature" is the finder's label and now also its visible placeholder (a UI string, listed here for the register). The closing band repeats the three product names already on the page as its object.
-Shared changes requested (`docs/requests/features.md`): none. Noted: `parity.py /features` reports the shared header and footer units as missing on this route (a capture artifact); all 29 page units (indices 10–38 of `content/live/features.json`) are in the server HTML. No skip link in shared chrome; `tokens.css` not merged.
+Shared changes requested (`docs/build-notes/requests/features.md`): none. Noted: `parity.py /features` reports the shared header and footer units as missing on this route (a capture artifact); all 29 page units (indices 10–38 of `content/live/features.json`) are in the server HTML. No skip link in shared chrome; `tokens.css` not merged.
 Forks this page deleted: the page's own chat room (a live AI call, banned by MASTER 3.3, and a duplicate of the footer's chat box) with its invented suggestions, error line and `title=` tooltips; the hero's second "Try Hanzo" (it repeats the header); "$ hanzo dev" and the agent/model/tool/memory labels in the chapter mocks; the floating pauses; the black lit key (now pressed silver); every spring; the "pink accent" comment.
 
 ## 1. Strategy and conversion

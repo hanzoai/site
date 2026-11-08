@@ -3,7 +3,7 @@
 Page file: `components/pages/model/Enso.jsx` and `components/v2/Launch.jsx` · gallery: `docs/gallery/enso/` · metric id: `signup_start`
 
 Open copy questions for James: none decided here. The page shows Hanzo's words only; labels that sat above headlines now sit below or beside them as captions.
-Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
+Shared changes requested (`docs/build-notes/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
 Forks this page deleted: the hand-rolled spec `<table>` (then a second `DataTable`, now gone: each switchboard lane carries its tier's prices) and GPQA `<table>` (now `DataTable` in a drawer), raw `.x-btn` asks (now `Cta`), raw `<img>`/`<video>` (now `Img`, `ModelFilm`), the old next-model card.
 
 ## 1. Strategy and conversion
@@ -98,7 +98,7 @@ Done here: Hanzo's own films are unfiltered; the only dimming is a gradient unde
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: targets measured at 375×812 (Playwright, isMobile): the four GPQA source marks (↗, 9×18px boxes) and "Source" each carry a centred 44×44px `::after`; "All Enso models" (132×21px box) and the hero "Docs on GitHub" carry a 44px-tall `::after`. For each, points 20px above, below, left and right of centre resolve to the link itself (elementFromPoint, 4/4 and 5/5 with the centre). The drawer button is full width and 44px tall at 375, the chapter links and request chips 44px. A sweep of every visible link and button in `main` at 375 (box height or absolute `::after` height) found none under 44px. At 375 nothing pins. The stage settles by itself 1.1s after arrival (a 2s hold is requested in `docs/requests/enso.md`: the delay is in shared `Launch.jsx`), and the camera pans the subject into the shape. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
+Done here: targets measured at 375×812 (Playwright, isMobile): the four GPQA source marks (↗, 9×18px boxes) and "Source" each carry a centred 44×44px `::after`; "All Enso models" (132×21px box) and the hero "Docs on GitHub" carry a 44px-tall `::after`. For each, points 20px above, below, left and right of centre resolve to the link itself (elementFromPoint, 4/4 and 5/5 with the centre). The drawer button is full width and 44px tall at 375, the chapter links and request chips 44px. A sweep of every visible link and button in `main` at 375 (box height or absolute `::after` height) found none under 44px. At 375 nothing pins. The stage settles by itself 1.1s after arrival (a 2s hold is requested in `docs/build-notes/requests/enso.md`: the delay is in shared `Launch.jsx`), and the camera pans the subject into the shape. Chapters become picture-then-words, and the grids stack to 2 columns. scrollWidth equals innerWidth at 375. The first-screen ask sits under the name inside the first screen.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -153,6 +153,6 @@ Done here: JS off shows every word. Reduced motion shows the settled stage and t
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for `lib/track.js`: not on main; kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/enso.md` verdict 8 or more (pending a fresh walk of the current build)
+- [ ] Review read: `docs/build-notes/review/enso.md` verdict 8 or more (pending a fresh walk of the current build)
 
-Done here: the `V2:` line is in `app/enso/page.jsx`. Proof is in `docs/gallery/enso/` (desktop film, 4 phone stills, and the film-strip sheets `desktop-sheet.jpg` and `phone-sheet.jpg` from run `enso-run4`). Fixes from the 7/10 review (GPQA lead figure, × hover) are in; open shared items are in `docs/requests/enso.md`. This card is refreshed after each review.
+Done here: the `V2:` line is in `app/enso/page.jsx`. Proof is in `docs/gallery/enso/` (desktop film, 4 phone stills, and the film-strip sheets `desktop-sheet.jpg` and `phone-sheet.jpg` from run `enso-run4`). Fixes from the 7/10 review (GPQA lead figure, × hover) are in; open shared items are in `docs/build-notes/requests/enso.md`. This card is refreshed after each review.

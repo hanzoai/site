@@ -3,7 +3,7 @@
 Page file: `components/pages/IdePage.jsx` (+ `.css`) · gallery: `docs/gallery/ide/` · metric id: `cta_click ide.hero`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/ide.md`): four UI strings for the register (Remember it, Recall, Nothing yet., One thing about your project); the Terminal and PageHero kit parts.
+Shared changes requested (`docs/build-notes/requests/ide.md`): four UI strings for the register (Remember it, Recall, Nothing yet., One thing about your project); the Terminal and PageHero kit parts.
 Forks this page deleted: the hand-written hero buttons (now kit Cta), the custom closing section (now kit Band), the tab row shared with /cli and /desktop, the grey code bars, every eyebrow, the indigo, orange, blue and green, springs.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -37,7 +37,7 @@ Done here: h1 52px cut in by line mask (A2Lines, 700 ms, 60 ms apart); the edito
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Open the IDE" after the hero; phone: `usePhoneAsk` keeps one solid at a time, but "Open the IDE" does not fit the phone header without clipping, so it stays "Try Hanzo"; request in `docs/requests/founder.md`)
+- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Open the IDE" after the hero; phone: `usePhoneAsk` keeps one solid at a time, but "Open the IDE" does not fit the phone header without clipping, so it stays "Try Hanzo"; request in `docs/build-notes/requests/founder.md`)
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -155,6 +155,6 @@ Done here: The memory demo has an empty state (an em dash named Nothing yet.); n
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/ide.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/ide.md` verdict 8 or more
 
-Done here: data-cta on ide.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line in the header; reviews read: 6/10, 6/10, 7/10, 6/10 (7 Nov). Round 9 (8 Nov) answers review round 8: chips can no longer cover code (they sit in the flow of their line in the chapter picture, and the hero lines reserve chip plus lead, measured at 1470 and 375); no arrival pop or wipe (Stage starts at scale 1; the editor holds the finished picture 1.5 s, then the memories leave in order); the stage shadow is the deck's floating shadow with `overflow: clip; overflow-clip-margin: 64px`, so no straight cut at a 1443px scroll; the Teach tiles are one hairline sheet; the kit Band items are re-filed in docs/requests/ide.md. Round 7 answered the one before: phone chapter items end at x 359 at 375 (round 6 had pushed them to 554), the editor rests under the ask in normal flow (top at y 490 at 1470 from first paint), the h1 cuts in by CSS from the first paint, and the page's own Lines and Room replace the shared A2Lines and A2Room so reduced motion hydrates with 0 errors (measured at 1470 and 375). Round 6 answered the one before it (whole code lines, reduced motion lays the stage flat, less air, hovers, Teach placeholder).
+Done here: data-cta on ide.hero; the kit Band's button has no data-cta yet (requested); Cta sends cta_click through the system event; V2 line in the header; reviews read: 6/10, 6/10, 7/10, 6/10 (7 Nov). Round 9 (8 Nov) answers review round 8: chips can no longer cover code (they sit in the flow of their line in the chapter picture, and the hero lines reserve chip plus lead, measured at 1470 and 375); no arrival pop or wipe (Stage starts at scale 1; the editor holds the finished picture 1.5 s, then the memories leave in order); the stage shadow is the deck's floating shadow with `overflow: clip; overflow-clip-margin: 64px`, so no straight cut at a 1443px scroll; the Teach tiles are one hairline sheet; the kit Band items are re-filed in docs/build-notes/requests/ide.md. Round 7 answered the one before: phone chapter items end at x 359 at 375 (round 6 had pushed them to 554), the editor rests under the ask in normal flow (top at y 490 at 1470 from first paint), the h1 cuts in by CSS from the first paint, and the page's own Lines and Room replace the shared A2Lines and A2Room so reduced motion hydrates with 0 errors (measured at 1470 and 375). Round 6 answered the one before it (whole code lines, reduced motion lays the stage flat, less air, hovers, Teach placeholder).

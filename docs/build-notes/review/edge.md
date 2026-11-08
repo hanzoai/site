@@ -15,7 +15,7 @@ First complaint: "The top's good, the little localhost window is going. But it's
 6. **Overlap, font swap, layout shift: clean.** CLS 0.0005 desktop / 0 phone (the only shifts are the shared header). No horizontal overflow. No font swap; h1 box holds. The cookie card covers the lower third on phone (shared, not counted).
 7. **Reference: apple.com product page, weakly; synchronized.studio in the card-to-sheet open.** No pinned stage, no count-up, no headline type moment.
 8. **Different from its neighbours: yes.** Localhost window + machine field is its own; it differs from /engine (terminal + pinned chapters) and /cloud/* (console template).
-9. **18 parts: card 18/18** (`docs/coverage/edge.md`). Claims hold except "every hover answers" (see 5) and "0 console errors": a hydration-mismatch error fires on every load (the diff is in `<Head>`, shared layout; it appears on all pages I walked, so not counted against the page).
+9. **18 parts: card 18/18** (`docs/build-notes/coverage/edge.md`). Claims hold except "every hover answers" (see 5) and "0 console errors": a hydration-mismatch error fires on every load (the diff is in `<Head>`, shared layout; it appears on all pages I walked, so not counted against the page).
 10. **Banned tells: none hard.** Monochrome only, no gradient text, Zen fonts, no eyebrow over the h1. The dot field is close to generic "AI particles".
 11. **Copy: untouched.** `parity.py /edge`: text 64/64, links 7/7.
 

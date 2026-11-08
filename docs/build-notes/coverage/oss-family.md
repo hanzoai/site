@@ -5,7 +5,7 @@ Page file: `components/pages/oss/OrgPage.jsx` (+ `oss.css`, `ossData.js`; route 
 Open copy questions for James:
 - The sort and filter icons and the open card's controls are named from the register: `oss_sort*`, `oss_language`, `oss_all`, `oss_clone_from`, `oss_copy`, `oss_show_all`, `oss_loading`, `oss_no_match`. All need James.
 
-Shared changes requested (`docs/requests/oss.md`):
+Shared changes requested (`docs/build-notes/requests/oss.md`):
 - n/a. Site-level: kit `Copy` swaps its `aria-label` instead of `role=status`.
 
 Forks this page deleted:
@@ -177,6 +177,6 @@ Done here: JS off shows every figure, chapter and tile.
 - [x] `data-cta` on the primaries (`lib/track.js` not merged yet)
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in `OrgPage.jsx` (v6)
-- [x] Review read: `docs/review/oss-family.md` (7/10 at `4fa3ca0`); its two fixes answered (the lead's digits rise on arrival and the strip's playhead or repository ticker moves on both sizes; the two text links draw a rule and nudge their arrow on hover); marked Ready by slice D, 7 Nov.
+- [x] Review read: `docs/build-notes/review/oss-family.md` (7/10 at `4fa3ca0`); its two fixes answered (the lead's digits rise on arrival and the strip's playhead or repository ticker moves on both sizes; the two text links draw a rule and nudge their arrow on hover); marked Ready by slice D, 7 Nov.
 
 Done here: Slice D, 7 Nov: check.mjs on /oss/crowdstart and /oss/hanzo-app at 1470×801 and 375×812: 0 console errors, no Next issue badge, no horizontal scroll; parity 28/28 + 9/9 and 37/37 + 25/25. Proof stills in `docs/gallery/oss-family/` (hanzo-app and crowdstart, desktop and phone, plus the arrow-link hover); the older films stay in `docs/gallery/oss/`.

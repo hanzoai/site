@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Analytics.jsx` (+ `Analytics.css`) · gallery: `docs/gallery/analytics/` · metric id: `api_key_created` (proxy on this page: `cta_click analytics.hero`)
 
 Open copy questions for James: (1) Hanzo's sample links `jane@example.com` to `/cdn-cgi/l/email-protection` (Cloudflare's email guard); the kit's CodeBlock is plain text, so the link now sits as a caption under the JavaScript sample: keep or drop? (2) "M+", "K+" and the empty "Contributors" figure print no number on live; kept as printed (an em dash for the empty one). (3) "Deploy to Cloud" in the close goes to `platform.hanzo.ai/deploy` as on live. No CTA label changed.
-Shared changes requested (`docs/requests/analytics.md`): none filed; kit gaps go to the Cloud 1 kit owner in the report (CodeBlock greys and its 32px copy, `.x-arrow` hit area, no line numbers in CodeBlock).
+Shared changes requested (`docs/build-notes/requests/analytics.md`): none filed; kit gaps go to the Cloud 1 kit owner in the report (CodeBlock greys and its 32px copy, `.x-arrow` hit area, no line numbers in CodeBlock).
 Forks this page deleted: the hand-made JS highlighter `Lines`/`an-pre` (now the kit `CodeBlock`, twice, plus a line-number gutter in the flow); the hand-made language tablist `an-langs` (now kit `Tabs`/`TabPanel`, every panel in the HTML); every hand-made `kn-btn` ask (9, now kit `Cta` solid/quiet/link); `Count` on the three KPIs (true values settle by line mask); Frame's `useLive`/`useEvery` (a `setInterval`; now page-local `useSeen` and a timeout chain); the floating hour label over the chart (now read out in the chart header); the floating shadowed cliff badge over the funnel (now an icon inside the "Step 4" label); the per-page accent.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: No fetch on the page; film and sweep show 0 console errors at desk an
 - [x] `data-cta` on every primary; events only through the kit `Cta` (`hz-event`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: 8/10 …` in the page file's top comment
-- [x] Review read: `docs/review/analytics.md` (round 2 critic, 7.5/10); its fixes are done in round 3
+- [x] Review read: `docs/build-notes/review/analytics.md` (round 2 critic, 7.5/10); its fixes are done in round 3
 
 Done here: Primary `analytics.hero` with `data-thumb`; gallery `docs/gallery/analytics/` (desktop.mp4, desktop.jpg, phone-1..3.jpg, plus round 2 `desktop-r2.jpg`, `phone-r2.jpg` and round 3 `desktop-r3.jpg`, `phone-r3.jpg`). Own score 8/10; the critic's verdict decides.

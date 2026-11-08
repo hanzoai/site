@@ -54,7 +54,7 @@ Fixed since round 2 (verified):
    - **Cards 01–03.** These are still three white mono tables of the same shape.
 4. **One ask in Hanzo's words in the sticky header, nothing floating, and rhythmic scale?**
    - **Desktop: right.** The header shows an outlined "Try Hanzo" while the hero ask is on screen, then a solid "Read the docs" from y 802 to 5213, then goes quiet at the close, where only the close's solid shows. Nothing floats over content (the chapter pause sits under the card).
-   - **Phone.** One solid per screen, but it is the shared header's "Try Hanzo" for the whole page. The page's own "Read the docs" is outlined at the hero and at the close, and no ask bar appeared. This is the header's and ask bar's issue, filed in `docs/requests/treasury.md`.
+   - **Phone.** One solid per screen, but it is the shared header's "Try Hanzo" for the whole page. The page's own "Read the docs" is outlined at the hero and at the close, and no ask bar appeared. This is the header's and ask bar's issue, filed in `docs/build-notes/requests/treasury.md`.
    - **Scale.** The h1 is 52 px, the lead statement 32 px and the chapter heads 26 px. The figures are 21 px, and the close's 10,000 is 84 px Air (64 px on phone). There is now one big figure moment; nothing else grows or shrinks.
 5. **Does every hover and press answer, with no jumps?** Yes, with no jumps (all boxes identical before and after):
    - hero ask: fill shift and magnetic pull, press 0.98;

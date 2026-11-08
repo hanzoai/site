@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Ingress.jsx` · gallery: `docs/gallery/ingress/` · metric id: `cta_click ingress.hero`
 
 Open copy questions for James: none. Round 3 (conductor copy rule) removed every invented visible string: the Beyond's h2 is now Hanzo's own sentence "Name one in an annotation, or chain several into a named pipeline and name that."; the chain's ends read "hanzo.ai" and "backend"; the empty chain shows an em dash; the board's labels are "hostname", "middleware", "backend", its routes are hanzo.ai/skill.md, docs/index.html and pricing.html (all on the page), its notes are Hanzo's "out of rotation", "put back when it recovers", "no reload, no dropped connection", "from disk"; the invented example hostnames, backend names, "certificate…" and the "Drag" cursor label are gone.
-Shared changes requested (`docs/requests/ingress.md`): the phone header ask swap (second solid fill), the cookie card over the hero board, ShipPrompt's 32px Copy (wants 44px), the hero ask's hover (done page-local meanwhile). GetIt's spacing is now done page-local. Still waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
+Shared changes requested (`docs/build-notes/requests/ingress.md`): the phone header ask swap (second solid fill), the cookie card over the hero board, ShipPrompt's 32px Copy (wants 44px), the hero ask's hover (done page-local meanwhile). GetIt's spacing is now done page-local. Still waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
 Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition, Frame `useEvery` (now `useTick`)
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: A headless JS-off pass shows every word; reduced motion stops each de
 - [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
 - [x] Nothing identifier-bearing; no field value in any payload
 - [x] `V2: 8/10` line in the page file's top comment
-- [x] Review read: `docs/review/ingress.md` (round 2, 7/10): fixes 1-4, 6, 7, 8 done page-local; fix 5 (phone header ask) filed in `docs/requests/ingress.md`
+- [x] Review read: `docs/build-notes/review/ingress.md` (round 2, 7/10): fixes 1-4, 6, 7, 8 done page-local; fix 5 (phone header ask) filed in `docs/build-notes/requests/ingress.md`
 
-Done here: `ingress.hero` and `ingress.close` on the asks. Gallery: `docs/gallery/ingress/` (earlier rounds plus C1 stills `c1-desk-hero.jpg`, `c1-desk-board.jpg`, `c1-phone-hero.jpg`, `c1-phone-facts.jpg`). Shared asks in `docs/requests/ingress.md` (item 7: GetIt's Deploy to Cloud 44px target).
+Done here: `ingress.hero` and `ingress.close` on the asks. Gallery: `docs/gallery/ingress/` (earlier rounds plus C1 stills `c1-desk-hero.jpg`, `c1-desk-board.jpg`, `c1-phone-hero.jpg`, `c1-phone-facts.jpg`). Shared asks in `docs/build-notes/requests/ingress.md` (item 7: GetIt's Deploy to Cloud 44px target).

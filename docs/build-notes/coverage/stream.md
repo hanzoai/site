@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Stream.jsx` · gallery: `docs/gallery/stream/` · metric id: `cta_click:stream.primary`
 
 Open copy questions for James: none: every visible word is Hanzo's. Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
-Shared changes requested (`docs/requests/stream.md`): none. The shared code pane (`components/pages/cloud/Frame.jsx`) animates a multi-tab pill with a spring; this page uses single-tab panes only and holds the pane to the deck colours in `components/v2/x-hamilton/Launch.css`.
+Shared changes requested (`docs/build-notes/requests/stream.md`): none. The shared code pane (`components/pages/cloud/Frame.jsx`) animates a multi-tab pill with a spring; this page uses single-tab panes only and holds the pane to the deck colours in `components/v2/x-hamilton/Launch.css`.
 Forks this page deleted: the teal boxes (greys now), the label squeezed over the title, the off-screen phone points (swipe rail now).
 
 Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off.
@@ -155,6 +155,6 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/stream.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/stream.md` verdict 8 or more
 
 Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Stream.jsx`. Ready (7 Nov, D2 run): held up next to /api and /affiliate.

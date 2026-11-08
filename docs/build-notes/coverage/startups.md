@@ -3,7 +3,7 @@
 Page file: `components/pages/Startups.jsx` · gallery: `docs/gallery/startups/` · metric id: `cta_click:startups.hero` (then `form_submit` on the application)
 
 Open copy questions for James: none new. "Select stage" and "Select one" (the live select placeholders) are kept word for word as the pill groups' hints.
-Shared changes requested (`docs/requests/startups.md`): none; the header carrying "Apply for credits" after the hero is the shared `Ask.jsx` behaviour.
+Shared changes requested (`docs/build-notes/requests/startups.md`): none; the header carrying "Apply for credits" after the hero is the shared `Ask.jsx` behaviour.
 Forks this page deleted: two browser-default `<select>` menus (now APG radio groups of pills), the eyebrow over the h1 (now a caption under it), three equal tiles of rising height (now one ladder, one rung big at a time), the colourless raw `.xp-cta` (now a styled ink ask with hover and press).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -149,6 +149,6 @@ Done here: a refused POST keeps every answer and shows the API's own reason (or 
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/startups.md` verdict 8 or more
+- [x] Review read: `docs/build-notes/review/startups.md` verdict 8 or more
 
 Done here: `data-cta="startups.hero"` on the primary; the V2 line is in `components/pages/Startups.jsx`; the review is re-walked after this pass.

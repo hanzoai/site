@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Hsm.jsx` · gallery: `docs/gallery/hsm/` · metric id: `cta_click hsm.hero`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/hsm.md`): none filed; waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero`, and the kit `Tabs` swap to land on main.
+Shared changes requested (`docs/build-notes/requests/hsm.md`): none filed; waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero`, and the kit `Tabs` swap to land on main.
 Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition, the kicker added over the h1
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: A headless JS-off pass shows every word; reduced motion stops each de
 - [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
 - [x] Nothing identifier-bearing; no field value in any payload
 - [x] `V2: 8/10` line in the page file's top comment
-- [x] Review read: no `docs/review/hsm.md` yet
+- [x] Review read: no `docs/build-notes/review/hsm.md` yet
 
 Done here: `hsm.hero` and `hsm.close` on the asks. Gallery: `docs/gallery/hsm/` (desktop film and phone stills).

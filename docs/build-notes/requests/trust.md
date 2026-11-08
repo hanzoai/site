@@ -13,7 +13,7 @@ Ask: restore `components/v2/DetailSheet.jsx` to the dialog build that `component
 The desktop header's ask carries the page's own ask after the hero (Ask.jsx), but `app/system.css:280` caps it:
 `header[data-slot=masthead] a[data-x-ask] { max-width: 240px; overflow: hidden; text-overflow: ellipsis; }`. /trust's ask,
 "Request a review or an enterprise deployment", needs 313px at 13px/600, so the critic saw it clipped at both ends
-for the whole page (docs/review/trust.md, fail 2).
+for the whole page (docs/build-notes/review/trust.md, fail 2).
 
 Ask: let the sticky ask size to its label (no max-width, `white-space: nowrap`, width from content), and give the nav
 room for it. Measured on /trust after the hero (header buttons' boxes): at 1470 the nav ends at 1125 and a full-width

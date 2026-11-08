@@ -15,7 +15,7 @@ James rejected: static pages, "scroll fade-ins only", walls of cards, everything
    some parts are drawn in the browser and are not in `content/pages/`.
 2. **Hanzo's words only.** Copy comes from `content/outline/<path>.json` and `content/pages/<path>.html`. No invented claims, prices or
    figures. Short UI labels are fine ("Replay", "Copy", "Close").
-3. **Unique.** Each top-level page has its own layout and signature moment. Check `docs/PAGES.md` (column *Signature*) and do not reuse one.
+3. **Unique.** Each top-level page has its own layout and signature moment. Check `docs/build-notes/PAGES.md` (column *Signature*) and do not reuse one.
    Page families share one template per family, with each member's own content and visual.
 4. **Moves without hover.** Something on screen is alive when the page is idle (a demo running, a film, a counter, a sweep), plus real
    hover/press detail. Never "only animates on hover".
@@ -57,7 +57,7 @@ James rejected: static pages, "scroll fade-ins only", walls of cards, everything
   steps aside for it automatically. Families: `app/<family>/[slug]/page.jsx` with `generateStaticParams` over its members.
 - All content is in the HTML: anything revealed by an interaction (FAQ answers, inactive tabs, other slides) is rendered collapsed
   or hidden, never left out (`Faq` in the kit already does this). `Count` and `Flap` render the real figure on the server.
-- Do not edit `lib/route.js`, `docs/PAGES.md` or other pages' files; report what you built and its signature instead.
+- Do not edit `lib/route.js`, `docs/build-notes/PAGES.md` or other pages' files; report what you built and its signature instead.
 
 ## Forms and live features keep working
 Hanzo's forms post to its API; the rebuilt form must send the same request. `content/forms.json` (from `node scripts/forms.mjs /path`)

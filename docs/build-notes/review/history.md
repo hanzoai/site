@@ -62,7 +62,7 @@ First complaint: "Twelve years are now a black box with the title written in it,
     - History.css still has 19 lines with literal colours: #0a0a0a, #fff, #f5f5f5, #a3a3a3, #737373 and rgba(0,0,0,.1/.18/.25/.3) and rgba(255,255,255,.16/.55). Round 3 fix 9 was not done.
 11. **Copy untouched?** Yes: 214/214 and 42/42. The 1,600+ against 1700+ question is now on the card.
 
-## Card check (docs/coverage/history.md)
+## Card check (docs/build-notes/coverage/history.md)
 - **False:** Part 18, "Done here: critic round 2: 7/10; all six fixes pushed". This is stale. Round 3 listed 11 fixes, and these are not done:
   - 7: flick-proof the scene;
   - 9: tokens only, and "01 / 06" moved under the figure;
@@ -72,7 +72,7 @@ First complaint: "Twelve years are now a black box with the title written in it,
 - **True:**
   - part 4 is honestly unticked (the phone header shows "Try Hanzo");
   - part 9: no fade-up (the hero side is a 12px rise only);
-  - part 10: wordmark plates, with the request filed (`docs/requests/history.md` exists);
+  - part 10: wordmark plates, with the request filed (`docs/build-notes/requests/history.md` exists);
   - part 11: 44px links, 0 overflow at 320;
   - part 1: the copy question listed;
   - part 14: the doubled title "History & Track Record — Hanzo AI — Hanzo AI" is left untouched;

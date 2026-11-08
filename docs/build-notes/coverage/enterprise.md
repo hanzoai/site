@@ -3,7 +3,7 @@
 Page file: `components/pages/Enterprise.jsx` (+ `Enterprise.css`) · gallery: `docs/gallery/enterprise/` · metric id: `cta_click` on `enterprise.hero` and the Band (toward `contact_sales_submit`)
 
 Open copy questions for James: the CTA labels. The hero's live label is "Get Enterprise plan" and the old close said "Talk to sales"; the Band's solid repeats the hero ask and "Talk to sales" stays its text link, so no wording changed. Years beside the customer figures: the case copy has none, so none are shown.
-Shared changes requested (`docs/requests/enterprise.md`): vendor the 12 customer and cloud logos into `public/logos/` (they 404'd; the page now shows names in type); kit `Band` blurs with JS off; kit `Film` has no pause control; `lib/cta.js`, `PageHero`, `tokens.css` pending. The header ask is shared chrome and not touched here.
+Shared changes requested (`docs/build-notes/requests/enterprise.md`): vendor the 12 customer and cloud logos into `public/logos/` (they 404'd; the page now shows names in type); kit `Band` blurs with JS off; kit `Film` has no pause control; `lib/cta.js`, `PageHero`, `tokens.css` pending. The header ask is shared chrome and not touched here.
 Forks this page deleted: the 3×2 results boxes (now a hairline ledger), icons in rounded boxes (now the hero's nested-wall glyph), the repeated deployment block and its second sales button, the long dark GPU room (now an instrument plus a drawer), the split-flap results, the logo marquee, the kicker over the h1, the hand-made close (now kit `Band`), `Answers` (now kit `Faq`), the 12 hot-linked logo requests.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: 0 console errors at 1470×801, 375×812 and 1470×801 reduced motion 
 - [x] `data-cta` on every primary (kit `Cta` dispatches cta_click; `lib/track.js` not merged)
 - [x] Nothing identifier-bearing before consent
 - [x] `V2: 7.5/10 ...` in the page file's top comment
-- [ ] Review read: `docs/review/enterprise.md` was 6/10; this pass answers its six fixes, re-review pending
+- [ ] Review read: `docs/build-notes/review/enterprise.md` was 6/10; this pass answers its six fixes, re-review pending
 
 Done here: Review fixes: (1) nothing floats on desktop, phone place tabs padded; (2) quiet ledger, figures rest small; (3) 246px of log above the fold; (4) panel writes rows, walls glyph replaces icons; (5) hero in place, cut-in on hydration, hydration error fixed; (6) 44px phone links, row press.

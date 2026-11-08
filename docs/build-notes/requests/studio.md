@@ -1,7 +1,7 @@
 # Request from /studio to the shared-file owners
 
 ## 1. Header: honour the page's `data-thumb` ask at phone widths (owner: header / Chrome chat)
-From docs/review/studio.md, fix 9. At 1470 the header ask swaps from "Try Hanzo" to the page's ask, "Launch
+From docs/build-notes/review/studio.md, fix 9. At 1470 the header ask swaps from "Try Hanzo" to the page's ask, "Launch
 studio.hanzo.ai", once the hero ask leaves view. At 375 it stays "Try Hanzo" (a solid black pill) for the whole walk,
 so the page's ask never reaches the header on a phone, and the first phone screen carries two solid fills (the header
 pill and the hero ask). Studio's hero and closing asks both carry `data-thumb="Launch studio.hanzo.ai"` and

@@ -81,7 +81,7 @@ The red "1 Issue" badge in the frames is the hydration warning that only fires w
     - **Parity:** `parity.py` misses only shared header and footer units, as the card says.
     - **Links:** /chat?skip=login and /dev are present.
 
-## Card check (docs/coverage/features.md)
+## Card check (docs/build-notes/coverage/features.md)
 - **False:** part 11, "the product rooms stack on phones (a 16:9 film, then rows…)". At 375 and 768 all three films measure `aspect-ratio: 4 / 3` (343×257 and 736×552). The later `@media (max-width: 899px)` block (CSS lines 160–190) overrides the round-4 block (lines 146–158), which set 16:9 for `.xft-film` and `.xft-prod.p1 .xft-film`. It also sets Dev's top padding to 0 (measured `0px 72px`). Per the brief, the verdict is capped at 7.
 - **True:**
   - idle phone CLS 0.0027 (measured 0.0027 over 18 s);
@@ -119,4 +119,4 @@ The red "1 Issue" badge in the frames is the hydration warning that only fires w
 8. **Housekeeping.**
    - **Tokens:** swap the 54 literal hex and `rgba()` lines in `Features.css` for tokens.
    - **Finder focus:** give it a 2px ring (`.xft-find:focus-within { box-shadow: 0 0 0 2px #0a0a0a }`).
-   - **768 label:** at 768 the shared header shows a solid "Try Hanzo" rather than "Open Chat" after the hero, so `usePhoneAsk` stops short of 899. If that is shared, request it in `docs/requests/features.md`.
+   - **768 label:** at 768 the shared header shows a solid "Try Hanzo" rather than "Open Chat" after the hero, so `usePhoneAsk` stops short of 899. If that is shared, request it in `docs/build-notes/requests/features.md`.

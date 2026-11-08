@@ -3,7 +3,7 @@
 Page file: `components/pages/model/Koe.jsx` on its page-local `KoeCreative.jsx` (Koe's copy of the family `Creative.jsx`) and `KoePanels.jsx`, on `components/v2/Launch.jsx` · gallery: `docs/gallery/koe/` · metric id: `contact_sales_submit`
 
 Open copy questions for James: none decided here. The page shows Hanzo's words only; labels that sat above headlines now sit below or beside them as captions.
-Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
+Shared changes requested (`docs/build-notes/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
 Forks this page deleted: our scene headings, raw `.x-btn` asks (now `Cta`), raw `<img>`/`<video>` (now `Img`, `Film`, `ModelFilm`), the studio-map tile, springs on the tab pill, cursor labels.
 
 ## 1. Strategy and conversion
@@ -166,9 +166,9 @@ Done here: JS off shows every word. Reduced motion shows the calm layout: the fu
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for `lib/track.js`: not on main; kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/koe.md` verdict 8 or more (pending a fresh walk of the current build)
+- [ ] Review read: `docs/build-notes/review/koe.md` verdict 8 or more (pending a fresh walk of the current build)
 
-Done here: the `V2:` line is in `components/pages/model/Koe.jsx` (and `app/koe/page.jsx`). Proof is in `docs/gallery/koe/`: C1 proof: `docs/gallery/koe/c1-*.jpg`. Review read; every fix item answered (Ready line); Morph and the 320px header clip are shared requests (`docs/requests/koe.md`).
+Done here: the `V2:` line is in `components/pages/model/Koe.jsx` (and `app/koe/page.jsx`). Proof is in `docs/gallery/koe/`: C1 proof: `docs/gallery/koe/c1-*.jpg`. Review read; every fix item answered (Ready line); Morph and the 320px header clip are shared requests (`docs/build-notes/requests/koe.md`).
 - settled first screens: `desktop-1470.png`, `phone-375.png` and `phone-375x667-cookie.png`;
 - two drawn chapter panels: `chapter-2-clone.png` and `chapter-3-visemes.png`;
 - filmed sheets: `d-sheet-01.jpg` and `p-sheet-01.jpg`;

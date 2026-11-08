@@ -3,7 +3,7 @@
 Page file: `components/pages/Compare.jsx` · gallery: `docs/gallery/compare/` · metric id: `cta_click` on `compare.hero`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/<page>.md`): none filed. For the kit owner: `DetailSheet` is a `role=dialog` div, not a native `<dialog>` (part 8); `MaskLines` runs 1s where MASTER asks 700 ms.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none filed. For the kit owner: `DetailSheet` is a `role=dialog` div, not a native `<dialog>` (part 8); `MaskLines` runs 1s where MASTER asks 700 ms.
 Forks this page deleted: the giant tally (72–136px figures, now one 84px moment and three at 44px), the 95px full-width display h1, the gliding board with its spring, the 10 Hz `setInterval` clock, every hover transform that was not James's (row nudges, card lifts, arrow slides), the old tinted Apple greys.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: Untick every countable row and each figure reads "—"; JS off and re
 - [x] `data-cta` on every primary; n/a `lib/track.js` (not in `lib/` yet)
 - [x] Nothing identifier-bearing; no form
 - [x] `V2:` line in the top comment
-- [ ] Review read: `docs/review/compare.md` says 7/10, walked before this rework
+- [ ] Review read: `docs/build-notes/review/compare.md` says 7/10, walked before this rework
 
 Done here: `compare.hero` and `compare.close`; V2 line updated; the critic's points (h1 leading, one thing at a time, phone rows, one ask) are answered in parts 3, 4 and 11.

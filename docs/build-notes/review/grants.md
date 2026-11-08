@@ -58,7 +58,7 @@ First complaint: "Half that page is a grey list with a big empty hole beside it,
     - The light sheets' quiet asks are white pills with an 8% outline on a #f5f5f5 surface, which is raised and outlined at once (part 7). This is minor.
 11. **Copy untouched?** Parity is 57/57 and 5/5. The closing strip repeats sheet 01's line "2,137+ repositories · 122 organizations". These are Hanzo's words, used twice.
 
-## Card check (docs/coverage/grants.md)
+## Card check (docs/build-notes/coverage/grants.md)
 - TRUE:
   - one h1 at 52px, with nothing above it;
   - the CSS rise from the server HTML;

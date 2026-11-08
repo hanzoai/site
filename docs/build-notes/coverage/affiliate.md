@@ -3,7 +3,7 @@
 Page file: `components/pages/Affiliate.jsx` · gallery: `docs/gallery/affiliate/` · metric id: `contact_click`
 
 Open copy questions for James: none (the page uses Hanzo's words only; the copy control is icon-only until James approves "Copy").
-Shared changes requested (`docs/requests/<page>.md`): `docs/requests/affiliate.md` (the header's ask outlines while the page's own ask is on screen, and carries it after the hero).
+Shared changes requested (`docs/build-notes/requests/<page>.md`): `docs/build-notes/requests/affiliate.md` (the header's ask outlines while the page's own ask is on screen, and carries it after the hero).
 Forks this page deleted: the forked xp-cta button colours (now kit `Cta` sized by `.xp-cta`), the hand-rolled case tabs (now kit `Tabs`), the browser-window hero and its placeholder bars, every invented label.
 
 
@@ -154,6 +154,6 @@ Done here: Static Hanzo copy; nothing to load or fail. With JS off every state i
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/affiliate.md` verdict 8 or more (7/10 capped; awaiting re-review)
+- [ ] Review read: `docs/build-notes/review/affiliate.md` verdict 8 or more (7/10 capped; awaiting re-review)
 
-Done here: `data-cta` ids `affiliate.hero`, `affiliate.close` (the kit Cta fires `cta_click`); V2 line in the page and route headers. Review read: `docs/review/affiliate.md` gave 7/10 (capped on the old card; page itself 8); its fixes are done: card in this 18-part format, h1 rests at 52px, and the link (hero object) sits whole in the first screen at 1470×801 (44px mono, top 430; proof `docs/gallery/affiliate/v3-desktop-first.jpg`). Round 4: one solid from first paint, idle beat every 5 s, the Affiliates caption inside the link band, JS-off diagram curves drawn.
+Done here: `data-cta` ids `affiliate.hero`, `affiliate.close` (the kit Cta fires `cta_click`); V2 line in the page and route headers. Review read: `docs/build-notes/review/affiliate.md` gave 7/10 (capped on the old card; page itself 8); its fixes are done: card in this 18-part format, h1 rests at 52px, and the link (hero object) sits whole in the first screen at 1470×801 (44px mono, top 430; proof `docs/gallery/affiliate/v3-desktop-first.jpg`). Round 4: one solid from first paint, idle beat every 5 s, the Affiliates caption inside the link band, JS-off diagram curves drawn.

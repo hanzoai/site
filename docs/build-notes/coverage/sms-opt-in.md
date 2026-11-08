@@ -3,7 +3,7 @@
 Page file: `components/pages/SmsOptIn.jsx` · gallery: `docs/gallery/sms-opt-in/` · metric id: `lead_submit`
 
 Open copy questions for James: a refused send has no words of Hanzo's: the number stays and the field is marked (dashed) and focused; James to say whether he wants a line there. The five chip names (What, How often, Cost, How to stop, Purchases) label parts of Hanzo's own consent paragraph; listed for James's yes.
-Shared changes requested (`docs/requests/<page>.md`): `docs/requests/affiliate.md` (the header's ask outlines while a page's own ask is on screen, and carries it after the hero; on /sms-opt-in it now carries "Yes, sign me up!").
+Shared changes requested (`docs/build-notes/requests/<page>.md`): `docs/build-notes/requests/affiliate.md` (the header's ask outlines while a page's own ask is on screen, and carries it after the hero; on /sms-opt-in it now carries "Yes, sign me up!").
 Forks this page deleted: the hand-made submit button and spinner (now kit `Cta` busy), the raw phone input (now kit `Field`), the label above the h1, the looping messages, the indigo accent, 72px bubbles all at once, box-plus-shadow on the field and keys.
 
 
@@ -154,6 +154,6 @@ Done here: Success ("You're opted in") shows only on a 2xx, so the consent recor
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/sms-opt-in.md` verdict 8 or more
+- [x] Review read: `docs/build-notes/review/sms-opt-in.md` verdict 8 or more
 
-Done here: `data-cta` id `sms-opt-in.submit` (kit Cta fires `cta_click`); the consent text sent is the paragraph shown; V2 line in the route header; conductor review `docs/review/sms-opt-in.md` (4/10 at `25b197c`): invisible bubble, scale, floating pill, label above the h1, Cost hover and the missing card all fixed.
+Done here: `data-cta` id `sms-opt-in.submit` (kit Cta fires `cta_click`); the consent text sent is the paragraph shown; V2 line in the route header; conductor review `docs/build-notes/review/sms-opt-in.md` (4/10 at `25b197c`): invisible bubble, scale, floating pill, label above the h1, Cost hover and the missing card all fixed.

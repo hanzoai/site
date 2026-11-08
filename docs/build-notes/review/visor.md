@@ -152,13 +152,13 @@ First complaint: "Right, the middle's alive now, I like the list with the big pi
 4. **Correct the coverage card.**
    - Part 6: name the 12px "HANZOAI/VISOR" caption.
    - Part 7: say the kicker is gone, or untick.
-   - Part 8: "primary presses 0.98 (kit `Cta`); request .97 from the kit owner in `docs/requests/visor.md`".
+   - Part 8: "primary presses 0.98 (kit `Cta`); request .97 from the kit owner in `docs/build-notes/requests/visor.md`".
    - Part 9: say which tool counted still screens.
    - Header comment: drop "ask bar".
 5. **Give the naming tool a moment of its own after arrival.** On first arrival, type the prefix into the field letter by letter (time, about 60 ms per letter) as the names update under it, then rest. Or let "dry run" → "launch" flip once on its own with the line swapping, then return. Something should still answer the eye after the batch names itself.
 6. **Let the next room peek at 1470×801.** Trim the hero's bottom padding or the console height so the dark room's top edge shows about 56px above the fold. Have the room enter as a rounded card inside the gutters that opens to full width, per MASTER's rooms.
 7. **Make the open carry the picture (synchronized.studio).** Give the stage picture and the Sheet picture one `layoutId`, so opening a row grows the picture you were looking at into the card instead of redrawing it in a drawer.
-8. **File shared requests** (`docs/requests/visor.md`):
+8. **File shared requests** (`docs/build-notes/requests/visor.md`):
    - `Finale` renders two h2s on one screen.
    - The kit `Sheet` uses a spring (`SPRING.sheet`).
    - The kit `Cta` press is 0.98.

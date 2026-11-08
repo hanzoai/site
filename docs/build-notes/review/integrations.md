@@ -1,5 +1,5 @@
 # /integrations — James-eye review
-Ready: 2026-11-07 card opens into its own sheet and its way in lands at the guide's top on phone (no glide), no empty bands around the pinned track (room rises over its end), phone rows show Hanzo's sentence, bare marks on the ring (no grey tiles), family hash in the URL, pressed arrow goes ink, dark-room ask hover answers, phone code keeps its shape; hydration error traced to the screenshot tool (0 in 12 painted loads); header/glass items filed in docs/requests/integrations.md
+Ready: 2026-11-07 card opens into its own sheet and its way in lands at the guide's top on phone (no glide), no empty bands around the pinned track (room rises over its end), phone rows show Hanzo's sentence, bare marks on the ring (no grey tiles), family hash in the URL, pressed arrow goes ink, dark-room ask hover answers, phone code keeps its shape; hydration error traced to the screenshot tool (0 in 12 painted loads); header/glass items filed in docs/build-notes/requests/integrations.md
 Verdict: 6/10
 First complaint: "I click a card and nothing opens. It just jumps to another page, and on my phone it lands halfway down with no header and then scrolls itself back up. That's the one moment this page is meant to have."
 

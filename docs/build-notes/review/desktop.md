@@ -21,7 +21,7 @@ Walked 7 Nov, page file at `a1dcdca` (`components/pages/DesktopPage.jsx`, `Deskt
 6. **Overlaps, font swap, layout shift?** None. JS off hides 7 of 32 text blocks.
 7. **Which reference, is its motion there?** Apple product page in the pinned chapters, yes. The "product as the hero" half is weakened because the product is drawn as placeholders.
 8. **Different from neighbours?** Weakly. The centred kicker, name and two buttons over a stage is the same opening as /bot. Pinned chapters, dark room and "Paste and ship" are shared with /api, /bot and /cli.
-9. **18 areas (PLAN-COMPONENTS)?** See below. No `docs/coverage/desktop.md`.
+9. **18 areas (PLAN-COMPONENTS)?** See below. No `docs/build-notes/coverage/desktop.md`.
 10. **Banned tells?** Yes:
     - eyebrows over the h1 ("NATIVE DESKTOP CLIENT" in blue) and over headlines ("01 · AGENTS", "IT WORKS WITH THE NETWORK OFF");
     - a sky-blue UI accent on the send button, chips, bars, toggle, round arrow buttons and a solid button;

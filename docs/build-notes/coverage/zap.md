@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Zap.jsx` (+ `Zap.css`) · gallery: `docs/gallery/zap/` · metric id: `install_copy` (docs hand-off)
 
 Open copy questions for James: demo labels not in `content/ui-strings.json`: "ZAP · the buffer that arrived", "JSON · the same message as text", "pointer + offset N", "N characters walked", "Read a field", "Agents you run", the two topology captions and their counts.
-Shared changes requested (`docs/requests/zap.md`): the header could start dark when the first section is `data-room="dark"` (shared chrome); the phone header ask should go quiet beside a page solid and carry "Read the docs" (until then this page outlines its own asks on phones and with JS off); `components/v2/Settle.jsx` mismatches on hydration under reduced motion (this page now uses a page-local copy, `components/pages/apps/zap/Settle.jsx`). Noted: no skip link; `useEvery` uses `setInterval` (shared `cloud/Frame`); `tokens.css` not merged.
+Shared changes requested (`docs/build-notes/requests/zap.md`): the header could start dark when the first section is `data-room="dark"` (shared chrome); the phone header ask should go quiet beside a page solid and carry "Read the docs" (until then this page outlines its own asks on phones and with JS off); `components/v2/Settle.jsx` mismatches on hydration under reduced motion (this page now uses a page-local copy, `components/pages/apps/zap/Settle.jsx`). Noted: no skip link; `useEvery` uses `setInterval` (shared `cloud/Frame`); `tokens.css` not merged.
 Forks this page deleted: the ASCII `<pre>` as the visible diagram (kept `hidden` in the HTML for the record), the browser range input, the floating pauses on the wire, terminal and fleet, two outlined hero buttons (now text links), the close's second outlined button, the page-wide `--acc` that hid the packet numbers, the "electric-cyan" comments, every spring.
 
 ## 1. Strategy and conversion
@@ -155,6 +155,6 @@ Done here: 0 console errors at 1470×801 and 375×812, with normal and with redu
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the top comment of `components/pages/apps/Zap.jsx`
-- [x] Review read: Ready line in docs/review/zap.md
+- [x] Review read: Ready line in docs/build-notes/review/zap.md
 
 Done here: Ready 7 Nov (James's bar: holds up next to /api and /affiliate, no score). Round-2 fixes hold on the rebuilt page; this pass: the 0 stands at figure size beside N:1 and 1:M (grey, not shrunk), the packet grid lands by itself, taps no longer freeze the hero, the phone terminal keeps whole tokens, and the gap after the packets is trimmed.

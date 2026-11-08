@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Registry.jsx` (+ `Registry.css`) · route: `app/registry/page.jsx` · gallery: `docs/gallery/registry/` · metric id: `api_key_created`
 
 Open copy questions for James: "View Source" and "View on GitHub" both point at the `github.com/hanzoai` org page, not a registry repo (Hanzo's links, kept as they are).
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none.
 Forks this page deleted: the page CSS that forced the header's "Try Hanzo" to an outline; the second white "repository window" in the chapters (now the layer stack) and its six grey row lists (handshake, repos, artifacts, tags, people); the switch label that repeated the dark room's h2; the swap row that repeated the hero lede; the forever-looping push; the spring knob; a drop shadow on a non-floating row; the shared `LaunchConsole` (generic services, Builds caption) for a page-local registry console with the same words and links; the shared `RelatedCards` grey Sigil boxes for page-local cards drawn as layer stacks; the separate "Get started" strip and the Paste block, now folded into the close; off-deck greys (#a1a1a6, #6e6e73, #0b0b0c and seven more).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: 0 console errors at 1470×801 and 375×812 (Playwright check, 7 Nov).
 - [x] `data-cta` on every primary
 - [x] Nothing before consent
 - [x] `V2:` line in the page file's top comment
-- [x] Review read: `docs/review/registry.md`
+- [x] Review read: `docs/build-notes/review/registry.md`
 
 Done here: `registry.hero`, `registry.close`; gallery in `docs/gallery/registry/`.

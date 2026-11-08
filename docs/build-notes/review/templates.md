@@ -74,7 +74,7 @@ Hanzo's preview images (hanzo.ai/templates/*.webp) are blocked in this sandbox: 
     - **Open strings:** "No agents match.", "Filter agents..." and "MCP client" are UI strings that are not in `content/ui-strings.json`.
     - **Two different counts side by side:** "+25 more" (the strip) and "+26" (the shared SetupMenu pill) sit together in the dark room.
 
-## Coverage claims checked (`docs/coverage/templates.md`)
+## Coverage claims checked (`docs/build-notes/coverage/templates.md`)
 
 **False:**
 - **Part 10 says:** "if Hanzo's screenshot fails it is hidden ... never a broken-image icon".

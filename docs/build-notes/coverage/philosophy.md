@@ -10,7 +10,7 @@ copycheck vs live: missing 0 of 166; parity 386/386.
 Page file: `components/pages/Philosophy.jsx` (+ `Philosophy.css`, data `philosophy/patterns.js`) · gallery: `docs/gallery/philosophy/` · metric id: `philosophy.close` (cta_click), lead `philosophy.hero`
 
 Open copy questions for James: none (no copy changed; "Philosophy", "The premise", "The synthesis", "The 64 patterns", "The method", "Across the stack" are Hanzo's labels, set as captions under their headings).
-Shared changes requested (`docs/requests/philosophy.md`): none.
+Shared changes requested (`docs/build-notes/requests/philosophy.md`): none.
 Forks this page deleted: the floating AskBar pill (MASTER: nothing floats over content), the 236px headline (now 52px at rest), the v1 "seal" kickers above headings, the spring and overshoot easings, every hover lift and scale.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -162,6 +162,6 @@ Done here: JS off: all words visible at 1470 (the Sequence view's panel is hidde
 - [x] `data-cta` on both primaries (`philosophy.hero`, `philosophy.close`); n/a: `lib/track.js` wiring is shared
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file's top comment
-- [x] Review read: `docs/review/philosophy.md` (7/10 on the walk before this build). In this build: the blank bands around the laws heading, the premise tail and above "Every hexagram is active" are cut; Sequence tiles run six a row at desktop widths so no name breaks mid-word; the questions section holds the question's trigram drawn large (walks the eight once, then follows the pointer), sticky beside the list; the closing statement is hydration-safe under reduced motion (0 console errors measured); text links are 44px tall. Not changed: the hero keeps its centred hexagram over the headline (the h1 sits low by design so the hexagram is the first screen's one big thing).
+- [x] Review read: `docs/build-notes/review/philosophy.md` (7/10 on the walk before this build). In this build: the blank bands around the laws heading, the premise tail and above "Every hexagram is active" are cut; Sequence tiles run six a row at desktop widths so no name breaks mid-word; the questions section holds the question's trigram drawn large (walks the eight once, then follows the pointer), sticky beside the list; the closing statement is hydration-safe under reduced motion (0 console errors measured); text links are 44px tall. Not changed: the hero keeps its centred hexagram over the headline (the h1 sits low by design so the hexagram is the first screen's one big thing).
 
 Done here: Filmed with `scripts/motion.mjs` (desktop) and `scripts/shot.mjs` (phone); gallery `desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`.

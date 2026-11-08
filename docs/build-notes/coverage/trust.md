@@ -3,7 +3,7 @@
 Page file: `components/pages/Trust.jsx` · gallery: `docs/gallery/trust/` · metric id: `contact_sales_submit` (cta_click on `trust.hero`, `trust.band`)
 
 Open copy questions for James: none decided. "Find a control" (the search heading) and the placeholder "PKCE, SCIM, argon2id, HKDF…" are v1 UI strings, not hanzo.ai copy; they should be in `content/ui-strings.json` once it exists.
-Shared changes requested (`docs/requests/trust.md`): v2/DetailSheet pair; the header ask's 240px cap and the nav's room for a page ask at 1000-1399px; v2/MaskLines and v2/SceneWipe reading reduced motion during render (hydration mismatch).
+Shared changes requested (`docs/build-notes/requests/trust.md`): v2/DetailSheet pair; the header ask's 240px cap and the nav's room for a page ask at 1000-1399px; v2/MaskLines and v2/SceneWipe reading reduced motion during render (hydration mismatch).
 Forks this page deleted: the page-level AskBar pill (the shared ask bar in `components/Ask.jsx` carries the ask), the spring physics on drawers and answers, the v1 "seal" image, the 112px hero headline at rest.
 Conflict noted (MASTER §0.6): MASTER §3.1 keeps centred heads for the closing section, but the hero is a centred statement because the critic found /trust sharing /leaderboard's frame and JAMES.md 8 asks that neighbouring pages differ (the coordinator's call); the 52px h1 follows the rhythm rule.
 
@@ -156,6 +156,6 @@ Done here: Empty: a search with no match shows Hanzo's own line, "If a control y
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/<page>.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta="trust.hero"` and `"trust.band"`; the search sends nothing anywhere. V2 line present. Review read: docs/review/trust.md gave 7/10 (second pass); its ranked fixes 1-7 are worked through (phone cabinet inline, papers without the repeated descriptions, stance stage shorter with a growing index, phone controls full width, phone "today" tightened without new words, the asks as slabs, gaps trimmed; variety.py passes, so the room's wipe stays), awaiting the next walk.
+Done here: `data-cta="trust.hero"` and `"trust.band"`; the search sends nothing anywhere. V2 line present. Review read: docs/build-notes/review/trust.md gave 7/10 (second pass); its ranked fixes 1-7 are worked through (phone cabinet inline, papers without the repeated descriptions, stance stage shorter with a growing index, phone controls full width, phone "today" tightened without new words, the asks as slabs, gaps trimmed; variety.py passes, so the room's wipe stays), awaiting the next walk.

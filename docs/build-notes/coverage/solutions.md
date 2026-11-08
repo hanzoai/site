@@ -6,7 +6,7 @@ Open copy questions for James:
 - (1) The catalogue type asks for the exact count as the hero figure. Hanzo's copy prints no total for /solutions, so none is shown. Should "17" (from `content/pages.json`) be allowed?
 - (2) The tiles carry a numbered caption ("01 / 17", the MASTER §4 supporting technique). These are new marks, so this is listed here.
 
-Shared changes requested (`docs/requests/solutions.md`):
+Shared changes requested (`docs/build-notes/requests/solutions.md`):
 - None filed. The solution pages (`Solution.jsx`, another chat's) do not call `useArrival`, so this index's open lifts its own cover (`openTile.js`). Once Morph is fixed site-wide, the tiles can go back to it.
 
 Forks this page deleted:
@@ -165,6 +165,6 @@ Done here: Playwright run with no console errors.
 - [x] `data-cta` on every primary. `lib/track.js` is pending.
 - [x] Nothing identifier-bearing
 - [x] `V2: 8/10 …` in the page file header
-- [ ] Review read: no `docs/review/solutions.md` yet. This page is ready for its critic.
+- [ ] Review read: no `docs/build-notes/review/solutions.md` yet. This page is ready for its critic.
 
 Done here: filter 17 → 7 → 17, the pill shows, numbers "01 / 07", the open lands on /solutions/finance, no console errors.

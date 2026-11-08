@@ -5,7 +5,7 @@ Page file: `components/pages/oss/OrgPage.jsx` (+ `oss.css`, `ossData.js`; route 
 Open copy questions for James:
 - The sort and filter icons and the open card's controls are named from the register: `oss_sort*`, `oss_language`, `oss_all`, `oss_clone_from`, `oss_copy`, `oss_show_all`, `oss_loading`, `oss_no_match`. All need James.
 
-Shared changes requested (`docs/requests/oss.md`):
+Shared changes requested (`docs/build-notes/requests/oss.md`):
 - n/a. Site-level: kit `Copy` swaps its `aria-label` instead of `role=status`.
 
 Forks this page deleted:
@@ -177,6 +177,6 @@ Done here: JS off shows every figure, chapter and tile.
 - [x] `data-cta` on the primaries (`lib/track.js` not merged yet)
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in `OrgPage.jsx` (v6)
-- [ ] Review read: `docs/review/oss-family.md` was 6/10 (v4); v6 answers its six fixes. A re-score is pending.
+- [ ] Review read: `docs/build-notes/review/oss-family.md` was 6/10 (v4); v6 answers its six fixes. A re-score is pending.
 
 Done here: Film and phone shots for hanzoai and hanzo-app are in `docs/gallery/oss/`, re-shot over the same names.

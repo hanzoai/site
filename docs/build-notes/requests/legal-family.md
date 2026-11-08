@@ -1,6 +1,6 @@
 # /legal/* (LegalDoc template): requests to the shared system
 
-Fix 8 of `docs/review/legal-family.md`: site layers, not this template.
+Fix 8 of `docs/build-notes/review/legal-family.md`: site layers, not this template.
 
 - **Arrival curtain on deep links.** The 000–100 arrival curtain played about 2.4 s on a deep link to /legal/terms in the 7 Nov walk and hid the h1 cut-in. CANON: home only, skip deep links, no counter.
 - **Morph cut-over.** The card-to-page Morph scrolled the old page to its top while waiting for the route (3.6 s on dev). Verify the sibling-card → h1 flight on the preview build.

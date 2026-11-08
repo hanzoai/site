@@ -15,7 +15,7 @@ Verdict: 7/10
 
 First complaint: "It's much better, and the piano roll is lovely. But as I scroll past the name, the button top right goes 'Try Hanzo', then 'Request access', then 'Try Hanzo' again, and the icons next to it jump each time. For a second there are two black buttons on screen. Pick one and keep it still."
 
-**Cap: false claims on the card (MASTER section 6).** The page alone scores 7, and two lines on `docs/coverage/uta.md` are untrue, so 7 is also the ceiling:
+**Cap: false claims on the card (MASTER section 6).** The page alone scores 7, and two lines on `docs/build-notes/coverage/uta.md` are untrue, so 7 is also the ceiling:
 1. Part 8 says "Focus ring visible on every stop of a Tab crawl". At 1470, from the top of the page, the 2nd and 3rd Tab stops in `main` are the settled headline's "Request access" and "Try it in Design". They sit at y=504 inside `.lv-acts` at `opacity: 0`, under the hero film. The ring is drawn but nobody can see it: two invisible stops on the first screen (screenshot `tab-1`).
 2. The line above part 1 says "The page shows Hanzo's words only". The studio's "Download MIDI", "Sound off" / "Sound on" and "Play" are in neither `content/live/uta.json`, `content/pages/uta.html` nor `content/ui-strings.json`. Of these labels only "Pause" is in the register. MASTER gate 4 says new UI strings come only from `ui-strings.json`.
 
@@ -32,7 +32,7 @@ Part 1's "one solid fill per screen, measured" is also only nearly true. From y�
   5. y 1350: "Request access", outlined.
   6. y 1430: "Request access", solid.
 
-  That is four changes of label or weight in about one and a half screens (shared header, requested in `docs/requests/`).
+  That is four changes of label or weight in about one and a half screens (shared header, requested in `docs/build-notes/requests/`).
 - **Fonts:** fonts finished loading by 0.6 s. The h1 box held at 135,459, 1200×122 through the swap. No visible swap.
 - **Phone hero:** the hold is real. "Uta", the lede and an outlined "Request access" stay over the full-bleed film until the first scroll. With no input, at 6 s the film eases into the four stems, the name slides under the stage and the hero ask goes `visibility:hidden`. The headline's asks are on the next screen.
 - **No horizontal scroll** at 1470, 375 and 320. At 375×667 the first ask sits at y 575–619. At 320×640 it sits at y 568–612.
@@ -110,4 +110,4 @@ Part 1's "one solid fill per screen, measured" is also only nearly true. From y�
    - Move the film Pause inside the stems' box (or the stage foot) after the settle, so it does not float on white paper.
    - Bring the Fits film above or beside the list at 375, so that screen has an object.
 8. **Neighbours:** give /uta one room-order difference from the other creative pages. For example, put Fits before the chapters, or end the chapters on the roll itself.
-9. **Card:** rewrite `docs/coverage/uta.md` so every line is true after these fixes (the line above part 1, and parts 1, 4, 8 and 9).
+9. **Card:** rewrite `docs/build-notes/coverage/uta.md` so every line is true after these fixes (the line above part 1, and parts 1, 4, 8 and 9).

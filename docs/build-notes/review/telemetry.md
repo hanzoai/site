@@ -113,7 +113,7 @@ All of the last fix list landed, and the walk confirms each one:
   - The signal hover has no pointer cursor.
 - **Part 13, performance:** walk CLS 0.0107 on desktop (the hero OTLP-out `layout` rows). That is under target, but not the 0.0009 the card states.
 - **Part 16, developer:** the config window and the builder output are raw `<pre>`, not `CodeBlock`/`Code`. The card ticks "One CodeBlock".
-- **False claims on `docs/coverage/telemetry.md`** (each caps the verdict at 7):
+- **False claims on `docs/build-notes/coverage/telemetry.md`** (each caps the verdict at 7):
   1. Part 7: "Radii 6, 8, 12, 16, 20, 24 (28 on the search composer only)". Telemetry.css also sets 10px (lines 21, 41), 14px (27, 28, 32) and 18px (69).
   2. Part 7 tick: "no literal hex outside tokens". The page CSS writes 63 literal hex values. They are deck values, but they are literals, which is what MASTER forbids.
 
@@ -151,4 +151,4 @@ All of the last fix list landed, and the walk confirms each one:
 7. **Differ from /billing.** The object is its own, but the frame (split StageHero, PinScenes, Finale) is shared. One structural difference would separate it:
    - the config window entering as a black room that opens to full width as it is reached (MASTER 3.1), or
    - the hero collector docking into the chapter stage instead of scrolling away.
-8. **Shared, request only:** the footer hydration false-positive when a tool touches the input before hydration (already in `docs/requests/telemetry.md`).
+8. **Shared, request only:** the footer hydration false-positive when a tool touches the input before hydration (already in `docs/build-notes/requests/telemetry.md`).

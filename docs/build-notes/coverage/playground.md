@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Playground.jsx` (+ `Playground.css`, route `app/playground/page.jsx`) · gallery: `docs/gallery/playground/` · metric id: `api_key_created`
 
 Open copy questions for James: the Python sample ends in `KeysApi(api).get_keys().keys` (lists keys, does not call a model); kept word for word, question left to James. The window labels ("Tokens in", "Tokens out", "Time", "Cost", "Run ·") are not yet in the UI-string register.
-Shared changes requested (`docs/requests/playground.md`): UI-string register entries; a hover and press for "Deploy to Cloud" in `LaunchClose`; the 14px phone floor for `LaunchClose`'s facts row; `scroll-behavior: auto` in the motion probe's phone walk.
+Shared changes requested (`docs/build-notes/requests/playground.md`): UI-string register entries; a hover and press for "Deploy to Cloud" in `LaunchClose`; the 14px phone floor for `LaunchClose`'s facts row; `scroll-behavior: auto` in the motion probe's phone walk.
 Forks this page deleted: the page CSS that outlined the header's "Try Hanzo"; the `SettleStage` wrapper on the hero (replaced by a page-local CSS arrival that cannot snap); the springs on the kind pill and the decision tree.
 
 ## 1. Strategy and conversion
@@ -152,6 +152,6 @@ Done here: own walk 7 Nov 16:36 at 1470×801 and 375×812: status 200, 0 console
 - [x] `data-cta` on both primaries; events through the shared ask
 - [x] Nothing identifier-bearing before consent
 - [x] `V2:` line in `Playground.jsx` and `app/playground/page.jsx`
-- [ ] Review read: `docs/review/playground.md` (6/10 at 15:24 read and answered; the re-walk is pending)
+- [ ] Review read: `docs/build-notes/review/playground.md` (6/10 at 15:24 read and answered; the re-walk is pending)
 
 Done here: every fix in the 15:24 review's "Fixes (in order)" list is answered above; proof in `docs/gallery/playground/` (d.jpg, p.jpg, d-0..2.png, p-0..2.png, d.mp4).

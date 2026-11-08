@@ -5,7 +5,7 @@ Page file: `components/pages/Support.jsx` (+ `Support.css`, deck tokens from `co
 Open copy questions for James:
 - /contact and /support both open on Hanzo's "How can we help?". That is Hanzo's copy, so it is kept on both. Should one page change it?
 
-Shared changes requested (`docs/requests/<page>.md`):
+Shared changes requested (`docs/build-notes/requests/<page>.md`):
 - None filed.
 - For the kit owner:
   - the kit `Band` reveals its title with a blur and uses off-deck greys; this page restyles it locally on the deck;
@@ -205,7 +205,7 @@ Done here:
 - [x] `data-cta` on every primary; events only through `lib/track.js` — not merged; nothing is sent
 - [x] Nothing identifier-bearing before consent
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/support.md` (6/10). Applied:
+- [x] Review read: `docs/build-notes/review/support.md` (6/10). Applied:
   - the focus ring;
   - the numeral overlap;
   - the calm typing;

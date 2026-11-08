@@ -1,5 +1,5 @@
 /* One shell for every page: Hanzo's header and footer persist across navigation, so only the page between them changes.
-   HOW TO USE (pages add nothing here; see docs/review/SYSTEM.md):
+   HOW TO USE (pages add nothing here; see docs/build-notes/review/SYSTEM.md):
    - Every page.jsx exports its own `metadata` ({ title, description }) and renders <JsonLd route="/its/path" /> once:
      that gives it its canonical link, share card (Open Graph, X) and schema.org data.
    - Styles load in this order: Hanzo's hanzo.css, globals.css, system.css (tokens and states), then the page's own CSS,

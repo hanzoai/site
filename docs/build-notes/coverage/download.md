@@ -3,7 +3,7 @@
 Page file: `components/pages/DownloadPage.jsx` (+ `DownloadPage.css`, shared `components/v2/AppType.css`, `x-edison/AppLines`) · gallery: `docs/gallery/download/` · metric id: `build_download`
 
 Open copy questions for James: none decided. On phones the main build follows the system the browser reports, as v1 and live do (an iPhone is offered the macOS build); the question of what a phone should be offered is left to James.
-Shared changes requested: `docs/requests/apps1.md` (a `Band` with an `id` prop). The ask is settled by the shared system: the header's solid "Try Hanzo" carries it at every width, with no desktop bar, and the page's own `data-thumb` ask rides the slim phone bar. The page closes on its own band with `<Cta id>`.
+Shared changes requested: `docs/build-notes/requests/apps1.md` (a `Band` with an `id` prop). The ask is settled by the shared system: the header's solid "Try Hanzo" carries it at every width, with no desktop bar, and the page's own `data-thumb` ask rides the slim phone bar. The page closes on its own band with `<Cta id>`.
 Forks this page deleted: the kicker over the h1 ("Download") and over "Just your files" ("Your kit"); the floating hover tooltips on the dial (the centre now reads the build you point at); the breathing glow loop on the button; the hand-made main button and the hidden `data-thumb` `<i>` (now `<Cta thumb>`); skeleton bars in the four product pictures (now Hanzo's own lines and a model image through kit `Img`); the solid "Or open Hanzo in your browser" (now a text link beside the repeated ask); spring and overshoot curves; cursor labels; shadows on objects.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: With GitHub and hanzo.ai blocked in the sandbox the page renders comp
 - [x] `data-cta` on every primary; events only through `lib/track.js` (`<Cta>` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/download.md` (none yet; the neighbours' reviews were applied pre-emptively)
+- [x] Review read: `docs/build-notes/review/download.md` (none yet; the neighbours' reviews were applied pre-emptively)
 
 Done here: `data-cta` = download-main, download-every-build, download-browser, download-open-desk, download-open-cli, download-open-ext, download-cli-all, download-main-end, download-browser-end.

@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Iam.jsx` · gallery: `docs/gallery/iam/` · metric id: `cta_click iam.hero`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/iam.md`): none filed; waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
+Shared changes requested (`docs/build-notes/requests/iam.md`): none filed; waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
 Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: A headless JS-off pass shows every word; reduced motion stops each de
 - [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
 - [x] Nothing identifier-bearing; no field value in any payload
 - [x] `V2: 8/10` line in the page file's top comment
-- [x] Review read: `docs/review/iam.md` round 4, all 9 fixes checked 7 Nov (C1)
+- [x] Review read: `docs/build-notes/review/iam.md` round 4, all 9 fixes checked 7 Nov (C1)
 
 Done here: `iam.hero` and `iam.close` on the asks. Gallery: `docs/gallery/iam/` (desktop film, phone stills, and C1 stills `c1-desk-hero.jpg`, `c1-desk-room.jpg`, `c1-phone-rail.jpg`).

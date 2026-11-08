@@ -76,7 +76,7 @@ None of these appear: hue, gradient text, Inter (the h1 stack resolves to Zen; "
 13. **Band headline (shared Band).** Replace the opacity-and-blur reveal with the line-mask cut-in, and balance the wrap so "Dev ships it." is not split as "Dev / ships it.". Test: no `filter: blur` animation on the Band, and the last line has 3 or more words or keeps the h1's 2-line break.
 14. **Rail edge.** After "Next place", snap so no card is cut mid-word at the viewport edge (the peek stays 14 to 18% of a card). Test: no text node of a rail card is clipped by the viewport.
 
-## Proof images (in `docs/review/dev/`)
+## Proof images (in `docs/build-notes/review/dev/`)
 - `1-hero-diff-landed-1470.jpg`: 1470x801 at t≈8.75 s with no input. The terminal has landed the diff (`-` line struck, `+ for (let i = 0; i < tries; i++)` highlighted, `+1 -1 M`). Also visible: the cookie card over the terminal's status bar and the red "1 Issue" badge in the bottom-left.
 - `2-race-clock-stuck-at-0.jpg`: 1470x801 with `prefers-reduced-motion: reduce`, 6 s after the race board came into view. Both cards read "READY 0.00 s" and the race never shows its result. With motion on, the clocks do run, to 9.52 s and 2.29 s.
 - `3-two-solid-fills-and-error-badge.jpg`: 375x812 at t≈6 s. A solid black header "Try Hanzo" and a solid black "Open Dev" are on the first screen together. The cookie card covers the hero terminal, so the diff never shows, and the red "1 Issue" badge sits on top.

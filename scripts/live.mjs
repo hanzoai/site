@@ -15,7 +15,7 @@
 //    HZ_LIVE_OFFLINE=1: no source is read and the run exits 0. In the cloud sandbox Node's fetch needs
 //    NODE_USE_ENV_PROXY=1 NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt.
 // 2. --pages [/path ...]: render hanzo.ai pages in headless Chrome and keep what a visitor sees (content/live/<path>.json
-//    { text, links }, parity.py's reference). A browser job: not on James's laptop unless he asks (docs/MASTER.md section 5).
+//    { text, links }, parity.py's reference). A browser job: not on James's laptop unless he asks (docs/build-notes/MASTER.md section 5).
 import { RUNS, MODELS, PRICES, readResearch, readModels } from '../lib/liveSources.mjs';
 import fs from 'node:fs';
 import path from 'node:path';

@@ -61,7 +61,7 @@ The grey-noise fix works, so the colour tell is gone. Two things hold the score 
     - Smaller: `.ir-frame::before` uses white at 4%, which is not on the deck's step list (3, 5, 6, 8…).
 11. **Copy untouched?** Yes. Parity is 51/51 text and 4/4 links.
 
-## Card check (docs/coverage/iro.md)
+## Card check (docs/build-notes/coverage/iro.md)
 - **False:** Part 4, "on phones the shared bar carries 'Request access' after the hero". At 375×812 no bottom bar appears at y 1500, 3000 or 5000, and the header keeps "Try Hanzo". `usePhoneAsk` falls back when the words don't fit, so the phone's sticky ask is never the page's ask. This caps the verdict at 7.
 - **True:**
   - Part 13: CLS 0.0015 at 1470 and 0 at 375 (measured 0.00147 and 0).

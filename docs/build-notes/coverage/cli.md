@@ -3,7 +3,7 @@
 Page file: `components/pages/CliPage.jsx` · gallery: `docs/gallery/cli/` · metric id: `api_key_created`
 
 Open copy questions for James: the CLI docs link (MASTER part 1 lists it): the live page sends both "Install from hanzo.sh" and "Install the CLI" to `https://docs.hanzo.ai/docs/cli`, kept as is. The hero says "Open source (MIT)" while the repo card says "License: Apache-2.0"; both are live strings, kept.
-Shared changes requested (`docs/requests/cli.md`): the header ask label ("Install from hanzo.sh" on /cli via `lib/cta.js`; the header is shared chrome and still says "Try Hanzo"); the reduced-motion hydration mismatch and JS-off mask in shared `v2/x-edison/AppLines` (replaced here by page-local `cli/Cut.jsx`); the `Band` `id` prop.
+Shared changes requested (`docs/build-notes/requests/cli.md`): the header ask label ("Install from hanzo.sh" on /cli via `lib/cta.js`; the header is shared chrome and still says "Try Hanzo"); the reduced-motion hydration mismatch and JS-off mask in shared `v2/x-edison/AppLines` (replaced here by page-local `cli/Cut.jsx`); the `Band` `id` prop.
 Forks this page deleted: the lime `.cli-go` button and the ghost `.x-btn` "View on GitHub" (now `<Cta>` solid and `<Cta kind="link">`); the second ending (the "Get CLI" card's solid "Deploy to Cloud" is a text link above the one Band); the 4 kickers over headlines; the tilted v1 terminal (`useTilt`); `Magnetic`; the hidden `<i data-thumb>`.
 
 ## 1. Strategy and conversion
@@ -39,7 +39,7 @@ Done here: the h1 is server HTML and cuts in by CSS line mask on first paint (70
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta id="cli.hero" thumb>` and `<Cta id="cli.band">`. Header, as the round-2 critic measured it: on desktop the shared header swaps to the solid "Install from hanzo.sh" once the hero ask leaves view and goes quiet while the band's solid is on screen, so one fill shows at a time; on phone the header still says "Try Hanzo" (shared chrome; the phone label is requested in `docs/requests/cli.md`). No floating bar (removed site-wide, d2b5ab8c), and none was added. Every Copy copies the shown command; the `$` is `user-select: none` and not in the copied text (`Copy` uses `copyText`).
+Done here: `<Cta id="cli.hero" thumb>` and `<Cta id="cli.band">`. Header, as the round-2 critic measured it: on desktop the shared header swaps to the solid "Install from hanzo.sh" once the hero ask leaves view and goes quiet while the band's solid is on screen, so one fill shows at a time; on phone the header still says "Try Hanzo" (shared chrome; the phone label is requested in `docs/build-notes/requests/cli.md`). No floating bar (removed site-wide, d2b5ab8c), and none was added. Every Copy copies the shown command; the `$` is `user-select: none` and not in the copied text (`Copy` uses `copyText`).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -168,6 +168,6 @@ Done here: the page fetches nothing; with JS off every heading and paragraph sho
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/cli.md` verdict 8 or more
+- [x] Review read: `docs/build-notes/review/cli.md` verdict 8 or more
 
-Done here: `data-cta="cli.hero"`, `cli.band`, plus `cli.*` on every secondary; `<Cta>` sends `cta_click`. Round-2 review read (7/10 at e88d5f71): fix 1 hero flash done (rows masked from first paint, 0 resets); fix 2 phone tree reflow done (CLS 0.0017 at 375); fix 3 ending done (one stepping caret, gaps 145/44px); fix 4 rail cards tightened; fix 5 tree outline only; fix 6 script arrival with rolling line count; card parts 4 and 11 corrected. Earlier review (6/10 at 4b53974): fix 1 hierarchy done (white hero solid, text links, "Deploy to Cloud" a link); fix 2 header ask requested in `docs/requests/cli.md` (shared chrome), floating pill already gone; fix 3 one ending done (Get CLI and related links above the one Band); fix 4 fixed heights and 44px targets done (phone CLS 0.000); fix 5 no label above a heading; fix 6 this card. Self-score 8/10 pending the critic's re-walk.
+Done here: `data-cta="cli.hero"`, `cli.band`, plus `cli.*` on every secondary; `<Cta>` sends `cta_click`. Round-2 review read (7/10 at e88d5f71): fix 1 hero flash done (rows masked from first paint, 0 resets); fix 2 phone tree reflow done (CLS 0.0017 at 375); fix 3 ending done (one stepping caret, gaps 145/44px); fix 4 rail cards tightened; fix 5 tree outline only; fix 6 script arrival with rolling line count; card parts 4 and 11 corrected. Earlier review (6/10 at 4b53974): fix 1 hierarchy done (white hero solid, text links, "Deploy to Cloud" a link); fix 2 header ask requested in `docs/build-notes/requests/cli.md` (shared chrome), floating pill already gone; fix 3 one ending done (Get CLI and related links above the one Band); fix 4 fixed heights and 44px targets done (phone CLS 0.000); fix 5 no label above a heading; fix 6 this card. Self-score 8/10 pending the critic's re-walk.

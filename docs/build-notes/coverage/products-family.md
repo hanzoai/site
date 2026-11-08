@@ -157,6 +157,6 @@ Done here: Playwright walk of company, agents, memory at 1470×801 and 375×812:
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing before consent
 - [x] `V2:` line in the page file's top comment
-- [ ] Review read: `docs/review/products-family.md` is 5/10 on an older build (v4); fixes 1–6 checked against this build, re-walk pending
+- [ ] Review read: `docs/build-notes/review/products-family.md` is 5/10 on an older build (v4); fixes 1–6 checked against this build, re-walk pending
 
 Done here: Review fixes: 1 operations once (done), 2 h1 72px and section heads 44px (done), 3 phone pane height, code scroll, 44px links (done), 4 band (done), 5 no-figure row (done), 6 row-to-page open with no jump (done, verified by walk).

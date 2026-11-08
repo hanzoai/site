@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/World.jsx` · gallery: `docs/gallery/world/` · metric id: `cta_click:world.primary`
 
 Open copy questions for James: none: every visible word is Hanzo's. Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
-Shared changes requested (`docs/requests/world.md`): StageHero's phone pin keeps its sticky `top` offset (worked around in World.css); the footer hydration mismatch the critic logged.
+Shared changes requested (`docs/build-notes/requests/world.md`): StageHero's phone pin keeps its sticky `top` offset (worked around in World.css); the footer hydration mismatch the critic logged.
 Forks this page deleted: the blue arcs and cyan accent (greys now), the blinking monitor lights, the centred hero shared with /search.
 
 Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off.
@@ -155,6 +155,6 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/world.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/world.md` verdict 8 or more
 
-Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/World.jsx`. Last critic verdict on file: 7/10 (`docs/review/world.md`: three monitors read as placeholders, reduced-motion hero overlap, swap ghosting, three counters, Multi-Cloud 3-up, empty phone cards, dead drift slot, intermittent hydration warning); fixes 1 to 8 are in (keyed latency lanes, thin gridded score rows, chips sized to text, hairline unified view, reduced-motion object inside the stage, cut swaps, monitor counter hidden while pinned, centred phone drawings, drift line always present, hydration re-checked clean); this version waits for the next walk.
+Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/World.jsx`. Last critic verdict on file: 7/10 (`docs/build-notes/review/world.md`: three monitors read as placeholders, reduced-motion hero overlap, swap ghosting, three counters, Multi-Cloud 3-up, empty phone cards, dead drift slot, intermittent hydration warning); fixes 1 to 8 are in (keyed latency lanes, thin gridded score rows, chips sized to text, hairline unified view, reduced-motion object inside the stage, cut swaps, monitor counter hidden while pinned, centred phone drawings, drift line always present, hydration re-checked clean); this version waits for the next walk.

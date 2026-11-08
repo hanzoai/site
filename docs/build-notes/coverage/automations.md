@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Automations.jsx` · gallery: `docs/gallery/automations/` (this round: `desktop-r2.jpg`, `phone-r2.jpg`) · metric id: `cta_click:automations.primary`
 
 Open copy questions for James: "Category" (`c4_category`), and "Clear" (the search's clear button, screen-reader name only; not yet in `content/ui-strings.json`). Until approved, the control is icon-only and the name is for screen readers only.
-Shared changes requested (`docs/requests/automations.md`): none. Noted for the shared-system chat: kit `A` treats an in-page `#hash` as external and adds `target="_blank"`; this page passes `target="_self"` on its three hash links instead of changing the kit.
+Shared changes requested (`docs/build-notes/requests/automations.md`): none. Noted for the shared-system chat: kit `A` treats an in-page `#hash` as external and adds `target="_blank"`; this page passes `target="_self"` on its three hash links instead of changing the kit.
 Forks this page deleted: the dragged dock icons with spring snap-back (tap now), the invented "is not in the catalogue yet" line (Hanzo's "Not here?" now), raw .x-btn asks, the label above the h1, the browser's blue search-cancel control, the dotted-grid canvas shared with /auto.
 
 Measured on the dev server at 1470×801 and 375×812 (isMobile, hasTouch) with Playwright, 7 Nov round 2.
@@ -155,6 +155,6 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/automations.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/automations.md` verdict 8 or more
 
 Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line updated in `components/pages/apps/Automations.jsx`. Last critic verdict on file: 5/10 (7 Nov 16:30); every fix it lists is addressed in this round, which waits for the next walk.

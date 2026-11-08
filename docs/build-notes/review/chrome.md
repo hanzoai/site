@@ -7,7 +7,7 @@ Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). T
 
 First complaint: "On my phone the side panel jumps about while it runs, and the ask box bounces up and down. Then there's a whole screen that's just one sentence on white, and in the black room I type an address and can't see the answer without scrolling."
 
-Proof: `docs/review/chrome/desktop-first.jpg`, `phone-first.jpg`, `desktop-walk.jpg` (the text-only "Real-time browser intelligence" screen), `phone-walk.jpg` (the phone side panel after its run).
+Proof: `docs/build-notes/review/chrome/desktop-first.jpg`, `phone-first.jpg`, `desktop-walk.jpg` (the text-only "Real-time browser intelligence" screen), `phone-walk.jpg` (the phone side panel after its run).
 
 ## The 11 answers
 1. **Sells in 5 seconds, moves within 1 second?** Yes. The h1 (52px desktop, 40px phone) with its lede and one solid "Add to Chrome" sit beside a full-width Chrome window. Within a second the side panel ticks "Step 1/4", then 3/4 by about 4 s. On the phone the h1 runs 4 lines at 40px (the brief says 3), but the h1, lede, ask and the top of the window still fit the first screen.

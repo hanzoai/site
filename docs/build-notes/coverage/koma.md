@@ -3,7 +3,7 @@
 Page file: `components/pages/model/Koma.jsx` on `components/pages/model/Creative.jsx` and `components/v2/Launch.jsx` · gallery: `docs/gallery/koma/` · metric id: `contact_sales_submit`
 
 Open copy questions for James: none decided here. The page shows Hanzo's words only; labels that sat above headlines now sit below or beside them as captions.
-Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
+Shared changes requested (`docs/build-notes/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
 Forks this page deleted: our scene headings, raw `.x-btn` asks (now `Cta`), raw `<img>`/`<video>` (now `Img`, `Film`, `ModelFilm`), the studio-map tile, springs on the tab pill, cursor labels.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: JS off shows every word. Reduced motion shows the settled stage and t
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for `lib/track.js`: not on main; kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/koma.md` verdict 8 or more (pending a fresh walk of the current build)
+- [ ] Review read: `docs/build-notes/review/koma.md` verdict 8 or more (pending a fresh walk of the current build)
 
 Done here: the `V2:` line is in `app/koma/page.jsx`. Proof is in `docs/gallery/koma/` (desktop film and 4 phone stills). This card is refreshed after each review.

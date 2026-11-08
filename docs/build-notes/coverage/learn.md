@@ -3,7 +3,7 @@
 Page file: `components/pages/Learn.jsx` (+ `Learn.css`, `app/learn/page.jsx`) · gallery: `docs/gallery/learn/` · metric id: `api_key_created`
 
 Open copy questions for James: none (every line and link is Hanzo's own; parity 69/69 text, 26/26 links). The closing line reuses the hero lede word for word, set on two lines.
-Shared changes requested (`docs/requests/<page>.md`): none. The header's solid ask is outlined page-locally in `Learn.css` while either page "Get started" is on screen (as /playground does).
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none. The header's solid ask is outlined page-locally in `Learn.css` while either page "Get started" is on screen (as /playground does).
 Forks this page deleted: the `x-btn solid` hero button (now kit `Cta`), raw `<img>`/`<video>` (now kit `Img`/`Film`), the pill tag on the map, the map's outline (raise or outline: the panel's fill is kept), the hero-side and panel opacity fade-ups (now clip reveals), tile and card hover lifts, the 2.5rem tile titles, the three-column "Read the thinking" (now a hairline list); five separate sections after the map are now three scenes, collapsed questions and a closing ask.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: no live data; blocked films keep their posters; JS off shows every gu
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/learn.md` verdict 8 or more (read: 7/10; every fix answered, awaiting the re-walk)
+- [ ] Review read: `docs/build-notes/review/learn.md` verdict 8 or more (read: 7/10; every fix answered, awaiting the re-walk)
 
 Done here: `data-cta` `learn.hero` and `learn.close` (plus the two University links) via kit `Cta`, which fires `cta_click`. Review (7/10) answered item by item: dead screen gone, rail cards carry Hanzo stills with one numeral big, closing ask, FAQ icon, train within 1 s plus a rest breath, fade-ups at 2, phone station labels, lead post as a full-width 8/5 row, map not outlined, thinking as a list, hash sync. Item 12 (site greys, hydration badge) is shared and left to the conductor.

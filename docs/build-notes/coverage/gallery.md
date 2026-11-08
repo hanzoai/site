@@ -3,7 +3,7 @@
 Page file: `components/pages/Gallery.jsx` (+ `.css`) · gallery: `docs/gallery/gallery/` · metric id: `signup_start` (gallery hand-off; `data-cta` gallery.hero, gallery.viewer, gallery.close)
 
 Open copy questions for James: the wall label reads "Image + video gallery" beside "Curated template showcase for Hanzo products"; both are Hanzo's words and they disagree (kept as live). "Close", "Previous template" and "Next template" are aria-labels only, awaiting the register.
-Shared changes requested: the phone header ask (filed in `docs/requests/founder.md` for all my pages; meanwhile the page-local `usePhoneAsk` does it); the cookie card can cover a phone dialog's bottom edge (the viewer's controls moved to its top under 899px).
+Shared changes requested: the phone header ask (filed in `docs/build-notes/requests/founder.md` for all my pages; meanwhile the page-local `usePhoneAsk` does it); the cookie card can cover a phone dialog's bottom edge (the viewer's controls moved to its top under 899px).
 Forks this page deleted: the hand-written hero and close buttons (now kit `Cta`), the six Sigil canvases (each frame now holds a render of its own words), the three equal move cards (one stage with three states), the text-only plaque (now the Zen film card), the `data-cursor="View"` label, the `aria-live` counter, `saturate(.6)`, the off-deck greys.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: qc with api.hanzo.ai blocked: 0 page errors, 0 console errors at 1470
 - [x] `data-cta` on every primary (gallery.hero, gallery.viewer, gallery.close)
 - [x] Nothing identifier-bearing before consent
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/gallery.md` verdict 8 or more (awaiting the fresh critic)
+- [ ] Review read: `docs/build-notes/review/gallery.md` verdict 8 or more (awaiting the fresh critic)
 
 Done here: hero and close asks fire the kit `cta_click` event with their ids; no field values exist on the page.

@@ -1,6 +1,6 @@
 # /captable — James-eye review
 
-Reviewed 2026-11-07 (late session), walked moving at 1470x801 and 375x812 (Playwright, wheel 400px every 700ms, rest pairs at 0.4/1.2/2.7/3.7s on the first screen and on screens 6 and 14, hover and press on every main control, both range inputs dragged, term sheet and a plan panel opened and closed with Esc). Proof: `docs/review/captable/desktop-first.jpg`, `desktop-walk.jpg`, `phone-first.jpg`, `phone-walk.jpg`.
+Reviewed 2026-11-07 (late session), walked moving at 1470x801 and 375x812 (Playwright, wheel 400px every 700ms, rest pairs at 0.4/1.2/2.7/3.7s on the first screen and on screens 6 and 14, hover and press on every main control, both range inputs dragged, term sheet and a plan panel opened and closed with Esc). Proof: `docs/build-notes/review/captable/desktop-first.jpg`, `desktop-walk.jpg`, `phone-first.jpg`, `phone-walk.jpg`.
 
 Verdict: 7.5/10
 Ready: 8 Nov, copycheck missing 0 of 85 (hanzo.ai live), held up next to /api and /affiliate (James's new bar, no score). The hero Try Hanzo is the one solid fill (phones too), the ways rows' titles and links are real text runs (For Developers, Need a Custom Solution?, View on GitHub, Read the docs were invisible to the check as b/em), and the inline Captable, Inc. link answers hover. Usable: the round calculator, waterfall, term sheet and docs links. taste/unique OK; 0 console errors, no overflow at 1470 and 375.

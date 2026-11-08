@@ -4,7 +4,7 @@ Page file: `components/pages/cloudfam/CloudProduct.jsx` (+ `cloudfam.css`, `clou
 Members checked by hand for this card: `/cloud/gpus` (stage, Compute) and `/cloud/evals` (path, Science); also walked `/cloud/embeddings` (wide), `/cloud/secrets` (field) and `/cloud/local` (CLI boot).
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/platform.md`, shared with this family): kit `Band` should accept an `id` so its primary carries `data-cta`; kit `Copy` should not show its tick when the clipboard write fails; `lib/cta.js`, `lib/track.js` and a kit `PageHero` do not exist yet.
+Shared changes requested (`docs/build-notes/requests/platform.md`, shared with this family): kit `Band` should accept an `id` so its primary carries `data-cta`; kit `Copy` should not show its tick when the clipboard write fails; `lib/cta.js`, `lib/track.js` and a kit `PageHero` do not exist yet.
 Forks this page deleted: the per-family accent colours (`accentOf`), the full-screen genesis-line room (now a quiet strip), the second solid button in the console and in Paste and ship (now outlines), the hidden ghost prompt that blinked on arrival.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -156,6 +156,6 @@ Done here: No network calls. `look.cjs` errors: none on gpus, embeddings, evals,
 - [ ] `data-cta` on every primary; events only through `lib/track.js` (hero yes; Band primary blocked on kit; `lib/track.js` does not exist)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [ ] `V2: <score>/10 <one line>` in the page file's top comment (added after the critic's verdict)
-- [ ] Review read: `docs/review/cloud-family.md` verdict 8 or more (re-review requested after this rework)
+- [ ] Review read: `docs/build-notes/review/cloud-family.md` verdict 8 or more (re-review requested after this rework)
 
 Done here: The pages send nothing; per-page `data-cta` ids on the hero asks. Gallery proof in `docs/gallery/cloud/`. Critic verdict before this rework: 5/10; this card is updated with the new verdict. 8 Nov: copycheck missing 0 on all 42 members (cascading headings carry their whole text once, status chips as plain text, the session note on every member).

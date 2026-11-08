@@ -2,8 +2,8 @@
 
 Page file: `components/pages/Gen.jsx` · gallery: `docs/gallery/gen/` · metric id: `api_key_created`
 
-Open copy questions for James: none new. The header ask label ("Try Hanzo" while the page's ask is "Get API key") is a shared change, filed in `docs/requests/apps1.md` item 1.
-Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own ask row with `<Cta id>`); the header ask and the ask bar landed with the shared system.
+Open copy questions for James: none new. The header ask label ("Try Hanzo" while the page's ask is "Get API key") is a shared change, filed in `docs/build-notes/requests/apps1.md` item 1.
+Shared changes requested (`docs/build-notes/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own ask row with `<Cta id>`); the header ask and the ask bar landed with the shared system.
 Forks this page deleted: the native `<select>` agent picker (now Previous/Next buttons), the page-local tabs (now kit `Tabs`/`TabPanel`), the page-local FAQ (now kit `Faq`, multi-open, `#q-slug`), the raw `.x-btn` hero links (now `<Cta>` and text links), `Magnetic`, every label above a heading (h1's included), the scrambled-letter flip.
 
 ## 1. Strategy and conversion
@@ -39,7 +39,7 @@ Done here: the h1 is plain server HTML (no mask holding it back on a slow machin
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta id="gen.hero" thumb>` and `<Cta id="gen.band">`; secondaries carry `gen.*` ids. Desktop: the shared Ask swaps the header to a solid "Get API key" after the hero (outlined while the hero's ask shows). Phones (measured 8 Nov at 375×812): `usePhoneAsk` outlines the header's "Try Hanzo" while the hero's "Get API key" is on screen, so one solid shows at a time; after the hero the header goes back to a solid "Try Hanzo", because the hook keeps Hanzo's label when "Get API key" would end 2.7px past the 16px gutter (right edge 361.7 > 359), and the shared slim bar did not rise at any depth (0, 900, 2000, 4000, 6000). So on phones the page's own ask shows in the hero and the closing room only; asked of the shared owner (docs/requests/apps1.md item 1). Every Copy copies the shown command; `$` is `user-select: none` and not copied.
+Done here: `<Cta id="gen.hero" thumb>` and `<Cta id="gen.band">`; secondaries carry `gen.*` ids. Desktop: the shared Ask swaps the header to a solid "Get API key" after the hero (outlined while the hero's ask shows). Phones (measured 8 Nov at 375×812): `usePhoneAsk` outlines the header's "Try Hanzo" while the hero's "Get API key" is on screen, so one solid shows at a time; after the hero the header goes back to a solid "Try Hanzo", because the hook keeps Hanzo's label when "Get API key" would end 2.7px past the 16px gutter (right edge 361.7 > 359), and the shared slim bar did not rise at any depth (0, 900, 2000, 4000, 6000). So on phones the page's own ask shows in the hero and the closing room only; asked of the shared owner (docs/build-notes/requests/apps1.md item 1). Every Copy copies the shown command; `$` is `user-select: none` and not copied.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -153,6 +153,6 @@ Done here: nothing is fetched; console errors none; JS off shows every word.
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/gen.md` verdict 8 or more
+- [x] Review read: `docs/build-notes/review/gen.md` verdict 8 or more
 
 Done here: `gen.hero`, `gen.band` plus `gen.*` secondaries; `<Cta>` sends `cta_click`. Review read (6/10): fixes 1 to 5 done in order (labels gone, h1's included; ask bar off with apps1.md referenced; closing ask row with "Get API key" and "Read the docs", Read and Paste moved above the FAQ; h1 paints first; this card). Self-score 8/10, pending the critic's re-walk.

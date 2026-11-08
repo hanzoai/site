@@ -3,7 +3,7 @@
 Page file: `components/pages/DesignPage.jsx` (+ `DesignPage.css`, shared `components/v2/AppType.css`, `AppScenes`, `x-edison/AppLines`, `components/Opener.jsx`) · gallery: `docs/gallery/design/` · metric id: `signup_start`
 
 Open copy questions for James: none decided. The hero ask "Open Design" points at /design itself (Hanzo's own link); kept as live, but it is a self-loop on this page: should it go to the app?
-Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own Band markup with `<Cta id>` until then). The header ask and the phone ask bar landed in the shared system, so `data-ask="off"` is gone from `<main>`.
+Shared changes requested (`docs/build-notes/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own Band markup with `<Cta id>` until then). The header ask and the phone ask bar landed in the shared system, so `data-ask="off"` is gone from `<main>`.
 Forks this page deleted: the oversized 112px editorial headline (now 52px beside the window), four kickers over headlines (now captions under them), the "Hanzo Design" pill over the studio heading, the outlined "Read the docs" and "Open Hanzo Studio (Cinema)" buttons (now text links), the solid "Deploy to Cloud" (now a text link before the Band), the "1 / 4", ratio and format chips that floated over the artifacts, the "Open" cursor label on the model tiles, the hover videos on six model tiles (now kit `Img`; the one clip uses kit `Film`), raw `<img>`/`<video>`, `setInterval`, spring transitions, the magenta hue.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: look.mjs and check.mjs report no console errors at either size.
 - [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload (the brief never leaves the page)
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/design.md` verdict 8 or more (no review yet)
+- [ ] Review read: `docs/build-notes/review/design.md` verdict 8 or more (no review yet)
 
 Done here: `data-cta` ids listed in part 4.

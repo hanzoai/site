@@ -3,7 +3,7 @@
 Page file: `components/pages/Research.jsx` (+ `Research.css`) · gallery: `docs/gallery/research/` · metric id: `research.hero` / `research.reader` (cta_click to papers.hanzo.ai or hips.hanzo.ai), `research.close` (GitHub)
 
 Open copy questions for James: none (no copy changed; "Research" is Hanzo's label, set as a caption under the h1; "When it was published", "Previous paper", "Next paper", "Pause" are control and chart labels).
-Shared changes requested (`docs/requests/research.md`): none.
+Shared changes requested (`docs/build-notes/requests/research.md`): none.
 Forks this page deleted: the floating AskBar pill, the staged right-hand deck and its scroll runway, the desk's scroll drift, the gliding kinds pill, every spring (row thumbs, title page, pills), every hover lift and slide.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,7 +155,7 @@ Done here: JS off measured 0 hidden text blocks at 1470 and 375; nothing on the 
 - [x] `data-cta` on every primary (`research.hero`, `research.reader`, `research.close`); n/a: `lib/track.js` wiring is shared
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file's top comment
-- [x] Review read: `docs/review/research.md` (7/10 on the walk before these fixes; its five points are addressed in this build)
+- [x] Review read: `docs/build-notes/review/research.md` (7/10 on the walk before these fixes; its five points are addressed in this build)
 - [x] Slice D entrances (MOTION-MAP row, page-local `research/enter.js` + `enter.css`, in page order): split-merge on the hero (the desk from the right, the words under the h1 from the left, CSS from first paint), focus-pull on the dark room (the statement sharpens out of a blur while its heading softens for a beat; time-based, so word-light stays the only scroll effect there), scramble on the glance (19 / 6 / 5 decode out of scrambled digits drawn over the real ones), domino on the papers rows (tip up from their bottom edge, 90 ms apart), diagonal-wipe on the specifications and standards. Probe after a slow scroll at 1470 and 375: all fired and ended visible; reduced motion 0 errors.
 - [x] Slice D, 7 Nov: the h1 cuts in on CSS from first paint (measured settled by 1.1 s on the dev server, no hydration wait); filtering keeps the list at its unfiltered height, so the footer never jumps into view (Standards, an empty search and back to All: footer top unchanged at 1470); Standards numbered 01-05 (00 stays the All HIPs row); the rail's month reads "HIPs" over the specifications and standards; reduced motion loads with 0 console errors.
 

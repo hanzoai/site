@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Flow.jsx` · gallery: `docs/gallery/flow/` · metric id: `app_handoff`
 
 Open copy questions for James: "Step through it" is used once as a heading (the chapter); live hanzo.ai also prints it as a small tab label, which this page does not repeat (the playground room takes no heading of its own). Licence: Hanzo's live /flow copy says both "MIT" (the fact strip, "MIT · Self-hosted") and "License: Apache-2.0" (Get Flow); both are kept word for word, so which is true needs James. Shared request: the phone header keeps a solid "Try Hanzo" beside the hero's solid "Open Flow", and is clipped at 320 (shared chrome). Node names are Hanzo's own component list, written as Hanzo writes them (lower case, with a CSS first capital); what a node "received" and "returned" is the node before and after it, and the last one returns "REST endpoint", all fragments of Hanzo's copy. The earlier invented demo data ("a file", "chunks", "an answer", "structured output", "running", "in"/"out") is gone; a copy audit of every visible string leaves only the kit dialog's composed "Open …" labels.
-Shared changes requested (`docs/requests/<page>.md`): Flow product media. The critic asked for real Flow canvas screenshots or screen film (part 10); `public/` holds none (searched for flow, langflow, canvas on 7 Nov), so none is invented and the page's objects stay drawn. Asked for: Hanzo's own Flow canvas frames (4+) or a short screen film, to place in the pinned stage and the fact strip. `lib/cta.js` is not on main yet, so the ask label is the live hero's own "Open Flow".
+Shared changes requested (`docs/build-notes/requests/<page>.md`): Flow product media. The critic asked for real Flow canvas screenshots or screen film (part 10); `public/` holds none (searched for flow, langflow, canvas on 7 Nov), so none is invented and the page's objects stay drawn. Asked for: Hanzo's own Flow canvas frames (4+) or a short screen film, to place in the pinned stage and the fact strip. `lib/cta.js` is not on main yet, so the ask label is the live hero's own "Open Flow".
 Forks this page deleted: the v1 hand-written `Hero`, the props accordion, the `Get` block from cloud/Frame, `Rise` fade-ups, raw `.x-btn` asks and the wrapping data-thumb spans (now kit `Cta`), the duplicate desktop `AskBar`.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -41,7 +41,7 @@ Done here: The first screen is the dotted canvas with the 52px h1 among six node
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: v2 `BizAsk` (`flow.hero` with `thumb`, `flow.close`); the desktop header carries "Open Flow" past the hero (the phone header label is shared chrome, requested in docs/requests/cloud2.md). The terminal Copy copies `uv pip install hanzoflow\nuv run hanzoflow run`, exactly the two commands shown (the `$` is a separate glyph).
+Done here: v2 `BizAsk` (`flow.hero` with `thumb`, `flow.close`); the desktop header carries "Open Flow" past the hero (the phone header label is shared chrome, requested in docs/build-notes/requests/cloud2.md). The terminal Copy copies `uv pip install hanzoflow\nuv run hanzoflow run`, exactly the two commands shown (the `$` is a separate glyph).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -155,6 +155,6 @@ Done here: Nothing is fetched live; with JS off the canvas shows its nodes and e
 - [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta` emits `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/flow.md` verdict 8 or more (no review written yet)
+- [ ] Review read: `docs/build-notes/review/flow.md` verdict 8 or more (no review written yet)
 
 Done here: `data-cta="flow.hero"` and `"flow.close"`; V2 8/10; gallery refilmed at 1470×801 and 375×812.

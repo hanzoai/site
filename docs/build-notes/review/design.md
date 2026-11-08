@@ -19,7 +19,7 @@ First complaint: "The top is lovely: the music app is actually playing. Then on 
    - **Desktop is clean:** CLS 0.0004, no font swap, no horizontal overflow at either size.
 7. **Which reference does it feel like? Apple, in the hero.** It has the product as the hero, a live demo and one idea per screen down to the dark room. The black room is the synchronized-style "card opens into its page" set-up. After that, no reference's motion is present: the grids are plain osply-less tiles.
 8. **Is it different from its neighbours? Yes.** No other page I know has a playing music app with synth pads as the hero, or a before/after divider.
-9. **Are all 18 parts covered? The card is filled, but one claim is false.** `docs/coverage/design.md` has 18/18 parts, and its part 15 claims "check.mjs at 375×812 … CLS 0.000" and "375×812 … pass with no overlap". I measured CLS 0.06–0.12 at 375 and a clipped section, so the false claim caps this page at 7 (_shared.md §2).
+9. **Are all 18 parts covered? The card is filled, but one claim is false.** `docs/build-notes/coverage/design.md` has 18/18 parts, and its part 15 claims "check.mjs at 375×812 … CLS 0.000" and "375×812 … pass with no overlap". I measured CLS 0.06–0.12 at 375 and a clipped section, so the false claim caps this page at 7 (_shared.md §2).
 10. **Any banned tells? None outright.** It is greys only and `taste.py` passes on the JSX and CSS. There is no gradient text, no Inter and no eyebrow above the h1. The component header comment still says "Accent: magenta", which is stale; no magenta renders.
 11. **Is the copy untouched? Yes.** Parity is OK: text 90/90, links 13/13. "Your brief" six times is the Beyond's placeholder echo, not Hanzo copy, and with no brief typed it reads as filler.
 

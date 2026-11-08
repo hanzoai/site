@@ -34,7 +34,7 @@ Walked 7 Nov, page file at `d42aa1a` (`components/pages/Enterprise.jsx`, `Enterp
     - **A floating pill over content.**
 11. **Copy untouched?** Yes (parity clean).
 
-## Card check (`docs/coverage/enterprise.md`)
+## Card check (`docs/build-notes/coverage/enterprise.md`)
 - The card uses the old PLAN area headings rather than MASTER's `Done here:` lines. All 18 are present.
 - **Part 11 is false:** it claims 44px targets. At 375 "How Hanzo is secured", "Trust center", "All customer stories", "Zen 6 on three machines", "Zen 6 Max" and "Talk to sales" are 21px tall with no larger hit area. That alone caps the page at 7.
 - **Part 4** claims the ask bar carries "Get Enterprise plan". True, but that bar is the floating desktop pill the new rules fail.

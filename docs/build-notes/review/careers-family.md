@@ -16,7 +16,7 @@ First complaint: "On the compiler role the button is orange and there's an orang
 6. **Overlap, font swap, layout shift?** None; layout shift 0.
 7. **Which reference, and is its motion there?** osply / hamol editorial (big title, numbered contents). Present but static.
 8. **Different from its neighbours?** The two members differ only by tint and words.
-9. **All 18 parts covered?** See below. `docs/coverage/careers.md` is the index's; no family coverage file.
+9. **All 18 parts covered?** See below. `docs/build-notes/coverage/careers.md` is the index's; no family coverage file.
 10. **Banned tells?** Yes:
     - An eyebrow above the h1 on both: a mono tag line ("ENGINEERING · REMOTE · FULL-TIME", "AI RESEARCH · REMOTE / SF · FULL-TIME").
     - A UI hue on the compiler role: orange tag line, orange solid button and border, orange contour. JAMES.md allows 0 UI hues. (The research role is grey, so the hue is per member.)

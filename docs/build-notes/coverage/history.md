@@ -3,7 +3,7 @@
 Page file: `components/pages/History.jsx` (+ `History.css`, `historyData.js`, `story.css`, `StoryClose.jsx`, `StoryPause.jsx`) · gallery: `docs/gallery/history/` · metric id: `contact_sales_submit` (`data-cta="history.*"`)
 
 Open copy questions for James: none decided. Years beside customer figures appear only where Hanzo's own year copy has them. Question: the page says "1,600+ repositories" where other Hanzo copy says "1700+ repos" (kept as live).
-Shared changes requested (`docs/requests/about.md`, shared by the Story pages): kit Band word blur; v2/Lines timing; the floating ask bar.
+Shared changes requested (`docs/build-notes/requests/about.md`, shared by the Story pages): kit Band word blur; v2/Lines timing; the floating ask bar.
 Forks this page deleted: the page's own buttons and text links (now kit `Cta`); the drag cursor label; the metric printed twice on picture-less plates (now a Sigil); the year cut reused for "Your year" (now the year's plate); the phone swipe rail of years (stacked again); the clippings' outline (shadow only); the badge above the h1; kickers above headlines, the pill above each year title and the tag above each metric (now captions after them); the gold accent; the odometer digits and the split-flap board (no invented digits); three equal hero buttons; the separate dark FDE room and back-link section (now in `StoryClose`); raw `<img>`/`<video>` on the plates.
 
 ## 1. Strategy and conversion
@@ -90,7 +90,7 @@ Done here: signature = word-light (the statement lights as it is read); the runn
 - [x] Alt: decorative plates `alt=""`, the year's figure stands in
 - [x] No dimmed photo
 
-Done here: 8 Nov: Hanzo's own customer logos are in `public/logos/customers/`, so each plate shows that year's logo in the plate's own ink (one tone, no hue) over the year's figure set large ($5.8M Raised, 120k ETH Raised, ...); years without a logo show the figure alone; dark and light plates alternate. The figure is no longer repeated in the text column (kept there for screen readers), and a badge that is the same words as the figure is said once, on the plate. The two photos (`/customers/kanoa/buds.webp`, `/customers/damon-motorcycles/reveal.webp`) are still not in `public/`, so those years fall back to their logo (request in `docs/requests/history.md`); 2026 shows the Zen film.
+Done here: 8 Nov: Hanzo's own customer logos are in `public/logos/customers/`, so each plate shows that year's logo in the plate's own ink (one tone, no hue) over the year's figure set large ($5.8M Raised, 120k ETH Raised, ...); years without a logo show the figure alone; dark and light plates alternate. The figure is no longer repeated in the text column (kept there for screen readers), and a badge that is the same words as the figure is said once, on the plate. The two photos (`/customers/kanoa/buds.webp`, `/customers/damon-motorcycles/reveal.webp`) are still not in `public/`, so those years fall back to their logo (request in `docs/build-notes/requests/history.md`); 2026 shows the Zen film.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass
@@ -147,6 +147,6 @@ Done here: with JS off a `noscript` rule stacks the 13 years; reduced motion hol
 - [x] `data-cta` on primaries; no analytics wired yet
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file
-- [x] Review read: `docs/review/history.md` (round 3, 7/10, 7 Nov); fixes applied 8 Nov
+- [x] Review read: `docs/build-notes/review/history.md` (round 3, 7/10, 7 Nov); fixes applied 8 Nov
 
-Done here: `docs/review/history.md` round 3 (7/10): 1 hydration (the Your year input is `suppressHydrationWarning`; 0 console errors in clean loads at both sizes; footer part filed), 2 plates are real logos plus the figure, 3 Your year keeps the dimmed plate, 4 n/a (scene gone), 5 h1 first, 6 header label filed in `docs/requests/history.md` (shared Ask), 7 deck tokens on `.xhi` (no scattered literals), hover inside `@media (hover:hover)`, the clipping counter under its figure, 8 this card. Copy: an offline copycheck against `content/live/history.json` reads missing 0 of 183 (hanzo.ai itself is not reachable from the cloud session).
+Done here: `docs/build-notes/review/history.md` round 3 (7/10): 1 hydration (the Your year input is `suppressHydrationWarning`; 0 console errors in clean loads at both sizes; footer part filed), 2 plates are real logos plus the figure, 3 Your year keeps the dimmed plate, 4 n/a (scene gone), 5 h1 first, 6 header label filed in `docs/build-notes/requests/history.md` (shared Ask), 7 deck tokens on `.xhi` (no scattered literals), hover inside `@media (hover:hover)`, the clipping counter under its figure, 8 this card. Copy: an offline copycheck against `content/live/history.json` reads missing 0 of 183 (hanzo.ai itself is not reachable from the cloud session).

@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Functions.jsx` (+ `Functions.css`) · gallery: `docs/gallery/functions/` · metric id: `api_key_created` (proxy on this page: the `functions.hero` click)
 
 Open copy questions for James: (1) "One handler, your choices" (the composer's h2) and "Compose yours" are not Hanzo copy; both were added by the earlier rebuild and are kept, "Compose yours" now set under the h2 as its caption (it used to sit above it). (2) The composer's read-back lines join Hanzo's sentences to the chosen runtime, trigger or move ("Node.js: name a runtime and point at a handler file."), and "Choose at least one trigger." is ours. (3) The hero's demo words ("Triggers", "Kubernetes", "replicas", "scaled to zero", "warm pool", "node 1", "editing", "deployed") and the scenes' labels are illustration. (4) The hero's primary is Hanzo's "Try Hanzo" (→ /login), the same words as the header's ask; any change is James's call. `lib/cta.js` does not exist yet.
-Shared changes requested (`docs/requests/functions.md`): none filed; kit gaps reported to the Cloud 1 lead: `KeynoteChapters`' "01 / 06" count is 12px (13px here, 14px on phones), the close's `CodeBlock` caption "Agent prompt" and `Copy` are 12 to 12.5px on phones, the stage's text-link secondary is 21px tall (44px here).
+Shared changes requested (`docs/build-notes/requests/functions.md`): none filed; kit gaps reported to the Cloud 1 lead: `KeynoteChapters`' "01 / 06" count is 12px (13px here, 14px on phones), the close's `CodeBlock` caption "Agent prompt" and `Copy` are 12 to 12.5px on phones, the stage's text-link secondary is 21px tall (44px here).
 Forks this page deleted: Frame's `Related` (now page-local hairline rows on the graphite close), Frame's `useEvery` and `useLive` (the 380 ms `setInterval` and the scenes' interval loops: now single timeouts, scenes run once and rest), the replica count that climbed through invented numbers (now filled against hollow slots and a word), the hero-sized "0" in the warm scene (now three slots that empty), the overshoot curve `cubic-bezier(.34, 1.56, .64, 1)`, the springs on the composer pills, the per-page accent.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: Console errors: none (film, sweep, look script; desk and phone). No t
 - [x] `data-cta` on every primary; events only through the kit `Cta`'s `cta_click` (`hz-event`; `lib/track.js` is not built yet)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: `docs/review/functions.md` does not exist yet (no critic verdict to answer)
+- [ ] Review read: `docs/build-notes/review/functions.md` does not exist yet (no critic verdict to answer)
 
 Done here: `data-cta` ids in part 4; metric `api_key_created`. Gallery: `docs/gallery/functions/desktop.mp4`, `desktop.jpg`, `phone-1.jpg` to `phone-3.jpg`, filmed with 0 console errors and no sideways scroll.

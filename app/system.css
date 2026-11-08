@@ -1,6 +1,6 @@
 /* Hanzo's shared system: tokens, component states, the ask bar, accessibility. Loaded once by app/layout.jsx, after
    globals.css and before any page CSS, so a page rule always wins over these defaults.
-   HOW TO USE (full list in docs/review/SYSTEM.md):
+   HOW TO USE (full list in docs/build-notes/review/SYSTEM.md):
    - Colour: the grey and silver deck only (0 UI hues). Use var(--hz-50 … --hz-950), the silvers, or the room tokens
      var(--room-bg / -surface / -ink / -soft / -faint / -line / -fill). Put data-room="dark" on a dark section and every
      room token (and the focus ring, and solid buttons) flips for it. Colour comes only from Hanzo's own media.

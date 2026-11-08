@@ -9,7 +9,7 @@ Open copy questions for James:
 - (5) The index keeps Hanzo's own order: SKULLY first, as on hanzo.ai. An earlier build moved it after Triller; that change is reverted, so there is nothing to decide.
 - (4) $8.4M and $7M+ sit on the plate beside the case year. Both come word for word from the case pages, with the year as the case copy prints it.
 
-Shared changes requested (`docs/requests/customers.md`):
+Shared changes requested (`docs/build-notes/requests/customers.md`):
 - Filed: the media mirror into `public/`, a hold cap inside the shared `openDoor` (wrapped page-locally here), and the header ask (shared chrome, unchanged).
 - Also noted: a shared `BACKERS` module (lib, Data chat) and a register string for the em dash.
 
@@ -203,7 +203,7 @@ Done here: with hanzo.ai blocked (this box), the page is complete. The only cons
 - [x] `data-cta` on every primary. `lib/track.js` does not exist yet.
 - [x] Nothing identifier-bearing; no payload
 - [x] `V2: 8/10 …` in the page file's top comment
-- [x] Review read: `docs/review/customers.md` re-run was 7/10. Its fixes are done:
+- [x] Review read: `docs/build-notes/review/customers.md` re-run was 7/10. Its fixes are done:
   - the phone scene (a sticky figure strip that swaps one in, one out, plus rows reading in);
   - the stage hands off in sequence;
   - "120,000 ETH" is on one line;

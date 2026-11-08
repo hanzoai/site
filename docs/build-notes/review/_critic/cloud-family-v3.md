@@ -44,7 +44,7 @@ Proof: `cloud-family.jpg` (first screens of gpus, kubernetes, logs and evals, pl
    - No scroll-speed marquee.
    - **No card that opens into its page.** A related card or a finder row hard-cuts through a white frame, and the old page's ask bar lingers on the new page for about 350 ms. The coverage file says the cards open into their page; they do not.
 8. **Different from its neighbours?** No. /cloud/gpus, /cloud/kubernetes, /cloud/logs and /cloud/evals have the same layout, the same hero medium, the same signature, the same object (see proof) and the same section order. Only the word and the contour seed change. /cloud/local is the one real variant.
-9. **All 18 parts covered?** No, see below. `docs/coverage/cloud-family.md` exists, but several of its claims do not hold.
+9. **All 18 parts covered?** No, see below. `docs/build-notes/coverage/cloud-family.md` exists, but several of its claims do not hold.
 10. **Banned tells?** No hue (0 saturated UI pixels; the only colour on the page is the shared footer's privacy toggle), no eyebrow over the h1, no gradient text, no green. Present:
     - Three cards in a row in Related.
     - Three equal columns of figures on /cloud/local.

@@ -3,7 +3,7 @@
 Page file: `components/pages/BetaApply.jsx` (`BetaAccess`, shared with the other application) · route: `app/beta/apply/page.jsx` · gallery: `docs/gallery/beta/apply/` · metric id: `beta_submitted`
 
 Open copy questions for James: none (every line is hanzo.ai's own: its PROGRAMS, ABOUT and Portal form strings).
-Shared changes requested (`docs/requests/<page>.md`): none; two tiny shared edits made and named in commit 0aaf15bc: `lib/routes.json` gains /beta/apply and /beta/research (so the site's links stay on the site), `content/pages.json` gains their hanzo.ai titles and descriptions (share cards).
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none; two tiny shared edits made and named in commit 0aaf15bc: `lib/routes.json` gains /beta/apply and /beta/research (so the site's links stay on the site), `content/pages.json` gains their hanzo.ai titles and descriptions (share cards).
 Forks this page deleted: none (a new route; it uses kit `Cta`, `Film` and `Img`, no forked button or video).
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: Empty: the pass shows only its film until the first answer lands. Sen
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - ~~`V2: <score>/10 <one line>` in the page file's top comment~~ n/a: James, 7 Nov: no more scores; the route header carries Persona, Goal, CTA, Metric, Signature and Beyond instead.
-- [x] Review read: `docs/review/<page>.md` verdict 8 or more
+- [x] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta` on every button (kit Cta fires `cta_click`); the finish fires `beta_submitted` with only the programme name through the site's `hz-event` channel (no `lib/track.js` exists; this is the channel kit Cta uses); no field value ever leaves the page. Review: `docs/review/beta/apply.md` (Ready line, copycheck missing 0 of 7).
+Done here: `data-cta` on every button (kit Cta fires `cta_click`); the finish fires `beta_submitted` with only the programme name through the site's `hz-event` channel (no `lib/track.js` exists; this is the channel kit Cta uses); no field value ever leaves the page. Review: `docs/build-notes/review/beta/apply.md` (Ready line, copycheck missing 0 of 7).

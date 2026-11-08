@@ -2,8 +2,8 @@
 
 Page file: `components/pages/cloud/Network.jsx` (+ `.css`) · route: `app/network/page.jsx` · gallery: `docs/gallery/network/` · metric id: `api_key_created`
 
-Open copy questions for James: none decided. Three to confirm: (1) the live page sets "Compute Marketplace" as an eyebrow over the h1; MASTER part 7 moves it, so it names the fabric's toolbar here, words unchanged; (2) "Buy Compute" is the live hero label and links to the docs (https://docs.hanzo.ai/docs/network), not to a purchase flow, so the metric it feeds is closest to `api_key_created` (the black room's "Get an API Key"); (3) the drawn UI strings of the demo ("ask the fabric for", "routing…", "idle · nothing billed", "attested ✓", "declared ✕", "Merkle root" …) are listed for the register in `docs/requests/network.md` #7.
-Shared changes requested (`docs/requests/network.md`): Frame's Paste on the deck (page-local overrides until then); `Copy` press to .97; the sticky ask (the header says "Try Hanzo", the desktop bar floats); a hue in the shared nav icon; the pinned chapter count above the h3; `lib/cta.js` and `lib/track.js`; the drawn UI strings into `content/ui-strings.json`.
+Open copy questions for James: none decided. Three to confirm: (1) the live page sets "Compute Marketplace" as an eyebrow over the h1; MASTER part 7 moves it, so it names the fabric's toolbar here, words unchanged; (2) "Buy Compute" is the live hero label and links to the docs (https://docs.hanzo.ai/docs/network), not to a purchase flow, so the metric it feeds is closest to `api_key_created` (the black room's "Get an API Key"); (3) the drawn UI strings of the demo ("ask the fabric for", "routing…", "idle · nothing billed", "attested ✓", "declared ✕", "Merkle root" …) are listed for the register in `docs/build-notes/requests/network.md` #7.
+Shared changes requested (`docs/build-notes/requests/network.md`): Frame's Paste on the deck (page-local overrides until then); `Copy` press to .97; the sticky ask (the header says "Try Hanzo", the desktop bar floats); a hue in the shared nav icon; the pinned chapter count above the h3; `lib/cta.js` and `lib/track.js`; the drawn UI strings into `content/ui-strings.json`.
 Forks this page deleted: the six-block chain (it told /node's facts with /node's pictures; the fabric is now the chapters' object), the white "Paste and ship" band (the prompt now lives in the black room), the endless demo loop (it runs once and rests), the floating "Compute Marketplace" panel with its shadow over the map, the white wash under the lede, the 128px title's halo, the springs on the picker, lend toggle and placement tag, the shadows on blocks, pills and packet, the opacity fade that failed contrast, the hairline-plus-fill on the ends, the arrow that slid on hover, the peer that scaled on hover, the 56px card titles, the eyebrows over the two ends' titles, every Apple-grey literal.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -37,7 +37,7 @@ Done here: The first screen is the 52px title, lede and ask together on the left
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` (the kit's 48px `lx-cta`; swapped when the deck `Cta` lands)
-- [x] Sticky ask in header and bar after the hero, same label: on desktop the shared header now carries a solid "Buy Compute" at every stop (8 Nov walk, `shot.cjs`), with no floating bar; on phones the slim bottom bar says "Buy Compute" after the hero while the header keeps the shared "Try Hanzo" (shared, `docs/requests/network.md` #3).
+- [x] Sticky ask in header and bar after the hero, same label: on desktop the shared header now carries a solid "Buy Compute" at every stop (8 Nov walk, `shot.cjs`), with no floating bar; on phones the slim bottom bar says "Buy Compute" after the hero while the header keeps the shared "Try Hanzo" (shared, `docs/build-notes/requests/network.md` #3).
 - [x] Copy button copies exactly the displayed text; failure never says Copied (Frame's Paste and the lend toggle use the kit `Copy`)
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -155,6 +155,6 @@ Done here: The fabric's own states are designed: routing, a peer with the model 
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for the file: not built yet; ids are in place)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/network.md` verdict 8 or more: read; it is 7/10 on `0d2a243`. Its fixes 1, 2, 4, 5 and 6 are done here; fix 3 (the sticky ask) is shared and filed. Awaiting the re-review.
+- [ ] Review read: `docs/build-notes/review/network.md` verdict 8 or more: read; it is 7/10 on `0d2a243`. Its fixes 1, 2, 4, 5 and 6 are done here; fix 3 (the sticky ask) is shared and filed. Awaiting the re-review.
 
 Done here: `network.hero` and `network.close` are set. Gallery: `docs/gallery/network/d.mp4`, `d.jpg`, `p.jpg` (filmed with `film.cjs` after the fixes, no errors). My own score is 8/10; the critic's verdict decides.

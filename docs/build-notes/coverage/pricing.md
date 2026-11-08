@@ -3,7 +3,7 @@
 Page file: `components/pages/Pricing.jsx` (+ `Pricing.css`) · gallery: `docs/gallery/pricing/` · metric id: `cta_click` on `pricing.free`, `pricing.go`, `pricing.pro`
 
 Open copy questions for James: the pricing source of truth (no `lib/plans.js` yet; prices are Hanzo's strings in the page); the dead pricing-button destinations (Dev, Max, Ultra and Team have no checkout link on Hanzo's page; they offer "Chat with buying specialist" until James names one).
-Shared changes requested (`docs/requests/pricing.md`): the phone header ask outlined while a page's solid ask shows; the Band's blur reveal and double keyboard stop. Waiting on shared owners for `lib/cta.js`, `lib/plans.js`, `PageHero` and `tokens.css`; the page uses page-local deck values until then.
+Shared changes requested (`docs/build-notes/requests/pricing.md`): the phone header ask outlined while a page's solid ask shows; the Band's blur reveal and double keyboard stop. Waiting on shared owners for `lib/cta.js`, `lib/plans.js`, `PageHero` and `tokens.css`; the page uses page-local deck values until then.
 Forks this page deleted: the dark "recommended" Pro and Team cards, three solid buttons in a row, the page-local tab bar (now kit `Tabs`), hand-written tables (now kit `DataTable`), the reading-row stripe, the duplicate "Pay as you go" price line, the invented helper sentences, the roll-up-from-$0 arrival.
 
 ## 1. Strategy and conversion
@@ -166,7 +166,7 @@ Done here:
 - [x] `data-cta` on every primary. `lib/track.js` is not merged; kit `Cta` dispatches `hz-event` cta_click
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/pricing.md` (7.5) — its five To-reach-8 fixes are in (art answers the picker, one thumb, phone API shorter, FAQ gap and one panel, card corrected); marked Ready in slice D, 7 Nov
+- [x] Review read: `docs/build-notes/review/pricing.md` (7.5) — its five To-reach-8 fixes are in (art answers the picker, one thumb, phone API shorter, FAQ gap and one panel, card corrected); marked Ready in slice D, 7 Nov
 
 Done here: The V2 line is updated after the critic's next walk. The critic's eight fixes are all in this build:
 1. picker, one solid ask

@@ -8,6 +8,6 @@ UI strings: `Pause`, `Close` and `Copy` are already listed in `content/ui-string
 3. **Cookie card covers the hero object on phones** until it is dismissed (shared `.x-cookie`). At 375×812 it sits over y≈595–795, the lede and the asks. Request: a slimmer phone layout, or one that starts below the first screen's ask.
 
 ## Done / no longer needed
-- The kit `Band` button has no `data-cta` (see `docs/requests/ide.md`): /mcp no longer uses Band; its close is page-local with `data-cta="mcp.close"`.
+- The kit `Band` button has no `data-cta` (see `docs/build-notes/requests/ide.md`): /mcp no longer uses Band; its close is page-local with `data-cta="mcp.close"`.
 - The desktop ask bar floating over content: fixed in shared `Ask.jsx` (desktop now carries the ask in the header).
 - Kit parts this page still waits for: `PageHero`.

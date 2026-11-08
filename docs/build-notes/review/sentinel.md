@@ -14,7 +14,7 @@ Walked 2026-11-07 16:36 UTC (run 3) on the dev server at 1470x801 and 375x812, m
 3. Real object in every section: trace waterfall, release bars with a cron dot strip, account rows, an alert router you can play with, the Sentry→Sentinel fork line, the closing issue card and the agent prompt.
 4. Ask and scale.
    - Desktop: the header starts with a quiet "Try Hanzo" and switches to "Read the docs" once the hero ask leaves view. Nothing floats over content on desktop.
-   - Phone: the header "Try Hanzo" is solid next to the hero's solid "Read the docs". This is shared chrome, already requested in docs/requests/sentinel.md, so I have not scored it against this page.
+   - Phone: the header "Try Hanzo" is solid next to the hero's solid "Read the docs". This is shared chrome, already requested in docs/build-notes/requests/sentinel.md, so I have not scored it against this page.
    - Scale on desktop is mostly right: 52px h1, 26px chapter heads, 13-16px body. On the first screen, though, two 64px figures and a 32px card title sit next to the 52px h1, so the numbers outshout the name. On phone, the 40px h1 sits under a 3-line 32px card title and 64px figures.
 5. Hover and press.
    - "Read the docs": #0a0a0a goes to #2c2c2e on hover, and press scales it to 0.98. "View on GitHub": the arrow moves 4px. Alert pills: #fff goes to #f2f2f2 on hover; a click sets #262626 and rewrites the sentence ("A spike goes to Slack and opens the ticket in Jira.").

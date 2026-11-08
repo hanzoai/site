@@ -6,7 +6,7 @@ Open copy questions for James:
 - The closing Band repeats the Sales route's heading, "Bring Hanzo to your company.". It is Hanzo's sentence, but it appears twice. Is there a closing line Hanzo prefers?
 - The community rows show each channel's address in small mono (for example `github.com/hanzoai`). The words are Hanzo's own link addresses with `https://` and `www.` dropped, not new copy; they are `aria-hidden`, so each link's name stays the channel name. Keep, or remove?
 
-Shared changes requested (`docs/requests/contact.md`): on phones, let the header's solid button carry the page's `data-thumb` ("Talk to sales") after the hero, as `components/Ask.jsx` already does above 700px.
+Shared changes requested (`docs/build-notes/requests/contact.md`): on phones, let the header's solid button carry the page's `data-thumb` ("Talk to sales") after the hero, as `components/Ask.jsx` already does above 700px.
 
 Forks this page deleted: the raw `.x-btn` hero buttons (kit `Go`); the page-wide `.x-btn.solid:hover` override that broke the kit Band; the Visit room's second contour map; the 01–04 jack numerals; the route counters; the running wire pulse; the page's own clipboard call (now the kit's `copyText`, with its phone fallback and chime).
 
@@ -45,7 +45,7 @@ Done here: Rooms in order: the patch panel hero, the dark Visit room with the li
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Measured at 1470×801 (Playwright, every 300px): the shared header button reads "Try Hanzo" while the hero's own solid ask is on screen (header quiet), then "Talk to sales" → /contact-sales/ from scroll 600 to the end, solid ink from 1500; no floating bar on desktop (removed site-wide). At 375×812 the header keeps the shared "Try Hanzo" at every scroll. The slim "Talk to sales" bar is shared chrome and rests only where nothing sits under it, so it is rare and not dependable: in my round-2 scan (cookie note rejected, 220px steps, 1.1s rest each) it showed at exactly one step (scroll 1760, top 758, in the Visit room's empty bottom) and never over a community row; the round-2 critic saw it at none of 24 steps. Treat the phone as having no sticky page ask beyond the header's "Try Hanzo" and the closing Band. The phone header ask is requested in `docs/requests/contact.md`. The copy button uses the kit `copyText`; clipboard read back "hello@hanzo.ai" at both widths.
+Done here: Measured at 1470×801 (Playwright, every 300px): the shared header button reads "Try Hanzo" while the hero's own solid ask is on screen (header quiet), then "Talk to sales" → /contact-sales/ from scroll 600 to the end, solid ink from 1500; no floating bar on desktop (removed site-wide). At 375×812 the header keeps the shared "Try Hanzo" at every scroll. The slim "Talk to sales" bar is shared chrome and rests only where nothing sits under it, so it is rare and not dependable: in my round-2 scan (cookie note rejected, 220px steps, 1.1s rest each) it showed at exactly one step (scroll 1760, top 758, in the Visit room's empty bottom) and never over a community row; the round-2 critic saw it at none of 24 steps. Treat the phone as having no sticky page ask beyond the header's "Try Hanzo" and the closing Band. The phone header ask is requested in `docs/build-notes/requests/contact.md`. The copy button uses the kit `copyText`; clipboard read back "hello@hanzo.ai" at both widths.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -159,6 +159,6 @@ Done here: Console errors 0 at 1470×801 and 375×812, with and without reduced 
 - [x] `data-cta` on every primary; events only through `lib/track.js` (not merged on this path; nothing is sent by the page)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/contact.md` verdict 8 or more (it is 7; this pass answers its five fixes)
+- [ ] Review read: `docs/build-notes/review/contact.md` verdict 8 or more (it is 7; this pass answers its five fixes)
 
 Done here: `data-cta` on contact.hero, .dispatch, .support, .press. Round-2 review (7/10 at e3f60107) answered: (1) Visit room's one big thing is the clock, resting type 52/26px; (2) phone plate scrolls away, nothing pinned under the header; (3) desktop contour a step darker with a visible draw-on; (4) `data-cursor` removed and the phone ask-bar line above corrected. Measured CLS 0.0014 desktop, 0.0021 phone in my probe. Gallery: `docs/gallery/contact/desktop-hero.jpg`, `desktop-visit.jpg`, `desktop-community.jpg`, `phone-sheet.jpg` (film run contact-run3: desktop 0 still screens, 0 dead controls, layout shift 0.004; phone width 375/375).

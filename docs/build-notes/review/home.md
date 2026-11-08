@@ -156,7 +156,7 @@ Proof:
    - Fold a .98 press into the card's tilt transform on pointerdown.
    - Give "Continue with email" an ink-shift hover.
    - Give repo cards a press.
-   - In `docs/requests/home.md`, ask the shared owner to cap the opener's hold at 700 ms and carry the card title into the h1 (MASTER part 3).
+   - In `docs/build-notes/requests/home.md`, ask the shared owner to cap the opener's hold at 700 ms and carry the card title into the h1 (MASTER part 3).
 9. **Take the colour out of the product screens and marks.** Grey the red and green diff lines, the green "POST", the window dots and the blue bubbles and links; `+`, `−` and `✓` already carry the state. Grey the Google and DeepSeek marks, as the hero's Google icon already is. If live's colours are to stay, note it on the card as a decision for James.
 10. **Handle failed media.** Give the agent wall the same name fallback as the logo walls, and give product-screen images a Sigil or aspect-ratio box instead of a broken-image glyph.
 11. **Stop the hero box moving.** Reserve the stage height in CSS at its fitted scale, so the h1 doesn't jump 22px at hydration.

@@ -6,8 +6,8 @@ Open copy questions for James:
 - Part 5 asks for a Privacy link and owner line beside every submit, but /contact-sales has no Privacy link in Hanzo's copy, so none is added. Should one be?
 - The success state reuses the lede's own sentence ("We come back with a plan for your company…"), because Hanzo has no thank-you wording for this form. Is there one?
 
-Shared changes requested (`docs/requests/<page>.md`):
-- `docs/requests/contact-sales.md`: (1) the header ask stays the shared "Try Hanzo"; the review wants "Talk to sales" there; (2) the kit `Band`'s `Magnetic` is a spring (ui.jsx); (3) the customer logos are not in `public/` and 404 in this box.
+Shared changes requested (`docs/build-notes/requests/<page>.md`):
+- `docs/build-notes/requests/contact-sales.md`: (1) the header ask stays the shared "Try Hanzo"; the review wants "Talk to sales" there; (2) the kit `Band`'s `Magnetic` is a spring (ui.jsx); (3) the customer logos are not in `public/` and 404 in this box.
 - Noted for the Company kit owner: the masked h1 lets the tops of tall letters peek out of the mask before its cut-in. A 120% start would hide them.
 
 Forks this page deleted:
@@ -61,7 +61,7 @@ Done here:
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn` — no kit `Cta` exists yet; the submit is its own ink button (`.xcs-send`), and the Band uses the kit `Go`
-- [ ] Sticky ask in header and bar after the hero, same label — not met: the header's ask is shared chrome ("Try Hanzo"), requested in `docs/requests/contact-sales.md`
+- [ ] Sticky ask in header and bar after the hero, same label — not met: the header's ask is shared chrome ("Try Hanzo"), requested in `docs/build-notes/requests/contact-sales.md`
 - [ ] Copy button copies exactly the displayed text — n/a: no copy button
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -216,7 +216,7 @@ Done here:
 - [x] `data-cta` on every primary; events only through `lib/track.js` — `lib/track.js` has not merged; nothing is sent
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/contact-sales.md` (6/10). Fixes 2–5 are applied here; fix 1 (the header ask) needs the shared header and is requested.
+- [x] Review read: `docs/build-notes/review/contact-sales.md` (6/10). Fixes 2–5 are applied here; fix 1 (the header ask) needs the shared header and is requested.
 
 Done here:
 - **Payload.** It is identical in shape to `content/forms.json` (name, email, company, size, need, source, visit). Inclusions join `need` only at send, one sentence per line after your own words.

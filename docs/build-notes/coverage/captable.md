@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Captable.jsx` · gallery: `docs/gallery/captable/` · metric id: `signup_start`
 
 Open copy questions for James: none new. ("Try Hanzo" is kept as the ask until `lib/cta.js` lands. The example company's inputs, 8,000,000 founder shares, a 1,000,000 pool, a $500,000 SAFE at an $8M cap and 20% discount, a $2M raise, are v1's labelled example, shown as "Example company. Every number in it is an input you would give your own."; James may want them confirmed.)
-Shared changes requested (`docs/requests/captable.md`): none.
+Shared changes requested (`docs/build-notes/requests/captable.md`): none.
 Forks this page deleted: the raw `.x-btn` asks and the interim `BizAsk` (now the kit `Cta`), the v1 `Get` block and `Rise` fade-ups, the drift's `setInterval` (now one setTimeout), the pulse dot, the inverted price chip and (round 2) the solid black "Founders, fully diluted" chip (now ink-on-white mono), every spring, the kickers above headlines, BizChapters' six stacked phone tables (replaced on phones by the page-local `captable/PhoneSteps.jsx`), the stray "×" on the term sheet's signature line.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: no live data; the SAFE says whether it converts at its cap or its dis
 - [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/captable.md` verdict 8 or more (no review written yet)
+- [ ] Review read: `docs/build-notes/review/captable.md` verdict 8 or more (no review written yet)
 
 Done here: `data-cta="captable.hero"`, `"captable.docs"`, `"captable.close"`; gallery `desktop.mp4`, `desktop-hero.jpg`, `phone-1..3.jpg`, and round 2's `desktop-r2.jpg`, `phone-r2.jpg` at 1470×801 and 375×812; errs.js 0 errors at both sizes; V2 line updated for round 2.

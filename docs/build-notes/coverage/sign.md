@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Sign.jsx` (+ `Sign.css`) · gallery: `docs/gallery/sign/` · metric id: `signup_start`
 
 Open copy questions for James: functional labels not in `content/ui-strings.json`: the pad's "Sign here", "draw here", "ready to sign", "signed", "Clear", "Sign", "Signed <date>"; the plan switch "Run it yourself" / "We run it" uses Hanzo's lede words as button labels.
-Shared changes requested (`docs/requests/sign.md`): none. Noted: no skip link in shared chrome; `useEvery`/`useSteps` use `setInterval`; `tokens.css` not merged.
+Shared changes requested (`docs/build-notes/requests/sign.md`): none. Noted: no skip link in shared chrome; `useEvery`/`useSteps` use `setInterval`; `tokens.css` not merged.
 Forks this page deleted: the separate hero (now the pinned story's lead), the floating desk pause, the "09"/"10" tile numbers, the "Most Popular" pill (now a line), the three equal dark cards (now one ask and text links), the white "Get started with Sign" box (now a hairline row), the pad's rewritten certificate sentence, every spring, the "ink indigo" comments.
 
 ## 1. Strategy and conversion

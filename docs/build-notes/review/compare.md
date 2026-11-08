@@ -4,7 +4,7 @@ Verdict: 8/10
 Ready: 8 Nov, held at missing 0 under the real copy check (copycheck 0 of 21): each row name reads as a whole line in the table and on phone cards; the closed detail sheet no longer pushes the page 1052px sideways (shared DetailSheet.css) and reduced motion no longer breaks hydration (tally here; shared MaskLines and SceneWipe). 0 console errors (also under reduced motion), no overflow at 1470 and 375. Usable: every row with its source, Model routing APIs.
 First complaint: "Tidy and honest, but the top is just a heading and a table. I want one moment that makes me stop."
 
-Walked 7 Nov 15:10 (third walk, after the shared system landed), page file at `575d9913` (`components/pages/Compare.jsx`, `Compare.css`), unchanged during the walk. Judged by `docs/JAMES.md` and `docs/MASTER.md`. Filmed moving at 1470×801 and 375×812 (wheel and finger scroll, dwell on every screen, hover and press on desktop, taps on phone), plus reduced motion and JS off. Stills: `review/compare/desktop-walk.jpg`, `review/compare/phone-walk.jpg`. The machine was overloaded, so motion is judged from frames.
+Walked 7 Nov 15:10 (third walk, after the shared system landed), page file at `575d9913` (`components/pages/Compare.jsx`, `Compare.css`), unchanged during the walk. Judged by `docs/JAMES.md` and `docs/build-notes/MASTER.md`. Filmed moving at 1470×801 and 375×812 (wheel and finger scroll, dwell on every screen, hover and press on desktop, taps on phone), plus reduced motion and JS off. Stills: `review/compare/desktop-walk.jpg`, `review/compare/phone-walk.jpg`. The machine was overloaded, so motion is judged from frames.
 
 ## What works
 - **The first screen fits at 1470×801:** the h1 at rest size (52px, line height 1.04), lede, one ask ("Model routing APIs →") and the table as a wide object with four rows showing.
@@ -29,7 +29,7 @@ Walked 7 Nov 15:10 (third walk, after the shared system landed), page file at `5
 10. **Banned tells?** None. The "HANZO VS" caption sits over the lede, not over a headline. No hue and no floating bar.
 11. **Copy untouched?** Yes; every figure (600+, 500+, 1,600+, 1,800+, 198 questions) is in its source cell.
 
-## Card check (docs/coverage/compare.md)
+## Card check (docs/build-notes/coverage/compare.md)
 - 18 of 18 parts filled. Spot-checked: part 3 (52px h1, 4 rows at 1470×801, JS off 0 hidden), part 7 (84px tally as the one moment), part 11 (phone rows) and part 12 (pause) are all true.
 - Part 8 says presses scale .97; measured .98. Close, but correct the card or the CSS.
 

@@ -71,7 +71,7 @@ Still: `img/legal-family.jpg`.
    - The hero composition is /integrations/cursor's: h1 left, lede top right, object below.
    - The object is /trust's: a numbered list beside a giant "01" panel.
    - The /legal hub (a paper stack) is different.
-9. **18 areas?** See below. `docs/coverage/legal-family.md` exists but overclaims:
+9. **18 areas?** See below. `docs/build-notes/coverage/legal-family.md` exists but overclaims:
    - "text 14px or more" on a phone;
    - "swipe checked";
    - "never a count of ours" for the cover, while the section plates still invent numbers.

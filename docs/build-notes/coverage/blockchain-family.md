@@ -3,7 +3,7 @@
 Page file: `components/pages/blockchain/BlockPage.jsx` (16 products) + `Directory.jsx` (the chain directory) + `BlockPage.css` + `bcData.js` · gallery: `docs/gallery/blockchain/` (bundler, defi, directory, exchange) · metric id: `api_key_created` (`signup_start` for "Try Hanzo")
 
 Open copy questions for James: the chain finder's sentences ("Named on this page", "Other products that name …") are in `content/ui-strings.json` waiting for approval; until then the finder shows a tick or a dash and the product links only.
-Shared changes requested (`docs/requests/blockchain-family.md`): none filed. Noted for the ask-bar owner: at the closing room the header's "Try Hanzo" turns solid beside the room's white button (two solids); and the site ask bar floats a pill over content (MASTER 3.2 rule 6). Noted for the Morph owner: on a sibling click the old page snaps to its top before the next page arrives.
+Shared changes requested (`docs/build-notes/requests/blockchain-family.md`): none filed. Noted for the ask-bar owner: at the closing room the header's "Try Hanzo" turns solid beside the room's white button (two solids); and the site ask bar floats a pill over content (MASTER 3.2 rule 6). Noted for the Morph owner: on a sibling click the old page snaps to its top before the next page arrives.
 Forks this page deleted: the identical key card as every member's hero (now a proof room after the hero), the 3×3 capability grid and the exploded deck, every derived number (counters, sheet, tile, console, Built For and stream numbering), the bare "5" in the finder, the fake language tabs, the GitHub chip styled like the License text, the inner scroll of the code block and chain picker on phones, the per-member accent, the coloured code tokens, native tooltips, Chrome's search ×, `setInterval`, springs and object shadows.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: static data from `bcData.js`; nothing to fail.
 - [x] `data-cta` on every primary (`lib/track.js` does not exist yet)
 - [x] Nothing identifier-bearing
 - [x] `V2:` lines in `BlockPage.jsx` and `Directory.jsx`
-- [x] Review read: `docs/review/blockchain-family.md` 6/10 at ea71c97 + fe077aa; fixes in this commit
+- [x] Review read: `docs/build-notes/review/blockchain-family.md` 6/10 at ea71c97 + fe077aa; fixes in this commit
 
 Done here: (1) deck back inside the gutters, a contour face per card, 25svh a card on the exchange; (2) one object of its own per product: its own capabilities turning in the hero with its own contour, its own code typing, its own chains driving the finder; (3) first screen top-aligned, object 148–699 at 1470×801, no stage zoom; (4) Built For without the empty column and with a row fill, chains with the product's contour beside the finder; (5) exchange code full width, panel first on phones, "Learn more" 44px, all 4 panels with JS off; (6) real controls, no inner scroll on phones, 14px floor; (7) directory: no native ×, sheet above the header, a row on the phone's first screen, legend lights marks, a closing rail; (8) Morph attributes present (6 of 6); the double solid and the snap-to-top are other owners'.

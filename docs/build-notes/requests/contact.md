@@ -1,6 +1,6 @@
 # Request from /contact to the shared-chrome owners (header ask)
 
-From `docs/review/contact.md` (7/10, fix 1): "Put 'Talk to sales' in the sticky header at every width."
+From `docs/build-notes/review/contact.md` (7/10, fix 1): "Put 'Talk to sales' in the sticky header at every width."
 
 Measured on 7 Nov with Playwright, page unchanged on this point (no page-side header hack):
 

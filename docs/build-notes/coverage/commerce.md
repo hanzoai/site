@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Commerce.jsx` · gallery: `docs/gallery/commerce/` · metric id: `docs_click`
 
 Open copy questions for James: none new. ("Read the docs" is Hanzo's own hero label and stays the ask until `lib/cta.js` lands. The cards' "held", "captured", "return", "size · colour · price" and "cart {id}" are labels drawn from Hanzo's own stop sentences; the endpoint counts are counts of Hanzo's list.)
-Shared changes requested (`docs/requests/commerce.md`): none.
+Shared changes requested (`docs/build-notes/requests/commerce.md`): none.
 Forks this page deleted: the raw `.x-btn` asks and the interim `BizAsk` (now the kit `Cta`), the v1 `Get` block and `Rise` fade-ups, the hand-rolled endpoint tabs (now five columns plus one `BizSheet` per group), the `data-cursor` label, every spring, the three equal integration columns.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: the finder's no-match state dims the group and shows an em dash; Clea
 - [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/commerce.md` verdict 7/10, every listed fix addressed in round 2; awaiting a fresh review
+- [ ] Review read: `docs/build-notes/review/commerce.md` verdict 7/10, every listed fix addressed in round 2; awaiting a fresh review
 
 Done here: `data-cta="commerce.hero"`, `"commerce.platform"`, `"commerce.close"`; gallery `desktop.mp4`, `desktop-hero.jpg`, `phone-1..3.jpg`, plus round 2 `desktop-r2.jpg` and `phone-r2.jpg` at 1470×801 and 375×812; errs.js 0 errors, overflow 0 at both sizes.

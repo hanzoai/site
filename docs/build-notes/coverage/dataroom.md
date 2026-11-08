@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Dataroom.jsx` (+ `Dataroom.css`) · gallery: `docs/gallery/dataroom/` · metric id: `signup_start`
 
 Open copy questions for James: none (no CTA label changed; "Try Hanzo" goes to /login as on the live hero, while the header's "Try Hanzo" goes to /signup; both kept as live).
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none.
 Forks this page deleted: the raw `.x-btn` asks (now kit `Cta`), the v2 `AskBar` (the site's ask bar carries the ask), every `data-cursor` label, every spring and hover lift.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: No live data: the page is complete in server HTML. The room has playi
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/<page>.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta="dataroom.hero"` and `"dataroom.close"`; `Cta` dispatches `cta_click` (no copy, no PII); the typed email never leaves the page. V2 line updated; no `docs/review/dataroom.md` yet, so the verdict is pending a critic.
+Done here: `data-cta="dataroom.hero"` and `"dataroom.close"`; `Cta` dispatches `cta_click` (no copy, no PII); the typed email never leaves the page. V2 line updated; no `docs/build-notes/review/dataroom.md` yet, so the verdict is pending a critic.

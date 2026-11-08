@@ -3,7 +3,7 @@
 Page file: `components/pages/Leaderboard.jsx` · gallery: `docs/gallery/leaderboard/` · metric id: `cta_click` on `leaderboard.hero`
 
 Open copy questions for James: none (every visible string is Hanzo's or the register's).
-Shared changes requested (`docs/requests/leaderboard.md`): kit `Band` (line-mask reveal, `cta` prop, 52px h2, no focusable magnetic wrapper); shared greys on the Apple ramp moved to the deck; PinScenes meter numerals. (The Morph freeze on in-site clicks was filed in `docs/review/SYSTEM.md`.)
+Shared changes requested (`docs/build-notes/requests/leaderboard.md`): kit `Band` (line-mask reveal, `cta` prop, 52px h2, no focusable magnetic wrapper); shared greys on the Apple ramp moved to the deck; PinScenes meter numerals. (The Morph freeze on in-site clicks was filed in `docs/build-notes/review/SYSTEM.md`.)
 Forks this page deleted: the v1 hero `Go` pair (second outlined button became a `More` text link); its own sticky pill (AskBar now defers to the shared ask bar); the gold accent; the 128px totals; round 2: the kit `Band` (replaced by a page-local close until the kit fix lands), the black calculator result panel, the receipt's invented line labels and summed totals, the points calculator (its steppers, +100…+500 chips, credits line and sum line showed figures Hanzo never prints; it became a scrubber over the board's own volumes), the visible "Linear"/"Log" words (icon tabs now), the infinite print-head loop.
 
 ## 1. Strategy and conversion
@@ -143,6 +143,6 @@ Done here: With JS off every word reads in place (`<noscript>` overrides in the 
 - [x] `data-cta="leaderboard.hero"` on the primary; no tracking SDK imported (`lib/track.js` not merged yet)
 - [x] Nothing identifier-bearing; no form
 - [x] `V2:` line in the page file's top comment
-- [x] Review read: `docs/review/leaderboard.md` (6/10), all ten fixes worked through in round 2
+- [x] Review read: `docs/build-notes/review/leaderboard.md` (6/10), all ten fixes worked through in round 2
 
 Done here: 0 console errors at 1470x801 and 375x812 on 8 Nov (check.cjs); the range input is hydration-safe (fill on `--f`, `suppressHydrationWarning`). The scrubber's org lines no longer sit on top of each other mid-climb (the old one leaves in 120 ms before the new one rises). Proof: `docs/gallery/leaderboard/desktop.jpg`, `phone-1.jpg`, `phone-2.jpg` (8 Nov).

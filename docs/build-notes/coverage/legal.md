@@ -3,7 +3,7 @@
 Page file: `components/pages/LegalIndex.jsx` (+ `LegalIndex.css`, data `legalData.js`) · gallery: `docs/gallery/legal/` · metric id: document open (`legal.doc.<slug>`)
 
 Open copy questions for James: the stamps repeat Hanzo's own "Status: draft, pending counsel." verbatim; the ladder's step numbers 01–04 are ordinal, not claims.
-Shared changes requested: `docs/requests/templates.md` (covers every Business 2 page). Utility page: no ask (`data-ask="off"`), per MASTER part 4.
+Shared changes requested: `docs/build-notes/requests/templates.md` (covers every Business 2 page). Utility page: no ask (`data-ask="off"`), per MASTER part 4.
 Forks this page deleted: the sheet that popped in front in the same frame (now it leaves on top, then tucks under), stamps on every sheet (top sheet only, wrapping inside it), the floating pause on the fan, `AnimatePresence initial={false}` that cancelled the rows' arrival, the see-through chip bar, the invented "Show"/"Documents" labels, the phone's repeated group label on every row, the cursor label "Open", every spring, the stale colour comments, the shared `Settle` (it read reduced motion during render and broke hydration; a legal-local `Rise` replaces it with the same scale-and-lift).
 
 ## 1. Strategy and conversion
@@ -155,4 +155,4 @@ Done here: `@media print` in `LegalIndex.css`: no header, footer, cookie note, p
 - [x] `V2:` line in `components/pages/LegalIndex.jsx`
 - [x] Ready line (no score system)
 
-Done here: Ready line 8 Nov in `docs/review/legal.md` (no score); the review's fixes addressed, the motion-map pass finished (its row, trail, tile, ring and ink styles were missing).
+Done here: Ready line 8 Nov in `docs/build-notes/review/legal.md` (no score); the review's fixes addressed, the motion-map pass finished (its row, trail, tile, ring and ink styles were missing).

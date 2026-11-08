@@ -3,7 +3,7 @@
 Page file: `components/pages/ComputerPage.jsx` (+ `ComputerPage.css`, shared `components/v2/AppType.css`, `AppStage`, `AppScenes`) · gallery: `docs/gallery/computer/` · metric id: `signup_start`
 
 Open copy questions for James: none decided.
-Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own Band markup with `<Cta id>` until then). The header ask and the phone ask bar landed in the shared system, so `data-ask="off"` is gone from `<main>`.
+Shared changes requested (`docs/build-notes/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own Band markup with `<Cta id>` until then). The header ask and the phone ask bar landed in the shared system, so `data-ask="off"` is gone from `<main>`.
 Forks this page deleted: two kickers over headlines ("computer.hanzo.ai", "Before you run it"; both now captions under their text), the outlined "Documentation" and "View on GitHub" buttons (now text links), the solid "Deploy to Cloud" (now a text link before the Band), the "-with-ocr" / "-with-som" chips and the voice pill that floated over the desktop (the voice now lights in the desktop's own menu bar), raw `<img>` (now kit `Img`), spring transitions, the motion `pathLength` tick (now a CSS stroke), the violet hue, grey bars where the desktop's windows had text (now Hanzo's lines).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: No live calls; look.mjs and check.mjs report no console errors at eit
 - [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/computer.md` verdict 8 or more (no review yet)
+- [ ] Review read: `docs/build-notes/review/computer.md` verdict 8 or more (no review yet)
 
 Done here: `data-cta` ids: computer-hero-try, computer-hero-docs, computer-deploy, computer-band-try, computer-band-github.

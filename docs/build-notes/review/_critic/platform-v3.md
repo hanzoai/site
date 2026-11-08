@@ -26,7 +26,7 @@ Proof: `platform.jpg`: desktop first screen (v3) | phone first screen | desktop 
    - A marquee whose speed answers the scroll (a fixed 38 s CSS loop).
    - Cards that open into their page: directory heads carry `data-morph`, but nothing opens.
 8. **Different from its neighbours?** Yes: the iso stack and the camera are its own. One echo: the Compute chapter's console shows the same four services (gateway, payments-api, checkout-web, docs-site) as 36 of the 42 /cloud pages.
-9. **All 18 parts covered?** No, see below. `docs/coverage/platform.md` exists (committed during the walk), but several of its claims do not hold (listed below).
+9. **All 18 parts covered?** No, see below. `docs/build-notes/coverage/platform.md` exists (committed during the walk), but several of its claims do not hold (listed below).
 10. **Banned tells?** No hue, no gradient text, no eyebrow over the h1 ("Hanzo Platform" sits under it). Present:
     - "Three equal boxes in a row": the facts row (11 / 4 / Measure the work), the three "homes" in Anywhere, and the four equal kernel targets.
     - "Explaining sentences under every tile": five tiles, each with a sentence, a tag and 3–4 pills.
@@ -84,4 +84,4 @@ Proof: `platform.jpg`: desktop first screen (v3) | phone first screen | desktop 
 5. **Fix the inspector sheet:** start the panel below the header (`top: calc(var(--hdr) + 12px)`), or lift it above the header. The close button must be clickable and visible when it takes focus.
 6. **Break the equal rows:** make the facts row one giant "11" with the others smaller beside it, set the three homes and four targets at different scales, and cut the empty space in the Semantic + Graph tile.
 7. **Every control answers:** add `translateY(1px)` to "Explore", the facts links and the directory heads, a hover to the Band's "Read the docs", and `data-cta` to the Band's button.
-8. **Open into the page:** directory rows and heads should Morph into their destination's hero, or crossfade for 250 ms where the destination has no target. Then correct `docs/coverage/platform.md`.
+8. **Open into the page:** directory rows and heads should Morph into their destination's hero, or crossfade for 250 ms where the destination has no target. Then correct `docs/build-notes/coverage/platform.md`.

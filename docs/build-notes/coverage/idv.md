@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Idv.jsx` · gallery: `docs/gallery/idv/` · metric id: `cta_click idv.hero`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/idv.md`): none filed; waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
+Shared changes requested (`docs/build-notes/requests/idv.md`): none filed; waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
 Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition, the kicker added beside the h1
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: If WebCrypto is unavailable the forge keeps the server-rendered verdi
 - [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
 - [x] Nothing identifier-bearing; no field value in any payload
 - [x] `V2: 8/10` line in the page file's top comment
-- [x] Review read: no `docs/review/idv.md` yet
+- [x] Review read: no `docs/build-notes/review/idv.md` yet
 
-Done here: `idv.hero` and `idv.close` on the asks. Gallery: `docs/gallery/idv/` (earlier film and stills plus C1 stills `c1-desk-hero.jpg`, `c1-desk-forge.jpg`, `c1-phone-hero.jpg`). Shared request kept in `docs/requests/cloud2.md` (CodeBlock `overscroll-behavior` under reduced motion).
+Done here: `idv.hero` and `idv.close` on the asks. Gallery: `docs/gallery/idv/` (earlier film and stills plus C1 stills `c1-desk-hero.jpg`, `c1-desk-forge.jpg`, `c1-phone-hero.jpg`). Shared request kept in `docs/build-notes/requests/cloud2.md` (CodeBlock `overscroll-behavior` under reduced motion).

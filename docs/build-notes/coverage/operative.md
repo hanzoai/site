@@ -3,7 +3,7 @@
 Page file: `components/pages/Operative.jsx` (+ `.css`) · gallery: `docs/gallery/operative/` · metric id: `cta_click operative.hero`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/operative.md`): Band headline reveal by line mask instead of blur; Cta solid hover #262626; data-cta (and a quiet option) on the kit Band; the desktop ask bar floating over content; the Terminal and PageHero kit parts.
+Shared changes requested (`docs/build-notes/requests/operative.md`): Band headline reveal by line mask instead of blur; Cta solid hover #262626; data-cta (and a quiet option) on the kit Band; the desktop ask bar floating over content; the Terminal and PageHero kit parts.
 Forks this page deleted: the raw hero anchor and Go buttons (now kit Cta), the raw <img> (now kit Img), the dimmed and greyscale photos, the gradient crate and shadowed slabs, the Interrupt/Resume button and the interrupted label (now the kit pause control), the autoplaying provider switch, the blue accent, springs, setInterval. Round 2: the four equal provider cards (now one tab panel), the height-animated chapter accordion (now one fixed slot), the open requirements/usage blocks (now native disclosures), the invented desktop/key/port labels and glyphs.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: No live data, so nothing loads or fails.
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/operative.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/operative.md` verdict 8 or more
 
 Done here: data-cta on operative.hero and operative.band (page-local close); Cta sends cta_click through the system event; V2 line updated for round 2; review read (6/10) and fixes 1–9 worked (gallery round2-*.jpg).

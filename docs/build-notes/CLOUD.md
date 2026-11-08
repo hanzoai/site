@@ -4,14 +4,14 @@ James's 8 GB laptop could not run the chats, so the remaining work runs in the c
 
 ## Shared rules (every cloud chat)
 - **The law, in order:**
-  1. `docs/MASTER.md`: the one brief (precedence, the 18 parts, the look, page types, mechanics, the coverage card).
-  2. `docs/DONE.md`: the finish line.
-- **Reviews decide "ready", not your own score.** Cloud James-eye critics walk every pushed page and write `docs/review/<page>.md`, with `Verdict: N/10` and the first complaint. After every `git pull`, read the reviews of your pages and fix anything under 8 **before** starting a new page.
-- **Coverage.** Each page you finish gets `docs/coverage/<page>.md`, copied from `docs/coverage/_TEMPLATE.md` (MASTER.md section 6).
+  1. `docs/build-notes/MASTER.md`: the one brief (precedence, the 18 parts, the look, page types, mechanics, the coverage card).
+  2. `docs/build-notes/DONE.md`: the finish line.
+- **Reviews decide "ready", not your own score.** Cloud James-eye critics walk every pushed page and write `docs/build-notes/review/<page>.md`, with `Verdict: N/10` and the first complaint. After every `git pull`, read the reviews of your pages and fix anything under 8 **before** starting a new page.
+- **Coverage.** Each page you finish gets `docs/build-notes/coverage/<page>.md`, copied from `docs/build-notes/coverage/_TEMPLATE.md` (MASTER.md section 6).
 - **Setup.** Run `npm ci`, then `npm run dev` (port 4180) in the background.
 - **Filming.** Cloud only, never on James's Mac. See MASTER.md section 5 (Filming and proof).
 - **Style.** Hanzo's way: the smallest change that fully works, reuse the kit (`components/ui.jsx`, `components/kit.jsx`), and review your own work before calling it done. Act as James: never ask him questions, and make the decisions yourself.
-- **Ownership.** Other cloud chats work on other files at the same time on their own branches, so touch only the files you own. Never edit `app/globals.css`, `lib/route.js`, `docs/PAGES.md`, `components/ui.jsx`, `components/kit.jsx` or another chat's pages. Report any shared change you need instead.
+- **Ownership.** Other cloud chats work on other files at the same time on their own branches, so touch only the files you own. Never edit `app/globals.css`, `lib/route.js`, `docs/build-notes/PAGES.md`, `components/ui.jsx`, `components/kit.jsx` or another chat's pages. Report any shared change you need instead.
 - **Safety.** Never submit real forms or send real chat messages to Hanzo's live API; intercept requests, as `scripts/forms.mjs` does. No deploys.
 - **Shared `components/v2/` files: reuse, never re-create.** Before adding one, run `git pull --rebase origin main` and check whether it already exists. If it does, use it as it is. If it lacks something, build that piece page-local (`components/pages/<your page>/...`). Only add a brand-new v2 file if the name is free, and pull right before pushing it. Two chats creating the same file caused the first merge conflict (7 Nov 13:45).
 - **Taste gate.** `python3 scripts/unique.py` now also runs `scripts/taste.py` on every page file you touch. It fails any UI hue (colour belongs only to Hanzo's media) and any label, tag or pill sitting directly above a headline. These are the critics' two most common complaints. If that label is Hanzo's own copy, keep the words but move them so they are not above the headline. Also fix any Next.js error badge (the red dev overlay) on your pages.

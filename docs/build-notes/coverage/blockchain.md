@@ -3,7 +3,7 @@
 Page file: `components/pages/blockchain/BlockchainIndex.jsx` (+ `BlockchainIndex.css`) · gallery: `docs/gallery/blockchain/` (desktop.mp4, desktop-hero.jpg, phone-1..3.jpg) · metric id: `signup_start` (the catalogue's action: open a card)
 
 Open copy questions for James: none (Hanzo's "Try Hanzo" and "View Pricing" kept as live; "Try Hanzo" → /signup and "View Pricing" → /pricing?tab=blockchain as the v1 page mapped them).
-Shared changes requested (`docs/requests/<page>.md`): none. The /blockchain/* family files (`BlockPage.jsx`, `Directory.jsx`, `blockchain.css`, `bcData.js`) belong to another group and are untouched.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none. The /blockchain/* family files (`BlockPage.jsx`, `Directory.jsx`, `blockchain.css`, `bcData.js`) belong to another group and are untouched.
 Forks this page deleted: `BizAsk` (now kit `Cta`), the v2 `AskBar`, the raw `<table>` matrix (now kit `DataTable`), the hand-built code window (now kit `CodeBlock`), the `data-cursor` label, every hover lift and spring.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: No live data at view time (built from Hanzo's pages), so the page is 
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/<page>.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more
 
-Done here: `data-cta="blockchain.hero"` and `"blockchain.close"`; `Cta` dispatches `cta_click` with the id only. V2 line updated; `docs/review/blockchain-family.md` covers the /blockchain/* template (another group), and no review of this overview exists yet, so its verdict is pending a critic.
+Done here: `data-cta="blockchain.hero"` and `"blockchain.close"`; `Cta` dispatches `cta_click` with the id only. V2 line updated; `docs/build-notes/review/blockchain-family.md` covers the /blockchain/* template (another group), and no review of this overview exists yet, so its verdict is pending a critic.

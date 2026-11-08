@@ -16,7 +16,7 @@ First complaint: "It's honest and it's calm, I like that. But once the numbers f
 6. **Overlap, font swap, layout shift?** None; layout shift 0.005 and 0.009.
 7. **Which reference, and is its motion there?** chatgpt.com/business/enterprise (calm proof, quietly listed) and the anthropic launch page's honest gaps ("not measured by us"). Both there; this is the brief's candour rule done right.
 8. **Different from its neighbours?** Yes.
-9. **All 18 parts covered?** See below. `docs/coverage/compare-family.md` exists.
+9. **All 18 parts covered?** See below. `docs/build-notes/coverage/compare-family.md` exists.
 10. **Banned tells?** None: greys only, nothing above the h1.
 11. **Copy untouched?** Yes: parity 29/29 text, 6/6 links. Two labels are not in Hanzo's copy: "Models reachable" (the race's caption) and "Only where they differ" (the switch).
 

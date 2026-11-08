@@ -3,7 +3,7 @@
 Page file: `components/pages/Comparison.jsx` · gallery: `docs/gallery/comparison/` · metric id: `signup_start`, read as `cta_click` on `comparison.hero`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/<page>.md`): none filed. For the kit owner: `DetailSheet` is a `role=dialog` div, not a native `<dialog>` (part 8); `MaskLines` runs 1s where MASTER asks 700 ms.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none filed. For the kit owner: `DetailSheet` is a `role=dialog` div, not a native `<dialog>` (part 8); `MaskLines` runs 1s where MASTER asks 700 ms.
 Forks this page deleted: the floating phone total pill (`.xcm-mini`), the digit-rolling odometer, the 112–128px centred headline, the 140 ms `setInterval` printer (now CSS transition delays), the spring on the stack bar, every hover transform that was not James's (row nudges, box swell, arrow turn), the side-by-side stack table (now in a sheet, so every price shows once).
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: Strike every stack and the empty line shows with a $0.00/mo total; th
 - [x] `data-cta` on every primary; n/a `lib/track.js` (not in `lib/` yet)
 - [x] Nothing identifier-bearing; no form
 - [x] `V2:` line in the top comment
-- [x] Review read: `docs/review/comparison.md` 8/10 (walked before this rework; its complaint, prices shown twice, is fixed)
+- [x] Review read: `docs/build-notes/review/comparison.md` 8/10 (walked before this rework; its complaint, prices shown twice, is fixed)
 
 Done here: `comparison.hero` and `comparison.close`; V2 line updated.

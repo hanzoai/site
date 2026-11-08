@@ -4,7 +4,7 @@ First complaint: "I click one of the organisation cards and the page goes white,
 
 Walked on 7 Nov, moving, at 1470×801 and 375×812, with Playwright on the dev server: `/oss/hanzoai/` (461 repositories, the full case) and `/oss/hanzo-app/` (11 repositories, mostly zeros, the sparse case). I took frames every 250 ms for 8 s with no input, then slow wheel scrolls (120 px every 90 ms) through to the footer. I probed hover, press and keyboard on the rows, filters, sort, search, the repository sheet and the org cards, then ran the card-to-page open frame by frame, JS off, reduced motion, and widths of 320, 375 and 1470.
 
-**Proof images** (`docs/review/oss/`; the filenames are the old ones, but the contents are new):
+**Proof images** (`docs/build-notes/review/oss/`; the filenames are the old ones, but the contents are new):
 - `1-hero-1470-badge.jpg`: `/oss/hanzoai/` at 1470×801, 7.75 s after load. The hero figure card has settled (568,900, contour field, monthly bars). The red Next "1 Issue" badge, caused by the hydration error below, sits bottom-left. The cookie card overlaps the "Counted from GitHub" stats.
 - `2-jsoff-375-clipped-h1-missing-figure.jpg`: `/oss/hanzoai/` at 375×812 with JS off. The earlier problem is fixed. The h1 is whole (y 76, 42 px tall, not clipped), 568,900 and the bar chart are in the static HTML, and 461 / 1,602 / 154 render.
 - `3-row01-misaligned-actions.jpg`: the row-01 action misalignment is fixed (the Forge pill and ↗ are both centred at y 467.1, which is the row's own centre). The image now shows the card-to-page open 900 ms after clicking the `hanzobot` org card. The page is blank white, and the stage title sits at 106 px at y≈581. The destination h1 lands at y 173, 52 px.

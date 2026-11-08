@@ -1,4 +1,4 @@
-# /ingress: shared changes requested (round 2, from docs/review/ingress.md fix 9)
+# /ingress: shared changes requested (round 2, from docs/build-notes/review/ingress.md fix 9)
 
 The page does not edit these files; it carries on page-local.
 
@@ -8,4 +8,4 @@ The page does not edit these files; it carries on page-local.
 4. **GetIt spacing** (`components/v2/GetIt.jsx`): `.v2-kick { margin: 0 }` can beat `.gi-lead { margin-top }` on load order, so the h2, caption and tag stack with no space. Round 3 fixes it page-local (17px / 27px from `Ingress.css`); a shared fix would help the other cloud pages.
 5. **Hero ask hover** (`components/kit.jsx` Cta / `app/globals.css`): the solid hover only lightens the fill (to an off-deck rgb(44,44,46) on some pages). Round 3 adds a page-local #262626 fill and a 4px arrow nudge on /ingress; a shared hover that tells you something would serve every page.
 6. **WipeScenes text handover** (`components/v2/WipeScenes.jsx`): the clip wipe shows both scenes' text at once mid-scroll. /ingress now drives `--out` and `data-t` per scene page-local (fade out by 30% of the next wipe, cut in at 50%); worth folding into the shared component.
-7. **GetIt "Deploy to Cloud" hit area** (`components/v2/GetIt.jsx`), from docs/review/ingress.md fix 6: the text link is 132×21 at 375×812; MASTER part 11 wants 44px touch targets. Ask: give `.gi-more` links a 44px minimum height (padding, not a bigger font). Still open 7 Nov (C1).
+7. **GetIt "Deploy to Cloud" hit area** (`components/v2/GetIt.jsx`), from docs/build-notes/review/ingress.md fix 6: the text link is 132×21 at 375×812; MASTER part 11 wants 44px touch targets. Ask: give `.gi-more` links a 44px minimum height (padding, not a bigger font). Still open 7 Nov (C1).

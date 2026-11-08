@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Pubsub.jsx` (+ `Pubsub.css`) · route: `app/pubsub/page.jsx` · gallery: `docs/gallery/pubsub/` · metric id: `github_click`
 
 Open copy questions for James: none decided. Listed: the live hero ask is "GitHub" (to github.com/hanzoai/pubsub) while the site header says "Try Hanzo"; the demo's drawn product words (delivery states, switch labels built from Hanzo's sentences) are not in `content/ui-strings.json` yet.
-Shared changes requested (`docs/requests/pubsub.md`): Frame's Paste/Code on the deck; light-code comment contrast in the kit; the sticky ask label and the floating desktop pill; a press on `lx-text`; `Copy` press .97; the UI-strings register; `lib/cta.js`, `lib/track.js` and the sound kit.
+Shared changes requested (`docs/build-notes/requests/pubsub.md`): Frame's Paste/Code on the deck; light-code comment contrast in the kit; the sticky ask label and the floating desktop pill; a press on `lx-text`; `Copy` press .97; the UI-strings register; `lib/cta.js`, `lib/track.js` and the sound kit.
 Forks this page deleted: the poster hero with the bus above the h1 (now the h1, line and ask left, the bus right, nothing above the h1), the header "Try Hanzo" override in page CSS, every spring (`SPRING`, `SNAP`), the arrow nudge on row hover, the raised inspector and code shadows, the 60px spec words and the 52px "Put it between your services", the #0a0a0a hero (black rooms are #000), and every Apple-grey literal.
 
 Decisions noted (James never asked): the metric is `github_click`, not `api_key_created`, because the only ask is Hanzo's live "GitHub" (MASTER §1 names a GitHub click). The bus now runs top to bottom so it can sit beside the title on the 5/8 split; the fan-out is the same signature, drawn downward.
@@ -15,7 +15,7 @@ Decisions noted (James never asked): the metric is `github_click`, not `api_key_
 - [x] No dead or self-looping button; prices from `lib/plans.js` (n/a: no prices)
 - [x] Open copy questions for James listed, none decided
 
-Done here: `Pubsub.jsx` and `app/pubsub/page.jsx` open with Persona (Developer), Goal, CTA ("GitHub" → github.com/hanzoai/pubsub, `pubsub.hero` / `pubsub.close`), Metric (`github_click`), Signature, Beyond and `V2:`. In the black hero the ask is the one solid (white on #000); on desktop the header's "Try Hanzo" is outlined while it is on screen. On phones the shared header keeps a solid "Try Hanzo" (shared header, requested in `docs/requests/pricing.md` item 1), so the phone's first screen has two fills until that lands.
+Done here: `Pubsub.jsx` and `app/pubsub/page.jsx` open with Persona (Developer), Goal, CTA ("GitHub" → github.com/hanzoai/pubsub, `pubsub.hero` / `pubsub.close`), Metric (`github_click`), Signature, Beyond and `V2:`. In the black hero the ask is the one solid (white on #000); on desktop the header's "Try Hanzo" is outlined while it is on screen. On phones the shared header keeps a solid "Try Hanzo" (shared header, requested in `docs/build-notes/requests/pricing.md` item 1), so the phone's first screen has two fills until that lands.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (the layout's skip link targets `#main`)
@@ -155,6 +155,6 @@ Done here: Nothing is fetched. The product's states are drawn: in the hero publi
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for the file: it does not exist yet; ids are in place)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/pubsub.md` verdict 8 or more (no review of this round yet; none existed when the page was pushed)
+- [x] Review read: `docs/build-notes/review/pubsub.md` verdict 8 or more (no review of this round yet; none existed when the page was pushed)
 
 Done here: `pubsub.hero` and `pubsub.close` are set; `V2: 8/10` heads `Pubsub.jsx` and the route. Gallery: `docs/gallery/pubsub/d.mp4`, `d.jpg`, `p.jpg`. Checks at push: 200, parity 0 missing, taste OK, variety OK, unique OK, fs-audit clear, pinchk 7/7.

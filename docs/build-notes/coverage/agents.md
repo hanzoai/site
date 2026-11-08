@@ -6,7 +6,7 @@ Open copy questions for James:
 1. The FAQ says "Top up in USDC or Card" inside `agent.ts` but "USDC or USDT" in the steps. Both are kept verbatim.
 2. The header sits white over the black hero at the top of the page (shared Header behaviour). Requested, not edited.
 
-Shared changes requested (`docs/requests/chat.md`): the kit `Band` (blur word reveal, no `data-cta`), the floating desktop ask bar, `.x-arrow` underlines. Also the shared Header: it should turn dark over a black first section at scroll 0.
+Shared changes requested (`docs/build-notes/requests/chat.md`): the kit `Band` (blur word reveal, no `data-cta`), the floating desktop ask bar, `.x-arrow` underlines. Also the shared Header: it should turn dark over a black first section at scroll 0.
 Forks this page deleted:
 - page asks (`Ask`, `Docs` buttons), now kit `Cta`
 - the hand-written close, now kit `Band`
@@ -180,6 +180,6 @@ Done here: JS off and reduced motion show the finished run and the whole script 
 - [x] `data-cta` on every primary; events only through `lib/track.js` (`lib/track.js` not on main; the kit `Cta` dispatches `hz-event`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment (after review)
-- [x] Review read: `docs/review/agents.md` verdict 8 or more (the critic gave 6 before these fixes; pending re-review)
+- [x] Review read: `docs/build-notes/review/agents.md` verdict 8 or more (the critic gave 6 before these fixes; pending re-review)
 
 Done here: Proof is in `docs/gallery/agents/` (`desktop-hero.jpg`, `phone-1..3.jpg`: hero, the script mid-scene, the proof row; plus the older `desktop.mp4`, `desktop.jpg`).

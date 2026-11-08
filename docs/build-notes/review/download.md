@@ -15,7 +15,7 @@ First complaint: "The dial is clever: the files fan out and when I point at one 
 6. **Do overlaps, a font swap or layout shift appear? None on desktop; the phone hero is weak.** CLS is 0.0007 at 1470 and 0 at 375, with no font swap and no page-level horizontal overflow. On phone the dial becomes one swipe rail per product. The rails' chips are cut at the right edge ("Linux", "Edg") with no other cue that they scroll, and each chip is a small icon plus a label in a pill. The page's signature is absent on phone.
 7. **Which reference does it feel like? Apple's download / "which Mac" calm.** It is precise and quiet, with one delight. The fan-out is a good authored move, but it plays once, and nothing pointer- or time-driven carries on.
 8. **Is it different from its neighbours? Yes.** Its signature is the orbit dial around one button, and no other page has it.
-9. **Are all 18 parts covered? Yes.** `docs/coverage/download.md` has 18/18 parts, and its claims match what I saw: CLS 0 at 375, rails below 1200px, one h1.
+9. **Are all 18 parts covered? Yes.** `docs/build-notes/coverage/download.md` has 18/18 parts, and its claims match what I saw: CLS 0 at 375, rails below 1200px, one h1.
 10. **Any banned tells? None.** It is greys only and `taste.py` passes. No eyebrow sits above the h1, there is no glow, and the orbit chips' icons are the page's own small glyphs, not a Lucide wall.
 11. **Is the copy untouched? Yes.** Parity is OK: text 48/48, links 19/19. Every size and file name traces to Hanzo's own pages.
 

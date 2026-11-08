@@ -3,7 +3,7 @@
 Page file: `components/pages/TeamPage.jsx` (+ `TeamPage.css`) · gallery: `docs/gallery/team/` · metric id: `signup_start` (cta_click team.hero)
 
 Open copy questions for James: the aria strings Pause and Replay (canvas control) wait for approval in `content/ui-strings.json`.
-Shared changes requested (`docs/requests/team.md`): none. Note for the conductor: `taste.py --fix` rewrote Hanzo's "PR #418" to "PR #262626" and the diff sample's colours on this page (restored here; copy outranks palette). It hits any "#" plus 3 or 6 hex-like characters, including /chrome.
+Shared changes requested (`docs/build-notes/requests/team.md`): none. Note for the conductor: `taste.py --fix` rewrote Hanzo's "PR #418" to "PR #262626" and the diff sample's colours on this page (restored here; copy outranks palette). It hits any "#" plus 3 or 6 hex-like characters, including /chrome.
 Forks this page deleted: the forked `Btn` buttons (now the kit's `Cta`); the company `PinScenes` (replaced by page-local chapters whose headline clears first); the placeholder grey rooms.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -168,6 +168,6 @@ Done here: With hanzo.ai blocked (cloud), the memoji fall back to initial discs.
 - [x] `data-cta` on every primary (through `Cta`)
 - [x] Nothing identifier-bearing before consent
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: `docs/review/team.md` was 6/10; every listed fix is done, awaiting re-review
+- [ ] Review read: `docs/build-notes/review/team.md` was 6/10; every listed fix is done, awaiting re-review
 
 Done here: The re-review (7/10) fixes are in. #bugfix stays the one open case and the other nine channels are sized to their content (on the phone a tap shows only that channel; with JS off all ten read as a list). The canvas starts on its first frame and rests its cursors above the fold. On the phone: 28px under the Code and Leaders headlines, cursor labels clamped inside the board, and board rows of fixed height (no column snapping). The gallery was not re-filmed after these fixes (stopped for usage).

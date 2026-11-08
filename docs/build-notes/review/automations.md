@@ -7,7 +7,7 @@ Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). O
 
 First complaint: "The top is nice, it builds itself. But then it's just a wall of 81 grey emoji boxes for two and a half screens. That's a directory, not a premium page. And the thing I add gets wiped by the demo a second later."
 
-Proof: `docs/review/automations/desktop-first.jpg`, `phone-first.jpg`, `desktop-walk.jpg`, `phone-walk.jpg`.
+Proof: `docs/build-notes/review/automations/desktop-first.jpg`, `phone-first.jpg`, `desktop-walk.jpg`, `phone-walk.jpg`.
 
 ## The 11 answers
 1. **Sells in 5 seconds, moves within 1 second?** Yes. h1 52px, lede, "All Integrations" and the dock plus canvas all sit in the first screen at 1470x801 (object y 403 to 770). The first app lands by 1.0 s, the second by 2.0 s, and the clock bar fills. Phone: h1 40px, lede and ask, with the canvas starting at y 529. At 300 ms the page is still blank white under the header, but it is filled by 1 s.

@@ -3,7 +3,7 @@
 Page file: `components/pages/ChromePage.jsx` · gallery: `docs/gallery/chrome/` · metric id: `signup_start` (install hand-off to the Chrome Web Store)
 
 Open copy questions for James: none new. "Add to Chrome" points at `https://chromewebstore.google.com` (the live href, no listing path), kept as live.
-Shared changes requested (`docs/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own ask row with `<Cta id>`); the header ask and the ask bar landed with the shared system.
+Shared changes requested (`docs/build-notes/requests/apps1.md`): only the `Band` `id` prop is still open (this page closes on its own ask row with `<Cta id>`); the header ask and the ask bar landed with the shared system.
 Forks this page deleted: the PR pill that flew over the window and the channel chip above it (the patch now lands in the window's own `#bug-button-darkmode` tab); the grey skeleton stripes in the ghost tabs (now Hanzo's own tab names); the progress bars in chapter one (now a tick per action); the raw `.x-btn` hero and close buttons (now `<Cta>`); every label above a heading; the second ending ("Get Hanzo in Chrome" with a solid "Deploy to Cloud", now a text-link row above the close); the endless loops (the run, the scan and the MCP pulses now play a set number of times and rest). Round 3 (review 7/10): the six-tile icon bento (three equal icon tiles in a row) is now four hairline capability rows with one small product render that changes per row; the two governance tiles (allowlists, password-manager guardrails) are gone from the bento, so each of those lines is said once, in the black room; the tester's repeat of the window's "Allowed: … Password managers: Blocked" line is gone; the four surface text columns are now a handoff rail; the grey "Looking for Firefox…" box and the outlined "Get Hanzo in Chrome" bar are one hairline block.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: nothing is fetched; the tester runs in the page; an empty address sho
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/chrome.md` verdict 8 or more
+- [x] Review read: `docs/build-notes/review/chrome.md` verdict 8 or more
 
-Done here: `chrome.hero`, `chrome.band` and `chrome.*` secondaries; `<Cta>` sends `cta_click`; the tester's address is never sent anywhere. `docs/review/chrome.md` scored round 2 at 7/10; every fix it lists is applied in round 3 (bento, de-duplication, handoff rail, one hairline block, window fit and tilt, closing object, phone crop, card claims). Self-score 8/10, awaiting re-review.
+Done here: `chrome.hero`, `chrome.band` and `chrome.*` secondaries; `<Cta>` sends `cta_click`; the tester's address is never sent anywhere. `docs/build-notes/review/chrome.md` scored round 2 at 7/10; every fix it lists is applied in round 3 (bento, de-duplication, handoff rail, one hairline block, window fit and tilt, closing object, phone crop, card claims). Self-score 8/10, awaiting re-review.

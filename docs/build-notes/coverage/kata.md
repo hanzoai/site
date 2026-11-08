@@ -3,7 +3,7 @@
 Page file: `components/pages/Kata.jsx` (+ `.css`) · gallery: `docs/gallery/kata/` · metric id: `cta_click kata.hero`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/kata.md`): UI strings (A Kata session, Test runner, CI, Language, The suite turns) as accessible names only; data-cta on the kit Band; the desktop ask bar floating over content; the Terminal and PageHero kit parts.
+Shared changes requested (`docs/build-notes/requests/kata.md`): UI strings (A Kata session, Test runner, CI, Language, The suite turns) as accessible names only; data-cta on the kit Band; the desktop ask bar floating over content; the Terminal and PageHero kit parts.
 Forks this page deleted: the hand-written hero and close buttons (now kit Cta and Band), the custom closing section, the capabilities report bar and PASS chips, the invented stack-check title, labels and answer sentence, the green wipe and every green, the 108px and 320px type, springs.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -41,7 +41,7 @@ Done here: h1 "Test. Repair. Verify." at 52px cuts in by a CSS line mask from th
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: Kit Cta only (solid hero, quiet GitHub, plain docs link); the header carries "Get API key" after the hero on desktop; on phone the header keeps "Try Hanzo" (outlined while a page ask is on screen): the shared usePhoneAsk keeps Hanzo's label when the swapped one would not fit, so the phone half of this box stays open (request in docs/requests/kata.md); the A2Paste strip copies exactly the prompt it shows.
+Done here: Kit Cta only (solid hero, quiet GitHub, plain docs link); the header carries "Get API key" after the hero on desktop; on phone the header keeps "Try Hanzo" (outlined while a page ask is on screen): the shared usePhoneAsk keeps Hanzo's label when the swapped one would not fit, so the phone half of this box stays open (request in docs/build-notes/requests/kata.md); the A2Paste strip copies exactly the prompt it shows.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -155,6 +155,6 @@ Done here: No live data, so nothing can fail or load; the stack check has an emp
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/kata.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/kata.md` verdict 8 or more
 
 Done here: data-cta on kata.hero; the kit Band's button is marked kata.band by the page (useBandAsk) and sends cta_click until the kit does it (requested); Cta sends cta_click through the system event; V2 line in the header; reviews read: 6/10, then 7/10 (7 Nov); round 9 (8 Nov) answers the 7/10: unlit words #737373, phone board in the first screen, arrival without the reset, one solid at a time, dial labels clear, one ruled Read list, no voids, a terminal beside the questions.

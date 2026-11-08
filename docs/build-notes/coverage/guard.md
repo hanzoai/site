@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Guard.jsx` · gallery: `docs/gallery/guard/` · metric id: `cta_click guard.hero`
 
 Open copy questions for James: the hero console and the playground show demo DATA that is not Hanzo copy: data-shaped values with no prose (the standard test card number 4111 1111 1111 1111, jane@example.com, the test-key-shaped string sk-test-51Hx9Qb2aZ, the documentation IP 192.0.2.1), so the redaction is visible on arrival. Decided by the page owner (7 Nov) on the rule that demo data may be values, never sentences; James to confirm or replace with Hanzo's own example.
-Shared changes requested (`docs/requests/guard.md`): none filed; waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
+Shared changes requested (`docs/build-notes/requests/guard.md`): none filed; waiting on `tokens.css`, `lib/cta.js`, `lib/track.js`, `PageHero` to land on main.
 Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition, the typing `setInterval`
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: Paste your own runs in the page with nothing sent; empty text shows "
 - [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
 - [x] Nothing identifier-bearing; no field value in any payload
 - [x] `V2: 8/10` line in the page file's top comment
-- [x] Review read: no `docs/review/guard.md` yet
+- [x] Review read: no `docs/build-notes/review/guard.md` yet
 
 Done here: `guard.hero` and `guard.close` on the asks. Gallery: `docs/gallery/guard/` (desktop film and phone stills).

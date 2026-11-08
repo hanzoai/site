@@ -3,7 +3,7 @@
 Page file: `components/pages/integrations/IntegrationsIndex.jsx` · gallery: `docs/gallery/integrations/` · metric id: `api_key_created`
 
 Open copy questions for James: none on Hanzo's copy. Two UI strings wait for the register: "Find your tool" and "Nothing matches" (see the request file).
-Shared changes requested (`docs/requests/integrations.md`): the two UI strings; the `components/Morph.jsx` 4 s freeze; the phone header ask label and solid fill; header glass over dark rooms; `public/hanzo.css` smooth scrolling on phones.
+Shared changes requested (`docs/build-notes/requests/integrations.md`): the two UI strings; the `components/Morph.jsx` 4 s freeze; the phone header ask label and solid fill; header glass over dark rooms; `public/hanzo.css` smooth scrolling on phones.
 Forks this page deleted: the floating AskBar pill, cursor labels on badges and cards ("Open"), springs on the chip pill and grid, the `setInterval` language timer, the outlined second hero button (now a text link), shadows and lifts on cards.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: Static data (no fetch); the search's empty state ("Nothing matches" +
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/integrations.md` fixes worked through (Ready line)
+- [x] Review read: `docs/build-notes/review/integrations.md` fixes worked through (Ready line)
 
 Done here: `data-cta="integrations.hero"`, `"integrations.band"`, `"integrations.open"`; no tracking code on the page. Gallery: `docs/gallery/integrations/` (current proof: `c1-desktop-hero.jpg`, `c1-desktop-track.jpg`, `c1-phone.jpg`, `c1-open.jpg`). Review read; every fix item answered (see the Ready line).

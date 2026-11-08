@@ -3,7 +3,7 @@
 Page file: `components/pages/model/Zen.jsx` and `components/v2/Launch.jsx` · gallery: `docs/gallery/zen/` · metric id: `signup_start`
 
 Open copy questions for James: (1) the h1 is "Zen" with the home model card's line ("Deep reasoning for complex problems."), and live /zen's h1 "Open models. Yours to run." sits beside the settled film as an h2 with the same words: keep, or make the live line the h1 again? (2) The trace's tab names reuse Hanzo's card rows ("Open weights", "Text, images and video", "Packed ternary, 5.95 GB"), its button uses the register's "Next" and "Replay", and its tablist is named "Zen": no new words, but the tabs are a new use of them. Labels that sat above headlines now sit below or beside them as captions.
-Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the kit Band's blur reveal; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
+Shared changes requested (`docs/build-notes/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the kit Band's blur reveal; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
 Forks this page deleted: our spec table and headings, raw `.x-btn` asks (now `Cta`), raw `<img>` (now `Img`, `ModelFilm`), cursor labels.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: JS off shows every word, unblurred, including the closing band (check
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for `lib/track.js`: not on main; kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/zen.md` verdict 8 or more (pending a fresh walk of the current build)
+- [ ] Review read: `docs/build-notes/review/zen.md` verdict 8 or more (pending a fresh walk of the current build)
 
 Done here: the `V2:` line is in the page file. Proof is in `docs/gallery/zen/` (desktop hero, settled headline, swarm, trace; phone stills), walked 7 Nov.

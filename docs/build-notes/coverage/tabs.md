@@ -3,7 +3,7 @@
 Page file: `components/pages/Tabs.jsx` (+ `Tabs.css`, `tabsTree.js`) · gallery: `docs/gallery/tabs/` · metric id: `signup_start` (app hand-off to tabs.hanzo.ai)
 
 Open copy questions for James: "Browser", "Phone" and "Reset" are icon buttons with aria-labels only (not in `content/ui-strings.json`); add them to the register if visible labels are wanted.
-Shared changes requested (`docs/requests/tabs.md`): none yet. Noted for shared owners (`docs/requests/templates.md` covers all Business 2 pages): the header's "Try Hanzo" is now always solid beside the page ask; `useEvery` (cloud/Frame.jsx) uses `setInterval`; `tokens.css` is not merged, so page CSS still carries deck-grey literals.
+Shared changes requested (`docs/build-notes/requests/tabs.md`): none yet. Noted for shared owners (`docs/build-notes/requests/templates.md` covers all Business 2 pages): the header's "Try Hanzo" is now always solid beside the page ask; `useEvery` (cloud/Frame.jsx) uses `setInterval`; `tokens.css` is not merged, so page CSS still carries deck-grey literals.
 Forks this page deleted: the old title-left/stage-under hero, the eyebrow-styled "HANZO TABS" label, the dark room's duplicate "Read the source" button (now the MIT tile itself), the map's black button-like "Open Tabs" tile, every spring transition.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: look.cjs at both widths reports errors none; closing every pane is re
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing; no tracking code in the page
 - [x] `V2:` line in `app/tabs/page.jsx`
-- [ ] Review read: `docs/review/tabs.md` verdict 8 or more (re-review pending after this rework)
+- [ ] Review read: `docs/build-notes/review/tabs.md` verdict 8 or more (re-review pending after this rework)
 
 Done here: `tabs.hero`, `tabs.close`, `tabs.source`. Reviews: 5/10, then 7/10; the second review's five fixes are addressed (keep tile animates by transform only, map wakes in view, light focus on dark, closing band, phone key caps, tree 330px).

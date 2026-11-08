@@ -3,7 +3,7 @@
 Page file: `components/pages/Investors.jsx` (+ `Investors.css`) · gallery: `docs/gallery/investors/` · metric id: `cta_click investors.hero` (one contact click)
 
 Open copy questions for James: "Backed by" logos (MASTER part 1 list; shown as on live, permission not documented here); the aria strings Pause, Replay and Read the source wait for `content/ui-strings.json` approval.
-Shared changes requested (`docs/requests/investors.md`): none (the PinScenes cross-fade ghost was avoided with a page-local pinned scene; the global no-JS rule in `app/layout.jsx` reveals hidden figures, so this page hides its counter's inactive figures in its own `<noscript>`).
+Shared changes requested (`docs/build-notes/requests/investors.md`): none (the PinScenes cross-fade ghost was avoided with a page-local pinned scene; the global no-JS rule in `app/layout.jsx` reveals hidden figures, so this page hides its counter's inactive figures in its own `<noscript>`).
 Forks this page deleted: the forked `UiBtn`/`Btn` buttons (now the kit's `Cta`); the hand-drawn Pareto scatter; native checkboxes; the infinite logo marquee; the counter's endless loop.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -151,6 +151,6 @@ Done here: With hanzo.ai blocked (this cloud box), the logos show their names an
 - [x] `data-cta` on every primary (through `Cta`, which fires `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: `docs/review/investors.md` was 6/10; every listed fix is done, awaiting re-review
+- [ ] Review read: `docs/build-notes/review/investors.md` was 6/10; every listed fix is done, awaiting re-review
 
 Done here: Reviews read: 6/10 (7 Nov). Round 9 (8 Nov) answers it: commit stats on one line (78,421 / 1,263 / 1,733 / 5,125 / 3,617, measured), bars true at every size and under reduced motion, phone header ask, 44px counter steps, presses and hovers on every link, `--acc` on the deck ink, 0 hydration errors under reduced motion, and the copy check's missing lines restored (Hanzo's kicker and the thesis label as visually hidden text, figures and names in leaf spans). Gallery: `docs/gallery/investors/`.

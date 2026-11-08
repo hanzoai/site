@@ -3,7 +3,7 @@
 Page file: `components/pages/Beta.jsx` · gallery: `docs/gallery/beta/` · metric id: `signup_start`
 
 Open copy questions for James: none (Hanzo's words only).
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none.
 Forks this page deleted: the forked `x-btn solid` Apply buttons (now kit `Cta`), the portal div sheet with a hand-made focus loop (now a native `<dialog>`), raw `<video>` (now kit `Film`), the floating `data-cursor` label, hover lifts and image zooms.
 
 
@@ -154,6 +154,6 @@ Done here: Static Hanzo copy; a film that fails leaves its poster; the sheet is 
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/beta.md` verdict 8 or more
+- [x] Review read: `docs/build-notes/review/beta.md` verdict 8 or more
 
-Done here: `data-cta` ids `beta.hero`, `beta.a`, `beta.b`, `beta.c` (kit Cta fires `cta_click`); V2 line in the route header; conductor review `docs/review/beta.md` 7/10 capped on the card format and the close scale (both fixed: 18-part card, close 52/26), product tiles without hover (fixed: drift, replay, hairline, press) and raw `<video>` (fixed: kit `Film`). Round 2 (7/10): phone double solid, rail cut by the fold and blank on first visit, white gaps, Design partner crowding, JS-off controls and reduced-motion scale: all fixed.
+Done here: `data-cta` ids `beta.hero`, `beta.a`, `beta.b`, `beta.c` (kit Cta fires `cta_click`); V2 line in the route header; conductor review `docs/build-notes/review/beta.md` 7/10 capped on the card format and the close scale (both fixed: 18-part card, close 52/26), product tiles without hover (fixed: drift, replay, hairline, press) and raw `<video>` (fixed: kit `Film`). Round 2 (7/10): phone double solid, rail cut by the fold and blank on first visit, white gaps, Design partner crowding, JS-off controls and reduced-motion scale: all fixed.

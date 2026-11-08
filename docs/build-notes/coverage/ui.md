@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/UiPage.jsx` (+ `UiPage.css`) · gallery: `docs/gallery/ui/` · metric id: `install_copy`
 
 Open copy questions for James: board demo labels not in `content/ui-strings.json` ("Field", "Panel", "Options ▾", "@hanzo/design tokens", "--radius", "--density", the accent names graphite/steel/silver, "Tab", "/ 45"); the chapter board reuses Hanzo's own phrases from the page ("one atomic stylesheet", the three product names, the `npx` line) as its labels.
-Shared changes requested (`docs/requests/ui.md`): on phones (≤ 700px) the shared header keeps a solid "Try Hanzo" for the whole page, and the shared phone bar (`Ask.jsx`) shows "GitHub →" only where nothing sits under it, so it is rarely on screen on this page. Asked for: let the header carry the page's own `data-thumb` ask on phones, as it does on desktop. Until then the page's GitHub asks are outlined on phones, so one solid shows per screen. Also noted: `Paste`, `Get` strip and `.w2-cta` are shared (`components/pages/cloud/Frame.jsx`, `components/v2/Scale.css`); this page overrides only `.w2-cta`'s greys to deck values.
+Shared changes requested (`docs/build-notes/requests/ui.md`): on phones (≤ 700px) the shared header keeps a solid "Try Hanzo" for the whole page, and the shared phone bar (`Ask.jsx`) shows "GitHub →" only where nothing sits under it, so it is rarely on screen on this page. Asked for: let the header carry the page's own `data-thumb` ask on phones, as it does on desktop. Until then the page's GitHub asks are outlined on phones, so one solid shows per screen. Also noted: `Paste`, `Get` strip and `.w2-cta` are shared (`components/pages/cloud/Frame.jsx`, `components/v2/Scale.css`); this page overrides only `.w2-cta`'s greys to deck values.
 Forks this page deleted: the two browser range inputs (now `components/v2/x-gauss/Slider.jsx`), the shared `Code` block in the dark room (now a page terminal whose Copy copies the two shell commands), the floating hero and chapter pauses, the ink accent that made "Ship it" a second black pill, every spring, the shared PinChapters (now one real board the chapters recompose), the "React Component Library" pill with the Enso picture (now a mono caption under the h1, same words), the hero board's 1.02 settle scale (it now settles by lift only, inside the gutters).
 
 ## 1. Strategy and conversion
@@ -148,12 +148,12 @@ Done here: `pnpm add @hanzo/ui` has its own Copy at the close.
 - [x] n/a submit
 - [x] n/a
 
-Done here: 0 console errors on 8 cold loads waiting for load before any screenshot: 1 normal and 3 reduced-motion at 1470×801, the same at 375×812. The reduced-motion hydration mismatch came from the shared `Settle` (it reads `useReducedMotion()` during render); /ui now uses a page-local Stage instead, and the shared fix is requested in `docs/requests/ui.md`.
+Done here: 0 console errors on 8 cold loads waiting for load before any screenshot: 1 normal and 3 reduced-motion at 1470×801, the same at 375×812. The reduced-motion hydration mismatch came from the shared `Settle` (it reads `useReducedMotion()` during render); /ui now uses a page-local Stage instead, and the shared fix is requested in `docs/build-notes/requests/ui.md`.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in `UiPage.jsx`
-- [x] Review read: Ready line in docs/review/ui.md
+- [x] Review read: Ready line in docs/build-notes/review/ui.md
 
 Done here: Ready 7 Nov (James's bar: holds up next to /api and /affiliate, no score). Round-4 fixes all hold on the rebuilt page (no keyboard trap: a 30-press Tab crawl goes Ship it, Options, Field, Pause, swatch, sliders with no stop on Close; 0 errors under reduced motion; Ship it answers; no repeated board; ends on the band; the title bar names an app only in chapter 04). This pass: the h1 sits about 35px higher (hero padding 40-52px), so the whole board fits the 801 first screen; Hello()'s button lands in a fixed outlined slot, so the card is never empty and nothing moves when it renders.

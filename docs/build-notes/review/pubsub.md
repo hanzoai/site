@@ -54,7 +54,7 @@ Walked 7 Nov on main at `e152bcc7` ("the chapters pin the hero's bus itself…")
 11. **Copy untouched?** Yes, parity is clean.
 
 ## Card check
-`docs/coverage/pubsub.md` has 18 headings, every `Done here:` filled, three lines on top, in MASTER format. Checked against the page:
+`docs/build-notes/coverage/pubsub.md` has 18 headings, every `Done here:` filled, three lines on top, in MASTER format. Checked against the page:
 - **True:**
   - parity and links;
   - part 7's "the chapters' object is now the hero's bus itself" and its per-chapter list;

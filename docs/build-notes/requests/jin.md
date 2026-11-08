@@ -1,4 +1,4 @@
-# /jin: shared-chrome requests (round 2, from docs/review/jin.md fix 9)
+# /jin: shared-chrome requests (round 2, from docs/build-notes/review/jin.md fix 9)
 
 Not edited by the /jin page; for the owners of the shared files.
 

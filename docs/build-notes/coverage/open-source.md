@@ -3,7 +3,7 @@
 Page file: `components/pages/OpenSource.jsx` · gallery: `docs/gallery/open-source/` · metric id: `github_click`
 
 Open copy questions for James: none. Decided here: commit totals differ by source (803,822 in Total across Hanzo; per-ecosystem figures elsewhere) and the hero's "38" sits beside the stat "73 organizations"; every figure is shown exactly as Hanzo prints it, nothing summed or derived. Copy rule (conductor, round 2): every visible string, number and aria-label checked against `content/live/open-source.json`, `content/pages/` and `content/ui-strings.json`; the invented ones were removed (pointer hint, "Charter" caption, card index numbers, composed sheet labels and share sentences, typed → ★ ⑂ glyphs now drawn icons, invented aria-labels).
-Shared changes requested (`docs/requests/<page>.md`): `docs/requests/open-source.md` (round 2): the phone header ask should read "View on GitHub" like the desktop header, and ProofScale's `.pf-btn.solid:hover` fill `#2a2a2c` is off-deck (overridden page-locally here). Reported to the conductor: `components/Morph.jsx` waits on `requestAnimationFrame` inside the View Transition callback, which Chromium only runs at its 4 s timeout, so every in-site click freezes about 4 s; fix is `setTimeout(ok, 16)`.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): `docs/build-notes/requests/open-source.md` (round 2): the phone header ask should read "View on GitHub" like the desktop header, and ProofScale's `.pf-btn.solid:hover` fill `#2a2a2c` is off-deck (overridden page-locally here). Reported to the conductor: `components/Morph.jsx` waits on `requestAnimationFrame` inside the View Transition callback, which Chromium only runs at its 4 s timeout, so every in-site click freezes about 4 s; fix is `setTimeout(ok, 16)`.
 Forks this page deleted: the floating AskBar pill, the cursor "Open" labels, the pinned ecosystem scene (now tabs), the second outlined hero button (now a text link), springs on the tab pills.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: the data is Hanzo's build snapshot (no live fetch), so the page is co
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/open-source.md` verdict 8 or more — read: 5/10; every Fix (1–7) addressed in round 2, awaiting a fresh review
+- [ ] Review read: `docs/build-notes/review/open-source.md` verdict 8 or more — read: 5/10; every Fix (1–7) addressed in round 2, awaiting a fresh review
 
 Done here: `data-cta="open-source.hero"` and `"open-source.band"`; no tracking code on the page. `V2:` line in the top comment describes round 2. Gallery: `desktop.mp4`, `desktop.jpg`, `phone-1..3.jpg`, `click-through.jpg`, and round 2 proof `round2-desktop.jpg`, `round2-totals-desktop.jpg`, `round2-phone.jpg`, `round2-phone-built.jpg`.

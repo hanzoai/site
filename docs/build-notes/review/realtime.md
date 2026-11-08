@@ -11,7 +11,7 @@ Walked 7 Nov 2026, about 17:00 UTC, on main `b9ca6fb0`, which includes the fix `
 - **Controls:** hovered and pressed the hero ask, "View Documentation", Client 3's rule switch, the hero pause, a drag throw on the rail then Next and Prev, a use-case card hover, the three handshake calls, "The handshake, in full", the three growth figures and the close ask.
 - **Other checks:** reduced motion, JS off, CLS, fixed elements, section heights, 375×667 fold, 320 width. Non-localhost POSTs blocked.
 
-Stills in `docs/review/realtime/`: `d-hero.jpg`, `d-chapter.jpg`, `d-gap.jpg` and `p-hero.jpg`.
+Stills in `docs/build-notes/review/realtime/`: `d-hero.jpg`, `d-chapter.jpg`, `d-gap.jpg` and `p-hero.jpg`.
 
 ## What works
 - **The hero sells and is alive.** h1 52px on 2 lines at y 132, then "Live record updates", **Start Building** and "View Documentation" on one line (y 268–316), then the three clients. The record cycles create → update → delete inside the first second; Client 3 ("no b") never sees b. On phone the h1 is 34px on 2 lines and the ask's bottom sits at 259px at 375×667 (330 at 320 wide).
@@ -55,7 +55,7 @@ Stills in `docs/review/realtime/`: `d-hero.jpg`, `d-chapter.jpg`, `d-gap.jpg` an
 11. **Copy untouched?** Yes. Parity 0 missing. The drawn demo words are flagged on the card.
 
 ## Card check
-`docs/coverage/realtime.md` has all 18 parts filled, with copy questions, requests and deleted forks listed. Most of it checks out (rail hard stop, card hover, CLS, phone h1 decision now stated in part 15). Corrections:
+`docs/build-notes/coverage/realtime.md` has all 18 parts filled, with copy questions, requests and deleted forks listed. Most of it checks out (rail hard stop, card hover, CLS, phone h1 decision now stated in part 15). Corrections:
 - **Part 11:** "the ask's bottom at 355px at 375×667". I measured 259px at 375×667 (330 at 320×700). That is better than claimed, but the number is wrong.
 - **Part 18:** "no review file exists yet". One does (this one, and a 7/10 before it).
 - **Part 9:** "magnetic close ask". A centred hover moved nothing measurable (transform none). It may only pull off-centre; worth stating how far.

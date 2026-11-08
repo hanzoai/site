@@ -6,7 +6,7 @@ Open copy questions for James:
 - "Only the Hanzo lines" is now shown as visible text on the switch (register `int_only`, needs_james). Without it nobody could tell what the switch does (review 7/10, part 8).
 - "Stop", "Replay", "Copy" and "Copy base URL" are icon-only controls named from the register.
 
-Shared changes requested (`docs/requests/integrations.md`, items 4-8: phone header ask, header glass, smooth scrolling in Hanzo's stylesheet, cookie card, FamNext transition). Two site-level issues sit outside this template: the Morph slow path shows the old page (`components/Morph.jsx`), and kit `Copy` swaps its `aria-label` instead of using `role=status` (`components/ui.jsx`).
+Shared changes requested (`docs/build-notes/requests/integrations.md`, items 4-8: phone header ask, header glass, smooth scrolling in Hanzo's stylesheet, cookie card, FamNext transition). Two site-level issues sit outside this template: the Morph slow path shows the old page (`components/Morph.jsx`), and kit `Copy` swaps its `aria-label` instead of using `role=status` (`components/ui.jsx`).
 
 Forks this page deleted:
 - The three look-alike code cards per page are now one pinned window with tabs.
@@ -169,6 +169,6 @@ Done here: JS off shows every line, every chapter and every link. C1: 0 console 
 - [x] `data-cta` on the hero ask and the close (`lib/track.js` not merged yet)
 - [x] Nothing identifier-bearing; no fields
 - [x] `V2:` line in `Guide.jsx` (v5)
-- [ ] Review read: `docs/review/integrations-family.md` was 7/10; this round fixes its six items. A re-score is pending.
+- [ ] Review read: `docs/build-notes/review/integrations-family.md` was 7/10; this round fixes its six items. A re-score is pending.
 
 Done here: Film and phone shots for langchain and cursor are in `docs/gallery/integrations/`, re-shot over the same names. C1 proof: `docs/gallery/integrations-family/` (anthropic-sdk desktop, chapter and phone; docker desktop and phone; cursor desktop). Members checked for C1: anthropic-sdk, docker, cursor (plus parity on all 19).

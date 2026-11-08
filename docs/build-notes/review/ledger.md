@@ -86,7 +86,7 @@ Walked: 2026-11-07, 16:58 to 17:20 UTC, dev server on :4180 (warmed with curl fi
 2. **Find and kill the hydration mismatch.**
    - Reload /ledger 10 times and log the full React diff.
    - Suspects: the `data-ask-on=""` attribute that the server renders on `<main>` and the IO effect then removes, and the header ask swapping "Try Hanzo" to "Read the docs" from `data-ask-name`.
-   - If it is shared chrome, write it up in `docs/requests/ledger.md`. The "1 Issue" badge must not appear.
+   - If it is shared chrome, write it up in `docs/build-notes/requests/ledger.md`. The "1 Issue" badge must not appear.
 3. **Phone header ask: same words as the page.** Make the header ask read "Read the docs" on phone too, as it does on desktop (the `[data-ask-name]` swap is not applied under 900px). Or outline the header "Try Hanzo" whenever the page's own solid is not on screen. Never show two different solid asks.
 4. **First second:** start the book's film one beat earlier.
    - Either begin at `f = 1` with the first timeout at about 600 ms, or fire the first step on `seen` after 500 ms. Then a balance rolls inside 1 s.

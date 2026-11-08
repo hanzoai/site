@@ -1,6 +1,6 @@
 # /gen — James-eye review
 
-Ready: 8 Nov, held up next to /api and /agents (no score). Read and Paste now share one screen (links in two compact columns with a hover wash, the prompt beside them with a live caret), the hero sits clear of the header with the index peeking above the fold, the card corrected on the phone ask (the header stays "Try Hanzo" after the hero because "Get API key" overruns the shared hook's gutter by 2.7px; shared, in docs/requests/apps1.md item 1). taste/unique/parity OK (text 164/164, links 10/10); 0 console errors from the page (the one shared footer hydration warning shows on /agents too), no overflow/overlap at 1470x801 and 375x812. 8 Nov copy rule: copycheck missing 0 of 76 (Hanzo's words now sit whole in their own elements, nothing reworded).
+Ready: 8 Nov, held up next to /api and /agents (no score). Read and Paste now share one screen (links in two compact columns with a hover wash, the prompt beside them with a live caret), the hero sits clear of the header with the index peeking above the fold, the card corrected on the phone ask (the header stays "Try Hanzo" after the hero because "Get API key" overruns the shared hook's gutter by 2.7px; shared, in docs/build-notes/requests/apps1.md item 1). taste/unique/parity OK (text 164/164, links 10/10); 0 console errors from the page (the one shared footer hydration warning shows on /agents too), no overflow/overlap at 1470x801 and 375x812. 8 Nov copy rule: copycheck missing 0 of 76 (Hanzo's words now sit whole in their own elements, nothing reworded).
 
 Verdict: 7/10
 First complaint: "On the phone there are two black buttons at the top, 'Try Hanzo' and 'Get API key'. Which one am I meant to press? And once I scroll past the hero, the ask is gone."
@@ -55,7 +55,7 @@ First complaint: "On the phone there are two black buttons at the top, 'Try Hanz
     - a dead Pause control under reduced motion. `.xgn-pause` measured `hidden=false` there while the board does not walk.
 11. **Is the copy untouched?** Yes, as far as walked. The card states parity text 164/164 and links 10/10, and every line reads as Hanzo's.
 
-## Card check (docs/coverage/gen.md)
+## Card check (docs/build-notes/coverage/gen.md)
 - Part 1, "check.mjs counts 1 solid on the first screen at both sizes": **false.** The phone first screen measures 2 solid fills, header "Try Hanzo" (rgb 10,10,10) and hero "Get API key".
 - Part 4, "on phones the slim shared bar carries this page's own `data-thumb` ask": **false.** No fixed bar exists at any scroll depth with the cookie card dismissed. The page's ask on phone exists only in the hero and the closing room.
 - Part 4, "The header carries the solid 'Try Hanzo'": **stale.** On desktop it is outlined "Try Hanzo" at the top and a solid "Get API key" after the hero. On phone it is a solid "Try Hanzo" throughout.
@@ -71,7 +71,7 @@ A false claim caps the verdict at 7.
    - the header ask must not be a second solid while the hero "Get API key" (`[data-cta="gen.hero"]`) is in view;
    - after the hero it must read "Get API key" (the page's `data-thumb` label), as it already does on desktop.
 
-   The header is shared chrome, so add this to `docs/requests/apps1.md` (item 1) with the measurement: phone header "Try Hanzo", bg #0a0a0a, at y 0–6000.
+   The header is shared chrome, so add this to `docs/build-notes/requests/apps1.md` (item 1) with the measurement: phone header "Try Hanzo", bg #0a0a0a, at y 0–6000.
 2. **Ask after the hero on phone.** Either get the shared slim bar to rise for `[data-thumb]` once `gen.hero` leaves view, or correct the card. Right now nothing carries the ask from y≈450 to the closing room at y≈9100.
 3. **Phone rails: keep the command in view.** At 375 the first switch sits 1,451px above `.xgn-build`. Under 899px, either:
    - move `.xgn-build-wrap` above `.xgn-rail-list` and make it `position: sticky; top: 64px` with only the `gen` row showing, or

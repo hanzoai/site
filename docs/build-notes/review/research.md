@@ -12,7 +12,7 @@ Walked 7 Nov 2026 on localhost:4180 with Playwright Chromium, fresh. This is not
 - **Other conditions:** reduced motion and JS off at both sizes, plus 320 px.
 - **Scripts:** parity, taste and unique.
 
-Stills are in `docs/review/research/`:
+Stills are in `docs/build-notes/review/research/`:
 - `desk-hero.jpg`: the desktop first screen at 1.3 s.
 - `desk-hover-mismatch.jpg`: the old name is kept, but it now shows the pointer holding Kai, which is fixed.
 - `phone-hero.jpg`: the phone desk.
@@ -73,7 +73,7 @@ Stills are in `docs/review/research/`:
 - During the busy walk, the default load also showed one "attributes didn't match" error with the badge. That matches `_shared.md` §3 and is not held against the page.
 
 ## Card check
-`docs/coverage/research.md` has 18/18 headings with `Done here:` filled. These claims no longer match the page:
+`docs/build-notes/coverage/research.md` has 18/18 headings with `Done here:` filled. These claims no longer match the page:
 - **Part 9:** "Signature scroll word reveal". The page's header comment and `app/research/page.jsx` now say the signature is the desk and the open.
 - **Part 11, layout:** "Phone desk is two loose rows of three sheets". It is now one fan of three.
 - **Part 11, ask:** "Primary ask above the fold at 375". It is at 812 tall, not at the 375×667 MASTER asks for.
@@ -87,7 +87,7 @@ Stills are in `docs/review/research/`:
 3. **Lift the phone ask above 667.** Trim the gap between the fan and the h1 (about 88 px now) and shorten the fan by about 30 px, so "Explore papers.hanzo.ai" ends at or above y 640 at 375×667.
 4. **Make the phone index feel less like a document.** Tighten phone rows to about 140 to 160 px by putting the date inline with the title rather than on its own line. Make the 2×2 kinds rail and the rolling month a slim sticky strip under the header, so something changes as you read.
 5. **Stop filtering from collapsing the page.** Give `.xrs-list` a min-height equal to its pre-filter height while a filter is active (or at least 100svh), so the footer never jumps into view.
-6. **Correct the card** (parts 9, 11, 17 and 18) to match what the page does now. Request "Find a paper or a HIP" and the empty-state sentence in `docs/requests/research.md` for `ui-strings.json`.
+6. **Correct the card** (parts 9, 11, 17 and 18) to match what the page does now. Request "Find a paper or a HIP" and the empty-state sentence in `docs/build-notes/requests/research.md` for `ui-strings.json`.
 7. **Small ones:**
    - Cut the white between the glance and the index by about half.
    - When the reader is in Specifications or Standards, the rail month should drop to blank or "HIPs" instead of keeping the stale "Jun 2026".

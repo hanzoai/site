@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Machines.jsx` · gallery: `docs/gallery/machines/` · metric id: `signup_start (cta_click machines.hero)`
 
 Open copy questions for James: none. Decided by the conductor (7 Nov, DONE.md point 2, copy word-for-word): the derived 2x and 4x prices are dropped; only Hanzo's 1x quote ($3.48, $27.84, $2,540, 80 GB) is printed, and the live 2x / 4x size tabs light their cards with an em dash in the quote. The "Tech specs" label stays out.
-Shared changes requested (`docs/requests/machines.md`): cookie card size, the header strip near the page end, the PinChapters crossfade (fixed page-locally), `tokens.css` (page tokens declared locally until it lands).
+Shared changes requested (`docs/build-notes/requests/machines.md`): cookie card size, the header strip near the page end, the PinChapters crossfade (fixed page-locally), `tokens.css` (page tokens declared locally until it lands).
 Forks this page deleted: the page's own hero shell (Frame `Hero`), hand-made buttons (`.v2-btn` became the kit `Cta`), a second ending (the agent prompt moved mid-page), the sticky phone visual over text (chapters now stack), every spring transition; round 2: the three-column spec wall, the shared `GetIt` contour close (the close is the page's own rack), the step console's six sets of boxes and its traffic-light dots, the invented console labels, the "Tech specs" label
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: Server HTML carries the true 80 (the count only arms when the figure 
 - [x] `data-cta` on every primary (the kit `Cta` sends `cta_click`); `lib/track.js` is not on main yet
 - [x] Nothing identifier-bearing; no field value in any payload
 - [x] `V2: 8/10` line in the page file's top comment
-- [x] Review read: `docs/review/machines.md` (6/10), all ten fixes worked through
+- [x] Review read: `docs/build-notes/review/machines.md` (6/10), all ten fixes worked through
 
 Done here: `machines.hero`, `machines.close` and `machines.deploy` on the asks. Gallery: `docs/gallery/machines/` (`desktop.jpg`, `phone-1.jpg`, `phone-2.jpg` refreshed 8 Nov; earlier round stills kept).

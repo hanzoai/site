@@ -66,7 +66,7 @@ Walked 7 Nov 2026 (critic round 6), HEAD `bd1204f2`, at 1470×801 (fine pointer)
     - The hero hover #2c2c2e and the dark-room ask #f5f5f7 come from the shared kit `Cta` and are off-deck (shared, not this page).
 11. **Copy untouched?** Yes. The renders are aria-hidden fragments of Hanzo's sentences, and the open copy question is left for James.
 
-## Card check (docs/coverage/gallery.md)
+## Card check (docs/build-notes/coverage/gallery.md)
 - **True:**
   - Part 1: the arrival is outlined at 0 to 1,500 ms, measured.
   - Part 4: phones keep "Try Hanzo".
@@ -110,4 +110,4 @@ Walked 7 Nov 2026 (critic round 6), HEAD `bd1204f2`, at 1470×801 (fine pointer)
    - Part 8: until fix 1 lands, frames do not press.
    - Part 15: the page scroll on close.
    - Part 9: Moves has a `Settle` too.
-8. **(Shared, already filed)** The hydration badge on cold loads, the kit `Cta` hover #2c2c2e and the dark-room fill #f5f5f7 are off-deck. Note them in `docs/requests/gallery.md` if they are not already there.
+8. **(Shared, already filed)** The hydration badge on cold loads, the kit `Cta` hover #2c2c2e and the dark-room fill #f5f5f7 are off-deck. Note them in `docs/build-notes/requests/gallery.md` if they are not already there.

@@ -3,7 +3,7 @@
 Page file: `components/pages/Operator.jsx` · gallery: `docs/gallery/operator/` · metric id: `cta_click operator.hero`
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none.
 Forks this page deleted: the teal accent, the eyebrows over headings, a derived "10 Kinds" count that is not Hanzo's, the raw `.x-btn` asks (now kit `Cta` and `Band`).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: Loading has nothing to fetch (all copy and samples are in the server 
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/operator.md` (7/10 on the walk before this build; its fixes are in: hero ask and pause answer hover, board tiles drag only with a mouse and stay inside the board, touch scrolls the page and a tap drifts a Kind, "Declare" now heads the six-point card stack (the pinned converge was replaced in the motion-map pass), the heading shows under reduced motion with no hydration mismatch, "operator up" copies; 8 Nov: a drifting Kind always moves toward the middle of the board so it never pokes past the edge at 375, the log holds five lines in a 156px panel so it is never two-thirds empty, kms.hanzo.ai breaks after "kms." instead of clipping at 1470)
+- [x] Review read: `docs/build-notes/review/operator.md` (7/10 on the walk before this build; its fixes are in: hero ask and pause answer hover, board tiles drag only with a mouse and stay inside the board, touch scrolls the page and a tap drifts a Kind, "Declare" now heads the six-point card stack (the pinned converge was replaced in the motion-map pass), the heading shows under reduced motion with no hydration mismatch, "operator up" copies; 8 Nov: a drifting Kind always moves toward the middle of the board so it never pokes past the edge at 375, the log holds five lines in a 156px panel so it is never two-thirds empty, kms.hanzo.ai breaks after "kms." instead of clipping at 1470)
 
-Done here: `data-cta` on `operator.hero`; `Cta` dispatches `hz-event` cta_click; nothing before consent; `V2:` line in the page file; verdict in `docs/review/operator.md`.
+Done here: `data-cta` on `operator.hero`; `Cta` dispatches `hz-event` cta_click; nothing before consent; `V2:` line in the page file; verdict in `docs/build-notes/review/operator.md`.

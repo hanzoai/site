@@ -3,7 +3,7 @@
 Page file: `components/pages/Platform.jsx` (+ `Platform.css`, `platformData.js`, `app/platform/page.jsx`; own v2 parts `IsoStack`, `PinChapters`, `SheetPanel`, `useCalm`) · gallery: `docs/gallery/platform/` · metric id: `api_key_created`
 
 Open copy questions for James: none. Live /platform has no sales ask, so the System-type "sales ask" is not added; Hanzo's own "Start building" stays.
-Shared changes requested (`docs/requests/platform.md`): the site ask bar (`components/Ask.jsx`) should not float over content on desktop (header-only there); kit `Band` should accept an `id` so its primary carries `data-cta`; kit `Copy` should not show its tick when the clipboard write fails; `lib/cta.js`, `lib/track.js` and a kit `PageHero` do not exist yet.
+Shared changes requested (`docs/build-notes/requests/platform.md`): the site ask bar (`components/Ask.jsx`) should not float over content on desktop (header-only there); kit `Band` should accept an `id` so its primary carries `data-cta`; kit `Copy` should not show its tick when the clipboard write fails; `lib/cta.js`, `lib/track.js` and a kit `PageHero` do not exist yet.
 Forks this page deleted: the page-local ask bar (the site `Ask` reads `data-thumb` instead), the Kernel section (now inside layer 11's sheet), the five-tile grid (now five rows and one stage), the marquee (now a static row), the separate proof strip and facts row (now one figures section), the closing of the black room (it left a blank screen).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: Nothing on the page calls a network API. Console errors: 0 on load an
 - [ ] `data-cta` on every primary; events only through `lib/track.js` (hero and asks yes; Band primary blocked on kit; `lib/track.js` does not exist)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [ ] `V2: <score>/10 <one line>` in the page file's top comment (added after the critic's verdict)
-- [ ] Review read: `docs/review/platform.md` verdict 8 or more (re-review requested after this rework)
+- [ ] Review read: `docs/build-notes/review/platform.md` verdict 8 or more (re-review requested after this rework)
 
 Done here: The page sends nothing; `data-cta` ids `platform.hero`, `platform.stack`, `platform.inspect`. Gallery proof in `docs/gallery/platform/`. Critic verdict before this rework: 6/10; this card is updated with the new verdict.

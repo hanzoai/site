@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Auto.jsx` · gallery: `docs/gallery/auto/` · metric id: `cta_click:auto.primary`
 
 Open copy questions for James: "Restart the pod" (`c4_restart_pod`). Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
-Shared changes requested (`docs/requests/auto.md`): none.
+Shared changes requested (`docs/build-notes/requests/auto.md`): none.
 Forks this page deleted: the cursor-following preview card that floated over the list, the url pill with a photo above the h1, raw .x-btn asks and Magnetic wrapper, the shaking lane, the full-scrim "pod rescheduled" overlay, the skeleton-bar and static-box minis, the single-letter connector glyphs, the framed editor window with its three dots, Motion `initial` entrances on the first screen (now CSS on `.js`).
 Page-local files: `components/pages/apps/auto/Minis.jsx` (the six live objects in the index).
 
@@ -156,6 +156,6 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/auto.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/auto.md` verdict 8 or more
 
 Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/apps/Auto.jsx`. Last critic verdict on file: 7/10 (round 3, 7 Nov); every fix in that review is addressed in this round except the shared header-glass smear (header owner), which waits for the next walk.

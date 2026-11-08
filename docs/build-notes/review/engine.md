@@ -16,7 +16,7 @@ First complaint: "The chapters are nice, the little squares going from 8 to 2 is
 6. **Overlap, font swap, layout shift: small ones.** CLS 0.0016 desktop / 0.0005 phone, no overflow, h1 box holds. On phone the CUDA card breaks words mid-word ("FlashAtte / ntion", "parallelis / m"), and the quantization grid's bottom row is clipped by its card. On desktop, a frame 700 ms after a wheel caught chapter 04's "8 —— 2" header sitting over chapter 05's CUDA card mid-swap.
 7. **Reference: apple.com product page.** The pinned stage where one panel changes is genuinely there, and the scrub is a real Apple-style moment. No count-up, no type moment.
 8. **Different from its neighbours: yes.** Terminal + pinned chapters with a quantization scrub; distinct from /edge and /cloud/*.
-9. **18 parts: card 18/18** (`docs/coverage/engine.md`). Hydration-mismatch error on every load (diff in `<Head>`, shared, seen on every page; not counted).
+9. **18 parts: card 18/18** (`docs/build-notes/coverage/engine.md`). Hydration-mismatch error on every load (diff in `<Head>`, shared, seen on every page; not counted).
 10. **Banned tells: none.** Monochrome, Zen fonts, no gradient text, no eyebrow over the h1 ("GET STARTED WITH HANZO ENGINE" and "RUN, SERVE, BENCH" sit under their heads).
 11. **Copy: untouched.** `parity.py /engine`: text 29/29, links 2/2.
 

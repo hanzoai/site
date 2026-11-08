@@ -55,7 +55,7 @@ def check(path):
     text = path.read_text(errors="ignore")
     why = []
     h = hues(re.sub(r"/\*.*?\*/|//[^\n]*", "", text, flags=re.S))
-    if h: why.append(f"{len(h)} colour(s) not in Hanzo's live palette (docs/original/brand-deck.html): {', '.join(h[:6])}")
+    if h: why.append(f"{len(h)} colour(s) not in Hanzo's live palette (docs/build-notes/original/brand-deck.html): {', '.join(h[:6])}")
     return why
 
 def main(args):

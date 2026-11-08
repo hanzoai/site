@@ -9,7 +9,7 @@ Open copy questions for James:
 - (1) The partner logo files are linked and shown as hanzo.ai shows them (MASTER part 5 asks for documented permission).
 - (2) May the two leadership portraits from /authors appear on /press? They are Hanzo's own pictures, and the boilerplate names both leaders.
 
-Shared changes requested (`docs/requests/press.md`):
+Shared changes requested (`docs/build-notes/requests/press.md`):
 - `Ask.jsx`: the sticky bar misses on quick or touch scrolls. The hero ask counts as gone only at `top < 0`; it should count as gone at `bottom < 64`.
 - The shell hydration mismatch.
 
@@ -186,7 +186,7 @@ Done here: Playwright ran with hanzo.ai's media missing locally: the only consol
 - [x] `data-cta` on every primary (`lib/track.js` pending)
 - [x] Nothing identifier-bearing
 - [x] `V2: 8/10 …` in the page file header
-- [x] Review read: `docs/review/press.md` (7/10, critic 3). Slice D, 7 Nov: the motion-map rebuild (left unverified mid-work) checked and finished: kit plates share a baseline and their titles a top line, the light plate has its grey ground (it was white on white), the zip line is no longer bitten by the pull-back clip's corner, velocity-skew calmed from 8° to 3°, stack-drop no longer bounces, the magnet grid breathes three idle ripples. The review's five fixes (phone pills, a live middle, tighter bands, boilerplate ink at rest, partners as one row) were done in ebf5c606 and hold.
+- [x] Review read: `docs/build-notes/review/press.md` (7/10, critic 3). Slice D, 7 Nov: the motion-map rebuild (left unverified mid-work) checked and finished: kit plates share a baseline and their titles a top line, the light plate has its grey ground (it was white on white), the zip line is no longer bitten by the pull-back clip's corner, velocity-skew calmed from 8° to 3°, stack-drop no longer bounces, the magnet grid breathes three idle ripples. The review's five fixes (phone pills, a live middle, tighter bands, boilerplate ink at rest, partners as one row) were done in ebf5c606 and hold.
   Earlier: was 6/10. Its fixes are done:
   - the black room is lit;
   - the deck greys are back;

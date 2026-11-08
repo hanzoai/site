@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Telemetry.jsx` · gallery: `docs/gallery/telemetry/` · metric id: `cta_click:telemetry.primary`
 
 Open copy questions for James: the config.yaml and builder.yaml files (their names, keys and `${CEILING}`/`${BACKEND}` placeholders) and the builder's group labels "signals", "protocols", "processors" are visible text written for this page: a standard OpenTelemetry collector config, not text Hanzo published. They are NOT in `content/ui-strings.json`; approve them, or the config window and the Copy button come out. The stage names in the strip and the collector at rest ("OTLP in", "pipelines", "batching", "memory ceiling", "OTLP out") are the same kind of question.
-Shared changes requested (`docs/requests/telemetry.md`): the `FooterHTML` hydration mismatch (red "1 Issue" badge on fresh loads, all pages); the phone header going quiet while a page's own ask is on screen.
+Shared changes requested (`docs/build-notes/requests/telemetry.md`): the `FooterHTML` hydration mismatch (red "1 Issue" badge on fresh loads, all pages); the phone header going quiet while a page's own ask is on screen.
 Forks this page deleted: the yellow boxes and code highlights (greys now), the label on the headline, the dark chapters next to the dark band (light now).
 
 Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off.
@@ -155,6 +155,6 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/telemetry.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/telemetry.md` verdict 8 or more
 
 Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Telemetry.jsx` (to carry the critic's score). Ready (7 Nov, D2 run). Earlier critic verdict on file: 7/10 (walked before these round-2 fixes); this version waits for the next walk.

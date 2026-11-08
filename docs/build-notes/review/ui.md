@@ -19,7 +19,7 @@ Verdict: 7/10
 First complaint: "Now it's alive. The 60 is a proper moment and the chapters actually change the board. But the first thing after the hero is the same box of buttons again, the end shows me the exact product list I saw one screen up, and the little window says 'chat' when it's clearly not chat. And when I tab through the board with the keyboard it throws a dialog at me and I can't get out."
 
 The cap applies, and the walk lands at 7 on its own merits too:
-- **Cap.** One claim on `docs/coverage/ui.md` is false (part 1, "No dead button"; see answer 9).
+- **Cap.** One claim on `docs/build-notes/coverage/ui.md` is false (part 1, "No dead button"; see answer 9).
 - **Merits.** A keyboard trap, and a red error badge for every reduced-motion visitor, keep it under 8 on their own.
 
 Fixed since the 7/10 walk, all re-checked:
@@ -209,7 +209,7 @@ Fixed since the 7/10 walk, all re-checked:
    - Re-crawl at human pace: Ship it → Options → Field → Pause → swatches → sliders, with no stop on "Close" unless you opened it.
 2. **Kill the reduced-motion hydration error on this page.**
    - Render `Settle`'s reduced-motion branch only after mount (the same style on server and first client render), or drop `Settle` from the hero. It only lifts 10px here.
-   - File the fix to `Settle`'s owner in `docs/requests/ui.md`.
+   - File the fix to `Settle`'s owner in `docs/build-notes/requests/ui.md`.
    - Check that a reduced-motion cold load shows no badge at both widths.
 3. **No dead button.** In the Hello() card, make "Ship it" a non-interactive render: a `span` styled as the button, or `inert`/`aria-hidden` on the card. Otherwise give it a real answer, for example opening the same Dialog. Then correct part 1 on the card.
 4. **Stop showing the same thing twice.**

@@ -2,8 +2,8 @@
 
 ## 0. How to use this file
 
-1. This is the only brief. It replaces BRIEF-v3, VISION, DESIGN, NEXT-LEVEL and PLAN, now in `docs/_archive/`. Do not read them.
-2. Read this file, then `docs/DONE.md` (the finish line), then `docs/CLOUD.md` (your pages and owners).
+1. This is the only brief. It replaces BRIEF-v3, VISION, DESIGN, NEXT-LEVEL and PLAN, now in `docs/build-notes/_archive/`. Do not read them.
+2. Read this file, then `docs/build-notes/DONE.md` (the finish line), then `docs/build-notes/CLOUD.md` (your pages and owners).
 3. Look up only what a part points to: `PLAN-COMPONENTS.md`, `JAMES.md`, `original/brand-deck.html`, `refs/hanzo-model-cards/SPEC.md`, `PAGES.md`.
 4. **Precedence when rules conflict:**
    1. **Copy is frozen.** Every Hanzo word, number and link stays exactly. Nothing rewrites, cuts, merges or renames copy.
@@ -263,7 +263,7 @@ Fail line: Google "good" (LCP 2.5 s, INP 200 ms, CLS 0.1, p75). Lab target: LCP 
 - `data-cta="<page>.<slot>"` on every primary; `page_view` on the committed route. Events are `object_action`, carry ids, never copy or PII, and go through `lib/track.js` (the only SDK import). Hover fires nothing.
 - App-bound links carry `hz_sid` and the cta id; `app_handoff` goes by `sendBeacon`. Anything identifier-bearing loads only after consent; GPC and Do Not Track mean decline.
 - Forms use `useFormTrack` (view, start, error with field name only, submit, success, fail, abandon; a honeypot hit is `spam_blocked`). No field value in a payload.
-- Write the coverage card (section 6), add `V2: <score>/10 <one line>` to the page file's top comment, and read `docs/review/<page>.md` after each pull.
+- Write the coverage card (section 6), add `V2: <score>/10 <one line>` to the page file's top comment, and read `docs/build-notes/review/<page>.md` after each pull.
 - **Not yours:** the live baseline counter, CI and previews, field Web Vitals, rollout, handover docs.
 
 **Tick:** [ ] `data-cta`, `lib/track.js`; [ ] nothing before consent; [ ] `V2:` line and card.
@@ -331,7 +331,7 @@ Source: `original/brand-deck.html` and `hanzo.css`, from `@hanzo/design` (commit
 
 ## 4. Page types
 
-Seven types. Each lists its screens in order, one job and one real object per screen. Hanzo's copy supplies the words; a section the live page lacks is not added. Pick one signature plus at most 3 supporting techniques, check `docs/PAGES.md`, and never reuse a taken signature. Families differ by their own data and Sigil seed.
+Seven types. Each lists its screens in order, one job and one real object per screen. Hanzo's copy supplies the words; a section the live page lacks is not added. Pick one signature plus at most 3 supporting techniques, check `docs/build-notes/PAGES.md`, and never reuse a taken signature. Families differ by their own data and Sigil seed.
 
 > **Overridden 7 Nov by `docs/MOTION-MAP.md` (James: "don't have every page following the same process").** Each page's signature interaction comes from the motion map, not from the options below. Screen lists in section 4 are a menu of what a page may contain, never a fixed order; pinned chapter scenes only where the map says `split`.
 
@@ -408,11 +408,11 @@ Shaped like the anthropic.com launch page. Pick it and try it.
 **Forms: never submit for real.** The rebuilt form sends the same request as Hanzo's (`content/forms.json`, from `node scripts/forms.mjs /path`). While building, intercept the request so nothing is sent, as `scripts/forms.mjs` does. Never send a real form or chat message to Hanzo's live API. No deploys.
 
 **Shared-file ownership.**
-- Never edit `app/globals.css`, `tokens.css`, `app/layout.js`, `lib/*`, `docs/PAGES.md`, `components/ui.jsx`, `kit.jsx`, `Chrome.jsx`, `Nav.jsx`, `HeaderTools.jsx`, an existing `components/v2/*` file, or another chat's pages.
-- Need a shared change? Write `docs/requests/<page>.md` and carry on page-local, in `components/pages/<page>/`.
+- Never edit `app/globals.css`, `tokens.css`, `app/layout.js`, `lib/*`, `docs/build-notes/PAGES.md`, `components/ui.jsx`, `kit.jsx`, `Chrome.jsx`, `Nav.jsx`, `HeaderTools.jsx`, an existing `components/v2/*` file, or another chat's pages.
+- Need a shared change? Write `docs/build-notes/requests/<page>.md` and carry on page-local, in `components/pages/<page>/`.
 - A new `components/v2/<Name>.jsx` is allowed only if the name is free: `git pull --rebase origin main`, check, one file per piece with a usage note on top, pull again right before the push.
 
-**Git: no PRs, push per page.** Finish a page, commit (conventional message), `git pull --rebase origin main`, push your branch. The conductor merges every pushed branch within 2 to 10 minutes. No PR, no watching, no scheduled check-ins: carry on to the next page. After each pull, read `docs/review/<page>.md` and fix anything under 8 before a new page. End your turn only when every page you own has 8 or more. Never stall on an approval (avoid `rm` with globs; write each run into a fresh folder; never ask to change environment or network settings). Act as James: decide, and note it on your card.
+**Git: no PRs, push per page.** Finish a page, commit (conventional message), `git pull --rebase origin main`, push your branch. The conductor merges every pushed branch within 2 to 10 minutes. No PR, no watching, no scheduled check-ins: carry on to the next page. After each pull, read `docs/build-notes/review/<page>.md` and fix anything under 8 before a new page. End your turn only when every page you own has 8 or more. Never stall on an approval (avoid `rm` with globs; write each run into a fresh folder; never ask to change environment or network settings). Act as James: decide, and note it on your card.
 
 **Checks before every push** (script checks take under 10 s):
 1. `curl -s -o /dev/null -w "%{http_code}" http://localhost:4180/<path>/` returns 200; the dev log shows no error or red badge.
@@ -422,10 +422,10 @@ Shaped like the anthropic.com launch page. Pick it and try it.
 
 **Filming and proof (cloud only).** Install Chrome for Testing (`npx @puppeteer/browsers install chrome@stable`). Run `node scripts/motion.mjs /<page>` and `node scripts/phone.mjs /<page>`. Fix every STILL screen, DEAD control and layout shift over 0.05, then film again. Commit small proof to `docs/gallery/<page>/`.
 
-**Reviews decide "ready".** Cloud critics write `docs/review/<page>.md` with `Verdict: N/10` and `First complaint:`. Your own score does not count.
+**Reviews decide "ready".** Cloud critics write `docs/build-notes/review/<page>.md` with `Verdict: N/10` and `First complaint:`. Your own score does not count.
 
 ---
 
 ## 6. The per-page 18-part card
 
-Every page produces `docs/coverage/<page>.md`, copied from `docs/coverage/_TEMPLATE.md` (a family writes `<family>.md` and names two members it checked). It has exactly 18 headings, `## 1. Strategy and conversion` to `## 18. Measurement and handover`. Under each: tick the boxes that apply, strike the rest with `n/a: reason`, then fill the `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line is filled; the board shows "Ready" only at 18 of 18. The three lines above part 1 list open copy questions, requested shared changes, and the forks this page deleted.
+Every page produces `docs/build-notes/coverage/<page>.md`, copied from `docs/build-notes/coverage/_TEMPLATE.md` (a family writes `<family>.md` and names two members it checked). It has exactly 18 headings, `## 1. Strategy and conversion` to `## 18. Measurement and handover`. Under each: tick the boxes that apply, strike the rest with `n/a: reason`, then fill the `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line is filled; the board shows "Ready" only at 18 of 18. The three lines above part 1 list open copy questions, requested shared changes, and the forks this page deleted.

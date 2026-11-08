@@ -128,13 +128,13 @@ First complaint: "On the computer it's lovely now. The ask hands over to the hea
 - **Part 6:** the "--name" flag breaks across a line on phone. The one-command pane wraps its URL line.
 - **Part 9:** the typewriter repeats 4 times. The supporting time motion should vary.
 - **Part 3:** a dead 100px white strip between the hero band and the dark room on desktop.
-- **Part 18:** no `V2:` line yet (correctly unticked). Finale's `data-cta` is still "close" / "deploy" (already requested in `docs/requests/tunnel.md`).
+- **Part 18:** no `V2:` line yet (correctly unticked). Finale's `data-cta` is still "close" / "deploy" (already requested in `docs/build-notes/requests/tunnel.md`).
 - **Part 7 and question 8:** the close is still the shared Finale template.
 
 ## Fixes (in order)
 1. **One solid ask on phone.**
    - Find why the shared header's phone ask ignores the page's hero ask. Desktop does it right: quiet "Try Hanzo" while "View Source" is in view, then a solid "View Source".
-   - If it is the shared `Ask` or `Header` phone branch, request it in `docs/requests/tunnel.md`. Until it lands, untick parts 1 and 4 for phone, or make the header's phone ask quiet while the hero ask is on screen.
+   - If it is the shared `Ask` or `Header` phone branch, request it in `docs/build-notes/requests/tunnel.md`. Until it lands, untick parts 1 and 4 for phone, or make the header's phone ask quiet while the hero ask is on screen.
    - Check: exactly one solid fill at 375×812 s0, and "View Source" in the header after the hero.
 2. **Phone CLS under 0.02.**
    - Find the 25px change in the phone hero after paint. The likely suspects are the `.tn2-term` URL and share lines or the command line's box while it types. Reserve their final height in CSS.

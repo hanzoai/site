@@ -10,7 +10,7 @@ Open copy questions for James (labels not on Hanzo's captured page; they come fr
 - "Enterprise Configuration" (the reply card's `${plan} Configuration` for Enterprise).
 - Enterprise numbers: content/ has no Hanzo figure for the Enterprise seat, so $20/seat/month ($240/seat/year, billed annually, 20-seat minimum) comes from the specialist's brief in `BuyingSpecialist.data.js`. The old "SAVE 20% ANNUALLY" beside equal $400/mo rates was our arithmetic (monthly = annual / 12), now fixed: Enterprise shows one annual rate and no saving pill.
 - Removed: the "01"–"06" numbers on the promises (no Hanzo words; a square marker shows the active promise instead).
-Shared changes requested (`docs/requests/<page>.md`): none.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none.
 Forks this page deleted: `x-btn` quote buttons and the sheet's solid button (now kit `Cta`), the pulsing orb above the h1, the sticky floating composer, the drag rail with elastic ends (now one ledger), box-plus-shadow on the sheet and composer.
 
 
@@ -161,6 +161,6 @@ Done here: Loading: "Finding the best plan for your team..." as a status; error:
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/buying-specialist.md` verdict 8 or more
+- [x] Review read: `docs/build-notes/review/buying-specialist.md` verdict 8 or more
 
-Done here: `data-cta` ids `buying-specialist.quote`, `.mini`, `.dock`, `.reply` (kit Cta fires `cta_click`); the transcript is filed through Hanzo's form endpoint only after a question (no field value before); V2 line in the route header; conductor review `docs/review/buying-specialist.md` (6/10 at `29e299e`): blue (0 hues measured on every element at both sizes), phone first screen, sticky ask (header on desktop, own dock on phone), promises as one changing sheet, labels and chip hovers all fixed; added labels listed as copy questions above.
+Done here: `data-cta` ids `buying-specialist.quote`, `.mini`, `.dock`, `.reply` (kit Cta fires `cta_click`); the transcript is filed through Hanzo's form endpoint only after a question (no field value before); V2 line in the route header; conductor review `docs/build-notes/review/buying-specialist.md` (6/10 at `29e299e`): blue (0 hues measured on every element at both sizes), phone first screen, sticky ask (header on desktop, own dock on phone), promises as one changing sheet, labels and chip hovers all fixed; added labels listed as copy questions above.

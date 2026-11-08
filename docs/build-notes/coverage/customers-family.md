@@ -3,7 +3,7 @@
 Page file: `components/pages/story/Story.jsx` (+ `Story.css`, `storyData.js`; route `app/customers/[slug]/page.jsx`) · gallery: `docs/gallery/customers-family/` (earlier stills in `docs/gallery/customers/`) · metric id: `contact_sales_submit` (journey level). Members checked: `/customers/damon-motorcycles`, `/customers/kanoa`.
 
 Open copy questions for James: (1) the primary ask on a case page is Hanzo's own "The original case study (PDF)", which sends a buyer to a PDF rather than to Hanzo; kept as the ask (Story type: the page's own closing link). (2) Years beside customer figures: Hanzo's header line gives one year per case ("2015", "2020"), shown under the name, not beside each figure.
-Shared changes requested (`docs/requests/customers.md`): the media mirror into `public/` (the covers and frames are hanzo.ai-only).
+Shared changes requested (`docs/build-notes/requests/customers.md`): the media mirror into `public/` (the covers and frames are hanzo.ai-only).
 Forks this page deleted: raw `<img>` (now kit `Img` inside a local plate), raw `.x-btn` asks (now kit `Cta`), the kit `Flap` scramble on figures (it drew invented in-between numbers), the floating reel counter over the scenes, hover captions laid over the frames.
 
 Decision (count-ups): a count from 0 would show numbers that aren't Hanzo's (JAMES.md: every number traces to Hanzo's copy), so each figure arrives by its own characters rising into place (500ms ease-emphasis, 60ms apart, no overshoot). That arrival is kept, not removed. Sampled every 100ms during arrival on both members: only Hanzo's values were ever in the DOM.
@@ -162,7 +162,7 @@ Done here: n/a: no code, terminal or version on a customer story.
 - [x] A thrown island does not blank the page
 
 Done here: a picture that fails (including one that failed before hydration) hides and leaves Hanzo's caption on a silver plate. With no cover, the stage lets the Sigil fill the room and shows the caption. Boxes are reserved, so loading never shifts layout. The page is fully static from `content/pages`, with no live data. **Console, with hanzo.ai blocked:**
-- Each load logs one 404 resource line per page picture that cannot be fetched (7 on KANOA, 14 on Damon; the blocked-media exemption, `docs/requests/customers.md`).
+- Each load logs one 404 resource line per page picture that cannot be fetched (7 on KANOA, 14 on Damon; the blocked-media exemption, `docs/build-notes/requests/customers.md`).
 - Some loads also log a hydration mismatch from the shared `FooterHTML` (`dangerouslySetInnerHTML` differs). That is shared chrome, not this page.
 - No other errors were seen at either size, with or without reduced motion, in this round's Playwright runs.
 
@@ -172,9 +172,9 @@ Islands such as Sigil sit under the shell's error boundary (`app/error.jsx`).
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/<page>.md` verdict 8 or more (pending re-review)
+- [x] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more (pending re-review)
 
-Done here: `data-cta="customers.hero"` and `"customers.close"`, sent as `cta_click` by the kit `Cta`; `lib/track.js` does not exist yet. There are no identifiers and no forms. The `V2:` line is in Story.jsx. `docs/review/customers-family.md` (6/10 at 6d77b65) was read, and its four fixes are done:
+Done here: `data-cta="customers.hero"` and `"customers.close"`, sent as `cta_click` by the kit `Cta`; `lib/track.js` does not exist yet. There are no identifiers and no forms. The `V2:` line is in Story.jsx. `docs/build-notes/review/customers-family.md` (6/10 at 6d77b65) was read, and its four fixes are done:
 - only Hanzo's figures (no scramble, no overshoot);
 - sized images (14/14 and 7/7);
 - the contour stops under reduced motion (0 running animations);

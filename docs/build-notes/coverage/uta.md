@@ -3,7 +3,7 @@
 Page file: `components/pages/model/Uta.jsx` on `components/pages/model/Creative.jsx` and `components/v2/Launch.jsx` · gallery: `docs/gallery/uta/` · metric id: `contact_sales_submit`
 
 Open copy questions for James: none decided here. The page shows Hanzo's words only (the family's studio map, whose heading "Find your field" and field tabs were our words, is off this page); labels that sat above headlines now sit below or beside them as captions.
-Shared changes requested (`docs/requests/zen-names.md`): the header ask swaps label between "Try Hanzo" and the page ask and moves its neighbours (Header); the kit `Band` blurs its headline in; the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
+Shared changes requested (`docs/build-notes/requests/zen-names.md`): the header ask swaps label between "Try Hanzo" and the page ask and moves its neighbours (Header); the kit `Band` blurs its headline in; the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
 Forks this page deleted: our scene headings, raw `.x-btn` asks (now `Cta`), raw `<img>`/`<video>` (now `Img`, `Film`, `ModelFilm`), the studio-map tile, springs on the tab pill, cursor labels; on /uta only: the studio map (the model grid below shows the same six cards), the glyph tile in the chapter pictures, the kit `Band` (a page-local band with the same words).
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: JS off shows every word, the closing band unblurred (checked at 1470)
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for `lib/track.js`: not on main; kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/uta.md` verdict 8 or more (pending a fresh walk of the current build)
+- [ ] Review read: `docs/build-notes/review/uta.md` verdict 8 or more (pending a fresh walk of the current build)
 
 Done here: the `V2:` line is in the page file. Proof is in `docs/gallery/uta/` (desktop hero, stems, scrub, studio and band; four phone stills), walked 7 Nov.

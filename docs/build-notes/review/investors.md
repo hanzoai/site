@@ -48,7 +48,7 @@ First complaint: "The numbers are broken. Under 732,288 it says '7' and then '8,
     - **Minor:** the inline `--acc: #1d1d1f` on `<main>` is not a deck value.
 11. **Copy untouched?** Yes. Parity is 131/131 and 43/43.
 
-## Card check (docs/coverage/investors.md)
+## Card check (docs/build-notes/coverage/investors.md)
 - TRUE: one solid in the hero; parity 131/131 and 43/43; the ask ends at y≈428 at 375; no overflow at 320; JS off shows the lede, asks and counter and stacks the scenes; the slabs layer; the thesis title clears before the next; the tick previews its check; the wall names wrap at 375 with no collision; reduced motion shows 0 animations; `taste.py` passes.
 - FALSE: part 5, "bars on a zero baseline… 400× is twice the length of 200×". This holds only on desktop with motion on. At 375 and under reduced motion every bar is full length.
 - FALSE: part 11, "every target 44px or more". The 7 counter steps are 36×44 at 375 (38×44 on desktop).

@@ -3,7 +3,7 @@
 Page file: `components/pages/model/Kai.jsx` and `components/v2/Launch.jsx` · gallery: `docs/gallery/kai/` · metric id: `api_key_created`
 
 Open copy questions for James: none decided here. The page shows Hanzo's words only; labels that sat above headlines now sit below or beside them as captions.
-Shared changes requested (`docs/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
+Shared changes requested (`docs/build-notes/requests/zen-names.md`): the desktop ask bar floats over content (Ask.jsx); the sound kit; `lib/cta.js`, `lib/track.js` and `tokens.css` are not on main yet.
 Forks this page deleted: our spec table, raw `.x-btn` asks (now `Cta`), raw `<img>` (now `Img`, `ModelFilm`), springs on the answer markers (now ease-emphasis), cursor labels.
 
 ## 1. Strategy and conversion
@@ -153,6 +153,6 @@ Done here: JS off shows every word. Reduced motion shows the settled stage and t
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for `lib/track.js`: not on main; kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/kai.md` verdict 8 or more (pending a fresh walk of the current build)
+- [ ] Review read: `docs/build-notes/review/kai.md` verdict 8 or more (pending a fresh walk of the current build)
 
 Done here: the `V2:` line is in `app/kai/page.jsx`. Proof is in `docs/gallery/kai/` (desktop film and 4 phone stills). This card is refreshed after each review.

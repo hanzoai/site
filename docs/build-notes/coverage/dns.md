@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Dns.jsx` (+ `Dns.css`) · gallery: `docs/gallery/dns/` · metric id: `api_key_created` (proxy on this page: `cta_click dns.hero`)
 
 Open copy questions for James: (1) the plan asks "Talk to us" (Starter, Pro, Team) and "Contact Sales" (Enterprise) share one href (/contact-sales) with different labels, as on live (MASTER part 4 says adjacent buttons never should): kept. (2) "Pricing" says "Start free." while every plan reads "Custom": kept as printed. (3) "Popular" marks Pro on live with no written rule behind it (MASTER part 4): kept as Hanzo's word, and the ink tile only follows it until a visitor says what they need.
-Shared changes requested (`docs/requests/dns.md`): none filed; kit gaps go to the kit owners in the report.
+Shared changes requested (`docs/build-notes/requests/dns.md`): none filed; kit gaps go to the kit owners in the report.
 Forks this page deleted: Frame's `useLive`/`useEvery` (a `setInterval`) and the chapters' own `setInterval` loops (now timeout chains that run once and rest); the hand-made terminal with Frame-style `Copy` (now the kit `CodeBlock`, lit a step at a time); 4 hand-made `kn-btn` plan asks (now kit `Cta`, one solid); the "Pricing" and "Use Cases" kickers above their h2s (now under them); two rewritten needs ("More than 5 zones", "More than 2 DNS providers", now Pro's own "Unlimited zones", "All DNS providers"); the invented idle line "Starter covers up to 5 zones and 2 DNS providers." and the unapproved "Fits:" and "Clear" strings; the pink accent, 9 shadows and the glow on the packets.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: No fetch on the page; film and sweep: 0 console errors at desk and ph
 - [x] `data-cta` on every primary; events only through the kit `Cta`
 - [x] Nothing identifier-bearing before consent
 - [x] `V2: 8/10 …` in the page file's top comment
-- [ ] Review read: no `docs/review/dns.md` yet
+- [ ] Review read: no `docs/build-notes/review/dns.md` yet
 
 Done here: Gallery `docs/gallery/dns/` (desktop.mp4, desktop.jpg, phone-1..3.jpg). Own score 8/10; the critic's verdict decides.

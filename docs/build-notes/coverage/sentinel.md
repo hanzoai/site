@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Sentinel.jsx` · gallery: `docs/gallery/sentinel/` · metric id: `cta_click:sentinel.primary`
 
 Open copy questions for James: Hanzo's 06/06 says "Functional Source License" but the shared "Get Sentinel" chip says "License: BSL-1.1" (left as is). "Mode" (`c4_mode`). Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
-Shared changes requested (`docs/requests/sentinel.md`): none.
+Shared changes requested (`docs/build-notes/requests/sentinel.md`): none.
 Forks this page deleted: the purple rain and pink dots (greys now), the eyebrow over the h1.
 
 Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off.
@@ -155,6 +155,6 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/sentinel.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/sentinel.md` verdict 8 or more
 
 Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/cloud/Sentinel.jsx`. Last critic verdict on file: 6/10 (walked an earlier version); this version waits for the next walk.

@@ -5,7 +5,7 @@ Ready: 8 Nov, copycheck missing 0 of N (live hanzo.ai) on all 73 maker shelves (
 Dark: 8 Nov, matches live hanzo.ai in dark side by side (docs/gallery/models-family/dark-*.jpg); darkcheck OK, lightcheck OK, copycheck 0. Checked /models/aion-labs, /models/anthropic, /models/hanzo, /models/aion-labs/aion-2.0, /models/anthropic/claude-opus-5.5, /models/hanzo/kai: html:not(.light) rules on Hanzo's tokens only; the page's local greys give way to the page's in dark (--muted, a caption grey here, takes --text-tertiary); hero glow as live; Sigil fields in --foreground; object, plot and reach on --muted (#171717) with the white-10% hairline; bars and selected pills light (primary). darkcheck's remaining hits on model pages are the ink data bars (the page's model in the bill, the IN/OUT rates), light on dark as live's primary fills, intended. Black in both modes as before: SPEC model cards, films, the guest terminal, the quick start room (data-room=dark). 0 console errors, no sideways scroll, both modes at 1470x801 and 375x812.
 First complaint: "I click the first card under 'More from Anthropic' and it throws me off to the old live site. And the Anthropic page is eight rows of three identical black text boxes with a bar floating over them."
 
-Walked 7 Nov on main at `b8c4ac3` (`components/pages/models/ModelSheet.jsx`, `ProviderShelf.jsx`, `parts.jsx`, `models.css`, `components/v2/SpecCard.jsx`) on the dev server. Judged against `docs/MASTER.md` (parts 1–18, section 3, 4.7), `docs/JAMES.md` and `docs/refs/hanzo-model-cards/SPEC.md`.
+Walked 7 Nov on main at `b8c4ac3` (`components/pages/models/ModelSheet.jsx`, `ProviderShelf.jsx`, `parts.jsx`, `models.css`, `components/v2/SpecCard.jsx`) on the dev server. Judged against `docs/build-notes/MASTER.md` (parts 1–18, section 3, 4.7), `docs/JAMES.md` and `docs/build-notes/refs/hanzo-model-cards/SPEC.md`.
 
 Members walked:
 - `/models/anthropic/claude-opus-5.5/`, `/models/hanzo/kai/` and the maker page `/models/anthropic/`, at 1470×801 and 375×812 (touch).
@@ -40,7 +40,7 @@ Stills and scripts are in `/tmp/claude-0/critic2/`.
   - `taste.py`: OK.
 
 ## Card check
-`docs/coverage/models-family.md` uses the 18-part format. No cap. Spot checks:
+`docs/build-notes/coverage/models-family.md` uses the 18-part format. No cap. Spot checks:
 - **"Every card opens by Morph" (part 3 and part 15): false.** Some cards link to `https://hanzo.ai/models/…`, pages that are not among the rebuild's 470. Clicking the first sibling card, "Claude Fable 5", leaves the site (it ended on `chrome-error://` in the sandbox).
   - On Opus, 4 of the 6 sibling cards: `claude-fable-5`, `-5.1`, `-5.1:batch`, `claude-haiku-5.5:batch`.
   - On the Anthropic shelf, 7 of 24 cards.

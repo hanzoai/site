@@ -3,7 +3,7 @@
 Page file: `components/pages/Careers.jsx` (+ `CareersBoard.css`, `app/careers/page.jsx`, page-local `components/pages/careers/door.js` and `careers/MaskLines.jsx`; reads `components/pages/company/*` without editing it) · gallery: `docs/gallery/careers/` · metric id: `cta_click careers.*` (one contact click: a role page)
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/careers.md`): Morph times out (rAF inside a held view transition); kit `A` treats `#hash` as external; `doorway.js` `useArrival` should be idempotent (careers now uses page-local `careers/door.js`); the header's solid "Try Hanzo" stays solid when a page turns its ask bar off (`data-ask="off"`).
+Shared changes requested (`docs/build-notes/requests/careers.md`): Morph times out (rAF inside a held view transition); kit `A` treats `#hash` as external; `doorway.js` `useArrival` should be idempotent (careers now uses page-local `careers/door.js`); the header's solid "Try Hanzo" stays solid when a page turns its ask bar off (`data-ask="off"`).
 Forks this page deleted: the `xcr-btn` and raw `.x-btn` buttons (all asks are kit `Cta`); the 8-pill team filter (each team had one role); the multi-select dashed skill chips (now one quiet row with one gliding ink pill); the shared doorway's grey flood (now the sheet's own white, carrying its title); the old orange accent; the perks' PinScenes pin; native `title=` tooltips.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -152,6 +152,6 @@ Done here: A blocked clipboard shows no false confirmation. JS off renders every
 - [x] `data-cta` on every primary; `lib/track.js` not used by this page (kit `Cta` dispatches `cta_click`)
 - [x] Nothing identifier-bearing before consent
 - [x] `V2: 8/10 …` in `Careers.jsx` and `app/careers/page.jsx`
-- [~] Review read: `docs/review/careers.md` 7/10; every numbered fix answered here, re-walk pending
+- [~] Review read: `docs/build-notes/review/careers.md` 7/10; every numbered fix answered here, re-walk pending
 
 Done here: Fixes: 1 JS off and reduced motion clean (measured, console clean); 2 the open grows the whole sheet in #fff with title and numeral carried to the role h1/numeral, page-local idempotent landing (production build not run here, by rule); 3 toolbar cut to one quiet row with a gliding pill; 4 perks crossfade, sticky tile on phone; 5 phone titles clear (0/7 at 320 and 375); 6 dark solid hover, next-section sliver at 1470×801, header and card corrected.

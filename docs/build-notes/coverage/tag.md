@@ -3,7 +3,7 @@
 Page file: `components/pages/Tag.jsx` (+ `Tag.css`, copy in `slackData.js`) · gallery: `docs/gallery/tag/` · metric id: `tag.hero`, `tag.close`
 
 Open copy questions for James: none; the copy is unchanged (parity 168/168 text, 10/10 links).
-Shared changes requested (`docs/requests/tag.md`): mirror the memoji, fix the shared A2Lines reduced-motion hydration, the phone header ask, cookie card height, the header solid beside the close's solid.
+Shared changes requested (`docs/build-notes/requests/tag.md`): mirror the memoji, fix the shared A2Lines reduced-motion hydration, the phone header ask, cookie card height, the header solid beside the close's solid.
 Forks this page deleted: the "@" chips in rounded boxes, the 180px "@" glyph and the solid black "Get Hanzo Tag" card, the outlined Explore pill buttons in the close, and the black Built detail panel.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -98,7 +98,7 @@ Long hero moments read themselves upward (transform, 1.4s in-out). Under reduced
 - [x] Budgets met; nothing missing; alt on every image
 - [x] ~~No dimmed or filtered photo; 4+ real visuals together where the page has them~~ n/a: no photos
 
-Done here: The memoji hotlinks were removed (hanzo.ai is unreachable here), so faces are drawn initial discs with 0 failed requests and no broken icons. Mirroring is filed in `docs/requests/tag.md`.
+Done here: The memoji hotlinks were removed (hanzo.ai is unreachable here), so faces are drawn initial discs with 0 failed requests and no broken icons. Mirroring is filed in `docs/build-notes/requests/tag.md`.
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -173,6 +173,6 @@ Done here: 0 console errors from /tag on desktop, phone, 320 and reduced motion.
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/<page>.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/<page>.md` verdict 8 or more
 
-Done here: The `V2:` line was rewritten for the second pass. Fixes 1 to 8 of `docs/review/tag.md` (7/10) were worked in order, and the FAQ now opens closed in a quiet `#f5f5f5` room after the see room. A fresh critic verdict is pending.
+Done here: The `V2:` line was rewritten for the second pass. Fixes 1 to 8 of `docs/build-notes/review/tag.md` (7/10) were worked in order, and the FAQ now opens closed in a quiet `#f5f5f5` room after the see room. A fresh critic verdict is pending.

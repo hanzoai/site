@@ -3,7 +3,7 @@
 Page file: `components/pages/Benchmarks.jsx` · gallery: `docs/gallery/benchmarks/` · metric id: `cta_click` (`benchmarks.hero`, `benchmarks.close`)
 
 Open copy questions for James: none. Section labels Hanzo shows as eyebrows ("Enso · intelligence per dollar", "Kai · decisions", "Leaderboard") now sit under their headings as captions, with the words unchanged.
-Shared changes requested (`docs/requests/benchmarks.md`): none.
+Shared changes requested (`docs/build-notes/requests/benchmarks.md`): none.
 Forks this page deleted:
 - the hand-built `<table>` helper and the evidence table (now the kit's `DataTable`);
 - the hero and close `pf-btn` links (now the kit's `Cta`);
@@ -162,6 +162,6 @@ Done here: "All 11" resets Your suites. The board view is kept in the address. T
 - [x] `data-cta` on every primary. Events are sent by the kit's `Cta` (`hz-event`, `cta_click`).
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/benchmarks.md` (5/10); every listed fix addressed in round 2
+- [x] Review read: `docs/build-notes/review/benchmarks.md` (5/10); every listed fix addressed in round 2
 
 Done here: Round 2 proofs: `desktop-r2.jpg` and `phone-r2.jpg` (first screens). Earlier: `desktop.mp4`, `desktop.jpg` and `phone-1..3.jpg`. (8 Nov) Ready by the new bar; proof in docs/gallery/benchmarks/ (desktop-hero, phone-1..3).

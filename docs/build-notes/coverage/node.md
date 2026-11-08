@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Node.jsx` (+ `.css`) · route: `app/node/page.jsx` · gallery: `docs/gallery/node/` · metric id: `api_key_created`
 
 Open copy questions for James: none decided. One to confirm: the spec row shows Hanzo's counted words as numerals ("One Rust binary" → 1, "Three commands" → 3, the five levels Hanzo lists → 5, "a tenth of the block reward" → 1/10); the words themselves stay in the chapters.
-Shared changes requested (`docs/requests/node.md`): Frame's Paste on the deck (page-local overrides until then); `Copy` press to .97; the desktop ask bar floats over content; a hue in the shared nav icon; the pinned chapter count above the h3; `lib/cta.js` and `lib/track.js`.
+Shared changes requested (`docs/build-notes/requests/node.md`): Frame's Paste on the deck (page-local overrides until then); `Copy` press to .97; the desktop ask bar floats over content; a hue in the shared nav icon; the pinned chapter count above the h3; `lib/cta.js` and `lib/track.js`.
 Forks this page deleted: the `useSpring` lean (now a CSS-eased tilt of 2.5° at most), the 52px "Why Run a Hanzo Node" h2 that sat on one screen with 64px figures (now 26px), the black room right after a dark terminal (now a quiet #f5f5f5 room), the terminal's drop shadow, three equal "hanzo fabric" buttons (now one command bar), the LED's halo ring, every Apple-grey literal (#6e6e73, #8e8e93, #c7c7cc, #e3e3e8, #ececf0, #f2f2f5, #f5f5f7, #2c2c2e, #a1a1a6, #d2d2d7), the 600–900 ms line and bar animations (now 400–500 ms).
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: The machine's own states are designed: stopped (hollow LED, blinking 
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for the file: not built yet; ids are in place)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/node.md` verdict 8 or more (pending: no verdict had landed at push time)
+- [x] Review read: `docs/build-notes/review/node.md` verdict 8 or more (pending: no verdict had landed at push time)
 
 Done here: `node.hero` and `node.close` are set. Gallery: `docs/gallery/node/desktop.jpg`, `phone-1.jpg`, `phone-2.jpg` (8 Nov, round 5 CSS); earlier stills kept.

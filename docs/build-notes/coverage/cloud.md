@@ -4,7 +4,7 @@ Page file: `components/pages/cloudfam/CloudProduct.jsx` (+ `cloudfam.css`, `clou
 Members checked by hand for this card: `/cloud/gpus` (stage, Compute) and `/cloud/wallet` (path, Web3); also walked `/cloud/logs` (wide, Observe), `/cloud/kubernetes` (stage, a page with no lede and no features), `/cloud/secrets` (field, Security), `/cloud/chat` (wide, a conversation console), `/cloud/embeddings` (wide) and `/cloud/local` (CLI boot). `/cloud/gateway` is not a member of this family (Hanzo has no `/cloud/gateway` page; the gateway product is the separate `/gateway` page).
 
 Open copy questions for James: none.
-Shared changes requested (`docs/requests/platform.md`, shared with this family): kit `Band` should accept an `id` so its primary carries `data-cta`; `lib/cta.js`, `lib/track.js` and a kit `PageHero` do not exist yet.
+Shared changes requested (`docs/build-notes/requests/platform.md`, shared with this family): kit `Band` should accept an `id` so its primary carries `data-cta`; `lib/cta.js`, `lib/track.js` and a kit `PageHero` do not exist yet.
 Forks this page deleted: the shared example project as the hero (gateway, payments-api, checkout-web, docs-site and "Every request enters here, so the limiter does too." now sit behind their own note "Example project. ..." and open on demand; the CLI "deploy the gateway to staging" lines likewise), the spec-sheet section that repeated the name as an h2, the three equal related cards, the 88px name repeat in the close, the replaying console loop.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -156,6 +156,6 @@ Done here: No network calls. /cloud/local's `TypeError: alive is not a function`
 - [ ] `data-cta` on every primary; events only through `lib/track.js` (hero yes; Band primary blocked on kit; `lib/track.js` does not exist)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [ ] `V2: <score>/10 <one line>` in the page file's top comment (added after the critic's verdict)
-- [ ] Review read: `docs/review/cloud.md` verdict 8 or more (re-review requested after this rework)
+- [ ] Review read: `docs/build-notes/review/cloud.md` verdict 8 or more (re-review requested after this rework)
 
-Done here: The pages send nothing; per-page `data-cta` ids on the hero asks. Critic verdict before this rework: 5/10 (`docs/review/cloud.md`); fixes 1 to 7 of the brief were worked in this pass, and this card is updated with the new verdict when it comes.
+Done here: The pages send nothing; per-page `data-cta` ids on the hero asks. Critic verdict before this rework: 5/10 (`docs/build-notes/review/cloud.md`); fixes 1 to 7 of the brief were worked in this pass, and this card is updated with the new verdict when it comes.

@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Gui.jsx` · gallery: `docs/gallery/gui/` · metric id: `github_click`
 
 Open copy questions for James: should the hero ask read "GitHub" (the live hero's label) or "View on GitHub" (the live close's label)? Both point to github.com/hanzoai/gui; the page uses "View on GitHub" in both places so the ask reads the same, and the live hero word "GitHub" stays in the HTML.
-Shared changes requested (`docs/requests/<page>.md`): none; `lib/cta.js` is not on main yet.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none; `lib/cta.js` is not on main yet.
 Forks this page deleted: the v1 hand-written `Hero`, the horizontal props rail, the `Get` block from cloud/Frame, `Rise` fade-ups, raw `.x-btn` asks and wrapping data-thumb spans (now kit `Cta`), the duplicate desktop `AskBar`, the `/models/kai.webp` badge above the h1.
 
 Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line with one or two sentences of evidence (a value, a file, a number). A part counts once its `Done here:` line has text.
@@ -155,6 +155,6 @@ Done here: Nothing is fetched live; JS off shows the h1, the four frames at thei
 - [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta` emits `cta_click`)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/gui.md` verdict 8 or more (no review written yet)
+- [ ] Review read: `docs/build-notes/review/gui.md` verdict 8 or more (no review written yet)
 
 Done here: `data-cta="gui.hero"` and `"gui.close"`; V2 8/10; gallery refilmed at 1470×801 and 375×812.

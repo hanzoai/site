@@ -3,7 +3,7 @@
 Page file: `components/pages/apps/Ledger.jsx` (+ `Ledger.css`, `app/ledger/page.jsx`) · gallery: `docs/gallery/ledger/` · metric id: `api_key_created` (developers; on this page through the docs clicks `ledger.hero` / `ledger.close`)
 
 Open copy questions for James: none. (The ask "Read the docs" and its docs.hanzo.ai/docs/cli/books link are kept as live; "the CLI docs link" is on MASTER's list, so James may want to confirm it is the right docs URL for Ledger.)
-Shared changes requested (`docs/requests/<page>.md`): none. Everything this page needed from the shared kit (header ask outline, paste-box greys, close as a Band) is done page-locally in `Ledger.css` / `Ledger.jsx`.
+Shared changes requested (`docs/build-notes/requests/<page>.md`): none. Everything this page needed from the shared kit (header ask outline, paste-box greys, close as a Band) is done page-locally in `Ledger.css` / `Ledger.jsx`.
 Forks this page deleted: the group's `BizAsk` button (now kit `Cta`), the v1 hero step accordion, the v1 three-box capability grid (now one tabbed object), the page's own AskBar pill, the "Watch" cursor label, `kick="bash"` on the sheet, the "Get X" receipt-beside-close block of the Biz template (now a hairline receipt strip, then a closing Band).
 
 ## 1. Strategy and conversion
@@ -170,6 +170,6 @@ Done here: Splitter: an empty amount reads "Type an amount above zero" and the s
 - [x] `data-cta` on every primary; events only through `lib/track.js` (kit `Cta` dispatches `cta_click`; `lib/track.js` is the shared owner's)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/ledger.md` verdict 8 or more (6/10; this pass answers its Fixes 1–6, awaiting a re-walk)
+- [ ] Review read: `docs/build-notes/review/ledger.md` verdict 8 or more (6/10; this pass answers its Fixes 1–6, awaiting a re-walk)
 
 Done here: `V2:` line updated (no sticky-bar claim). `data-cta` ids `ledger.hero`, `ledger.github`, `ledger.close`, `ledger.deploy`. The 6/10 review was read and each fix is answered in this commit.

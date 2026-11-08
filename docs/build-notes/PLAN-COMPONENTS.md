@@ -2,7 +2,7 @@
 > 1. **`docs/JAMES.md` wins on taste.** That means 0 UI accent hues: links are ink with an underline, not #0066cc blue. Status colours appear only together with a shape or text cue. No eyebrow above any headline. Motion is not only scroll.
 > 2. **Copy is frozen.** Any new UI string is limited to `content/ui-strings.json`, and only for function (legal, accessibility, control labels), never to replace Hanzo's wording. Until James approves those strings, controls use an icon with an aria-label.
 > 3. **No local browser jobs.** All rendering, filming and Lighthouse checks run in the cloud.
-> 4. **Coverage.** Every page writes `docs/coverage/<page>.md` against the 18 areas below, and the critics check it.
+> 4. **Coverage.** Every page writes `docs/build-notes/coverage/<page>.md` against the 18 areas below, and the critics check it.
 
 # Hanzo component master plan
 

@@ -3,7 +3,7 @@
 Page file: `components/pages/Grants.jsx` · gallery: `docs/gallery/grants/` · metric id: `lead_submit`
 
 Open copy questions for James: the form's state lines ("Application Received", "Thank you for applying! …", "Submit Another Application", the two check lines and "Your application did not reach us…") come from the page as it arrived in the 7 Nov snapshot (`4203095f`) and are not in `content/live/grants.json`; listed for James to confirm. "Sending…" is removed (the kit busy ring stands in).
-Shared changes requested (`docs/requests/<page>.md`): `docs/requests/affiliate.md` (the header's ask outlines while a page's own ask is on screen, and carries it after the hero).
+Shared changes requested (`docs/build-notes/requests/<page>.md`): `docs/build-notes/requests/affiliate.md` (the header's ask outlines while a page's own ask is on screen, and carries it after the hero).
 Forks this page deleted: `x-btn` buttons (now kit `Cta`), raw inputs (now kit `Field`), the pill label on the art, the track chip's box-plus-shadow, step hover lifts, oversized 12rem numbers and 36px list titles.
 
 
@@ -36,7 +36,7 @@ Done here: Nothing above the h1. "Open Source & Research Credit Grants" (52px) c
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Apply for a Grant" after the hero; phone: the label is too long for the shared header, so it stays "Try Hanzo"; request for a phone-size header ask in `docs/requests/founder.md`)
+- [ ] Sticky ask in header and bar after the hero, same label (desktop: the header carries "Apply for a Grant" after the hero; phone: the label is too long for the shared header, so it stays "Try Hanzo"; request for a phone-size header ask in `docs/build-notes/requests/founder.md`)
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
 - [x] `data-cta` and `data-thumb` on every primary
 
@@ -154,6 +154,6 @@ Done here: Offline (round 3): the `online`/`offline` events disable "Submit Gran
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/grants.md` (7/10 on 7 Nov); every fix in it applied on 8 Nov (JS-off final state, outlined sheet asks, the dim no longer exists, the ledger figure, phone filing card below the form; the header swap lag filed in `docs/requests/grants.md`); Ready line added
+- [x] Review read: `docs/build-notes/review/grants.md` (7/10 on 7 Nov); every fix in it applied on 8 Nov (JS-off final state, outlined sheet asks, the dim no longer exists, the ledger figure, phone filing card below the form; the header swap lag filed in `docs/build-notes/requests/grants.md`); Ready line added
 
 Done here: `data-cta` ids `grants.hero`, `grants.apply`, `grants.oss`, `grants.academic`, `grants.internship`, `grants.again` (kit Cta fires `cta_click`); the lead carries only what the visitor typed, on submit; V2 line in the route header; critic review (6/10 at `57dfa0a`): JS-off sheets, the stack's motion, keyboard under sheets, hierarchy, the list as an object, phone filing card, track sound, form focus, kit parts all fixed; strings listed above.

@@ -3,7 +3,7 @@
 Page file: `components/pages/ChatPage.jsx` · gallery: `docs/gallery/chat/` · metric id: `first_chat`
 
 Open copy questions for James: none; the page uses Hanzo's words only. One structure note: MASTER 4.1 lists "the existing plan cards, Download" for /chat, but the live /chat page has neither, so none were added (copy is frozen).
-Shared changes requested (`docs/requests/chat.md`): the kit `Band` reveals its title word by word with a 12px blur and sets it at about 88px, while MASTER parts 9 and 3.1 ask for a line-mask cut-in and resting sizes. The kit `Band` takes no `data-cta`. The site ask bar is a floating pill on desktop, while MASTER 3.1 rule 6 says nothing floats over content.
+Shared changes requested (`docs/build-notes/requests/chat.md`): the kit `Band` reveals its title word by word with a 12px blur and sets it at about 88px, while MASTER parts 9 and 3.1 ask for a line-mask cut-in and resting sizes. The kit `Band` takes no `data-cta`. The site ask bar is a floating pill on desktop, while MASTER 3.1 rule 6 says nothing floats over content.
 Forks this page deleted: the page's own `Open` button fork (`.cht-open`), the `.cht-link` text-link fork, the hand-written closing section (`.cht-close`, `.cht-field`), the scroll-scaled stage, a `setInterval` lane scan, and all springs.
 
 ## 1. Strategy and conversion
@@ -184,6 +184,6 @@ Done here: JS off and reduced motion show Hanzo's finished two-question conversa
 - [x] `data-cta` on every primary; events only through `lib/track.js`. `data-cta` is set; the kit `Cta` dispatches `hz-event` cta_click. `lib/track.js` does not exist yet.
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment (added once the critic scores)
-- [x] Review read: `docs/review/chat.md` verdict 8 or more. The critic pass in this session gave 7 before these fixes, so this is pending re-review.
+- [x] Review read: `docs/build-notes/review/chat.md` verdict 8 or more. The critic pass in this session gave 7 before these fixes, so this is pending re-review.
 
 Done here: `data-cta` is `chat.hero` and `chat.recent`. Proof is in `docs/gallery/chat/`: a 15 s desktop film at 1470×801, the first screen, and three 375×812 phone shots. (8 Nov) Ready by the new bar: docs/gallery/chat/ desktop-hero, phone-1..3.

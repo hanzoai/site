@@ -3,10 +3,10 @@
 Page file: `components/pages/apps/Billing.jsx` · gallery: `docs/gallery/billing/` · metric id: `cta_click:billing.primary`
 
 Open copy questions for James: "Publish a new price" (`c4_publish_price`); "Reset" (`c4_reset`); "Projects" (`c4_projects`); "Products" (`c4_products`). Each is in `content/ui-strings.json` as needs_james; until approved the control is icon-only or the name is for screen readers only.
-Shared changes requested (`docs/requests/billing.md`): none. The shared code pane (`components/pages/cloud/Frame.jsx`) animates a multi-tab pill with a spring; this page uses single-tab panes only and holds the pane to the deck colours in `components/v2/x-hamilton/Launch.css`.
+Shared changes requested (`docs/build-notes/requests/billing.md`): none. The shared code pane (`components/pages/cloud/Frame.jsx`) animates a multi-tab pill with a spring; this page uses single-tab panes only and holds the pane to the deck colours in `components/v2/x-hamilton/Launch.css`.
 Forks this page deleted: the hover tooltips that floated over the invoice, the invented "Change a price, not a customer" label, raw .x-btn asks and duplicate More links.
 
-Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off. Round 2 (after `docs/review/billing.md`, 7/10) re-measured at 1470×801 and 375×812: layout shift, overlaps, hovers, the drawer and the disabled state, as noted per part below.
+Measured on the dev server at 1470×801, 375×667 and 320×640 with `audit.cjs` (Playwright), JS on and off. Round 2 (after `docs/build-notes/review/billing.md`, 7/10) re-measured at 1470×801 and 375×812: layout shift, overlaps, hovers, the drawer and the disabled state, as noted per part below.
 
 ## 1. Strategy and conversion
 - [x] Header comment has Persona, Goal, CTA, metric id, Signature, Beyond
@@ -155,6 +155,6 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/billing.md` verdict 8 or more
+- [ ] Review read: `docs/build-notes/review/billing.md` verdict 8 or more
 
-Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/apps/Billing.jsx`. Last critic verdict on file: 7.5/10 (`docs/review/billing.md`, round 2). Round 3 fixes its list (dead air between rooms, the three-box close, chapter numbers that disagreed, the phone gutter, stacked invoices and code wrap, rail and ledger hovers, dark rooms entering as rounded cards) and waits for the next walk. (8 Nov) Ready by the new bar; proof: docs/gallery/billing/desktop-hero.jpg, phone-1..3 (fresh). Verified 8 Nov: the calculator reprices every invoice on the page, history rows light their capability, phone code scrolls, CLS 0.000 on both sizes.
+Done here: `data-cta` on every primary (kit `Cta`); the page imports no analytics itself. `V2:` line present in `components/pages/apps/Billing.jsx`. Last critic verdict on file: 7.5/10 (`docs/build-notes/review/billing.md`, round 2). Round 3 fixes its list (dead air between rooms, the three-box close, chapter numbers that disagreed, the phone gutter, stacked invoices and code wrap, rail and ledger hovers, dark rooms entering as rounded cards) and waits for the next walk. (8 Nov) Ready by the new bar; proof: docs/gallery/billing/desktop-hero.jpg, phone-1..3 (fresh). Verified 8 Nov: the calculator reprices every invoice on the page, history rows light their capability, phone code scrolls, CLS 0.000 on both sizes.

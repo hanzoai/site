@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Mq.jsx` (+ `Mq.css`) · route: `app/mq/page.jsx` · gallery: `docs/gallery/mq/` · metric id: `github_click`
 
 Open copy questions for James: none decided. Listed: the live hero ask is "GitHub" (to github.com/hanzoai) while the site header says "Try Hanzo"; the demo's drawn product words (job states, tab names, "Retry"/"Undo") are not in `content/ui-strings.json` yet.
-Shared changes requested (`docs/requests/mq.md`): Frame's Paste/Code on the deck; light-code comment contrast in the kit; the sticky ask label and the floating desktop pill; a press on `lx-text`; `Copy` press .97; the UI-strings register; `lib/cta.js`, `lib/track.js` and the sound kit.
+Shared changes requested (`docs/build-notes/requests/mq.md`): Frame's Paste/Code on the deck; light-code comment contrast in the kit; the sticky ask label and the floating desktop pill; a press on `lx-text`; `Copy` press .97; the UI-strings register; `lib/cta.js`, `lib/track.js` and the sound kit.
 Forks this page deleted: the centred hero head (the h1 is now on the 8/5 split), the header "Try Hanzo" override in page CSS, every spring (`SPRING`, `SNAP`), the inspector's raised shadow, the 120–220px "10K", the 46px spec words and the 52px "Add a job and walk away", and every Apple-grey literal.
 
 Decisions noted (James never asked): the metric is `github_click`, not `api_key_created`, because the page's only ask is Hanzo's live "GitHub" and no button here creates a key (MASTER §1 names a GitHub click as a metric). The h1 baseline sits at about 30% of 801px rather than 38%, so the whole conveyor fits the first screen (MASTER part 3 "the hero object on the first screen" taken over the 38% line).
@@ -155,6 +155,6 @@ Done here: The product's own states are designed in the demo: waiting, running, 
 - [x] `data-cta` on every primary; events only through `lib/track.js` (n/a for the file: it does not exist yet; ids are in place)
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [x] Review read: `docs/review/mq.md` verdict 8 or more (no review of this round yet; none existed when the page was pushed)
+- [x] Review read: `docs/build-notes/review/mq.md` verdict 8 or more (no review of this round yet; none existed when the page was pushed)
 
 Done here: `mq.hero` and `mq.close` are set; `V2: 8/10` heads `Mq.jsx` and the route. Gallery: `docs/gallery/mq/d.mp4`, `d.jpg`, `p.jpg` (filmed in the cloud). Checks at push: 200, parity 0 missing, taste OK, variety OK, unique OK, fs-audit clear, pinchk 7/7.

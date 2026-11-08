@@ -35,7 +35,7 @@ Walked 7 Nov 2026 (16:30 UTC) on the local dev server, page files `components/pa
 4. **One ask in the sticky header, and does scale have rhythm?**
    - **The ask, Personal on desktop:** correct. The header "Try Hanzo" is outlined while Free's ask is on screen.
    - **The ask, Team and API on desktop:** wrong. The first screen shows two solid fills: the header's "Try Hanzo" and "Get API Key" (API), or "Chat with buying specialist" (Team, after a short scroll). The cause is page-side. `Ask.jsx` watches the first `[data-thumb]` in `<main>`, and that is Free's ask inside the hidden Personal panel. The page sets `thumb` on asks in every tab, hidden or not.
-   - **The ask on phone:** two solid "Try Hanzo" buttons at rest (the header and Free). This is shared and already asked for in `docs/requests/pricing.md`, so it is not held against the page.
+   - **The ask on phone:** two solid "Try Hanzo" buttons at rest (the header and Free). This is shared and already asked for in `docs/build-notes/requests/pricing.md`, so it is not held against the page.
    - **Scale on desktop:** good. The h1 is 52px, prices are 64px Air and "No card needed" is 26px.
    - **Scale on phone, Team tab:** two 64px figures ($40 and $20) in one screen.
 5. **Does every hover and press answer, without jumps?**
@@ -70,7 +70,7 @@ Walked 7 Nov 2026 (16:30 UTC) on the local dev server, page files `components/pa
 The page fails the money-page gate on Distinctiveness, which must be 4 or more.
 
 ## Card check
-`docs/coverage/pricing.md` exists in MASTER format with 18/18 headings and filled `Done here:` lines, open copy questions, requests and deleted forks.
+`docs/build-notes/coverage/pricing.md` exists in MASTER format with 18/18 headings and filled `Done here:` lines, open copy questions, requests and deleted forks.
 - **True:**
   - asks share one y (690, six of six);
   - Free is the default solid;
@@ -104,4 +104,4 @@ The page fails the money-page gate on Distinctiveness, which must be 4 or more.
    - On Team, give the Enterprise column its "What's included" list at the same y as Team's seats, so the half isn't white at the first screen.
 5. **Correct the card** for parts 1, 11 and 13 as above.
 
-Not held against the page (already in `docs/requests/pricing.md`): the phone header's solid ask, the Band's blur reveal and its doubled keyboard stop. Also not held against it, as shared kit: the `Cta` press colour `rgb(44,44,46)`.
+Not held against the page (already in `docs/build-notes/requests/pricing.md`): the phone header's solid ask, the Band's blur reveal and its doubled keyboard stop. Also not held against it, as shared kit: the `Cta` press colour `rgb(44,44,46)`.

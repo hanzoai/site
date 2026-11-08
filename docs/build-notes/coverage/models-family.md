@@ -13,7 +13,7 @@ Open copy questions for James:
 - Hanzo's "More from <maker>" and shelf cards link some models hanzo.ai has but this rebuild does not (Claude Fable 5, 5.1, the batch variants). They open hanzo.ai in a new tab and say so. Keep, or drop them?
 - Ask labels drift within a page in Hanzo's own words: "Get API key" (hero) and "Get an API key" (close); "Get decisions" on Kai. Which one per page?
 
-Shared changes requested (`docs/requests/models.md`): kit `Film` with `play` and a budget, one `ModelCard`, `DataTable`, `Copy` with `role="status"`, kit `A` keeping `#section` links on the page, `lib/cta.js`/`lib/track.js`.
+Shared changes requested (`docs/build-notes/requests/models.md`): kit `Film` with `play` and a budget, one `ModelCard`, `DataTable`, `Copy` with `role="status"`, kit `A` keeping `#section` links on the page, `lib/cta.js`/`lib/track.js`.
 
 Forks this template deleted:
 - The white sibling card, the split-flap figures, the auto-rotating quick start, the "No published rate" string, the invented section headings, the kicker over the h1, the coloured syntax palette, the browser-default range control, every spring.
@@ -174,6 +174,6 @@ Done here: JS off: `NoScript.jsx`. Reduced motion: no drift, final states, bars 
 - [x] `data-cta` on every primary ~~`lib/track.js`~~ not on main
 - [x] Nothing before consent
 - [x] `V2:` line in `ModelSheet.jsx`
-- [ ] Review: waiting for a fresh critic (`docs/review/models-family.md`)
+- [ ] Review: waiting for a fresh critic (`docs/build-notes/review/models-family.md`)
 
 Done here: Proof in `docs/gallery/models/family-*` and `docs/gallery/models-family/`.

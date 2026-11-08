@@ -13,7 +13,7 @@ Walked 7 Nov 2026 (main at `dba2ca82`, after `c17b43ac` and `c79a1ad5`, the secu
 - **Other checks:** reduced motion, JS off, 375×667 and 320. Non-localhost POSTs were blocked.
 - **Neighbour:** /trust captured for comparison.
 
-Stills in `docs/review/security/`:
+Stills in `docs/build-notes/review/security/`:
 - `hero-1470.jpg`
 - `controls-06-plate-hidden-1470.jpg`: the main bug.
 - `sheet-open-1470.jpg`
@@ -87,7 +87,7 @@ Stills in `docs/review/security/`:
 Console: on the first, loaded walk, the desktop had one hydration-mismatch error and the red "1 Issue" badge. Quiet reloads of /security (and /trust) were clean, with no badge and 0 errors. This matches `_shared.md` §3 (load-only), so it is not held against the page.
 
 ## Card check
-`docs/coverage/security.md` is in MASTER format, 18/18, and every "Done here" line is filled. The three claims I failed last time are now true:
+`docs/build-notes/coverage/security.md` is in MASTER format, 18/18, and every "Done here" line is filled. The three claims I failed last time are now true:
 - **Part 8:** the native dialog traps focus, Esc closes it, focus returns, and opening does not scroll.
 - **Part 11:** no overlap from the sheet, and no scroll at 320.
 - **Part 4:** the desktop header swap works, and the card honestly says the phone header is the shared "Try Hanzo".

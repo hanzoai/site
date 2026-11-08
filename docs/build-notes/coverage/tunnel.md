@@ -3,7 +3,7 @@
 Page file: `components/pages/cloud/Tunnel.jsx` · gallery: `docs/gallery/tunnel/` · metric id: `github_click` (MASTER §1, researchers: a GitHub click; fired as `cta_click` with `data-cta="tunnel.hero"`)
 
 Open copy questions for James: none; every visible word is Hanzo's. The scene's four labels ("café network", "nothing listening", "open internet", "stopped answering") and the request lines are lifted from Hanzo's own sentences and its example output.
-Shared changes requested (`docs/requests/tunnel.md`): Finale's close `data-cta` should take the page prefix.
+Shared changes requested (`docs/build-notes/requests/tunnel.md`): Finale's close `data-cta` should take the page prefix.
 Forks this page deleted: the cloud `Code` block on "One command, one URL" (it copied the "$" and output lines; replaced by the same look with a Copy of the command only), the opacity fade on the hero's terminal band, two hero fade-ups, the `aria-pressed` mode buttons (now a radio group with a gliding pill and arrow keys).
 
 Measured on the dev server at 1470×801 and 375×812 with Playwright (JS on and off) and `node scripts/motion.mjs /tunnel`.
@@ -155,6 +155,6 @@ Done here: Every word is in the server HTML and every demo is local, so a blocke
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [ ] `V2: <score>/10 <one line>` in the page file's top comment (added once a critic scores it)
-- [ ] Review read: `docs/review/tunnel.md` verdict 8 or more (last review: 7/10, fixes applied, re-walk pending)
+- [ ] Review read: `docs/build-notes/review/tunnel.md` verdict 8 or more (last review: 7/10, fixes applied, re-walk pending)
 
 Done here: `data-cta` in `tunnel.<slot>` form on the page's own asks (kit `Cta` fires `cta_click`); the builder sends nothing. The last review (7/10) was read and its fixes 1–4 and 6–9 applied; fix 5 is declined above (part 9). The `V2:` line goes into `components/pages/cloud/Tunnel.jsx` with the next critic's verdict.

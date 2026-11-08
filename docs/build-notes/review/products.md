@@ -32,12 +32,12 @@ Stills: `products/memory-load-ghost.jpg` (0.94 s: the table fading out after it 
 11. **Copy untouched?** Yes. Parity is 0 missing on all four pages checked, and the paragraph is in the HTML whole (`x-sr`), with the strip as its `aria-hidden` picture.
 
 ## Card check
-`docs/coverage/products.md` exists, has exactly 18 parts and fills every `Done here:` line. Inaccuracies:
+`docs/build-notes/coverage/products.md` exists, has exactly 18 parts and fills every `Done here:` line. Inaccuracies:
 - Part 1 and part 6 say the h1 "arrives up to 84". Measured: 72 px (`fam.css` caps `[data-settle]` at `clamp(52px, 4.9vw, 72px)`).
 - Part 17 says JS off and reduced motion show the final state. True. But "a CSS failsafe shows them after 3.5 s if arming never happens" leaves out that, with JS on, the finished rows are painted and then faded out when the console arms. That flash is not acknowledged anywhere.
 - Part 11 says "no layout shift as rows land: CLS 0.001". True by the metric, but the strip's 239 → 858 px snap at hydration is a visible re-layout the card does not mention.
 - Part 6 lists "section heads 44" as if within the rules. JAMES.md rests section headings at 26 px; a deviation like that should be noted as a decision on the card.
-- Part 18 still points at `docs/review/products-family.md`. This review (`docs/review/products.md`) replaces it.
+- Part 18 still points at `docs/build-notes/review/products-family.md`. This review (`docs/build-notes/review/products.md`) replaces it.
 
 ## To reach 8
 - **Fix the hero object's first six seconds (the main fix).** Arm before first paint, not after hydration. Either put `data-armed` in the server HTML whenever `html.js` is set (CSS-only: the rows start at opacity 0 with no transition), or turn off the row transition while arming, so the table never paints and then fades. Then shorten the empty time. Either start the rows landing while the request is still typing (for example, row *i* lands when the request types the path it names), or type faster for long requests: cap the typing at about 2 s, as MASTER's 6–10 s demo budget is for the whole run. At no moment after 1.5 s should the API table be empty.
@@ -45,4 +45,4 @@ Stills: `products/memory-load-ghost.jpg` (0.94 s: the table fading out after it 
 - **Make the phone a composition, not a long stack.** On 375×812 the console is over 1,000 px tall. Cap the table's height with its own scroll (or show the first 3 operations and open the rest), so the sentence rail and the next idea arrive within a screen. Give the strip cards a white fill or a hairline where they meet the grey Measured room. On the Hanzo OS rows, the bare "6" with its label hidden means nothing: keep the mono label, or drop the number on phone.
 - **Tidy Measured.** Three figures in a 7/5/5 pattern leave a 7-column hole beside the third card. Use 7/5 then a full-width or centred 12 for an odd last card, or put the CronQuestions text row into that space. Give the growing first figure room (top padding or a smaller grow) so 37.5 never crowds the card edge at its peak.
 - **Fill the short consoles.** On record (2 lines) and models (4 lines), the request pane is mostly white at 470 px. Size the pane to the request (shorter console height when the request is short) so the hero object looks full on every member.
-- **Correct the card** (84 → 72, note the 44 px section-head decision, note the arming flash once it is fixed, point part 18 at `docs/review/products.md`).
+- **Correct the card** (84 → 72, note the 44 px section-head decision, note the arming flash once it is fixed, point part 18 at `docs/build-notes/review/products.md`).

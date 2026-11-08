@@ -7,7 +7,7 @@ Open copy questions for James:
 2. `v0.7.7` is hand-typed, as on Hanzo's page; MASTER 16 wants versions from the registry at build time.
 3. The sample session needed a task line. It uses Hanzo's own "Describe the change." rather than an invented sentence.
 
-Shared changes requested (`docs/requests/chat.md`): the kit `Band` (blur word reveal, no `data-cta`), the floating ask bar on desktop, and `.x-arrow` underlines.
+Shared changes requested (`docs/build-notes/requests/chat.md`): the kit `Band` (blur word reveal, no `data-cta`), the floating ask bar on desktop, and `.x-arrow` underlines.
 Forks this page deleted: page `Btn` and `Lk` button forks (now kit `Cta`), the hand-written install table and two code-block forks (now kit `Tabs` plus `CodeBlock`), the hand-written dark close (now kit `Band`), the raw `<table>`, and the four-column highlights row.
 
 ## 1. Strategy and conversion
@@ -178,6 +178,6 @@ Done here: JS off shows the finished session and the finished race (9.52 s and 2
 - [x] `data-cta` on every primary; events only through `lib/track.js`. `lib/track.js` is not on main; the kit `Cta` dispatches `hz-event`.
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment (after review)
-- [x] Review read: `docs/review/dev.md` verdict 8 or more. The critic gave 6 before these fixes; pending re-review.
+- [x] Review read: `docs/build-notes/review/dev.md` verdict 8 or more. The critic gave 6 before these fixes; pending re-review.
 
 Done here: Proof is in `docs/gallery/dev/`: a 15 s 1470×801 film, the first screen, and three 375×812 phone shots.

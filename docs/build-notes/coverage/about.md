@@ -3,7 +3,7 @@
 Page file: `components/pages/About.jsx` (+ `AboutZen.jsx`, `About.css`, `story.css`, `StoryClose.jsx`, `StorySheet.jsx`) · gallery: `docs/gallery/about/` · metric id: `signup_start` (`data-cta="about.*"`)
 
 Open copy questions for James: "1700+" repositories in the page copy against "1,600+" in its meta description and on /history (left as Hanzo has them). "Illustration, not data" and "2 of 4 kept" were strings the page had added; both are gone rather than registered.
-Shared changes requested (`docs/requests/about.md`): Unfold spring → tween; kit Band word blur; kit Tabs spring pill; v2/Lines timing; the floating ask bar; `taste.py --fix` rewriting copy ("#299").
+Shared changes requested (`docs/build-notes/requests/about.md`): Unfold spring → tween; kit Band word blur; kit Tabs spring pill; v2/Lines timing; the floating ask bar; `taste.py --fix` rewriting copy ("#299").
 Forks this page deleted: the page's own buttons and text links (now kit `Cta`: solid, quiet, link); the cursor labels (`data-cursor`); three equal buttons in three places (now one solid plus text links); the page's own dark close (now `StoryClose`); raw `<img>`/`<video>` on the model cards and portraits; the badge above the h1 and every kicker above a heading; the ultramarine accent, the green status dot and the italic accent words; the auto-rotating tile cue and Zen auto-turn (nothing loops past 5 s).
 
 ## 1. Strategy and conversion
@@ -141,12 +141,12 @@ Done here: n/a: no code blocks; commit hashes are real links.
 - [x] n/a: no submit
 - [x] Reduced motion and JS off designed
 
-Done here: without the portrait files the page is complete with Sigil portraits and no console errors from the page (the shared FooterHTML hydration warning is requested in `docs/requests/about.md`); JS off shows the frontier drawn at rest (a `noscript` rule stops the draw and the idle loops and hides the pause); reduced motion shows the curve drawn and figures at rest, with `document.getAnimations()` empty after 3.5 s.
+Done here: without the portrait files the page is complete with Sigil portraits and no console errors from the page (the shared FooterHTML hydration warning is requested in `docs/build-notes/requests/about.md`); JS off shows the frontier drawn at rest (a `noscript` rule stops the draw and the idle loops and hides the pause); reduced motion shows the curve drawn and figures at rest, with `document.getAnimations()` empty after 3.5 s.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; no analytics wired yet (needs `lib/track.js`)
 - [x] Nothing identifier-bearing
 - [x] `V2:` line in the page file's top comment
-- [x] Review read: `docs/review/about.md` verdict 7/10, every fix applied, re-review pending
+- [x] Review read: `docs/build-notes/review/about.md` verdict 7/10, every fix applied, re-review pending
 
-Done here: docs/review/about.md: Ready 8 Nov (new bar, no score). Proof in docs/gallery/about/ (desktop-hero, phone-1..3).
+Done here: docs/build-notes/review/about.md: Ready 8 Nov (new bar, no score). Proof in docs/gallery/about/ (desktop-hero, phone-1..3).

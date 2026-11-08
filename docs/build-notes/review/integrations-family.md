@@ -1,5 +1,5 @@
 # /integrations/* (template) — James-eye review
-Ready: 2026-11-07 the chapter window now fills its stage (66svh, was ~46%: a percentage height resolved to auto), phone CLS while typing 0.0006 (caret no longer adds a break point), one-row phone window bar and one label where language = name, wrapped lines hang under their indent, long lines fade at the edge, infrastructure route keeps a request moving after typing, visible band hovers, links land at the top on phones; checked on anthropic-sdk, docker, cursor (+ parity on all 19); header, cookie card and FamNext timing filed in docs/requests/integrations.md
+Ready: 2026-11-07 the chapter window now fills its stage (66svh, was ~46%: a percentage height resolved to auto), phone CLS while typing 0.0006 (caret no longer adds a break point), one-row phone window bar and one label where language = name, wrapped lines hang under their indent, long lines fade at the edge, infrastructure route keeps a request moving after typing, visible band hovers, links land at the top on phones; checked on anthropic-sdk, docker, cursor (+ parity on all 19); header, cookie card and FamNext timing filed in docs/build-notes/requests/integrations.md
 Verdict: 6/10
 First complaint: "There's a red '1 Issue' error sitting on the hero and the cookie box is covering the code. Then I scroll into the 'scene' and it's one small code box in a big empty white room. That's not premium, it's a dead page with a tab in it."
 
@@ -42,7 +42,7 @@ Walked 7 Nov, live dev server, members `/integrations/openai-sdk/` and `/integra
 9. **Idle life after typing on docker.** Something should keep living after 3.5 s (the route chips cycling as on openai-sdk, or a slow Sigil drift), and stop under reduced motion.
 10. **Bottom third.** Make the "More integrations" cards differ by each integration's own mark or seed instead of four identical contour tiles, and give the 12-row link list a hover preview (category or one-line description) so it isn't a plain list.
 
-## Proof images (`docs/review/integrations-family/`)
+## Proof images (`docs/build-notes/review/integrations-family/`)
 - `1-desktop-hero-badge-cookie.jpg`: openai-sdk at 1470x801, 9 s after load with no input. The cookie card covers the hero code and the route diagram, and the red Next "1 Issue" badge (the FooterHTML hydration error) sits bottom-left.
 - `2-desktop-pinned-stage-empty-clipped.jpg`: docker at 1470x801, scrollY 2309, as the pinned stage releases. The code card slides up behind the translucent header and stays visible through it, with the empty white stage below the progress dashes, then the credit row.
 - `3-phone-two-fills-duplicate-labels.jpg`: docker at 375x812, first screen. Two solid black fills ("Try Hanzo" in the header and "Get API key — Free"), the code window header split over two rows with "Dockerfile" and "DOCKERFILE", and the cookie card covering the code.
