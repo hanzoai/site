@@ -58,15 +58,15 @@
   /* layers */
   --x-z-ask: 70; --x-z-sheet: 985; --x-z-skip: 2147483001;
 }
-/* dark mode: the page's room is Hanzo's dark (values in globals.css html.dark); a [data-room=light] section follows the
-   page into the dark, and [data-room=dark] stays as it is */
-html.dark, html.dark [data-room=light] {
-  --room-bg: #0d0d0d; --room-surface: #171717; --room-raised: #0f0f0f;
-  --room-ink: #e5e5e5; --room-soft: #a3a3a3; --room-faint: #858585;
-  --room-line: rgba(255, 255, 255, .1); --room-line-strong: rgba(255, 255, 255, .16);
-  --room-fill: rgba(255, 255, 255, .04); --room-fill-strong: rgba(255, 255, 255, .08);
-  --focus: #e5e5e5;
-  --btn-solid-bg: var(--ink); --btn-solid-ink: #0a0a0a; --btn-solid-hover: #ccc;
+/* dark mode: the page's room is Hanzo's dark, from @hanzo/design's tokens (Hanzo's own :not(.light) selector); a
+   [data-room=light] section follows the page into the dark, and [data-room=dark] stays as it is */
+html:not(.light), html:not(.light) [data-room=light] {
+  --room-bg: var(--background); --room-surface: var(--muted); --room-raised: var(--card);
+  --room-ink: var(--foreground); --room-soft: var(--muted-foreground); --room-faint: var(--text-tertiary);
+  --room-line: var(--border); --room-line-strong: var(--border-strong);
+  --room-fill: var(--glass); --room-fill-strong: var(--glass-strong);
+  --focus: var(--ring);
+  --btn-solid-bg: var(--primary); --btn-solid-ink: var(--primary-foreground); --btn-solid-hover: var(--primary-hover);
 }
 [data-room=dark] {
   --room-bg: #0a0a0b; --room-surface: #141416; --room-raised: #1c1c1e;
@@ -303,8 +303,8 @@ header[data-slot=masthead] a[data-x-ask]:active, header[data-slot=masthead] :is(
   .x-nav-stage-t p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--hz-500); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .x-nav-stage-t span { font: 500 11.5px/1.2 var(--mono); color: var(--hz-400); overflow-wrap: anywhere; }
   /* dark mode: the menu's feature card on Hanzo's dark muted surface */
-  html.dark .x-nav-stage { background: #171717; color: #e5e5e5; }
-  html.dark .x-nav-stage-t p { color: #a3a3a3; } html.dark .x-nav-stage-t span { color: #858585; }
+  html:not(.light) .x-nav-stage { background: var(--muted); color: var(--foreground); }
+  html:not(.light) .x-nav-stage-t p { color: var(--muted-foreground); } html:not(.light) .x-nav-stage-t span { color: var(--text-tertiary); }
 }
 .x-sheet { display: flex; flex-direction: column; height: 100dvh; padding: 0 20px calc(20px + env(safe-area-inset-bottom)); }
 .x-sheet-top { display: flex; align-items: center; gap: 4px; height: 68px; flex: none; }
