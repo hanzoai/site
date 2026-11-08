@@ -132,13 +132,21 @@ async function figures() {
     }
     need(snap && cal, "the open-source snapshot in hanzo.ai's scripts");
     const e = snap.estate;
+    // commits a day (every group added up) and repositories active that day, as hanzo.ai's calendar draws them
+    const all = Object.values(cal.groups);
+    const days = [];
+    for (let t = Date.parse(cal.from + 'T00:00:00Z'), end = Date.parse(cal.to + 'T00:00:00Z'); t <= end; t += 864e5) {
+      const d = new Date(t).toISOString().slice(0, 10);
+      days.push([d, all.reduce((a, g) => a + (g.daily?.[d] ?? 0), 0), all.reduce((a, g) => a + (g.active?.[d] ?? 0), 0)]);
+    }
+    need(days.length >= 365 && days.every(([, c, r]) => int(c) && int(r)), 'calendar days');
     need([e.commits, e.merges, e.orgs, e.public].every(int) && Array.isArray(e.monthly) && e.window?.to, 'estate');
     const groups = Object.fromEntries(Object.entries(snap.groups).map(([k, g]) => {
       need([g.stars, g.forks, g.repos].every(int), 'group ' + k);
       return [k, { name: g.name, repos: g.repos, public: g.public, stars: g.stars, forks: g.forks, top: (g.top || []).map((r) => ({ repo: r.repo, description: r.description ?? '', language: r.language ?? '', stars: r.stars, forks: r.forks, commits: r.commits, months: r.months, contributors: r.contributors, faces: r.faces ?? [], pushed: r.pushed, forge: r.forge, site: r.site ?? null })) }];
     }));
     need((groups.hanzo?.top || []).length > 0, 'repository cards');
-    return { source: HOME + ' (its built-in snapshot of https://api.hanzo.ai/v1/git/activity and GitHub)', script: from, fetched_at, read: snap.read, estate: { window: e.window, months: e.months, orgs: e.orgs, repos: e.repos, public: e.public, commits: e.commits, merges: e.merges, monthly: e.monthly }, calendar: { from: cal.from, to: cal.to }, forge: snap.forge, groups };
+    return { source: HOME + ' (its built-in snapshot of https://api.hanzo.ai/v1/git/activity and GitHub)', script: from, fetched_at, read: snap.read, estate: { window: e.window, months: e.months, orgs: e.orgs, repos: e.repos, public: e.public, commits: e.commits, merges: e.merges, monthly: e.monthly }, calendar: { from: cal.from, to: cal.to, days, week: days.slice(-7).reduce((a, x) => a + x[1], 0) }, forge: snap.forge, groups };
   };
 
   // the coding race, Kai's speed and Enso's cost, as hanzo.ai's home reads them (summary view, every run)
