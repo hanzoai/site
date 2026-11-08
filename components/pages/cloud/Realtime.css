@@ -500,7 +500,7 @@
 .rt .lx-dark .lx-ghost { border-color: rgba(255, 255, 255, .22); }
 .rt .lx-dark .lx-cta { background: light-dark(#fafafa, var(--primary)); }
 @media (hover: hover) { .rt .lx-dark .lx-cta:hover { background: light-dark(#fff, var(--primary)); } }
-.rt-slots i { border-color: light-dark(rgba(255, 255, 255, .3), rgba(0, 0, 0, .3)); }
+.rt-slots i { border-color: light-dark(rgba(255, 255, 255, .3), var(--primary-foreground)); }
 .rt .cf-code.lt .cf-code-bar .x-copy { background: light-dark(#fff, var(--surface-1)); }
 /* the use-case drawings and the tenant map: their ink marks sit at a mid grey in dark, like Hanzo's icons on its cards */
 .lx.rt .rt-v, .lx.rt .rt-tm-rows { --ink: light-dark(#0a0a0a, var(--muted-foreground)); }
