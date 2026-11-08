@@ -1,7 +1,7 @@
 'use client';
 // Persona: a platform engineer running the stack on Kubernetes.
 // Goal: install the operator.
-// CTA: View on GitHub (operator.hero); the close is Deploy to Cloud in the Band.
+// CTA: View on GitHub (operator.hero), and again under "Get started with Hanzo Operator" (the Band), as hanzo.ai pairs them; Deploy to Cloud sits in Get Operator, as live.
 // Metric: cta_click operator.hero
 // Signature: a card stack of the six points under "Declare the thing, not the thirty objects": flick or drag the top card away (swipe on touch), one idea per card, the next rising from beneath.
 // Beyond: the hero cluster board (approved): drag any resource out of place yourself (or press it) and watch the next sweep revert it, with the log saying so.
@@ -223,6 +223,7 @@ function Get() {
           </div>
           <p className="xop-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to={GH}>hanzoai</A></p>
           <p className="xop-get-cmd x-mono"><code>operator up</code><Copy text="operator up" /></p>
+          <Cta to="https://platform.hanzo.ai/deploy" id="operator.get" kind="quiet" size="sm">Deploy to Cloud</Cta>
         </div>
       </div>
     </section>
@@ -236,7 +237,7 @@ export default function Operator() {
       <Stack />
       <A2Paste name="Operator" text="Read https://hanzo.ai/skill.md and use Hanzo Operator in my project." />
       <Get />
-      <Band title="Get started with Hanzo Operator" action="Deploy to Cloud" to="https://platform.hanzo.ai/deploy" />
+      <Band title="Get started with Hanzo Operator" action="View on GitHub" to={GH} />
     </main>
   );
 }
