@@ -171,3 +171,14 @@ html.x-arriving .xso-in, html.x-arriving .xso-in2 { animation-play-state: paused
    reserved room are films and stay black. */
 html:not(.light) .vc.xso { --ink: var(--foreground); --ink2: var(--text-helper); --muted: var(--text-helper); --quiet: var(--surface-2); --card: var(--surface-2); --tile: var(--surface-3); --line: var(--border); }
 html:not(.light) .xso .vc-kick.acc { color: var(--ink); }
+
+/* dark only: Hanzo's halftone dot field behind the hero, as live hanzo.ai's dark heroes sit on it */
+html:not(.light) .xso-hero { position: relative; isolation: isolate; }
+html:not(.light) .xso-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .xso-hero::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }

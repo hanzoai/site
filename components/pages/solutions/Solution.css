@@ -232,9 +232,11 @@ html[data-tile-open] .xs2-h1 .v2f-w > span, .xs2-h1[data-landed] .v2f-w > span {
 
 /* dark mode (docs/DARK-MODE.md): the family sheet (v2/fam.css) states its own ink; on this page it takes Hanzo's dark
    values (text #e5e5e5, muted #a3a3a3, surface #171717, borders white 10%). Films, shots and the closing room stay black. Dark values are Hanzo's tokens only. */
-html:not(.light) .xs2.v2f { --acc: var(--foreground); --acc-ink: var(--primary-foreground); --acc-soft: var(--surface-2); --ink: var(--foreground); --soft: var(--muted-foreground); --muted: var(--muted-foreground); --faint: var(--text-tertiary); --card: var(--surface-2); --hair: var(--border); --silver: var(--surface-3); }
+html:not(.light) .xs2.v2f { --acc: var(--foreground); --acc-ink: var(--primary-foreground); --acc-soft: var(--surface-2); --ink: var(--foreground); --soft: var(--muted-foreground); --muted: var(--muted-foreground); --faint: var(--text-tertiary); --card: var(--surface-2); --hair: var(--border); --silver: var(--surface-3); --xs2-pf: var(--primary-foreground); }
 html:not(.light) .xs2 .v2f-btn:not(.solid):not(.acc), html:not(.light) .xs2 .v2f-spec-btn { border-color: var(--white-14); }
 html:not(.light) .xs2 .v2f-body a, html:not(.light) .xs2 a.v2f-link { text-decoration-color: var(--white-30); }
+/* the band's light button carries Hanzo's .light class, so it reads the dark ink captured on the page root */
+html:not(.light) .xs2-band .v2f-btn.light { color: var(--xs2-pf); }
 html:not(.light) .xs2 .v2f-ch-nav button i { background: var(--border-control); }
 html:not(.light) .xs2 .v2f-next-go { border-color: var(--white-20); }
 @media (hover: hover) {
@@ -242,3 +244,14 @@ html:not(.light) .xs2 .v2f-next-go { border-color: var(--white-20); }
   html:not(.light) .xs2 .v2f-btn.solid:hover, html:not(.light) .xs2 .v2f-btn.acc:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
   html:not(.light) .xs2 .v2f-spec-btn:hover { border-color: var(--white-40); }
 }
+
+/* dark only: Hanzo's halftone dot field behind the hero, as live hanzo.ai's dark heroes sit on it */
+html:not(.light) .xs2-hero { position: relative; isolation: isolate; }
+html:not(.light) .xs2-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .xs2-hero::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
