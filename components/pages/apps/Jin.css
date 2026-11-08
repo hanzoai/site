@@ -412,3 +412,8 @@ html:not(.light) .jn-svg .fo, html:not(.light) .jn-svg .jn-scrub { fill: var(--x
 html.js:not(.light) .jn-plate { background: var(--x-raised); }
 @media (hover: hover) { html:not(.light) .jn-row:hover { background: var(--x-fill); } }
 html:not(.light) .jn-dlg { background: var(--x-raised); color: var(--ink); }
+
+/* dark: live hanzo.ai's heroes carry a halftone dot field in dark, densest at the edges (the same rule as /investors);
+   light mode draws nothing here */
+html:not(.light) .jn-hero { position: relative; isolation: isolate; }
+html:not(.light) .jn-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--white-20) 1px, transparent 1.6px) 0 0 / 5px 5px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); mask-composite: intersect; }

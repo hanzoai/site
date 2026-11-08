@@ -541,3 +541,8 @@ html:not(.js) .id-ld { display: none; }
   .id-end-apps i { background: var(--id-k); color: var(--id-ko); transition: none; }
   .id-mark-row .id-mark { transition: none; }
 }
+
+/* dark: live hanzo.ai's heroes carry a halftone dot field in dark, densest at the edges (the same rule as /investors);
+   light mode draws nothing here */
+html:not(.light) .id-hero-s { position: relative; isolation: isolate; }
+html:not(.light) .id-hero-s::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--white-20) 1px, transparent 1.6px) 0 0 / 5px 5px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); mask-composite: intersect; }

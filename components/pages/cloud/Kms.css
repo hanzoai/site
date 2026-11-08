@@ -413,3 +413,8 @@ html:not(.light) .km-ship-con .cf-con.light .cf-tip { color: var(--x-on-ink); }
 /* Frame.css steps the selected row and on-icon up to var(--secondary), but inside .cf-con.light that name is Hanzo's light
    token (the .light class); the row tone captured outside the console keeps them Hanzo's dark secondary */
 html:not(.light) .km-ship-con .cf-con.light .cf-row-bg, html:not(.light) .km-ship-con .cf-con.light .cf-con-ico.on, html:not(.light) .km-ship-con .cf-con.light .cf-con-ico:hover { background: var(--km-con-row); }
+
+/* dark: live hanzo.ai's heroes carry a halftone dot field in dark, densest at the edges (the same rule as /investors);
+   light mode draws nothing here */
+html:not(.light) .km-hero { position: relative; isolation: isolate; }
+html:not(.light) .km-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--white-20) 1px, transparent 1.6px) 0 0 / 5px 5px; -webkit-mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); -webkit-mask-composite: source-in; mask-image: radial-gradient(ellipse 75% 70% at 45% 45%, transparent 35%, #000 100%), linear-gradient(#000 70%, transparent); mask-composite: intersect; }
