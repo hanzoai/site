@@ -9,7 +9,7 @@
 .vs2-hero.rise .l2-stage-obj { padding-top: clamp(20px, 3.4svh, 40px); transform-origin: 0 0; }
 .vs2-hero .l2-stage-obj > * { width: min(100%, 1152px); }
 /* the repo caption is 12px mono capitals (the deck's eyebrow size), set at #525252 so it reads 4.5:1 on the grey console */
-.vs2-hero .l2-stage-kick { color: #525252; }
+.vs2-hero .l2-stage-kick { color: light-dark(#525252, var(--muted-foreground)); }
 .vs2-nw { white-space: nowrap; }
 @media (min-width: 901px) {
   .vs2-hero .l2-stage-pin { display: block; }
@@ -32,7 +32,7 @@
   .vs2-hero .vs2-inv { display: contents; }
   .vs2-hero .vs2-inv > .vs2-k { grid-area: k; margin: 0; padding: 6px 4px 0; }
   .vs2-hero .vs2-inv > ul { grid-area: ul; }
-  .vs2-hero .vs2-inv li { background: #fff; }
+  .vs2-hero .vs2-inv li { background: var(--x-raised); }
   .vs2-hero .vs2-con { grid-area: con; align-self: stretch; display: flex; flex-direction: column; }
   .vs2-hero .vs2-con code { flex: 1; height: auto; min-height: 96px; }
   .vs2-hero .vs2-audit { grid-area: audit; margin: 0; padding: 0 4px 4px; align-self: end; }
@@ -42,41 +42,41 @@
 }
 
 /* Stage object: the fleet console */
-.vs2-fleet { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; padding: 10px; background: #f5f5f5; }
+.vs2-fleet { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; padding: 10px; background: light-dark(#f5f5f5, var(--surface-2)); }
 .vs2-req, .vs2-cat, .vs2-dry { grid-column: 1 / -1; }
 .vs2-fleet[data-paused] .vs2-caret { animation-play-state: paused; }
 .vs2-pause.l2-pause { top: 20px; right: 20px; }
 .vs2-req { padding: 22px 64px 22px 24px; border-radius: 20px; background: #0a0a0a; color: #f5f5f5; }
-.vs2-k { margin: 0 0 12px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #525252; }
+.vs2-k { margin: 0 0 12px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: light-dark(#525252, var(--muted-foreground)); }
 .vs2-req .vs2-k { color: #a3a3a3; }
 .vs2-cmd { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.02em; }
 .vs2-cmd b { color: #a3a3a3; font-weight: 606; }
 .vs2-cat { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 /* resting states are legible (4.5:1 or better); an unanswered provider is dashed and waiting, not faded */
-.vs2-prov { display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 18px; background: #fff; border: 1.5px dashed #d4d4d4; transform: translateY(6px); transition: transform .6s var(--ease), border-color .4s, background-color .4s; }
+.vs2-prov { display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 18px; background: var(--x-raised); border: 1.5px dashed light-dark(#d4d4d4, var(--border-selected)); transform: translateY(6px); transition: transform .6s var(--ease), border-color .4s, background-color .4s; }
 .vs2-prov.on { transform: none; border-style: solid; border-color: transparent; }
 .vs2-prov.pick { border-color: var(--ink); }
 .vs2-prov b { font-size: 17px; font-weight: 606; }
 .vs2-prov span { font-size: 14px; color: var(--soft); }
-.vs2-prov em { font-size: 13px; font-style: normal; color: #525252; }
+.vs2-prov em { font-size: 13px; font-style: normal; color: light-dark(#525252, var(--muted-foreground)); }
 .vs2-prov.on em { color: var(--ac); }
-.vs2-dry { height: 38px; display: flex; align-items: center; padding: 0 16px; font-size: 13px; color: #525252; }
+.vs2-dry { height: 38px; display: flex; align-items: center; padding: 0 16px; font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); }
 .vs2-dry span { transform: translateY(2px); transition: color .35s, transform .5s var(--ease); }
 .vs2-dry span.on { transform: none; color: var(--ink); font-weight: 606; }
-.vs2-inv { grid-column: 1 / -1; padding: 20px; border-radius: 20px; background: #fff; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 0 16px; }
+.vs2-inv { grid-column: 1 / -1; padding: 20px; border-radius: 20px; background: var(--x-raised); display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 0 16px; }
 .vs2-inv .vs2-k { grid-column: 1 / -1; }
 .vs2-fleet .vs2-inv ul { min-height: 190px; gap: 5px; } /* five rows reserved: adding machines never moves the console */
 .vs2-inv ul li { height: 34px; }
-.vs2-inv li.ph, .vs2-hero .vs2-inv li.ph { background: transparent; border: 1px dashed #d4d4d4; }
+.vs2-inv li.ph, .vs2-hero .vs2-inv li.ph { background: transparent; border: 1px dashed light-dark(#d4d4d4, var(--border-selected)); }
 .vs2-req { padding-top: 18px; padding-bottom: 18px; }
 .vs2-inv { padding: 16px 20px; }
 .vs2-prov { padding: 14px 16px; }
 .vs2-inv ul, .vs2-inv2 ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.vs2-inv li, .vs2-inv2 li { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 14px; border-radius: 12px; background: #f5f5f5; }
+.vs2-inv li, .vs2-inv2 li { display: flex; align-items: center; gap: 12px; height: 44px; padding: 0 14px; border-radius: 12px; background: light-dark(#f5f5f5, var(--surface-2)); }
 .vs2-inv li i, .vs2-inv2 li i { width: 10px; height: 10px; border-radius: 3px; }
 i.m { background: var(--ac); }
-i.p { background: #0a0a0a; }
-i.k { background: #d4d4d4; }
+i.p { background: var(--ink); }
+i.k { background: light-dark(#d4d4d4, var(--border-selected)); }
 .vs2-inv li b, .vs2-inv2 li b { font-size: 14px; font-weight: 606; }
 .vs2-inv li span, .vs2-inv2 li span { margin-left: auto; font-size: 13px; color: var(--soft); }
 /* the console is a real terminal from the first frame (full contrast, an idle prompt); "opened" lights its tab and
@@ -86,9 +86,9 @@ i.k { background: #d4d4d4; }
 .vs2-con p { display: flex; gap: 2px; margin: 0; padding: 8px 8px 0; font-size: 13px; }
 .vs2-con p span { padding: 6px 10px; border-radius: 8px 8px 0 0; background: #171717; color: #a3a3a3; transition: background-color .4s, color .4s; }
 .vs2-con.on p span:first-child { background: #262626; color: #fafafa; }
-.vs2-idle { font-style: normal; color: #525252; }
+.vs2-idle { font-style: normal; color: light-dark(#525252, var(--muted-foreground)); }
 .vs2-con code { display: block; height: 96px; padding: 12px; background: #171717; font-size: 14px; }
-.vs2-audit { grid-column: 1 / -1; margin: 8px 0 0; font-size: 13px; color: #525252; opacity: 0; transition: opacity .4s; }
+.vs2-audit { grid-column: 1 / -1; margin: 8px 0 0; font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); opacity: 0; transition: opacity .4s; }
 .vs2-audit.on { opacity: 1; }
 
 /* signature: the one dark room. Phones (and reduced motion): the rows stack as cards, each with its own picture that
@@ -134,7 +134,7 @@ html:not(.js) .vs2-find[hidden] { display: block; } /* JS off: every paragraph r
 .vs2-us { position: relative; display: inline-block; }
 .vs2-us::after { content: ''; position: absolute; left: 0; right: 0; bottom: -3px; height: 2px; background: currentColor; transform-origin: 0 50%; }
 .vs2-name .l2-mono .vs2-us::after { height: 1px; bottom: -2px; }
-.vs2-sheet .vs2-cap { margin: -8px 0 16px; font-size: 13px; color: #525252; } /* the row number, under the title as a caption */
+.vs2-sheet .vs2-cap { margin: -8px 0 16px; font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); } /* the row number, under the title as a caption */
 .vs2-sheet .vs2-cp { display: flex; align-items: center; min-height: 220px; padding: 24px; border-radius: 20px; background: #0a0a0a; color: #fafafa; }
 .vs2-sheet .vs2-cp > * { width: 100%; }
 .vs2-sheet .vs2-cd { margin-top: 24px; }
@@ -217,28 +217,28 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
 .vs2-name-l { grid-column: 1 / span 5; }
 .vs2-form { display: flex; flex-direction: column; gap: 18px; margin-top: 36px; }
 .vs2-form label, .vs2-count { display: flex; flex-direction: column; gap: 8px; }
-.vs2-form label span, .vs2-count > span { font-size: 13px; color: #525252; }
-.vs2-form input { width: 100%; height: 56px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--hair); background: #f5f5f5; font: 500 20px/1 var(--mono); color: var(--ink); caret-color: var(--ink); outline: 2px solid transparent; outline-offset: 2px; transition: border-color .2s, background .2s, outline-color .15s; }
+.vs2-form label span, .vs2-count > span { font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); }
+.vs2-form input { width: 100%; height: 56px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--hair); background: light-dark(#f5f5f5, var(--surface-2)); font: 500 20px/1 var(--mono); color: var(--ink); caret-color: var(--ink); outline: 2px solid transparent; outline-offset: 2px; transition: border-color .2s, background .2s, outline-color .15s; }
 /* the one focus ring: 2px ink with a white halo */
-.vs2-form input:focus-visible { background: #fff; border-color: var(--ink); outline-color: var(--ink); box-shadow: 0 0 0 2px #fff; }
-@media (hover: hover) { .vs2-form input:hover { border-color: rgba(0, 0, 0, .3); } }
+.vs2-form input:focus-visible { background: var(--x-raised); border-color: var(--ink); outline-color: var(--ink); box-shadow: 0 0 0 2px light-dark(#fff, var(--card)); }
+@media (hover: hover) { .vs2-form input:hover { border-color: light-dark(rgba(0, 0, 0, .3), var(--border-selected)); } }
 .vs2-count div { display: flex; align-items: center; gap: 18px; }
-.vs2-count button { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--hair); background: #fff; color: var(--ink); cursor: pointer; transition: transform 90ms var(--ease), border-color .2s, background .2s; }
+.vs2-count button { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--hair); background: var(--x-raised); color: var(--ink); cursor: pointer; transition: transform 90ms var(--ease), border-color .2s, background .2s; }
 .vs2-count button:active { transform: scale(.97); }
 .vs2-count button:focus-visible, .vs2-dryt button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-@media (hover: hover) { .vs2-count button:hover { border-color: var(--ink); background: #f5f5f5; } .vs2-dryt button:hover { color: var(--ink); background: rgba(255, 255, 255, .55); } }
+@media (hover: hover) { .vs2-count button:hover { border-color: var(--ink); background: light-dark(#f5f5f5, var(--surface-2)); } .vs2-dryt button:hover { color: var(--ink); background: light-dark(rgba(255, 255, 255, .55), var(--glass-strong)); } }
 .vs2-count b { min-width: 2ch; text-align: center; font-size: 44px; }
-.vs2-dryt { display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: #ededed; align-self: flex-start; }
+.vs2-dryt { display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: light-dark(#ededed, var(--secondary)); align-self: flex-start; }
 .vs2-dryt button { min-height: 44px; padding: 0 20px; border: 0; border-radius: 11px; background: transparent; font: 606 14px/1 var(--mono); color: var(--soft); cursor: pointer; transition: color .2s, background-color .2s, transform 90ms var(--ease); }
 .vs2-dryt button:active { transform: scale(.97); }
-.vs2-dryt button[aria-pressed='true'] { background: #fff; color: var(--ac); }
+.vs2-dryt button[aria-pressed='true'] { background: var(--x-knob); color: var(--ac); }
 .vs2-name-r { grid-column: 7 / span 6; align-self: center; }
-.vs2-inv2 { padding: 26px; border-radius: 24px; background: #f5f5f5; }
+.vs2-inv2 { padding: 26px; border-radius: 24px; background: light-dark(#f5f5f5, var(--surface-2)); }
 .vs2-inv2 .vs2-k b { color: var(--ac); }
 .vs2-inv2 ul { min-height: 244px; } /* five rows (three machines, the pool, the cluster) reserved: the arrival never moves the page */
 .vs2-out { min-height: 2.9em; }
-.vs2-inv2 li { background: #fff; }
-.vs2-inv2 li.dry { background: repeating-linear-gradient(135deg, #fff 0 10px, #fafafa 10px 20px); }
+.vs2-inv2 li { background: var(--x-raised); }
+.vs2-inv2 li.dry { background: repeating-linear-gradient(135deg, light-dark(#fff, var(--card)) 0 10px, light-dark(#fafafa, var(--surface-2)) 10px 20px); }
 .vs2-inv2 li.dry b { color: var(--soft); }
 .vs2-out { margin: 16px 0 0; font-size: 14px; color: var(--ac); }
 .vs2-out.live { color: var(--ink); }
@@ -282,3 +282,6 @@ html:not(.js) .vs2-ns { display: grid; gap: 12px; margin-top: 32px; }
 .vs2-range { margin: 14px 0 0; font-size: 13px; color: #a3a3a3; }
 /* Hanzo's Kai art (live: the black card behind the six tiles), kept under the range (COPY-RULE.md rule 5) */
 .vs2-art { margin: 24px 0 8px; }
+/* dark (docs/DARK-MODE.md): the shared l2 frame takes Hanzo's dark on this page; light-dark() keeps bright exactly as it was */
+.vs2.l2-page { background: var(--bg); --hair: light-dark(rgba(0, 0, 0, .1), var(--border)); --muted: light-dark(#525252, var(--muted-foreground)); --soft: light-dark(#525252, var(--muted-foreground)); }
+html:not(.light) .vs2 .l2-pause:not(.dk) { background: var(--surface-overlay); }
