@@ -15,7 +15,9 @@
 html:not(.light) {
   --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border);
   --card: var(--muted); --bg: var(--background);
-  --x-raised: var(--card); --x-on-ink: var(--primary-foreground); --x-sunk: var(--surface-card-quiet); --x-knob: var(--secondary);
+  /* --x-raised is Hanzo's dark card, #0f0f0f (@hanzo/design --card and --popover; live's card background). It reads
+     --popover because --card on <html> is ours (the muted fill) and would shadow Hanzo's card colour here. */
+  --x-raised: var(--popover); --x-on-ink: var(--primary-foreground); --x-sunk: var(--surface-card-quiet); --x-knob: var(--secondary);
   --x-fill: var(--muted); --x-e10: var(--border); --x-e12: var(--border-control); --x-e15: var(--border-control);
 }
 html { background: var(--bg); -webkit-text-size-adjust: 100%; }
