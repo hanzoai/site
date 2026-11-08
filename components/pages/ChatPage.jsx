@@ -24,7 +24,6 @@ import { A, Img, Cta, Band } from '../kit';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
 import AppLines from '../v2/AppLines';
-import AppChapters from '../v2/AppChapters';
 import { useDemo } from '../v2/AppDemo';
 import { MODELS } from '../../lib/models';
 import './ChatPage.css';
@@ -424,34 +423,43 @@ function Art({ k }) {
   );
 }
 
-/* The dark room's heading starts big, as the moment, and shrinks back to a section heading as the pinned scene
-   takes over (MASTER 3.1: some things start big and shrink as things happen). */
-function ToolsHead() {
+/* 2. What it does, as hanzo.ai/chat lays it out: one heading and six cards, three by two. Each card carries its own
+   small scene (the same art the tools had), which plays once as the card comes into view and again on hover or focus. */
+function Tool({ t, d, k, i }) {
   const ref = useRef(null);
-  const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.7', 'start 0.05'] });
-  // phones stop the shrink at the section size (26px of a ~40px heading) instead of going on to 16px
-  const k = useRef(0.62);
-  useEffect(() => { if (matchMedia('(max-width: 600px)').matches) k.current = 0.35; }, []);
-  const scale = useTransform(p, (v) => 1 - k.current * Math.min(1, Math.max(0, v)));
+  const [play, setPlay] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setPlay((n) => n || 1); io.disconnect(); } }, { threshold: 0.45 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const again = () => setPlay((n) => n + 1);
   return (
-    <div className="v2a-wrap cht-ch-head" ref={ref}>
-      <motion.div className="cht-ch-hw" style={{ scale }}>
-        <AppLines as="h2" view className="cht-ch-h" lines={['A chat that does the work,', 'not just the talking']} soft={[1]} />
-      </motion.div>
-    </div>
+    <li className="cht-tool" ref={ref} style={{ '--i': i }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') again(); }} onFocus={again} tabIndex={-1}>
+      <div className="v2a-ch-art cht-tool-art" data-play={play ? '' : undefined} aria-hidden="true">
+        <div className="cht-tool-scale" key={play}><Art k={k} /></div>
+      </div>
+      <div className="cht-tool-b">
+        <span className="cht-tool-i"><Ico k={k} /></span>
+        <h3 className="cht-tool-t">{t}</h3>
+        <p className="cht-tool-d">{d}</p>
+      </div>
+    </li>
   );
 }
 
 function Tools() {
   return (
-    <AppChapters
-      className="cht-ch"
-      dark
-      id="cht-tools"
-      label="A chat that does the work, not just the talking"
-      head={<ToolsHead />}
-      items={TOOLS.map(([title, body, k]) => ({ key: k, title, body, icon: <Ico k={k} />, art: <Art k={k} /> }))}
-    />
+    <section className="v2a-sec cht-tools" aria-labelledby="cht-tools-h">
+      <div className="v2a-wrap">
+        <h2 className="v2a-head cht-tools-h" id="cht-tools-h">A chat that does the work, not just the talking</h2>
+        <ul className="cht-tools-g">
+          {TOOLS.map(([t, d, k], i) => <Tool key={k} t={t} d={d} k={k} i={i} />)}
+        </ul>
+      </div>
+    </section>
   );
 }
 
