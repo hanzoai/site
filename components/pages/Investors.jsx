@@ -320,15 +320,45 @@ function Research() {
   );
 }
 
+/* Hanzo's stat captions count up with their figures, as hanzo.ai's activity cards do (useCount): every number in the
+   caption reads 0 until the cards are seen, then counts to its value in 1.1 s, easing out. The server and reduced
+   motion show the finished words ("In the past 7 days"). */
+function countText(e, r) {
+  if (r >= 1) return e;
+  return e.replace(/\d[\d,]*(?:\.\d+)?/g, (m) => {
+    const t = Number(m.replace(/,/g, ''));
+    if (!Number.isFinite(t)) return m;
+    const a = m.indexOf('.'), n = a >= 0 ? m.length - a - 1 : 0, i = t * r;
+    if (m.includes(',')) return n > 0 ? i.toLocaleString('en-US', { minimumFractionDigits: n, maximumFractionDigits: n }) : Math.round(i).toLocaleString('en-US');
+    return n > 0 ? i.toFixed(n) : String(Math.round(i));
+  });
+}
+function Cap({ s, on }) {
+  const ref = useRef(null);
+  const calm = useReducedMotion();
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (calm) { el.textContent = s; return; }
+    if (!on) { el.textContent = countText(s, 0); return; }
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (now) => { const n = Math.min(1, (now - t0) / 1100); el.textContent = countText(s, 1 - (1 - n) ** 3); if (n < 1) raf = requestAnimationFrame(tick); };
+    raf = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(raf); el.textContent = s; };
+  }, [s, on, calm]);
+  return <span ref={ref}>{s}</span>;
+}
+
 /* ---------- built in public: the commit record ---------- */
 function Public() {
   const cols = Math.ceil(H.heat.length / 7);
   const [lead, ...rest] = H.stats;
   const ref = useRef(null);
-  const seen = useInView(ref, { once: true, amount: 0.4 });
+  const seen = useInView(ref, { once: true, amount: 0.15 }); // hanzo.ai plays its activity cards once 15% of the block is in view (useSeen(.15))
   return (
     <section className="vc-sec xin-pub" aria-labelledby="xin-pub">
-      <div className="vc-grid">
+      <div className="vc-grid" ref={ref}>
         <header className="xin-pub-h">
           <h2 id="xin-pub" className="vc-headline">Built in public. Shipping every day.</h2>
           <p className="vc-body">The cloud, the gateway, the agents and the runtime are developed in the open. This is the public commit record, not a marketing projection.</p>
@@ -338,9 +368,9 @@ function Public() {
           <span className="xin-lead-k">{lead[0]}</span>
           <small>{lead[2]}</small>
         </A>
-        <ul className="xin-stats" ref={ref}>
+        <ul className="xin-stats">
           {rest.map(([k, v, s], i) => (
-            <li key={i}><A to={H.statTo[i + 1]}><span>{k}</span><RollFig v={v} on={seen} className="xin-stat-v" /><small><span>{s}</span></small><span className="xin-up"><Up /></span></A></li>
+            <li key={i}><A to={H.statTo[i + 1]}><span>{k}</span><RollFig v={v} on={seen} className="xin-stat-v" /><small><Cap s={s} on={seen} /></small><span className="xin-up"><Up /></span></A></li>
           ))}
         </ul>
         <figure className="xin-heat">
