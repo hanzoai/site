@@ -177,3 +177,7 @@
 
 .xfo-pr-k { flex: none; font: 560 14px/1 var(--sans); color: light-dark(#0a0a0b, var(--foreground)); padding-right: 10px; border-right: 1px solid var(--line); }
 .xfo-lv-h { margin-bottom: 8px; }
+
+/* dark (docs/DARK-MODE.md): on a card (--x-raised is Hanzo's muted there) a muted fill would vanish, so the diff panel and the
+   level's track sit on Hanzo's secondary */
+html:not(.light) .xfo-diff, html:not(.light) .xfo-pour { background: var(--secondary); }
