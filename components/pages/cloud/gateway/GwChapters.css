@@ -13,28 +13,29 @@
 .gwc-t > span { display: block; padding-bottom: .08em; margin-bottom: -.08em; }
 .js .gwc-t > span { clip-path: inset(0 0 100% 0); transition: clip-path .95s var(--e); }
 .js .gwc-art[data-on] .gwc-t > span { clip-path: inset(0 0 0 0); transition-delay: .12s; }
-.gwc .gwc-n { margin: 14px 0 22px; color: #737373; }
+.gwc .gwc-n { margin: 14px 0 22px; color: light-dark(#737373, var(--text-tertiary)); }
 .gwc-d { margin: 0; font-size: 16px; line-height: 1.6; color: var(--soft); text-wrap: pretty; max-width: 46ch; }
 
 /* the dots: the title shows on hover or focus, a press answers, a click jumps */
 .gwc-dots { display: flex; gap: 2px; margin-top: 40px; margin-left: -14px; }
 .gwc-dots button { position: relative; width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: none; cursor: pointer; border-radius: 12px; transition: transform 90ms cubic-bezier(0, 0, .2, 1); }
 .gwc-dots button:active { transform: scale(.9); }
-.gwc-dots i { width: 8px; height: 8px; border-radius: 999px; background: rgba(0, 0, 0, .16); transition: transform .3s var(--e), background-color .15s cubic-bezier(0, 0, .2, 1); }
-.gwc-dots button[aria-current] i { background: #0a0a0a; transform: scale(1.5); }
-.gwc-tip { position: absolute; left: 50%; bottom: calc(100% + 2px); padding: 7px 10px; border-radius: 8px; background: #0a0a0a; color: #fafafa; font: 500 12px/1.2 var(--mono); white-space: nowrap; opacity: 0; visibility: hidden; transform: translate(-50%, 6px); pointer-events: none; transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .3s var(--e), visibility 0s .15s; z-index: 2; }
-.gwc-dots button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: -4px; }
+.gwc-dots i { width: 8px; height: 8px; border-radius: 999px; background: light-dark(rgba(0, 0, 0, .16), var(--border-focus)); transition: transform .3s var(--e), background-color .15s cubic-bezier(0, 0, .2, 1); }
+.gwc-dots button[aria-current] i { background: var(--ink); transform: scale(1.5); }
+.gwc-tip { position: absolute; left: 50%; bottom: calc(100% + 2px); padding: 7px 10px; border-radius: 8px; background: var(--ink); color: light-dark(#fafafa, var(--primary-foreground)); font: 500 12px/1.2 var(--mono); white-space: nowrap; opacity: 0; visibility: hidden; transform: translate(-50%, 6px); pointer-events: none; transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .3s var(--e), visibility 0s .15s; z-index: 2; }
+.gwc-dots button:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; }
 .gwc-dots button:focus-visible .gwc-tip { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition-delay: 0s; }
 @media (hover: hover) {
-  .gwc-dots button:hover i { background: #525252; transform: scale(1.35); }
+  .gwc-dots button:hover i { background: light-dark(#525252, var(--muted-foreground)); transform: scale(1.35); }
   .gwc-dots button:hover .gwc-tip { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition-delay: 0s; }
 }
 
 .gwc-dots button { transition: transform 90ms cubic-bezier(0, 0, .2, 1), background-color .15s cubic-bezier(0, 0, .2, 1); }
-@media (hover: hover) { .gwc-dots button:hover { background: #f5f5f5; } }
+@media (hover: hover) { .gwc-dots button:hover { background: light-dark(#f5f5f5, var(--muted)); } }
 /* a dot previewing another chapter's scene: the window takes a hairline ink ring, so the preview reads as a preview */
 .gwc-vis { border-radius: 24px; transition: box-shadow .15s cubic-bezier(0, 0, .2, 1); }
-.gwc-vis[data-peek] { box-shadow: 0 0 0 1.5px #0a0a0a; }
+.gwc-vis[data-peek] { box-shadow: 0 0 0 1.5px var(--ink); }
+
 .gwc-vis > * { width: 100%; height: 100%; box-sizing: border-box; }
 
 /* phone: the same pinned stage, stacked. A short scene at the top (about 40svh, inside the gutters) and the chapter's

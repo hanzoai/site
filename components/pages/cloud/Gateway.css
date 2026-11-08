@@ -1,5 +1,7 @@
 /* Gateway v2. Greys only (the deck): the gate is ink. One dark room: Forge. */
 .gw { --acc: #0a0a0a; --glow: #525252; }
+/* dark (Hanzo's :not(.light)): v2scale.css pins .v2's greys to light values, so the page hands them back to Hanzo's tokens */
+html:not(.light) .gw { --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); --card: var(--muted); --acc: var(--foreground); --glow: var(--muted-foreground); background: var(--bg); }
 .gw .v2-dark, .gw [data-room='dark'] { --acc: #f5f5f5; --glow: #e5e5e5; }
 
 /* hero: the title over a full-bleed lane */
@@ -11,8 +13,8 @@
 .gw-sub { margin-bottom: 32px; color: var(--ink); font-weight: 500; max-width: 16ch; font-size: clamp(22px, 2vw, 28px); letter-spacing: -.02em; }
 .gw-lift { margin-top: clamp(28px, 2.6vw, 40px); }
 
-.gw-lane { --gate: 50%; --cw: 420px; position: relative; height: clamp(400px, 31vw, 480px); background: radial-gradient(60% 80% at var(--gate) 50%, rgba(163, 163, 163, .10), transparent 70%), #f5f5f5; overflow: hidden; border-radius: 28px; margin-inline: clamp(12px, 1.6vw, 24px); }
-.gw-lane::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(0, 0, 0, .045) 1px, transparent 1px); background-size: 100% 56px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent); mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent); }
+.gw-lane { --gate: 50%; --cw: 420px; position: relative; height: clamp(400px, 31vw, 480px); background: radial-gradient(60% 80% at var(--gate) 50%, rgba(163, 163, 163, .10), transparent 70%), light-dark(#f5f5f5, var(--muted)); overflow: hidden; border-radius: 28px; margin-inline: clamp(12px, 1.6vw, 24px); }
+.gw-lane::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(light-dark(rgba(0, 0, 0, .045), var(--glass)) 1px, transparent 1px); background-size: 100% 56px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent); mask-image: linear-gradient(90deg, transparent, #000 20%, #000 80%, transparent); }
 .gw-gate { position: absolute; top: 0; bottom: 0; left: var(--gate); width: 2px; margin-left: -1px; }
 .gw-gate i { position: absolute; inset: 0; background: linear-gradient(transparent, var(--glow) 18%, var(--glow) 82%, transparent); box-shadow: 0 0 24px 2px rgba(163, 163, 163, .55); }
 .gw-gate-k { position: absolute; top: 28px; left: 16px; font: 600 13px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--acc); white-space: nowrap; }
@@ -22,30 +24,30 @@
 .gw-side.r b { color: var(--acc); font-weight: 600; }
 .gw-queue, .gw-log { position: absolute; top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .gw-queue { left: 32px; }
-.gw-queue li { padding: 9px 14px; border-radius: 999px; border: 1px dashed rgba(0, 0, 0, .18); font: 500 13px/1 var(--mono); color: var(--soft); background: rgba(255, 255, 255, .6); }
+.gw-queue li { padding: 9px 14px; border-radius: 999px; border: 1px dashed light-dark(rgba(0, 0, 0, .18), var(--border-strong)); font: 500 13px/1 var(--mono); color: var(--soft); background: light-dark(rgba(255, 255, 255, .6), var(--glass)); }
 .gw-log { right: 32px; }
-.gw-log li { display: flex; gap: 12px; align-items: center; justify-content: space-between; min-width: 220px; padding: 11px 14px; border-radius: 14px; background: #fff; box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 0 0 1px rgba(0, 0, 0, .05); font: 500 13px/1 var(--mono); }
-.gw-log li span { color: #525252; }
-.gw-log li span.x { color: #262626; }
-.gw-bucket { position: absolute; bottom: 22px; left: var(--gate); transform: translateX(-50%); display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 10px 30px -12px rgba(0, 0, 0, .2); font: 500 12px/1 var(--mono); color: var(--soft); white-space: nowrap; }
+.gw-log li { display: flex; gap: 12px; align-items: center; justify-content: space-between; min-width: 220px; padding: 11px 14px; border-radius: 14px; background: light-dark(#fff, var(--secondary)); box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 0 0 1px light-dark(rgba(0, 0, 0, .05), var(--border)); font: 500 13px/1 var(--mono); }
+.gw-log li span { color: light-dark(#525252, var(--muted-foreground)); }
+.gw-log li span.x { color: light-dark(#262626, var(--foreground)); }
+.gw-bucket { position: absolute; bottom: 22px; left: var(--gate); transform: translateX(-50%); display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 999px; background: light-dark(#fff, var(--secondary)); box-shadow: 0 0 0 1px light-dark(rgba(0, 0, 0, .06), var(--border)), 0 10px 30px -12px rgba(0, 0, 0, .2); font: 500 12px/1 var(--mono); color: var(--soft); white-space: nowrap; }
 .gw-bucket div { display: flex; gap: 4px; }
 .gw-bucket i { width: 8px; height: 18px; border-radius: 3px; background: var(--glow); }
 
-.gw-req { position: absolute; top: 50%; left: var(--gate); width: var(--cw); margin-top: -118px; box-sizing: border-box; padding: 18px 20px 20px; border-radius: 22px; background: #fff; box-shadow: 0 1px 0 rgba(0, 0, 0, .05), 0 30px 60px -24px rgba(0, 0, 0, .28), 0 0 0 1px rgba(0, 0, 0, .06); font: 400 15px/1.3 var(--mono); }
+.gw-req { position: absolute; top: 50%; left: var(--gate); width: var(--cw); margin-top: -118px; box-sizing: border-box; padding: 18px 20px 20px; border-radius: 22px; background: light-dark(#fff, var(--secondary)); box-shadow: 0 1px 0 rgba(0, 0, 0, .05), 0 30px 60px -24px rgba(0, 0, 0, .28), 0 0 0 1px light-dark(rgba(0, 0, 0, .06), var(--border)); font: 400 15px/1.3 var(--mono); }
 .gw-req p { margin: 0; }
 .gw-req-top { display: flex; align-items: center; gap: 8px; padding-bottom: 14px; margin-bottom: 12px !important; border-bottom: 1px solid var(--line); color: var(--ink); }
-.gw-req-top b { font-weight: 600; color: #0a0a0a; padding: 3px 7px; border-radius: 6px; background: #ededed; }
+.gw-req-top b { font-weight: 600; color: var(--ink); padding: 3px 7px; border-radius: 6px; background: light-dark(#ededed, var(--muted)); }
 .gw-req-top span { margin-left: auto; color: var(--faint); font-size: 13px; }
 .gw-h { display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 10px; border-radius: 10px; color: var(--soft); }
 .gw-h em { font-style: normal; color: var(--ink); }
 .gw-h.ok { background: rgba(163, 163, 163, .08); }
-.gw-h.forged { color: #262626; background: rgba(38, 38, 38, .06); }
-.gw-h.forged em { color: #262626; }
+.gw-h.forged { color: light-dark(#262626, var(--foreground)); background: light-dark(rgba(38, 38, 38, .06), var(--glass)); }
+.gw-h.forged em { color: light-dark(#262626, var(--foreground)); }
 .gw-h.set { color: var(--ink); background: rgba(163, 163, 163, .12); margin-top: 6px; }
 .gw-h.set em { color: var(--acc); }
-.gw-chip { margin-left: auto; padding: 4px 8px; border-radius: 999px; background: #0a0a0a; color: #fafafa; font-weight: 600; font-size: 12px; }
+.gw-chip { margin-left: auto; padding: 4px 8px; border-radius: 999px; background: var(--ink); color: light-dark(#fafafa, var(--primary-foreground)); font-weight: 600; font-size: 12px; }
 .gw-stamps { min-height: 126px; }
-.gw-429 { display: flex; align-items: baseline; gap: 12px; margin-top: 18px !important; font: 600 44px/1 var(--sans); letter-spacing: -.04em; color: #262626; }
+.gw-429 { display: flex; align-items: baseline; gap: 12px; margin-top: 18px !important; font: 600 44px/1 var(--sans); letter-spacing: -.04em; color: light-dark(#262626, var(--foreground)); }
 .gw-429 span { font: 500 14px/1 var(--mono); letter-spacing: 0; color: var(--soft); }
 
 /* the statement */
@@ -134,13 +136,13 @@
 .gw-rail-end.r { color: var(--ink); }
 .gw-rail-end.r b { font-weight: 600; }
 .gw-rail-line { position: relative; height: 44px; }
-.gw-rail-line::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid rgba(0, 0, 0, .14); }
-.gw-rail-gate { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #0a0a0a; }
+.gw-rail-line::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-control)); }
+.gw-rail-gate { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--ink); }
 .gw-rail-mov { position: absolute; inset: 0; animation: gw-rail 6s cubic-bezier(.4, 0, .2, 1) infinite; }
 .gw-rail-dot { position: absolute; top: 50%; left: 0; display: grid; transform: translate(0, -50%); animation: gw-rail-self 6s cubic-bezier(.4, 0, .2, 1) infinite; }
 .gw-rail-dot em { grid-area: 1 / 1; font-style: normal; white-space: nowrap; padding: 9px 14px; border-radius: 999px; font: 500 13px/1 var(--mono); }
-.gw-rail-in { background: #ededed; color: #262626; animation: gw-rail-in 6s linear infinite; }
-.gw-rail-out { background: #0a0a0a; color: #fafafa; animation: gw-rail-out 6s linear infinite; }
+.gw-rail-in { background: light-dark(#ededed, var(--secondary)); color: light-dark(#262626, var(--foreground)); animation: gw-rail-in 6s linear infinite; }
+.gw-rail-out { background: var(--ink); color: light-dark(#fafafa, var(--primary-foreground)); animation: gw-rail-out 6s linear infinite; }
 @keyframes gw-rail { 0% { transform: translateX(0); } 42%, 50% { transform: translateX(50%); } 92%, 100% { transform: translateX(100%); } }
 @keyframes gw-rail-self { 0% { transform: translate(0, -50%); } 42%, 50% { transform: translate(-50%, -50%); } 92%, 100% { transform: translate(-100%, -50%); } }
 @keyframes gw-rail-in { 0%, 44% { opacity: 1; } 48%, 100% { opacity: 0; } }
@@ -152,6 +154,8 @@
 
 /* the code card: "api /v1/gateway" sits on its own line above the block; the prompt wraps instead of being cut */
 .gw .sp-api { justify-self: start; }
+/* ShipPrompt's api tag is #fafafa on ink: in dark the ink turns light, so its word takes Hanzo's primary-foreground */
+.gw .sp-api i { color: light-dark(#fafafa, var(--primary-foreground)); }
 .gw .sp-code pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 /* the copy button: only the icon that is arriving shows, so the tick never draws over the outgoing copy icon */
 .gw .sp-code .x-copy { display: inline-flex; align-items: center; gap: 6px; }
@@ -163,9 +167,9 @@
 .gw .sp-rel-a b { grid-column: 1; }
 .gw .sp-rel-a svg { grid-column: 2; grid-row: 1; margin: 0; }
 .gw .sp-rel-a span { grid-column: 1 / -1; }
-.gw .sp-rel-a::after { content: attr(href); grid-column: 1 / -1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 12px/1.4 var(--mono); color: #737373; opacity: 0; transform: translateY(-4px); transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
+.gw .sp-rel-a::after { content: attr(href); grid-column: 1 / -1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 12px/1.4 var(--mono); color: light-dark(#737373, var(--text-tertiary)); opacity: 0; transform: translateY(-4px); transition: opacity .15s cubic-bezier(0, 0, .2, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
 @media (hover: hover) {
-  .gw .sp-rel-a:hover { background: #f5f5f5; }
+  .gw .sp-rel-a:hover { background: light-dark(#f5f5f5, var(--muted)); }
   .gw .sp-rel-a:hover::after { opacity: 1; transform: none; }
 }
 .gw .sp-rel-a:focus-visible::after { opacity: 1; transform: none; }
@@ -177,8 +181,8 @@
 .gw .gw-forge-pick button { transition: color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
 .gw .gw-forge-pick button:active, .gw .gw-tog:active .gw-tog-ui { transform: scale(.97); }
 @media (hover: hover) {
-  .gw .x-btn.solid:hover { background: #262626; border-color: #262626; }
-  .gw .x-btn:not(.solid):hover { background: #f5f5f5; border-color: #0a0a0a; }
+  .gw .x-btn.solid:hover { background: light-dark(#262626, var(--primary-hover)); border-color: light-dark(#262626, var(--primary-hover)); }
+  .gw .x-btn:not(.solid):hover { background: light-dark(#f5f5f5, var(--muted)); border-color: var(--ink); }
   .gw .sp-rel-a:hover b { background-size: 100% 1px; }
   .gw .gw-forge-pick button[aria-checked='false']:hover { color: #fafafa; }
   .gw .gw-tog:hover .gw-tog-ui { background: #525252; }
@@ -280,6 +284,8 @@
 @media (hover: hover) {
   .gw .cf-con-main li:hover { background: #f5f5f5; }
   .gw .cf-con-ico:hover, .gw .cf-con-ico.on:hover { background: #e4e4e7; color: #0a0a0a; }
+  html:not(.light) .gw .cf-con.light .cf-con-main li:hover { background: var(--x-sunk); }
+  html:not(.light) .gw .cf-con.light .cf-con-ico:hover, html:not(.light) .gw .cf-con.light .cf-con-ico.on:hover { background: var(--x-knob); color: var(--ink); }
   .gw .gi-more a:hover { text-underline-offset: 7px; text-decoration-thickness: 2px; }
 }
 
@@ -306,7 +312,7 @@
 .gw-lane { height: clamp(460px, 34vw, 520px); }
 .gw-req { margin-top: -132px; margin-left: calc(var(--cw) * -0.5); z-index: 2; will-change: transform; }
 .gw-bucket { top: 20px; bottom: auto; z-index: 3; }
-.gw-gate-k { top: auto; bottom: 22px; left: 0; transform: translateX(-50%); padding: 7px 10px; border-radius: 999px; background: #f5f5f5; }
+.gw-gate-k { top: auto; bottom: 22px; left: 0; transform: translateX(-50%); padding: 7px 10px; border-radius: 999px; background: light-dark(#f5f5f5, var(--muted)); }
 .gw-cloud { position: absolute; top: 50%; right: 32px; width: 260px; transform: translateY(-50%); display: grid; gap: 14px; }
 .gw-cloud .gw-side.r { position: static; margin: 0; color: var(--ink); }
 .gw-cloud .gw-log { position: static; transform: none; display: grid; gap: 8px; }
@@ -318,7 +324,7 @@
 .gw-forge-pick { justify-self: auto; }
 
 /* chapter scenes: flat quiet tiles (no outline, no shadow), the scene is the object */
-.gw .gws.v2-obj { background: #f5f5f5; box-shadow: none; border: 0; }
+.gw .gws.v2-obj { background: light-dark(#f5f5f5, var(--muted)); box-shadow: none; border: 0; }
 
 /* example project: the window spans the container, its caption above it */
 .gw-proj-in { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
@@ -368,8 +374,8 @@
 
 /* round 6 ------------------------------------------------------------------------------------------------------- */
 /* the identity headers the gate is about to write: empty slots until the claims fill them */
-.gw-h.ghost { margin-top: 6px; color: #a3a3a3; background: transparent; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); }
-.gw-h.ghost em { color: #a3a3a3; }
+.gw-h.ghost { margin-top: 6px; color: light-dark(#a3a3a3, var(--text-tertiary)); background: transparent; box-shadow: inset 0 0 0 1px light-dark(rgba(0, 0, 0, .1), var(--border)); }
+.gw-h.ghost em { color: light-dark(#a3a3a3, var(--text-tertiary)); }
 
 /* phone: the lane runs top to bottom. The client's request is checked above the gate line, drops through it and lands
    in the Hanzo Cloud ledger underneath; the token bucket sits on the line. */
@@ -401,4 +407,15 @@
   .gw .sp-rel-a > svg { position: absolute; right: 2px; top: 50%; margin-top: -7px; }
 }
 
-.gw-proj-cap { margin: 12px 0 0; font-size: 13px; line-height: 1.5; color: #525252; }
+.gw-proj-cap { margin: 12px 0 0; font-size: 13px; line-height: 1.5; color: light-dark(#525252, var(--muted-foreground)); }
+
+/* dark: the example console. Frame's white window carries class "light", which gives it Hanzo's light tokens and
+   color-scheme; in dark it takes the page's own (inherited) greys instead, a dark card with white-10% hairlines like live */
+html:not(.light) .gw .cf-con.light { color-scheme: dark; background: var(--x-raised); border-color: var(--line); box-shadow: none; }
+html:not(.light) .gw .cf-con.light .cf-con-bar i { border-color: var(--x-e15); }
+html:not(.light) .gw .cf-con.light .cf-con-side { background: var(--x-sunk); }
+html:not(.light) .gw .cf-con.light .cf-con-ico:hover, html:not(.light) .gw .cf-con.light .cf-con-ico.on { background: var(--x-knob); }
+html:not(.light) .gw .cf-con.light .cf-row-bg { background: var(--x-knob); }
+html:not(.light) .gw .cf-con.light .cf-tip, html:not(.light) .gw .cf-con.light .cf-sess-me { color: var(--x-on-ink); }
+html:not(.light) .gw .cf-con.light .cf-con-open:hover { color: var(--x-on-ink); }
+
