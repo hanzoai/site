@@ -33,7 +33,13 @@ import KeynoteClose from './SafeClose';
 import './Datastore.css';
 
 const COLS = ['ts', 'user_id', 'event', 'country', 'device', 'plan', 'revenue', 'duration_ms', 'referrer', 'path', 'session', 'version'];
-const AUTO = [[], ['country'], ['country', 'device'], ['plan'], []];
+/* Hanzo's own four example queries, in its order; the first is the resting state (hanzo.ai/datastore) */
+const EXAMPLES = [
+  { cols: ['event'], sql: "SELECT count() FROM events WHERE event = 'signup'" },
+  { cols: ['country', 'revenue'], sql: 'SELECT country, sum(revenue) FROM events GROUP BY country' },
+  { cols: ['ts', 'path', 'duration_ms'], sql: 'SELECT path, quantile(0.99)(duration_ms) FROM events WHERE ts > now() - 3600 GROUP BY path' },
+  { cols: ['plan', 'user_id'], sql: 'SELECT plan, uniq(user_id) FROM events GROUP BY plan' },
+];
 const shade = (a, b) => Math.abs(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453) % 1;
 
 /* [ref, live, calm]: live while seen and motion is allowed (hydration-safe: useCalm is false on the first render) */
@@ -44,43 +50,40 @@ function useLive(amount = 0.2) {
   return [ref, seen && !calm, calm];
 }
 
-/* The hero object: the query console. Press a column and it joins the query; the scan runs down only the named files. */
+/* The hero object: the query console, as hanzo.ai runs it. It steps through Hanzo's four example queries (3.2 s each)
+   while seen; press a column and the query becomes yours (SELECT <columns> FROM events), and the scan runs down only
+   the named files. Every example query stays in the page as text; one shows at a time. */
 function Query() {
   const [ref, live, calm] = useLive(0.3);
   const paused = useStagePause();
-  const [extra, setExtra] = useState([]);
-  const [mine, setMine] = useState(false);
-  const [k, setK] = useState(0);
+  const [m, setM] = useState(0);
+  const [mine, setMine] = useState(null);
   useEffect(() => {
     if (mine || !live || calm || paused) return;
-    const t = setTimeout(() => { const n = (k + 1) % AUTO.length; setK(n); setExtra(AUTO[n]); }, 2600);
-    return () => clearTimeout(t);
-  }, [k, mine, live, calm, paused]);
+    const t = setInterval(() => setM((x) => (x + 1) % EXAMPLES.length), 3200);
+    return () => clearInterval(t);
+  }, [mine, live, calm, paused]);
+  const reads = mine ?? EXAMPLES[m].cols;
   const toggle = (c) => {
-    if (c === 'event') return;
-    setMine(true);
-    setExtra((e) => (e.includes(c) ? e.filter((x) => x !== c) : [...e, c]));
+    const cur = mine ?? EXAMPLES[m].cols;
+    setMine(cur.includes(c) ? cur.filter((x) => x !== c) : [...cur, c]);
   };
-  const reads = ['event', ...extra];
-  const sql = extra.length
-    ? `SELECT ${extra.join(', ')}, count() FROM events WHERE event = 'signup' GROUP BY ${extra.join(', ')}`
-    : "SELECT count() FROM events WHERE event = 'signup'";
   return (
     <div className="kn-obj ds-q" ref={ref}>
       <div className="ds-q-bar">
         <i /><i /><i />
         <span className="ds-q-t">events <em>example</em></span>
-        <p className="ds-q-reads">Reads <span className="ds-q-n"><b key={reads.length}>{reads.length}</b></span> of 12 columns</p>
+        <span className="ds-q-reads" key={reads.length}>Reads {reads.length} of 12 columns</span>
       </div>
-      <div className="ds-q-sql">
-        <code aria-live="polite">{sql}</code>
-        <span className="x-sr">SELECT count() FROM events WHERE event = 'signup'</span>
+      <div className="ds-q-sql" aria-live="polite">
+        {EXAMPLES.map((x, i) => <span key={i} className="ds-q-line" hidden={!!mine || i !== m}>{x.sql}</span>)}
+        {mine && <span className="ds-q-line">{`SELECT ${mine.length ? mine.join(', ') : '…'} FROM events`}</span>}
       </div>
       <div className="ds-files" role="group" aria-label="Columns">
         {COLS.map((c, ci) => {
           const on = reads.includes(c);
           return (
-            <button key={c} type="button" className={'ds-file' + (on ? ' on' : '') + (c === 'event' ? ' fixed' : '')} aria-pressed={on} aria-disabled={c === 'event' || undefined} onClick={() => toggle(c)}>
+            <button key={c} type="button" className={'ds-file' + (on ? ' on' : '')} aria-pressed={on} onClick={() => toggle(c)}>
               <span className="ds-name">{c.split('_').map((w, j) => (j ? <span key={j}>_<wbr />{w}</span> : w))}</span>
               <span className="ds-blocks" aria-hidden="true">{Array.from({ length: 10 }).map((_, i) => <i key={i} style={{ opacity: (0.25 + shade(ci, i) * 0.6).toFixed(2) }} />)}</span>
               {on && <span className="ds-beam" aria-hidden="true" />}
@@ -90,7 +93,6 @@ function Query() {
       </div>
       <div className="ds-q-foot">
         <p>Press a column to add it to the query.</p>
-        <span className="x-sr">Reads 1 of 12 columns</span>
       </div>
     </div>
   );

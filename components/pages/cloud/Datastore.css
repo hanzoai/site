@@ -13,9 +13,12 @@
 .ds-q-n { display: inline-block; overflow: hidden; padding: .06em 0 .1em; margin: -.06em 0 -.1em; }
 .ds-q-n b { display: inline-block; min-width: 1ch; font-size: 26px; font-weight: 400; letter-spacing: -.02em; color: var(--ink); font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
 .js .ds-q-n b { animation: ds-cut .3s var(--e-in) both; }
+.js .ds-q-reads, .js .ds-q-line:not([hidden]) { animation: ds-swap .3s var(--e-in) both; } /* the count and the query settle in as they change */
+@keyframes ds-swap { from { opacity: 0; transform: translate3d(0, 6px, 0); } }
+.ds-q-sql .ds-q-line[hidden] { display: none; }
 @keyframes ds-cut { from { transform: translate3d(0, 105%, 0); } to { transform: none; } }
 .ds-q-sql { padding: clamp(24px, 2.6vw, 32px) clamp(24px, 6vw, 88px); border-bottom: 1px solid var(--hair); min-height: 5.6em; }
-.ds-q-sql code { display: block; font: 400 21px/1.45 var(--mono); letter-spacing: -.01em; color: var(--ink); }
+.ds-q-sql .ds-q-line { display: block; font: 400 21px/1.45 var(--mono); letter-spacing: -.01em; color: var(--ink); }
 .ds-files { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 8px; padding: clamp(24px, 2.6vw, 32px) clamp(24px, 6vw, 88px) 16px; }
 .ds-file { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 12px 4px 10px; border-radius: 12px; border: 1px solid var(--hair); background: #fff; color: var(--body); cursor: pointer; overflow: hidden; text-align: center; transition: border-color .3s var(--e-move), background-color .3s var(--e-move), color .3s var(--e-move), transform .15s var(--e-out); }
 .ds-file.on { border-color: var(--ink); background: var(--ink); color: #fafafa; }
@@ -216,7 +219,7 @@ html:not(.js) .ds-x-rail { display: none; }
   .ds-q-reads { font-size: 14px; }
   .ds-q-n b { font-size: 21px; }
   .ds-q-sql { padding: 17px 16px; min-height: 7.4em; }
-  .ds-q-sql code { font-size: 16px; }
+  .ds-q-sql .ds-q-line { font-size: 16px; }
   .ds-files { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 16px 16px 8px; }
   .ds-file { padding: 10px 4px 8px; gap: 8px; min-height: 44px; }
   .ds-name { font-size: 14px; letter-spacing: -.03em; }
@@ -274,7 +277,7 @@ html:not(.js) .ds-x-rail { display: none; }
   .ds-port-w { font-size: 32px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ds-beam, .ds-streams i::after, .ds-mv i, .ds-s-file, .ds-q-n b, .ds-tile b, .ds-port-w span { animation: none !important; }
+  .ds-beam, .ds-streams i::after, .ds-mv i, .ds-s-file, .ds-q-n b, .ds-q-reads, .ds-q-line, .ds-tile b, .ds-port-w span { animation: none !important; }
   .ds-beam { opacity: .6; transform: translate3d(0, 80%, 0); }
   .ds-x-say, .ds-x-col, .ds-x-part, .ds-x-parts, .ds-x-codec, .ds-node, .ds-bucket, .ds-dn i { transition: none !important; }
 }
