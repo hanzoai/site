@@ -79,11 +79,9 @@ export default function RowsOpen({ doc, previews, own }) {
   const mounted = useMounted();
   useEffect(() => () => clearTimeout(dwell.current), []);
   const id = 'xro-' + doc.slug;
-  const pointIn = (e, i) => {
-    if (e.pointerType !== 'mouse') return; // touch opens on the tap itself
-    clearTimeout(dwell.current);
-    dwell.current = setTimeout(() => setAt(i), 110);
-  };
+  // a row opens on a click, tap or focus, never on a passing pointer: an opening row is a few hundred px tall, and opening
+  // under a moving mouse pushed the rows below (and the section after) up and down (CLS 0.16). Hover only lights the row.
+  const pointIn = () => {};
   return (
     <ol className="xro" onPointerLeave={() => clearTimeout(dwell.current)}>
       {sibs.map((s, i) => {

@@ -1,8 +1,7 @@
 # /products/* (template) — James-eye review
 
-Ready: 7 Nov 21:20, held up next to /api and /affiliate (James's new bar, no score). Entrances on measured cards, OS rows and band; the Hanzo OS row flies into the next page's h1; phone Measured rows fixed (name and text were split into two columns). taste/unique/parity OK; 0 console errors at 1470 and 375.
-
 Verdict: 5/10
+Ready: 8 Nov, re-checked against the real copy check: copycheck missing 0 on all 7 (agents 25, company 24, identity 23, machines 25, memory 30, models 23, record 20) after the Try it request and each Measured line were made one text run (typed tokens and split labels aria-hidden). 0 console errors (also under reduced motion), no overflow at 1470 and 375. Usable: each page's Try it request, API table and Docs links.
 First complaint: "Where's the product? The name's tiny, and then it's the same six API lines three times in grey boxes. That's developer docs, not an Apple launch page."
 
 Walked 7 Nov, 14:25 to 15:05. Template `components/pages/ProductPage.jsx` and `ProductPage.css`, judged on `b11ac35` (v4) with the Families kit at `fe077aa`.

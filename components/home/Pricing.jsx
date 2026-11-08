@@ -42,6 +42,8 @@ function List({ head, items }) {
             <motion.li key={t} layout initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 8 }} transition={{ duration: 0.35, ease: EASE }}>{t}</motion.li>
           ))}
         </AnimatePresence>
+        {/* the rest of Hanzo's list stays in the page, found by search (the full list shows on /pricing) */}
+        {items.slice(3).map((t) => <li key={t} hidden="until-found">{t}</li>)}
       </ul>
     </div>
   );

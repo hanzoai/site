@@ -26,7 +26,6 @@ import { EASE } from '../../ui';
 import { Cta } from '../../kit';
 import { Code, Console, useLive } from '../cloud/Frame';
 import Finale, { Prompt } from '../../v2/Finale';
-import Drawer from '../../v2/Drawer';
 import useCalm from '../../v2/useCalm';
 import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
 import './Billing.css';
@@ -340,7 +339,7 @@ function History() {
             {CAPS.map(([t, d], i) => (
               <li key={t} className={pick === i ? 'on' : ''}>
                 <button type="button" aria-pressed={pick === i} onClick={() => setPick(pick === i ? -1 : i)} onMouseEnter={() => setPick(i)} onMouseLeave={() => setPick(-1)}>
-                  <b>{t}</b><span>{d}</span>
+                  <span className="bl2-cap-t">{t}</span><span>{d}</span>
                 </button>
               </li>
             ))}
@@ -392,10 +391,11 @@ function Start() {
             <p className="l2-body">Report what someone used, and let the invoice read the meter at the end of the period.</p>
             <div className="l2-acts"><Cta to={DOCS} id="start" size="lg">Read the docs</Cta><Cta to={GH} kind="link" id="start-github">View on GitHub</Cta></div>
           </div>
-          <Drawer label="Open in the console" title="Hanzo Billing">
-            <Console name="Billing" api="/v1/billing" light side={[['Billing', '/billing'], ['Metrics', '/metrics'], ['Dashboards', '/dashboards'], ['O11y', '/o11y'], ['AI Metrics', '/cloud/ai-metrics'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions'], ['Annotation Queues', '/cloud/annotation-queues']]} />
-            <p className="bl2-note">Example project. Every name in it is one you would give your own.</p>
-          </Drawer>
+          {/* Hanzo's example console, in the page as on hanzo.ai: the projects the session is changing, and where to open it */}
+          <figure className="bl2-con">
+            <Console name="Billing" api="/v1/billing" light cap="The service the session above is changing." side={[['Billing', '/billing'], ['Metrics', '/metrics'], ['Dashboards', '/dashboards'], ['O11y', '/o11y'], ['AI Metrics', '/cloud/ai-metrics'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions'], ['Annotation Queues', '/cloud/annotation-queues']]} />
+            <figcaption className="bl2-note">Example project. Every name in it is one you would give your own.</figcaption>
+          </figure>
         </div>
         <div className="bl2-start-r">
           <Code tabs={[{ k: 'typescript', code: CODE }]} light mark="billing.usage.record" />

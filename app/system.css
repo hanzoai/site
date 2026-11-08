@@ -58,6 +58,16 @@
   /* layers */
   --x-z-ask: 70; --x-z-sheet: 985; --x-z-skip: 2147483001;
 }
+/* dark mode: the page's room is Hanzo's dark (values in globals.css html.dark); a [data-room=light] section follows the
+   page into the dark, and [data-room=dark] stays as it is */
+html.dark, html.dark [data-room=light] {
+  --room-bg: #0d0d0d; --room-surface: #171717; --room-raised: #0f0f0f;
+  --room-ink: #e5e5e5; --room-soft: #a3a3a3; --room-faint: #858585;
+  --room-line: rgba(255, 255, 255, .1); --room-line-strong: rgba(255, 255, 255, .16);
+  --room-fill: rgba(255, 255, 255, .04); --room-fill-strong: rgba(255, 255, 255, .08);
+  --focus: #e5e5e5;
+  --btn-solid-bg: var(--ink); --btn-solid-ink: #0a0a0a; --btn-solid-hover: #ccc;
+}
 [data-room=dark] {
   --room-bg: #0a0a0b; --room-surface: #141416; --room-raised: #1c1c1e;
   --room-ink: #f5f5f7; --room-soft: #a1a1a6; --room-faint: #86868b;
@@ -282,7 +292,7 @@ header[data-slot=masthead] a[data-x-ask] { max-width: 240px; overflow: hidden; t
 header[data-slot=masthead] a[data-x-ask]:active, header[data-slot=masthead] :is(button, a):active { transform: scale(.97); }
 
 /* ---------- header menus: the stage (a preview of the link under the pointer) and the phone sheet ---------- */
-.x-nav-panel { display: flex; align-items: stretch; background: #fff; } /* opaque: nothing of the page shows through */
+.x-nav-panel { display: flex; align-items: stretch; background: var(--x-raised); } /* opaque: nothing of the page shows through */
 .x-nav-grid { flex: 1; min-width: 0; }
 .x-nav-stage { display: none; }
 @media (min-width: 1240px) {
@@ -292,11 +302,14 @@ header[data-slot=masthead] a[data-x-ask]:active, header[data-slot=masthead] :is(
   .x-nav-stage-t b { font-size: 20px; font-weight: 560; letter-spacing: -.02em; line-height: 1.15; }
   .x-nav-stage-t p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--hz-500); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .x-nav-stage-t span { font: 500 11.5px/1.2 var(--mono); color: var(--hz-400); overflow-wrap: anywhere; }
+  /* dark mode: the menu's feature card on Hanzo's dark muted surface */
+  html.dark .x-nav-stage { background: #171717; color: #e5e5e5; }
+  html.dark .x-nav-stage-t p { color: #a3a3a3; } html.dark .x-nav-stage-t span { color: #858585; }
 }
 .x-sheet { display: flex; flex-direction: column; height: 100dvh; padding: 0 20px calc(20px + env(safe-area-inset-bottom)); }
 .x-sheet-top { display: flex; align-items: center; gap: 4px; height: 68px; flex: none; }
 .x-sheet-home { font: 600 21px/1 var(--sans); letter-spacing: -.02em; color: var(--ink); text-decoration: none; margin-right: auto; }
-.x-sheet-s { width: 44px; height: 44px; margin-right: 52px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); display: grid; place-items: center; cursor: pointer; }
+.x-sheet-s { width: 44px; height: 44px; margin-right: 52px; border-radius: 50%; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); display: grid; place-items: center; cursor: pointer; }
 .x-sheet-x { top: 12px !important; width: 44px !important; height: 44px !important; }
 .x-sheet-list { flex: 1 0 auto; }
 .x-sheet-b { min-height: 56px; }
@@ -315,7 +328,7 @@ header[data-slot=masthead] a[data-x-ask]:active, header[data-slot=masthead] :is(
 .x-snd:active { transform: scale(.92); }
 .x-snd[aria-pressed='false'] { color: var(--faint); }
 @media (max-width: 700px) { .x-snd-slot { display: none; } }
-.x-sheet-snd { width: 44px; height: 44px; border: 1px solid var(--line); background: #fff; color: var(--ink); margin-right: 8px; }
+.x-sheet-snd { width: 44px; height: 44px; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); margin-right: 8px; }
 
 /* ---------- the phone ask (components/Ask.jsx): slim and quiet, phones only, only where it covers nothing ---------- */
 .x-ask { position: fixed; left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: var(--x-z-ask); height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-radius: var(--x-radius-pill); background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 10px 28px -16px rgba(0, 0, 0, .35); font: 500 15px/1 var(--sans); text-decoration: none; -webkit-tap-highlight-color: transparent; }

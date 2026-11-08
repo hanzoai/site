@@ -31,7 +31,7 @@ Done here: `<main id="main">`; parity links 36/36; model cards are real `<a href
 - [x] Ends in proof strip, Band, footer
 - [x] Card-to-page links use the opener (model cards) and Morph (paper titles carry `data-morph`)
 
-Done here: h1 (52px, cut in by line by a CSS animation from first paint, 60 ms apart) with the lede and one ask to its right on 8/5 columns, at full opacity in the server HTML; the frontier, its ghost axes and its head draw by CSS from 0.1 s (no hydration wait); with JS off the frontier shows fully drawn. The lede and asks never move (lede top measured identical at 0.3, 1 and 3 s); on phones the frontier is its own taller plot of the whole 2014–2026 curve at 343px (Techstars '17, all four axis names and every year at 12–13px, y 221–451 of 812), straight under the h1, with the lede and "Get Started" below it. Order: hero, Why (one figure, switches and the principles index on one screen), figures, founders, Zen (the one pinned scene: the scroll turns its six principles one at a time), black room (enters as a rounded card), models and papers, roles, Band. At 1470×801 the hero leaves the next section's head peeking under the fold.
+Done here: h1 (52px, cut in by line by a CSS animation from first paint, 60 ms apart) with the lede and one ask to its right on 8/5 columns, at full opacity in the server HTML; the frontier, its ghost axes and its head draw by CSS from 0.1 s (no hydration wait); with JS off the frontier shows fully drawn. The lede and asks never move (lede top measured identical at 0.3, 1 and 3 s); on phones the frontier is its own taller plot of the whole 2014–2026 curve at 343px (Techstars '17, all four axis names and every year at 12–13px, y 221–451 of 812), straight under the h1, with the lede and "Get Started" below it. Order: hero, Why (one figure, switches and the principles index on one screen), figures, founders, Zen (the one pinned scene: the scroll turns its six principles one at a time), black room (enters as a rounded card), models and papers, roles, Band. At 1470×801 the hero leaves the next section's head peeking under the fold. 8 Nov: Why we build is two beats on desktop: the figure and its four switches, then the six principles as their own 3×2 row.
 
 ## 4. Conversion system
 - [x] kit `Cta` only (solid, quiet, link); no raw `.x-btn`
@@ -39,7 +39,7 @@ Done here: h1 (52px, cut in by line by a CSS animation from first paint, 60 ms a
 - [x] n/a: no copy button on this page
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta thumb id="about.hero">` puts "Get Started" in the phone bar; `about.record` and `about.band` ids; the header carries the desktop ask (shared). On phones the header's solid "Try Hanzo" turns quiet (`html[data-ask=quiet]`, the /bounty pattern) while the hero's solid ask is on screen, so one solid fill shows at a time.
+Done here: `<Cta thumb id="about.hero">` puts "Get Started" in the phone bar; `about.record` and `about.band` ids; the header carries the desktop ask (shared). On phones the header's solid "Try Hanzo" turns quiet (`html[data-ask=quiet]`, the /bounty pattern) while the hero's solid ask is on screen, so one solid fill shows at a time. 8 Nov: while the band's solid "Explore Open Roles" is on screen the header ask goes quiet at every width (html[data-ask=quiet], re-said after the shell's scroll pass), so one solid fill per viewport.
 
 ## 5. Trust and proof
 - [x] No logo, no seal, no invented number
@@ -90,7 +90,7 @@ Done here: signature = tile opens into its sheet (600 ms ease-in-out). The Zen o
 - [x] Alt on every image (portraits named; decorative art `alt=""`)
 - [x] No dimmed photo; Kai, Zen and Enso art shown together
 
-Done here: 3 model artworks plus a Sigil plate for Hanzo Engine in one row; the founders' portraits are not in `public/authors` yet, so `app/about/page.jsx` asks for them only when the files exist (no 404s); no portrait exists anywhere in the repo (public, content, /team and /investors use the same missing `/authors/*` paths), so each founder is a 230px Sigil plate (contour field from their name, 26px initials) with the name, role, bio and links beside it, two cards side by side (no dead half-screen). The plate opens as a circle from its initials' corner as it scrolls in (CSS `view()` timeline), its hills lean toward a hand and darken under it. When a portrait ships, it loads over the Sigil.
+Done here: 3 model artworks plus a Sigil plate for Hanzo Engine in one row; the founders' portraits are not in `public/authors` yet, so `app/about/page.jsx` asks for them only when the files exist (no 404s); no portrait exists anywhere in the repo (public, content, /team and /investors use the same missing `/authors/*` paths), so each founder is a 230px Sigil plate (contour field from their name, 26px initials) with the name, role, bio and links beside it, two cards side by side (no dead half-screen). The plate opens as a circle from its initials' corner as it scrolls in (CSS `view()` timeline), its hills lean toward a hand and darken under it. When a portrait ships, it loads over the Sigil. (8 Nov) public/authors/ now holds both portraits, so the founders show their photos (the server checks the files exist; the Sigil stays only as the failure fallback).
 
 ## 11. Mobile and responsive
 - [x] 375×812 and 1470×801 pass with no overlap
@@ -98,7 +98,7 @@ Done here: 3 model artworks plus a Sigil plate for Hanzo Engine in one row; the 
 - [x] Targets 44px (socials in a clean 2 × 2, commit links, github.com/hanzoai, and every text link on phones); every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: phone composition stacks the hero with the frontier cropped at true scale, with its year labels and three axis names set larger so they read at about 13px; the commit log runs repo and date on one line (149px / 130px columns, "Nov 6, 05:53 UTC" on one line), message under it; the black room's two tabs wrap onto two rows (nothing cut); the Zen scene shows its plate with a row of six numbers under it; the switches go two by two, tiles stack with the radar top right, the sheet rises from the bottom, the black room's tabs sit above the log; scrollWidth 375 at 375.
+Done here: phone composition stacks the hero with the frontier cropped at true scale, with its year labels and three axis names set larger so they read at about 13px; the commit log runs repo and date on one line (149px / 130px columns, "Nov 6, 05:53 UTC" on one line), message under it; the black room's two tabs wrap onto two rows (nothing cut); the Zen scene shows its plate with a row of six numbers under it; the switches go two by two, tiles stack with the radar top right, the sheet rises from the bottom, the black room's tabs sit above the log; scrollWidth 375 at 375. 8 Nov: switches stack one per row on phones (no 3-line wraps, no orphaned arrow); papers show two rows and the commit log three on phones (the rest stays in the HTML behind Papers → and the dashboard link); phone page 14,020px (was 14,605).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast: #0a0a0a and #525252 on white, #525252 on #f5f5f5, #a3a3a3 and white 78% on black
@@ -149,4 +149,4 @@ Done here: without the portrait files the page is complete with Sigil portraits 
 - [x] `V2:` line in the page file's top comment
 - [x] Review read: `docs/review/about.md` verdict 7/10, every fix applied, re-review pending
 
-Done here: `docs/review/about.md` (7/10). Round 3: Zen pinned scene; founders always Sigil (never grey), names 26px; "Start Building" a text link; github link 44px; log shadow removed; role rows not focus stops; dark room rounded; hero peek; phone hero labels. Round 4 (review 6/10): hero visible in server HTML and moving from first paint; phone header quiet beside the hero ask; dark-room button legible with hover; section padding 80px max (was 116); runtime hover; counter aligned; reduced motion 0 running animations. Page is 12,088px at 1470 (the pinned scene's six steps are about 1,400px of it). Proof: `docs/gallery/about/v3-*`.
+Done here: docs/review/about.md: Ready 8 Nov (new bar, no score). Proof in docs/gallery/about/ (desktop-hero, phone-1..3).

@@ -4,12 +4,17 @@ import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useRed
 import { EASE, Head, mod } from '../ui';
 import { A } from '../kit';
 import C from '../../content';
+import './scenes.css';
 
 const P = C.products;
 const N = P.length;
 const HOLD = 4.8; // seconds each product holds the stage while it plays by itself
 
-function Slide({ i, pos, W, active, onPick }) {
+/* Each product plays more than one scene on hanzo.ai (other questions, other sessions, other tool calls). Ours keeps
+   its first screen and steps through Hanzo's other scenes while it holds the stage, a new one every 1.6 s; all of them
+   stay in the page (the others hidden), word for word, with their colours on the deck's greys. */
+const STEP = 1.6;
+function Slide({ i, pos, W, active, onPick, scenes = [], play }) {
   const off = useTransform(pos, (v) => mod(i - v + N / 2, N) - N / 2);
   const transform = useTransform(off, (d) => {
     const a = Math.abs(d);
@@ -24,6 +29,13 @@ function Slide({ i, pos, W, active, onPick }) {
   const shade = useTransform(off, (d) => Math.min(Math.abs(d), 1.6) * 0.32);
   const p = P[i];
   const on = active === i;
+  const all = [p.vis, ...scenes];
+  const [k, setK] = useState(0);
+  useEffect(() => {
+    if (!on || !play || all.length < 2) return;
+    const t = setInterval(() => setK((n) => (n + 1) % all.length), STEP * 1000);
+    return () => clearInterval(t);
+  }, [on, play, all.length]);
   return (
     <motion.article
       className={'x-slide' + (on ? ' on' : '')}
@@ -33,7 +45,13 @@ function Slide({ i, pos, W, active, onPick }) {
       aria-label={`${i + 1} of ${N}: ${p.name}`}
       inert={!on}
     >
-      <div className="x-slide-vis" dangerouslySetInnerHTML={{ __html: p.vis }} />
+      {all.length < 2
+        ? <div className="x-slide-vis" dangerouslySetInnerHTML={{ __html: p.vis }} />
+        : (
+          <div className="x-slide-vis xh-scenes">
+            {all.map((h, n) => <div key={n} className={'xh-scene' + (n === k ? ' on' : '')} aria-hidden={n === k ? undefined : true} dangerouslySetInnerHTML={{ __html: h }} />)}
+          </div>
+        )}
       <footer className="x-slide-f">
         <div><b>{p.name}</b><A className="x-slide-addr" to={p.addr.startsWith('hanzo.ai/') ? p.addr.slice(8) : 'https://' + p.addr} aria-label={`Open Hanzo ${p.name} at ${p.addr}`}>{p.addr}</A></div>
         <div className="x-slide-acts">
@@ -58,6 +76,9 @@ export default function Platform() {
   const [auto, setAuto] = useState(true);
   const [held, setHeld] = useState(false);
   const drag = useRef({ start: 0, moved: false });
+  // Hanzo's other scenes load once the page is up (a separate chunk, so the first screen does not carry them)
+  const [scenes, setScenes] = useState([]);
+  useEffect(() => { let live = true; import('./scenes.json').then((m) => { if (live) setScenes(m.default); }); return () => { live = false; }; }, []);
 
   useMotionValueEvent(pos, 'change', (v) => { const a = mod(Math.round(v), N); setActive((c) => (c === a ? c : a)); });
   useLayoutEffect(() => {
@@ -103,7 +124,7 @@ export default function Platform() {
         transition={{ duration: 1.1, ease: EASE }}
       >
         <div className="x-cover-3d" style={{ '--cw': W + 'px' }}>
-          {P.map((_, i) => <Slide key={i} i={i} pos={pos} W={W} active={active} onPick={(k) => { take(); to(k); }} />)}
+          {P.map((_, i) => <Slide key={i} i={i} pos={pos} W={W} active={active} scenes={scenes[i]} play={seen && !calm} onPick={(k) => { take(); to(k); }} />)}
         </div>
       </motion.div>
       <div className="x-wrap x-cover-nav">

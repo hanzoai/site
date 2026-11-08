@@ -1,6 +1,7 @@
 # /blockchain — James-eye review
 Reviewed: 2026-11-07 16:40 UTC, walked at 1470x801 and 375x812.
 Verdict: 6/10
+Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). Hero "Try Hanzo" is the one solid on the first screen with quiet product pills in one swipe row, phone h1 sets in 3 lines, pieces fold to 5 on phone with a working Show all (5 → 19 → 5), and piece and close rows answer hover with an arrow nudge even when already lit. taste/unique/parity OK (text 153/153, links 16/16); 0 console errors, no overflow at 1470 and 375. Left alone (shared): the card-to-page Morph landing height and the phone motion.mjs walk stepping only ~91px per screen (scrollBy under smooth scroll), so phone STILL counts from it are not real. copycheck missing 0 of 79 (8 Nov, after restoring one text run per line: facts, piece names, group titles, agent bullets).
 First complaint: "The top's nice, the chain name ticking over, fine. Then I scroll and it's a list, another list, an accordion, a list of chain names, then a table of dots. Four screens where nothing moves and nothing to look at. And where's the button? The loudest thing up top is a wall of black pills, not Try Hanzo."
 
 Walked moving with `scripts/.cloud/motion.mjs` (film strips in `shots/blockchain/`) and my own Playwright walk (`/tmp/claude-0/critic-blockchain/r2/`): idle at 0.3 s, 1 s and 4 s, a scroll every 700 px, hovers and a press, console, phone first screen, JS off, reduced motion, and a click through a piece row.

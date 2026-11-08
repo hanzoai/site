@@ -1,6 +1,7 @@
 # /beta — James-eye review
 
 Verdict: 8/10
+Ready: 8 Nov, copycheck missing 0 of 7 (hanzo.ai live). The lede is Hanzo's plain sentence again ("Early access to Dev, Studio, Kai, Enso and Zen.", the products stay linked in the strip below it) and each pass carries Hanzo's own letter (A, B, C) as on hanzo.ai/beta; pass titles, lines and Apply are Hanzo's word for word. taste OK; 0 console errors, no overflow at 1470 and 375. Not this page: live's /beta/apply and /beta/research are question-by-question application forms that 404 on our site (the passes link there), so they need building by whoever owns new routes.
 First complaint: "It's the same three pictures over and over. Kai, Enso and Zen in the strip, then Enso and Zen again in the cards, then Kai again at the bottom. Give each screen its own thing."
 
 Walked 2026-11-07 16:29 UTC, HEAD 27ecbacd, at 1470x801 and 375x812 (isMobile, hasTouch). First visit and reload sampled at 0.2/1/3/6 s with pixel diffs; wheel-scrolled the whole page in 200px notches with a 0.7 s dwell; hovered and pressed Apply, the strip tiles, the pass cards and the Feedback band; opened and Esc-closed the pass sheet; toggled the strip pause; tapped on phone and swiped the rail; checked reduced motion and JS off; ran taste.py and parity.py.

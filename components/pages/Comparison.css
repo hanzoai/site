@@ -50,6 +50,9 @@
 .xcm-l-d { border-bottom: 1px dotted rgba(0, 0, 0, .3); transform: translateY(4px); }
 .xcm-l-p { white-space: nowrap; transition: color 150ms var(--xcm-out); }
 .xcm-l-n { transition: color 150ms var(--xcm-out); }
+/* each line's images, as its own compose file names them, under the line */
+.xcm-l-i { grid-column: 2 / -1; margin-top: -6px; font-size: 12px; line-height: 1.35; color: #737373; overflow-wrap: anywhere; }
+.xcm-lines li.off .xcm-l-i { color: #a3a3a3; }
 .xcm-lines li.off .xcm-l-n, .xcm-lines li.off .xcm-l-p { color: #a3a3a3; text-decoration: line-through; text-decoration-color: rgba(0, 0, 0, .3); }
 .xcm-empty { margin: 17px 0 0; text-align: center; font: 400 14px/1.5 var(--sans); color: #525252; }
 

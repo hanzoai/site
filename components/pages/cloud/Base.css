@@ -70,6 +70,11 @@ html.bs-own-ask header[data-slot=masthead] a[data-x-ask] { background-color: tra
 .bs-au { display: flex; align-items: center; gap: 8px; }
 .bs-au b { flex: none; width: 22px; height: 22px; border-radius: 50%; background: #ededed; }
 .bs-au i { display: block; height: 10px; border-radius: 999px; background: #ededed; }
+/* author is a relation: it shows the users record it points at */
+.bs-tr .bs-au code { font-size: 13px; color: #737373; white-space: nowrap; overflow: hidden; text-overflow: clip; }
+/* the new record's title fills in as it lands */
+.bs-tr.new > span:nth-child(2) > i { transform-origin: 0 50%; animation: bs-fill .7s var(--e-out) .25s both; }
+@keyframes bs-fill { from { transform: scaleX(0); } }
 .bs-tr em { display: block; width: 34px; height: 20px; border-radius: 999px; background: #e4e4e7; position: relative; }
 .bs-tr em::after { content: ''; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: #fff; }
 .bs-tr em.on { background: var(--ink); }
@@ -456,6 +461,18 @@ html:not(.js) .bs-zm-half { display: none; }
   .bs-rel a { flex-direction: column; gap: 2px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .bs-adm-live i, .bs-rows, .bs-tr.new, .bs-stream.run div, .bs-dep-rows, .bs-dep-rows div, .bs-dep-proj i.b { animation: none !important; }
+  .bs-adm-live i, .bs-rows, .bs-tr.new, .bs-tr.new > span > i, .bs-stream.run div, .bs-dep-rows, .bs-dep-rows div, .bs-dep-proj i.b { animation: none !important; }
   .bs-tile, .bs-zm-half, .bs-zm-l0, .bs-pil-r, .bs-dep > *, .bs-dep-places button, .bs-dep-proj li, .bs-caps > .kn-wrap, .bs-close * { transition: none !important; }
 }
+
+/* each service is a button: point at or tap it and its own note shows under the list (live's per-service notes) */
+.bs-dep-proj li { padding: 0; }
+.bs-dep-proj button { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: none; color: inherit; font: inherit; cursor: pointer; transition: transform .15s var(--e-in, ease); }
+.bs-dep-proj button:active { transform: scale(.98); }
+.bs-dep-proj button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+.bs-dep-proj li.on { background: #e4e4e7; }
+@media (hover: hover) { .bs-dep-proj li:not(.on):hover { background: #ededed; } }
+/* the four notes share one cell, so the caption keeps the height of the longest and nothing below moves */
+.bs-dep-cap { display: grid; }
+.bs-dep-cap > p { grid-area: 1 / 1; margin: 0; }
+.bs-dep-cap > p[hidden] { display: block; visibility: hidden; }

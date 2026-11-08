@@ -74,7 +74,7 @@
 .xag-pil .xag-body { grid-column: 2; }
 
 /* ---------- Crew: ten seats on a ring, the turn passing round ---------- */
-.xag-ring { --R: clamp(160px, 15vw, 214px); --s: clamp(60px, 5.4vw, 76px); position: relative; width: calc(var(--R) * 2 + var(--s)); aspect-ratio: 1; }
+.xag-ring { --R: clamp(160px, 15vw, 214px); --s: min(clamp(60px, 5.4vw, 76px), calc(var(--R) * 6.2832 / var(--n, 10) * .86)); /* seats never overlap, however long the roster */ position: relative; width: calc(var(--R) * 2 + var(--s)); aspect-ratio: 1; }
 .xag-orbit { position: absolute; inset: calc(var(--s) / 2); border-radius: 50%; border: 1px solid var(--line); }
 .xag-seat { position: absolute; left: 50%; top: 50%; width: var(--s); height: var(--s); margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2); border-radius: 50%; transform: rotate(var(--a)) translateY(calc(var(--R) * -1)) rotate(calc(var(--a) * -1)); transition: opacity var(--t-base) var(--e-out); }
 .xag-face { --fs: 100%; position: relative; display: grid; place-items: center; align-content: center; width: var(--fs); height: var(--fs); border-radius: 50%; overflow: hidden; flex: none; background: var(--tile-2); color: var(--ink); box-shadow: 0 0 0 3px #fff; transition: transform var(--t-slow) var(--e-move), box-shadow var(--t-fast) var(--e-out), background-color var(--t-base) var(--e-out), color var(--t-base) var(--e-out); }
@@ -338,7 +338,8 @@ a.xag-chip:active { transform: translateY(1px); }
   .xag-split[data-kind='sdk'] .xag-views { width: 140%; transform: scale(.714); transform-origin: top center; align-self: start; margin-top: 10px; }
   .xag-h1 { font-size: 40px; }
   .xag-lede { font-size: 17px; margin-top: 17px; }
-  .xag-ring { --R: 104px; --s: 46px; }
+  .xag-ring { --R: 128px; --s: min(46px, calc(var(--R) * 6.2832 / var(--n, 10) * .86)); }
+  .xag-seat::after { content: ''; position: absolute; inset: -8px; border-radius: 50%; } /* a finger-sized hit area round each small seat */
   .xag-face b { font-size: 18px; }
   .xag-baton i { height: calc(var(--R) - var(--s) - 44px); }
   .xag-hub { width: 132px; }

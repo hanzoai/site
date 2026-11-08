@@ -103,9 +103,7 @@ function Hero() {
         <h1 id="xbt-h1" className="xp-display xbt-h1"><span className="xbt-v">Get there first.</span></h1>
         <div className="xbt-side">
           <p className="xp-lede xbt-lede xbt-v">
-            Early access to {PRODUCTS.map(([n, to], i) => (
-              <span key={n}><A to={to} className="xbt-prod">{n}</A>{i < 3 ? ', ' : i === 3 ? ' and ' : '.'}</span>
-            ))}
+            Early access to Dev, Studio, Kai, Enso and Zen.
           </p>
           <span className="xbt-v xbt-v-cta"><Cta to="/beta/apply" id="beta.hero" thumb className="xp-cta">Apply</Cta></span>
         </div>
@@ -207,6 +205,7 @@ function Passes({ paused }) {
                   <A to={to} className="x-arrow xbt-stub"><span>Apply</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></A>
                 </div>
                 <span className="xbt-mark" aria-hidden="true"><span>{t}</span></span>
+                <span className="xbt-key x-mono">{k.toUpperCase()}</span>
                 <span className="xbt-plus" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></span>
               </motion.article>
             </li>

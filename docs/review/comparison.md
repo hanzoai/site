@@ -1,6 +1,7 @@
 # /comparison — James-eye review
 
 Verdict: 8/10
+Ready: 8 Nov, held at missing 0 under the real copy check (copycheck 0 of 27): each receipt line now shows the images its own compose file runs (live's image column), duty sentences whole; the closed images sheet no longer pushes the page 1052px sideways and reduced motion no longer breaks hydration (shared fixes). 0 console errors (also under reduced motion), no overflow at 1470 and 375. Usable: toggle stacks to price your own selection; Try Hanzo.
 First complaint: "The headline's small and off to the left with a big empty patch beside it, and the total, the whole point, is below the fold on my laptop."
 
 Walked 7 Nov 15:16 (third walk, after the shared system landed), page file at `18823f5f` (`components/pages/Comparison.jsx`, `Comparison.css`), unchanged during the walk. Judged by `docs/JAMES.md` and `docs/MASTER.md`. Filmed moving at 1470×801 and 375×812 (wheel and finger scroll, dwell on every screen, hover and press on desktop, taps on phone), plus reduced motion and JS off. Stills: `review/comparison/desktop-walk.jpg`, `review/comparison/phone-walk.jpg`. The machine was overloaded, so motion is judged from frames.

@@ -75,7 +75,7 @@ Done here: `taste.py` OK on the page JSX and CSS; only deck neutrals. Every emoj
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: Hover sits under `@media (hover: hover)`. Catalogue tiles: hover lifts 2px, fills white with a grey hairline, brings the emoji's colour back and slides in a "+" (tells you a tap adds it); in the flow they carry an ink ring and their place number (1, 2, 3). Dock tiles and canvas nodes change border and fill; nodes lift 2px. Press is scale .97-.98. Focus-visible draws a 2px ink ring. Nothing loads data, so no loading state; no control is disabled. Dialogs: none. The search input is 16px, aria-label is Hanzo's placeholder. Forks deleted: see the top of this card.
+Done here: Hover sits under `@media (hover: hover), (pointer: none)` (as /blockchain), so a desktop without a hover media flag still answers. Catalogue tiles: hover lifts 2px, fills white with a grey hairline, brings the emoji's colour back and slides in a "+" (tells you a tap adds it); in the flow they carry an ink ring and their place number (1, 2, 3). Dock tiles and canvas nodes change border and fill; nodes lift 2px. Press is scale .97-.98. Focus-visible draws a 2px ink ring. Nothing loads data, so no loading state; no control is disabled. Dialogs: none. The search input is 16px, aria-label is Hanzo's placeholder. Forks deleted: see the top of this card.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -84,7 +84,7 @@ Done here: Hover sits under `@media (hover: hover)`. Catalogue tiles: hover lift
 - [x] Reduced motion shows the final state; no `setInterval`
 - [ ] Sound only on the listed moments, through the one kit (n/a: the page plays no sound of its own; the kit owns it)
 
-Done here: Signature: apps dropping onto a canvas (time; pausable). Supporting: chip pill (layoutId, state), catalogue re-flow (groups and tiles leave and close up by FLIP on transform, 300 ms ease-emphasis), tiles dropping into the tray (state). Kinds: idle (the canvas runs itself, packets travel the wires, a clock fills to the next drop), time, state, pointer (tile lift and "+"); no scroll-linked motion at all. Timers are one timeout chain (first drop 0.45 s, then 1.6 s), no `setInterval`. Reduced motion: the canvas holds its settled flow and CSS animations collapse. `scripts/variety.py` OK.
+Done here: Signature: apps dropping onto a canvas (time; pausable). Supporting: chip pill (layoutId, state), catalogue re-flow (groups and tiles leave and close up by FLIP on transform, 300 ms ease-emphasis), tiles dropping into the tray (state). Kinds: idle (the canvas runs itself, packets travel the wires, a clock fills to the next drop; in the gallery a soft wave runs across the "+" marks of the panel in view, 0.32 s a tile in a 7 s cycle), time, state, pointer (tile lift and "+"), scroll (the sideways gallery, the one scroll-linked move: the track rests on each panel for half of its 528 px share of scroll, then glides to the next with a smoothstep, so a panel is read whole and never two halves slide past). Timers are one timeout chain (first drop 0.45 s, then 1.6 s), no `setInterval`. Reduced motion: the canvas holds its settled flow and CSS animations collapse. `scripts/variety.py` OK.
 
 ## 10. Media
 - [ ] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)

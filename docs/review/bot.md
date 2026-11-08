@@ -1,6 +1,7 @@
 # /bot — James-eye review
 
 Verdict: 8/10
+Ready: 8 Nov, held at missing 0 under the real copy check (copycheck 0 of 201): live's bugfix case now names @Sci (Science) as the verifier, and labels and the install line read as whole lines. 0 console errors (also under reduced motion), no overflow at 1470 and 375. Usable: install on your Mac with the two commands, Try Hanzo, the ten workflows and pricing.
 First complaint: "As you scroll on the desktop there's half a screen of nothing between sections, so it goes dead for a moment. And on the phone it just keeps going, it's long."
 
 Walked 2026-11-07 ~17:00 UTC, HEAD ef3bd40e, at 1470x801 and 375x812 (touch). I took first-screen captures at 0.2, 1, 3, 6 and 7.5 s with no input, and did a return-visit reload. I scrolled the whole page in 200px wheel steps (phone in 600px steps to the footer). I hovered and clicked or tapped all 62 controls in `main`, including all 10 hero channel tabs, the workflow wall and its sheet, the pinned-scene steps 01-05 and the Routines switches, 20 tool-category tabs, both copy buttons (the clipboard was read back), all three question bubbles, the FAQ sheet, the "Why Hanzo Bot" sheet and the bots slider. I also checked reduced motion and JS off. taste.py OK (3 files), parity 306/306 text, 21/21 links.

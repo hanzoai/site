@@ -82,7 +82,7 @@ Done here: the switch knob moves with ease-emphasis in 300 ms (no spring).
 - [x] Reduced motion: rows and race at their final state; no `setInterval`
 - [x] n/a sound
 
-Done here: no springs (kit tab pill aside, which is the shared Tabs).
+Done here: no springs (kit tab pill aside, which is the shared Tabs). 8 Nov: the hero race keeps reading while in view (each router lit in turn with a blinking read cursor, then every figure in ink, then again; a hover holds one), and the "we ran this" stamp's dot breathes, so no screen is still at either width.
 
 ## 10. Media
 - [x] n/a: the live page has no images or video; the race and the ledger are the objects
