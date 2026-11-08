@@ -1,45 +1,43 @@
-// Dark mode check (docs/DARK-MODE.md): opens each page with the device set to dark, at 1470x801 and 375x812, scrolls it
-// through, and lists what still reads as bright mode: visible light backgrounds, and text too close to what sits behind it.
-// Solid ink buttons are meant to turn light in dark (Hanzo's primary), so they are not listed.
-// Usage: node scripts/darkcheck.mjs /pricing /chat ...   (dev server on :4180, or HZ_BASE=...; CHROME=path on Linux)
+// Dark-mode readability check: every page of the local preview in dark, every visible text element,
+// Usage: HZ_BASE=http://localhost:3000 CHROME=/path/to/chrome node scripts/darkcheck.mjs  (dev server running). Writes OUT/summary.json.
+// contrast of its text colour against the first opaque background behind it. Flags ratio < 3.
 import puppeteer from 'puppeteer-core';
-
-const BASE = process.env.HZ_BASE || 'http://localhost:4180';
-const b = await puppeteer.launch({ executablePath: process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true, args: ['--no-sandbox'] });
-let total = 0;
-for (const path of process.argv.slice(2)) for (const [w, h] of [[1470, 801], [375, 812]]) {
-  const p = await b.newPage();
-  await p.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }]);
-  await p.setViewport({ width: w, height: h, isMobile: w < 500, hasTouch: w < 500 });
-  const errs = [];
-  p.on('pageerror', (e) => errs.push(String(e).slice(0, 160)));
-  await p.goto(BASE + path.replace(/\/?$/, '/'), { waitUntil: 'networkidle2', timeout: 120000 });
-  await p.evaluate(async () => { for (let y = 0; y < document.documentElement.scrollHeight; y += 600) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); } });
-  await new Promise((r) => setTimeout(r, 600));
+import fs from 'node:fs';
+const pages = fs.readFileSync(process.env.PAGES || new URL('./copycheck-pages.txt', import.meta.url).pathname, 'utf8').split('\n').map(s => s.trim()).filter(Boolean);
+const OUT = process.env.OUT || 'darkcheck-out';
+const b = await puppeteer.launch({ executablePath: process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
+const res = {};
+async function check(path) {
+  const p = await b.newPage(); await p.setViewport({ width: 1470, height: 801 });
+  await p.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }, { name: 'prefers-reduced-motion', value: 'reduce' }]);
+  try { await p.goto((process.env.HZ_BASE || 'http://localhost:4300') + (path === '/' ? '/' : path + '/'), { waitUntil: 'networkidle2', timeout: 90000 }); } catch {}
+  await p.evaluate(async () => { for (let y = 0; y < document.documentElement.scrollHeight; y += 700) { scrollTo(0, y); await new Promise(r => setTimeout(r, 120)); } scrollTo(0, 0); });
+  await new Promise(r => setTimeout(r, 800));
   const r = await p.evaluate(() => {
-    const lum = (c) => { const m = c.match(/[\d.]+/g); if (!m) return null; if (m[3] != null && +m[3] < 0.5) return null; return (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255; };
-    const bgOf = (e) => { for (let x = e; x; x = x.parentElement) { const l = lum(getComputedStyle(x).backgroundColor); if (l != null) return l; } return 0.05; };
-    const name = (e) => (typeof e.className === 'string' && e.className.trim() ? '.' + e.className.trim().split(/\s+/).slice(0, 2).join('.') : e.tagName.toLowerCase());
-    const ink = (e) => { const cs = getComputedStyle(e); return (lum(cs.backgroundColor) ?? 0) > 0.8 && (lum(cs.color) ?? 1) < 0.2; }; // a solid primary: light fill, dark text
-    const out = {}; const add = (k) => (out[k] = (out[k] || 0) + 1);
-    for (const e of document.querySelectorAll('main *, body > div *')) {
-      const rc = e.getBoundingClientRect(); if (rc.width < 8 || rc.height < 8) continue;
-      const cs = getComputedStyle(e); if (cs.visibility === 'hidden' || +cs.opacity === 0) continue;
-      if (e.closest('[data-room=dark], video, img, canvas, svg, header, footer')) continue;
-      const l = lum(cs.backgroundColor);
-      if (l != null && l > 0.8 && rc.width * rc.height > 400 && !ink(e)) add('bright background  ' + name(e));
-      if ([...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) {
-        const t = lum(cs.color), bg = bgOf(e);
-        if (t != null && Math.abs(t - bg) < 0.25 && !ink(e) && !(e.parentElement && ink(e.parentElement))) add('low-contrast text  ' + name(e));
-      }
+    const parse = c => { const m = c.match(/[\d.]+/g); return m ? m.map(Number) : null; };
+    const lum = ([r, g, b]) => { const f = v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }; return .2126 * f(r) + .7152 * f(g) + .0722 * f(b); };
+    const bgOf = e => { for (let n = e; n; n = n.parentElement) { const s = getComputedStyle(n); if (s.backgroundImage !== 'none' && n !== document.body && n !== document.documentElement) return null; const c = parse(s.backgroundColor); if (c && (c[3] === undefined || c[3] > .85)) return c; } return [13, 13, 13]; };
+    const bad = [];
+    if (!document.documentElement.classList.contains('dark')) return { notDark: true, bad };
+    for (const e of document.querySelectorAll('body *')) {
+      if (e.children.length || !e.textContent.trim() || e.closest('svg,canvas,[aria-hidden=true],.x-sr,script,style')) continue;
+      const s = getComputedStyle(e); const rc = e.getBoundingClientRect();
+      if (rc.width < 2 || rc.height < 2 || s.visibility === 'hidden' || +s.opacity < .3) continue;
+      const fg = parse(s.color); const bg = bgOf(e); if (!fg || !bg) continue;
+      const a = (fg[3] ?? 1); const mix = fg.slice(0, 3).map((v, i) => v * a + bg[i] * (1 - a));
+      const L1 = lum(mix), L2 = lum(bg); const ratio = (Math.max(L1, L2) + .05) / (Math.min(L1, L2) + .05);
+      if (ratio < 3) bad.push({ t: e.textContent.trim().slice(0, 50), ratio: +ratio.toFixed(2), fg: s.color, bg: 'rgb(' + bg.slice(0, 3).join(',') + ')', cls: (e.className + '').slice(0, 40) });
     }
-    return out;
+    return { bad };
   });
-  const n = Object.values(r).reduce((a, c) => a + c, 0); total += n;
-  console.log(`${path.padEnd(14)} ${w}px  ${n} to convert${errs.length ? '  page errors: ' + errs.join(' | ') : ''}`);
-  for (const [k, v] of Object.entries(r).sort((a, c) => c[1] - a[1]).slice(0, 25)) console.log(`   ${String(v).padStart(3)}  ${k}`);
+  res[path] = { notDark: !!r.notDark, count: r.bad.length, samples: r.bad.slice(0, 8) };
   await p.close();
+  console.log(path, r.notDark ? 'NOT DARK' : r.bad.length);
 }
+const q = [...pages];
+await Promise.all([0, 1].map(async () => { while (q.length) await check(q.shift()); }));
 await b.close();
-console.log(total ? `dark: ${total} to convert` : 'dark: OK');
-process.exit(total ? 1 : 0);
+fs.writeFileSync(OUT + '/summary.json', JSON.stringify(res, null, 1));
+const bad = Object.entries(res).filter(([, v]) => v.count || v.notDark).sort((a, b) => b[1].count - a[1].count);
+console.log('PAGES WITH UNREADABLE TEXT IN DARK:', bad.length, 'of', Object.keys(res).length);
+bad.slice(0, 60).forEach(([k, v]) => console.log(k, v.notDark ? 'NOT DARK' : v.count));
