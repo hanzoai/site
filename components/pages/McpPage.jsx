@@ -24,6 +24,7 @@ import A2Pause from '../v2/A2Pause';
 import { T, EMPH, MOVE } from '../v2/A2Motion';
 import McpCompare from './mcp/McpCompare';
 import useEnter from './mcp/useEnter';
+import HeroDither from './HeroDither';
 import '../v2/A2.css';
 import './McpPage.css';
 
@@ -96,6 +97,7 @@ function Hero() {
   const viaSeen = useInView(via, { once: true, amount: 0.8 });
   return (
     <section className="mcp-hero" aria-labelledby="mcp-h1">
+      <HeroDither />
       {/* entrance 1, diagonal-wipe: the words, then the stream, then the client row are uncovered by a diagonal clip
           that sweeps left to right on load (CSS only, under html.js, so JavaScript off shows it all at once) */}
       <div className="a2-wrap a2-grid mcp-hero-grid">

@@ -2,7 +2,7 @@
 
 Verdict: 7/10
 Ready: 8 Nov, copycheck missing 0 of 40 (live hanzo.ai). The viewport's "SPINNING · 360°" readout is its own text leaf beside the turning dial (it was split by the dial's element); nothing else changed. taste/unique OK; 0 console errors, no overlap at 1470x801 and 375x812.
-Dark: 8 Nov, matches live hanzo.ai in dark side by side (docs/gallery/mori/dark-*.jpg); darkcheck OK, lightcheck OK, copycheck 0. (darkcheck's one `.cr-tab` hit is the selected studio-map tab: dark type on its light pill, live's selected-pill style; the pill is a child under the text, which the checker does not see.)
+Dark: 8 Nov, matches live hanzo.ai in dark side by side (docs/gallery/mori/dark-*.jpg); darkcheck OK, lightcheck OK, copycheck 0. Live's hero halftone (HeroDither) sits in the stage around the settled cube, portalled into the shared Launch stage's pinned frame. (darkcheck's one `.cr-tab` hit is the selected studio-map tab: dark type on its light pill, live's selected-pill style; the pill is a child under the text, which the checker does not see.)
 First complaint: "I scroll to the next chapter and the picture goes black. There's just an empty box, then the thing draws itself in. And on my phone the words are cut off: 'Gaussian spla…', and 'Ambient occlusion' spills out of its tile."
 
 How I walked it: Playwright, moving, at 1470×801 (fine-pointer hover enabled) and at 375×812. The cookie bar was dismissed and there is no loader on this route. On each half-screen of the wheel walk I took two frames 1 s apart, and I recorded video. I hovered and pressed the asks, links, rail, tabs, tiles, model cards and view chips, switched the viewport between wireframe, shaded and normals, dragged the mesh and used the arrow keys.

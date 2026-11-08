@@ -364,3 +364,38 @@ main.mcp .x-copy { height: 44px; padding: 0 16px; }
 @media (prefers-reduced-motion: reduce) {
   .mcp *, .mcp *::before, .mcp *::after { animation: none !important; }
 }
+
+/* ---------- dark (docs/DARK-MODE.md): live hanzo.ai/mcp in dark, by role, in Hanzo's own tokens ----------
+   The stream, the "after" half, the config room and the black domain card are black in both modes and stay. A2.css
+   (shared) states its light greys as fixed values, so this page restates them: Hanzo's foreground for headings, muted
+   foreground for body, tertiary text for captions, its border for hairlines and its muted surface for every quiet fill;
+   ink fills and highlights turn to Hanzo's primary (light fill, dark type), as live's selected pills and asks do. */
+html:not(.light) .a2.mcp {
+  --ink: var(--foreground); --acc: var(--foreground); --acc-soft: var(--x-fill); --soft: var(--muted-foreground);
+  --faint: var(--text-tertiary); --card: var(--x-fill); --line: var(--border);
+  & .mcp-hero { position: relative; background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
+  & .mcp-hero .mcp-cap.a2-kick.show, & .mcp-cmp-hint, & .mcp-cmp-code > span, & .mcp-sheet-n, & .mcp-card-n, & .mcp-repo dt { color: var(--faint); }
+  & :is(.mcp-oss, .mcp-f > span:last-child, .mcp-cmp-side, .mcp-cmp-bar, .mcp-sheet-copy .a2-body, .mcp-card p, .mcp-repo > p) { color: var(--muted-foreground); }
+  & .after :is(.mcp-cmp-side, .mcp-cmp-bar), & .mcp-card.d5 :is(p, .mcp-card-n) { color: var(--muted-foreground); }
+  /* before / after: "before" on Hanzo's secondary with a muted code well, "after" stays black */
+  & .mcp-cmp-l.before { background: var(--secondary); }
+  & .before .mcp-cmp-code { background: var(--x-fill); }
+  /* the runtime sheets: muted surfaces, the art on the page's own background inside a hairline */
+  & .mcp-sheet, & .mcp-sheet:nth-child(2), & .mcp-sheet:nth-child(3) { background: var(--x-fill); }
+  & .mcp-sheet-art { background: var(--bg); box-shadow: inset 0 0 0 1px var(--border); }
+  & .mcp-art.a0 span { background: var(--x-fill); animation-name: mcp-call-d; }
+  & .mcp-art.a1 i { background: var(--secondary); animation-name: mcp-svc-d; }
+  & .mcp-gate { background: var(--foreground); }
+  & .mcp-cmds span.stop b { background: var(--neutral-600); }
+  /* domain cards: muted cards, chips on Hanzo's secondary that light up in primary (the black card's own motion) */
+  & .mcp-card-tools i { background: var(--secondary); color: var(--foreground); }
+  & .mcp-card.live .mcp-chips.rest i { animation-name: mcp-chip-d; }
+  & .mcp-card.live .mcp-card-open { animation-name: mcp-ring-d; }
+  & .mcp-card-open { color: var(--x-on-ink); }
+  & .mcp-open-card { background: var(--popover); box-shadow: 0 0 0 1px var(--border), 0 40px 120px -30px rgb(0 0 0 / .6); }
+  & .mcp-open-x { background: var(--secondary); color: var(--foreground); border-color: var(--border-strong); }
+  & .mcp-repo .x-btn:not(.solid) { box-shadow: inset 0 0 0 1px var(--border-strong); }
+}
+@media (hover: hover) { html:not(.light) .a2.mcp .mcp-gh:hover { background: var(--secondary); } }
+@keyframes mcp-call-d { 0%, 8% { background: var(--primary); color: var(--primary-foreground); } 16%, 100% { background: var(--muted); color: var(--foreground); } }
+@keyframes mcp-svc-d { 0%, 70%, 100% { background: var(--secondary); } 80% { background: var(--primary); } }
