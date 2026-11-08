@@ -115,7 +115,7 @@ function Title({ text }) {
    unless <html> carries data-xbg-solid. This hook sets that flag only while none of the post's own solid asks (the hero
    ask, the phone chapter bar's ask, the closing Band's) is on screen, so the header is solid exactly when the post's
    ask is not, at every width, and there is no solid-to-outline flash in the first second. */
-const OWN_ASKS = 'main.xbg [data-cta="blog-post.hero"], main.xbg [data-cta="blog-post.bar"], main.xbg .x-band .x-btn.solid';
+const OWN_ASKS = 'main.xbg [data-cta="blog-post.hero"], main.xbg [data-cta="blog-post.bar"], main.xbg .xbg-band .x-btn.solid';
 function useQuietHeader() {
   useEffect(() => {
     const H = document.documentElement;
@@ -167,6 +167,7 @@ function Hero({ doc, nums, ask, alt }) {
         </div>
         <div className="xbg-art" ref={art} data-enter="pendulum">
           {doc.film ? <Film slug={doc.film} className="xbg-art-film" /> : <Sigil seed={doc.route} data={nums} className="xbg-sigil" />}
+          <i className="xbg-art-ht" aria-hidden="true" />
           {doc.film && (
             <button type="button" className="xbg-pause" onClick={toggle} aria-label={paused ? 'Play' : 'Pause'} aria-pressed={paused}>
               <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{paused ? <path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /> : <path d="M5 3.5h2v9H5zM9 3.5h2v9H9z" fill="currentColor" />}</svg>
@@ -184,7 +185,7 @@ function Plate({ doc }) {
   if (!doc.facts.length) return null;
   const figs = doc.facts.some((c) => /\d/.test(c[1]));
   return (
-    <section className="xbg-plate" data-room="dark" aria-label={doc.chip}>
+    <section className="xbg-plate" aria-label={doc.chip}>
       <div className="xbg-w">
         <p className="xbg-plate-k x-mono"><span>{doc.chip}</span><span>{doc.date}</span></p>
         <ul className={'xbg-facts' + (figs ? ' figs' : '')} data-enter="grid-wave" style={{ '--n': doc.facts.length > 3 ? 2 : doc.facts.length }}>
@@ -322,42 +323,56 @@ function Thread({ doc, chapters, body, ask }) {
 
 const Chevron = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-/* The closing band, page-local (the kit Band reveals with blur, against MASTER part 9): the same .x-band look and words;
-   on arrival an underline sweeps under each word in turn (entrance 5, underline-sweep), then the post's own ask as a
-   kit Cta (magnetic, as the Band's was) and the other closing links. Request to the kit owner: docs/build-notes/requests/blog-family.md. */
-function Close({ cta }) {
+/* The newsletter, in Hanzo's own words (content/live/newsletter.json): the second way to stay with Hanzo after a post */
+const NEWS = { title: 'The Hanzo newsletter', lede: 'Releases, benchmarks and engineering notes, once or twice a month.', lines: ['New models and what they measured, the day they ship', 'What changed in the API, the CLI and Hanzo Dev', 'Engineering notes from the people who built it'], action: 'Subscribe', to: '/newsletter' };
+const Tick = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+
+/* The end of every post: a dark room that opens like a curtain as you arrive (scroll-driven, CSS only), lit from above
+   through a halftone. On the left the post's own closing line and its product links, the first as the one solid ask;
+   on the right, beside it, the newsletter. Every word is Hanzo's: the post's closing block and the newsletter page. */
+function Close({ doc, cta }) {
   const words = cta.label.split(' ');
+  const [first, ...rest] = cta.links;
   return (
-    <section className="x-band xbg-band" data-room="dark" data-enter="underline-sweep">
-      <div className="x-wrap">
-        <h2 className="xbg-band-h">
-          <span className="x-sr">{cta.label}</span>
-          {words.map((w, i) => (
-            <Fragment key={i}>
-              <span className="xbg-uw" aria-hidden="true" style={{ '--i': i }}>{w}</span>
-              {i < words.length - 1 ? ' ' : ''}
-            </Fragment>
-          ))}
-        </h2>
-        <div className="x-band-act">
-          <Magnetic><Cta to={cta.links[0].href} id="blog-post.close-1" size="lg">{cta.links[0].label}</Cta></Magnetic>
-          {cta.links.length > 1 && (
-            <span className="xbg-band-more">
-              {cta.links.slice(1).map((l, i) => <A key={l.href} to={l.href} className="x-arrow" data-cta={'blog-post.close-' + (i + 2)}><span>{l.label}</span><Chevron /></A>)}
-            </span>
-          )}
+    <section className="xbg-band" data-room="dark" data-enter="underline-sweep" aria-labelledby="xbg-band-h">
+      <div className="xbg-w xbg-band-g">
+        <div className="xbg-band-main">
+          <p className="xbg-band-k x-mono"><span>{doc.chip}</span></p>
+          <h2 id="xbg-band-h" className="xbg-band-h">
+            <span className="x-sr">{cta.label}</span>
+            {words.map((w, i) => (
+              <Fragment key={i}>
+                <span className="xbg-uw" aria-hidden="true" style={{ '--i': i }}>{w}</span>
+                {i < words.length - 1 ? ' ' : ''}
+              </Fragment>
+            ))}
+          </h2>
+          <div className="xbg-band-act">
+            <Magnetic><Cta to={first.href} id="blog-post.close-1" size="lg">{first.label}</Cta></Magnetic>
+            {rest.length > 0 && (
+              <ul className="xbg-band-more">
+                {rest.map((l, i) => <li key={l.href}><A to={l.href} className="xbg-band-l" data-cta={'blog-post.close-' + (i + 2)}><span>{l.label}</span><Chevron /></A></li>)}
+              </ul>
+            )}
+          </div>
         </div>
+        <aside className="xbg-news" aria-labelledby="xbg-news-h">
+          <h3 id="xbg-news-h" className="xbg-news-h">{NEWS.title}</h3>
+          <p className="xbg-news-p">{NEWS.lede}</p>
+          <ul className="xbg-news-l">{NEWS.lines.map((l) => <li key={l}><Tick /><span>{l}</span></li>)}</ul>
+          <Cta to={NEWS.to} id="blog-post.newsletter" kind="line" className="xbg-news-go">{NEWS.action}</Cta>
+        </aside>
       </div>
     </section>
   );
 }
 
-/* the close: the sources, the other posts as cards that open into their page, then the band with the post's own ask */
+/* the close: the sources and the other posts as cards that open into their page, in one frame; then the dark room */
 function End({ doc, cta, sources }) {
   return (
     <>
-      <section className="xbg-end" aria-label={doc.back.label} data-ask-hide>
-        <div className="xbg-w">
+      <section className={'xbg-end' + (sources ? ' src' : '')} aria-label={doc.back.label} data-ask-hide>
+        <div className="xbg-w xbg-end-g">
           {sources && (
             <aside className="xbg-src" aria-label={sources.label}>
               <p className="x-mono">{sources.label}</p>
@@ -382,7 +397,7 @@ function End({ doc, cta, sources }) {
           )}
         </div>
       </section>
-      {cta && <Close cta={cta} />}
+      {cta && <Close doc={doc} cta={cta} />}
     </>
   );
 }

@@ -783,56 +783,6 @@
 .xbm-zen .pf-head, .xbm-zen .pf-moment { color: #fafafa; }
 .xbm-close { background: #0a0a0a; }
 
-/* ---------- entrances (one each, in the map's order) ---------- */
-/* 1. sticky-stack (the three figures): each row sticks under the header as you scroll past, the next stacking over it */
-.xbm-ent[data-ent='sticky-stack'] .xbm-figs-l > li { position: sticky; top: 60px; background: var(--bg, #fff); }
-.xbm-ent[data-ent='sticky-stack'] .xbm-figs-l > li:nth-child(2) { top: 72px; }
-.xbm-ent[data-ent='sticky-stack'] .xbm-figs-l > li:nth-child(3) { top: 84px; }
-.xbm-ent[data-ent='sticky-stack'] .xbm-figs-l > li > a { background: #fff; box-shadow: 0 -1px 0 var(--line); }
-/* 2. glitch-in (Zen 6): a short monochrome glitch, then it holds still */
-html.js .xbm-ent[data-ent='glitch-in']:not([data-go]) .xbm-zenroom > .pf-wrap { opacity: 0; }
-html.js .xbm-ent[data-ent='glitch-in'][data-go] .xbm-zenroom > .pf-wrap { animation: xbm-glitch 560ms steps(1, end) both; }
-@keyframes xbm-glitch {
-  0% { opacity: 0; }
-  12% { opacity: 1; transform: translate3d(-14px, 0, 0); clip-path: inset(8% 0 62% 0); filter: grayscale(1) contrast(1.6); }
-  26% { transform: translate3d(10px, 0, 0); clip-path: inset(48% 0 18% 0); }
-  40% { transform: translate3d(-6px, 0, 0); clip-path: inset(22% 0 40% 0); filter: grayscale(1) contrast(1.3); }
-  54% { transform: translate3d(4px, 0, 0); clip-path: inset(0 0 0 0); filter: none; }
-  68% { transform: translate3d(-2px, 0, 0); }
-  82%, 100% { opacity: 1; transform: none; clip-path: inset(0 0 0 0); filter: none; }
-}
-/* 3. swing-door (the GPQA frontier): swings in on a vertical hinge */
-.xbm-ent[data-ent='swing-door'] { perspective: 1600px; }
-.xbm-ent[data-ent='swing-door'] .xbm-front-s > .pf-wrap { transform-origin: 0 50%; }
-html.js .xbm-ent[data-ent='swing-door']:not([data-go]) .xbm-front-s > .pf-wrap { opacity: 0; transform: rotateY(-38deg); }
-html.js .xbm-ent[data-ent='swing-door'][data-go] .xbm-front-s > .pf-wrap { transition: transform 850ms cubic-bezier(.16, 1, .3, 1), opacity 400ms cubic-bezier(0, 0, .2, 1); }
-/* 4. line-draw (Enso's frontier figure): its outline draws itself, then it fills */
-.xbm-enso-obj { position: relative; }
-.xbm-ld { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; opacity: 0; }
-.xbm-ld rect { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 1; stroke-dashoffset: 0; }
-html.js .xbm-ent[data-ent='line-draw']:not([data-go]) .xbm-enso-obj { background: transparent; }
-html.js .xbm-ent[data-ent='line-draw']:not([data-go]) .xbm-enso-obj > :not(.xbm-ld) { opacity: 0; }
-html.js .xbm-ent[data-ent='line-draw'][data-go] .xbm-ld { animation: xbm-ld-o 900ms linear both; }
-html.js .xbm-ent[data-ent='line-draw'][data-go] .xbm-ld rect { animation: xbm-ld 560ms cubic-bezier(.4, 0, .2, 1) both; }
-html.js .xbm-ent[data-ent='line-draw'] .xbm-enso-obj { transition: background-color 300ms cubic-bezier(0, 0, .2, 1) 480ms; }
-html.js .xbm-ent[data-ent='line-draw'] .xbm-enso-obj > :not(.xbm-ld) { transition: opacity 300ms cubic-bezier(0, 0, .2, 1) 520ms; }
-@keyframes xbm-ld { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-@keyframes xbm-ld-o { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
-/* 5. conveyor (Kai's duel tiles): they ride in on a horizontal belt, one after another */
-html.js .xbm-ent[data-ent='conveyor']:not([data-go]) .xbm-tiles > li, html.js .xbm-ent[data-ent='conveyor']:not([data-go]) .xbm-kai-n { opacity: 0; transform: translate3d(48vw, 0, 0); }
-html.js .xbm-ent[data-ent='conveyor'][data-go] .xbm-tiles > li, html.js .xbm-ent[data-ent='conveyor'][data-go] .xbm-kai-n { transition: transform 700ms cubic-bezier(.16, 1, .3, 1), opacity 250ms linear; }
-html.js .xbm-ent[data-ent='conveyor'][data-go] .xbm-tiles > li:nth-child(1) { transition-delay: 90ms; }
-html.js .xbm-ent[data-ent='conveyor'][data-go] .xbm-tiles > li:nth-child(2) { transition-delay: 160ms; }
-html.js .xbm-ent[data-ent='conveyor'][data-go] .xbm-tiles > li:nth-child(3) { transition-delay: 230ms; }
-html.js .xbm-ent[data-ent='conveyor'][data-go] .xbm-tiles > li:nth-child(n+4) { transition-delay: 300ms; }
-.xbm-ent[data-ent='conveyor'] { overflow-x: clip; }
-@media (prefers-reduced-motion: reduce) {
-  /* the observer marks every section reached at once (useEnter); nothing animates */
-  html.js .xbm-ent .xbm-zenroom > .pf-wrap, html.js .xbm-ent .xbm-front-s > .pf-wrap, html.js .xbm-ent .xbm-enso-obj > :not(.xbm-ld), html.js .xbm-ent .xbm-tiles > li, html.js .xbm-ent .xbm-kai-n { opacity: 1 !important; transform: none !important; animation: none !important; transition: none !important; clip-path: none !important; }
-  html.js .xbm-ent .xbm-enso-obj { transition: none !important; }
-  .xbm-ld { display: none; }
-}
-
 @media (max-width: 900px) {
   .xbm-hero { padding-top: 88px; }
   .xbm-front-s .xbm-stage-grid { display: flex; flex-direction: column; gap: 32px; }
@@ -912,7 +862,449 @@ html:not(.light) .xbm-sh-x { background: var(--secondary); }
 @media (hover: hover) { html:not(.light) .xbm-sh-x:hover { background: var(--secondary-hover); } }
 html:not(.light) .xbm-sh-body { color: var(--muted-foreground); }
 html:not(.light) .xbm-sh-panel::before { background: var(--border-strong); }
-html:not(.light) .xbm-ent[data-ent='sticky-stack'] .xbm-figs-l > li > a { background: var(--bg); }
 .xbm-figs-cta { margin-top: 24px; }
 /* the selected segment/race tab carries its own ink fill in dark (same colour as the sliding pill behind it) */
 html:not(.light) .xbm-seg button[aria-selected='true'], html:not(.light) .xbm-race-tabs button[aria-selected='true'] { background: var(--ink); }
+
+/* ===================================================================================================================
+   8 Nov, frames (the approved home page's bar, components/home/wow.css): every section reads in one 1470x801 frame and
+   opens to the rest; a buying action stands beside every result. Split headings with a hairline that draws itself, a
+   lit corner and Hanzo's 12px halftone per section (drifting with scroll), lifted stages with long soft shadows (a 1px
+   ring in dark), and two moments: the Zen 6 dark room opens like a curtain under a beam; Kai's tiles tilt in on a hinge.
+   CSS-only motion, scroll-driven where supported and never under reduced motion. Scoped to .xbm (this page's <main>).
+   =================================================================================================================== */
+.xbm { --fr: min(680px, calc(100svh - 128px)); }
+.xbm-sheets { display: contents; }
+
+/* ---------- every section: a frame ---------- */
+.xbm > .xbm-sec { position: relative; isolation: isolate; padding-block: clamp(56px, 8.5svh, 96px); }
+.xbm > .xbm-sec::before { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--ink) 15%, transparent) 1px, transparent 1.5px) 0 0 / 12px 12px;
+  -webkit-mask-image: radial-gradient(40% 55% at var(--hx, 100%) var(--hy, 0%), #000, transparent 72%); mask-image: radial-gradient(40% 55% at var(--hx, 100%) var(--hy, 0%), #000, transparent 72%); opacity: .9; }
+.xbm > .xbm-sec::after { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none;
+  background: radial-gradient(42% 46% at var(--lx, 18%) var(--ly, 0%), color-mix(in srgb, var(--ink) 6%, transparent), transparent 70%); }
+.xbm > .xbm-hero { --hx: 100%; --hy: 0%; --lx: 8%; --ly: 10%; }
+.xbm > .xbm-racesec { --hx: 0%; --hy: 100%; --lx: 70%; --ly: 30%; }
+.xbm > .xbm-front-s { --hx: 0%; --hy: 0%; --lx: 85%; --ly: 40%; }
+.xbm > .xbm-enso { --hx: 100%; --hy: 100%; --lx: 10%; }
+.xbm > .xbm-kai { --hx: 100%; --hy: 10%; --lx: 0%; --ly: 60%; }
+.xbm > .xbm-lead { --hx: 0%; --hy: 60%; --lx: 90%; --ly: 0%; }
+.xbm > .xbm-kaimore { --hx: 100%; --hy: 100%; --lx: 20%; --ly: 0%; }
+.xbm > .xbm-ktools { --hx: 0%; --hy: 0%; --lx: 80%; --ly: 80%; }
+.xbm > .xbm-harness { --hx: 100%; --hy: 50%; --lx: 0%; --ly: 20%; }
+.xbm > .xbm-plat { --hx: 0%; --hy: 100%; --lx: 60%; --ly: 0%; }
+.xbm > .xbm-methods { --hx: 100%; --hy: 0%; --lx: 0%; --ly: 100%; }
+.xbm > .xbm-shelf { --hx: 0%; --hy: 30%; --lx: 100%; --ly: 10%; border-top: 0; }
+
+/* the split heading's type and the hairline above every section title */
+.xbm-sec h2.pf-head, .xbm-hero .xbm-h1 { position: relative; padding-top: 22px; font-weight: 560; line-height: 1.02; letter-spacing: -.04em; text-wrap: balance; }
+.xbm-sec h2.pf-head { max-width: 18ch; font-size: clamp(1.9rem, 2.6vw, 2.6rem); }
+.xbm-sec h2.pf-head::before, .xbm-hero .xbm-h1::before { content: ''; position: absolute; left: 0; top: 0; width: 44px; height: 3px; border-radius: 3px; background: var(--ink); transform-origin: 0 50%; }
+.xbm-sec .pf-body { font-size: 15px; line-height: 1.55; }
+.xbm-sec .xbm-cap { margin-top: 14px; font-size: 12px; }
+.xbm-sec .xbm-cap + .pf-body { margin-top: 14px; }
+.xbm-sec .xbm-opens { margin-top: 18px; gap: 2px; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .xbm > .xbm-sec::before { animation: xbm-drift linear both; animation-timeline: view(); }
+    @keyframes xbm-drift { from { background-position: 0 60px; opacity: .2; } 45% { opacity: .9; } to { background-position: 0 -60px; opacity: .3; } }
+    .xbm-sec h2.pf-head::before { animation: xbm-rule linear both; animation-timeline: view(); animation-range: entry 20% cover 45%; }
+    @keyframes xbm-rule { from { transform: scaleX(0); } }
+  }
+}
+
+/* the buying action beside a result */
+.xbm-buy { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-top: 20px; }
+.xbm-buy .x-btn.sm { height: 38px; padding: 0 18px; font-size: 14px; box-shadow: 0 18px 30px -22px rgba(0, 0, 0, .6); transition: transform .2s var(--ease), box-shadow .3s var(--ease), background .2s; }
+@media (hover: hover) { .xbm-buy .x-btn.sm:hover { transform: translateY(-1px); box-shadow: 0 22px 34px -20px rgba(0, 0, 0, .6); } }
+.xbm-buy .x-btn.sm:active { transform: scale(.98); }
+.xbm-buy .x-arrow { font-size: 14px; }
+.xbm-buy.dark .x-btn.solid { background: #fafafa; color: #0a0a0a; border-color: #fafafa; }
+.xbm-buy.dark .x-arrow { color: #fafafa; }
+.xbm-open { margin: 16px 0 0; }
+
+/* ---------- tabs: the index above a pane (headline tabs) ---------- */
+.xbm-tabs-h { display: flex; align-items: flex-end; gap: 24px; }
+.xbm-tabs-l { flex: 1; min-width: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 0 24px; }
+.xbm-tabs-l > button { position: relative; display: block; min-height: 44px; padding: 16px 4px 4px 0; border: 0; border-top: 1px solid var(--line); background: none; color: var(--faint); text-align: left; font: 560 clamp(1.05rem, 1.45vw, 1.4rem)/1.18 var(--sans); letter-spacing: -.02em; text-wrap: balance; cursor: pointer; transition: color .2s var(--ease); }
+.xbm-tabs-l > button[aria-selected='true'] { color: var(--ink); }
+@media (hover: hover) { .xbm-tabs-l > button:hover { color: var(--soft); } .xbm-tabs-l > button[aria-selected='true']:hover { color: var(--ink); } }
+.xbm-tabs-l > button:active .xbm-tabs-t { transform: translateY(1px); }
+.xbm-tabs-t { position: relative; display: block; }
+.xbm-tabs-bg { position: absolute !important; left: 0; right: 0; top: -2px; height: 3px; border-radius: 3px; background: var(--ink); }
+.xbm-pane:not([hidden]) { margin-top: clamp(22px, 3.4svh, 34px); }
+.xbm-tab-k { display: block; margin-bottom: 8px; font: 500 11.5px/1.35 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); text-wrap: pretty; }
+/* a pane's own title and kicker are its tab's (they stay in the page for readers, shown once) */
+.xbm-tabs .xbm-ch-t > .pf-head, .xbm-tabs .xbm-ch-t > .xbm-ch-cap, .xbm-ktools .xbm-kt h2.pf-head, .xbm-h-tabs .pf-title { position: absolute !important; width: 1px; height: 1px; padding: 0 !important; margin: 0 !important; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.xbm-tabs .xbm-ch-t > * + * { margin-top: 16px; }
+.xbm-tabs .xbm-ch-t > .pf-head + *, .xbm-tabs .xbm-ch-t > .xbm-ch-cap + * { margin-top: 0; }
+.xbm-tabs .xbm-ch { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 4vw, 56px); align-items: start; }
+.xbm-tabs .xbm-ch.flip .xbm-ch-t { order: 0; }
+
+/* ---------- 1. hero: the statement, then the scoreboard ---------- */
+.xbm > .xbm-hero { padding-block: clamp(84px, 13svh, 116px) clamp(48px, 7svh, 72px); }
+.xbm-hero .xbm-stage-hgrid { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 20px clamp(32px, 5vw, 80px); align-items: end; }
+.xbm-hero .xbm-h1 { font-size: clamp(2.5rem, 4.3vw, 4.1rem); line-height: 1; letter-spacing: -.045em; }
+.xbm-hero .xbm-lede { font-size: clamp(1rem, 1.25vw, 1.2rem); max-width: 36ch; }
+.xbm-hero .xbm-pill { margin-top: 14px; font-size: 12px; }
+.xbm-hero .xbm-acts { margin-top: 18px; gap: 6px 22px; }
+.xbm-hero .xbm-figs { padding: 0; margin-top: clamp(26px, 4.4svh, 44px); }
+.xbm-figs-l { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; border-top: 0; }
+.xbm-figs-l > li { display: flex; }
+.xbm-fig { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start; gap: 14px; width: 100%; padding: 22px 24px 24px; border: 1px solid var(--line); border-radius: 24px; background: var(--x-raised); box-shadow: 0 40px 80px -60px rgba(0, 0, 0, .45); transition: transform .5s var(--ease), box-shadow .5s var(--ease), border-color .3s; }
+.xbm-fig::before { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(circle, color-mix(in srgb, var(--ink) 16%, transparent) 1px, transparent 1.5px) 0 0 / 10px 10px; -webkit-mask-image: radial-gradient(70% 80% at 100% 0%, #000, transparent 70%); mask-image: radial-gradient(70% 80% at 100% 0%, #000, transparent 70%); opacity: .55; transition: opacity .5s var(--ease); }
+.xbm-figs-l > li:first-child .xbm-fig { background: radial-gradient(90% 90% at 0% 0%, color-mix(in srgb, var(--ink) 5%, transparent), transparent 70%), var(--x-raised); }
+@media (hover: hover) { .xbm-fig:hover { transform: translateY(-4px); box-shadow: 0 50px 90px -56px rgba(0, 0, 0, .5); } .xbm-fig:hover::before { opacity: 1; } .xbm-fig:hover .xbm-fig-v, .xbm-fig:focus-visible .xbm-fig-v { transform: none; } }
+.xbm-fig:active .xbm-fig-v { transform: none; }
+.xbm-fig:active { transform: translateY(1px); }
+.xbm-fig-v { font-size: clamp(2.2rem, 3.3vw, 3.1rem); font-weight: 300; letter-spacing: -.045em; }
+.xbm-figs-l > li:first-child .xbm-fig-v { font-size: clamp(2.6rem, 4.2vw, 4rem); }
+.xbm-fig-t b { font-size: 14.5px; }
+.xbm-fig-t span { margin-top: 6px; font-size: 14px; line-height: 1.45; }
+.xbm-fig i { position: absolute; top: 18px; right: 20px; font-size: 20px; }
+@media (hover: hover) { .xbm-fig:hover i { transform: translate(3px, -3px); } }
+.xbm-hero .xbm-figs-cta { margin-top: 16px; }
+
+/* ---------- 2. the race: its five names beside the stage ---------- */
+.xbm-racesec .xbm-trk { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: clamp(24px, 3.4vw, 52px); align-items: start; margin-top: 0; }
+.xbm-trk-side { display: flex; flex-direction: column; position: relative; padding-top: 22px; }
+.xbm-trk-side::before { content: ''; position: absolute; left: 0; top: 0; width: 44px; height: 3px; border-radius: 3px; background: var(--ink); }
+.xbm-racesec .xbm-trk-tabs { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 2px; margin: 0; }
+.xbm-racesec .xbm-trk-tabs > button { min-height: 0; padding: 12px 16px; border: 0; border-radius: 14px; background: none; text-align: left; font: 560 clamp(1rem, 1.25vw, 1.15rem)/1.25 var(--sans); letter-spacing: -.015em; color: var(--faint); }
+.xbm-racesec .xbm-trk-tabs > button[aria-selected='true'] { color: var(--x-on-ink); }
+.xbm-racesec .xbm-trk-tabs .xbm-race-bg { inset: 0; border-radius: 14px; }
+@media (hover: hover) { .xbm-racesec .xbm-trk-tabs > button:hover:not([aria-selected='true']) { color: var(--ink); transform: none; } .xbm-racesec .xbm-trk-tabs > button:hover span { transform: translateX(3px); } }
+.xbm-racesec .xbm-buy { margin-top: 22px; padding-left: 16px; }
+.xbm-trk-stage { min-width: 0; }
+.xbm-racesec .pf-obj.xbm-arena { padding: 20px 22px; box-shadow: 0 40px 80px -60px rgba(0, 0, 0, .45); }
+.xbm-racesec .xbm-race-top { grid-template-columns: minmax(0, 1fr) auto; gap: 12px 28px; }
+.xbm-racesec .xbm-race-top .pf-head { max-width: none; font-size: 21px; }
+.xbm-racesec .xbm-race-top .pf-body { margin-top: 8px; font-size: 14px; max-width: 72ch; }
+.xbm-racesec .xbm-race .xbm-race-tabs { margin: 14px 0 12px; gap: 4px; }
+.xbm-racesec .xbm-race .xbm-race-tabs button { min-height: 34px; padding: 0 12px; font-size: 13px; }
+.xbm-racesec .xbm-race .xbm-arena { padding: 16px 18px; }
+.xbm-racesec .xbm-race .xbm-arena-h { margin-bottom: 12px; }
+.xbm-racesec .xbm-race .xbm-target { font-size: 16px; }
+.xbm-racesec .xbm-race .xbm-run-b { height: 40px; }
+.xbm-racesec .xbm-race .xbm-lane { padding: 10px 14px; }
+.xbm-racesec .xbm-race .xbm-lane-bar { margin: 8px 0 6px; }
+.xbm-racesec .xbm-race .xbm-lane-d { font-size: 13px; line-height: 1.4; }
+.xbm-racesec .xbm-race .xbm-lane-n { font-size: 14.5px; }
+.xbm-racesec .xbm-trk-a .xbm-lane { padding: 14px 18px; }
+.xbm-racesec .xbm-trk-a .xbm-lane + .xbm-lane { margin-top: 10px; }
+
+/* ---------- 3. Zen 6: the dark room (always dark), a scoreboard of three that opens its chapter ---------- */
+.xbm > .xbm-zen { padding-block: clamp(56px, 8svh, 88px); --hx: 50%; --hy: 0%; }
+.xbm > .xbm-zen::before { background: radial-gradient(circle, rgba(255, 255, 255, .22) 1px, transparent 1.5px) 0 0 / 12px 12px; -webkit-mask-image: radial-gradient(60% 50% at 50% 0%, #000, transparent 75%); mask-image: radial-gradient(60% 50% at 50% 0%, #000, transparent 75%); }
+.xbm > .xbm-zen::after { transform-origin: 50% 0; background: conic-gradient(from 180deg at 50% -10%, transparent 160deg, rgba(255, 255, 255, .09) 175deg, rgba(255, 255, 255, .14) 180deg, rgba(255, 255, 255, .09) 185deg, transparent 200deg); }
+.xbm-zen .xbm-tabs-l { gap: 12px; }
+.xbm-zen .xbm-tabs-l > button { padding: 18px 20px 20px; border: 1px solid rgba(255, 255, 255, .12); border-radius: 22px; color: rgba(255, 255, 255, .5); background: rgba(255, 255, 255, .02); transition: color .25s var(--ease), border-color .25s var(--ease), background-color .25s; }
+.xbm-zen .xbm-tabs-l > button[aria-selected='true'] { color: #fafafa; border-color: rgba(255, 255, 255, .28); }
+@media (hover: hover) { .xbm-zen .xbm-tabs-l > button:hover { color: #fafafa; border-color: rgba(255, 255, 255, .24); } }
+.xbm-zen .xbm-tabs-bg { inset: -1px; top: -1px; height: auto; border-radius: 22px; background: radial-gradient(80% 120% at 0% 0%, rgba(255, 255, 255, .1), rgba(255, 255, 255, .03) 70%); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28); }
+.xbm-zen .xbm-tab-k { color: rgba(255, 255, 255, .5); }
+.xbm-zen .xbm-tab-n { display: block; font-size: clamp(1.4rem, 2vw, 1.9rem); font-weight: 400; letter-spacing: -.03em; line-height: 1.1; }
+.xbm-zen .xbm-tab-n .pf-moment { font-size: clamp(2rem, 3.3vw, 3.1rem); line-height: 1; font-weight: 220; color: inherit; }
+.xbm-zen .xbm-pane .pf-lede { font-size: 17px; }
+.xbm-zen .xbm-pane .pf-body { font-size: 15px; }
+.xbm-zen .xbm-zlink { padding: 16px 18px; }
+.xbm-zen .xbm-hw { padding: 26px; gap: 24px; box-shadow: 0 40px 80px -50px rgba(0, 0, 0, .9); }
+.xbm-zen .xbm-dial { gap: 18px; padding: 24px 28px; }
+.xbm-zen .xbm-dial-x { margin: 16px 0 12px; }
+.xbm-zen .xbm-spd { padding: 18px 20px; }
+.xbm-zen .xbm-spd ul { gap: 9px; }
+.xbm-zen .xbm-spd-t { margin-bottom: 12px; font-size: 15px; }
+.xbm-zen .xbm-buy { margin-top: 22px; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .xbm > .xbm-zen { animation: xbm-curtain linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
+    @keyframes xbm-curtain { from { clip-path: inset(0 5% round 56px); } to { clip-path: inset(0 0 round 0); } }
+    .xbm > .xbm-zen::after { animation: xbm-beam linear both; animation-timeline: view(); }
+    @keyframes xbm-beam { from { transform: rotate(-24deg); opacity: 0; } 40% { opacity: 1; } to { transform: rotate(24deg); opacity: .4; } }
+  }
+}
+
+/* ---------- 4. the GPQA frontier: the chart takes the stage, its title stands beside it ---------- */
+.xbm-front-s .xbm-stage-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 2.15fr); gap: clamp(28px, 3.4vw, 52px); align-items: center; }
+.xbm-front-s .xbm-stage-cap { padding: 0; }
+.xbm-front-s .xbm-stage-cap .pf-body { margin-top: 18px; }
+.xbm-front-s .xbm-src { margin-top: 18px; font-size: 13px; gap: 4px 12px; }
+.xbm-front-s .xbm-stage-obj { padding: 18px 22px 10px; box-shadow: 0 40px 80px -60px rgba(0, 0, 0, .45); }
+.xbm-front-s .xbm-sc svg { max-height: calc(var(--fr) - 190px); }
+
+/* ---------- 5. Enso ---------- */
+.xbm-enso .xbm-enso-g { align-items: start; }
+.xbm-enso .xbm-enso-copy .pf-head { margin-bottom: 0; }
+.xbm-enso .xbm-enso-obj { padding: 18px 22px 12px; box-shadow: 0 40px 80px -60px rgba(0, 0, 0, .45); }
+.xbm-enso .xbm-obj-h { padding-bottom: 12px; margin-bottom: 10px; }
+.xbm-enso .xbm-sc svg { max-height: calc(var(--fr) - 260px); }
+.xbm-enso .xbm-obj-f { padding-top: 4px; }
+
+/* ---------- 6. Kai: sixteen of sixteen, the tiles tilt in on a hinge ---------- */
+.xbm-kai .xbm-kai-g { align-items: start; }
+.xbm-kai .xbm-kai-h { max-width: 16ch; }
+.xbm-kai .xbm-kai-vis { gap: 14px; perspective: 1600px; }
+.xbm-kai .xbm-kai-n { font-size: clamp(3rem, 5vw, 4.6rem); font-weight: 220; letter-spacing: -.05em; line-height: 1; }
+.xbm-tiles:not(.all) > li:nth-child(n+5) { display: grid; }
+.xbm-tiles:not(.all) > li:nth-child(n+9) { display: none; }
+.xbm-tile { padding: 0; box-shadow: 0 30px 60px -48px rgba(0, 0, 0, .45); }
+.xbm-tile-b { display: grid; gap: 8px; align-content: start; width: 100%; height: 100%; padding: 14px 15px 16px; border: 0; border-radius: 16px; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; box-sizing: border-box; }
+.xbm-tile-b:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.xbm-tile-t { min-height: 2.6em; font-size: 13.5px; }
+.xbm-kai .xbm-fold { margin-top: 0; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .xbm-kai .xbm-tiles { transform-origin: 50% 100%; animation: xbm-tilt linear both; animation-timeline: view(); animation-range: entry 0% cover 42%; }
+    @keyframes xbm-tilt { from { transform: rotateX(22deg) scale(.92); opacity: .35; } }
+    .xbm-kai .xbm-tile:nth-child(odd) { animation: xbm-tile-in linear both; animation-timeline: view(); animation-range: entry 0% cover 38%; }
+    @keyframes xbm-tile-in { from { transform: translateY(26px); } }
+  }
+}
+
+/* ---------- 7. the board: its title and figure stand beside the rows ---------- */
+.xbm-lead .xbm-board { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr); gap: 0 clamp(28px, 3.6vw, 56px); align-items: start; }
+.xbm-lead .xbm-board-head { display: flex; flex-direction: column; margin: 0; gap: 0; }
+.xbm-lead .xbm-board-head .pf-body { margin-top: 14px; font-size: 14.5px; }
+.xbm-lead .xbm-won { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.xbm-lead .xbm-won .pf-figure { display: block; font-size: 56px; }
+.xbm-lead .xbm-won-k { margin: 8px 0 4px; font-size: 13.5px; line-height: 1.5; }
+.xbm-lead .xbm-won-k b { font-size: 15px; margin-bottom: 4px; }
+.xbm-board-main { min-width: 0; }
+.xbm-lead .xbm-ctl { gap: 8px 10px; padding: 10px 0; margin-bottom: 12px; }
+.xbm-lead .xbm-ctl .xbm-lbl { font-size: 11.5px; }
+.xbm-lead .xbm-seg button { min-height: 30px; padding: 0 11px; font-size: 13px; line-height: 30px; }
+.xbm-lead .xbm-tools button { height: 30px; padding: 0 10px; font-size: 12.5px; }
+.xbm-lead .xbm-sum { margin-bottom: 8px; font-size: 14.5px; }
+.xbm-lead .xbm-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) 72px 76px; gap: 18px; padding: 10px 10px 10px 0; }
+.xbm-lead .xbm-row-t b { font-size: 15px; }
+.xbm-lead .xbm-row-t small { font-size: 12px; margin-top: 2px; }
+.xbm-lead .xbm-row-bars { gap: 4px 10px; }
+.xbm-lead .xbm-row-bars b { font-size: 13px; }
+.xbm-row-a { color: var(--ink); text-decoration: none; }
+.xbm-row-a b::after { content: ' →'; color: var(--faint); font-weight: 400; transition: color .15s; }
+@media (hover: hover) { .xbm-row-a:hover b { text-decoration: underline; text-underline-offset: 3px; } .xbm-row-a:hover b::after { color: var(--ink); } }
+.xbm-lead .xbm-fold { margin-top: 12px; }
+.xbm-lead .xbm-foot { margin-top: 12px; font-size: 12.5px; gap: 4px 20px; }
+.xbm-lead .xbm-board-main { padding: 6px 22px 16px; border: 1px solid var(--line); border-radius: 24px; background: var(--x-raised); box-shadow: 0 40px 80px -60px rgba(0, 0, 0, .45); }
+.xbm-lead .xbm-board-main .xbm-ctl { border-top: 0; }
+.xbm-lead .xbm-board-main .xbm-row, .xbm-lead .xbm-board-main .xbm-rows .xbm-w::before { background: transparent; }
+.xbm-lead .xbm-rows .xbm-w.lit::before { background: var(--x-fill); }
+
+/* ---------- 8. Kai, beyond the suites (four chapters) ---------- */
+.xbm-kaimore .xbm-vis { padding: 22px 26px; box-shadow: 0 40px 80px -60px rgba(0, 0, 0, .45); }
+.xbm-kaimore .xbm-yn li { padding: 16px 0; }
+.xbm-kaimore .xbm-tr { gap: 18px; }
+.xbm-kaimore .xbm-tr-t { margin-bottom: 6px; font-size: 15px; }
+.xbm-kaimore .xbm-tr-r { margin-top: 4px; }
+.xbm-kaimore .xbm-vis-k { margin: 10px 0 16px; }
+.xbm-kaimore .xbm-set { padding-top: 14px; gap: 10px; }
+.xbm-kaimore .xbm-pr0 { margin-top: 26px; padding-top: 20px; }
+.xbm-kaimore .xbm-ch-t .pf-body { font-size: 15px; }
+
+/* ---------- 9. Kai's tools ---------- */
+.xbm-ktools .xbm-tabs-l { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); grid-auto-flow: row; }
+.xbm-ktools .xbm-kt, .xbm-ktools .xbm-kt.two { margin-top: 0; align-items: start; }
+.xbm-ktools .xbm-kt .pf-body { margin-top: 0; }
+.xbm-ktools .xbm-vis-pp { gap: 12px; }
+.xbm-ktools .xbm-pp { padding: 20px; }
+.xbm-ktools .xbm-pp ul { gap: 10px; }
+.xbm-ktools .xbm-vis-tools { gap: 12px; }
+.xbm-ktools .xbm-vis-tools li { gap: 8px; padding: 18px; box-shadow: 0 30px 60px -48px rgba(0, 0, 0, .4); }
+
+/* ---------- 10. the agent harness ---------- */
+.xbm-harness .xbm-h-top { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: end; margin-bottom: clamp(22px, 3.6svh, 36px); }
+.xbm-harness .xbm-h-head { max-width: 26ch; font-size: clamp(1.7rem, 2.3vw, 2.3rem); }
+.xbm-harness .xbm-h-fig { gap: 8px; padding: 20px 22px; border: 1px solid var(--line); border-radius: 24px; background: var(--x-raised); box-shadow: 0 40px 80px -60px rgba(0, 0, 0, .45); }
+.xbm-harness .xbm-h-fig .pf-moment { font-size: clamp(3rem, 5vw, 4.6rem); }
+.xbm-harness .xbm-h-fig > span:last-child span { font-size: 14px; }
+.xbm-harness .xbm-mem { margin-top: 0; }
+.xbm-harness .xbm-mem-h { margin-bottom: 16px; }
+.xbm-harness .xbm-mem-h .pf-body, .xbm-harness .xbm-two .pf-body { margin-top: 0; }
+.xbm-harness .xbm-pps.mem { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.xbm-harness .xbm-pps-col { display: contents; }
+.xbm-harness .xbm-pp { padding: 18px 20px; box-shadow: 0 30px 60px -48px rgba(0, 0, 0, .4); }
+.xbm-harness .xbm-pp ul { gap: 10px; }
+.xbm-harness .xbm-two { margin-top: 0; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); align-items: start; }
+.xbm-harness .xbm-two .xbm-pp, .xbm-harness .xbm-graph { margin-top: 0; }
+
+/* ---------- 11. the agent platform: a bento of three columns ---------- */
+.xbm-plat .xbm-plat-g { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(0, 1fr); gap: 0 clamp(24px, 3vw, 44px); align-items: start; }
+.xbm-plat .xbm-plat-top { display: flex; flex-direction: column; }
+.xbm-plat .xbm-plat-fig { grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 22px; padding-top: 18px; }
+.xbm-plat .xbm-plat-fig > b { font-size: clamp(2.6rem, 4vw, 3.8rem); }
+.xbm-plat .xbm-plat-fig span span { font-size: 14px; }
+.xbm-plat .xbm-bytes { width: min(100%, 210px); margin: 22px 0 0; }
+.xbm-plat-col { min-width: 0; padding-top: 22px; }
+.xbm-plat .xbm-plat-h { margin: 0 0 14px; }
+.xbm-plat .xbm-plat-h .pf-body { margin: 8px 0 6px; font-size: 14px; }
+.xbm-plat .xbm-gap { margin: 0 0 14px; }
+.xbm-plat .xbm-spec a { grid-template-columns: minmax(0, 1fr) 20px; gap: 4px 10px; min-height: 0; padding: 13px 0; }
+.xbm-plat .xbm-spec b { font-size: 26px; }
+.xbm-plat .xbm-spec a > span { grid-column: 1; grid-row: 2; font-size: 14.5px; }
+.xbm-plat .xbm-spec i { grid-column: 2; grid-row: 1; }
+.xbm-plat .xbm-spec small { font-size: 13px; line-height: 1.45; }
+.xbm-plat .xbm-spec a::before { inset: 0 -12px; }
+
+/* ---------- 12. methods ---------- */
+.xbm-methods .xbm-papers { margin-top: 32px; }
+.xbm-methods .xbm-cmd p { font-size: 15px; }
+
+/* ---------- 13. the shelf: the heading, views and the ask beside the rows ---------- */
+.xbm-shelf .xbm-shelf-g { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 0 clamp(28px, 3.6vw, 56px); align-items: start; }
+.xbm-shelf .xbm-shelf-h { display: block; margin: 0; }
+.xbm-shelf .xbm-shelf-h .pf-body { margin-top: 14px; font-size: 14px; }
+.xbm-shelf .xbm-views { margin: 18px 0 0; gap: 6px; }
+.xbm-shelf .xbm-views .xbm-lbl { flex-basis: 100%; font-size: 11.5px; }
+.xbm-shelf .xbm-views a { min-height: 32px; padding: 0 12px; font-size: 13px; }
+.xbm-shelf-main { min-width: 0; }
+.xbm-shelf .xbm-ctl { border-top: 0; padding: 0 0 10px; margin-bottom: 10px; gap: 8px 10px; }
+.xbm-shelf .xbm-seg button { min-height: 30px; padding: 0 11px; font-size: 13px; line-height: 30px; }
+.xbm-shelf .xbm-tools button { height: 30px; padding: 0 10px; font-size: 12.5px; }
+.xbm-shelf .xbm-search, .xbm-shelf .xbm-fbtn { height: 42px; }
+.xbm-shelf .xbm-count { margin: 12px 0 6px; }
+.xbm-shelf .xbm-sr { grid-template-columns: 30px minmax(0, 1fr) 160px 70px 118px; gap: 12px; padding: 9px 6px 9px 0; }
+.xbm-shelf .xbm-sr-s { font-size: 15px; }
+.xbm-shelf .xbm-sr-v b { font-size: 15px; }
+.xbm-shelf .xbm-sr-t a::after { content: ' →'; }
+.xbm-shelf-l:not(.all) > li:nth-child(n+6) { display: none; }
+.xbm-shelf-more { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 12px; }
+.xbm-shelf-more .xbm-fold { margin-top: 0; }
+.xbm-shelf-more .xbm-showall { margin-top: 0; }
+.xbm-shelf .xbm-index { margin-top: 16px; }
+.xbm-shelf .xbm-ix-fold { min-height: 48px; font-size: 18px; }
+.xbm-shelf .xbm-index-g { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+
+/* ---------- the close ---------- */
+.xbm-close { padding: clamp(64px, 10svh, 120px) 0; }
+
+/* ---------- dark: lifted stages wear a ring instead of a shadow ---------- */
+html:not(.light) .xbm-fig, html:not(.light) .xbm-racesec .pf-obj.xbm-arena, html:not(.light) .xbm-front-s .xbm-stage-obj, html:not(.light) .xbm-enso .xbm-enso-obj, html:not(.light) .xbm-lead .xbm-board-main, html:not(.light) .xbm-kaimore .xbm-vis, html:not(.light) .xbm-harness .xbm-h-fig, html:not(.light) .xbm-tile { box-shadow: 0 0 0 1px var(--border), 0 40px 80px -50px rgba(0, 0, 0, .9); }
+html:not(.light) .xbm-buy .x-btn.sm { box-shadow: none; }
+html:not(.light) .xbm-buy.dark .x-btn.solid { background: #fafafa; color: #0a0a0a; }
+
+/* ---------- smaller screens ---------- */
+@media (max-width: 1100px) {
+  .xbm-plat .xbm-plat-g { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .xbm-plat .xbm-plat-top { grid-column: 1 / -1; }
+  .xbm-harness .xbm-pps.mem { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+  .xbm > .xbm-sec { padding-block: 48px; }
+  .xbm > .xbm-hero { padding-top: 84px; }
+  .xbm-sec h2.pf-head { font-size: 30px; }
+  .xbm-hero .xbm-h1 { font-size: 40px; }
+  .xbm-figs-l { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .xbm-fig { padding: 16px 18px; gap: 8px; }
+  .xbm-figs-l > li:first-child .xbm-fig-v, .xbm-fig-v { font-size: 34px; }
+  .xbm-racesec .xbm-trk { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .xbm-racesec .xbm-trk-tabs { flex-direction: row; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding: 2px 16px; }
+  .xbm-racesec .xbm-trk-tabs > button { flex: none; white-space: nowrap; padding: 10px 14px; font-size: 14px; }
+  .xbm-racesec .xbm-buy { padding-left: 0; margin-top: 12px; }
+  .xbm-racesec .xbm-race-top { grid-template-columns: minmax(0, 1fr); }
+  .xbm-tabs-l { display: flex; overflow-x: auto; scrollbar-width: none; gap: 0 18px; margin-inline: -16px; padding: 0 16px; }
+  .xbm-tabs-l::-webkit-scrollbar { display: none; }
+  .xbm-tabs-l > button { flex: 0 0 auto; max-width: 74%; font-size: 17px; }
+  .xbm-zen .xbm-tabs-l { gap: 10px; }
+  .xbm-zen .xbm-tabs-l > button { flex: 0 0 78%; max-width: none; padding: 14px 16px; }
+  .xbm-tabs .xbm-ch { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .xbm-front-s .xbm-stage-grid { display: flex; flex-direction: column; gap: 22px; }
+  .xbm-front-s .xbm-stage-slot { order: 0; width: 100%; }
+  .xbm-lead .xbm-board, .xbm-shelf .xbm-shelf-g, .xbm-plat .xbm-plat-g, .xbm-harness .xbm-h-top, .xbm-harness .xbm-two, .xbm-ktools .xbm-tabs-l { grid-template-columns: minmax(0, 1fr); }
+  .xbm-lead .xbm-board-main { margin-top: 22px; padding: 4px 14px 14px; }
+  .xbm-lead .xbm-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .xbm-shelf-main { margin-top: 22px; }
+  .xbm-shelf .xbm-sr { grid-template-columns: 30px minmax(0, 1fr) auto; }
+  .xbm-shelf .xbm-index-g { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .xbm-harness .xbm-pps.mem { display: flex !important; }
+  .xbm-plat .xbm-bytes { display: none; }
+  .xbm-kai .xbm-kai-g { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- tuning after the first measure (8 Nov) ---------- */
+.xbm-fig { justify-content: space-between; }
+.xbm-fig-v { display: block; align-self: flex-start; text-align: left; padding-right: 28px; }
+.xbm-fig-t { display: block; }
+/* board rows: one line of dates, the lead on one line */
+.xbm-lead .xbm-row-t { gap: 10px; }
+.xbm-lead .xbm-row-t small { white-space: nowrap; font-size: 11.5px; }
+.xbm-lead .xbm-row-lead { white-space: nowrap; font-size: 14px; }
+.xbm-lead .xbm-row { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) 78px 64px; gap: 14px; padding: 8px 8px 8px 0; }
+.xbm-lead .xbm-foot { flex-direction: column; gap: 2px; }
+.xbm-lead .xbm-board-head .xbm-buy { margin-top: 16px; }
+/* harness: a pair reads label, bar and value on one line */
+.xbm-harness .xbm-pp li { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) 40px; gap: 6px 10px; }
+.xbm-harness .xbm-pp li span { grid-column: auto; margin: 0; font-size: 12.5px; line-height: 1.3; }
+.xbm-harness .xbm-pp li b { font-size: 13px; }
+.xbm-harness .xbm-pp-t { margin-bottom: 12px; font-size: 16px; }
+.xbm-harness .xbm-pp-f { margin-top: 10px; font-size: 12px; }
+.xbm-harness .xbm-mem-h { max-width: none; }
+.xbm-harness .xbm-mem-h .pf-body { max-width: 110ch; }
+.xbm-harness .xbm-h-fig { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 18px; }
+.xbm-harness .xbm-h-top .xbm-buy { margin-top: 14px; }
+.xbm-harness .xbm-h-top { gap: 18px clamp(28px, 3.6vw, 56px); }
+/* platform: the column starts at the left; its rows set small */
+.xbm-plat .xbm-plat-top { align-items: stretch; }
+.xbm-plat .xbm-bytes { width: min(100%, 180px); }
+.xbm-plat .xbm-spec span, .xbm-plat .xbm-spec a > span > span { font-size: 14.5px; }
+.xbm-plat .xbm-spec small, .xbm-plat .xbm-spec small span { font-size: 13px; }
+/* shelf: the rows take the stage; each row reads in three lines */
+.xbm-shelf .xbm-shelf-g { grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr); }
+.xbm-shelf .xbm-sr { grid-template-columns: 30px minmax(0, 1fr) 150px 112px; grid-template-areas: 'c t v w' 'c t v d'; align-items: start; row-gap: 4px; padding: 10px 6px 10px 0; }
+.xbm-shelf .xbm-sr > .xbm-chk { grid-area: c; align-self: center; }
+.xbm-shelf .xbm-sr > .xbm-sr-t { grid-area: t; }
+.xbm-shelf .xbm-sr > .xbm-sr-v { grid-area: v; }
+.xbm-shelf .xbm-sr > .xbm-win { grid-area: w; justify-content: flex-start; }
+.xbm-shelf .xbm-sr > .xbm-sr-d { grid-area: d; font-size: 13px; }
+.xbm-shelf .xbm-sr-t small { font-size: 12px; }
+.xbm-shelf .xbm-sr-t a { font-size: 13px; }
+@media (max-width: 900px) {
+  .xbm-shelf .xbm-shelf-g { grid-template-columns: minmax(0, 1fr); }
+  .xbm-shelf .xbm-sr { grid-template-columns: 30px minmax(0, 1fr) auto; grid-template-areas: 'c t w' 'c v v' 'c d d'; }
+  .xbm-lead .xbm-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .xbm-harness .xbm-h-fig { grid-template-columns: minmax(0, 1fr); }
+}
+.xbm-lead .xbm-board-head { align-items: stretch; }
+.xbm-harness .xbm-h-head { font-size: clamp(1.6rem, 2.15vw, 2.15rem); max-width: 30ch; }
+.xbm-harness .xbm-h-side .xbm-buy { margin-top: 14px; }
+@media (min-width: 901px) { .xbm-shelf .xbm-sr { grid-template-columns: 30px minmax(0, 1fr) 150px 140px; grid-template-rows: min-content 1fr; } }
+.xbm-shelf .xbm-sr-s { line-height: 1.3; }
+.xbm-shelf .xbm-sr-v b { font-size: 14px; }
+.xbm-shelf .xbm-sr-t small { font-family: var(--sans); font-size: 12.5px; }
+.xbm-shelf .xbm-sr-d { flex-direction: column; gap: 0; }
+.xbm-shelf-l:not(.all) > li:nth-child(n+5) { display: none; }
+@media (max-width: 900px) {
+  .xbm-shelf .xbm-sr { grid-template-columns: 30px minmax(0, 1fr) auto; grid-template-areas: 'c t w' 'c v v' 'c d d'; }
+  .xbm-shelf .xbm-sr-v { flex-direction: row; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; text-align: left; }
+}
+/* shelf rows read as cards, two a row: each opens its benchmark's page (its title), each can be ticked to compare */
+.xbm-shelf .xbm-shelf-l { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; border-top: 0; }
+.xbm-shelf .xbm-shelf-l > li.xbm-sr { grid-template-columns: 26px minmax(0, 1fr) auto; grid-template-rows: auto; grid-template-areas: 'c t t' '. v w' '. v d'; align-items: start; gap: 4px 10px; padding: 14px 16px 14px 10px; border: 1px solid var(--line); border-radius: 18px; background: var(--x-raised); box-shadow: 0 24px 50px -44px rgba(0, 0, 0, .4); transition: border-color .2s, box-shadow .3s var(--ease), transform .3s var(--ease); }
+@media (hover: hover) { .xbm-shelf .xbm-shelf-l > li.xbm-sr:hover { border-color: var(--x-e15); background: var(--x-raised); box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .45); } }
+.xbm-shelf .xbm-shelf-l > li.xbm-sr.on { border-color: var(--ink); }
+.xbm-shelf .xbm-sr > .xbm-chk { align-self: start; margin-top: -4px; }
+.xbm-shelf .xbm-sr > .xbm-sr-v { text-align: left; margin-top: 6px; }
+.xbm-shelf .xbm-sr > .xbm-win { justify-content: flex-end; margin-top: 8px; }
+.xbm-shelf .xbm-sr > .xbm-sr-d { text-align: right; font-size: 12.5px; }
+@media (max-width: 900px) { .xbm-shelf .xbm-shelf-l { grid-template-columns: minmax(0, 1fr); } }
+html:not(.light) .xbm-shelf .xbm-shelf-l > li.xbm-sr { box-shadow: none; }
+.xbm-shelf .xbm-shelf-side .xbm-index { margin-top: 22px; }
+.xbm-shelf .xbm-shelf-side .xbm-index-g { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.xbm-harness .xbm-h-top { grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); }
+.xbm-harness .xbm-h-head { max-width: 36ch; }
+.xbm-harness .xbm-pp-f { font-family: var(--sans); font-size: 12px; line-height: 1.45; }
+.xbm-harness .xbm-tabs-l > button { padding-top: 12px; }
+.xbm-harness h2.xbm-h-head { font-size: clamp(1.6rem, 2.15vw, 2.15rem); max-width: 36ch; }
+.xbm > .xbm-sec:not(.xbm-hero) { padding-block: clamp(52px, 7.5svh, 92px); }
+@media (max-width: 900px) {
+  .xbm-hero .xbm-stage-hgrid, .xbm-harness .xbm-h-top { grid-template-columns: minmax(0, 1fr); }
+  .xbm-harness h2.xbm-h-head { font-size: 27px; }
+  .xbm-hero .xbm-acts { margin-top: 12px; }
+}
+/* phone: the shelf's heading, then its cards; the views, the ask and the index follow them */
+@media (max-width: 900px) {
+  .xbm-shelf .xbm-shelf-g { display: flex; flex-direction: column; }
+  .xbm-shelf .xbm-shelf-side { display: contents; }
+  .xbm-shelf .xbm-shelf-h { order: 0; }
+  .xbm-shelf .xbm-shelf-main { order: 1; margin-top: 18px; }
+  .xbm-shelf .xbm-views, .xbm-shelf .xbm-shelf-side > .xbm-buy, .xbm-shelf .xbm-shelf-side > .xbm-index { order: 2; }
+}
