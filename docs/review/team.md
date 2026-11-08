@@ -1,5 +1,5 @@
 # /team — James-eye review
-Ready: 8 Nov 23:25, copycheck missing 0 of 126 (captured page), Hanzo's images kept: the four model tiles (Enso, Kai, Zen, Iro) under the channel list and Hanzo's two memoji per channel (data.svg restored). Bugfix steps, workflow labels, code-session trace, @Zoe Maxwell, Canvas title and diff lines are text leaves; CODE CHANNELS & ARTIFACTS is visible under its headline. taste/unique/parity OK; 0 console errors besides the sandbox's blocked hanzo.ai image loads; no overlap at 1470 and 375.
+Ready: 8 Nov 00:09, live copycheck missing 0 of 129 (live hanzo.ai), Hanzo's images kept: the hero is now Hanzo's workspace (crew of twelve with their /agents portraits, the seven DMs with live's previews, Zach Kelling), the story plays #bugfix then opens Rev's Revenue & Billing Ops thread and Rev's sleeping computer (Rev and #bugfix are presses); Qa is Sci as live; code session says Working · Session channel and its Artifacts tabs work (View holds Hanzo's before/after Buy Now — $49 preview and the live-preview line). taste/unique OK; 0 console errors, no overlap at 1470 and 375.
 
 
 Verdict: 6/10

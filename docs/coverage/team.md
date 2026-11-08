@@ -35,6 +35,7 @@ Done here: The layout's skip link reaches `#main`. The links are `Cta`, `Lk` (th
 
 Done here:
 - The right column's fade and the canvas story both wait for `useArrived`, so Zoe's first walk happens where people can see it. After Done the cursors breathe (one mover), with Pause and Replay.
+- The hero window is Hanzo's workspace as live shows it (8 Nov): a dock with the crew of twelve and their `/agents/*.png` portraits, seven DMs with live's previews and Zach Kelling. After the #bugfix board story, Rev's "Revenue & Billing Ops" thread plays in and Rev's computer rests asleep; the Rev row and #bugfix are presses that switch the pane (both panes share one grid cell, so nothing shifts).
 - With JS off the lede, asks, docs link and whole canvas show; the cursors are hidden and the chapters stack.
 - Narrative: canvas hero, three pinned chapters, together, the rooms (miniatures), the dark workflow room, the code window, leaders, the spec, the close.
 
