@@ -163,8 +163,8 @@ const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'enso.go-' + slot} class
 
 const TIERS = [
   { name: 'Enso Flash', code: 'enso', inp: '$0.33', out: '$1.65', ctx: true, axis: 0, why: 'at volume', wb: 'https://platform.hanzo.ai/workbench?model=enso', desc: 'For chat, extraction, classification and simple agent steps at volume.' },
-  { name: 'Enso Pro', code: 'enso-pro', inp: '$4.40', out: '$22', ctx: false, axis: 1, why: 'while someone waits', wb: 'https://platform.hanzo.ai/workbench?model=enso-pro', desc: 'For coding, code review and agents that answer while someone waits.' },
-  { name: 'Enso Ultra', code: 'enso-ultra', inp: '$5.50', out: '$27.50', ctx: true, axis: 2, why: 'a wrong answer is expensive', wb: 'https://platform.hanzo.ai/workbench?model=enso-ultra', desc: 'For work where a wrong answer is expensive: research, security review and long autonomous runs.' },
+  { name: 'Enso Pro', code: 'enso-pro', inp: '$4.40', out: '$22', ctx: '262K', axis: 1, why: 'while someone waits', wb: 'https://platform.hanzo.ai/workbench?model=enso-pro', desc: 'For coding, code review and agents that answer while someone waits.' },
+  { name: 'Enso Ultra', code: 'enso-ultra', inp: '$5.50', out: '$27.50', ctx: true, axis: 2, why: 'a wrong answer is expensive', wb: 'https://platform.hanzo.ai/workbench?model=enso-ultra', desc: 'For work where a wrong answer is expensive: research, security review and long autonomous runs.', more: 'For hard reasoning over long material: it thinks at high effort, holds a 1M-token context and reads images.' },
 ];
 const AXES = ['cost', 'speed', 'quality'];
 // Hanzo's own task words from each tier, in the order the board sends them by itself
@@ -291,7 +291,7 @@ function Switchboard() {
             </div>
             <span className="eo-why">{AXES[tr.axis]} · {tr.why}</span>
             <p className="eo-last" aria-hidden="true"><i />{last[i]}</p>
-            <p className="eo-lane-p mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span>{tr.ctx && <> <b>1M</b> <span>context</span></>}</p>
+            <p className="eo-lane-p mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span>{tr.ctx === true ? <> <b>1M</b> <span>context</span></> : tr.ctx ? <> <span>{`${tr.ctx} context`}</span></> : null}</p>
           </li>
         ))}
       </ol>
@@ -494,7 +494,8 @@ const CHAPTERS = TIERS.map((tr, i) => ({
     <>
       <p className="eo-ch-price mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span></p>
       <p>{tr.desc}</p>
-      <p className="eo-meta">{tr.ctx && <span><b>1M</b> context</span>}<span>OpenAI-compatible API</span><span>Anthropic-compatible API</span></p>
+      {tr.more && <p>{tr.more}</p>}
+      <p className="eo-meta">{tr.ctx === true ? <span><b>1M</b> context</span> : tr.ctx ? <span>{`${tr.ctx} context`}</span> : null}<span>OpenAI-compatible API</span><span>Anthropic-compatible API</span></p>
       <p className="eo-acts">
         <A to="/login" className="eo-l">Try Hanzo</A>
         <A to={tr.wb} className="eo-l">Open in Workbench</A>
@@ -575,6 +576,7 @@ export default function Enso() {
             → model cards (ink-spread) → GPQA (word-shuffle; the figures still count up) → band (orbit-in) */}
         <Form />
         <section id="eo-tiers" className="eo-tiers" aria-label="Enso">
+          <div className="x-wrap"><p className="eo-auto">The default for everyone, Free plan included: it picks the tier for each request and bills at the tier that answers.</p></div>
           <div className="x-wrap">{CHAPTERS.map((c, i) => <Tier key={c.title} c={c} i={i} />)}</div>
         </section>
         {/* the dark room: the live router; each tier's lane carries its own prices (one object, not a second table) */}
