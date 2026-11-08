@@ -29,14 +29,14 @@
 /* chapters: Enso's film, a little closer each tier, with the tier's card on it */
 .eo-art { position: absolute; inset: 0; overflow: hidden; background: #000; }
 .eo-art img, .eo-art video { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; transform: translate(var(--x), var(--y)) scale(var(--z)); }
-.eo-tcard { position: absolute; left: var(--cl, 32px); right: var(--cr, auto); top: var(--ct, auto); bottom: var(--cb, 32px); width: min(360px, calc(100% - 64px)); padding: 24px 24px 22px; border-radius: 16px; background: #fff; color: var(--ink); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .6); }
+.eo-tcard { position: absolute; left: var(--cl, 32px); right: var(--cr, auto); top: var(--ct, auto); bottom: var(--cb, 32px); width: min(360px, calc(100% - 64px)); padding: 24px 24px 22px; border-radius: 16px; background: var(--x-raised); color: var(--ink); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .6); }
 .eo-tcard p { margin: 0; }
 .eo-tcard-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .eo-tcard-top b { font-size: 22px; font-weight: 497; letter-spacing: -.02em; }
 .eo-tcard code { font: 500 13px/1 var(--mono); padding: 5px 8px; border-radius: 6px; background: var(--card); color: var(--soft); }
-.eo-tcard-ax { margin-top: 6px !important; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #737373; }
+.eo-tcard-ax { margin-top: 6px !important; font: 500 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: light-dark(#737373, var(--text-tertiary)); }
 .eo-tcard ul { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.eo-tcard li { padding: 7px 10px; border-radius: 999px; background: #f5f5f5; color: var(--ink); font-size: 13.5px; }
+.eo-tcard li { padding: 7px 10px; border-radius: 999px; background: light-dark(#f5f5f5, var(--muted)); color: var(--ink); font-size: 13.5px; }
 .eo-tcard-p { margin-top: 18px !important; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--soft); }
 .eo-tcard-p b { font-size: 20px; font-weight: 497; letter-spacing: -.02em; color: var(--ink); }
 .eo-tcard-p b + b { margin-left: 10px; }
@@ -68,7 +68,7 @@
 .eo-tier.flip .eo-tier-art { grid-column: 7 / 14; order: 2; }
 .eo-tier.flip .eo-tier-t { grid-column: 1 / 6; }
 .eo-tier-h { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.2; color: var(--ink); }
-.eo-tier-b { margin-top: 17px; font-size: 16px; line-height: 1.6; color: #525252; max-width: 44ch; }
+.eo-tier-b { margin-top: 17px; font-size: 16px; line-height: 1.6; color: light-dark(#525252, var(--muted-foreground)); max-width: 44ch; }
 .eo-tier-b p { margin: 0; }
 .eo-tier-b > * + * { margin-top: 16px; }
 
@@ -113,7 +113,7 @@
 .eo-queue { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; height: 206px; align-content: start; }
 .eo-queue li { display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 44px; padding: 0 14px; border-radius: 12px; background: #171717; border: 1px solid rgba(255, 255, 255, .08); font-size: 14.5px; color: #f5f5f5; }
 .eo-queue li:first-child { border-color: rgba(255, 255, 255, .4); }
-.eo-queue em { font: 500 13px/1 var(--mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; color: #737373; white-space: nowrap; }
+.eo-queue em { font: 500 13px/1 var(--mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; color: light-dark(#737373, var(--text-tertiary)); white-space: nowrap; }
 .eo-queue em[data-done] { color: #d4d4d4; }
 
 .eo-node { grid-area: node; position: relative; width: 210px; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; border: 1px solid rgba(255, 255, 255, .12); background: radial-gradient(circle at 50% 40%, #171717, #0a0a0a 70%); }
@@ -136,7 +136,7 @@
 .eo-lane-top b { color: #f5f5f5; font-size: 22px; font-weight: 497; letter-spacing: -.02em; }
 .eo-lane code { font: 500 13px/1 var(--mono); padding: 4px 7px; border-radius: 6px; background: #262626; color: #d4d4d4; }
 .eo-why { grid-column: 1; font: 500 13px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #a3a3a3; }
-.eo-last { grid-column: 2; grid-row: 1 / 3; margin: 0; display: flex; align-items: center; gap: 8px; font: 500 13px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: #737373; }
+.eo-last { grid-column: 2; grid-row: 1 / 3; margin: 0; display: flex; align-items: center; gap: 8px; font: 500 13px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: light-dark(#737373, var(--text-tertiary)); }
 .eo-last i { width: 7px; height: 7px; border-radius: 50%; background: #404040; transition: background .3s; }
 .eo-lane[data-hit] .eo-last { color: #f5f5f5; }
 .eo-lane[data-hit] .eo-last i { background: #f5f5f5; transform: scale(1.4); }
@@ -185,11 +185,11 @@
 .eo-vs li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; font-size: 14px; }
 .eo-vs span { font: 500 13px var(--mono); color: var(--soft); }
 .eo-vs em { font: 500 13px/1 var(--mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; padding: 5px 7px; border-radius: 999px; background: #e9e9e9; color: var(--soft); transition: background .3s, color .3s; }
-.eo-vs em[data-yes] { background: var(--ink); color: #fff; }
+.eo-vs em[data-yes] { background: var(--ink); color: var(--x-on-ink); }
 /* every result in a drawer under the chart (closed: hidden="until-found"; #eo-results and find-in-page open it) */
 .eo-table { margin-top: clamp(40px, 4vw, 64px); border-top: 1px solid rgba(0, 0, 0, .1); border-bottom: 1px solid rgba(0, 0, 0, .1); }
 .eo-disc { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 64px; padding: 0; border: 0; background: none; color: var(--ink); font: 497 19px/1.2 var(--sans); letter-spacing: -.01em; text-align: left; cursor: pointer; }
-.eo-disc-a { display: inline-flex; align-items: center; gap: 10px; font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #525252; transition: color .15s cubic-bezier(0, 0, .2, 1); }
+.eo-disc-a { display: inline-flex; align-items: center; gap: 10px; font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: light-dark(#525252, var(--muted-foreground)); transition: color .15s cubic-bezier(0, 0, .2, 1); }
 .eo-disc-a svg { transition: transform .3s var(--ease); }
 .eo-disc:active { transform: translateY(1px); }
 @media (hover: hover), not all and (pointer: coarse) { .eo-disc:hover .eo-disc-a { color: var(--ink); } .eo-disc:hover .eo-disc-a svg { transform: rotate(90deg); } }
@@ -203,10 +203,10 @@ html:not(.js) .eo-disc-a { display: none; }
 .lv:has(.eo-head) .eo-ink .mc.lv-sec { padding-bottom: clamp(48px, 5vw, 80px); } /* no dead white band between the cards and the GPQA story */
 .lv:has(.eo-head) .eo-ink + .eo-gpqa.lv-sec { padding-top: clamp(48px, 5vw, 80px); }
 .eo-sort { display: flex; gap: 8px; margin-bottom: 14px; }
-.eo-sortb { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--soft); font: 500 14px var(--sans); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.eo-sortb { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--x-raised); color: var(--soft); font: 500 14px var(--sans); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
 @media (hover: hover), not all and (pointer: coarse) { .eo-sortb:hover { border-color: rgba(0, 0, 0, .25); color: var(--ink); } }
 .eo-sortb:active { transform: scale(.98); }
-.eo-sortb[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.eo-sortb[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
 .eo-table b { font-weight: 497; color: var(--ink); }
 
 @media (max-width: 900px) {

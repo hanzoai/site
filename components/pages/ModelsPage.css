@@ -6,8 +6,10 @@
   --ink: #0a0a0a; --body: #525252; --quiet: #737373; --line: rgba(0, 0, 0, .1); --room: #f5f5f5; --track: #d4d4d4;
   --emph: cubic-bezier(.16, 1, .3, 1); --io: cubic-bezier(.4, 0, .2, 1); --out: cubic-bezier(0, 0, .2, 1);
   --pad: clamp(72px, 11vw, 188px); --gut: clamp(16px, 4vw, 32px); --top: 60px;
-  background: #fff; color: var(--ink); overflow-x: clip;
+  background: var(--bg); color: var(--ink); overflow-x: clip;
 }
+/* dark mode: the page's own palette points at Hanzo's tokens (@hanzo/design), under Hanzo's :not(.light) */
+html:not(.light) .xmo { --ink: var(--foreground); --body: var(--muted-foreground); --quiet: var(--text-tertiary); --line: var(--border); --room: var(--muted); --track: var(--secondary); }
 .xmo .x-wrap { width: min(100% - 2 * var(--gut), 1152px); }
 .xmo-sec { position: relative; padding: var(--pad) 0; }
 .xmo-display { margin: 0; font-size: clamp(40px, 3.6vw, 52px); font-weight: 497; line-height: 1.05; letter-spacing: -.035em; color: var(--ink); text-wrap: balance; }
@@ -120,7 +122,7 @@
 .xmo-bars span { display: grid; grid-template-columns: 36px 1fr 56px; align-items: center; gap: 10.5px; }
 .xmo-bars b { font-size: 13px; font-weight: 500; color: var(--ink); }
 .xmo-bars .jev b { color: var(--quiet); }
-.xmo-bars i { position: relative; height: 6px; border-radius: 99px; background: #ededed; overflow: hidden; }
+.xmo-bars i { position: relative; height: 6px; border-radius: 99px; background: light-dark(#ededed, var(--muted)); overflow: hidden; }
 .xmo-bars i::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .9s var(--emph) .2s; }
 .xmo-bars .jev i::after { background: #a3a3a3; transition-delay: .35s; }
 .xmo-fig.on .xmo-bars i::after { transform: scaleX(var(--v)); }
@@ -129,13 +131,13 @@
 
 /* ---------- 5. the catalogue ---------- */
 .xmo-cat { padding-top: 0; }
-.xmo-chipbar { position: sticky; top: var(--top); z-index: 10; background: #fff; border-bottom: 1px solid var(--line); }
+.xmo-chipbar { position: sticky; top: var(--top); z-index: 10; background: var(--x-raised); border-bottom: 1px solid var(--line); }
 .xmo-chipbar-in { display: flex; align-items: center; gap: 17px; min-height: 64px; }
 .xmo-chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .xmo-chips button { position: relative; min-height: 40px; padding: 0 17px; border: 0; border-radius: 999px; background: transparent; color: var(--body); font: 500 14px/1 var(--sans); cursor: pointer; transition: color .15s var(--out), transform .09s var(--out); }
-@media (hover: hover) { .xmo-chips button:not([aria-pressed='true']):hover { color: var(--ink); } .xmo-chips button[aria-pressed='true']:hover .xmo-chip-bg { background: #262626; } }
+@media (hover: hover) { .xmo-chips button:not([aria-pressed='true']):hover { color: var(--ink); } .xmo-chips button[aria-pressed='true']:hover .xmo-chip-bg { background: light-dark(#262626, var(--primary-hover)); } }
 .xmo-chips button:active { transform: scale(.97); }
-.xmo-chips button[aria-pressed='true'] { color: #fff; }
+.xmo-chips button[aria-pressed='true'] { color: var(--x-on-ink); }
 .xmo-chips button > span:not(.xmo-chip-bg) { position: relative; z-index: 1; display: inline-flex; align-items: flex-start; gap: 5px; }
 .xmo-chips sup { font-size: 11px; line-height: 1; opacity: .7; }
 .xmo-chip-bg { position: absolute; inset: 0; border-radius: inherit; background: var(--ink); }
@@ -188,7 +190,7 @@
 .xmo-table th:last-child, .xmo-table td:last-child { padding-right: 0; }
 .xmo-table thead th { font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--quiet); border-bottom-color: var(--ink); }
 .xmo-table tbody tr:not(.xmo-grp) { transition: background-color .15s var(--out); }
-@media (hover: hover) { .xmo-table tbody tr:not(.xmo-grp):hover { background: #fafafa; } }
+@media (hover: hover) { .xmo-table tbody tr:not(.xmo-grp):hover { background: var(--x-sunk); } }
 .xmo-grp th { padding-top: 27px; text-align: left !important; font-weight: 500; }
 .xmo-grp th > * { margin-right: 10.5px; }
 .xmo-grp th a { color: var(--ink); }
@@ -199,9 +201,9 @@
 .xmo-row-n code { font: 500 12px/1 var(--mono); color: var(--quiet); }
 @media (hover: hover) { .xmo-row-n:hover b { text-decoration: underline 1px; text-underline-offset: 3px; } }
 .xmo-out { display: inline-flex; align-items: center; gap: 10.5px; }
-.xmo-bar { display: inline-block; width: 64px; height: 4px; border-radius: 99px; background: #ededed; overflow: hidden; }
+.xmo-bar { display: inline-block; width: 64px; height: 4px; border-radius: 99px; background: light-dark(#ededed, var(--muted)); overflow: hidden; }
 .xmo-bar b { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; transition: transform .3s var(--io); }
-.xmo-more { position: relative; display: grid; place-items: center; width: 48px; height: 48px; margin: 27px auto 0; padding: 0; border-radius: 50%; border: 1px solid var(--line); background: #fff; cursor: pointer; transition: border-color .15s var(--out), transform .09s var(--out); }
+.xmo-more { position: relative; display: grid; place-items: center; width: 48px; height: 48px; margin: 27px auto 0; padding: 0; border-radius: 50%; border: 1px solid var(--line); background: var(--x-raised); cursor: pointer; transition: border-color .15s var(--out), transform .09s var(--out); }
 @media (hover: hover) { .xmo-more:hover { border-color: rgba(0, 0, 0, .4); } }
 .xmo-more:active { transform: scale(.97); }
 .xmo-more i { position: relative; width: 14px; height: 14px; }
@@ -427,7 +429,7 @@
 @media (max-width: 899px) { .xmo-priced { padding-top: 56px; } .xmo-try { padding-top: 72px; } .xmo-vs { padding-bottom: 72px; } .xmo-fig-g { padding-top: 72px; } }
 
 /* idle life where nothing played by itself: the labs head's contour field, the price list's live dot, the code's caret */
-.xmo-gh-film.art { background: #f5f5f5; }
+.xmo-gh-film.art { background: light-dark(#f5f5f5, var(--muted)); }
 .xmo-gh-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--ink); opacity: .6; }
 .xmo-n-dot { display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: var(--ink); vertical-align: 1px; animation: xmo-ping-ink 2s var(--out) infinite; }
 @keyframes xmo-ping-ink { 0% { box-shadow: 0 0 0 0 rgba(10, 10, 10, .35); } 70%, 100% { box-shadow: 0 0 0 7px rgba(10, 10, 10, 0); } }
@@ -446,7 +448,7 @@
    kit's own button rule (position: relative) never wins, whatever order the stylesheets load in. */
 .xmo-pill.price { color: #fff; border-color: rgba(255, 255, 255, .45); letter-spacing: 0; white-space: nowrap; }
 .xmo-cards > li { position: relative; }
-.xmo-cards > li > .x-btn.xmo-use { position: absolute; right: 21px; bottom: 21px; top: auto; left: auto; z-index: 2; background: #fff; border-color: #fff; transition: background .2s, transform .2s cubic-bezier(.2, .8, .2, 1); }
+.xmo-cards > li > .x-btn.xmo-use { position: absolute; right: 21px; bottom: 21px; top: auto; left: auto; z-index: 2; background: #fff; border-color: #fff; color: #0a0a0a; transition: background .2s, transform .2s cubic-bezier(.2, .8, .2, 1); }
 .xmo-cards > li > .x-btn.xmo-use::after { content: ''; position: absolute; inset: -5px -4px; }
 .xmo-cards > li > .x-btn.xmo-use:active { transform: scale(.97); }
 @media (hover: hover) { .xmo-cards > li > .x-btn.xmo-use:hover { background: #e8e8e8; border-color: #e8e8e8; } }
