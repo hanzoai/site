@@ -238,3 +238,7 @@ html:not(.light) .st2.l2-page .cf-code.light .k { color: var(--st2-d-text-second
 html:not(.light) .st2.l2-page .st2-code-r .cf-mark { background-color: var(--st2-d-secondary); background-image: none; color: var(--st2-d-foreground); box-shadow: inset 0 -2px 0 var(--st2-d-foreground); }
 /* live's dark cards: #0f0f0f with a white 10% hairline (inset, so nothing moves) */
 html:not(.light) .st2-rec, html:not(.light) .st2-check { box-shadow: inset 0 0 0 1px var(--border); }
+/* dark only: Hanzo's halftone dot field behind the hero, as live hanzo.ai draws it (8px grid in --foreground at 17%,
+   dense at the side edges, thinning toward the top and centre); isolation keeps it under the hero content */
+html:not(.light) .st2 .l2-stage > .l2-stage-pin { isolation: isolate; }
+html:not(.light) .st2 .l2-stage > .l2-stage-pin::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 17%, transparent) 2.4px, transparent 2.9px) 0 0 / 8px 8px; -webkit-mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); mask-composite: intersect; }
