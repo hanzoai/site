@@ -1,6 +1,13 @@
 # /philosophy coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/Philosophy.jsx` (+ `Philosophy.css`, data `philosophyData.js`) · gallery: `docs/gallery/philosophy/` · metric id: `philosophy.close` (cta_click), lead `philosophy.hero`
+**9 Nov rebuild (slice D):** Hanzo replaced the page's copy on live hanzo.ai (the five laws, premise, method, stack and
+questions are gone). The page was re-read from live and rebuilt on the same system: hero hexagram walk (now Hanzo's new
+64), introduction, the explorer (category filter, 8 x 8 index, the chosen pattern's three applications), the eight
+categories (every row opens the sheet), the dark-room close. Parts below that name the removed sections describe the
+7 Nov build; the parts themselves (ask, motion, states, reduced motion, JS off, entrances, proof) hold for the new one.
+copycheck vs live: missing 0 of 166; parity 386/386.
+
+Page file: `components/pages/Philosophy.jsx` (+ `Philosophy.css`, data `philosophy/patterns.js`) · gallery: `docs/gallery/philosophy/` · metric id: `philosophy.close` (cta_click), lead `philosophy.hero`
 
 Open copy questions for James: none (no copy changed; "Philosophy", "The premise", "The synthesis", "The 64 patterns", "The method", "Across the stack" are Hanzo's labels, set as captions under their headings).
 Shared changes requested (`docs/requests/philosophy.md`): none.

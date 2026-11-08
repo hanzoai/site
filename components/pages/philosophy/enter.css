@@ -45,5 +45,12 @@
   .js [data-enter='carousel'] > li:nth-child(4) { transition-delay: 180ms; }
   .js [data-enter='carousel'] > li:nth-child(5) { transition-delay: 240ms; }
   .js [data-enter='carousel'] > li:nth-child(6) { transition-delay: 300ms; }
+  .js [data-enter='carousel'] > li:nth-child(7) { transition-delay: 360ms; }
+  .js [data-enter='carousel'] > li:nth-child(8) { transition-delay: 420ms; }
   .js [data-enter='carousel'][data-done] > li { transition-delay: 0s; }
+
+  /* 4b. invert-flash on the explorer: the chosen pattern arrives inverted (black panel, white lines), flicks once and
+     holds normal, just after the explorer has unfolded */
+  .js .xph-ex-d[data-enter]:not([data-in]) .xph-det { opacity: 0; }
+  .js .xph-ex-d[data-enter][data-in]:not([data-done]) .xph-det { animation: xph-invert .75s linear .55s both; }
 }

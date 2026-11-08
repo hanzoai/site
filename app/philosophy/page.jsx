@@ -1,10 +1,10 @@
-// Signature: timeline. The five operating laws on a strip you drag; the law in hand takes the panel and a hexagram gains a line per law.
+// Signature: the hero hexagram walking Hanzo's sixty-four; press any line and it becomes the pattern that change makes.
 import Philosophy from '../../components/pages/Philosophy';
 import JsonLd from '../../components/JsonLd';
 
 export const metadata = {
-  title: 'The Zen of Hanzo — 64 patterns for intelligent systems',
-  description: 'Systems philosophy for open, decentralized AI. Architectural patterns for understandable, adaptive, and human-aligned intelligence.',
+  title: 'The Zen of Hanzo — Hanzo AI',
+  description: '64 patterns for exploration, progress, and continuous improvement. Modern Hanzo interpretations inspired by the I Ching.',
 };
 
 export default function Page() {
