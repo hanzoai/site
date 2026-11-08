@@ -34,13 +34,13 @@
 /* ---------- control room ---------- */
 .wd2-room-h { max-width: 12ch; }
 .wd2-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; margin-top: 44px; }
-.wd2-mon { position: relative; display: flex; flex-direction: column; padding: 26px; border-radius: 24px; background: #f5f5f5; }
+.wd2-mon { position: relative; display: flex; flex-direction: column; padding: 26px; border-radius: 24px; background: light-dark(#f5f5f5, var(--surface-2)); }
 /* stacked (phones, reduced motion): big, medium, wide; never three equal boxes in a row */
 .wd2-mon.c0, .wd2-mon.c4 { grid-column: span 7; }
 .wd2-mon.c1, .wd2-mon.c3 { grid-column: span 5; }
 .wd2-mon.c2, .wd2-mon.c5 { grid-column: span 12; }
-.wd2-mon header { display: flex; align-items: center; gap: 14px; font-size: 13px; color: #737373; }
-.wd2-mon header::after { content: ''; flex: 1; height: 1px; background: rgba(0, 0, 0, .14); transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--eio); }
+.wd2-mon header { display: flex; align-items: center; gap: 14px; font-size: 13px; color: light-dark(#737373, var(--text-tertiary)); }
+.wd2-mon header::after { content: ''; flex: 1; height: 1px; background: light-dark(rgba(0, 0, 0, .14), var(--border-control)); transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--eio); }
 @media (hover: hover) { .wd2-mon:hover header::after { transform: none; } }
 .wd2-pic { position: relative; margin: 22px 0 26px; min-height: 180px; display: flex; align-items: center; }
 .wd2-pic > * { width: 100%; }
@@ -98,14 +98,14 @@
 .wd2-roll { display: block; height: 64px; overflow: hidden; }
 .wd2-roll > span { display: flex; flex-direction: column; transition: transform .5s var(--ee); }
 .wd2-roll b { display: block; height: 64px; font-size: 64px; line-height: 64px; min-width: 2ch; }
-.wd2-count em { font-size: 13px; font-style: normal; color: #737373; }
+.wd2-count em { font-size: 13px; font-style: normal; color: light-dark(#737373, var(--text-tertiary)); }
 
 /* the rail: six numbered stops; the one on air in ink, a hairline filling as scroll passes through it */
 .wd2-rail { display: flex; flex-direction: column; }
-.wd2-stop { display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; row-gap: 10px; min-height: 52px; padding: 10px 0 0; border: 0; background: none; color: #737373; font: 400 16px/1.3 var(--sans); text-align: left; cursor: pointer; transition: color .15s var(--eo), transform 90ms var(--ee); }
+.wd2-stop { display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; row-gap: 10px; min-height: 52px; padding: 10px 0 0; border: 0; background: none; color: light-dark(#737373, var(--text-tertiary)); font: 400 16px/1.3 var(--sans); text-align: left; cursor: pointer; transition: color .15s var(--eo), transform 90ms var(--ee); }
 .wd2-stop span { font-size: 13px; }
 .wd2-stop b { font-weight: 497; transition: transform .3s var(--eio); }
-.wd2-stop i { grid-column: 1 / -1; display: block; height: 1px; background: rgba(0, 0, 0, .1); overflow: hidden; }
+.wd2-stop i { grid-column: 1 / -1; display: block; height: 1px; background: light-dark(rgba(0, 0, 0, .1), var(--border)); overflow: hidden; }
 .wd2-stop u { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
 .wd2-stop.on { color: var(--ink); }
 .wd2-stop.on b { font-weight: 606; }
@@ -129,23 +129,23 @@
 .wd2-lc p b { grid-row: span 3; font-size: 14px; }
 /* bars: the <i> is the bar's lane (it grows in on arrival), the <u> its fill (it re-draws while on air) */
 .wd2-lc i, .wd2-ev i { display: block; border-radius: 4px; transform-origin: 0 50%; }
-.wd2-lc u, .wd2-ev u { display: block; height: 100%; border-radius: inherit; background: #d4d4d4; transform-origin: 0 50%; transition: transform .5s var(--eio); }
+.wd2-lc u, .wd2-ev u { display: block; height: 100%; border-radius: inherit; background: light-dark(#d4d4d4, var(--border-selected)); transform-origin: 0 50%; transition: transform .5s var(--eio); }
 .wd2-lc i { height: 8px; }
-.wd2-lc i.q1 u { background: #a3a3a3; }
+.wd2-lc i.q1 u { background: light-dark(#a3a3a3, var(--muted-foreground)); }
 .wd2-lc i.q2 u { background: var(--ac); }
 /* the lanes' key: the hero panel's own P50 / P95 / P99, each beside a swatch of its lane's fill */
-.wd2-lc-key { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 16px; padding-left: 62px; font-size: 13px; color: #525252; }
+.wd2-lc-key { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0 0 16px; padding-left: 62px; font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); }
 .wd2-lc-key span { display: inline-flex; align-items: center; gap: 8px; }
-.wd2-lc-key s { display: block; width: 18px; height: 6px; border-radius: 3px; background: #d4d4d4; }
-.wd2-lc-key .q1 s { background: #a3a3a3; }
+.wd2-lc-key s { display: block; width: 18px; height: 6px; border-radius: 3px; background: light-dark(#d4d4d4, var(--border-selected)); }
+.wd2-lc-key .q1 s { background: light-dark(#a3a3a3, var(--muted-foreground)); }
 .wd2-lc-key .q2 s { background: var(--ac); }
-.wd2-lc p.spike { display: flex; gap: 10px; margin: 6px 0 0; font-size: 13px; color: #525252; }
-.wd2-lc p.spike i { width: 8px; height: 8px; border-radius: 50%; background: #737373; }
+.wd2-lc p.spike { display: flex; gap: 10px; margin: 6px 0 0; font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); }
+.wd2-lc p.spike i { width: 8px; height: 8px; border-radius: 50%; background: light-dark(#737373, var(--text-tertiary)); }
 .wd2-drift-c { width: 100%; height: auto; max-height: 280px; overflow: visible; }
 .wd2-drift-c .band { fill: rgba(163, 163, 163, .14); }
 .wd2-drift-c .ln { fill: none; stroke: var(--ink); stroke-width: 2; }
 /* the alert: a hollow ink ring at the line's end, and a pulse ring it sends out while on air */
-.wd2-drift-c .al { fill: #f5f5f5; stroke: var(--ink); stroke-width: 2; transform-box: fill-box; transform-origin: 50% 50%; }
+.wd2-drift-c .al { fill: light-dark(#f5f5f5, var(--surface-2)); stroke: var(--ink); stroke-width: 2; transform-box: fill-box; transform-origin: 50% 50%; }
 .wd2-drift-c .pu { fill: none; stroke: var(--ink); stroke-width: 1.5; opacity: 0; transform-box: fill-box; transform-origin: 50% 50%; animation: wd2-ring .5s var(--eo); }
 @keyframes wd2-ring { 0% { opacity: .7; transform: scale(1); } 100% { opacity: 0; transform: scale(2.6); } }
 .wd2-ev p { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 12px; margin: 0 0 14px; }
@@ -153,13 +153,13 @@
 .wd2-ev i { height: 14px; border-radius: 7px; }
 .wd2-ev p { margin-bottom: 24px; }
 /* each score runs on its own pale track, with a 1px ink tick at the baseline */
-.wd2-ev .lane { position: relative; display: block; text-decoration: none; border-radius: 8px; background: rgba(0, 0, 0, .06); }
-.wd2-ev .lane::before { content: ''; position: absolute; left: 0; right: 0; top: -6px; bottom: -6px; background: linear-gradient(var(--ink), var(--ink)) 0 0 / 1px 100% no-repeat, repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), rgba(0, 0, 0, .08) calc(25% - 1px) 25%); }
+.wd2-ev .lane { position: relative; display: block; text-decoration: none; border-radius: 8px; background: light-dark(rgba(0, 0, 0, .06), var(--glass)); }
+.wd2-ev .lane::before { content: ''; position: absolute; left: 0; right: 0; top: -6px; bottom: -6px; background: linear-gradient(var(--ink), var(--ink)) 0 0 / 1px 100% no-repeat, repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), light-dark(rgba(0, 0, 0, .08), var(--glass-strong)) calc(25% - 1px) 25%); }
 .wd2-ev .lane i { position: relative; }
 .wd2-ev p { grid-template-columns: 30px minmax(0, 1fr) 7ch; }
 .wd2-ev p.b u { background: var(--ac); }
 .wd2-mc { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.wd2-mc li { padding: 9px 12px; border-radius: 10px; background: #fff; font-size: 16px; }
+.wd2-mc li { padding: 9px 12px; border-radius: 10px; background: var(--x-raised); font-size: 16px; }
 /* each source's signal dot; the one sending lights while on air */
 .wd2-mc li:not(.one)::before { content: ''; display: inline-block; width: 6px; height: 6px; margin: 0 .5em .12em 0; border-radius: 50%; background: var(--ink); vertical-align: middle; opacity: .2; transition: opacity .3s var(--eo); }
 .wd2-mc li.sig::before { opacity: 1; }
@@ -241,3 +241,6 @@
 /* Hanzo's Koe art (live: the black card behind the six capabilities), kept under the heading (COPY-RULE.md rule 5) */
 .wd2-cnt-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .art-card.wd2-art { margin: 0; width: clamp(84px, 6.4vw, 104px); border-radius: 14px; }
+/* dark (docs/DARK-MODE.md): the shared l2 frame takes Hanzo's dark on this page; light-dark() keeps bright exactly as it was */
+.wd2.l2-page { background: var(--bg); --hair: light-dark(rgba(0, 0, 0, .1), var(--border)); --muted: light-dark(#525252, var(--muted-foreground)); --soft: light-dark(#525252, var(--muted-foreground)); }
+html:not(.light) .wd2 .l2-pause:not(.dk) { background: var(--surface-overlay); }
