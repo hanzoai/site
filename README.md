@@ -3,7 +3,8 @@
 Every page of hanzo.ai, redesigned on Hanzo's own stack: **Next.js 16 (static export) · React 19 · Motion 12**, with
 light and dark mode from Hanzo's own **`@hanzo/appearance`** and **`@hanzo/design`**.
 
-- **897 pages**: every URL in hanzo.ai's sitemap, plus the home page.
+- **897 pages**: every URL in hanzo.ai's sitemap, plus the home page, and **9 new sign-up and checkout pages**
+  (`/pay`, `/signup`, `/login`…) that hand off to Hanzo's real checkout and hanzo.id ([details](#hand-offs-to-hanzos-real-flows)).
 - **Hanzo's words, numbers and links, unchanged.** The redesign changes how pages look and move, not what they say.
   Copy was checked against live hanzo.ai: 148 of 152 checked pages match word for word; the other 4 differ only in
   Hanzo's rotating demo feeds ([details](#known-differences-from-live)).
@@ -25,6 +26,7 @@ light and dark mode from Hanzo's own **`@hanzo/appearance`** and **`@hanzo/desig
 | Run or deploy it | [Run it](#run-it) · [Deploy](#deploy) |
 | Change a price, plan or checkout link | [Prices, plans and checkout links](#prices-plans-and-checkout-links) (one file: `lib/plans.js`) |
 | Understand light and dark | [Light and dark mode](#light-and-dark-mode) |
+| Confirm the sign-up and checkout hand-offs | [Hand-offs to Hanzo's real flows](#hand-offs-to-hanzos-real-flows) (one file: `lib/handoff.js`) |
 | Know where it differs from live | [Known differences from live](#known-differences-from-live) · [Before it goes live](#before-it-goes-live-on-hanzoai) |
 | Know which branch to use | **`main`**. The rest are history: [docs/BRANCHES.md](docs/BRANCHES.md) |
 
@@ -32,13 +34,16 @@ light and dark mode from Hanzo's own **`@hanzo/appearance`** and **`@hanzo/desig
 
 - **Look and motion, everywhere.** Each page has its own layout and one signature interaction, so no two pages move
   alike. Headers, menus and footers are Hanzo's own, as live.
-- **A new home page.** Every section reads in one screen; the models section is a scroll-driven 3D journey; products
-  sit in a dock you click through; live figures (model rates, research runs, commits) are read from api.hanzo.ai.
+- **A new home page.** Every section reads in one screen; the models sit in a card grid; the products section is a
+  scroll-driven 3D journey; live figures (model rates, research runs, commits) are read from api.hanzo.ai.
 - **A clearer /pricing.** Every plan of the chosen tab side by side, with the same plans, prices and links as live.
 - **Dark mode that matches live**, built from Hanzo's own tokens, and light mode kept separate so one never moves the other.
 - **Phones.** Every page was laid out and checked at 375–390px wide.
 - **Next.js 16** (from 15.5), static export.
-- **Not changed:** wording, prices, plan names, checkout links, app routes (/chat app, /pay, /signup, /login).
+- **New: sign-up and checkout pages** (`/pay`, `/pay/cart`, `/pay/confirm/card`, `/signup`, `/login`, `/auth/callback`,
+  `/onboarding`, `/docs/quickstart`, `/docs/cli`). They never collect a card, password or code; each hands off to
+  Hanzo's real system. Hanzo confirms the hand-off URLs marked CONFIRM in `lib/handoff.js` before launch.
+- **Not changed:** wording, prices, plan names, checkout plan ids; the /chat app and dashboards stay in Hanzo's app.
 - A few buy buttons were added by design; they are listed under [Known differences from live](#known-differences-from-live).
 
 Full page-by-page list: [docs/RELEASE-NOTES.md](docs/RELEASE-NOTES.md).
@@ -177,7 +182,7 @@ Enterprise and Volume to `/pricing` (`components/home/Pricing.jsx` lines 103–1
 
 ## Hand-offs to Hanzo's real flows
 
-Nine app and checkout pages from Zack's list are designed here: `/pay`, `/pay/cart`, `/pay/confirm/card`, `/signup`,
+Nine app and checkout pages are designed here: `/pay`, `/pay/cart`, `/pay/confirm/card`, `/signup`,
 `/login`, `/auth/callback`, `/onboarding`, `/docs/quickstart`, `/docs/cli` (code in `components/pages/flow/`). **This
 site never collects a card number, a password or a one-time code.** Each page shows the plan, the total and one action,
 and that action hands off to Hanzo's real system. Every hand-off URL is a named constant in **one file,

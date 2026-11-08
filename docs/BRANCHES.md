@@ -9,9 +9,9 @@ any branch can be removed once Hanzo no longer needs it.
 | `main` | **The release.** What Hanzo should build and deploy. |
 | `hanzo-handoff` | The release candidate, merged into `main` when approved. Next 16, the new home page, dark mode checked on 152 pages, copy checked against live (148 of 152 match; the other 4 are rotating demo feeds). |
 | `release-prep` | This README, release notes and this file (merged into `hanzo-handoff`). |
-| `zack-pages-1`, `zack-pages-2`, `zack-pages-3` | Further page work in review (pull requests #65, #66, #64). Not in the release until approved. |
-| `home-journey-swap` | An alternative home layout (models back to a card grid, products as the scroll journey). In review, not in the release. |
-| `dark-g1`, `dark-g2`, `dark-g3` | Dark-mode proof screenshots and small follow-ups. Not merged. |
+| `zack-pages-1`, `zack-pages-2`, `zack-pages-3` | Page redesigns and the sign-up and checkout pages (pull requests #65, #66, #64). Merged into `hanzo-handoff`. |
+| `home-journey-swap` | The home layout that ships: models as a card grid, products as the 3D scroll journey (pull request #67). Merged into `hanzo-handoff`. |
+| `dark-g1`, `dark-g2`, `dark-g3` | Dark-mode proof screenshots and small follow-ups. Not merged; kept for reference. |
 | `home-wow`, `home-models-journey`, `home-platform-dock`, `feat/buying-ctas` | Already merged into `hanzo-handoff`. |
 | `claude/*` | Working branches from individual design sessions (listed below). |
 

@@ -2,7 +2,8 @@
 
 ## What this release is
 
-A full redesign of hanzo.ai: **897 pages**. That is every URL in hanzo.ai's sitemap, plus the home page.
+A full redesign of hanzo.ai: **906 pages**. That is **897 site pages** (every URL in hanzo.ai's sitemap, plus the
+home page) and **9 new sign-up and checkout pages** (listed under "Sign-up and checkout (new)").
 
 - **The words, prices and links are the same as live hanzo.ai.** The redesign changes how pages look and move, never
   what they say. Copy was checked against live hanzo.ai on 8 Nov 2026: 148 of the 152 pages checked match word for
@@ -13,7 +14,8 @@ A full redesign of hanzo.ai: **897 pages**. That is every URL in hanzo.ai's site
   The old pattern every page shared (hero, then pinned scroll chapters, then proof, then a closing band) is gone.
 - **Hanzo's palette only.** Pages use Hanzo's black, white and greys. Colour comes from Hanzo's own model art, films
   and logos.
-- The only additions are a few buy buttons, listed at the end under "Added by design (not on live)".
+- The only additions are the 9 sign-up and checkout pages and a few buy buttons, listed at the end under "Added by
+  design (not on live)".
 
 ---
 
@@ -23,54 +25,73 @@ A full redesign of hanzo.ai: **897 pages**. That is every URL in hanzo.ai's site
 The hero is live hanzo.ai's own hero, kept as it is. A prompt types into the desktop app while the phone answers and
 the agent roster rolls, over a dotted field that swells under the pointer. Below it:
 - **Backed by / Trusted by**: logo marquees (white logos in dark mode, black in light).
-- **Models**: a 3D journey. Scrolling moves a camera through the nine models, Enso to Mori. Drag to turn one, click
-  to open its page. Phones, reduced motion and browsers without 3D get a static card grid.
-- **Products**: a dock with a stage.
+- **Models**: a card grid, Enso to Mori. The Enso feature card and eight model cards fit on one screen. Each film
+  plays while it is on screen, and a click opens the model's page.
+- **Products**: a 3D journey, App to Team. On wide screens the section holds in place and scrolling moves a camera
+  through Hanzo's nine products in dock order. Each one is a graphite slab carrying its own screen, beside its name,
+  address and links, word for word. Drag to turn one, click to open it, or use the dock to jump to any product.
+  Phones, reduced motion and browsers without 3D get the dock with a stage.
 - **Agents, Race, Cheaper, Pareto**: live figures on speed and cost, read from Hanzo's API.
 - **Open source**, then **Pricing** (from the same price list as /pricing).
 - Each section fits on one screen. A quiet "on this page" index on the right edge shows where you are and jumps to
   any section.
 
 ### Pricing (`/pricing`)
-Every plan in the chosen tab (Personal, Team or API) sits side by side, with its price, billing line, button and
-every feature. On a phone the plans stack. Pro is the recommended plan. Its usage ladder walks once ($15, $45, $95,
-$195), then you can take over. Each paid rung goes to its own checkout, as on live. "Compare plans" opens a sheet
-with every personal plan side by side, showing what each step up adds. Team has a seat mixer.
+Rebuilt to the home page's standard: each section fits on one screen, over Hanzo's halftone. Every plan in the
+chosen tab (Personal, Team or API) sits side by side, with its price, billing line, button and every feature. On a
+phone the plans stack. Pro is marked Recommended and carries its usage switch on its card (3x, 5x, 15x, unlimited:
+$15, $45, $95, $195). It never moves by itself, so the price you read is the one you get. Each paid rung goes to its
+own checkout, as on live. "Compare plans" is now a rising stair of the personal plans: each step shows its price, the
+three lines that differ and its own "Try Hanzo" button, and "Read more" opens the full line-by-line table. Enso's
+per-token rates sit in a dark room of their own. Team has a seat mixer.
 
 ### Chat (`/chat`)
-"Ask anything. Enso picks the model." sits over a working chat window. It runs itself once: the question visibly
-routes through Enso to the model that answers, then it rests with a replay button. Below, six short scenes show what
-Chat does. Then comes a card for whichever model answers: point at a name to swap the card, and open it to go to that
-model's page.
+Rebuilt to the home page's standard: each section fits on one screen. "Ask anything. Enso picks the model." sits over
+a working chat window. It runs itself once: the question visibly routes through Enso to the model that answers, then
+it rests with a replay button. A prompt in the hero lets you type a question and land in Hanzo Chat. Chat's six tools
+are now the page's dark room, a set of tiles that opens like a curtain. Then comes a card for whichever model answers:
+point at a name to swap the card, and open it to go to that model's page. The page closes on "Ask anything" as a real
+prompt, beside the three personal plans with working Go and Pro checkouts.
 
 ### Models (`/models`)
-The first screen is Hanzo's model grid, drawn as live hanzo.ai draws it. Films play, and a light follows the pointer
-or walks the cards as you scroll. Any card opens into its model's page. Further down:
-- the three families in one dark room;
-- a catalogue you filter with chips, where the cards re-flow;
-- every model priced;
-- a sample request that swaps its model by itself.
+Rebuilt to the home page's standard: each section fits on one screen. The first screen is Hanzo's model grid, drawn
+as live hanzo.ai draws it. Films play, and a light follows the pointer or walks the cards as you scroll. Any card
+opens into its model's page. Further down:
+- the catalogue, now the centrepiece: every model in one list, filtered by family, price or search, each row with its
+  price in and out per million tokens and "Use it now";
+- the three families as tiles in the page's dark room;
+- Enso against Zen, and Kai's benchmark figures;
+- a sample request that swaps its model by itself, with "Get free API key".
 
 A collapsed "Every model" list links all 544 model and maker pages from here.
 
 ### About (`/about`)
-"Chasing the Pareto Frontier of AI" sits over the frontier itself, full width. The frontier draws itself, and
-pointing at it reads out the year under your hand. Hanzo's statement lights up word by word as you read it. The six
-reasons Hanzo builds are tiles that grow into full sheets you can page through. The lede's four trade-offs are
-switches, and none turns another off ("Pick two? Keep all four."). The old pinned scene is gone.
+Rebuilt to the home page's standard: each section fits on one screen. "Chasing the Pareto Frontier of AI" sits over
+the frontier itself, full width. The frontier draws itself, and pointing at it reads out the year under your hand.
+Hanzo's statement lights up word by word as you read it. The six reasons Hanzo builds are tiles that grow into full
+sheets you can page through. The lede's four trade-offs are switches, and none turns another off ("Pick two? Keep all
+four."). The open-source section is the page's dark room, the four runtimes are lit plates that tilt in, and the page
+closes on "Try Hanzo" and "Book a call". The old pinned scene is gone.
 
 ### Dev (`/dev`)
-"Describe the change. Dev ships it." Dev works in a session that runs by itself. Beside it, the changed file is a
-before/after slider: when the change lands, the divider sweeps across on its own, then you can drag it. Below:
+Rebuilt to the home page's standard: each section fits on one screen. "Describe the change. Dev ships it." Dev works
+in a session that runs by itself. Beside it, the changed file is a before/after slider: when the change lands, the
+divider sweeps across on its own, then you can drag it. The hero offers "Get Hanzo Dev, $8/month" (Go's checkout)
+beside "Open Dev". Below:
+- the race in the page's dark room ("3.02× faster on the same coding tasks"), where each side replays its median
+  task at the speed it actually ran;
 - where Dev runs (terminal, web, cloud, Slack), on a rail you can throw;
-- a race in a dark room, where each side replays its median task at the speed it actually ran;
-- install as three tabs.
+- install as three tabs, then the source, questions and a paste-into-any-agent line;
+- a close that repeats the headline and the Go offer.
 
 ### Enso (`/enso`)
-Hanzo's own hero, then Enso's film on white. The page's main piece is a switchboard. Requests stream through Enso,
-which sends each to the tier made for it (Flash, Pro or Ultra), and you can send Hanzo's own task words by hand. A
-GPQA Diamond explorer puts any model beside Enso's three tiers, in a table you can sort by score or by cost. In dark
-mode the particle ring now draws in the light foreground colour (it was invisible before).
+Rebuilt to the home page's standard: each section fits on one screen. Prices and a way to buy are now in the first
+screen: Hanzo's own hero over a band of the three tiers (Flash, Pro, Ultra), each with its prices in and out, what it
+is for, and "Try Hanzo". The page's main piece is a switchboard in a dark room that opens like a curtain. Requests
+stream through Enso, which sends each to the tier made for it, and you can send Hanzo's own task words by hand. Then
+come the models as tiles and the GPQA Diamond explorer ("A New Pareto Frontier of Intelligence"), which puts any
+model beside Enso's three tiers in a table you can sort by score or by cost. In dark mode the particle ring draws in
+the light foreground colour (it was invisible before).
 
 ### Bot (`/bot`)
 The org chart is the hero. Someone mentions a bot, a packet runs down the chart to that bot and across to the
@@ -84,16 +105,21 @@ tool shows how long Zen 6 takes to read prompts of different sizes on one DGX Sp
 repeated deployment block and the second dark room are gone.
 
 ### Studio (`/studio`)
-The hero is the product: a monitor and a multi-track timeline that play by themselves. Grab the playhead and it's
-yours. Then a wide-screen frame pins, and scrolling performs Hanzo's camera moves on a still (Dolly In, Crane Rise,
-360° Orbit). The six creative models sit on a film strip, and each frame opens its model page. "Studio or Design?"
-points you to the right product.
+Rebuilt to the home page's standard: each section fits on one screen. The hero is the product: a monitor and a
+multi-track timeline that play by themselves. Grab the playhead and it's yours. "See plans, from $8/month" sits right
+beside "Launch". Then comes one cinema screen in a dark room: the curtain and letterbox open as you arrive, and
+Hanzo's camera moves (Dolly In, Crane Rise, 360° Orbit) run on stills one after another, or pick one to hold it. The
+six creative models sit on a lit film strip, and each frame opens its model page. "Studio or Design?" points you to
+the right product, and the page closes on a three-step ladder: launch Studio, see plans, or open Design.
 
 ### Benchmarks (`/benchmarks`)
-A model launch told as a story, one idea per screen. Right under the headline is a live race at Hanzo's measured
-ratios, and you pick what races: Zen 6 builds, D-LSA against full attention at a chosen context length, or the
-agent CodeRace scenarios. Full tables, methods and runs open in sheets. Tick the suites that look like your work and
-the summary re-adds itself for just those. The pinned chapters and scroll wipes are gone.
+A model launch told as a story, rebuilt to the home page's standard: each section fits on one screen and opens to
+the rest through tabs, folds and sheets. Right under the headline is a live race at Hanzo's measured ratios, and you
+pick what races: Zen 6 builds, D-LSA against full attention at a chosen context length, or the agent CodeRace
+scenarios. Every result now has a way to buy beside it ("Start on Hanzo Cloud", plus Go or "View Models & Pricing").
+Zen 6 has a dark room that opens like a curtain, and Kai's sixteen suites are tiles that tilt in and open to their
+full numbers. Tick the suites that look like your work and the summary re-adds itself for just those. The pinned
+chapters and scroll wipes are gone.
 
 ### Agents (`/agents`)
 A dark room with Koma's film. A numbered terminal runs the five sign-up steps once. "Questions" is a conversation:
@@ -101,9 +127,12 @@ pick a question and Hanzo answers on screen, word by word, in the page's own wor
 plain numbered block, and each step marks its own lines. Nothing pins.
 
 ### Blog (`/blog`)
-A magazine front page. Under the "News & Guides." masthead, the six latest posts take the cover in turn, each with
-its own art plate. Hover or tap a headline in the index to bring it to the cover. The masthead lede lights up word
-by word. A publishing strip shows every month Hanzo has posted in. Tap a month to narrow the contents to it.
+A magazine front page, rebuilt to the home page's standard: each section fits on one screen. Under the "News &
+Guides." masthead, the six latest posts take the cover in turn, each with its own art plate, and the plate swings
+back in 3D like a turning cover. Hover or tap a headline in the index to bring it to the cover. The masthead lede
+lights up word by word. The contents are now one pane beside the publishing strip, which shows every month Hanzo has
+posted in. Tap a month to narrow the pane to it. Each post now ends in a dark room with its own product links and
+the newsletter.
 
 ### Customers (`/customers`)
 Hanzo's lede, right under the headline, lights up word by word as you read it. The case plate turns between
@@ -170,10 +199,35 @@ Any layer opens its sheet. "Ask the map": type a word and the layers whose descr
   at Hanzo's rates.
 - **Grants (`/grants`)**: the three ways in land like stamps. Your application writes itself onto a card as you
   type.
-- **Beta (`/beta`)**: pressing a pass stamps its name onto it, then it opens into a full sheet. The application asks
-  one question at a time beside the pass you chose.
+- **Beta (`/beta`, `/beta/apply`)**: rebuilt to the home page's standard, each section on one screen. "Get there
+  first." Pressing a pass stamps its name onto it, then it opens into a full sheet. A new "Skip the wait, go paid"
+  section sets the Beta access pass beside the Go plan, straight to checkout, and the page closes in a dark room with
+  Feedback and Book a call. The application asks one question at a time beside the pass you chose, and the pass now
+  carries the same "Skip the wait, go paid" route to Go.
 - **Buying specialist (`/buying-specialist`)**: a conversation on the left. On the right, a quote sheet fills one
   square per seat and re-prices as you go.
+
+### Sign-up and checkout (new)
+Nine new pages for the moment someone signs up or pays. **This site never collects a card number, a password or a
+one-time code.** Each page shows the plan, the total and one clear action, and that action hands off to Hanzo's real
+checkout or to Hanzo's sign-in (hanzo.id).
+- **Pay (`/pay`)**: a doorway. A link naming a plan goes on to the cart; anything else goes to /pricing.
+- **Cart (`/pay/cart`)**: one card with the plan, a card-only total and one button.
+- **Card checkout (`/pay/confirm/card`)**: the plan, what is included and the total, then "Continue to card payment"
+  to Hanzo's real card form. Every plan link now resolves to a real plan; no more "Cannot show this plan."
+- **Sign up (`/signup`)**: "Create your Hanzo account", with Google or email on hanzo.id, and the chosen plan and
+  price beside it.
+- **Log in (`/login`)**: split from sign-up. The header's Log in now opens it.
+- **Sign-in return (`/auth/callback`)**: a calm waiting state, then the next step (checkout, onboarding or Chat). It
+  no longer dead-ends, and a failed sign-in says so plainly with "Try again".
+- **Onboarding (`/onboarding`)**: two steps, what you will use first, then a plan from Free to Ultra. Paid plans go
+  on to checkout.
+- **Quickstart (`/docs/quickstart`)**: set your key and make your first request, with "Get an API key, free".
+- **CLI docs (`/docs/cli`)**: install, sign in and start a session, with the same API-key button.
+
+**Before launch:** a few hand-off addresses could not be read from live hanzo.ai and are marked CONFIRM in
+`lib/handoff.js` (the card form, the sign-in address, the Google and sign-up settings, and where sign-in finishes).
+Hanzo must confirm them before launch. README, "Hand-offs to Hanzo's real flows", lists each one.
 
 ### Product pages
 - **API (`/api`)**: the hero terminal types a request to api.hanzo.ai and streams back the answer. Pick another
@@ -299,7 +353,7 @@ one also reads the address you tried and suggests the pages you may have meant.
   their device for reduced motion see finished, still states. Things that move by themselves can be paused.
 - **Live figures**: model rates, research figures and plan prices are read from api.hanzo.ai at build time. If a
   source fails, the build stops rather than ship stale numbers. The home page also re-reads figures in the browser.
-- **Technology**: Next.js 16 (upgraded from 15.5, static export), React 19, Motion 12. The 3D library loads only when the home models
+- **Technology**: Next.js 16 (upgraded from 15.5, static export), React 19, Motion 12. The 3D library loads only when the home products
   section comes near, never in the first load.
 - **One price file**: plan prices and checkout links live in `lib/plans.js`, and every page reads them from there.
 
