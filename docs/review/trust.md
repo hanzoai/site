@@ -1,5 +1,7 @@
 # /trust — James-eye review
 
+Ready: 8 Nov 01:10, live copycheck missing 0 of 70 against hanzo.ai, Hanzo's images kept (live /trust shows none beyond the header). The 16 control titles, which lived only inside the closed sheets, now show as a quiet numbered index under each group's lede; each row opens its sheet at that control. taste/unique/parity OK (87/87, 6/6); 0 console errors, no overlap at 1470 and 375.
+
 Verdict: 8/10
 First complaint: "The top is right now: the drawers pull themselves out, the papers look like papers, the search shows itself working. But from 'Where we stand' down it turns back into paragraphs in boxes, a grey box of text and then a black box of text. And on the phone the open drawer has a big empty hole in it before 'Ask for it'."
 

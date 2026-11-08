@@ -58,7 +58,7 @@ Done here: Published / On request comes from whether Hanzo links the document; S
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /trust`: 0 missing
 
-Done here: Parity text 87/87, links 6/6. The 16 controls sit in five kit `DetailSheet`s under real h2s; the cabinet is an APG tablist with every tray in the HTML; the four stances are a `dl` whose closed bodies stay in the HTML (`hidden="until-found"` on phones, `inert` off-stage on desktop).
+Done here: Parity text 87/87, links 6/6. The 16 controls sit in five kit `DetailSheet`s under real h2s, and each group now lists its control titles in Hanzo's words as a quiet two-column index under its lede (each row opens the sheet at that control; live copycheck 70/70, 8 Nov); the cabinet is an APG tablist with every tray in the HTML; the four stances are a `dl` whose closed bodies stay in the HTML (`hidden="until-found"` on phones, `inert` off-stage on desktop).
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
