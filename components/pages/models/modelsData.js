@@ -44,13 +44,15 @@ const link = (a) => ({ label: clean(textOf(a)), href: a.a.href });
 function cardOf(a) {
   const p = find(a, tag('p'));
   const spans = findAll(a, slot('text')).filter((s) => s.t === 'span').map((s) => clean(textOf(s))).filter(Boolean);
-  const name = spans[0] || '';
+  // a card with no picture shows the maker's initial first ("d"): the name is the first span longer than one letter
+  const isId = (t) => /^~?[\w.-]+\/[^\s]+$/.test(t);
+  const name = spans.find((t) => t.length > 1 && !isId(t)) || spans[0] || '';
   const ctx = spans.find((s, i) => i > 0 && /^[\d.]+[KM]$/.test(s)) || null;
   const last = a.c.filter(isN).slice(-1)[0];
   const tags = last && last !== p && last.t === 'div' ? findAll(last, slot('text')).map((s) => clean(textOf(s))).filter(Boolean) : [];
-  // hanzo.ai prints each card's model id in mono under its name (8 Nov); older captures have none
-  const mono = findAll(a, slot('text')).find((s) => s.t === 'span' && /\bfont_mono\b/.test((s.a && s.a.class) || '') && !/^[\d.]+[KM]$/.test(clean(textOf(s))));
-  return { href: a.a.href, name, ctx, desc: p ? clean(textOf(p)) : '', tags, ...(mono ? { mid: clean(textOf(mono)) } : {}) };
+  // hanzo.ai prints each card's model id in mono under its name (8 Nov; "~maker/x-latest" for an alias); older captures have none
+  const mid = spans.find(isId);
+  return { href: a.a.href, name, ctx, desc: p ? clean(textOf(p)) : '', tags, ...(mid ? { mid } : {}) };
 }
 
 const providerCache = new Map();
@@ -63,6 +65,9 @@ export function providerCards(slug) {
   } catch { /* a provider without a page */ }
   // each sibling's live rate, as hanzo.ai printed it
   cards.forEach((c) => { const t = live(c.href.slice(1)); const pr = after(t, 'Price'); c.price = pr || null; c.rate = rate(pr); c.tokens = tokens(c.ctx); c.id = c.href.split('/').slice(2).join('/'); });
+  // a model hanzo.ai lists that this rebuild has no page for (one added since the content capture, e.g. a :free
+  // variant) opens Hanzo's own page in a new tab rather than a 404 here
+  cards.forEach((c) => { if (!exists(c.href)) c.href = 'https://hanzo.ai' + c.href; });
   providerCache.set(slug, cards);
   return cards;
 }

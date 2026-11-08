@@ -16,7 +16,7 @@ import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
-import { Field, CopyStatus, useCatalog, useShelf, rateFrom, money } from './parts';
+import { Field, CopyStatus, useCatalog, rateFrom, money } from './parts';
 import './models.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
@@ -25,8 +25,9 @@ const SORTS = [['shelf', 'As listed'], ['ctx', 'Context window'], ['rate', 'Outp
 
 export default function ProviderShelf({ doc }) {
   const cat = useCatalog(true);
-  // the shelf as hanzo.ai lists it now (api.hanzo.ai/v1/models), the captured one until the gateway answers
-  const list = useShelf(doc.slug, doc.cards);
+  // hanzo.ai's shelf is no longer the gateway's list (it shows :free variants the gateway omits and drops models the
+  // gateway still serves), so the shelf is the capture of hanzo.ai's own page; rates still follow api.hanzo.ai
+  const list = doc.cards;
   const cards = list.map((c, i) => ({ ...c, n: i, rate: rateFrom(cat, c.id, c.rate) }));
   const [sort, setSort] = useState('shelf');
   const [mod, setMod] = useState('all');
