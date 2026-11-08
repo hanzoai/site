@@ -1,6 +1,6 @@
 /* ---------- History, v3 (editorial). Ink, greys and silvers only (JAMES.md 7). ---------- */
 /* the page's own deck tokens (the shared ones resolve to off-deck Apple greys) */
-.xhi { --xhi-ink: #0a0a0a; --xhi-paper: #fff; --xhi-card: #f5f5f5; --xhi-snow: #fafafa; --xhi-mid: #a3a3a3; --xhi-low: #737373; --xhi-line: rgba(0, 0, 0, .1); --xhi-line-2: rgba(0, 0, 0, .25); --xhi-shade: rgba(0, 0, 0, .18); --xhi-dk-line: rgba(255, 255, 255, .16); --xhi-dk-soft: rgba(255, 255, 255, .55); --acc: var(--xhi-ink); overflow-x: clip; background: var(--xhi-paper); }
+.xhi { --xhi-ink: #0a0a0a; --xhi-paper: #fff; --xhi-card: #f5f5f5; --xhi-snow: #fafafa; --xhi-mid: #a3a3a3; --xhi-low: #737373; --xhi-line: rgba(0, 0, 0, .1); --xhi-line-2: rgba(0, 0, 0, .25); --xhi-shade: rgba(0, 0, 0, .18); --xhi-dk-line: rgba(255, 255, 255, .16); --xhi-dk-soft: rgba(255, 255, 255, .55); --acc: var(--xhi-ink); overflow-x: clip; background: var(--bg); }
 
 /* 1. first screen: display type, the lede, and the eras a playhead keeps crossing */
 .xhi-hero { min-height: calc(100svh - 76px); display: flex; flex-direction: column; padding: clamp(40px, 7vh, 88px) 0 clamp(32px, 5vh, 56px); }
@@ -30,7 +30,7 @@
 .xhi-rail.hand:active { cursor: grabbing; }
 .xhi-clips { list-style: none; margin: 0; padding: 0 max(var(--v2-pad), calc((100vw - var(--v2-max)) / 2)); display: flex; gap: clamp(16px, 2vw, 28px); width: max-content; touch-action: pan-y; }
 .xhi-clips li { scroll-snap-align: start; scroll-margin-left: var(--v2-pad); }
-.xhi-clip { width: clamp(290px, 29vw, 420px); min-height: clamp(400px, 34vw, 500px); box-sizing: border-box; padding: clamp(24px, 2.4vw, 36px); display: grid; grid-template-rows: auto auto 1fr auto; gap: 20px; background: var(--xhi-paper); border-radius: 16px; box-shadow: 0 24px 60px -16px var(--xhi-shade); transform: rotate(var(--r)); transition: transform .6s var(--ease); user-select: none; }
+.xhi-clip { width: clamp(290px, 29vw, 420px); min-height: clamp(400px, 34vw, 500px); box-sizing: border-box; padding: clamp(24px, 2.4vw, 36px); display: grid; grid-template-rows: auto auto 1fr auto; gap: 20px; background: var(--x-raised); border-radius: 16px; box-shadow: 0 24px 60px -16px var(--xhi-shade); transform: rotate(var(--r)); transition: transform .6s var(--ease); user-select: none; }
 .xhi-clips li:hover .xhi-clip { transform: rotate(0deg) translateY(-6px); }
 .xhi-clip-k { margin-top: -8px; font: 500 13px/1 var(--mono); letter-spacing: .1em; color: var(--faint); }
 .xhi-clip-f { font-size: 44px; font-weight: 220; line-height: .95; letter-spacing: -.03em; color: var(--ink); }
@@ -42,10 +42,10 @@
 /* a year's figure, and the rest of its story one press away */
 .xhi-yr-fig { font-size: 44px; font-weight: 220; line-height: 1; letter-spacing: -.03em; color: var(--ink); }
 .xhi-more { display: grid; gap: 10px; }
-.xhi-more > summary { list-style: none; display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--xhi-line); cursor: pointer; color: var(--ink); transition: transform .3s cubic-bezier(.16, 1, .3, 1), border-color .15s cubic-bezier(0, 0, .2, 1); }
+.xhi-more > summary { list-style: none; display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--x-e10); cursor: pointer; color: var(--ink); transition: transform .3s cubic-bezier(.16, 1, .3, 1), border-color .15s cubic-bezier(0, 0, .2, 1); }
 .xhi-more > summary::-webkit-details-marker { display: none; }
 .xhi-more[open] > summary { transform: rotate(45deg); }
-@media (hover: hover) { .xhi-more > summary:hover { border-color: var(--xhi-line-2); } }
+@media (hover: hover) { .xhi-more > summary:hover { border-color: light-dark(rgba(0, 0, 0, .25), var(--border-selected)); } }
 .xhi-you-y { font-size: 64px; font-weight: 220; line-height: 1; letter-spacing: -.03em; color: var(--ink); }
 .xhi-you-a .xhi-plate { grid-column: auto; grid-row: auto; aspect-ratio: 16 / 9; opacity: 1; transform: none; }
 
@@ -64,7 +64,7 @@
 .xhi-years { display: grid; gap: clamp(56px, 6vw, 88px); margin-top: clamp(40px, 5vw, 72px); }
 .xhi-yr { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--v2-gut); align-items: start; scroll-margin-top: 96px; padding-top: 22px; border-top: 1px solid var(--hair); }
 .xhi-yr-n { grid-column: 1 / 3; margin: 0; font-size: 44px; font-weight: 220; line-height: .9; letter-spacing: -.04em; color: var(--ink); }
-.xhi-plate { grid-column: 3 / 7; align-self: start; position: relative; width: 100%; aspect-ratio: 16 / 10; border-radius: 24px; overflow: hidden; background: var(--xhi-card); display: grid; place-items: center; }
+.xhi-plate { grid-column: 3 / 7; align-self: start; position: relative; width: 100%; aspect-ratio: 16 / 10; border-radius: 24px; overflow: hidden; background: light-dark(#f5f5f5, var(--muted)); display: grid; place-items: center; }
 .xhi-plate img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .6s var(--ease); }
 .xhi-plate.ok img { opacity: 1; }
 .xhi-plate video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -94,8 +94,8 @@
 .xhi-you-g { align-items: center; }
 .xhi-you-g .v2s-kick { margin-bottom: 24px; }
 .xhi-you-in { display: flex; align-items: center; gap: clamp(8px, 1.4vw, 20px); margin-top: clamp(32px, 4vw, 56px); }
-.xhi-you-in button { flex: none; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--hair); background: var(--xhi-paper); color: var(--ink); font: 400 26px/1 var(--sans); cursor: pointer; transition: border-color .2s, transform .2s var(--ease); }
-@media (hover: hover) { .xhi-you-in button:hover { border-color: var(--xhi-line-2); } }
+.xhi-you-in button { flex: none; width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--hair); background: var(--x-raised); color: var(--ink); font: 400 26px/1 var(--sans); cursor: pointer; transition: border-color .2s, transform .2s var(--ease); }
+@media (hover: hover) { .xhi-you-in button:hover { border-color: light-dark(rgba(0, 0, 0, .25), var(--border-selected)); } }
 .xhi-you-in button:active { transform: scale(.94); }
 .xhi-you-in input { width: 4.1ch; min-width: 0; padding: 0 0 6px; border: 0; border-bottom: 2px solid var(--ink); border-radius: 0; background: transparent; color: var(--ink); font: 220 64px/1 var(--sans); letter-spacing: -.05em; text-align: center; font-variant-numeric: tabular-nums; }
 .xhi-you-in input:focus-visible { outline: none; border-bottom-width: 4px; }
@@ -113,8 +113,8 @@
 .xhi-plate-word b { font: 220 clamp(30px, 2.9vw, 44px)/1 var(--sans); letter-spacing: -.035em; text-wrap: balance; max-width: 14ch; }
 .xhi-plate-word .x-mono { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--xhi-dk-soft); }
 .xhi-plate-y { position: absolute; top: 8%; right: 8%; font-style: normal; font-size: 12px; letter-spacing: .12em; color: var(--xhi-dk-soft); }
-.xhi-plate.lt .xhi-plate-word { background: var(--xhi-card); color: var(--xhi-ink); box-shadow: inset 0 0 0 1px var(--xhi-line); }
-.xhi-plate.lt .xhi-plate-word .x-mono, .xhi-plate.lt .xhi-plate-y { color: var(--xhi-low); }
+.xhi-plate.lt .xhi-plate-word { background: light-dark(#f5f5f5, var(--secondary)); color: var(--ink); box-shadow: inset 0 0 0 1px var(--x-e10); }
+.xhi-plate.lt .xhi-plate-word .x-mono, .xhi-plate.lt .xhi-plate-y { color: light-dark(#737373, var(--text-tertiary)); }
 .xhi-plate.photo.ok .xhi-plate-word { opacity: 0; }
 /* a logo plate keeps its figure: Hanzo's logo for the year sits at the top in the plate's own ink (one tone, no hue),
    the figure under it; the second logo (2018) takes the other corner */
@@ -124,8 +124,8 @@
 .xhi-plate.logo img.two { inset: 8% 8% auto auto; width: 30%; height: 14%; object-position: 100% 0; }
 .xhi-plate.logo.ok .xhi-plate-y { opacity: 0; }
 /* your year, out of range: the last plate stays, dimmed under a gradient, and the sentence takes the title's place */
-.xhi-plate.dim::after { content: ''; position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(245, 245, 245, .35), rgba(245, 245, 245, .92)); }
-.xhi-you-a { display: grid; gap: 14px; align-content: start; min-height: 640px; padding: clamp(28px, 3.4vw, 48px); border-radius: 24px; background: var(--xhi-card); }
+.xhi-plate.dim::after { content: ''; position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, light-dark(rgba(245, 245, 245, .35), color-mix(in srgb, var(--background) 35%, transparent)), light-dark(rgba(245, 245, 245, .92), color-mix(in srgb, var(--background) 92%, transparent))); }
+.xhi-you-a { display: grid; gap: 14px; align-content: start; min-height: 640px; padding: clamp(28px, 3.4vw, 48px); border-radius: 24px; background: light-dark(#f5f5f5, var(--muted)); }
 .xhi-you-b { margin: 0; font: 500 13px/1.3 var(--mono); letter-spacing: .06em; color: var(--soft); }
 .xhi-you-l { margin-top: 16px; }
 .xhi-you-p { display: flex; flex-wrap: wrap; gap: 0 20px; }
@@ -182,3 +182,16 @@
 /* links press down 1px, like the kit's */
 .xhi-posts a, .xhi-you-p a, .xhi-clip-s a { transition: transform 90ms cubic-bezier(0, 0, .2, 1); }
 .xhi-posts a:active, .xhi-you-p a:active, .xhi-clip-s a:active { transform: translateY(1px); }
+
+/* dark (docs/DARK-MODE.md): the shared story kit pins its ink to black on .v2s, so the page hands it Hanzo's dark tokens;
+   the clippings and the dark plates sit as Hanzo's cards with a hairline; a logo drawn in one ink tone turns light on a
+   plate gone dark; the photos stay as they are */
+html:not(.light) .xhi { --acc: var(--foreground); --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --hair: var(--border); }
+html:not(.light) .xhi-clip { box-shadow: inset 0 0 0 1px var(--border), 0 24px 60px -16px var(--surface-scrim); }
+html:not(.light) .xhi-plate-word { background: var(--card); box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .xhi-plate.lt .xhi-plate-word { background: var(--secondary); }
+html:not(.light) .xhi-plate.logo.lt img { filter: brightness(0) invert(1); }
+/* the closing band's ask: the shared band rule fills it with --x-fill and black type, which reads black on black in dark;
+   here it is Hanzo's primary ask */
+html:not(.light) .xhi .x-band .x-btn.solid { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+@media (hover: hover) { html:not(.light) .xhi .x-band .x-btn.solid:hover { background: var(--primary-hover); border-color: var(--primary-hover); } }
