@@ -19,7 +19,10 @@ function Dots({ host }) {
   useEffect(() => {
     const cv = ref.current, cx = cv.getContext('2d'), el = host.current;
     const G = 10, R = 170;
-    let W = 0, H = 0, cols = 0, rows = 0, base = null, raf = 0, px = -1e4, py = -1e4, energy = 0, vis = true;
+    let W = 0, H = 0, cols = 0, rows = 0, base = null, raf = 0, px = -1e4, py = -1e4, energy = 0, vis = true, ink = '';
+    // the dot colour is the page's ink (.x-dots { color: var(--ink) }) at 17%: it follows light and dark
+    const tone = () => { const m = getComputedStyle(cv).color.match(/[\d.]+/g) || [10, 10, 10]; ink = `rgba(${m[0]},${m[1]},${m[2]},.17)`; };
+    tone();
     const field = (x, y) => {
       const ex = Math.max(1 - x / (W * 0.3), (x - W * 0.66) / (W * 0.34), 0);
       const ey = Math.min(1, 0.3 + (y / H) * 0.95);
@@ -28,7 +31,7 @@ function Dots({ host }) {
     };
     const draw = () => {
       cx.clearRect(0, 0, W, H);
-      cx.fillStyle = 'rgba(10,10,10,.17)';
+      cx.fillStyle = ink; // the theme's ink at 17% (light: rgba(10,10,10,.17), as before; dark: Hanzo's #e5e5e5 dots)
       cx.beginPath();
       for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
         const x = i * G, y = j * G;
@@ -66,7 +69,10 @@ function Dots({ host }) {
     const ro = new ResizeObserver(size);
     ro.observe(el);
     el.addEventListener('pointermove', move);
-    return () => { io.disconnect(); ro.disconnect(); el.removeEventListener('pointermove', move); cancelAnimationFrame(raf); };
+    // the theme can change while the page is open (the device setting): redraw in the new ink
+    const mo = new MutationObserver(() => { tone(); if (base) draw(); });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => { io.disconnect(); ro.disconnect(); mo.disconnect(); el.removeEventListener('pointermove', move); cancelAnimationFrame(raf); };
   }, [host]);
   return <canvas ref={ref} className="x-dots" aria-hidden="true" />;
 }

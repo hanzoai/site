@@ -8,7 +8,7 @@
 .lv-body { overflow-x: clip; }
 
 /* ---------- Stage ---------- */
-.lv-stage { position: relative; height: calc(210svh - 60px); background: #fff; }
+.lv-stage { position: relative; height: calc(210svh - 60px); background: var(--x-raised); }
 .lv-pin { position: sticky; top: var(--x-top, 60px); height: calc(100svh - 60px); min-height: 560px; overflow: hidden; }
 .lv-film { position: absolute; inset: 0; background: #000; overflow: hidden; }
 .lv-film-in { position: absolute; inset: 0; transform-origin: 50% 50%; }
