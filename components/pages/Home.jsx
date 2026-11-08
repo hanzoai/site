@@ -14,9 +14,11 @@ import Cheaper from '../Cheaper';
 import Pareto from '../Pareto';
 import Open from '../Open';
 import Pricing from '../home/Pricing';
+import { Figures } from '../home/useFigures';
 import { A } from '../kit';
 import C from '../../content';
 import './Home.css';
+import '../home/wow.css';
 
 /* Beyond: the section index, read from the headings on the page (desktop only; phones have the thumb bar) */
 function Spine() {
@@ -40,12 +42,12 @@ function Spine() {
   );
 }
 
-export default function Home() {
+export default function Home({ figures }) {
   return (
+    <Figures.Provider value={figures}>
     <main>
       <A to="/beta" className="x-ann">
         <span>Apply for Beta Access or Start Free</span>
-        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </A>
       <Hero />
       <Marquee items={C.backed} label="Backed by" />
@@ -60,5 +62,6 @@ export default function Home() {
       <Marquee items={C.trusted} label="Trusted by" reverse />
       <Spine />
     </main>
+    </Figures.Provider>
   );
 }

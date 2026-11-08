@@ -159,6 +159,7 @@ function Way({ w }) {
 
 export default function Open() {
   return (
+    <>
     <section className="x-sec x-oss" id="open-source" aria-labelledby="open-source-h">
       <div className="x-wrap">
         <Head title="We ship every day. Fork anything. Build your own." lede="Every layer of the stack is open, hackable and modifiable — recursively self-upgrading AI from the ground up. Fork, remix, and build the apps only you can imagine." />
@@ -168,12 +169,15 @@ export default function Open() {
       <Rail />
       <div className="x-wrap">
         <div className="x-row-links"><Arrow href="/open-source">Explore every repository</Arrow></div>
-        <div className="x-ways">{WAYS.map((w) => <Way key={w[0]} w={w} />)}</div>
-        <div className="x-row-links">
-          <Arrow href="https://git.hanzo.ai/explore/repos">Explore the forge</Arrow>
-          <Arrow href="/grants">OSS &amp; research credit grants</Arrow>
-        </div>
       </div>
     </section>
+    <section className="xw-ways">
+      <div className="x-ways">{WAYS.map((w) => <Way key={w[0]} w={w} />)}</div>
+      <div className="x-row-links">
+        <Arrow href="https://git.hanzo.ai/explore/repos">Explore the forge</Arrow>
+        <Arrow href="/grants">OSS &amp; research credit grants</Arrow>
+      </div>
+    </section>
+    </>
   );
 }

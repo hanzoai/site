@@ -5,8 +5,8 @@
 // build), so the first paint and a failed read show the same figures.
 // The three endpoints answer any origin (access-control-allow-origin: *), so the read runs wherever the page is served:
 // hanzo.ai, a preview or localhost.
-import { useEffect, useState } from 'react';
-import { SNAPSHOT, figuresOf } from './figures';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { figuresOf } from './figures';
 import { readResearch, readModels } from '../../lib/liveSources.mjs';
 
 let once = null; // one read per page load, shared by the three cards
@@ -17,8 +17,11 @@ const get = async (url) => {
 };
 const read = () => (once ??= Promise.all([readResearch(get), readModels(get)]).then(([R, M]) => figuresOf(R, M)));
 
+// the build's snapshot, worked out on the server (snapshot.js) and provided by the home page
+export const Figures = createContext(null);
+
 export default function useFigures() {
-  const [f, setF] = useState(SNAPSHOT);
+  const [f, setF] = useState(useContext(Figures));
   useEffect(() => {
     let on = true;
     read().then((x) => on && setF(x), () => {}); // a failed read keeps the snapshot

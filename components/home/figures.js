@@ -1,8 +1,6 @@
 // Every figure on the home page's race, cost and frontier cards, worked out the way hanzo.ai's own home works them out,
 // from the same sources it reads (content/live/_research.json and _models.json, refreshed by scripts/live.mjs).
 // Nothing here is a figure; the formats are hanzo.ai's: "3.02×", "2.29 s", "1,120 ms", "$5.57 in · $27.83 out", "90.6%".
-import RS from '../../content/live/_research.json';
-import MS from '../../content/live/_models.json';
 
 const measure = (r, category, metric) => r?.measures?.find((m) => m.category === category && m.metric === metric) ?? null;
 const val = (r, category, metric) => measure(r, category, metric)?.value ?? null;
@@ -95,7 +93,6 @@ function gpqa(R, M) {
   };
 }
 
-// the four figure sets from one read of the sources: the build's snapshot here, a fresh read at page load in useFigures.js
+// the four figure sets from one read of the sources: the build's snapshot (snapshot.js, worked out on the server, so the
+// browser never downloads the raw runs), a fresh read at page load in useFigures.js
 export const figuresOf = (R, M) => ({ CODING: coding(R), KAI: kai(R, M), PRICES: prices(M), GPQA: gpqa(R, M) });
-export const SNAPSHOT = figuresOf(RS, MS);
-export const { CODING, KAI, PRICES, GPQA } = SNAPSHOT;
