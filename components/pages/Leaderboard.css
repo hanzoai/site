@@ -44,7 +44,10 @@ html:not(.light) .xlb-hero .pf-btn.solid { background: var(--k-primary); border-
 @media (hover: hover) { html:not(.light) .xlb-hero .pf-btn.solid:hover { background: var(--k-ink); border-color: var(--k-ink); } }
 html:not(.light) .xlb .pf-btn:not(.solid) { border-color: var(--k-hair); }
 html:not(.light) .xlb .pf-obj, html:not(.light) .xlb-tape, html:not(.light) .xlb-calc-out { box-shadow: inset 0 0 0 1px var(--k-hair); }
-html:not(.light) .xlb-step[data-on='true'] .xlb-block b, html:not(.light) .xlb-tags span:first-child { color: var(--k-on-ink); }
+html:not(.light) .xlb-tags span:first-child { color: var(--k-on-ink); }
+/* the lit podium block: live's selected row in dark is a raised #262626 surface with light type, not a light box */
+html:not(.light) .xlb-step[data-on='true'] .xlb-block { background: var(--secondary); box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .xlb-step[data-on='true'] .xlb-block b { color: var(--foreground); }
 html:not(.light) .xlb-stepper { background: var(--k-quiet); }
 html:not(.light) .xlb-stepper button { background: var(--k-muted); }
 @media (hover: hover) { html:not(.light) .xlb-stepper button:hover:not(:disabled) { color: var(--k-on-ink); } }
