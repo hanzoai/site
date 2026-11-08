@@ -19,12 +19,11 @@ import ModelFilm, { usePaused } from '../../v2/ModelFilm';
 import './Enso.css';
 import { PLANS, checkout } from '../../../lib/plans';
 
-/* ---------- entrances (page-local; James's motion map: fold-out, cursor-lens, ink-spread, word-shuffle, orbit-in) ----------
-   Each section arrives once, the first time it scrolls in. The final state is the server HTML (JS off reads it all);
-   start states live only under html.js in Enso.css; reduced motion jumps straight to data-in. */
+/* ---------- entrances (9 Nov: the room's curtain, the bento's tilt and the halftone are CSS, scroll-driven; JS keeps
+   only the word-shuffle and the band's orbit-in). Each arrives once; the final state is the server HTML (JS off reads
+   it all); start states live only under html.js in Enso.css; reduced motion jumps straight to data-in. */
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const EMPH = 'cubic-bezier(.16, 1, .3, 1)';
-const pointer = { x: -1, y: -1 }; // the last pointer position on the page (client px), for the lens
 function useEnter(play, margin = '0px 0px -16% 0px') {
   const ref = useRef(null);
   const fn = useRef(play);
@@ -43,33 +42,6 @@ function useEnter(play, margin = '0px 0px -16% 0px') {
     return () => io.disconnect();
   }, [margin]);
   return ref;
-}
-// cursor-lens: the section opens through a round lens centred on the pointer, magnified at first; the lens follows the
-// pointer while it opens (no pointer, as on a phone: it opens from the middle)
-function lens(el) {
-  const wrap = el.querySelector('.x-wrap');
-  const t0 = performance.now(), D = 1150;
-  let cx = null, cy = null;
-  const step = (now) => {
-    const r = el.getBoundingClientRect();
-    const has = pointer.x >= 0 && pointer.y >= r.top && pointer.y <= r.bottom;
-    const tx = has ? pointer.x - r.left : r.width / 2, ty = has ? pointer.y - r.top : Math.min(r.height / 2, innerHeight * 0.5 - r.top);
-    cx = cx === null ? tx : cx + (tx - cx) * 0.18; cy = cy === null ? ty : cy + (ty - cy) * 0.18;
-    const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
-    const far = Math.hypot(Math.max(cx, r.width - cx), Math.max(cy, r.height - cy));
-    el.style.clipPath = `circle(${(60 + e * (far - 60)).toFixed(1)}px at ${cx.toFixed(1)}px ${cy.toFixed(1)}px)`;
-    if (wrap) { wrap.style.transformOrigin = `${cx.toFixed(1)}px ${cy.toFixed(1)}px`; wrap.style.transform = `scale(${(1.14 - 0.14 * e).toFixed(4)})`; }
-    if (k < 1) requestAnimationFrame(step);
-    else { el.style.clipPath = ''; if (wrap) { wrap.style.transform = ''; wrap.style.transformOrigin = ''; } el.querySelector('.eo-board')?.dispatchEvent(new Event('eo-measure')); }
-  };
-  requestAnimationFrame(step);
-}
-// ink-spread: an organic blot (one jagged polygon, same points every frame) spreads from a point until it covers all
-function ink(el) {
-  const n = 28, R = rng(7);
-  const jag = Array.from({ length: n }, () => 0.72 + R() * 0.5);
-  const blot = (s) => `polygon(${jag.map((j, i) => { const a = (i / n) * Math.PI * 2; return `calc(32% + ${(Math.cos(a) * j * s).toFixed(1)}vmax) calc(38% + ${(Math.sin(a) * j * s).toFixed(1)}vmax)`; }).join(',')})`;
-  el.animate([{ clipPath: blot(0.5) }, { clipPath: blot(22), offset: 0.55 }, { clipPath: blot(190) }], { duration: 1500, easing: 'cubic-bezier(.45, 0, .2, 1)' });
 }
 // word-shuffle: each word starts in another word's place and swaps back into its own
 function shuffle(el) {
@@ -146,11 +118,11 @@ function Form() {
   });
   const move = (e) => { const r = cv.current.getBoundingClientRect(); ptr.current = [e.clientX - r.left, e.clientY - r.top]; };
   return (
-    <section className="lv-sec eo-form" ref={box} aria-labelledby="eo-spec-h">
-      <div className="x-wrap eo-form-in">
-        <div className="eo-form-t">
-          <h2 id="eo-spec-h" className="lv-h">One endpoint for every frontier model.</h2>
-          <p className="lv-p">Enso routes each request for quality, speed and cost.</p>
+    <section className="eo-form eo-s" ref={box} aria-labelledby="eo-spec-h">
+      <div className="x-wrap">
+        <div className="eo-sh">
+          <h2 id="eo-spec-h" className="eo-h2">One endpoint for every frontier model.</h2>
+          <p className="eo-lede">Enso routes each request for quality, speed and cost.</p>
         </div>
         <canvas ref={cv} className="eo-dots" aria-hidden="true" onPointerMove={move} onPointerDown={move} onPointerLeave={() => (ptr.current = null)} onPointerUp={(e) => e.pointerType !== 'mouse' && (ptr.current = null)} />
       </div>
@@ -209,8 +181,7 @@ function Switchboard() {
     const ro = new ResizeObserver(measure);
     const el = board.current;
     ro.observe(el);
-    el.addEventListener('eo-measure', measure); // the room's lens entrance asks again once its magnification ends
-    return () => { ro.disconnect(); el.removeEventListener('eo-measure', measure); };
+    return () => ro.disconnect();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const send = (k, byHand) => {
@@ -371,16 +342,35 @@ function Gpqa() {
   const frontier = ENSO.map((g) => `${px(g[2])},${py(g[1])}`).join(' ');
   const head = useEnter(shuffle, '0px 0px -8% 0px');
   return (
-    <section className="eo-gpqa lv-sec" ref={box} aria-labelledby="eo-gpqa-h">
-      <div className="x-wrap">
-        <div className="lv-sh">
-          <h2 id="eo-gpqa-h" className="lv-h eo-shuffle" ref={head}>{'A New Pareto Frontier of Intelligence'.split(' ').map((w, i, a) => <span key={i}><span className="eo-w">{w}</span>{i < a.length - 1 ? ' ' : ''}</span>)}</h2>
-          <p className="lv-p">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
+    <section className="eo-gpqa eo-s" ref={box} aria-labelledby="eo-gpqa-h">
+      <div className="x-wrap eo-gq">
+        <div className="eo-gq-t">
+          <h2 id="eo-gpqa-h" className="eo-h2 eo-shuffle" ref={head}>{'A New Pareto Frontier of Intelligence'.split(' ').map((w, i, a) => <span key={i}><span className="eo-w">{w}</span>{i < a.length - 1 ? ' ' : ''}</span>)}</h2>
+          <p className="eo-lede">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
+          <aside className="eo-read" aria-live={mine ? 'polite' : 'off'}>
+            <p className="mb-mono">Compare</p>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div key={m[0]} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: EASE }}>
+                <p className="eo-read-m"><b>{m[0]}</b><span className="mb-tnum">{`${m[1].toFixed(1)}% · ${money(m[2])}`}</span></p>
+                <p className="eo-read-s">{m[3].replace(/ https:\S+$/, '')}</p>
+                {m[4] && <A to={m[4]} className="eo-src">Source</A>}
+              </motion.div>
+            </AnimatePresence>
+            <ul className="eo-vs">
+              {ENSO.map((g) => (
+                <li key={g[0]}>
+                  <b>{g[0]}</b>
+                  <span className="mb-tnum">{`${g[1].toFixed(1)}% · ${money(g[2])}`}</span>
+                  <em data-yes={g[2] < m[2] ? '' : undefined}>{g[2] < m[2] ? 'cheaper' : 'dearer'}</em>
+                </li>
+              ))}
+            </ul>
+          </aside>
         </div>
-        <div className="lv-stats eo-figs">
-          {[...ENSO].reverse().map((g) => <Stat key={g[0]} value={`${g[1].toFixed(1)}%`} label={g[0]} note={`${money(g[2])} per 1,000 questions`} />)}
-        </div>
-        <div className="eo-plotwrap" ref={plot}>
+        <div className="eo-stage" ref={plot}>
+          <div className="lv-stats eo-figs">
+            {[...ENSO].reverse().map((g) => <Stat key={g[0]} value={`${g[1].toFixed(1)}%`} label={g[0]} note={`${money(g[2])} per 1,000 questions`} />)}
+          </div>
           <svg className="eo-plot" viewBox="0 0 1000 600" role="group" aria-label="GPQA Diamond % against $ per 1,000 questions">
             {[75, 80, 85, 90, 95, 100].map((v) => (
               <g key={v}><line x1="70" x2="970" y1={py(v)} y2={py(v)} className="eo-grid" /><text x="56" y={py(v) + 5} textAnchor="end" className="eo-tick">{v}</text></g>
@@ -419,25 +409,6 @@ function Gpqa() {
               );
             })}
           </svg>
-          <aside className="eo-read" aria-live={mine ? 'polite' : 'off'}>
-            <p className="mb-mono">Compare</p>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div key={m[0]} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.35, ease: EASE }}>
-                <p className="eo-read-m"><b>{m[0]}</b><span className="mb-tnum">{`${m[1].toFixed(1)}% · ${money(m[2])}`}</span></p>
-                <p className="eo-read-s">{m[3].replace(/ https:\S+$/, '')}</p>
-                {m[4] && <A to={m[4]} className="eo-src">Source</A>}
-              </motion.div>
-            </AnimatePresence>
-            <ul className="eo-vs">
-              {ENSO.map((g) => (
-                <li key={g[0]}>
-                  <b>{g[0]}</b>
-                  <span className="mb-tnum">{`${g[1].toFixed(1)}% · ${money(g[2])}`}</span>
-                  <em data-yes={g[2] < m[2] ? '' : undefined}>{g[2] < m[2] ? 'cheaper' : 'dearer'}</em>
-                </li>
-              ))}
-            </ul>
-          </aside>
         </div>
         <div className="eo-table" data-open={open ? '' : undefined}>
           <button type="button" className="eo-disc" aria-expanded={open} aria-controls="eo-results" onClick={() => setOpen((o) => !o)}>
@@ -468,60 +439,6 @@ function Gpqa() {
   );
 }
 
-const TIER_TASKS = TIERS.map((_, i) => TASKS.filter(([, k]) => k === i).map(([w]) => w));
-
-// a chapter's picture: Enso's own film, framed a little closer each tier, with that tier's card laid on it
-function TierArt({ i, on }) {
-  const tr = TIERS[i];
-  return (
-    <div className="eo-art" style={{ '--z': 1.12 + i * 0.22, '--x': ['-4%', '6%', '-2%'][i], '--y': ['3%', '-5%', '2%'][i], ...[{}, { '--cl': 'auto', '--cr': '32px', '--ct': '32px', '--cb': 'auto' }, { '--cl': 'auto', '--cr': '32px' }][i] }}>
-      <Img src={film('enso', 'webp')} w={1200} h={1500} />
-      <ModelFilm slug="enso" play={on} />
-      <div className="eo-tcard" aria-hidden="true">
-        <p className="eo-tcard-top"><b>{tr.name}</b><code>{tr.code}</code></p>
-        <p className="eo-tcard-ax">{AXES[tr.axis]}</p>
-        <ul>{TIER_TASKS[i].map((w) => <li key={w}>{w}</li>)}</ul>
-        <p className="eo-tcard-p mb-tnum"><b>{tr.inp}</b> in <b>{tr.out}</b> out</p>
-      </div>
-    </div>
-  );
-}
-
-const CHAPTERS = TIERS.map((tr, i) => ({
-  k: tr.name,
-  title: tr.name,
-  art: (on) => <TierArt i={i} on={on} />,
-  body: (
-    <>
-      <p className="eo-ch-price mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span></p>
-      <p>{tr.desc}</p>
-      {tr.more && <p>{tr.more}</p>}
-      <p className="eo-meta">{tr.ctx === true ? <span><b>1M</b> context</span> : tr.ctx ? <span>{`${tr.ctx} context`}</span> : null}<span>OpenAI-compatible API</span><span>Anthropic-compatible API</span></p>
-      <p className="eo-acts">
-        <A to="/login" className="eo-l">Try Hanzo</A>
-        <A to={tr.wb} className="eo-l">Open in Workbench</A>
-        <A to="https://github.com/hanzoai/enso" className="eo-l">Docs on GitHub</A>
-      </p>
-    </>
-  ),
-}));
-
-// the three tiers as plain quick sections (no pinned chapter scene); each unfolds like paper from its top edge (fold-out)
-function Tier({ c, i }) {
-  const ref = useEnter();
-  return (
-    <article className={'eo-tier' + (i % 2 ? ' flip' : '')} ref={ref}>
-      <div className="eo-tier-in">
-        <div className="eo-tier-art">{c.art(true)}</div>
-        <div className="eo-tier-t">
-          <h3 className="eo-tier-h">{c.title}</h3>
-          <div className="eo-tier-b">{c.body}</div>
-        </div>
-      </div>
-    </article>
-  );
-}
-
 /* The hero's Enso: Hanzo's film inside the ensō, at the size of a feature, not a takeover. It is the opener's landing
    (data-hero, then data-ready once the poster decodes); the one pause beside it stops every film and demo on the page. */
 function Feature() {
@@ -543,22 +460,48 @@ function Feature() {
   );
 }
 
+/* Zack (9 Nov): the prices and a way to buy, front and centre. The three tiers as one lifted band in the first frame,
+   each with its prices in and out, what it is for, and its three asks (Try Hanzo, Open in Workbench, Docs on GitHub);
+   Hanzo's line on the default (enso-auto) heads it, the two compatible APIs every tier speaks sit beside that line. */
+function Prices() {
+  return (
+    <div id="eo-tiers" className="eo-px">
+      <div className="eo-px-h">
+        <p className="eo-auto">The default for everyone, Free plan included: it picks the tier for each request and bills at the tier that answers.</p>
+        <p className="eo-api"><span>OpenAI-compatible API</span><span>Anthropic-compatible API</span></p>
+      </div>
+      <ol className="eo-px-l">
+        {TIERS.map((tr) => (
+          <li key={tr.code} className="eo-pc">
+            <div className="eo-pc-top">
+              <h2 className="eo-pc-h">{tr.name}</h2>
+              <code>{tr.code}</code>
+              <span className="eo-pc-ctx">{tr.ctx === true ? <><b>1M</b> context</> : `${tr.ctx} context`}</span>
+            </div>
+            <p className="eo-pc-p mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span></p>
+            <p className="eo-pc-d">{tr.desc}{tr.more && <span className="eo-pc-more"> {tr.more}</span>}</p>
+            <p className="eo-pc-a">
+              <A to="/login" className="eo-pc-buy" data-cta={'enso.' + tr.code}>Try Hanzo</A>
+              <A to={tr.wb} className="eo-l">Open in Workbench</A>
+              <A to="https://github.com/hanzoai/enso" className="eo-l">Docs on GitHub</A>
+            </p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+/* order, each section one frame and a direct child of <main>: hero with the price band → the ring forms → the dark room
+   (opens like a curtain) → the model bento (tilts in) → the Pareto chart on its stage, title beside it → the band */
 export default function Enso() {
-  const room = useEnter(lens, '0px 0px -12% 0px');
-  const cards = useEnter(ink, '0px 0px -12% 0px');
   const band = useEnter(null, '0px 0px -10% 0px');
-  useEffect(() => {
-    const f = (e) => { if (e.pointerType === 'mouse') { pointer.x = e.clientX; pointer.y = e.clientY; } };
-    addEventListener('pointermove', f, { passive: true });
-    return () => removeEventListener('pointermove', f);
-  }, []);
   return (
     <main className="x-model lv eo" data-cursor="">
-      {/* Hanzo's own hero, as clear as theirs (COPY-RULE 4, 8 Nov): the crumb, the two-line headline, the lede and the
-          three asks, word for word, with Enso's film held in its ensō beside them. Nothing pins, nothing takes the screen. */}
-      <section className="eo-hero" aria-labelledby="eo-h">
+      <section className="eo-hero eo-s" aria-labelledby="eo-h">
         <div className="x-wrap eo-hero-g">
           <div className="eo-head eo-hero-t">
+            <p className="lv-crumb">Hanzo / Enso</p>
             <Lines as="h1" id="eo-h" lines={['The right intelligence.', 'Every time.']} reveal />
             <p className="lv-lede">One endpoint for every frontier model. Enso routes each request for quality, speed and cost.</p>
             <div className="lv-acts">
@@ -567,30 +510,22 @@ export default function Enso() {
               <More to="https://github.com/hanzoai/enso">Docs on GitHub</More>
             </div>
             <p className="eo-buy"><Plan slot="hero" /></p>
-            <p className="lv-crumb">Hanzo / Enso</p>
           </div>
           <Feature />
+          <Prices />
         </div>
       </section>
-      <div className="x-model-body lv-body">
-        {/* order (motion map: lead with the signature): particles form the ring → tiers (fold-out) → router room (cursor-lens)
-            → model cards (ink-spread) → GPQA (word-shuffle; the figures still count up) → band (orbit-in) */}
-        <Form />
-        <section id="eo-tiers" className="eo-tiers" aria-label="Enso">
-          <div className="x-wrap"><p className="eo-auto">The default for everyone, Free plan included: it picks the tier for each request and bills at the tier that answers.</p></div>
-          <div className="x-wrap">{CHAPTERS.map((c, i) => <Tier key={c.title} c={c} i={i} />)}</div>
-        </section>
-        {/* the dark room: the live router; each tier's lane carries its own prices (one object, not a second table) */}
-        <section className="lv-room lv-sec eo-live eo-lens" data-room="dark" aria-label="Enso" ref={room}>
-          <div className="x-wrap">
-            <Switchboard />
-            <p className="eo-all"><More to="/models/enso">All Enso models</More></p>
-          </div>
-        </section>
-        <div className="eo-ink" ref={cards}><ModelCards slug="enso" /></div>
-        <Gpqa />
-        <div className="eo-orbit" ref={band}><Band title="The right intelligence. Every time." action="Try Hanzo" to="/login" note={<Plan slot="close" />} /></div>
-      </div>
+      <Form />
+      {/* the dark room: the live router; each tier's lane carries its own prices */}
+      <section className="lv-room eo-live eo-s" data-room="dark" aria-label="Enso">
+        <div className="x-wrap">
+          <Switchboard />
+          <p className="eo-all"><More to="/models/enso">All Enso models</More></p>
+        </div>
+      </section>
+      <div className="eo-cards eo-s"><ModelCards slug="enso" /></div>
+      <Gpqa />
+      <div className="eo-orbit eo-s" ref={band}><Band title="The right intelligence. Every time." action="Try Hanzo" to="/login" note={<Plan slot="close" />} /></div>
     </main>
   );
 }
