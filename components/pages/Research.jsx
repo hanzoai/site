@@ -14,18 +14,22 @@
    row → its title page, 600 ms in-out), a line-mask cut-in on the h1 and the figures only, the month that follows your reading in the index rail. Idle: the desk lifting one sheet at a time (pausable). Pointer: rows fill from
    the left (400 ms), their sheet tilts 2°, bars and kinds fill. State: the list re-flows, the title page opens. Deck
    timings only (150 ms hover, 300 ms state, 400 ms moves, 600 ms open), no springs or overshoot. Ink only.
-   Every word, date and link is Hanzo's. */
-import { useEffect, useMemo, useRef, useState } from 'react';
+   Every word, date and link is Hanzo's.
+   V2: 8/10 slice D: h1 cuts in on CSS from first paint, filtering keeps the list's height (no footer jump), Standards numbered from 01, the rail reads HIPs over the specifications.
+   Entrances (MOTION-MAP, research/enter.js + enter.css, in order): split-merge (hero, CSS from first paint), focus-pull
+   (dark room), scramble (the glance's counts), domino (papers rows), diagonal-wipe (specifications, standards); each once, none scroll-linked. */
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, More } from '../kit';
-import MaskLines from './proof/MaskLines';
 import SceneWipe from './proof/SceneWipe';
 import LivePause, { usePause } from '../v2/LivePause';
 import NoJs from '../NoJs';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Research.css';
+import { useEnter } from './research/enter';
+import './research/enter.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 const P = (t, date, sub, slug) => ({ kind: 'Papers', t, date, sub, to: `https://papers.hanzo.ai/${slug}/` });
@@ -154,7 +158,8 @@ function Hero({ open, openLid }) {
       </div>
       <div className="pf-wrap pf-grid xrs-hero-g">
         <div className="xrs-hero-c">
-          <MaskLines as="h1" id="xrs-h1" className="pf-display xrs-h1" lines={['Work we', 'publish']} amount={0.1} />
+          {/* the h1 cuts in on CSS from first paint, so the headline never waits for hydration (same mask and easing as MaskLines) */}
+          <h1 id="xrs-h1" className="pf-display xrs-h1"><span className="pf-mask-l"><span className="pf-mask-in xrs-cut">Work we</span> </span><span className="pf-mask-l"><span className="pf-mask-in xrs-cut" style={{ '--d': '60ms' }}>publish</span></span></h1>
           <div className="xrs-hero-row">
             <p className="pf-mono xrs-cap-h">Research</p>
             <p className="pf-lede xrs-lede">Hanzo builds infrastructure that has to hold up under audit, regulation and adversaries.</p>
@@ -166,12 +171,14 @@ function Hero({ open, openLid }) {
           </div>
         </div>
         <div className="xrs-deal">
+          {/* Hanzo's own picture for its papers card (the Oto film still), kept beside the caption */}
+          <img className="xrs-oto" src="/models/oto.webp" alt="" width="1200" height="1500" decoding="async" />
           <div className="xrs-caps" aria-live={mine ? 'polite' : 'off'}>
             {FEATURED.map((x, i) => (
               <p key={x.t} className="xrs-cap" hidden={i !== top}>
                 <span className="pf-mono">{pad(i + 1)} / {pad(n)}</span>
-                <b>{x.t}</b>
-                <small>{x.date}. {x.sub}</small>
+                <span className="xrs-cap-t">{x.t}</span>
+                <span className="xrs-cap-d">{x.date}. {x.sub}</span>
               </p>
             ))}
           </div>
@@ -191,10 +198,10 @@ function Glance({ mon, pickMonth }) {
   return (
     <section className="pf-sec xrs-glance" aria-label="The library at a glance">
       <div className="pf-wrap pf-grid xrs-glance-g">
-        <dl className="xrs-tally">
+        <dl className="xrs-tally" data-enter="scramble">
           {GROUPS.map(([k, , list], i) => (
             <div key={k} className={i ? 'xrs-tally-s' : 'xrs-tally-b'}>
-              <MaskLines as="dd" className={i ? 'pf-figure' : 'pf-moment xl'} lines={[String(list.length - (k === 'Specifications' ? 1 : 0))]} delay={i * 0.06} />
+              <dd className={i ? 'pf-figure' : 'pf-moment xl'}><span className="xrs-scr">{String(list.length - (k === 'Specifications' ? 1 : 0))}</span></dd>
               <dt className="pf-mono">{k}</dt>
             </div>
           ))}
@@ -234,6 +241,16 @@ function Library({ mon, setMon, open, openKey }) {
     return () => io.disconnect();
   }, [all, kind, t, mon]);
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  // filtering never collapses the page: while a kind, a search or a month narrows the list, the list keeps the height
+  // it had unfiltered, so the footer never jumps up into view under the reader
+  const filtered = kind !== 'All' || !!t || !!mon;
+  const tall = useRef(0);
+  useLayoutEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    if (!filtered) { el.style.minHeight = ''; tall.current = el.offsetHeight; }
+    else if (!el.style.minHeight) el.style.minHeight = Math.max(tall.current, innerHeight * 0.8) + 'px';
+  });
   return (
     <section className="pf-sec xrs-lib" id="papers">
       <div className="pf-wrap pf-grid xrs-lib-g">
@@ -257,25 +274,25 @@ function Library({ mon, setMon, open, openKey }) {
             const shown = kind === 'All' || kind === k;
             const rows = list.filter(match);
             return (
-              <motion.div key={k} layout="position" className="xrs-group" hidden={!shown || !rows.length} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
+              <motion.div key={k} layout="position" className="xrs-group" data-enter={k === 'Papers' ? undefined : 'wipe'} hidden={!shown || !rows.length} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
                 <div className="xrs-group-h">
                   <h2 className="pf-head">{k}</h2>
                   <p className="pf-body">{lede}</p>
                 </div>
-                <ol className={'xrs-rows ' + (k === 'Papers' ? 'p' : 'h')}>
+                <ol className={'xrs-rows ' + (k === 'Papers' ? 'p' : 'h')} data-enter={k === 'Papers' ? 'domino' : undefined}>
                   {list.map((it, i) => {
                     const prev = list[i - 1];
                     const head = it.date && (!prev || prev.date !== it.date);
                     const id = key(it);
                     return (
-                      <motion.li key={it.t} layout="position" hidden={!match(it) || (folded && k === 'Papers' && i >= 6)} data-d={it.date || undefined} className={head ? 'xrs-new' : ''} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
+                      <motion.li key={it.t} layout="position" hidden={!match(it) || (folded && k === 'Papers' && i >= 6)} data-d={it.date || 'HIPs'} className={head ? 'xrs-new' : ''} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}>
                         <div className="xrs-row">
                           <button type="button" className="xrs-row-open" onClick={(e) => open(it, e.currentTarget)} aria-haspopup="dialog" aria-label={`Open the title page: ${it.t}`}>
-                            <span className="xrs-row-d pf-mono">{it.date ? (head ? it.date : '') : pad(i)}</span>
+                            <span className="xrs-row-d pf-mono">{it.date ? (head ? it.date : '') : pad(list[0].t === 'All HIPs' ? i : i + 1)}</span>
                             <span className="xrs-thumb">
                               {openKey !== id && <motion.span layoutId={id} className="xrs-thumb-s" style={{ borderRadius: 4 }} transition={OPEN}><Mini x={it} /></motion.span>}
                             </span>
-                            <span className="xrs-row-t"><b>{it.t}</b><span>{it.sub}</span></span>
+                            <span className="xrs-row-t"><span className="xrs-row-tt">{it.t}</span><span>{it.sub}</span></span>
                           </button>
                           <A to={it.to} className="xrs-row-go" aria-label={`${it.t} on ${it.kind === 'Papers' ? 'papers.hanzo.ai' : 'hips.hanzo.ai'}`}>
                             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -352,12 +369,17 @@ function Open() {
   return (
     <SceneWipe className="xrs-open" label="Open source">
       <div className="pf-sec">
-        <div className="pf-wrap pf-grid xrs-open-g">
+        <div className="pf-wrap pf-grid xrs-open-g" data-enter="focus">
           <h2 className="pf-head xrs-open-h">Open source</h2>
+          {/* Hanzo's sentence stays real text (its link and its closing clause as Hanzo writes them); the word-by-word
+              light is drawn by an aria-hidden copy in the same grid cell, so both wrap identically */}
           <p className="xrs-open-t" ref={ref}>
-            {a.map((w, i) => W(i, w + ' '))}
-            {W(a.length, <>{link}{', '}</>)}
-            {b.map((w, i) => W(a.length + 1 + i, w + (i < b.length - 1 ? ' ' : '')))}
+            <span className="xrs-open-v" aria-hidden="true">
+              {a.map((w, i) => W(i, w + ' '))}
+              {W(a.length, <><span className="xrs-open-lk">github.com/hanzoai</span>{', '}</>)}
+              {b.map((w, i) => W(a.length + 1 + i, w + (i < b.length - 1 ? ' ' : '')))}
+            </span>
+            <span className="xrs-open-r">{OPEN_A} {link}<span>{OPEN_B}</span></span>
           </p>
           <div className="xrs-open-a"><A to="https://github.com/hanzoai" className="pf-btn solid" data-cta="research.close">github.com/hanzoai</A></div>
         </div>
@@ -367,6 +389,7 @@ function Open() {
 }
 
 export default function Research() {
+  useEnter('.xrs');
   const [mon, setMon] = useState(null);
   const [open, setOpen] = useState(null); // { it, from, lid }
   const pickMonth = (m) => {

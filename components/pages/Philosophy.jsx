@@ -1,46 +1,46 @@
 'use client';
 // Persona: a builder, founder or researcher deciding whether to trust Hanzo's stack, who wants to know how Hanzo thinks (arrives from About, Research, the footer or a shared link)
-// Goal: understand the premise and the five laws, then open the 64 patterns and read the ones that fit their system
-// CTA: Explore the 64 patterns -> #patterns (hero, data-cta="philosophy.hero", data-thumb) · closing link: Explore Hanzo -> / (data-cta="philosophy.close")
+// Goal: understand how Hanzo reads the 64 patterns, then find the one that fits their problem and see how it applies to AI research, an experiment and an organization
+// CTA: Explore the patterns -> #explore (hero, data-cta="philosophy.hero", data-thumb) · closing link: Explore Hanzo Science -> /science (data-cta="philosophy.close")
 // Metric: cta_click on philosophy.close (Story: the page's own closing link), with philosophy.hero as the lead indicator
-// Signature: timeline. The five operating laws on a strip you drag (or tap, or step with the arrow keys): the law under the thumb takes the panel and the hexagram beside it gains a line per law, its sixth line never settling (MOTION-MAP `timeline`).
-// Beyond: "Change a line". Press any line of the hero hexagram and it flips, yin to yang, becoming the hexagram that change makes — its number, name and trigrams read from Hanzo's own sixty-four.
-/* Philosophy: the Zen of Hanzo, told as a chapter book. Its idea is change itself, drawn in lines.
-   A Story page on Hanzo's scale rhythm: the hexagram is the one big thing of the first screen (walking the sixty-four, changing at a press) over a 52px headline; then the five laws on a timeline you drag; the premise as a moment; the 64 as a quiet index whose every pattern opens in a sheet; the belief statement set still; deck easing only, nothing floating, every word legible with JavaScript off.
-   One idea per screen, one big thing each: the hero hexagram (huge, centred, its name and trigrams either side, the
-   lines that changed marked with a dot, any line you press flips), the 52px headline, caption, ask and lede at its
-   foot; the five laws on a draggable strip, a hexagram building a line per law beside the law in hand, its last line
-   never settling; the premise sentence beside one line that keeps opening and closing; the 64 as a
-   quiet index (sequence, 8 x 8 matrix, or by lens) where every pattern opens into a sheet with its principle, practice
-   and question; how we build, the method ring stepping round until you point; the stack; the questions, each beside
-   its trigram; the belief statement; the close in the one dark room, 1 → 2 → 8 → 64.
-   Motion: signature, the laws timeline (no pinned scene, no scroll scrub). Supporting: a line-mask cut-in on the h1, the
-   premise and the stanza only, the view pill gliding (300 ms, ease-emphasis). Idle: the hero walk (with its pause control), the premise line, the laws' last line and one lap of the method ring, each ending at rest. Pointer: lines
-   part their strokes under the pointer (James's "strokes parting"), rows and tiles fill. State: the sheet rises.
-   The one dark room enters as a rounded card and opens to full width (MASTER §3.1 rooms). Deck timings only: 150 ms hover, 300 ms state, 400 ms fills, 800 ms line art; no springs, no overshoot.
-   Ink only: hierarchy is alpha steps of black and white. Every word is Hanzo's. */
+// Signature: one hexagram walking the sixty-four in the hero; press any line and it flips, becoming the pattern that change makes (its number, name, principle and perspective read from Hanzo's own sixty-four).
+/* Philosophy: the Zen of Hanzo, as hanzo.ai/philosophy now publishes it (re-read from live, 9 Nov): an introduction, the 64
+   patterns to explore (filter by the eight categories, pick any number, read its three applications), the eight
+   categories in King Wen order, and the close. Every word is Hanzo's (philosophy/patterns.js is their data, verbatim).
+   One idea per screen, one big thing each: the hero hexagram (huge, centred, its name and principle either side, the
+   lines that changed marked with a dot, any line you press flips) over the 52px headline; the introduction as a moment;
+   the explorer (an 8 x 8 index of numbers beside the chosen pattern, its hexagram large); the eight categories as quiet
+   ledgers whose every pattern opens in a sheet; the close in the one dark room, 1 → 2 → 8 → 64.
+   Motion: idle, the hero walk (with its pause control); pointer, lines part their strokes under the pointer, index cells
+   and rows fill; state, the filter pill glides (300 ms), the sheet rises; arrival, the h1 cut-in and the hexagram's draw
+   on CSS from first paint. Deck timings only: 150 ms hover, 300 ms state, 800 ms line art; no springs, no overshoot.
+   Ink only: hierarchy is alpha steps of black and white.
+   V2: 8/10 slice D, 9 Nov: rebuilt on Hanzo's new philosophy copy (live re-read): the explorer, the eight categories and the close; the hero walk now reads Hanzo's 64.
+   Entrances (MOTION-MAP, philosophy/enter.js + enter.css, in order): venetian-type (the introduction), fold-out (the
+   explorer), invert-flash (the explorer's chosen pattern, after the fold), side-carousel (each category's rows), typewriter (the close's
+   statement); each plays once, none scroll-linked. Every entrance moves boxes only: the text in the page is always whole. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
-import MaskLines from './proof/MaskLines';
 import SceneWipe from './proof/SceneWipe';
 import NoJs from '../NoJs';
 import LivePause, { usePause } from '../v2/LivePause';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import '../v2/DetailSheet.css';
-import { GROUPS, HEX, LENSES } from './philosophyData';
+import { GROUPS, PATTERNS } from './philosophy/patterns';
 import './Philosophy.css';
+import { useEnter } from './philosophy/enter';
+import './philosophy/enter.css';
 
-const TRI = { Heaven: [1, 1, 1], Lake: [1, 1, 0], Fire: [1, 0, 1], Thunder: [1, 0, 0], Wind: [0, 1, 1], Water: [0, 1, 0], Mountain: [0, 0, 1], Earth: [0, 0, 0] };
-const TRI_ORDER = Object.keys(TRI);
-const lines = (h) => [...TRI[h[3]], ...TRI[h[2]]]; // bottom to top: the lower trigram, then the upper
-const split = (t) => { const [a, b] = t.split(' — '); return [a, b]; };
-const triOf = (ls) => TRI_ORDER.find((t) => TRI[t].every((v, k) => v === ls[k]));
-const hexOf = (ls) => HEX.findIndex((h) => h[2] === triOf(ls.slice(3)) && h[3] === triOf(ls.slice(0, 3)));
 const pad = (n) => String(n).padStart(2, '0');
+const title = (p) => `${p[3]} — ${p[4]}`; // "The Creative — Origination", as Hanzo prints it
+const groupOf = (p) => GROUPS[p[2] - 1];
+const hexOf = (ls) => PATTERNS.findIndex((p) => p[1].every((v, k) => v === ls[k]));
+const APPS = ['AI research', 'Scientific experimentation', 'Organizational improvement'];
+const TABS = ['All', ...GROUPS.map((g) => g[1])];
 
-/* Six lines, bottom to top. A yang line is whole; a yin line opens in the middle (each half scales, transform only).
+/* Six lines, bottom to top. A whole line is one stroke; an open line parts in the middle (each half scales, transform only).
    hot: lines marked as changing (a dot beside them). press(i): the lines become buttons that change themselves. */
 function Hexa({ ls, size = 80, drawn = 6, hot = [], press, className = '' }) {
   return (
@@ -70,7 +70,7 @@ function Hero() {
     const t = setTimeout(() => {
       if (Date.now() - held < 7000) { setHeld((h) => h - 1); return; }
       setI((v) => {
-        const n = (v + 1) % 64, a = lines(HEX[v]), b = lines(HEX[n]);
+        const n = (v + 1) % 64, a = PATTERNS[v][1], b = PATTERNS[n][1];
         setHot(a.map((x, k) => (x !== b[k] ? k : -1)).filter((k) => k >= 0));
         return n;
       });
@@ -79,37 +79,36 @@ function Hero() {
     return () => clearTimeout(t);
   }, [i, calm, live, held, steps, paused]);
   const press = (k) => {
-    const ls = lines(HEX[i]).map((x, j) => (j === k ? 1 - x : x));
+    const ls = PATTERNS[i][1].map((x, j) => (j === k ? 1 - x : x));
     setI(hexOf(ls));
     setHot([k]);
     setHeld(Date.now());
   };
-  const h = HEX[i];
-  const [main, sub] = split(h[1]);
+  const p = PATTERNS[i];
   return (
     <section className="xph-hero" ref={ref} aria-labelledby="xph-h1">
       <div className="pf-wrap xph-hero-g">
         <div className="xph-stage">
           <LivePause paused={paused} onToggle={pause} className="xph-pause" />
           <div className="xph-flank l" aria-live={Date.now() - held < 7000 ? 'polite' : 'off'}>
-            <span className="pf-mono xph-oracle-n">{h[0]} / 64</span>
-            <b>{main}</b>
+            <span className="pf-mono xph-oracle-n">{pad(p[0])} / 64</span>
+            <b>{p[3]}</b>
           </div>
-          <Hexa ls={lines(h)} size={340} hot={hot} press={press} className="xph-oracle-hx" />
+          <Hexa ls={p[1]} size={340} hot={hot} press={press} className="xph-oracle-hx" />
           <div className="xph-flank r">
-            <span>{sub} · {h[2]} over {h[3]}</span>
+            <span>{p[4]} · {p[5]}</span>
           </div>
         </div>
-        <MaskLines as="h1" id="xph-h1" className="pf-display xph-h1" lines={['The Zen', 'of Hanzo']} amount={0.1} />
+        {/* the h1 cuts in on CSS from first paint, so arrival never waits for hydration (same mask and easing as MaskLines) */}
+        <h1 id="xph-h1" className="pf-display xph-h1"><span className="pf-mask-l"><span className="pf-mask-in xph-cut">The Zen</span> </span><span className="pf-mask-l"><span className="pf-mask-in xph-cut" style={{ '--d': '60ms' }}>of Hanzo</span></span></h1>
         <div className="pf-grid xph-hero-foot">
           <div className="xph-hero-a">
-            <p className="pf-mono xph-cap">Philosophy</p>
-            <p className="xph-sub">64 patterns for intelligent systems</p>
+            <p className="pf-mono xph-cap">Hanzo / Philosophy</p>
+            <p className="xph-sub">64 patterns for exploration, progress, and continuous improvement.</p>
           </div>
-          <p className="pf-body xph-lede">The <em>I Ching</em> is a map of change. Its 64 hexagrams describe recurring conditions: creation, resistance, conflict, growth, decay, transformation, completion and renewal.</p>
+          <p className="pf-body xph-lede">The I Ching describes change through 64 hexagrams—patterns of emergence, discovery, resistance, cooperation, transformation, and renewal.</p>
           <div className="xph-acts">
-            <a href="#patterns" className="pf-btn solid" data-thumb="Explore the 64 patterns" data-cta="philosophy.hero">Explore the 64 patterns</a>
-            <More to="https://cloud.hanzo.ai">Build with Hanzo</More>
+            <a href="#explore" className="pf-btn solid" data-thumb="Explore the patterns" data-cta="philosophy.hero">Explore the patterns</a>
           </div>
         </div>
       </div>
@@ -117,187 +116,102 @@ function Hero() {
   );
 }
 
-/* ---------- the premise: one sentence beside one line that keeps changing ---------- */
-function Premise() {
+/* ---------- the introduction: Hanzo's reading, then the one sentence as a moment ---------- */
+function Intro() {
   return (
-    <section className="pf-sec xph-premise">
+    <section className="pf-sec xph-intro">
       <div className="pf-wrap">
-        <div className="pf-grid xph-premise-top">
-          <MaskLines as="p" className="pf-moment xph-big" lines={['No intelligent system', 'remains fixed.']} />
-          <div className="xph-one" aria-hidden="true"><span className="xph-hl yang xph-one-l"><i /><i /></span></div>
+        <div className="pf-grid xph-intro-g">
+          <p className="pf-lede xph-intro-a">At Hanzo, we use these patterns as inspiration for building intelligent systems and advancing research.</p>
+          <p className="pf-body xph-intro-b">Science progresses by asking questions, challenging assumptions, testing ideas, learning from failure, and discovering what becomes possible next.</p>
         </div>
-        <div className="pf-grid xph-premise-g">
-          <div className="xph-premise-h">
-            <h2 className="pf-title">Intelligence is always changing</h2>
-            <p className="pf-mono xph-cap">The premise</p>
-          </div>
-          <div className="xph-premise-t">
-            <p className="pf-body">Models learn. Data changes. Infrastructure fails. Organizations grow. Interfaces become dependencies. Successful architectures eventually meet conditions they were never designed to handle.</p>
-            <p className="pf-body">The goal is not to prevent change. The goal is to build systems capable of changing without losing their integrity.</p>
-            <p className="xph-that">That is the Zen of Hanzo.</p>
-          </div>
-        </div>
+        <p className="pf-moment xph-big" data-enter="ven"><span className="xph-ven-l">Intelligence grows through that same process.</span></p>
+        <p className="pf-lede xph-intro-c">Eight categories. Sixty-four perspectives. Infinite possibilities for discovery.</p>
       </div>
     </section>
   );
 }
 
-/* ---------- the five laws: a timeline you drag, a hexagram building itself beside it ---------- */
-const LAWS = [
-  ['See the system clearly', 'Understand the current condition before prescribing action.'],
-  ['Separate what changes independently', 'Do not bind together concepts that evolve for different reasons.'],
-  ['Compose capability from complete primitives', 'Small components should combine without central coordination or hidden behavior.'],
-  ["Preserve the user's authority", 'The user should control their models, data, keys, infrastructure and economic participation.'],
-  ['Design for the next transformation', 'Every completed system is already approaching its next condition.'],
-];
-const LAST = HEX[63]; // Before Completion: the hexagram that is never finished
-const BUILD = lines(LAST);
-
-/* The hexagram that the timeline builds: one line per law, bottom to top; on the fifth law the sixth line arrives and
-   never settles (it flips six times, then rests as Before Completion). */
-function LawStage({ at, calm }) {
-  const ref = useRef(null);
-  const live = useInView(ref, { amount: 0.3 });
-  const [flick, setFlick] = useState(BUILD[5]);
-  const [flips, setFlips] = useState(0);
-  const done = at >= 4;
-  useEffect(() => { if (!done) setFlips(0); }, [done]);
-  useEffect(() => {
-    if (!done || calm || !live || flips >= 6) return;
-    const t = setTimeout(() => { setFlick((v) => 1 - v); setFlips((n) => n + 1); }, 1100);
-    return () => clearTimeout(t);
-  }, [done, calm, live, flips]);
-  const ls = [...BUILD.slice(0, 5), done ? flick : BUILD[5]];
-  const drawn = at + 1 + (done ? 1 : 0);
-  const [, sub] = split(LAST[1]);
-  return (
-    <div className="xph-law-stage" ref={ref}>
-      <div className="xph-law-hx" aria-hidden="true">
-        {ls.map((y, i) => (
-          <div key={i} className="xph-law-row" data-on={i < drawn} data-hot={i === (done ? 5 : at)}>
-            <span className={'xph-hl ' + (y ? 'yang' : 'yin')}><i /><i /></span>
-            <b className="pf-mono xph-law-n">{i < 5 ? pad(i + 1) : LAST[0]}</b>
-          </div>
-        ))}
-      </div>
-      <p className="xph-law-cap" data-on={done}>{LAST[4]}<span className="pf-mono">{LAST[0]} · {sub}</span></p>
-    </div>
-  );
-}
-
-/* Signature: the five laws on a timeline you drag. The strip runs law 01 to law 05; the thumb follows the finger or
-   pointer anywhere along it (or the arrow keys), the law under it takes the panel, and the hexagram beside it gains a
-   line per law. On release the thumb settles on the nearest law (300 ms, ease-in-out). It plays through once by itself
-   when first seen, until the visitor takes it. */
-function Laws() {
-  const ref = useRef(null);
-  const track = useRef(null);
-  const seen = useInView(ref, { amount: 0.45 });
-  const rm = useReducedMotion();
-  const [calm, setCalm] = useState(false); // after hydration, so server and client markup match
-  useEffect(() => setCalm(!!rm), [rm]);
-  const [pos, setPos] = useState(0); // 0..4, continuous while dragging
-  const [drag, setDrag] = useState(false);
-  const [mine, setMine] = useState(false);
-  const at = Math.round(pos);
-  useEffect(() => {
-    if (mine || calm || !seen || at >= 4) return;
-    const t = setTimeout(() => setPos((p) => Math.min(4, Math.round(p) + 1)), at === 0 ? 1400 : 2600);
-    return () => clearTimeout(t);
-  }, [mine, calm, seen, at]);
-  const fromX = (x) => {
-    const r = track.current.getBoundingClientRect();
-    return Math.max(0, Math.min(4, ((x - r.left) / r.width) * 4));
-  };
-  const down = (e) => {
-    if (e.button !== undefined && e.button !== 0) return;
-    setMine(true); setDrag(true);
-    e.currentTarget.setPointerCapture?.(e.pointerId);
-    setPos(fromX(e.clientX));
-  };
-  const move = (e) => { if (drag) setPos(fromX(e.clientX)); };
-  const up = () => { if (!drag) return; setDrag(false); setPos((p) => Math.round(p)); };
-  const go = (n) => { setMine(true); setPos(Math.max(0, Math.min(4, n))); };
-  const key = (e) => {
-    const k = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[e.key];
-    if (k) { e.preventDefault(); go(at + k); }
-    else if (e.key === 'Home') { e.preventDefault(); go(0); }
-    else if (e.key === 'End') { e.preventDefault(); go(4); }
-  };
-  return (
-    <section className="pf-sec xph-laws" ref={ref} aria-labelledby="xph-laws-h">
-      <div className="pf-wrap">
-        <div className="pf-grid xph-laws-top">
-          <div className="xph-laws-t">
-            <h2 className="pf-head xph-laws-h" id="xph-laws-h">Five operating laws</h2>
-            <p className="pf-mono xph-cap">The synthesis</p>
-          </div>
-          <p className="pf-mono xph-laws-hint" aria-hidden="true">Drag the line · {pad(at + 1)} / 05</p>
-        </div>
-        <div className="pf-grid xph-laws-g">
-          <LawStage at={at} calm={calm} />
-          <div className="xph-law-panel" aria-live="polite">
-            {LAWS.map(([t, d], i) => (
-              <article key={t} className="xph-law-p" data-on={i === at} aria-hidden={i !== at}>
-                <span className="pf-mono xph-law-k">Law {pad(i + 1)}</span>
-                <h3 className="pf-title xph-law-t">{t}</h3>
-                <p className="pf-lede">{d}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-        <div className="xph-tl" data-drag={drag} style={{ '--p': pos / 4 }}>
-          <div ref={track} className="xph-tl-track" role="slider" tabIndex={0} aria-label="Five operating laws" aria-valuemin={1} aria-valuemax={5} aria-valuenow={at + 1} aria-valuetext={`Law ${at + 1}: ${LAWS[at][0]}`}
-            onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onLostPointerCapture={up} onKeyDown={key}>
-            <span className="xph-tl-rail" aria-hidden="true"><i /></span>
-            {LAWS.map((_, i) => <span key={i} className="xph-tl-tick" data-on={i <= pos + 0.001} style={{ left: (i / 4) * 100 + '%' }} aria-hidden="true" />)}
-            <span className="xph-tl-run" aria-hidden="true"><span className="xph-tl-thumb"><span className="xph-hl yang"><i /><i /></span></span></span>
-          </div>
-          <ol className="xph-tl-stops">
-            {LAWS.map(([t], i) => (
-              <li key={t} style={{ left: (i / 4) * 100 + '%' }} data-on={i === at}>
-                <button type="button" tabIndex={-1} onClick={() => go(i)} aria-label={`Law ${i + 1}: ${t}`}>
-                  <span className="pf-mono">{pad(i + 1)}</span><span className="xph-tl-name">{t}</span>
-                </button>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- the 64 patterns: a quiet index, each pattern opening into a sheet ---------- */
-function Detail({ h }) {
-  const [main, sub] = split(h[1]);
+/* ---------- one pattern, read three ways (the explorer's panel and the sheet) ---------- */
+function Detail({ p, as: H = 'h3', size = 120 }) {
+  const g = groupOf(p);
   return (
     <article className="xph-det">
       <div className="xph-det-h">
-        <Hexa ls={lines(h)} size={92} />
+        <Hexa ls={p[1]} size={size} />
         <div>
-          <h3 className="xph-det-t">{main}</h3>
-          <p className="xph-det-s">{sub}</p>
-          <p className="xph-det-tri"><span className="pf-mono">{h[0]}</span> · {h[2]} <i>over</i> {h[3]}</p>
+          <p className="xph-det-tri">{pad(p[0])} · {g[0]} {g[1]}</p>
+          <H className="xph-det-t">{title(p)}</H>
+          <p className="xph-det-s">{p[5]}</p>
         </div>
       </div>
+      <p className="xph-det-sum">{p[6]}</p>
       <dl className="xph-det-l">
-        <div><dt>Principle</dt><dd className="xph-pr">{h[4]}</dd></div>
-        <div><dt>In practice</dt><dd>{h[5]}</dd></div>
-        <div><dt>Ask</dt><dd className="xph-ask">{h[6]}</dd></div>
-        {h[8] && <div><dt>Lenses</dt><dd className="xph-lens-d"><span className="xph-chip">{h[8]}</span><span>{LENSES[h[8]]}</span></dd></div>}
+        {APPS.map((a, k) => <div key={a}><dt>{a}</dt><dd>{p[7 + k]}</dd></div>)}
       </dl>
     </article>
   );
 }
 
-/* One sheet for all sixty-four (the kit's DetailSheet look): every pattern is in the page, the chosen one shows; the
-   arrows or ← → step to its neighbours in King Wen order. */
-// a native <dialog> (showModal: fixed, backdrop, focus trapped, Esc closes, nothing drawn while closed), which is what
-// the kit's DetailSheet.css positions; the closed dialog's words stay in the server HTML
+/* ---------- explore the patterns: filter by category, pick a number, read its applications ---------- */
+function Explorer({ tab, setTab, at, setAt }) {
+  // on a phone the panel sits under the index: a pick brings it into view
+  const pick = (i) => {
+    setAt(i);
+    if (matchMedia('(max-width: 900px)').matches) document.getElementById('xph-ex-d')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  };
+  const keys = (e) => {
+    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    if (!k) return;
+    const n = (tab + k + TABS.length) % TABS.length;
+    setTab(n);
+    document.getElementById('xph-tab-' + n)?.focus();
+  };
+  return (
+    <section className="pf-sec xph-pat" id="explore" aria-label="Explore the patterns">
+      <div className="pf-wrap">
+        <p className="pf-body xph-note">These are modern Hanzo interpretations inspired by the I Ching, not claims about the text’s historical or scientific meaning. The eight categories are Hanzo’s own editorial grouping of the hexagrams in King Wen order.</p>
+        <div className="xph-bar">
+          <div className="xph-views xph-tabs" role="tablist" aria-label="Categories" onKeyDown={keys}>
+            {TABS.map((t, n) => (
+              <button key={t} type="button" role="tab" id={'xph-tab-' + n} aria-selected={tab === n} tabIndex={tab === n ? 0 : -1} aria-controls="xph-ex xph-cats" onClick={() => setTab(n)}>
+                {tab === n && <motion.span layoutId="xph-view-pill" className="xph-view-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
+                <span>{t}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="xph-fold" data-enter="fold">
+        <div className="xph-ex" id="xph-ex" role="tabpanel" aria-labelledby={'xph-tab-' + tab}>
+          <div className="xph-idx" role="group" aria-label="The 64 patterns">
+            {GROUPS.map((g, r) => (
+              <div key={g[0]} className={'xph-idx-r' + (tab && tab !== r + 1 ? ' dim' : '')}>
+                <span className="pf-mono xph-idx-k">{g[0]}</span>
+                {PATTERNS.slice(g[2] - 1, g[3]).map((p) => (
+                  <button key={p[0]} type="button" className={'xph-idx-c' + (at === p[0] - 1 ? ' on' : '')} aria-pressed={at === p[0] - 1} aria-label={pad(p[0]) + ' ' + title(p)} onClick={() => pick(p[0] - 1)}>
+                    <Hexa ls={p[1]} size={18} />
+                    <span className="pf-mono">{pad(p[0])}</span>
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+          {/* every pattern is in the page; the chosen one shows */}
+          <div className="xph-ex-d" id="xph-ex-d" aria-live="polite" data-enter="invert">
+            {PATTERNS.map((p, i) => <div key={p[0]} className="xph-ex-one" hidden={i !== at}><Detail p={p} /></div>)}
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* One sheet for all sixty-four (the kit's DetailSheet look), opened by a row's "See applications"; the arrows or ← → step
+   to its neighbours in King Wen order. A native <dialog> (showModal: fixed, backdrop, focus trapped, Esc closes). */
 function PatternSheet({ sel, setSel }) {
   const open = sel !== null;
-  const [shown, setShown] = useState(false); // drives the slide (data-open); the dialog itself opens a frame earlier
+  const [shown, setShown] = useState(false);
   const dlg = useRef(null);
   const close = useRef(null);
   const back = useRef(null);
@@ -324,309 +238,96 @@ function PatternSheet({ sel, setSel }) {
     addEventListener('keydown', key);
     return () => { cancelAnimationFrame(raf); clearTimeout(t); removeEventListener('keydown', key); l?.start(); document.documentElement.style.overflow = prev; };
   }, [open, setSel]);
-  const cur = sel ?? 0;
+  const p = PATTERNS[sel ?? 0];
   return (
-    <dialog ref={dlg} className="pf-sheet xph-sheet" data-open={shown} aria-labelledby="xph-sheet-h"
+    <dialog ref={dlg} className="pf-sheet xph-sheet" data-open={shown} aria-label={title(p)}
       onCancel={(e) => { e.preventDefault(); setSel(null); }}
       onClick={(e) => { if (e.target === dlg.current) setSel(null); }}>
-      <NoJs css="dialog.xph-sheet{display:block!important;position:static!important;width:auto!important;height:auto!important;margin:24px 0!important;background:none!important}.xph-sheet .pf-sheet-x{display:none!important}.xph-sheet .pf-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important}" />
       <div className="pf-sheet-panel" data-lenis-prevent>
         <div className="pf-sheet-top">
-          <div>
-            <p className="pf-title" id="xph-sheet-h">{HEX[cur][0]} / 64</p>
-            <p className="pf-kick pf-sheet-cap">The 64 patterns</p>
-          </div>
+          <span className="pf-mono xph-sheet-n" aria-hidden="true">{pad(p[0])} / 64</span>
           <div className="xph-sheet-nav">
             <button type="button" className="pf-sheet-x" onClick={() => setSel((s) => (s + 63) % 64)} aria-label="Previous pattern"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
             <button type="button" className="pf-sheet-x" onClick={() => setSel((s) => (s + 1) % 64)} aria-label="Next pattern"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
             <button ref={close} type="button" className="pf-sheet-x" onClick={() => setSel(null)} aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></button>
           </div>
         </div>
-        <div className="pf-sheet-body">
-          {HEX.map((h, i) => <div key={i} id={'xph-d-' + i} hidden={i !== cur}><Detail h={h} /></div>)}
-        </div>
+        <div className="pf-sheet-body">{open && <Detail p={p} as="h2" size={92} />}</div>
       </div>
     </dialog>
   );
 }
 
-function Tile({ h, i, open }) {
-  const [main, sub] = split(h[1]);
+/* ---------- the eight categories, in King Wen order: quiet ledgers whose every pattern opens in the sheet ---------- */
+function Categories({ tab, open }) {
   return (
-    <button type="button" className="xph-tile" onClick={() => open(i)} aria-haspopup="dialog" aria-controls={'xph-d-' + i} aria-label={`${h[0]} ${h[1]}, ${h[2]} over ${h[3]}`}>
-      <Hexa ls={lines(h)} size={40} />
-      <span className="pf-mono xph-tile-n">{h[0]}</span>
-      <span className="xph-tile-t">{main}</span>
-      <span className="xph-tile-s"><span>{sub}</span><span className="xph-tile-p">{h[4]}</span></span>
-    </button>
-  );
-}
-
-function Sequence({ open }) {
-  return (
-    <div className="xph-seq">
-      {GROUPS.map(([num, name], g) => {
-        const hs = HEX.map((h, i) => [h, i]).filter(([h]) => h[7] === g);
-        return (
-          <section key={num} className="xph-grp" aria-labelledby={'xph-g-' + num}>
-            <div className="xph-grp-h">
-              <h3 id={'xph-g-' + num}>{name}</h3>
-              <span className="pf-mono xph-grp-r">{num} · {hs[0][0][0]} – {hs[7][0][0]}</span>
-            </div>
-            <div className="xph-tiles">{hs.map(([h, i]) => <Tile key={i} h={h} i={i} open={open} />)}</div>
-          </section>
-        );
-      })}
-    </div>
-  );
-}
-
-function Matrix({ open }) {
-  const [hi, setHi] = useState(null); // a highlighted row (upper) or column (lower): ['u', name] | ['l', name]
-  const lit = (up, lo) => hi && ((hi[0] === 'u' && hi[1] === up) || (hi[0] === 'l' && hi[1] === lo));
-  const on = (k, t) => !!(hi && hi[0] === k && hi[1] === t);
-  const tog = (k) => setHi((h) => (h && h[0] === k[0] && h[1] === k[1] ? null : k));
-  return (
-    <div className="xph-mx">
-      <div className="xph-mx-side">
-        <p className="pf-body">Each hexagram stacks two trigrams — the lower force (bottom three lines) beneath the upper force (top three lines). Select a row or column to see how one force meets every other.</p>
-        <p className="xph-mx-leg"><b>The eight trigrams</b>{TRI_ORDER.map((t) => <span key={t}><Hexa ls={TRI[t]} size={16} />{t}</span>)}</p>
-      </div>
-      <div className="xph-mx-scroll">
-        <div className={'xph-mx-g' + (hi ? ' hi' : '')}>
-          <div className="xph-mx-c xph-mx-k"><span>U/L</span></div>
-          {TRI_ORDER.map((t) => <button key={t} type="button" className={'xph-mx-c xph-mx-k xph-mx-h' + (on('l', t) ? ' on' : '')} onClick={() => tog(['l', t])} aria-pressed={on('l', t)} aria-label={'Lower: ' + t}><Hexa ls={TRI[t]} size={20} /><span>{t}</span></button>)}
-          {TRI_ORDER.map((up) => (
-            <div key={up} className="xph-mx-row">
-              <button type="button" className={'xph-mx-c xph-mx-k xph-mx-h' + (on('u', up) ? ' on' : '')} onClick={() => tog(['u', up])} aria-pressed={on('u', up)} aria-label={'Upper: ' + up}><Hexa ls={TRI[up]} size={20} /><span>{up}</span></button>
-              {TRI_ORDER.map((lo) => {
-                const i = HEX.findIndex((h) => h[2] === up && h[3] === lo);
-                return (
-                  <button key={lo} type="button" className={'xph-mx-c xph-mx-b' + (lit(up, lo) ? ' lit' : '')} onClick={() => open(i)} aria-haspopup="dialog" aria-label={`${HEX[i][0]} ${HEX[i][1]}: ${up} over ${lo}`}>
-                    <Hexa ls={lines(HEX[i])} size={30} /><span className="pf-mono">{HEX[i][0]}</span>
-                  </button>
-                );
-              })}
-            </div>
+    <section className="pf-sec xph-cats" aria-label="The eight categories">
+      <div className="pf-wrap">
+        <div id="xph-cats" aria-labelledby={'xph-tab-' + tab}>
+          {GROUPS.map((g, r) => (
+            <section key={g[0]} className="xph-grp" aria-labelledby={'xph-g-' + g[0]} hidden={!!tab && tab !== r + 1}>
+              <div className="xph-grp-h">
+                <h2 id={'xph-g-' + g[0]} className="pf-title">{g[0]} — {g[1]}</h2>
+                <p className="pf-mono xph-grp-r">{pad(g[2])}–{pad(g[3])} · {g[4]}</p>
+                <p className="pf-body xph-grp-l">{g[5]}</p>
+              </div>
+              <ol className="xph-rows" data-enter="carousel">
+                {PATTERNS.slice(g[2] - 1, g[3]).map((p) => (
+                  <li key={p[0]} className="xph-row">
+                    <span className="pf-mono xph-row-n">{pad(p[0])}</span>
+                    <Hexa ls={p[1]} size={28} />
+                    <div className="xph-row-t">
+                      <h3>{title(p)}</h3>
+                      <p className="xph-row-p">{p[5]}</p>
+                      <p className="xph-row-s">{p[6]}</p>
+                    </div>
+                    <button type="button" className="xph-row-b" onClick={() => open(p[0] - 1)} aria-haspopup="dialog" aria-label={'See applications: ' + title(p)}>
+                      <span>See applications</span>
+                      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            </section>
           ))}
         </div>
-      </div>
-    </div>
-  );
-}
-
-function Lenses() {
-  const [lens, setLens] = useState(null);
-  const names = Object.keys(LENSES);
-  const hs = HEX.map((h, i) => [h, i]).filter(([h]) => (lens ? h[8] === lens : h[8]));
-  return (
-    <div className="xph-lenses">
-      <div className="xph-chips">
-        {[null, ...names].map((n) => (
-          <button key={n || 'all'} type="button" aria-pressed={lens === n} onClick={() => setLens(n)}>
-            {lens === n && <motion.span layoutId="xph-lens-pill" className="xph-pill" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
-            <span>{n || 'All lensed patterns'}</span>{n && <span className="pf-mono">{HEX.filter((h) => h[8] === n).length}</span>}
-          </button>
-        ))}
-      </div>
-      <p className="pf-body xph-lens-p">{lens ? <><b>{lens}.</b> {LENSES[lens]}</> : 'Four modern minds read the same sixty-four patterns. Select one to see the conditions it illuminates.'}</p>
-      <div className="xph-lens-l">{hs.map(([h, i]) => <div key={i} className="xph-lens-card"><Detail h={h} /></div>)}</div>
-    </div>
-  );
-}
-
-const VIEWS = ['Sequence', 'Matrix', 'Lenses'];
-const HINTS = ['All sixty-four, in the traditional King Wen order.', 'The eight forces above and below — every pairing is one condition.', 'The same patterns, read through four modern minds.'];
-
-function Patterns() {
-  const [view, setView] = useState('Matrix'); // the 64 as one 8×8 object first; Sequence is a tab away
-  const [sel, setSel] = useState(null);
-  const keys = (e) => {
-    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
-    if (!k) return;
-    const n = (VIEWS.indexOf(view) + k + 3) % 3;
-    setView(VIEWS[n]);
-    document.getElementById('tab-' + VIEWS[n].toLowerCase())?.focus();
-  };
-  return (
-    <section className="pf-sec xph-pat" id="patterns">
-      <div className="pf-wrap">
-        <div className="pf-grid xph-pat-h">
-          <div className="xph-pat-t">
-            <h2 className="pf-head">Every hexagram is active</h2>
-            <p className="pf-mono xph-cap">The 64 patterns</p>
-          </div>
-          <p className="pf-lede xph-pat-l">Each represents a condition that can appear in a model, an application, a company, a network or an entire technological ecosystem. The classical title names the condition. The Hanzo principle defines how we respond.</p>
-        </div>
-        <div className="xph-bar">
-          <div className="xph-views" role="tablist" aria-label="View" onKeyDown={keys}>
-            {VIEWS.map((v) => (
-              <button key={v} type="button" role="tab" id={'tab-' + v.toLowerCase()} aria-selected={view === v} tabIndex={view === v ? 0 : -1} aria-controls={'panel-' + v.toLowerCase()} onClick={() => setView(v)}>
-                {view === v && <motion.span layoutId="xph-view-pill" className="xph-view-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
-                <span>{v}</span>
-              </button>
-            ))}
-          </div>
-          <div className="xph-hints">{VIEWS.map((v, i) => <p key={v} className="pf-mono xph-hint" hidden={view !== v}>{HINTS[i]}</p>)}</div>
-        </div>
-        {/* all three views are in the page; the chosen one is shown */}
-        <div id="panel-sequence" role="tabpanel" aria-labelledby="tab-sequence" hidden={view !== 'Sequence'}><Sequence open={setSel} /></div>
-        <div id="panel-matrix" role="tabpanel" aria-labelledby="tab-matrix" hidden={view !== 'Matrix'}><Matrix open={setSel} /></div>
-        <div id="panel-lenses" role="tabpanel" aria-labelledby="tab-lenses" hidden={view !== 'Lenses'}><Lenses /></div>
-      </div>
-      <PatternSheet sel={sel} setSel={setSel} />
-    </section>
-  );
-}
-
-/* ---------- the method: a cycle you point at ---------- */
-const METHOD = [['Observe', 'Identify the actual condition of the system.'], ['Separate', 'Untangle concerns that change for different reasons.'], ['Reduce', 'Find the smallest complete set of concepts.'], ['Compose', 'Combine orthogonal primitives into greater capability.'], ['Verify', 'Measure behavior instead of trusting intention.'], ['Adapt', 'Respond to evidence without abandoning the foundation.'], ['Distribute', 'Place data, computation and authority where they belong.'], ['Continue', 'Treat every completion as the beginning of another cycle.']];
-
-function Method() {
-  const [at, setAt] = useState(0);
-  const [mine, setMine] = useState(false); // once the visitor points at a step, the cycle is theirs
-  const [lap, setLap] = useState(0);
-  const calm = useReducedMotion();
-  const ref = useRef(null);
-  const live = useInView(ref, { amount: 0.2 });
-  useEffect(() => {
-    if (mine || calm || !live || lap >= 8) return; // one lap by itself, then it rests back on Observe
-    const t = setTimeout(() => { setAt((v) => (v + 1) % 8); setLap((n) => n + 1); }, 2400);
-    return () => clearTimeout(t);
-  }, [at, mine, calm, live, lap]);
-  const take = (i) => { setMine(true); setAt(i); };
-  return (
-    <section className="pf-sec xph-method" ref={ref}>
-      <div className="pf-wrap pf-grid xph-method-g">
-        <div className="xph-method-l">
-          <h2 className="pf-head">How we build</h2>
-          <p className="pf-mono xph-cap">The method</p>
-          <div className="xph-ring" aria-hidden="true" style={{ '--at': at }}>
-            <svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" /></svg>
-            <i className="xph-hand" />
-            {METHOD.map(([t], i) => {
-              const a = (i / 8) * Math.PI * 2 - Math.PI / 2;
-              return <span key={t} className={'xph-node pf-mono' + (i === at ? ' on' : '')} style={{ left: 50 + Math.cos(a) * 43 + '%', top: 50 + Math.sin(a) * 43 + '%' }}>{pad(i + 1)}</span>;
-            })}
-            <div className="xph-ring-c">{METHOD.map(([t], i) => <b key={t} data-on={i === at}>{t}</b>)}</div>
-          </div>
-        </div>
-        <ol className="xph-steps">
-          {METHOD.map(([t, d], i) => (
-            <li key={t} data-on={i === at}>
-              <button type="button" aria-pressed={i === at} onClick={() => take(i)} onPointerEnter={(e) => e.pointerType === 'mouse' && take(i)} onFocus={() => take(i)}>
-                <span className="pf-mono">{pad(i + 1)}</span>
-                <h3>{t}</h3>
-                <p>{d}</p>
-              </button>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- across the stack: an editorial index ---------- */
-const STACK = [
-  ['Hanzo Models', 'Open and adaptable intelligence across language, vision, audio, code, tools and physical systems.', '/models'],
-  ['Hanzo Platform', 'One control plane, assembled from services you can take apart.', '/platform'],
-  ['Hanzo Engine', 'Efficient execution built around measurable performance, hardware awareness and composable runtimes.', '/engine'],
-  ['Hanzo Router', 'Model choice treated as a changing systems problem—balancing capability, latency, cost, privacy and availability.', '/gateway'],
-  ['Hanzo Network', 'Distributed intelligence designed to reduce centralized dependence and share value with those who contribute compute, models, code and knowledge.', '/network'],
-  ['Hanzo Open Source', 'Infrastructure that can be inspected, operated, modified and carried forward by the people who depend upon it.', '/open-source'],
-];
-
-function Stack() {
-  return (
-    <section className="pf-sec xph-stack">
-      <div className="pf-wrap">
-        <div className="xph-stack-h">
-          <h2 className="pf-head">One philosophy</h2>
-          <p className="pf-mono xph-cap">Across the stack</p>
-        </div>
-        <ul className="xph-stack-l">
-          {STACK.map(([t, d, to], i) => (
-            <li key={t}>
-              <A to={to}>
-                <Hexa ls={lines(HEX[[0, 1, 13, 62, 7, 12][i]])} size={34} />
-                <b data-morph>{t}</b>
-                <span>{d}</span>
-                <i aria-hidden="true"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></i>
-              </A>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- the questions, each beside its trigram ---------- */
-const QUESTIONS = ['Is it understandable?', 'Is it composable?', 'Is it verifiable?', 'Can it operate privately?', 'Can the user leave?', 'Can it survive failure?', 'Can it evolve without being destroyed?', 'Does it increase human agency?'];
-
-function Change() {
-  // the one big thing of this screen: the question's own trigram drawn large; it walks the eight once on arrival,
-  // then follows the pointer or focus
-  const ref = useRef(null);
-  const seen = useInView(ref, { amount: 0.4 });
-  const calm = useReducedMotion();
-  const [q, setQ] = useState(0);
-  const [mine, setMine] = useState(false);
-  useEffect(() => {
-    if (!seen || mine || calm) return;
-    const t = setTimeout(() => { if (q >= 7) { setMine(true); setQ(0); } else setQ(q + 1); }, 900);
-    return () => clearTimeout(t);
-  }, [seen, mine, calm, q]);
-  const pick = (i) => { setMine(true); setQ(i); };
-  return (
-    <section className="pf-sec xph-change" ref={ref}>
-      <div className="pf-wrap pf-grid xph-change-g">
-        <div className="xph-change-l">
-          <h2 className="pf-head">Build systems that can change</h2>
-          <p className="pf-lede">The purpose of a philosophy is not to decorate a company. It is to make difficult decisions clearer.</p>
-          <div className="xph-change-big" aria-hidden="true"><Hexa ls={TRI[TRI_ORDER[q]]} size={150} /><span className="pf-mono">{pad(q + 1)} / 08</span></div>
-        </div>
-        <div className="xph-change-r">
-          <p className="pf-body">When we design a model, an API, an agent, a database or a network, we return to the same questions:</p>
-          <ol className="xph-qs">{QUESTIONS.map((x, i) => <li key={x} data-on={q === i ? '' : undefined} tabIndex={-1} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)} onClick={() => pick(i)}><Hexa ls={TRI[TRI_ORDER[i]]} size={22} /><span className="pf-mono">{pad(i + 1)}</span><span>{x}</span></li>)}</ol>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- the belief statement: set still, in full ink (the timeline is this page's motion) ---------- */
-function Whole() {
-  return (
-    <section className="pf-sec xph-whole">
-      <div className="pf-wrap">
-        <h2 className="pf-moment xph-whole-t">The Zen of Hanzo is not a promise that systems will remain still. <span className="xph-whole-b">It is a method for building systems that remain whole while everything changes.</span></h2>
       </div>
     </section>
   );
 }
 
 /* ---------- the close, in the one dark room: from one line to sixty-four conditions ---------- */
+const CLOSE = [
+  'A model can become more capable. An experiment can reveal a better question. A failed hypothesis can redirect an entire research program. A discovery in one discipline can transform another.',
+  'Progress is not a straight line, and intelligence is not a fixed destination.',
+  'These 64 patterns provide different perspectives for recognizing the condition of a problem and choosing how to proceed.',
+  'The same principles can inform the development of an AI model, a scientific experiment, a research laboratory, an organization, or an evolving technological ecosystem.',
+];
+const TRI8 = [[1, 1, 1], [1, 1, 0], [1, 0, 1], [1, 0, 0], [0, 1, 1], [0, 1, 0], [0, 0, 1], [0, 0, 0]];
 function Close() {
-  const stanza = ['From one line, two forces.', 'From two forces, eight patterns.', 'From eight patterns, sixty-four conditions.', 'From small primitives, unbounded intelligence.'];
   return (
-    <SceneWipe className="xph-close" label="From one line to sixty-four conditions">
+    <SceneWipe className="xph-close" label="Intelligence is never finished.">
       <div className="pf-sec"><div className="pf-wrap">
         <div className="xph-grow" aria-hidden="true">
           <div className="xph-g1"><span className="xph-hl yang xph-one-l"><i /><i /></span></div>
           <span className="xph-gto" />
           <div className="xph-g2"><Hexa ls={[1]} size={56} /><Hexa ls={[0]} size={56} /></div>
           <span className="xph-gto" />
-          <div className="xph-g8">{TRI_ORDER.map((t) => <Hexa key={t} ls={TRI[t]} size={26} />)}</div>
+          <div className="xph-g8">{TRI8.map((t, k) => <Hexa key={k} ls={t} size={26} />)}</div>
           <span className="xph-gto" />
-          <div className="xph-g64">{HEX.map((h, i) => <Hexa key={i} ls={lines(h)} size={15} />)}</div>
+          <div className="xph-g64">{PATTERNS.map((p) => <Hexa key={p[0]} ls={p[1]} size={15} />)}</div>
         </div>
-        <MaskLines as="h2" className="pf-head xph-stanza" lines={stanza} />
+        <div data-enter="type">
+          <h2 className="pf-head xph-stanza"><span className="xph-type"><span className="xph-type-t">Intelligence is never finished.</span></span></h2>
+        </div>
+        <div className="xph-close-t">{CLOSE.map((t) => <p key={t} className="pf-body">{t}</p>)}</div>
+        <p className="xph-close-m">Explore. Form. Observe. Experiment. Adapt. Optimize. Transform. Evolve.</p>
+        <p className="xph-close-m dim">And begin again.</p>
+        <p className="pf-mono xph-close-sig">The Zen of Hanzo.</p>
         <div className="xph-close-acts">
-          <A to="/" className="pf-btn solid" data-cta="philosophy.close">Explore Hanzo</A>
+          <A to="/science" className="pf-btn solid" data-cta="philosophy.close">Explore Hanzo Science</A>
           <More to="https://papers.hanzo.ai">Read the research</More>
-          <More to="https://github.com/hanzoai">View the source</More>
+          <More to="https://cloud.hanzo.ai">Build with Hanzo</More>
         </div>
       </div></div>
     </SceneWipe>
@@ -634,18 +335,20 @@ function Close() {
 }
 
 export default function Philosophy() {
+  const [tab, setTab] = useState(0); // 0 = All, 1-8 = a category
+  const [at, setAt] = useState(0); // the pattern in the explorer
+  const [sel, setSel] = useState(null); // the pattern in the sheet
+  const pickTab = (n) => { setTab(n); if (n && PATTERNS[at][2] !== n) setAt(GROUPS[n - 1][2] - 1); };
+  useEnter('.xph');
   return (
     <main id="main" className="xph pf-r">
-      {/* JavaScript off: the five laws are laid out one under another and the strip is hidden, every view and all 64 patterns are laid out in the page, tiles show their principle */}
-      <NoJs css=".xph-law-p{position:static!important;opacity:1!important;transform:none!important;visibility:visible!important;margin-bottom:32px}.xph-law-panel{display:block!important;height:auto!important}.xph-tl,.xph-laws-hint{display:none!important}.xph-law-row .xph-hl i{opacity:1!important}#panel-matrix,#panel-lenses,.xph-hint{display:block!important}#panel-matrix,#panel-lenses{margin-top:96px}.xph-mx-side{position:static!important}.xph-tile-s>span{grid-area:auto!important;opacity:1!important;transform:none!important}.xph-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important;margin-top:96px}.xph-sheet .xph-sheet-nav{display:none!important}.xph-sheet .pf-sheet-panel{position:static!important;transform:none!important;width:auto!important;box-shadow:none!important;border-radius:0!important;overflow:visible!important}.xph-sheet .pf-sheet-top{padding:0 0 20px!important}.xph-sheet .pf-sheet-body{overflow:visible!important;padding:0!important}.xph-sheet [hidden]{display:block!important;margin-top:56px}" />
+      {/* JavaScript off: every category is laid out, every pattern's applications are in the explorer one under another */}
+      <NoJs css=".xph-ex-d [hidden],.xph-grp[hidden]{display:block!important}.xph-ex-one+.xph-ex-one{margin-top:56px}.xph-idx-r.dim{opacity:1!important}.xph-ex-d{position:static!important;max-height:none!important}" />
       <Hero />
-      <Laws />
-      <Premise />
-      <Patterns />
-      <Method />
-      <Stack />
-      <Change />
-      <Whole />
+      <Intro />
+      <Explorer tab={tab} setTab={pickTab} at={at} setAt={setAt} />
+      <Categories tab={tab} open={setSel} />
+      <PatternSheet sel={sel} setSel={setSel} />
       <Close />
     </main>
   );

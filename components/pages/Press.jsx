@@ -1,15 +1,17 @@
 'use client';
-/* /press. V2: 8/10 Story on the Hanzo deck (third review's fixes: scale rhythm, a beat per lower section, phone news card, kit signature). The headline and its one ask sit beside a stack of the
-   three press-kit plates; scroll and the stack itself fans out into the kit (one object, one pinned stage, never shown
-   twice). Hanzo's boilerplate is read word by word, the four facts settle once, the news reads as an editorial index with
+/* /press. V2: 8/10 slice D: the motion-map rebuild verified (magnet-grid signature with three idle ripples; conveyor, pull-back,
+   velocity-skew calmed to 3°, orbit-in, stack-drop without bounce), kit plates on one baseline, light plate visible, zip line unclipped.
+   The headline and its one ask sit beside the magnet grid (Hanzo's mark in a field of dots that bends to the pointer
+   and ripples at a click); the three press-kit plates follow, pulled back from a close-up of the dark one. Hanzo's boilerplate is read word by word, the four facts settle once, the news reads as an editorial index with
    a card beside the row you point at, press contact is the one black room where the email cuts in with its copy button
    beside it, then brand assets with the partners as one still row, the channels as a hairline list, and the leadership.
    Persona: a journalist or analyst writing about Hanzo (MASTER: investors and press).
    Goal: leave with the kit, the facts and the right person to email.
    CTA: "Contact Press Team" (mailto:press@hanzo.ai) in the hero and the shared sticky ask bar (data-thumb), data-cta
    press.hero; "Request Executive Bios" (press.bios) closes the page; metric: one contact click.
-   Signature: the kit deals out. The three press-kit plates sit as one stack beside the headline; pinned, the stack fans
-   out into the kit spread as you scroll (stack to spread), a move no other page makes. A sheen crosses the dark plate.
+   Signature (MOTION-MAP `magnet-grid`, press/MagnetGrid.jsx): Hanzo's mark drawn in a field of dots beside the headline;
+   the field bends toward the pointer, a click or tap ripples out, one ripple on arrival and three slow idle ones.
+   Entrances (press/Enter.jsx, in order): conveyor, pull-back, velocity-skew, orbit-in, stack-drop. A sheen crosses the dark plate.
    Demoted to support: the boilerplate read word by word (scroll), the facts settling once.
    Supporting (3): masked headline cut-in, once (with the team names and section heads); the boilerplate word fill
    (scroll); the email typed into the black room, one beat per section below it (time: the partner hairlines drawing
@@ -202,7 +204,9 @@ function News() {
   const box = useRef(null);
   const [at, setAt] = useState(0);
   const [pointing, setPointing] = useState(false);
-  const calm = useReducedMotion();
+  const rm = useReducedMotion();
+  const [calm, setCalm] = useState(false); // after hydration: the server can't know the setting, so the markup must match first
+  useEffect(() => setCalm(!!rm), [rm]);
   // idle: while the card is in view and nothing holds it, it keeps walking the six stories slowly (4 s each);
   // pointer and focus hold it, the pause control stops it, reduced motion never starts it
   const [paused, pause] = usePause();
@@ -238,7 +242,7 @@ function News() {
             <OrbitItem key={t} i={i} go={go} data-i={i} className={i === at ? 'on' : ''}>
               <A to="/blog" className="xpe-item" onPointerEnter={(e) => { if (e.pointerType === 'mouse') hold(i); }} onFocus={() => hold(i)} onBlur={free}>
                 <span className="xpe-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                <span className="xpe-tt">{keep(t)}</span>
+                <span className="xpe-tt">{t}</span>
                 <span className="xpe-ts vc-num">{dd}</span>
                 <span className="xpe-ts2">{ss}</span>
                 <span className="xpe-go" aria-hidden="true">{ARROW}</span>
@@ -287,7 +291,7 @@ function Contact() {
           <p className="xpe-tel vc-num">+1 (424) 335-0550</p>
         </div>
         <div className="xpe-contact-a">
-          <address>Hanzo AI, Inc.<br />1 Ferry Building<br />San Francisco, CA 94105<br />United States</address>
+          <address><span>Hanzo AI, Inc.</span><br /><span>1 Ferry Building</span><br /><span>San Francisco, CA 94105</span><br /><span>United States</span></address>
           <h3 className="vc-kick">Headquarters</h3>
         </div>
       </StackDrop>
@@ -295,7 +299,8 @@ function Contact() {
   );
 }
 
-const PARTNERS = [['Techstars', '/press/partners/techstars/techstars.png', 'Logo (PNG)'], ['NVIDIA', '/press/partners/nvidia/nvidia.svg', 'Logo (SVG)'], ['Google Cloud', '/press/partners/googlecloud/googlecloud.svg', 'Logo (SVG)'], ['AWS', '/press/partners/aws/aws.svg', 'Logo (SVG)'], ['DigitalOcean', '/press/partners/digitalocean/digitalocean.svg', 'Logo (SVG)'], ['Nebius', '/press/partners/nebius/nebius.svg', 'Logo (SVG)']];
+// [name, Hanzo's download path (its link, kept word for word), label, the logo this repo mirrors for display]
+const PARTNERS = [['Techstars', '/press/partners/techstars/techstars.png', 'Logo (PNG)', '/logos/partners/techstars.svg'], ['NVIDIA', '/press/partners/nvidia/nvidia.svg', 'Logo (SVG)', '/logos/partners/nvidia.svg'], ['Google Cloud', '/press/partners/googlecloud/googlecloud.svg', 'Logo (SVG)', '/logos/partners/google.svg'], ['AWS', '/press/partners/aws/aws.svg', 'Logo (SVG)', '/logos/partners/amazon.svg'], ['DigitalOcean', '/press/partners/digitalocean/digitalocean.svg', 'Logo (SVG)', '/logos/partners/digitalocean.svg'], ['Nebius', '/press/partners/nebius/nebius.svg', 'Logo (SVG)', '/logos/partners/nebius.svg']];
 
 function BrandAssets() {
   const [k, , ref] = useBeat(PARTNERS.length, 160, 0.3);
@@ -310,14 +315,14 @@ function BrandAssets() {
         </div>
         <A to="/brand" className="xpe-guide" ref={gref}>
           <span className={'xpe-guide-p' + (g > 0 ? ' in' : '')} aria-hidden="true"><Mark size={56} /></span>
-          <span className="xpe-guide-t"><b>Brand Guidelines</b><span>View Brand Guidelines <i>{ARROW}</i></span></span>
+          <span className="xpe-guide-t"><span className="xpe-guide-n">Brand Guidelines</span><span className="xpe-guide-l"><span>View Brand Guidelines</span> <i>{ARROW}</i></span></span>
         </A>
         <h3 className="vc-title xpe-h3">Partner Assets</h3>
         <ul className="xpe-partners" ref={ref}>
-          {PARTNERS.map(([n, f, l], i) => (
+          {PARTNERS.map(([n, f, l, logo], i) => (
             <li key={n} className={i < k ? 'in' : ''}>
-              <span className="xpe-p-img"><Pic src={f} alt={n} w={140} h={32} fallback={<span className="xpe-p-alt" aria-hidden="true">{n.slice(0, 1)}</span>} /></span>
-              <b>{n}</b>
+              <span className="xpe-p-img"><Pic src={logo} alt={n} w={140} h={32} fallback={<span className="xpe-p-alt" aria-hidden="true">{n.slice(0, 1)}</span>} /></span>
+              <span className="xpe-p-n">{n}</span>
               <a href={f} download aria-label={n + ' ' + l}><span>{l}</span>{DOWN}</a>
             </li>
           ))}

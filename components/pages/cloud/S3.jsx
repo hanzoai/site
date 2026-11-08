@@ -1,6 +1,6 @@
 'use client';
 /* Object Storage, Cloud 3 launch page, round 3 to docs/MASTER.md (the only brief).
-   V2: Title first on the 8/5 split with the lede and ask beside it, then the object on one flat quiet stage: it breaks into fourteen shards that fly to fourteen volume servers, survives four going dark and reads back from the ten left (kept as approved motion); then the peel: the binary's four roles lift apart into floating layers in 3D beside the four facts, and close again; one black room where the figures cut in beside the agent prompt; deck greys, flat surfaces, no springs.
+   V2: 8/10 Title first on the 8/5 split with the lede and ask beside it, then the object on one flat quiet stage: it breaks into fourteen shards that fly to fourteen volume servers, survives four going dark and reads back from the ten left (phones: shards top-right, readout on its own row, nothing shifts); then the peel: the binary's four roles lift apart into floating layers in 3D beside the four facts, and close again; one black room where "4 can be lost, and it still reads" is the one big figure beside three small ones, then the agent prompt; entrances (s3/S3Enter.jsx): text-mask-film, iris, shutter, cursor-lens, grid-wave; deck greys, flat surfaces, no springs.
 // Signature: peel — one binary lifts apart into its four floating roles in 3D (HTTP gateway, filer, master, volume servers), walks KMS keys, ten data and four parity shards (four dark, still reads) and one binary protocol on those layers, then closes back into one binary
 // Beyond: lose four yourself — in the hero, tap any volume servers dark, up to the four Hanzo says can be lost, and watch the object keep reading
    Persona: Developer storing objects (buckets from code).
@@ -23,11 +23,13 @@
    timed wipe are gone. Every word and link is Hanzo's. */
 import { useEffect, useMemo, useState } from 'react';
 import { motion, LayoutGroup } from 'motion/react';
-import { A } from '../../kit';
-import { Paste, useLive } from './Frame';
+import { A, Img } from '../../kit';
+import { useLive } from './Frame';
+import { LeafPaste as Paste } from './close3/Leaf';
 import SpecDrawer from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from './close3/Close';
 import Peel from './s3/Peel';
+import { Shutter, CursorLens, GridWave } from './s3/S3Enter';
 import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
 import './S3.css';
@@ -153,12 +155,14 @@ export default function S3() {
 
       <section className="s3-room lx-dark" data-room="dark">
         <div className="lx-wrap">
-          <SpecDrawer className="s3-spec" rows={FIG.map(([v, l], i) => ({ v: <LineMask as="span" lines={[String(v)]} delay={i * 0.06} inView />, l }))} />
-          <Paste dark name="Object Storage" api="/v1/s3/buckets" prompt="Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list" className="s3-paste" />
+          <Shutter><SpecDrawer className="s3-spec" rows={FIG.map(([v, l], i) => ({ v: <LineMask as="span" lines={[String(v)]} delay={i * 0.06} inView />, l }))} /></Shutter>
+          <CursorLens><Paste dark name="Object Storage" api="/v1/s3/buckets" prompt="Read https://hanzo.ai/skill.md and use Hanzo Object Storage in my project. Start with: hanzo s3 buckets list" className="s3-paste" aside={<div className="s3-kai"><Img src="/models/kai.webp" alt="" w={1200} h={1500} /></div>} /></CursorLens>
         </div>
       </section>
 
-      <LaunchClose name="Object Storage" tag="Distributed object storage" seed="s3" data={[10, 4, 4]} ask={['API reference', API]} cta="s3.close" repo={['hanzoai/s3', GH]} stars="4 stars" />
+      <GridWave>
+        <LaunchClose name="Object Storage" tag="Distributed object storage" seed="s3" data={[10, 4, 4]} ask={['API reference', API]} cta="s3.close" repo={['hanzoai/s3', GH]} stars="4 stars" />
+      </GridWave>
     </main>
   );
 }

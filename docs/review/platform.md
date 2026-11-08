@@ -1,4 +1,5 @@
 # /platform — James-eye review
+Ready: 2026-11-07, slice D — map words and plates in step (camera crosses only at the switch, words crossfade, intro up before the room covers), directory reads 01-07 with level rows, hovers on Copy/column heads/chapter tabs/endpoints, deck tokens on Copy and the Band (84px h2), JS-off Data tiles, finder hydration clean, 18.0→16.2 screens, five section entrances
 Verdict: 7/10
 First complaint: "The black stack is the best thing on the page, but when I scroll through it the words on the left go dark and disappear while the cards have already moved on. For a moment half the screen is just black. And the bar at the top turns a muddy grey over it. It feels like it's lagging, not premium."
 

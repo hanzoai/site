@@ -2,7 +2,7 @@
 /* MASTER.md section 3: the deck's greys only (page-local until tokens.css lands), and a scale with rhythm: the h1 rests at
    52px, section headings at 26px, figures at 64px (Air 220); headings are Book 497 */
 .xpr {
-  --ink: #0a0a0a; --soft: #525252; --faint: #737373; --line: rgba(0, 0, 0, .1); --card: #f5f5f5;
+  --ink: light-dark(#0a0a0a, var(--foreground)); --soft: light-dark(#525252, var(--muted-foreground)); --faint: light-dark(#737373, var(--text-tertiary)); --line: light-dark(rgba(0, 0, 0, .1), var(--border)); --card: light-dark(#f5f5f5, var(--muted));
   --s-h1: clamp(40px, 3.6vw, 52px); --s-h: 26px; --s-t: 21px; --s-fig: clamp(44px, 4.4vw, 64px);
   --s-lede: clamp(17px, 1.45vw, 21px); --s-body: 16px;
   --gut: clamp(16px, 4vw, 32px); --pad: clamp(72px, 11vw, 188px);
@@ -34,26 +34,26 @@
 @media (prefers-reduced-motion: reduce) { .xpr-art-c { animation: none; transition: none; } }
 
 /* the room: tabs that stay with you while you read the plans */
-.xpr-tabs { position: sticky; top: var(--x-top, 60px); z-index: 20; padding: 12px 0; background: #fff; box-shadow: 0 1px 0 var(--line); }
+.xpr-tabs { position: sticky; top: var(--x-top, 60px); z-index: 20; padding: 12px 0; background: light-dark(#fff, var(--card)); box-shadow: 0 1px 0 var(--line); }
 .xpr-panels { padding-top: clamp(24px, 2.2vw, 32px); }
 
 /* the small segmented choices inside cards */
-.xpr-seg { position: relative; display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: #ededed; }
+.xpr-seg { position: relative; display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; background: light-dark(#ededed, var(--secondary)); }
 .xpr-seg button { position: relative; height: 32px; padding: 0 13px; border: 0; border-radius: 999px; background: none; color: var(--soft); font: 500 13.5px/1 var(--sans); cursor: pointer; transition: color .2s; }
 .xpr-seg button[aria-checked='true'] { color: var(--ink); }
 .xpr-seg button span { position: relative; }
-.xpr-seg .xpr-seg-bg { position: absolute; inset: 0; border-radius: 999px; background: #fff; }
+.xpr-seg .xpr-seg-bg { position: absolute; inset: 0; border-radius: 999px; background: light-dark(#fff, var(--background)); }
 .xpr-seg button:active { transform: scale(.97); transition: transform 90ms var(--eo); }
 
 /* the signature: ONE plan panel. The rail (left) picks a plan of the set; the frame (right) eases its height to the plan,
    and every block inside glides to its new place while words cross over. One outlined surface, no shadow. */
-.xpr-morph { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 9fr); border: 1px solid var(--line); border-radius: 24px; overflow: hidden; background: #fff; }
+.xpr-morph { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 9fr); border: 1px solid var(--line); border-radius: 24px; overflow: hidden; background: light-dark(#fff, var(--card)); }
 .xpr-rail { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 12px; background: var(--card); border-right: 1px solid var(--line); }
 .xpr-rail-i { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-height: 92px; padding: 18px 20px; border: 0; border-radius: 16px; background: none; color: var(--soft); text-align: left; cursor: pointer; font: inherit; transition: color .15s var(--eo); }
 .xpr-rail-i > span:not(.xpr-rail-bg) { position: relative; }
-.xpr-rail-bg { position: absolute; inset: 0; border-radius: 16px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+.xpr-rail-bg { position: absolute; inset: 0; border-radius: 16px; background: light-dark(#fff, var(--card)); box-shadow: inset 0 0 0 1px var(--line); }
 .xpr-rail-i[aria-checked='true'] { color: var(--ink); }
-@media (hover: hover) { .xpr-rail-i[aria-checked='false']:hover { color: var(--ink); background: #ededed; } }
+@media (hover: hover) { .xpr-rail-i[aria-checked='false']:hover { color: var(--ink); background: light-dark(#ededed, var(--secondary)); } }
 .xpr-rail-i:active { transform: scale(.98); transition: transform 90ms var(--eo); }
 .xpr-rail-i:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .xpr-rail-n { display: block; min-width: 5ch; font-size: 17px; font-weight: 497; letter-spacing: -.015em; line-height: 1.2; }
@@ -64,6 +64,7 @@
 .xpr-pa, .xpr-pb { min-width: 0; }
 .xpr-swap { position: relative; display: block; }
 .xpr-swap-i, .xpr-line { display: block; }
+.xpr-swap.roll { overflow: hidden; padding-bottom: .12em; margin-bottom: -.12em; }
 .xpr-r-name { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; min-height: 40px; }
 .xpr-pname { margin: 0; min-width: 6ch; font-size: var(--s-h); font-weight: 497; letter-spacing: -.02em; line-height: 1.15; color: var(--ink); }
 .xpr-d { margin: 12px 0 0; max-width: 46ch; font-size: 15px; line-height: 1.5; color: var(--soft); text-wrap: pretty; }
@@ -105,7 +106,7 @@
 .xpr-cmp .x-table { min-width: 880px; table-layout: fixed; }
 .xpr-cmp .x-table th, .xpr-cmp .x-table td { white-space: normal; vertical-align: top; font-size: 14.5px; }
 .xpr-cmp .x-table thead th:first-child, .xpr-cmp .x-table tbody th { width: 28%; }
-.xpr-cmp .x-table thead th { vertical-align: bottom; background: #fff; }
+.xpr-cmp .x-table thead th { vertical-align: bottom; background: light-dark(#fff, var(--card)); }
 .xpr-cmp .x-table thead th[data-subject] { background: var(--card); }
 .xpr-cmp-h { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .xpr-cmp-h b { font-size: 21px; font-weight: 497; letter-spacing: -.02em; color: var(--ink); }
@@ -117,7 +118,7 @@
 
 /* team */
 .xpr-bill { display: flex; align-items: center; gap: 10px; }
-.xpr-save { padding: 6px 10px; border-radius: 999px; background: var(--ink); color: #fff; font: 600 13px/1 var(--mono); }
+.xpr-save { padding: 6px 10px; border-radius: 999px; background: var(--ink); color: light-dark(#fff, var(--primary-foreground)); font: 600 13px/1 var(--mono); }
 .xpr-seats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
 .xpr-note-l p { margin: 0; }
 .xpr-seats > div { display: flex; flex-direction: column; align-items: flex-start; padding: 22px; border-radius: 16px; background: var(--card); }
@@ -132,11 +133,11 @@
 .xpr-morph .xpr-seats .xpr-seat-p { grid-column: 2; grid-row: 1 / span 2; margin: 0; font-size: 32px; }
 .xpr-morph .xpr-seats small { grid-column: 1 / -1; }
 .xpr-morph .xpr-seats .xpr-step { grid-column: 1 / -1; justify-self: start; margin-top: 12px; }
-.xpr-step { display: inline-flex; align-items: center; gap: 4px; margin-top: 18px; padding: 4px; border-radius: 999px; background: #fff; border: 1px solid var(--line); }
+.xpr-step { display: inline-flex; align-items: center; gap: 4px; margin-top: 18px; padding: 4px; border-radius: 999px; background: light-dark(#fff, var(--card)); border: 1px solid var(--line); }
 .xpr-step button { width: 40px; height: 40px; border: 0; border-radius: 50%; background: none; color: var(--ink); font: 400 21px/1 var(--sans); cursor: pointer; transition: background .15s var(--eo), transform 90ms var(--eo); }
-@media (hover: hover) { .xpr-step button:hover:not(:disabled) { background: #ededed; } }
+@media (hover: hover) { .xpr-step button:hover:not(:disabled) { background: light-dark(#ededed, var(--secondary)); } }
 .xpr-step button:active:not(:disabled) { transform: scale(.94); }
-.xpr-step button:disabled { color: #a3a3a3; cursor: default; }
+.xpr-step button:disabled { color: light-dark(#a3a3a3, var(--neutral-500)); cursor: default; }
 .xpr-step output { min-width: 3ch; text-align: center; font: 600 17px/1 var(--sans); font-feature-settings: 'tnum'; }
 
 /* api: its reading arrives under the panel when the API set is picked */
@@ -161,7 +162,7 @@
 .xpr-unit { justify-self: start; margin-top: 10px; padding: 5px 10px; border-radius: 6px; background: var(--card); font: 500 13px/1.2 var(--mono); color: var(--ink); }
 .xpr-bills p { margin: 14px 0 0; max-width: 64ch; font-size: 16px; line-height: 1.55; color: var(--soft); }
 .xpr-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
-.xpr-chips > span { padding: 5px 10px; border-radius: 6px; background: #fff; border: 1px solid var(--line); font: 500 13px/1.2 var(--sans); color: var(--soft); white-space: nowrap; }
+.xpr-chips > span { padding: 5px 10px; border-radius: 6px; background: light-dark(#fff, var(--card)); border: 1px solid var(--line); font: 500 13px/1.2 var(--sans); color: var(--soft); white-space: nowrap; }
 .xpr-chips.mono > span { font-family: var(--mono); }
 .xpr-rates { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .xpr-rates li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1.3fr); gap: 8px 24px; align-items: baseline; padding: 22px 0; border-bottom: 1px solid var(--line); }
@@ -215,12 +216,12 @@
 .xpr-m-body { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 10px; }
 .xpr-nm { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
 .xpr-nm b { font-size: 17px; font-weight: 600; letter-spacing: -.015em; color: var(--ink); }
-.xpr-nm em { padding: 4px 8px; border-radius: 6px; background: var(--ink); color: #fff; font: 500 12px/1 var(--mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; }
+.xpr-nm em { padding: 4px 8px; border-radius: 6px; background: var(--ink); color: light-dark(#fff, var(--primary-foreground)); font: 500 12px/1 var(--mono); font-style: normal; letter-spacing: .06em; text-transform: uppercase; }
 .xpr-m-d { max-width: 62ch; font-size: 14px; line-height: 1.5; color: var(--soft); }
 .xpr-m-spec { display: flex; flex-direction: column; gap: 2px; font: 500 13px/1.4 var(--mono); color: var(--ink); }
 .xpr-m-k { color: var(--soft); }
 .xpr-m .xpr-chips { margin: 0; }
-.xpr-m code, .xpr-after code { display: inline-block; padding: 3px 8px; border-radius: 6px; background: #f5f5f7; font: 500 13px/1.4 var(--mono); color: var(--ink); }
+.xpr-m code, .xpr-after code { display: inline-block; padding: 3px 8px; border-radius: 6px; background: light-dark(#f5f5f7, var(--muted)); font: 500 13px/1.4 var(--mono); color: var(--ink); }
 .xpr-use { display: inline-flex; margin: 10px 12px 0 0; font: 500 14px/1.3 var(--sans); color: var(--ink); text-underline-offset: 4px; }
 .xpr-m .xpr-use { margin: 0; }
 .xpr-after { margin: 14px 0 0; font-size: 14px; line-height: 1.5; color: var(--soft); }
@@ -291,3 +292,119 @@
   .xpr-wins li:nth-child(3) .xpr-stair { --w: 30%; }
   .xpr-faq { padding: 56px 0 80px; }
 }
+
+/* phones: "How we bill" shows its first line; the other three open behind Read more (every word stays in the HTML) */
+.xpr-bills-more { display: none; }
+@media (max-width: 899px) {
+  .xpr-bills:not(.all) > li:nth-child(n + 2) { display: none; }
+  .xpr-bills-more { display: flex; align-items: center; gap: 12px; width: calc(100% + 24px); min-height: 56px; margin: 0 -12px; padding: 0 12px; border: 0; border-bottom: 1px solid var(--line); border-radius: 8px; background: none; cursor: pointer; font: 606 13px/1 var(--mono); letter-spacing: .08em; color: var(--ink); transition: background-color .15s var(--eo), transform 90ms var(--eo); }
+  .xpr-bills-more:active { transform: scale(.98); }
+  .xpr-bills-more:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+}
+html:not(.js) .xpr-bills > li { display: grid !important; }
+
+/* ---------- section entrances (MOTION-MAP /pricing), see useEnter in Pricing.jsx ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* 1. text-mask-film: Hanzo's Enso film runs through the letters of the headline, then they settle to ink */
+  .js .xpr-h1[data-enter] .xpr-cut > span { background: url(/models/enso.webp) 0 45% / 340% auto no-repeat; -webkit-background-clip: text; background-clip: text; animation: xpr-cut .7s var(--ee) both, xpr-film 2.6s cubic-bezier(.4, 0, .2, 1) .15s both; }
+  @keyframes xpr-film { 0% { -webkit-text-fill-color: transparent; background-position: 0 40%; } 78% { -webkit-text-fill-color: transparent; background-position: 100% 60%; } 100% { -webkit-text-fill-color: var(--ink); background-position: 100% 60%; } }
+
+  /* 2. grow-from-point: the plan panel grows out of the point under the tab you would press (its top-left) */
+  .js .xpr-morph[data-enter] { animation: xpr-grow .9s cubic-bezier(.16, 1, .3, 1) .2s backwards; } /* backwards: no clip is left on the panel once it has grown */
+  @keyframes xpr-grow { 0% { clip-path: circle(0 at 6% 0); } 100% { clip-path: circle(150% at 6% 0); } }
+
+  /* 3. scroll-tilt: see Trust in Pricing.jsx (arrival here, the speed lean on its wrapper) */
+  .xpr-trust-w { transform-origin: 50% 0; }
+  .js .xpr-trust[data-enter]:not([data-in]) { opacity: 0; }
+  .js .xpr-trust[data-in]:not([data-done]) { transform-origin: 50% 0; animation: xpr-tilt .9s cubic-bezier(.16, 1, .3, 1) both; }
+  @keyframes xpr-tilt { 0% { opacity: 0; transform: perspective(900px) rotateX(55deg) translateY(16px); } 30% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+
+  /* 4. vertical-ticker: each question rides up through its own row, like a departure board, one after another */
+  .js [data-enter='vertical-ticker']:not([data-in]) .x-faq > li > button { opacity: 0; }
+  .js [data-enter='vertical-ticker'][data-in]:not([data-done]) .x-faq > li > button { animation: xpr-tick .55s cubic-bezier(.3, .7, .2, 1) both; }
+  .js [data-enter='vertical-ticker'][data-in] .x-faq > li:nth-child(2) > button { animation-delay: .09s; }
+  .js [data-enter='vertical-ticker'][data-in] .x-faq > li:nth-child(3) > button { animation-delay: .18s; }
+  @keyframes xpr-tick { 0% { opacity: 1; transform: translateY(100%); clip-path: inset(0 0 100% 0); } 70% { transform: translateY(-6%); clip-path: inset(0); } 100% { opacity: 1; transform: none; clip-path: inset(0); } }
+
+  /* 5. underline-sweep: a rule sweeps under the closing band's words in sequence */
+  .xpr .x-band h2 .x-word:nth-child(1) { --wi: 0; }
+  .xpr .x-band h2 .x-word:nth-child(2) { --wi: 1; }
+  .xpr .x-band h2 .x-word:nth-child(3) { --wi: 2; }
+  .xpr .x-band h2 .x-word:nth-child(4) { --wi: 3; }
+  .xpr .x-band h2 .x-word:nth-child(5) { --wi: 4; }
+  .xpr .x-band h2 .x-word:nth-child(6) { --wi: 5; }
+  .xpr .x-band h2 .x-word:nth-child(7) { --wi: 6; }
+  .xpr .x-band h2 .x-word:nth-child(8) { --wi: 7; }
+  .xpr .x-band h2 .x-word:nth-child(9) { --wi: 8; }
+
+  .js .xpr .x-band[data-in]:not([data-done]) h2 .x-word { background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 3px; animation: xpr-sweep .8s cubic-bezier(.65, 0, .35, 1) calc(.45s + var(--wi, 0) * 70ms) both; }
+  @keyframes xpr-sweep { 0% { background-size: 0 3px; background-position: 0 100%; } 55% { background-size: 100% 3px; background-position: 0 100%; } 56% { background-size: 100% 3px; background-position: 100% 100%; } 100% { background-size: 0 3px; background-position: 100% 100%; } }
+}
+
+/* ---------- 9 Nov redesign for clarity: every plan of a tab side by side (as live), Pro recommended ---------- */
+/* the header: the title, Hanzo's line and the tabs centred over the halftone, the cards rising out of it */
+.xpr-top { position: relative; isolation: isolate; padding: clamp(48px, 5.4vw, 80px) 0 0; }
+.xpr-dots { position: absolute; inset: 0 0 auto; z-index: -1; width: 100%; height: min(880px, 100%); pointer-events: none; color: var(--ink);
+  -webkit-mask-image: linear-gradient(#000 62%, transparent); mask-image: linear-gradient(#000 62%, transparent); }
+.xpr-top .xpr-hero-g { flex-direction: column; align-items: center; justify-content: flex-start; gap: 14px; text-align: center; }
+.xpr-top .xpr-lede { margin: 0; max-width: none; }
+.xpr-top .xpr-tabs { position: static; margin-top: 18px; padding: 0; background: none; box-shadow: none; }
+.xpr-top .xpr-panels { padding-top: clamp(32px, 3.4vw, 48px); }
+
+/* the cards */
+.xpr-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 24px); align-items: stretch; }
+.xpr-cards.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 960px; margin-inline: auto; }
+.xpr-cards[hidden] { display: none; }
+.xpr-card { position: relative; display: flex; flex-direction: column; min-width: 0; padding: clamp(22px, 2.2vw, 32px); border: 1px solid var(--line); border-radius: 28px; background: light-dark(rgba(245, 245, 245, .92), var(--card)); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.xpr-card.rec { border-color: light-dark(rgba(10, 10, 10, .32), var(--border-strong)); background: light-dark(#fafafa, var(--muted)); box-shadow: 0 24px 48px -32px rgba(0, 0, 0, .35); }
+.xpr-c-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px; min-height: 40px; }
+.xpr-c-name { margin: 0; font-size: 21px; font-weight: 560; letter-spacing: -.015em; line-height: 1.2; color: var(--ink); }
+.xpr-c-name .xpr-swap { min-width: 4ch; }
+.xpr-c-d { margin: 12px 0 0; min-height: 2.9em; font-size: 15px; line-height: 1.45; color: var(--soft); }
+.xpr-c-d .xpr-swap { display: block; }
+.xpr-c-price { display: flex; flex-direction: column; gap: 4px; min-height: 96px; margin-top: 22px; color: var(--ink); }
+.xpr-c-price .xpr-fig { font-size: clamp(40px, 3.6vw, 52px); font-weight: 560; letter-spacing: -.035em; }
+.xpr-c-price .xpr-word { font-size: clamp(26px, 2.4vw, 34px); font-weight: 560; letter-spacing: -.025em; line-height: 1.1; }
+.xpr-card[data-id='free'] .xpr-c-price .xpr-word { font-size: clamp(40px, 3.6vw, 52px); letter-spacing: -.035em; }
+.xpr-c-sub { font-size: 14px; line-height: 1.45; color: var(--soft); }
+.xpr-c-acts { display: grid; gap: 10px; margin-top: 22px; }
+.xpr-c-acts .xpr-cta { width: 100%; justify-content: center; }
+.xpr-card:not(.rec) .xpr-cta { background: light-dark(#fff, var(--surface-card-quiet)); }
+.xpr-c-acts .xpr-note { margin: 2px 0 0; }
+.xpr-c-inc { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+.xpr-c-inc .xpr-head { margin: 0; }
+.xpr-c-inc .xpr-list li { font-size: 14.5px; padding: 5px 0; }
+.xpr-c-seats { grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 22px; }
+.xpr-c-seats > div { padding: 16px 18px; background: light-dark(#fff, var(--card)); border: 1px solid var(--line); }
+.xpr-c-seats .xpr-seat-p { margin: 10px 0 0; font-size: 30px; font-weight: 560; letter-spacing: -.03em; line-height: 1; color: var(--ink); }
+.xpr-card .xpr-seg { background: light-dark(rgba(0, 0, 0, .06), var(--muted)); }
+.xpr-card .xpr-bill { display: inline-flex; align-items: center; gap: 8px; }
+.xpr-card .xpr-save { font: 600 12.5px/1 var(--sans); color: var(--ink); }
+
+/* compare: the personal plans line by line, right under the cards (no drawer) */
+.xpr-compare { padding-top: clamp(48px, 5vw, 72px); }
+.xpr-compare .xpr-cmp { max-height: none; overflow-x: auto; }
+
+@media (max-width: 1100px) {
+  .xpr-cards { grid-template-columns: minmax(0, 1fr); max-width: 560px; margin-inline: auto; }
+  .xpr-cards.n2 { grid-template-columns: minmax(0, 1fr); max-width: 560px; }
+  .xpr-c-d, .xpr-c-price { min-height: 0; }
+}
+@media (max-width: 420px) {
+  .xpr-card { border-radius: 22px; }
+  .xpr-c-top { align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) { .xpr-card { transition: none; } }
+/* one row per part across the cards (subgrid), so names, prices, asks and feature lists sit level side by side */
+@media (min-width: 1101px) {
+  .xpr-cards { grid-template-rows: repeat(6, auto); row-gap: 0; }
+  .xpr-card { display: grid; grid-row: span 6; grid-template-rows: subgrid; align-content: start; }
+  .xpr-c-d, .xpr-c-price { min-height: 0; }
+  .xpr-c-price { justify-content: flex-start; }
+  .xpr-c-gap { min-height: 0; }
+  .xpr-cards.n2 .xpr-c-gap { margin-top: 22px; }
+}
+.xpr-card .xpr-bill .xpr-save { padding: 0; border-radius: 0; background: none; box-shadow: none; font: 600 13px/1 var(--sans); color: var(--ink); }
+
+/* the closing Band's ask: the shared rule fills it with --x-fill, which is a dark grey in dark; live's is Hanzo's primary */
+.xpr .x-band .x-btn.solid { background: light-dark(#f5f5f7, var(--primary)); border-color: light-dark(#f5f5f7, var(--primary)); color: light-dark(#000, var(--primary-foreground)); }

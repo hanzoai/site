@@ -1,4 +1,5 @@
 # /payments — James-eye review
+Ready: 2026-11-07, slice D — methods sit beside Hanzo's three lines and light the line they belong to on hover; tax cards arrive (VAT/GST cut in, shield tick draws) with their three lines at rest; tighter bands; chip overflow, hovers, code pane and hydration fixes from 2b836213 verified at 1470/375/320; plus its five motion-map entrances (stretch-scroll, curtain-rise, word-shuffle, side-carousel, stack-drop), probed to land at both sizes
 
 Verdict: 7/10
 First complaint: "Better: now I see it pay, and there's a proper button up top. But look at the 'succeeded' chip, the one moment the whole page is built on, and it's hanging out of its own box on both the laptop and the phone. And once the chapters finish it's a document again: a big list of card names with half a screen of nothing under it, two grey boxes with an icon, four grey boxes with a number. Nothing there is alive."

@@ -12,24 +12,28 @@
    every". Drag spins it (sideways on touch, vertical stays scroll; it lets go with inertia and turns back to the
    message); hovering a place lights its arcs and names it in the toolbar. Supporting: the ack pill that glides
    (layoutId), the replay preview over the stream's sequences (pointer), the h1 cut-in (the page's one reveal). The
-   pinned six chapters are gone: their words are one plain, quick list. Tweens only (ease-emphasis 300 ms, ease-in-out
+   pinned six chapters are gone: their words pass beside one held drawing that draws each fact once. Tweens only (ease-emphasis 300 ms, ease-in-out
    400 ms); no springs.
    States differ by fill, weight, dash and a shape, never by hue. Every word, figure and link is Hanzo's; places,
    sequence numbers and values are drawn.
-   V2: the black room is the hero: name, line and one ask left (5), the globe right (8) with the stream tray, the three
-   subscribers and the ack switch under it; then events.go beside "Put it between your services"; the six facts as a
-   numbered list; the prompt and the 4222 spec in the quiet room; the close. */
+   V2: 8/10 the black room is the hero: name, line and one ask left (5), the globe right (8) with the stream tray, the
+   three subscribers and the ack switch under it (phones: queue group a full-width row, no state cut); then events.go
+   walked once beside "Put it between your services"; the six facts passing beside one held drawing that draws the fact
+   at the middle (pubsub/PsFacts.jsx); the prompt and the 4222 spec in the quiet room; the close. Entrances
+   (pubsub/PsEnter.jsx): line-draw, cursor-trail, spring-snap, cover-slide, pixel-resolve. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { A } from '../../kit';
+import { A, Img } from '../../kit';
 import { useCalm } from '../../ui';
-import { Paste, Code } from './Frame';
+import { LeafPaste as Paste, LeafCode as Code } from './close3/Leaf';
 import SpecDrawer from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from './close3/Close';
 import LineMask from '../../v2/LineMask';
 import NoJs from '../../NoJs';
 import LivePause, { usePause } from '../../v2/LivePause';
 import PsGlobe, { PLACES } from './pubsub/PsGlobe';
+import PsFacts from './pubsub/PsFacts';
+import { Outline, CursorTrail, CoverSlide, PixelResolve } from './pubsub/PsEnter';
 import './Pubsub.css';
 
 const GH = 'https://github.com/hanzoai/pubsub';
@@ -108,7 +112,7 @@ function Planet() {
   return (
     <div className="ps-busw" ref={ref} data-paused={paused || undefined}>
       <div className="ps-bar">
-        <p className="ps-bar-k"><i aria-hidden="true" />NATS JetStream</p>
+        <p className="ps-bar-k">NATS JetStream</p>
         <p className="ps-rp" aria-hidden="true">
           <AnimatePresence mode="wait" initial={false}>
             {line && (
@@ -126,8 +130,9 @@ function Planet() {
       <div className="ps-tray">
         <p className="ps-k">stream EVENTS · events.&gt;</p>
         <div className="ps-seqs" onPointerLeave={() => setRp(null)}>
+          <Outline d={0.15} />
           {nums.map((n, i) => (
-            <span key={n} onPointerEnter={(e) => e.pointerType === 'mouse' && setRp(n)}
+            <span key={n} style={{ '--k': i }} onPointerEnter={(e) => e.pointerType === 'mouse' && setRp(n)}
               className={(i === 5 && t >= 1 ? 'new' : '') + (rp !== null && n >= rp ? ' rp' : '') + (n === rp ? ' from' : '')}>{n}</span>
           ))}
         </div>
@@ -135,9 +140,10 @@ function Planet() {
       <div className="ps-subs" aria-live="polite">
         {['analytics', 'audit'].map((s, i) => {
           const [c, l] = states[i];
-          return <div key={s} className={'ps-sub' + (t >= 2 ? ' got' : '') + (c ? ' ' + c : '')}><b>{s}</b><span>{l}</span></div>;
+          return <div key={s} className={'ps-sub' + (t >= 2 ? ' got' : '') + (c ? ' ' + c : '')} style={{ '--fd': 0.55 + i * 0.12 + 's' }}><Outline d={0.3 + i * 0.12} /><b>{s}</b><span>{l}</span></div>;
         })}
-        <div className={'ps-sub ps-grp' + (t >= 2 ? ' got' : '') + (qState[0] ? ' ' + qState[0] : '')}>
+        <div className={'ps-sub ps-grp' + (t >= 2 ? ' got' : '') + (qState[0] ? ' ' + qState[0] : '')} style={{ '--fd': '0.79s' }}>
+          <Outline d={0.54} />
           <b>queue group</b>
           <span className="ps-one">{[0, 1, 2].map((k) => <i key={k} className={t >= 2 && k === pick ? 'on' : ''} />)}</span>
         </div>
@@ -185,13 +191,35 @@ for _, msg := range msgs {
     msg.Ack()
 }`;
 
-const pad = (n) => String(n).padStart(2, '0');
+/* events.go, walked once as it arrives: connect, the stream, the publish, the consumer that fetches and acks, one
+   beat each (1.25 s, 5 s in all), then every line back in ink. A pointer on the code ends the walk at once. */
+const BEATS = ['conn', 'stream', 'pub', 'sub'];
+function Walked() {
+  const ref = useRef(null);
+  const calm = useCalm();
+  const seen = useSeen(ref, 0.5);
+  const [beat, setBeat] = useState(-1);
+  const [held, setHeld] = useState(false);
+  useEffect(() => { if (!seen) { setBeat(-1); setHeld(false); } }, [seen]);
+  useEffect(() => {
+    if (calm || held || !seen) return;
+    if (beat >= BEATS.length) return;
+    const id = setTimeout(() => setBeat((b) => b + 1), beat < 0 ? 350 : 1250);
+    return () => clearTimeout(id);
+  }, [beat, seen, calm, held]);
+  const step = !held && beat >= 0 && beat < BEATS.length ? BEATS[beat] : undefined;
+  return (
+    <div className="ps-codew" ref={ref} data-step={step} onPointerEnter={() => setHeld(true)}>
+      <Code light title="PubSub" tabs={[{ k: 'events.go', code: CODE }]} className="ps-code" />
+    </div>
+  );
+}
 
 export default function Pubsub() {
   return (
     <main className="lx ps" data-cursor="">
       {/* without JavaScript the canvas stays empty: the stream tray and the subscribers carry the story instead */}
-      <NoJs css=".ps-globe{display:none}" />
+      <NoJs css=".ps-globe,.ps-figw,.ps-figm{display:none}" />
       <section className="ps-hero lx-dark" data-room="dark" data-morph-target data-ask-name="Hanzo PubSub">
         <div className="lx-wrap ps-hero-in">
           <div className="ps-hero-title">
@@ -203,33 +231,26 @@ export default function Pubsub() {
         </div>
       </section>
 
-      <section className="lx-sec ps-walk">
+      <CursorTrail className="lx-sec ps-walk">
         <div className="lx-wrap ps-walk-in">
           <div className="ps-walk-l">
             <h2 className="lx-headline">Put it between your services</h2>
             <p className="lx-lede">Free tier includes 1M messages/month.</p>
             <A to={GH} className="lx-ghost">View on GitHub<Arr /></A>
+            {/* Hanzo's own picture on this page (mori), kept: a black card under the words */}
+            <div className="ps-mori"><Img src="/models/mori.webp" alt="" w={1200} h={1500} /></div>
           </div>
-          <Code light title="PubSub" tabs={[{ k: 'events.go', code: CODE }]} className="ps-code" />
+          <Walked />
         </div>
-      </section>
+      </CursorTrail>
 
       <section className="lx-sec ps-facts" aria-labelledby="ps-facts-h">
-        <div className="lx-wrap ps-facts-in">
-          <h2 id="ps-facts-h" className="lx-headline ps-facts-h">More than pub/sub</h2>
-          <ol className="ps-flist">
-            {FACTS.map(([h, d], i) => (
-              <li key={h}>
-                <p className="lx-kick ps-fk">{`${pad(i + 1)} / ${pad(FACTS.length)}`}</p>
-                <h3 className="ps-ft">{h}</h3>
-                <p className="ps-fd">{d}</p>
-              </li>
-            ))}
-          </ol>
+        <div className="lx-wrap">
+          <PsFacts facts={FACTS} />
         </div>
       </section>
 
-      <section className="ps-room">
+      <CoverSlide className="ps-room">
         <div className="lx-wrap">
           <div className="ps-room-top">
             <h2 className="lx-headline">Publish and Subscribe</h2>
@@ -237,9 +258,11 @@ export default function Pubsub() {
           </div>
           <SpecDrawer className="ps-spec" rows={[{ v: '4222', l: 'Client port' }, { v: 'Replay', l: 'From any point' }, { v: 'Durable', l: 'Written to disk' }, { v: 'Replicas', l: 'Set per stream' }]} />
         </div>
-      </section>
+      </CoverSlide>
 
-      <LaunchClose name="PubSub" tag="Pub/sub messaging" seed="pubsub" data={[4222, 3, 1000000]} ask={['GitHub', GH]} cta="pubsub.close" repo={['hanzoai/pubsub', GH]} stars="4 stars" />
+      <PixelResolve>
+        <LaunchClose name="PubSub" tag="Pub/sub messaging" seed="pubsub" data={[4222, 3, 1000000]} ask={['GitHub', GH]} cta="pubsub.close" repo={['hanzoai/pubsub', GH]} stars="4 stars" />
+      </PixelResolve>
     </main>
   );
 }

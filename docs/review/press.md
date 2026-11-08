@@ -1,4 +1,5 @@
 # /press: James-eye review (critic 3, 7 Nov)
+Ready: 2026-11-07, slice D — unverified motion-map rebuild checked and finished: kit plates on one baseline, light plate visible, zip line unclipped, velocity-skew 8°→3°, stack-drop without bounce, magnet grid breathes 3 idle ripples; review fixes from ebf5c606 hold (phone pills clear, news walks, partners one row)
 
 Verdict: 7/10
 First complaint: "On my phone the little SVG, PNG, ICO pills are printed straight through the logo. That's the press kit, the one thing a journalist comes for, and it looks broken."

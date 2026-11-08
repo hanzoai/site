@@ -12,6 +12,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useCalm } from '../../../ui';
 import LivePause, { usePause } from '../../../v2/LivePause';
+import { useArrive } from './S3Enter';
 
 export const FACTS = [
   ['One binary, four roles', 'One binary in four roles: a master that tracks where everything is, volume servers that hold the bytes, a filer for the namespace and the HTTP gateway your code talks to.'],
@@ -58,12 +59,15 @@ export default function Peel() {
     return () => clearTimeout(id);
   }, [ph, seen, paused, mine, calm]);
   const go = (f) => { setMine(true); setPh(f + 1); };
+  // entrances (MOTION-MAP): a film plays through the heading's letters (text-mask-film), the stage opens on an iris
+  const [filmRef, film] = useArrive('0px 0px -15% 0px', 1900);
+  const [irisRef, iris] = useArrive('0px 0px -20% 0px');
   const open = ph > 0;
   const fact = FACT_OF[ph];
   return (
     <div className="s3-peel" ref={ref}>
       <div className="s3-facts">
-        <h2 className="lx-headline s3-peel-h">An object, kept</h2>
+        <h2 className="lx-headline s3-peel-h s3-film" ref={filmRef} data-fm={film}>An object, kept</h2>
         <ol className="s3-fl">
           {FACTS.map(([t, d], i) => (
             <li key={t} className={i === fact ? 'on' : ''}>
@@ -74,7 +78,7 @@ export default function Peel() {
           ))}
         </ol>
       </div>
-      <div className="s3-stage" data-ph={ph} data-open={open || undefined} data-hot={hot ?? undefined}>
+      <div className="s3-stage" ref={irisRef} data-iris={iris} data-ph={ph} data-open={open || undefined} data-hot={hot ?? undefined}>
         <div className="s3-stage-bar">
           <LivePause inline paused={paused || mine} onToggle={() => { if (mine) { setMine(false); if (paused) pause(); } else pause(); }} className="s3-ppause" />
         </div>

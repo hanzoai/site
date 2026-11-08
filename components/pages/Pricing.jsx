@@ -1,6 +1,6 @@
 'use client';
 /* Pricing, v2 (VISION archetype E, Utility: calm, precise and fast, with one delight; PLAN-COMPONENTS 5.2).
-   V2: 8/10 equal plan cards with aligned asks and prices that roll in 300ms; kit tabs, tables, FAQ and Band; no dead buttons; greys only
+   V2: 8/10 9 Nov redesign for clarity (James: "not clear enough"): every plan of the chosen tab side by side as live sets them (stacked on a phone), each with its name, line, price, billing line, ask and every feature; Pro recommended (the dark ask) with its usage switch on its card, every rung to its own checkout as live (pro-2x, dev-5x, max-10x, ultra; Team to plan=team); Hanzo's halftone behind the header; the compare table under the cards, no drawer; section entrances text-mask-film, grow-from-point, scroll-tilt, vertical-ticker, underline-sweep; greys only
    Persona: a builder or a team lead choosing a plan. Goal: know the price before you ask. CTA: "Try Hanzo" on the plan
    you pick (data-cta pricing.free / pricing.go / pricing.pro); metric: cta_click on those ids.
    Thesis: know the price before you ask.
@@ -21,14 +21,13 @@
 // Persona: a builder or a team lead choosing a plan
 // Goal: know the price before you ask
 // CTA: the selected plan's ask (Try Hanzo); metric: cta_click on pricing.free / pricing.go / pricing.pro
-// Signature: one plan panel, many states: tabs and the plan rail morph a single panel (height, name, rolling price, Hanzo's lines) with no cut, and the Pro row walks its ladder
-// Beyond: the compare sheet: every personal plan's own lines side by side with what each inherits, opened out of the panel
+// Signature: the plans side by side over Hanzo's halftone; Pro's usage switch rolls its own name and price in place (odometer)
+// Beyond: the compare table under the cards: every personal plan's own lines side by side with what each inherits
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, MotionConfig, useInView } from 'motion/react';
+import { motion, AnimatePresence, MotionConfig, useInView, useScroll, useVelocity, useTransform, useSpring } from 'motion/react';
 import { EASE, useCalm } from '../ui';
 import { A, More, Cta, Tabs, Faq, DataTable, Band, Img } from '../kit';
 import Odometer from '../v2/Odometer';
-import Drawer from '../v2/x-cannon/Drawer';
 import NoJs from '../NoJs';
 import './Pricing.css';
 
@@ -62,10 +61,10 @@ const Ck = () => <svg className="xpr-ck" viewBox="0 0 16 16" width="16" height="
 const List = ({ items }) => <ul className="xpr-list">{items.map((t) => <li key={t}><Ck />{t}</li>)}</ul>;
 
 /* ---------- the plans, as Hanzo lists them ---------- */
-const FREE = ['Chat on the web with Enso Free and Zen Free', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks'];
+const FREE = ['Chat on the web with Enso Auto', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks'];
 const GO = ['Build apps with Hanzo Dev', 'Connect any MCP server in Hanzo Dev', 'The Hanzo CLI for macOS, Windows and Linux', 'Every model, including Enso Ultra and Kai', 'Usage included on every model', 'Priority inference and priority support', 'Your own agents, working in the background', 'Automations, with daily runs included'];
 const COMMON = ['Early access to new models and features', 'Train custom models on your data', 'Hanzo Engine to run models on your own hardware', 'Dedicated support'];
-// to: every plan goes straight to its checkout, with the plan ids live /bot's plan buttons use (Zack's GA list, 8 Nov)
+// to: every rung has its own checkout on Hanzo's page (live, 9 Nov: pro-2x, dev-5x, max-10x, ultra)
 const PRO = [
   { x: '3x', name: 'Pro', price: 15, to: PAY('pro-2x'), head: 'Everything in Go, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['3x more usage than Go', '3x higher limits than Go', 'Hanzo Bot: 1 bot of your own'] },
   { x: '5x', name: 'Dev', price: 45, to: PAY('dev-5x'), head: 'Everything in Pro, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['5x more usage than Go', '5x higher limits than Go', 'Hanzo Bot: 2 bots of your own'] },
@@ -161,11 +160,13 @@ const IN = { duration: 0.3, ease: EASE };
 const NONE = { duration: 0 };
 
 // text that changes in place: the old line lifts away while the new one rises into its seat (no cut, no remount)
-function Swap({ k, children, className = '' }) {
+// `roll`: a one-line name rolls through a clipped slot like the odometer beside it (the two words never overlap)
+function Swap({ k, children, className = '', roll }) {
+  const d = roll ? '105%' : 10;
   return (
-    <span className={'xpr-swap ' + className}>
+    <span className={'xpr-swap ' + (roll ? 'roll ' : '') + className}>
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={k} className="xpr-swap-i" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={IN}>{children}</motion.span>
+        <motion.span key={k} className="xpr-swap-i" initial={{ opacity: 0, y: d }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: roll ? '-105%' : -10 }} transition={IN}>{children}</motion.span>
       </AnimatePresence>
     </span>
   );
@@ -238,90 +239,122 @@ function Seats({ s, set }) {
 }
 
 // Hanzo's own trust links, beside the asks (PLAN-COMPONENTS 2.4 "Pricing objections")
-const Trust = () => (
-  <div className="xpr-trust">
-    <More to="/security">How Hanzo is secured</More>
-    <More to="/trust">Trust center</More>
-    <More to="/privacy">Read the Privacy Policy</More>
-  </div>
-);
-
-/* ---------- the signature: ONE plan panel. The rail picks a plan, the tabs pick a set; the panel never remounts ---------- */
-function PlanPanel({ tab, at, setAt, s, set, open, hand, live }) {
+// scroll-tilt: the row arrives leaning back and levels out, then leans on rotateX with the speed of the scroll
+function Trust() {
   const calm = useCalm();
-  const still = calm || !live; // the first paint (and a #team link) lands without moving; reduced motion never moves
-  const ids = SETS[tab];
-  const p = planOf(ids[at], s);
-  const inner = useRef(null);
-  const [h, setH] = useState('auto');
-  useEffect(() => {
-    const el = inner.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => setH(el.offsetHeight));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-  const keys = (e) => {
-    const k = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-    if (!k) return;
-    e.preventDefault();
-    const n = (at + k + ids.length) % ids.length;
-    setAt(n);
-    document.getElementById('xpr-rail-' + n)?.focus();
-  };
-  const note = p.alt ? <A to={p.alt[1]} className="xpr-alt">{p.alt[0]}</A> : lines(p.note).map((n) => <span key={n} className="xpr-line">{n}</span>);
+  const [on, setOn] = useState(false); // after hydration and only when motion is welcome
+  useEffect(() => setOn(!calm), [calm]);
+  const { scrollY } = useScroll();
+  const tilt = useSpring(useTransform(useVelocity(scrollY), [-2600, 0, 2600], [-9, 0, 9], { clamp: true }), { stiffness: 170, damping: 26 });
   return (
-    <div className="xpr-morph" role="tabpanel" id={'xpr-plans-panel-' + tab} aria-labelledby={'xpr-plans-tab-' + tab} data-set={tab} onPointerEnter={hand} onFocusCapture={hand}>
-      <MotionCfg calm={calm}>
-        <div className="xpr-rail" role="radiogroup" aria-label={TABS[tab]} onKeyDown={keys}>
-          <AnimatePresence mode="popLayout" initial={false}>
-            {ids.map((id, i) => {
-              const q = planOf(id, s), on = i === at;
-              return (
-                <motion.button key={id} id={'xpr-rail-' + i} type="button" role="radio" aria-checked={on} tabIndex={on ? 0 : -1} className="xpr-rail-i" onClick={() => setAt(i)}
-                  layout="position" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0, transition: { ...IN, delay: 0.06 * i } }} exit={{ opacity: 0, transition: { duration: 0.15 } }} transition={MOVE}>
-                  {on && <motion.span layoutId="xpr-rail-bg" className="xpr-rail-bg" transition={MOVE} />}
-                  <span className="xpr-rail-n"><Swap k={q.name}>{q.name}</Swap></span>
-                  <span className={'xpr-rail-p' + (q.fig ? ' fig' : '')}>{q.fig ? <Odometer value={q.fig} /> : q.word}</span>
-                </motion.button>
-              );
-            })}
-          </AnimatePresence>
+    <motion.div className="xpr-trust-w" style={on ? { rotateX: tilt, transformPerspective: 900 } : undefined}>
+      <div className="xpr-trust" data-enter="scroll-tilt">
+        <More to="/security">How Hanzo is secured</More>
+        <More to="/trust">Trust center</More>
+        <More to="/privacy">Read the Privacy Policy</More>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ---------- the plans side by side (James, 9 Nov: "not clear enough"): every plan of the chosen tab at once, as live
+   hanzo.ai sets them out. Each card: name, Hanzo's one line, the price with USD/month and its billing line, the ask and
+   every feature. Pro is the recommended one (the dark ask) and keeps its usage switch on its own card; Team keeps its
+   billing switch and seat prices on its own. ---------- */
+// every feature of a plan, as live lists it on the card (the panel used to show the first four)
+function cardOf(id, s) {
+  const p = planOf(id, s);
+  if (id === 'free') return { ...p, word: 'Free', sub: 'No card needed', items: FREE };
+  if (id === 'go') return { ...p, items: GO };
+  if (id === 'pro') return { ...p, items: [...p.items, ...COMMON], rec: true };
+  if (id === 'team') return { ...p, fig: null, word: 'Standard & Premium seats', sub: 'From 2 members', cta: ['Try Hanzo', `/pay/confirm/card?plan=team${s.bill === 'Annual' ? '&interval=year' : ''}&quantity=2&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat`, 'pricing.team'], note: 'Organizations can mix Standard and Premium seats · Cancel anytime', rec: true };
+  return p;
+}
+
+function SeatPrices({ bill }) {
+  const k = bill === 'Annual' ? 0 : 1;
+  return (
+    <div className="xpr-seats xpr-c-seats">
+      {[['Standard seat', 'All Hanzo features, plus more usage than Pro', 'Standard', '$25'], ['Premium seat', '5x more usage than standard seats', 'Premium', '$125']].map(([n, d, key, mo]) => (
+        <div key={key}>
+          <b>{n}</b>
+          <span>{d}</span>
+          <p className="xpr-seat-p" aria-live="polite"><Odometer value={'$' + SEAT[key][k]} /></p>
+          <small>Per seat / month if billed annually. {mo} if billed monthly.</small>
         </div>
-        <motion.div className="xpr-frame" initial={false} animate={{ height: h }} transition={still ? NONE : MOVE}>
-          <div className="xpr-detail" ref={inner}>
-            <Slot className="xpr-pa">
-              <div className="xpr-r-name">
-                <h2 className="xpr-pname"><Swap k={p.name}>{p.name}</Swap></h2>
-                <AnimatePresence mode="popLayout" initial={false}>
-                  {p.ladder && <motion.div key="ladder" {...fade}><Seg opts={PRO.map((q) => q.x)} val={s.x} set={(v) => { hand(); set.x(v); }} id="xpr-mult" label="Usage multiple" /></motion.div>}
-                  {p.seats && <motion.div key="bill" className="xpr-bill" {...fade}><Seg opts={['Annual', 'Monthly']} val={s.bill} set={set.bill} id="xpr-bill" label="Billing period" /><span className="xpr-save">−20%</span></motion.div>}
-                </AnimatePresence>
-              </div>
-              <Swap k={p.d} className="xpr-d">{p.d}</Swap>
-              <Price p={p} />
-              <Swap k={lines(p.sub).join('|')} className="xpr-sub">{lines(p.sub).map((t) => <span key={t} className="xpr-line">{t}</span>)}</Swap>
-              <AnimatePresence mode="popLayout" initial={false}>
-                {p.seats && <motion.div key="seats" {...fade}><Seats s={s} set={set} /></motion.div>}
-              </AnimatePresence>
-              <div className="xpr-r-cta"><Cta to={p.cta[1]} size="lg" id={p.cta[2]} className="xpr-cta" thumb>{p.cta[0]}</Cta></div>
-              <Swap k={p.alt ? 'alt' : lines(p.note).join('|')} className="xpr-note">{note}</Swap>
-            </Slot>
-            <Slot className="xpr-pb">
-              <div className="xpr-inc">
-                <p className="xpr-inc-h">What’s included</p>
-                <Swap k={p.head || '-'} className="xpr-head">{p.head || ''}</Swap>
-                <Lines items={p.items} />
-              </div>
-              <AnimatePresence mode="popLayout" initial={false}>
-                {p.col != null && <motion.button key="cmp" type="button" className="xpr-more" onClick={(e) => open(e, p.col)} data-cursor="" {...fade}><span>Compare plans</span><span aria-hidden="true">→</span></motion.button>}
-              </AnimatePresence>
-            </Slot>
-          </div>
-        </motion.div>
-      </MotionCfg>
+      ))}
     </div>
   );
+}
+
+function Card({ id, s, set, hand, i }) {
+  const p = cardOf(id, s);
+  const sub = lines(p.sub);
+  return (
+    <motion.article className={'xpr-card' + (p.rec ? ' rec' : '')} data-id={id} aria-labelledby={'xpr-c-' + id} style={{ '--i': i }}
+      initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0, transition: { ...IN, delay: 0.06 * i } }} exit={{ opacity: 0, transition: { duration: 0.12 } }}>
+      <div className="xpr-c-top">
+        <h2 className="xpr-c-name" id={'xpr-c-' + id}>{p.ladder ? <Swap k={p.name} roll>{p.name}</Swap> : p.name}</h2>
+        {p.ladder && <Seg opts={PRO.map((q) => q.x)} val={s.x} set={(v) => { hand(); set.x(v); }} id="xpr-mult" label="Usage multiple" />}
+        {id === 'team' && <div className="xpr-bill"><Seg opts={['Annual', 'Monthly']} val={s.bill} set={set.bill} id="xpr-bill" label="Billing period" /><span className="xpr-save">−20%</span></div>}
+      </div>
+      <p className="xpr-c-d">{p.ladder ? <Swap k={p.d}>{p.d}</Swap> : p.d}</p>
+      <div className="xpr-c-price">
+        {p.fig ? <span className="xpr-fig"><Odometer value={p.fig} /><span className="xpr-u">USD/month</span></span> : <span className="xpr-word">{p.word}</span>}
+        {sub.map((t) => <span key={t} className="xpr-c-sub">{t}</span>)}
+      </div>
+      <div className="xpr-c-acts">
+        <Cta to={p.cta[1]} size="lg" kind={p.rec ? 'solid' : 'outline'} id={p.cta[2]} className="xpr-cta" thumb={p.rec}>{p.cta[0]}</Cta>
+        {p.alt && <Cta to={p.alt[1]} size="lg" kind="outline" id="pricing.help" className="xpr-cta">{p.alt[0]}</Cta>}
+        {!p.alt && lines(p.note).map((n) => <p key={n} className="xpr-note">{n}</p>)}
+      </div>
+      {id === 'team' ? <SeatPrices bill={s.bill} /> : <div className="xpr-c-gap" />}
+      <div className="xpr-c-inc">
+        <p className="xpr-head">{p.head || 'What’s included'}</p>
+        {p.ladder ? <Lines items={p.items} /> : <List items={p.items} />}
+      </div>
+    </motion.article>
+  );
+}
+
+function Plans({ tab, s, set, hand }) {
+  const calm = useCalm();
+  return (
+    <MotionCfg calm={calm}>
+      {SETS.map((ids, t) => (
+        <div key={t} className={'xpr-cards n' + ids.length} role="tabpanel" id={'xpr-plans-panel-' + t} aria-labelledby={'xpr-plans-tab-' + t} hidden={t !== tab}
+          data-enter={t === 0 ? 'grow-from-point' : undefined} onPointerEnter={hand} onFocusCapture={hand}>
+          <AnimatePresence initial={false}>
+            {t === tab && ids.map((id, i) => <Card key={id} id={id} s={s} set={set} hand={hand} i={i} />)}
+          </AnimatePresence>
+        </div>
+      ))}
+    </MotionCfg>
+  );
+}
+
+/* ---------- section entrances (MOTION-MAP /pricing: text-mask-film, grow-from-point, scroll-tilt, vertical-ticker,
+   underline-sweep), page-local. The first two are on the first screen, so they play from the first paint in CSS (no
+   wait on hydration); the rest are marked once with data-in by one observer when a quarter of them (or of the screen)
+   is in view, and Pricing.css plays them. Start states live under html.js and prefers-reduced-motion: no-preference,
+   so the server markup is final and JS off or reduced motion show everything at rest. ---------- */
+function useEnter(root) {
+  useEffect(() => {
+    const band = root.current?.querySelector('.x-band');
+    if (band && !band.dataset.enter) band.dataset.enter = 'underline-sweep'; // the kit Band, swept page-locally
+    const els = [...(root.current?.querySelectorAll('[data-enter]:not([data-enter="text-mask-film"]):not([data-enter="grow-from-point"])') || [])];
+    if (typeof IntersectionObserver === 'undefined') { els.forEach((el) => { el.dataset.in = ''; }); return; }
+    const timers = [];
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting || (e.intersectionRatio < 0.25 && e.intersectionRect.height < innerHeight * 0.25)) return;
+      const el = e.target;
+      el.dataset.in = '';
+      io.unobserve(el);
+      timers.push(setTimeout(() => { el.dataset.done = ''; }, 2200));
+    }), { threshold: [0, 0.1, 0.25, 0.5] });
+    els.forEach((el) => io.observe(el));
+    return () => { io.disconnect(); timers.forEach(clearTimeout); };
+  }, [root]);
 }
 
 // under reduced motion nothing in the panel travels (no slides, no height ease); words still cross over in place
@@ -475,6 +508,7 @@ function Models() {
 
 // the API set's own reading, under the panel while the API tab is on (in the HTML always)
 function ApiMore({ on }) {
+  const [allBill, setAllBill] = useState(false); // phones show the first way we bill; the rest open behind "Read more"
   return (
     <div className="xpr-api" hidden={!on}>
       <section className="xpr-ch xpr-split" aria-labelledby="xpr-bill-h">
@@ -482,7 +516,8 @@ function ApiMore({ on }) {
           <h2 id="xpr-bill-h">How we bill</h2>
           <p>Transparent pricing based on what your models, agents, and tools use. Predictable, metered, and with no hidden fees.</p>
         </header>
-        <ol className="xpr-bills">
+        <div>
+        <ol className={'xpr-bills' + (allBill ? ' all' : '')}>
           {BILL.map(([n, u, d, tiers], i) => (
             <li key={n}>
               <span className="xpr-bills-n">{String(i + 1).padStart(2, '0')}</span>
@@ -493,6 +528,8 @@ function ApiMore({ on }) {
             </li>
           ))}
         </ol>
+        {!allBill && <button type="button" className="xpr-bills-more" onClick={() => setAllBill(true)}><span>Read more</span><span className="xpr-faq-n" aria-hidden="true">+ {BILL.length - 1}</span></button>}
+        </div>
       </section>
 
       <section className="xpr-ch xpr-split" aria-labelledby="xpr-rates-h">
@@ -565,9 +602,9 @@ function ApiMore({ on }) {
 
 /* ---------- questions ---------- */
 const QA = [
-  ['What is free?', 'Running your own private AI on your own machine, and the open Zen weights, free forever. The free models on the API, on a daily pool. Everything open source is yours to download and run.'],
+  ['What is free?', 'Running your own private AI on your own machine, and the open Zen weights, free forever. Enso Auto on the Free plan, on a daily pool. Everything open source is yours to download and run.'],
   ['What does a plan cost?', 'Exactly the price on its card, by the month or, where a year is sold, by the year. Free costs nothing. Team is priced per member, from 2 members. Paid plans include usage on every model; top up prepaid credit anytime for more. Enterprise is priced with our team.'],
-  ["What happens when I reach my plan's included usage?", "Switch to Enso Free and keep chatting, or keep using any model with prepaid credit, which you can add anytime. Your plan's usage renews every billing period."],
+  ["What happens when I reach my plan's included usage?", "Keep using any model with prepaid credit, which you can add anytime. Your plan's usage renews every billing period."],
   ['What is a bill made of?', 'Four components, and every charge is one of them: model inference, the computer an agent runs on, web tools, and media generation. Each appears on your spend breakdown under its own name, so a month adds up to four lines you can check rather than one you have to trust.'],
   ['Which charges are quoted before they run?', "Model calls and compute. Both can be bounded from above before they happen, so an agent that would breach its budget is refused rather than discovered on an invoice. Web calls and media renders cannot be — a provider's charge and a render's cost are only known afterwards — so those are billed at what they actually cost, and a render runs only while the agent's per-task cap has room for it."],
   ['How are tokens billed?', 'Per token, in five tiers that never overlap: input, cached reads, cache writes, output and reasoning, at the tariff for the completion window the request asked for. Amounts are carried as integer micro-dollars, so nothing rounds in our favor.'],
@@ -592,36 +629,55 @@ const QA = [
   ['Do you offer pricing for education or nonprofits?', 'Yes, for both. Contact sales with your institution or nonprofit credentials and we will sort out the right rate.'],
 ];
 
-/* ---------- the hero object: the models the bill covers, as Hanzo's own art ---------- */
-// "every model on one bill": Enso, Zen and Kai deal onto the page, then the strip answers the plan you pick with the
-// models that plan's own lines name: Free lights "Enso Free and Zen Free"; Go and every plan above it light "Every model,
-// including Enso Ultra and Kai". A model the plan does not cover rests low and small (never dimmed). Hanzo's media is the only colour.
-const ART = [['enso', 'Enso'], ['zen', 'Zen'], ['kai', 'Kai']];
-function Art({ lit }) {
-  return (
-    <div className="xpr-art" aria-hidden="true">
-      {ART.map(([s, n], i) => (
-        <span key={s} className={'xpr-art-c' + (i === 0 ? ' big' : '')} style={{ '--i': i }} data-on={lit.includes(i)}>
-          <Img src={`/models/${s}.webp`} w={i ? 192 : 320} h={240} priority={i === 0} />
-          <b>{n}</b>
-        </span>
-      ))}
-    </div>
-  );
+/* ---------- the header's halftone (as live hanzo.ai sets one behind its pricing header; James likes the texture): a dot
+   field drawn once per size on a canvas, dots growing toward the edges and the far side, clear around the title. Ink
+   at low alpha only; decorative, aria-hidden; nothing moves. ---------- */
+function Halftone() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current;
+    if (!c) return;
+    const draw = () => {
+      const r = c.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+      c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr);
+      const g = c.getContext('2d');
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      g.clearRect(0, 0, r.width, r.height);
+      const small = r.width < 600;
+      // the dots are the page's ink (.xpr-dots { color: var(--ink) }): dark dots on white, light dots on Hanzo's dark
+      const m = getComputedStyle(c).color.match(/[\d.]+/g) || [10, 10, 10];
+      g.fillStyle = `rgba(${m[0]}, ${m[1]}, ${m[2]}, ${small ? 0.2 : 0.28})`;
+      const step = r.width < 600 ? 7 : 8, cx = r.width * 0.5, cy = r.height * 0.34;
+      for (let y = step / 2; y < r.height; y += step) {
+        for (let x = step / 2; x < r.width; x += step) {
+          // distance from the clear ellipse around the title, leaning heavier to the right and toward the bottom left
+          const dx = (x - cx) / (r.width * 0.5), dy = (y - cy) / (r.height * 0.75);
+          const d = Math.sqrt(dx * dx + dy * dy) + Math.max(0, dx) * 0.35;
+          const k = Math.min(1, Math.max(0, (d - (small ? 0.78 : 0.42)) / 0.62));
+          const rad = k * k * (step * 0.36);
+          if (rad < 0.35) continue;
+          g.beginPath(); g.arc(x, y, rad, 0, 6.2832); g.fill();
+        }
+      }
+    };
+    draw();
+    const ro = new ResizeObserver(draw);
+    ro.observe(c);
+    // redraw when the theme changes (Hanzo's appearance sets light / dark on <html>)
+    const mo = new MutationObserver(draw);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => { ro.disconnect(); mo.disconnect(); };
+  }, []);
+  return <canvas ref={ref} className="xpr-dots" aria-hidden="true" />;
 }
 
 /* ---------- the room ---------- */
 const TABS = ['Personal', 'Team', 'API'];
 
 export default function Pricing() {
+  const root = useRef(null);
+  useEnter(root);
   const [tab, setTab] = useState(0);
-  const [ats, setAts] = useState([0, 0, 0]); // the plan picked in each set (the lowest by default: Free, Team, Pay as you go)
-  const at = ats[tab];
-  const setAt = (i) => { setLive(true); setAts((a) => a.map((v, j) => (j === tab ? i : v))); };
-  const artOn = tab === 0 && at === 0 ? [0, 1] : [0, 1, 2];
-  const [src, setSrc] = useState(null);
-  const [lit, setLit] = useState(-1);
-  const [live, setLive] = useState(false); // the panel eases its height only once a hand has touched it
   // the panel's own state: the Pro ladder rung, Team's billing period and seat mix
   const [x, setX] = useState(DEF.x);
   const [bill, setBill] = useState(DEF.bill);
@@ -629,20 +685,11 @@ export default function Pricing() {
   const [prem, setPrem] = useState(DEF.prem);
   const s = { x, bill, std, prem };
   const set = { x: setX, bill: setBill, std: setStd, prem: setPrem };
-  // idle: the Pro row walks its ladder once (Pro, Dev, Max, Ultra, back to Pro) within 4.3 s and rests (WCAG 2.2.2:
-  // moving content under 5 s needs no pause control); a pointer or focus on the panel stops it at once
+  // a hand on a card (pointer or focus) marks the visitor's own choice; the Pro rung never moves by itself, so the
+  // prices on the page are always the ones you read
   const rail = useRef(null);
-  const seen = useInView(rail, { amount: 0.3 });
-  const calm = useCalm();
-  const [mine, setMine] = useState(false);
-  const hand = useCallback(() => { setMine(true); setLive(true); }, []);
-  useEffect(() => {
-    if (mine || calm || !seen || tab !== 0) return;
-    let n = 0, t = 0;
-    const step = () => { n += 1; setX(PRO[n % PRO.length].x); if (n >= PRO.length) { clearInterval(t); setMine(true); } };
-    const first = setTimeout(() => { step(); t = setInterval(step, 1100); }, 1000);
-    return () => { clearTimeout(first); clearInterval(t); };
-  }, [mine, calm, seen, tab]);
+  const [, setMine] = useState(false);
+  const hand = useCallback(() => setMine(true), []);
   useEffect(() => {
     const read = () => {
       const h = decodeURIComponent(location.hash.slice(1)).toLowerCase();
@@ -653,35 +700,38 @@ export default function Pricing() {
     addEventListener('hashchange', read);
     return () => removeEventListener('hashchange', read);
   }, []);
-  const pick = (i) => { setLive(true); setTab(i); try { history.replaceState(null, '', '#' + TABS[i].toLowerCase()); } catch { /* the tab still changes */ } };
-  const open = useCallback((e, col) => { setLit(col); setSrc(e.currentTarget.closest('.xpr-morph') || e.currentTarget); }, []);
-  const close = useCallback(() => setSrc(null), []);
+  const pick = (i) => { setTab(i); try { history.replaceState(null, '', '#' + TABS[i].toLowerCase()); } catch { /* the tab still changes */ } };
   return (
-    <main className="xpr">
-      <section className="xpr-hero" aria-labelledby="xpr-h1">
+    <main ref={root} className="xpr">
+      <section className="xpr-top" aria-labelledby="xpr-h1">
+        <Halftone />
         <div className="xpr-w xpr-hero-g">
-          <h1 id="xpr-h1" className="xpr-h1"><span className="xpr-cut"><span>Pricing</span></span></h1>
+          <h1 id="xpr-h1" className="xpr-h1" data-enter="text-mask-film"><span className="xpr-cut"><span>Pricing</span></span></h1>
           <p className="xpr-lede">Start free, every model on one bill.</p>
-          <Art lit={artOn} />
+          <div className="xpr-tabs"><Tabs id="xpr-plans" label="Plans" tabs={TABS} value={tab} onChange={pick} size="lg" /></div>
+        </div>
+        <div className="xpr-w xpr-panels" ref={rail}>
+          <Plans tab={tab} s={s} set={set} hand={hand} />
         </div>
       </section>
       <div className="xpr-room">
-        <div className="xpr-tabs">
-          <div className="xpr-w"><Tabs id="xpr-plans" label="Plans" tabs={TABS} value={tab} onChange={pick} size="lg" /></div>
-        </div>
-        <div className="xpr-w xpr-panels" ref={rail}>
-          <PlanPanel tab={tab} at={at} setAt={setAt} s={s} set={set} open={open} hand={hand} live={live} />
+        <div className="xpr-w">
+          {tab === 0 && (
+            <section className="xpr-compare" aria-label="Compare plans" >
+              <CompareSheet lit={PRO.findIndex((q) => q.x === x) + 2} />
+            </section>
+          )}
           <Trust />
           <Index />
           <ApiMore on={tab === 2} />
         </div>
       </div>
-      <NoJs css=".xpr-morph{display:none}.xpr-all{display:grid!important}.xpr-api{display:block!important}" />
+      <NoJs css=".xpr-all{display:grid!important}.xpr-api{display:block!important}.xpr-dots{display:none}" />
 
       <section className="xpr-faq" aria-labelledby="xpr-faq-h">
         <div className="xpr-w xpr-split">
           <header className="xpr-stick"><h2 id="xpr-faq-h" className="xpr-h">Frequently Asked Questions</h2></header>
-          <div>
+          <div data-enter="vertical-ticker">
             <Faq items={QA.slice(0, 3)} first={0} multi />
             <details className="xpr-faq-more">
               <summary><span>Read more</span><span className="xpr-faq-n" aria-hidden="true">+ {QA.length - 3}</span></summary>
@@ -695,12 +745,9 @@ export default function Pricing() {
         title="Need help sizing seats or configuring the right plan?"
         action="Talk to our AI Buying Specialist →"
         to="/buying-specialist"
-        note={<p className="xpr-band-note">Need dedicated VPC clusters, custom fine-tuning, or high-volume enterprise SLAs? <A to="/enterprise">Contact our engineering team →</A></p>}
+        note={<p className="xpr-band-note"><span>Need dedicated VPC clusters, custom fine-tuning, or high-volume enterprise SLAs?</span> <A to="/enterprise">Contact our engineering team →</A></p>}
       />
 
-      <Drawer open={!!src} from={src} onClose={close} title="Compare plans" label="Compare plans">
-        <CompareSheet lit={lit} />
-      </Drawer>
     </main>
   );
 }

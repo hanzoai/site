@@ -126,7 +126,7 @@ function Board() {
     <div className="ot-board" ref={stage}>
       <div className="ot-head">
         <p className="mb-mono">48 kHz / 24-BIT FLAC</p>
-        <p className="mb-mono ot-k">TRANSIENT PERCUSSION</p>
+        <p className="mb-mono ot-k">TRANSIENT PERCUSSION · 00:01.12</p>
         <p className="ot-clock mb-tnum" ref={clock}>00:01.12</p>
         <p className="mb-mono">CONTACT SYNC: 0.00ms</p>
         <button type="button" className="mb-chip ot-sound" aria-pressed={sound} onClick={() => { if (sound) hush(); else audio(); setSound(!sound); }}>{sound ? 'Sound on' : 'Sound off'}</button>

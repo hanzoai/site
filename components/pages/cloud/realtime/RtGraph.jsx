@@ -11,21 +11,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { useFrame } from '../Frame';
 
-/* nodes: id, label, the fact it opens (index into GIVES), shape, and where it rests (wide 760×480, tall 360×560) */
+/* nodes: id, label, the fact it opens (index into GIVES), shape, and where it rests (wide 760×480, tall 360×620).
+   Rests are spaced so no lit link name ever crosses a node's name; on phones the stream's seven link names are left
+   unsaid (its panel says them), since seven names round one hub cannot fit 360 units without touching. */
 export const NODES = [
-  ['del', 'delete · b', 3, 'ev', [70, 64], [56, 36]],
-  ['store', 'one store', 4, 'sq', [130, 212], [176, 66]],
-  ['api', 'API', 4, 'dot', [104, 388], [310, 118]],
-  ['rule', 'access rule', 5, 'dia', [262, 302], [196, 196]],
-  ['ba', 'org a · broker', 2, 'dot', [330, 122], [56, 262]],
-  ['bb', 'org b · broker', 2, 'dot', [392, 404], [306, 282]],
-  ['stream', 'GET /v1/realtime', 0, 'ring', [528, 256], [180, 404]],
-  ['grant', 'grant', 6, 'dot', [552, 70], [44, 372]],
-  ['dep', 'deployment', 7, 'dot', [556, 438], [314, 400]],
-  ['subs', 'subscriptions', 1, 'dot', [418, 246], [116, 328]],
-  ['c1', 'Client 1', 0, 'cl', [690, 148], [58, 552]],
-  ['c2', 'Client 2', 0, 'cl', [700, 268], [180, 560]],
-  ['c3', 'Client 3', 5, 'cl', [684, 388], [302, 552]],
+  ['del', 'delete · b', 3, 'ev', [64, 58], [52, 40]],
+  ['store', 'one store', 4, 'sq', [150, 190], [180, 72]],
+  ['api', 'API', 4, 'dot', [80, 400], [308, 128]],
+  ['rule', 'access rule', 5, 'dia', [228, 318], [200, 176]],
+  ['ba', 'org a · broker', 2, 'dot', [330, 104], [60, 262]],
+  ['bb', 'org b · broker', 2, 'dot', [340, 404], [300, 262]],
+  ['stream', 'GET /v1/realtime', 0, 'ring', [500, 254], [180, 420]],
+  ['grant', 'grant', 6, 'dot', [508, 58], [300, 356]],
+  ['dep', 'deployment', 7, 'dot', [500, 442], [304, 470]],
+  ['subs', 'subscriptions', 1, 'dot', [320, 250], [72, 372]],
+  ['c1', 'Client 1', 0, 'cl', [688, 120], [60, 560]],
+  ['c2', 'Client 2', 0, 'cl', [700, 256], [180, 568]],
+  ['c3', 'Client 3', 5, 'cl', [688, 392], [300, 560]],
 ];
 const IDX = Object.fromEntries(NODES.map((n, i) => [n[0], i]));
 /* links, each with the name it shows when lit */
@@ -181,7 +183,7 @@ export default function RtGraph({ sel, onPick, onPeek, run, calm, ev, evAt }) {
         {LINKS.map((l, i) => <line key={i} ref={(el) => (els.current.l[i] = el)} className={'rg-l' + (on(l) ? ' on' : '') + (ev[0] === 'delete' && l[1] === 'store' && l[0] === 'del' ? ' ev' : '')} />)}
         {ROUTES.map((_, r) => <circle key={r} ref={(el) => (els.current.p[r] = el)} r="5" className="rg-rec" opacity="0" />)}
         {/* a name shared by several lit links (text/event-stream to each client) is said once */}
-        {LINKS.map((l, i) => <text key={i} ref={(el) => (els.current.t[i] = el)} className={'rg-ln' + (on(l) && LINKS.findIndex((m) => on(m) && m[2] === l[2]) === i ? ' on' : '')} textAnchor="middle">{l[2]}</text>)}
+        {LINKS.map((l, i) => <text key={i} ref={(el) => (els.current.t[i] = el)} className={'rg-ln' + (on(l) && !(mode === 'tall' && id === 'stream') && LINKS.findIndex((m) => on(m) && m[2] === l[2]) === i ? ' on' : '')} textAnchor="middle">{l[2]}</text>)}
       </g>
       {NODES.map(([nid, label, fact, shape], i) => {
         const p = NODES[i][k];

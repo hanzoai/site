@@ -1,8 +1,12 @@
+/* dark mode: the shared ProofRhythm greys keep their exact light value and take Hanzo's dark tokens; same specificity as
+   ProofRhythm's own rules and first in this file, so every page rule below (the dark room's included) still wins as before */
+.xsc .pf-lede, .xsc .pf-body { color: light-dark(#525252, var(--text-secondary)); }
+.xsc .pf-kick { color: light-dark(#737373, var(--muted-foreground)); }
 /* ---------- security: an honest status (MASTER §4.2), deck tokens only ---------- */
-.xsc { --ink: #0a0a0a; --mute: #525252; --quiet: #737373; --line: rgba(0, 0, 0, .1); --tile: #f5f5f5; --tile2: #ededed; --brand: #e4e4e7;
+.xsc { --ink: light-dark(#0a0a0a, var(--foreground)); --mute: light-dark(#525252, var(--text-secondary)); --quiet: light-dark(#737373, var(--muted-foreground)); --line: light-dark(rgba(0, 0, 0, .1), var(--border)); --tile: light-dark(#f5f5f5, var(--muted)); --tile2: light-dark(#ededed, var(--secondary)); --brand: light-dark(#e4e4e7, var(--secondary));
   --f: 150ms; --b: 300ms; --s: 400ms; --sl: 500ms; }
 .xsc .pf-kick.xsc-cap { margin: 17px 0 0; }
-.xsc :focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+.xsc :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 /* hero: the status, checked once */
 .xsc-hero { padding: clamp(72px, 9vw, 116px) 0 clamp(72px, 9vw, 116px); }
@@ -18,8 +22,8 @@
 .xsc-map-h .pf-mono { color: var(--ink); letter-spacing: .04em; font-size: 13px; }
 .xsc-map-st { position: relative; list-style: none; margin: 0; padding: 0; height: 470px; }
 .xsc-map-st li { position: absolute; left: 0; right: 0; top: calc(30px + var(--i) * 72px); height: 72px; z-index: calc(10 - var(--i)); }
-.xsc-mp { position: absolute; left: 6px; top: -30px; width: 172px; height: 120px; border-radius: 16px; background: #fafafa; outline: 1px solid rgba(0, 0, 0, .14); transform: perspective(1400px) rotateX(58deg) rotateZ(-42deg); overflow: hidden; transition: background-color var(--b) var(--pf-io), translate var(--b) var(--pf-io), outline-color var(--b) var(--pf-io); }
-.xsc-map-st li.ok .xsc-mp { background: var(--brand); outline-color: rgba(0, 0, 0, .18); }
+.xsc-mp { position: absolute; left: 6px; top: -30px; width: 172px; height: 120px; border-radius: 16px; background: var(--x-sunk); outline: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-control)); transform: perspective(1400px) rotateX(58deg) rotateZ(-42deg); overflow: hidden; transition: background-color var(--b) var(--pf-io), translate var(--b) var(--pf-io), outline-color var(--b) var(--pf-io); }
+.xsc-map-st li.ok .xsc-mp { background: var(--brand); outline-color: light-dark(rgba(0, 0, 0, .18), var(--border-control)); }
 .xsc-map-st li.now .xsc-mp { translate: 0 -10px; background: var(--ink); outline-color: var(--ink); }
 .xsc-map-st li.core .xsc-mp { background: #000; outline-color: #000; }
 .xsc-map-st li.core .xsc-mp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -50,7 +54,7 @@
 .xsc-tabs button .pf-mono { font-size: 13px; }
 .xsc-tabs button:active > span:not(.xsc-pill) { transform: scale(.97); transition-duration: 90ms; }
 .xsc-tabs button[aria-selected='true'] { color: var(--ink); font-weight: 497; }
-.xsc-pill { position: absolute; z-index: 0; inset: 4px 0; border-radius: 12px; background: #fff; }
+.xsc-pill { position: absolute; z-index: 0; inset: 4px 0; border-radius: 12px; background: var(--x-raised); }
 .xsc-tab-ok { color: var(--ink); opacity: 0; transform: scale(.6); transition: opacity var(--b) var(--pf-emph), transform var(--b) var(--pf-emph) !important; }
 .xsc-tabs button.ok .xsc-tab-ok { opacity: 1; transform: none; }
 @media (hover: hover) {
@@ -60,7 +64,7 @@
 .xsc-ws-n { margin: 17px 0 6.5px; font-size: 13px; color: var(--mute); font-variant-numeric: tabular-nums; }
 
 .xsc-layers-r { position: sticky; top: 96px; }
-.xsc-stk { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 27px; align-items: center; min-height: 340px; padding: 27px; border-radius: 24px; background: #fff; }
+.xsc-stk { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 27px; align-items: center; min-height: 340px; padding: 27px; border-radius: 24px; background: var(--x-raised); }
 .xsc-stk-s { position: relative; list-style: none; margin: 0; padding: 0; height: 300px; }
 .xsc-stk-s li { position: absolute; left: 0; top: calc(64px + var(--i) * 34px); width: 190px; height: 34px; z-index: calc(10 - var(--i)); cursor: pointer; }
 .xsc-stk-s .xsc-mp { left: 10px; top: -40px; width: 160px; height: 112px; transition: background-color var(--b) var(--pf-io), translate var(--sl) var(--pf-emph), outline-color var(--b) var(--pf-io); }
@@ -84,7 +88,7 @@
 .xsc-path { align-items: center; gap: 0; }
 .xsc-path li + li { margin-left: 22px; }
 .xsc-path li + li::before { content: ''; position: relative; left: -10.5px; width: 22px; height: 1px; margin-left: -22px; background: var(--ink); }
-.xsc-path li:last-child { background: var(--ink); color: #fafafa; }
+.xsc-path li:last-child { background: var(--ink); color: light-dark(#fafafa, var(--primary-foreground)); }
 .xsc-strike li s { text-decoration-color: var(--ink); text-decoration-thickness: 1.5px; color: var(--mute); }
 .xsc-strike p { margin: 10.5px 0 0; font: 500 13px/1 var(--mono); color: var(--ink); }
 
@@ -92,13 +96,13 @@
 .xsc-panel { grid-area: 1 / 1; opacity: 0; transform: translate3d(0, 16px, 0); transition: opacity var(--b) var(--pf-emph), transform var(--b) var(--pf-emph); pointer-events: none; }
 .xsc-panel[data-on='true'] { opacity: 1; transform: none; pointer-events: auto; }
 .xsc-panel .xsc-panel-n { margin: 0 0 10.5px; color: var(--ink); }
-.xsc-tick { display: inline-flex; align-items: center; gap: 6.5px; min-height: 44px; margin-top: 17px; padding: 0 17px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .18); background: #fff; font: 500 13px/1 var(--mono); color: var(--mute); cursor: pointer; transition: background-color var(--f) var(--pf-out), color var(--f) var(--pf-out), border-color var(--f) var(--pf-out), transform 90ms var(--pf-out); }
+.xsc-tick { display: inline-flex; align-items: center; gap: 6.5px; min-height: 44px; margin-top: 17px; padding: 0 17px; border-radius: 999px; border: 1px solid light-dark(rgba(0, 0, 0, .18), var(--border-control)); background: var(--x-raised); font: 500 13px/1 var(--mono); color: var(--mute); cursor: pointer; transition: background-color var(--f) var(--pf-out), color var(--f) var(--pf-out), border-color var(--f) var(--pf-out), transform 90ms var(--pf-out); }
 .xsc-tick svg { opacity: .3; transition: opacity var(--f) var(--pf-out), transform var(--b) var(--pf-emph); }
 .xsc-tick:active { transform: scale(.97); }
-.xsc-tick.on { background: var(--ink); border-color: var(--ink); color: #fafafa; }
+.xsc-tick.on { background: var(--ink); border-color: var(--ink); color: light-dark(#fafafa, var(--primary-foreground)); }
 .xsc-tick.on svg { opacity: 1; }
 @media (hover: hover) {
-  .xsc-tick:hover { border-color: rgba(0, 0, 0, .4); color: var(--ink); transform: translate3d(0, -1px, 0); }
+  .xsc-tick:hover { border-color: light-dark(rgba(0, 0, 0, .4), var(--border-control)); color: var(--ink); transform: translate3d(0, -1px, 0); }
   .xsc-tick:hover svg { opacity: .7; transform: scale(1.1); }
 }
 
@@ -108,16 +112,16 @@
 .xsc-rack { list-style: none; margin: 0; padding: 10.5px 27px; border-radius: 24px; background: var(--tile); transform: scale(calc(.92 + var(--up, 4) * .02)); transform-origin: 50% 100%; transition: transform var(--sl) var(--pf-emph); }
 .xsc-rack li { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr) 40px; gap: 17px; align-items: center; min-height: 72px; border-bottom: 1px solid var(--line); }
 .xsc-rack li:last-child { border-bottom: 0; }
-.xsc-rack li::before { content: ''; position: absolute; inset: 6.5px -17px; border-radius: 12px; background: #fff; clip-path: inset(0 100% 0 0 round 12px); transition: clip-path var(--s) var(--pf-io); }
+.xsc-rack li::before { content: ''; position: absolute; inset: 6.5px -17px; border-radius: 12px; background: var(--x-raised); clip-path: inset(0 100% 0 0 round 12px); transition: clip-path var(--s) var(--pf-io); }
 .xsc-rack li > * { position: relative; }
 .xsc-u { font-size: 13px; color: var(--mute); }
 .xsc-rack-t { font-size: 17px; line-height: 1.35; color: var(--ink); transition: transform var(--f) var(--pf-out); }
 .xsc-bay { display: flex; gap: 6px; justify-content: flex-end; }
 .xsc-rack li { --on: 0; }
 .xsc-rack-t, .xsc-u { opacity: calc(.45 + var(--on) * .55); transition: opacity var(--s) var(--pf-io), transform var(--f) var(--pf-out); }
-.xsc-bay i { width: 6px; height: 6px; border-radius: 50%; background: #d4d4d4; transform: scale(calc(.7 + var(--on) * .3)); transition: background-color var(--b) var(--pf-io), transform var(--b) var(--pf-emph); }
+.xsc-bay i { width: 6px; height: 6px; border-radius: 50%; background: light-dark(#d4d4d4, var(--secondary)); transform: scale(calc(.7 + var(--on) * .3)); transition: background-color var(--b) var(--pf-io), transform var(--b) var(--pf-emph); }
 .xsc-rack li[data-up='true'] .xsc-bay i:first-child { background: var(--ink); }
-.xsc-rack li[data-up='true'] .xsc-bay i + i { background: #a3a3a3; transition-delay: 150ms; }
+.xsc-rack li[data-up='true'] .xsc-bay i + i { background: light-dark(#a3a3a3, var(--muted-foreground)); transition-delay: 150ms; }
 @media (hover: hover) {
   .xsc-rack li:hover::before { clip-path: inset(0 0 0 0 round 12px); }
   .xsc-rack li:hover .xsc-rack-t { transform: translateX(4px); }
@@ -126,13 +130,13 @@
 /* or none of it */
 .xsc-where { position: relative; margin-top: 44px; max-width: 560px; }
 .xsc-where-s { position: relative; height: 150px; width: calc(100% / 3); transform: translate3d(calc(var(--at) * 100%), 0, 0); transition: transform var(--sl) var(--pf-emph); pointer-events: none; }
-.xsc-where-s i { position: absolute; left: 50%; bottom: calc(14px + var(--i) * 18px); width: 96px; height: 66px; margin-left: -48px; border-radius: 10px; background: #fafafa; outline: 1px solid rgba(0, 0, 0, .14); transform: perspective(900px) rotateX(58deg) rotateZ(-42deg); z-index: calc(10 - var(--i)); }
+.xsc-where-s i { position: absolute; left: 50%; bottom: calc(14px + var(--i) * 18px); width: 96px; height: 66px; margin-left: -48px; border-radius: 10px; background: var(--x-sunk); outline: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-control)); transform: perspective(900px) rotateX(58deg) rotateZ(-42deg); z-index: calc(10 - var(--i)); }
 .xsc-where-s i:first-child { background: var(--ink); outline-color: var(--ink); }
 .xsc-where-s i.core { background: #000; }
 .xsc-where-b { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .xsc-where-b button { display: grid; justify-items: center; gap: 10.5px; min-height: 72px; padding: 10.5px 6.5px; border: 0; border-radius: 16px; background: none; font: inherit; color: var(--mute); cursor: pointer; transition: background-color var(--f) var(--pf-out), color var(--f) var(--pf-out), transform 90ms var(--pf-out); }
 .xsc-where-b .pf-mono { font-size: 13px; letter-spacing: .02em; }
-.xsc-where-pad { width: 100%; height: 6px; border-radius: 999px; background: #d4d4d4; transition: background-color var(--b) var(--pf-io); }
+.xsc-where-pad { width: 100%; height: 6px; border-radius: 999px; background: light-dark(#d4d4d4, var(--secondary)); transition: background-color var(--b) var(--pf-io); }
 .xsc-where-b button[aria-pressed='true'] { color: var(--ink); }
 .xsc-where-b button[aria-pressed='true'] .xsc-where-pad { background: var(--ink); }
 .xsc-where-b button:active { transform: scale(.97); }
@@ -157,7 +161,7 @@
 .xsc-comes { margin-top: 27px; }
 .xsc-dark .pf-plus i { background: #fafafa; color: #0a0a0a; }
 .xsc-comes-l { list-style: none; margin: 17px 0 27px; padding: 0; }
-.xsc-comes-l li { display: flex; align-items: center; gap: 10.5px; min-height: 48px; border-top: 1px solid rgba(0, 0, 0, .1); font-size: 16px; color: #0a0a0a; }
+.xsc-comes-l li { display: flex; align-items: center; gap: 10.5px; min-height: 48px; border-top: 1px solid light-dark(rgba(0, 0, 0, .1), var(--border)); font-size: 16px; color: light-dark(#0a0a0a, var(--foreground)); }
 .xsc-comes-l li svg { flex: none; }
 .xsc-found { display: grid; grid-template-columns: minmax(0, 38.2fr) minmax(0, 61.8fr); column-gap: 44px; align-items: end; margin-top: clamp(116px, 12vw, 188px); }
 .xsc-found .pf-body { margin-top: 17px; }
@@ -188,7 +192,7 @@
   .xsc-where-s i { width: 132px; height: 92px; margin-left: -66px; bottom: calc(18px + var(--i) * 24px); border-radius: 14px; }
 }
 .xsc-where-b .pf-mono { white-space: nowrap; }
-.xsc-note { margin: 17px 0 0; font-size: 14px; color: #a3a3a3; }
+.xsc-note { margin: 17px 0 0; font-size: 14px; color: light-dark(#a3a3a3, var(--text-tertiary)); }
 .xsc-note a { color: #fafafa; text-decoration-thickness: 1px; text-underline-offset: 3px; transition: text-underline-offset var(--f) var(--pf-out); }
 @media (hover: hover) { .xsc-note a:hover { text-underline-offset: 6px; } }
 
@@ -270,3 +274,8 @@
   /* every text link gets a 44px target on touch */
   .xsc .x-arrow, .xsc-note a { display: inline-flex; align-items: center; min-height: 44px; }
 }
+
+/* the hero h1's cut-in runs on CSS from first paint (no hydration wait) */
+@keyframes xsc-cut { from { transform: translate3d(0, 105%, 0); } }
+.xsc-cut { animation: xsc-cut .7s cubic-bezier(.16, 1, .3, 1) calc(.1s + var(--d, 0ms)) backwards; }
+@media (prefers-reduced-motion: reduce) { .xsc-cut { animation: none; } }

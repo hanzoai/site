@@ -1,6 +1,6 @@
 'use client';
 /* Persona: teams that send contracts (ops, sales, HR) and developers who embed signing. Goal: start signing. CTA: "Try Hanzo" → /login. Metric: signup_start.
-   Sign. V2: 8/10 no pinned chapters: the desk beside the title signs the contract by itself and the five steps sit under it as one row you can pick from; every moment of the signing lands like a stamp; five sections, five different entrances; greys only
+   Sign. V2: 8/10 no pinned chapters: the desk beside the title signs the contract by itself and the five steps sit under it as one row you can pick from; every moment of the signing lands like a stamp; five sections, five different entrances; greys only; slice D: the part tiles preview their first sentence on hover, two to a row on phones, the plans ride a sideways rail on phones (the toggle brings its plans into view), the close's five rows sit as a two-column ledger so it fits one screen
    Signature: stamp. A PDF page sits on a desk beside the title and goes through Hanzo's five steps by itself; each
    thing that arrives on the paper lands with weight (a short drop, a squash onto the page, a settle): the six fields,
    the signature (the ink writes, then the field takes the pen's press), the checkbox tick, and the certificate,
@@ -159,7 +159,7 @@ function Opening() {
               <li key={t} style={{ '--i': i }}>
                 <button type="button" aria-pressed={at === i} className={i < at ? 'past' : ''} onClick={() => pick(i)}>
                   <span className="x-mono">{String(i + 1).padStart(2, '0')}</span>
-                  <b>{t}</b>
+                  <span className="sg-step-t">{t}</span>
                   <span className="sg-step-d">{d}</span>
                 </button>
               </li>
@@ -240,7 +240,8 @@ function Parts() {
             <Langs />
           </div>
         </div>
-        <OpenCards cols={4} className="sg-cards" items={PARTS.map(([t, d], i) => ({ id: 'sg-' + i, k: String(i + 1).padStart(2, '0'), t, body: <p>{d}</p> }))} />
+        {/* hover (pointer devices): the part's first sentence previews where the number sat, so the hover says what opens */}
+        <OpenCards cols={4} className="sg-cards" items={PARTS.map(([t, d], i) => ({ id: 'sg-' + i, k: String(i + 1).padStart(2, '0'), t, d: <span aria-hidden="true">{d.split(/(?<=\.) /)[0]}</span>, body: <p>{d}</p> }))} />
       </div>
     </section>
   );
@@ -334,6 +335,13 @@ function Cost() {
   const plansRef = useRef(null);
   const seen = useInView(plansRef, { once: true, amount: 0.4 }); // the prices flip in once, the first time they are reached
   const wrapRef = useEnter(dissolve);
+  // on phones the plans are a sideways rail: the toggle brings the plans it means into view
+  const toPlan = (k) => {
+    const rail = plansRef.current;
+    if (!rail || rail.scrollWidth <= rail.clientWidth + 1) return;
+    const card = rail.children[k];
+    rail.scrollTo({ left: card.offsetLeft - rail.firstElementChild.offsetLeft, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
   return (
     <section className="w2-sec sg-cost">
       {/* the noise the section dissolves in from (entrance 4): grey fractal noise, thresholded into an alpha mask */}
@@ -354,7 +362,7 @@ function Cost() {
             <p className="w2-lede">Run it yourself and pay nothing but your own hosting. Pay us and we run it, on the same code.</p>
             <div className="sg-run" role="group" aria-label="Who runs it">
               {['Run it yourself', 'We run it'].map((t, i) => (
-                <button key={t} type="button" aria-pressed={run === i} onClick={() => setRun(i)}><span>{t}</span></button>
+                <button key={t} type="button" aria-pressed={run === i} onClick={() => { setRun(i); toPlan(i === 0 ? 0 : 1); }}><span>{t}</span></button>
               ))}
             </div>
           </div>
@@ -377,9 +385,9 @@ function Cost() {
         <div className="sg-oss">
           <h2 className="w2-headline">Built on Open Source</h2>
           <div>
-            <p className="w2-body">Hanzo Sign is built on <A to="https://documenso.com">Documenso</A>, an open-source document signing platform, under the AGPL.</p>
+            <p className="w2-body"><span>Hanzo Sign is built on </span><A to="https://documenso.com">Documenso</A><span>, an open-source document signing platform, under the AGPL.</span></p>
             <p className="w2-body">The upstream project is named here and in the licence, because naming what you forked is required and is a different act from branding yourself with it. Run our build, or run your own — the whole thing is a TypeScript application over Postgres, and you can read every line that touches a document before you trust it with one.</p>
-            <div className="sg-oss-links"><A to={REPO} className="w2-ghost">hanzoai/esign <i aria-hidden="true">↗</i></A><A to="https://github.com/documenso/documenso" className="w2-ghost">Upstream: documenso/documenso <i aria-hidden="true">↗</i></A></div>
+            <div className="sg-oss-links"><A to={REPO} className="w2-ghost"><span>hanzoai/esign</span> <i aria-hidden="true">↗</i></A><A to="https://github.com/documenso/documenso" className="w2-ghost"><span>Upstream: documenso/documenso</span> <i aria-hidden="true">↗</i></A></div>
             <Fork />
           </div>
         </div>
@@ -406,12 +414,12 @@ function First() {
           {/* one ledger, quiet rows divided by hairlines: everything else Hanzo says here, never a second box or ask */}
           <ul className="sg-first-links">
             {[['Documentation', 'Setup, self-hosting, and the API reference', 'View Docs', DOCS], ['The source', 'Read it before you trust a contract to it', 'View on GitHub', REPO]].map(([t, d, a, to], i) => (
-              <li key={t} className="sg-fold" style={{ '--i': i + 2 }}><h3>{t}</h3><p>{d}</p><A to={to} className="sg-tlink">{a} <i aria-hidden="true">→</i></A></li>
+              <li key={t} className="sg-fold" style={{ '--i': i + 2 }}><h3>{t}</h3><p>{d}</p><A to={to} className="sg-tlink"><span>{a}</span> <i aria-hidden="true">→</i></A></li>
             ))}
             <li className="sg-fold" style={{ '--i': 4 }}>
               <h3>Something more specific</h3>
               <p>Signing inside your own product, a flow with approvals before the send, or running it on your infrastructure. Tell us the shape and we will tell you whether it fits.</p>
-              <A to="/contact-sales" className="sg-tlink">Contact Sales <i aria-hidden="true">→</i></A>
+              <A to="/contact-sales" className="sg-tlink"><span>Contact Sales</span> <i aria-hidden="true">→</i></A>
             </li>
             <li className="sg-fold" style={{ '--i': 5 }}>
               <h3>Get started with Sign</h3>
@@ -423,7 +431,7 @@ function First() {
               <span className="sg-get-meta">
                 <span className="sg-chip"><span>License:</span> AGPL-3.0</span>
                 <A to="https://github.com/hanzoai" className="sg-chip">hanzoai</A>
-                <A to="https://platform.hanzo.ai/deploy" className="sg-tlink">Deploy to Cloud <i aria-hidden="true">→</i></A>
+                <A to="https://platform.hanzo.ai/deploy" className="sg-tlink"><span>Deploy to Cloud</span> <i aria-hidden="true">→</i></A>
               </span>
             </li>
           </ul>

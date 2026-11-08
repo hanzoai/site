@@ -1,4 +1,5 @@
 # /referral: James-eye review (critic 4, 7 Nov)
+Ready: 2026-11-07, slice D — re-verified the motion-map rebuild (the strip hairline and the half-empty pin this review describes are gone with it); word-shuffle no longer crosses words, the summary lists its four steps from the start and inks them as done, the close panel parks under the card instead of covering it and the blank band before the footer is gone, 44px phone Sign in
 
 Verdict: 7/10
 First complaint: "In How it works there's a line running straight through the speedometer and through the list, like it's been crossed out. It looks broken. Everything else is nearly there."

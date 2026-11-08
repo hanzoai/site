@@ -19,7 +19,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useReducedMotion, useTransform } from 'motion/react';
 import { Copy } from '../../ui';
-import { Paste, useLive } from './Frame';
+import { useLive } from './Frame';
+import { LeafPaste } from './close3/Leaf';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
@@ -46,7 +47,9 @@ function useSteps(n, ms, live) {
   }, [at, live, mine, n, ms]);
   return [at, (i) => { setAt(i); setMine(true); }, mine];
 }
-const rnd = (i) => { const x = Math.sin(i * 91.7) * 43758.5453; return x - Math.floor(x); };
+// rounded: Math.sin of large arguments can differ in the last digits between the server and the browser (hydration)
+const rnd = (i) => { const x = Math.sin(i * 91.7) * 43758.5453; return Math.round((x - Math.floor(x)) * 1e4) / 1e4; };
+const r2 = (v) => Math.round(v * 100) / 100;
 
 function Chat() {
   return (
@@ -79,7 +82,7 @@ function Embeddings() {
     <svg className="pg-emb" viewBox="0 0 300 200" aria-hidden="true">
       {Array.from({ length: 42 }).map((_, i) => {
         const h = hubs[i % 3];
-        return <motion.circle key={i} r="4" className={'c' + (i % 3)} initial={{ cx: rnd(i + 9) * 300, cy: rnd(i + 99) * 200, opacity: 0 }} animate={{ cx: h[0] + (rnd(i) - 0.5) * 60, cy: h[1] + (rnd(i + 50) - 0.5) * 44, opacity: 1 }} transition={{ duration: 1.4, ease: EASE, delay: 0.2 + (i % 14) * 0.03 }} />;
+        return <motion.circle key={i} r="4" className={'c' + (i % 3)} initial={{ cx: r2(rnd(i + 9) * 300), cy: r2(rnd(i + 99) * 200), opacity: 0 }} animate={{ cx: r2(h[0] + (rnd(i) - 0.5) * 60), cy: r2(h[1] + (rnd(i + 50) - 0.5) * 44), opacity: 1 }} transition={{ duration: 1.4, ease: EASE, delay: 0.2 + (i % 14) * 0.03 }} />;
       })}
     </svg>
   );
@@ -338,6 +341,8 @@ function Explore() {
               ))}{' '}
               <button type="button" className={'pg-ph' + (show === 3 ? ' on' : '')} onClick={() => pick(3)} onPointerEnter={peek(3)} aria-pressed={sel === 3}>is the whole first request.</button>
             </p>
+            {/* Hanzo's sentence as one line of text: the buttons above spell exactly these words, phrase by phrase */}
+            <p className="x-sr" aria-hidden="true">A key, a model name, and a message is the whole first request.</p>
           </div>
           <div className="pg-cv-item pg-req pg-req-curl" ref={put('curl')} style={pos('curl')}>
             <div className="pg-req-bar"><i /><i /><i /><span className="pg-req-n">curl</span><Copy text={CURL} /></div>
@@ -432,7 +437,7 @@ function Room() {
   return (
     <section ref={ref} className="lx-dark pg-paste pg-room" data-room="dark" data-enter={enter || undefined}>
       <div className="lx-wrap pg-paste-grid">
-        <Paste dark name="Playground" api="/v1/chat/completions" prompt="Read https://hanzo.ai/skill.md and use Hanzo Playground in my project." className="lx-paste" />
+        <LeafPaste dark name="Playground" api="/v1/chat/completions" prompt="Read https://hanzo.ai/skill.md and use Hanzo Playground in my project." className="lx-paste" />
         <Wall />
       </div>
     </section>

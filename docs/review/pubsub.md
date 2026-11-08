@@ -1,4 +1,5 @@
 # /pubsub — James-eye review
+Ready: 2026-11-07, slice D — facts pass beside one held drawing that draws each (no more text wall), events.go walked once on arrival, phone subscriber states never cut, card and V2 line match the globe page
 
 Verdict: 7/10
 First complaint: "Good, the bus comes down with me now. But on the accounts chapter there's a white line drawn straight through 'account b', and on my phone half the cards say 'from the …', 'as fast a…', 'one ans…'. It looks unfinished right where it should feel premium."

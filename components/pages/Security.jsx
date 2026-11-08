@@ -19,15 +19,18 @@
    black room's entry (the one scroll-linked move).
    Conflict noted on the card: MASTER §4.2 also lists DPA, subprocessors and security.txt for /security; on hanzo.ai those
    live on /trust, and the split is not ours to merge, so /security links /trust for them and adds no copy.
-   V2: 8/10 calm honest-status rebuild in ink: status pass in the hero, the controls as a selectable document with the worksheet, quiet proof, one black room ending on the same ask. */
+   V2: 8/10 calm honest-status rebuild in ink: status pass in the hero, the controls as a selectable document with the worksheet, quiet proof, one black room ending on the same ask. Slice D: the h1 cuts in on CSS from first paint; plate lift, rack, place move and band press verified.
+   Entrances (MOTION-MAP, security/enter.js + enter.css, in order): shutter (hero layers, CSS from first paint), depth-parallax
+   (controls, scroll), squash-land (rack), scroll-tilt (place switcher, scroll speed), slot-roll ("Ask us the hard question"). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../ui';
 import { A, Cta, More } from '../kit';
-import MaskLines from './proof/MaskLines';
 import SceneWipe from './proof/SceneWipe';
 import Sheet from './security/Sheet';
 import Decode from './security/Decode';
+import { useEnter } from './security/enter';
+import './security/enter.css';
 import NoJs from '../NoJs';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
@@ -94,7 +97,8 @@ function Hero({ pick }) {
     <section className="xsc-hero" aria-labelledby="xsc-h1">
       <div className="pf-wrap xsc-hero-g">
         <div className="xsc-hero-c">
-          <MaskLines as="h1" id="xsc-h1" className="pf-display" lines={['What protects', 'your data,', 'and how.']} />
+          {/* the h1 cuts in on CSS from first paint, so it never waits for hydration (same mask and easing as MaskLines) */}
+          <h1 id="xsc-h1" className="pf-display">{['What protects', 'your data,', 'and how.'].map((l, i) => <span key={l} className="pf-mask-l"><span className="pf-mask-in xsc-cut" style={{ '--d': i * 60 + 'ms' }}>{l}</span>{i < 2 ? ' ' : null}</span>)}</h1>
           <p className="pf-kick xsc-cap">Security Architecture</p>
           <p className="pf-lede">Clear security mechanisms: which key encrypts your data, where tenancy boundaries are enforced, and how every request is verified.</p>
           <div className="xsc-acts">
@@ -145,7 +149,7 @@ function Layers({ at, setAt }) {
   };
   return (
     <section className="pf-sec xsc-layers" id="controls" aria-labelledby="xsc-layers-h">
-      <div className="pf-wrap xsc-layers-g">
+      <div className="pf-wrap xsc-layers-g" data-enter="depth">
         <div className="xsc-layers-l">
           <h2 id="xsc-layers-h" className="pf-head">The controls, named</h2>
           <div className="xsc-tabs" role="tablist" aria-label="The controls" aria-orientation="vertical" onKeyDown={keys}>
@@ -219,7 +223,7 @@ function Infra() {
   }, [live, up, calm]);
   return (
     <section className="pf-sec xsc-infra" aria-labelledby="xsc-infra-h">
-      <div className="pf-wrap xsc-infra-g">
+      <div className="pf-wrap xsc-infra-g" data-enter="squash">
         <div>
           <h2 id="xsc-infra-h" className="pf-head">What runs underneath</h2>
           <p className="pf-kick xsc-cap">Infrastructure</p>
@@ -253,7 +257,7 @@ function Where() {
     return () => clearTimeout(t);
   }, [live, at, own, calm]);
   return (
-    <div className="xsc-where" ref={ref} style={{ '--at': at }}>
+    <div className="xsc-where" ref={ref} style={{ '--at': at }} data-enter="tilt">
       <div className="xsc-where-s" aria-hidden="true">{[0, 1, 2, 3, 4, 5].map((i) => <i key={i} style={{ '--i': i }} className={i === 5 ? 'core' : ''} />)}</div>
       <div className="xsc-where-b" role="group" aria-label={OPTIONS[0][0]}>
         {PLACES.map((p, i) => (
@@ -278,7 +282,7 @@ function None() {
         </div>
         <ol className="xsc-opts">
           {OPTIONS.map(([t, d], i) => (
-            <li key={t}><span className="xsc-opt-n pf-mono" aria-hidden="true">{pad(i)}</span><b className="pf-title">{t}</b><span>{d}</span></li>
+            <li key={t}><span className="xsc-opt-n pf-mono" aria-hidden="true">{pad(i)}</span><span className="pf-title xsc-opt-t">{t}</span><span>{d}</span></li>
           ))}
         </ol>
       </div>
@@ -324,8 +328,8 @@ function Dark() {
           </div>
         </div>
 
-        <div className="pf-wrap xsc-ask">
-          <MaskLines className="pf-moment" lines={['Ask us the', 'hard question']} />
+        <div className="pf-wrap xsc-ask" data-enter="slot">
+          <h2 className="pf-moment">{['Ask us the', 'hard question'].map((l, i) => <span key={l} className="xsc-slot"><span className="xsc-slot-in" data-t={l}>{l}</span>{i ? null : ' '}</span>)}</h2>
           <div className="xsc-ask-r">
             <p className="pf-lede">Bring the requirement you cannot get past, and we will show you the code or tell you it is not built. Both answers are more useful than a brochure.</p>
             <div className="xsc-ask-acts">
@@ -341,6 +345,7 @@ function Dark() {
 }
 
 export default function Security() {
+  useEnter('.xsc');
   const [at, setAt] = useState(0);
   // a layer named in the hero: bring the controls up with that layer chosen
   const pick = (i) => {

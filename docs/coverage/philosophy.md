@@ -1,6 +1,13 @@
 # /philosophy coverage (MASTER.md part 2, the 18 parts)
 
-Page file: `components/pages/Philosophy.jsx` (+ `Philosophy.css`, data `philosophyData.js`) · gallery: `docs/gallery/philosophy/` · metric id: `philosophy.close` (cta_click), lead `philosophy.hero`
+**9 Nov rebuild (slice D):** Hanzo replaced the page's copy on live hanzo.ai (the five laws, premise, method, stack and
+questions are gone). The page was re-read from live and rebuilt on the same system: hero hexagram walk (now Hanzo's new
+64), introduction, the explorer (category filter, 8 x 8 index, the chosen pattern's three applications), the eight
+categories (every row opens the sheet), the dark-room close. Parts below that name the removed sections describe the
+7 Nov build; the parts themselves (ask, motion, states, reduced motion, JS off, entrances, proof) hold for the new one.
+copycheck vs live: missing 0 of 166; parity 386/386.
+
+Page file: `components/pages/Philosophy.jsx` (+ `Philosophy.css`, data `philosophy/patterns.js`) · gallery: `docs/gallery/philosophy/` · metric id: `philosophy.close` (cta_click), lead `philosophy.hero`
 
 Open copy questions for James: none (no copy changed; "Philosophy", "The premise", "The synthesis", "The 64 patterns", "The method", "Across the stack" are Hanzo's labels, set as captions under their headings).
 Shared changes requested (`docs/requests/philosophy.md`): none.
@@ -15,7 +22,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; n/a: no prices on the page
 - [x] Open copy questions for James listed, none decided
 
-Done here: Story page, one audience (builders and researchers judging how Hanzo thinks), metric `philosophy.close`. One solid ask per screen; "Build with Hanzo", "Read the research" and "View the source" are text links.
+Done here: Story page, one audience (builders and researchers judging how Hanzo thinks), metric `philosophy.close`. Copy question for James: the Lenses copy says "four modern minds" but Hanzo's data has one lens (Zen, 6 patterns), so the Lenses view shows "All lensed patterns" plus one chip; copy and data left as Hanzo has them. One solid ask per screen; "Build with Hanzo", "Read the research" and "View the source" are text links.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -26,14 +33,14 @@ Done here: Story page, one audience (builders and researchers judging how Hanzo 
 Done here: `<main id="main">` takes the layout's "Skip to content"; links use the kit `A` and `More`; parity shows 10/10 links.
 
 ## 3. First impression and page narrative
-- [x] Sells in 5 s; something moves within 1 s without input (the hexagram's first change at 900 ms)
+- [x] Sells in 5 s; something moves within 1 s without input (the hexagram draws itself and the h1 cuts in on CSS from first paint; the walk's first change follows 900 ms after mount)
 - [x] Hero: the hexagram is the one big thing; h1 52px by line mask; nothing above the h1 ("Philosophy" is a caption under it)
 - [x] JS off: legible; no `opacity:0` on the LCP element
 - [x] One idea per screen; sizes alternate (one moment per screen: hexagram, premise sentence, law hexagram, belief statement)
 - [x] Ends in the dark room's closing link ("Explore Hanzo"), then the footer
 - [x] n/a: no cards to other pages beyond the stack rows (they morph through the site layer)
 
-Done here: First screen at 1470×801: centred hexagram (≈420px) walking the sixty-four, 52px headline, caption, lede and ask at its foot; JS off measured 0 of 910 text blocks hidden.
+Done here: First screen at 1470×801: centred hexagram (≈420px) walking the sixty-four, 52px headline, caption, lede and ask at its foot. Slice D: the h1 cut-in and the hexagram's bottom-to-top draw are CSS keyframes, so they run from first paint and never wait for hydration (measured on the dev server: h1 already moving on the first frame at 0.78 s, settled by 1.6 s). JS off: every word visible; only the Sequence tab panel stays hidden, and its words are in the laid-out sheet details.
 
 ## 4. Conversion system
 - [x] Kit ask (`.pf-btn.solid`) only; no raw `.x-btn`
@@ -84,7 +91,7 @@ Done here: Hovers fill or part the hexagram's strokes (James's "strokes parting"
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] n/a: sound is a shared kit, not wired on this page
 
-Done here: The pinned laws scene (PinScenes) and the scroll word reveal of the belief statement are gone. The second screen is the signature: a timeline of the five operating laws; dragging the thumb (pointer or finger, `touch-action: pan-y`), tapping a law's number or pressing ← → / Home / End moves it, the law under it takes the panel (outgoing 150 ms, incoming 300 ms ease-emphasis) and the hexagram beside it gains one line per law, the sixth (64 · Before Completion) flipping six times on law 05; on release it settles on the nearest law in 300 ms ease-in-out. It plays 01 → 05 once by itself when first seen until touched; the thumb moves by transform only (CLS 0.001 desktop, 0.0006 phone while scrolling). The belief statement is now set still in ink and grey. Deck timings only, no springs or overshoot; `variety.py` OK.
+Done here: The pinned laws scene (PinScenes) and the scroll word reveal of the belief statement are gone. The second screen is the signature: a timeline of the five operating laws; dragging the thumb (pointer or finger, `touch-action: pan-y`), tapping a law's number or pressing ← → / Home / End moves it, the law under it takes the panel (outgoing 150 ms, incoming 300 ms ease-emphasis) and the hexagram beside it gains one line per law, the sixth (64 · Before Completion) flipping six times on law 05; on release it settles on the nearest law in 300 ms ease-in-out. It plays 01 → 05 once by itself when first seen until touched; the thumb moves by transform only (CLS 0.001 desktop, 0.0006 phone while scrolling). The belief statement is now set still in ink and grey. Deck timings only, no springs or overshoot; `variety.py` OK. Entrances (MOTION-MAP row, page-local `philosophy/enter.js` + `enter.css`, in page order): typewriter on "Five operating laws" (steps per letter behind a caret that blinks twice), venetian-type on the premise's two lines (alternating sides), fold-out on the 64's view (rotateX from its top edge), invert-flash on the method ring (a black disc flicks back to light), side-carousel on the stack rows (ride in from the right, a row behind the next). One IntersectionObserver plays each once; start states only under html.js without reduced motion, so JS off and reduced motion show the final page. Probe at 1470 and 375 after a slow scroll: all five fired (data-in and data-done) and ended visible; reduced motion 0 console errors.
 
 ## 10. Media
 - [x] n/a: the page has no Hanzo photo or film; its objects are drawn (hexagrams, ring)
@@ -100,7 +107,7 @@ Done here: Every object is drawn in HTML and CSS (the hexagram is 6 rows of two 
 - [x] Every target 44px or more; tiles and rows answer taps
 - [x] Primary ask above the fold at 375 (moved above the lede)
 
-Done here: Phone hero: a 150px hexagram whose lines sit in 44px tap pads, h1 at 40px, the ask before the lede; the laws timeline sets a 104px hexagram beside its caption, the law below, and the strip at full width with 44px number stops (drag with a finger). Nothing overlaps at 375 (the old closed-sheet overlap is gone; scrollWidth 375). The patterns open on the Matrix view (one 8×8 object) instead of eight rows of tiles; tile titles wrap instead of colliding at 1470.
+Done here: Phone hero: a 150px hexagram whose lines sit in 44px tap pads, h1 at 40px, the ask before the lede; the laws timeline sets a 104px hexagram beside its caption, the law below, and the strip at full width with 44px number stops (drag with a finger). Nothing overlaps at 375 (the old closed-sheet overlap is gone; scrollWidth 375). The patterns open on the Matrix view (one 8×8 object) instead of eight rows of tiles; tile titles never break inside a word: measured with a Range per word at 1470, 1200, 900, 375 and 320 (six a row from 900, four below 1200, three on phones with 8px tile padding, two below 370px).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Text #0a0a0a / #525252 / #737373 on white, #525252 on #f5f5f5
@@ -149,7 +156,7 @@ Done here: n/a: no code, terminal or config on /philosophy.
 - [x] n/a: no form
 - [x] JS off: a `<noscript>` rule lays out all views and all 64 patterns; reduced motion shows final states
 
-Done here: JS off measured 0 hidden blocks at 1470; the sheet wraps 64 → 01; nothing on the page fetches.
+Done here: JS off: all words visible at 1470 (the Sequence view's panel is hidden, but each of its 64 entries is laid out in full in the sheet details); the sheet wraps 64 → 01; nothing on the page fetches.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on both primaries (`philosophy.hero`, `philosophy.close`); n/a: `lib/track.js` wiring is shared

@@ -1,6 +1,6 @@
 /* ---------- search v2 (se2-): ink, greys and white only ---------- */
 /* page-scoped deck tokens (docs/original/brand-deck.html): every grey below reads from these */
-.se2, .se2-note { --se-paper: #ffffff; --se-stage: #fbfbfb; --se-room: #f5f5f5; --se-card: #f2f2f2; --se-tile: #ededed; --se-track: #d4d4d4; --se-on: #fafafa; --se-graphite: #171717; --se-on-dim: #a3a3a3; --se-mid: #404040; --se-body: #525252; }
+.se2, .se2-note { --se-paper: light-dark(#ffffff, var(--surface-1)); --se-stage: light-dark(#fbfbfb, var(--surface-card-quiet)); --se-room: light-dark(#f5f5f5, var(--surface-2)); --se-card: light-dark(#f2f2f2, var(--surface-2)); --se-tile: light-dark(#ededed, var(--surface-3)); --se-track: light-dark(#d4d4d4, var(--surface-3)); --se-on: #fafafa; --se-graphite: #171717; --se-on-dim: #a3a3a3; --se-mid: light-dark(#404040, var(--text-secondary)); --se-body: light-dark(#525252, var(--muted-foreground)); }
 .se2 .l2-stage-obj > * { width: min(100%, 1040px); }
 
 /* Stage object: a search bar the size of the screen */
@@ -16,7 +16,7 @@
 .se2-modes button { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 5px; min-height: 60px; padding: 12px 16px; border: 0; border-radius: 12px; background: none; text-align: left; cursor: pointer; color: var(--se-body); transition: transform var(--dur-press, .1s) var(--ease); }
 .se2-modes button:active { transform: scale(.98); }
 .se2-modes button > :not(.se2-mode-bg) { position: relative; }
-.se2-mode-bg { position: absolute; inset: 0; border-radius: 12px; background: var(--se-paper); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); transition: box-shadow .15s cubic-bezier(0, 0, .2, 1); }
+.se2-mode-bg { position: absolute; inset: 0; border-radius: 12px; background: var(--se-paper); box-shadow: inset 0 0 0 1px light-dark(rgba(0, 0, 0, .1), var(--border)); transition: box-shadow .15s cubic-bezier(0, 0, .2, 1); }
 .se2-modes b { font: 500 15px/1 var(--mono); color: var(--se-mid); }
 .se2-modes button[aria-selected='true'] b { font-weight: 700; color: var(--ink); }
 .se2-modes button[aria-selected='true'] span { color: var(--ink); }
@@ -31,7 +31,7 @@
 .se2-doc b { font-size: 17px; font-weight: 606; letter-spacing: -.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .se2-doc em { font: 400 13px/1 var(--mono); font-style: normal; color: var(--se-body); }
 .se2-fix, .se2-fused { margin-left: auto; flex: none; padding: 7px 10px; border-radius: 8px; font-size: 13px; color: var(--ink); border: 1.5px solid var(--ink); }
-.se2-fused { border-color: rgba(0, 0, 0, .2); color: var(--se-mid); }
+.se2-fused { border-color: light-dark(rgba(0, 0, 0, .2), var(--border-control)); color: var(--se-mid); }
 .se2-rows li:not(:first-child) .se2-fused { display: none; }
 .se2-rag { padding: 14px; }
 .se2-rag-q { display: table; margin: 0 0 16px auto; padding: 14px 18px; border-radius: 16px 16px 6px 16px; background: var(--ink); color: var(--se-paper); font-size: 17px; font-weight: 500; }
@@ -39,7 +39,7 @@
 .se2-rag.big .se2-rag-a { font-size: 26px; padding: 26px 28px; }
 .se2-srcs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; transition: opacity .3s, transform .45s var(--ease); }
 html.js .se2-srcs:not(.on) { opacity: 0; transform: translateY(6px); }
-.se2-srcs span { padding: 9px 12px; border-radius: 8px; border: 1px solid rgba(0, 0, 0, .16); font-size: 13px; color: var(--ink); background: var(--se-paper); }
+.se2-srcs span { padding: 9px 12px; border-radius: 8px; border: 1px solid light-dark(rgba(0, 0, 0, .16), var(--border-control)); font-size: 13px; color: var(--ink); background: var(--se-paper); }
 
 /* chapter pictures */
 .se2-way { height: min(560px, 66svh); background: var(--se-stage); }
@@ -53,7 +53,7 @@ html.js .se2-w0-q mark:not(.on) { opacity: 0; transform: translateY(-.4em); }
 .se2-rag-a > .se2-ghost, .se2-rag-a > .se2-live { grid-area: 1 / 1; }
 .se2-ghost { visibility: hidden; }
 .se2-w0-f { display: flex; gap: 8px; margin: 24px 0 28px; }
-.se2-w0-f span { padding: 9px 14px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); font-size: 13px; color: var(--se-body); }
+.se2-w0-f span { padding: 9px 14px; border-radius: 999px; border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-control)); font-size: 13px; color: var(--se-body); }
 .se2-w0-f span.on { border-color: var(--ink); color: var(--ink); background: var(--se-paper); }
 .se2-w0 ol, .se2-w2 ol, .se2-w2 ol.m { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .se2-w0 li, .se2-w2 li { display: flex; align-items: center; gap: 16px; height: 60px; padding: 0 18px; border-radius: 12px; background: var(--se-paper); border: 1px solid var(--hair); font-size: 17px; font-weight: 500; letter-spacing: -.01em; }
@@ -64,7 +64,7 @@ html.js .se2-w0-q mark:not(.on) { opacity: 0; transform: translateY(-.4em); }
 .se2-w1 svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .se2-w1 i { position: absolute; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: var(--se-track); }
 .se2-w1 i.near { width: 12px; height: 12px; margin: -6px 0 0 -6px; background: var(--se-mid); }
-.se2-w1 i.q { width: 18px; height: 18px; margin: -9px 0 0 -9px; background: var(--ink); box-shadow: 0 0 0 6px rgba(10, 10, 10, .1); }
+.se2-w1 i.q { width: 18px; height: 18px; margin: -9px 0 0 -9px; background: var(--ink); box-shadow: 0 0 0 6px light-dark(rgba(10, 10, 10, .1), var(--border)); }
 .se2-w1-list { display: none; }
 .se2-w1 line { stroke: var(--ink); vector-effect: non-scaling-stroke; stroke-width: 1.5; opacity: 0; }
 .se2-w1.go line { animation: se2-in .5s var(--ease) forwards; }
@@ -76,7 +76,7 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
 .se2-w1-l li { position: absolute; transform: translate(14px, -50%); padding: 8px 12px; border-radius: 8px; background: var(--se-paper); border: 1px solid var(--hair); font-size: 14px; font-weight: 500; white-space: nowrap; }
 .se2-w1-l li.q { transform: translate(-50%, -150%); background: var(--ink); color: var(--se-paper); border-color: var(--ink); font-family: var(--mono); }
 .se2-w2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: center; height: 100%; }
-.se2-w2 ol.a li { border-color: rgba(0, 0, 0, .16); }
+.se2-w2 ol.a li { border-color: light-dark(rgba(0, 0, 0, .16), var(--border-control)); }
 .se2-w2 ol.b { align-self: start; }
 .se2-w2 ol.b li { background: var(--se-card); }
 .se2-w2.fused { grid-template-columns: 1fr; }
@@ -93,15 +93,14 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
 .se2-hb-bar b { margin-left: auto; font-size: 13px; font-weight: 500; color: var(--se-body); }
 .se2-hb-in { min-height: 300px; padding: 16px 6px 6px; }
 .se2-hb-docs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-.se2-hb-docs li { display: flex; align-items: center; gap: 14px; height: 58px; padding: 0 16px; border-radius: 12px; background: var(--se-paper); border: 1px solid rgba(0, 0, 0, .08); font-size: 17px; font-weight: 500; }
-.se2-hb-docs li span, .se2-hb-docs li em { font-size: 13px; font-style: normal; color: var(--se-body); padding: 5px 8px; border-radius: 6px; border: 1px solid rgba(0, 0, 0, .12); }
+.se2-hb-docs li { display: flex; align-items: center; gap: 14px; height: 58px; padding: 0 16px; border-radius: 12px; background: var(--se-paper); border: 1px solid light-dark(rgba(0, 0, 0, .08), var(--border)); font-size: 17px; font-weight: 500; }
+.se2-hb-docs li span, .se2-hb-docs li em { font-size: 13px; font-style: normal; color: var(--se-body); padding: 5px 8px; border-radius: 6px; border: 1px solid light-dark(rgba(0, 0, 0, .12), var(--border-control)); }
 .se2-hb-docs li em { margin-left: auto; }
 .se2-hb-call { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-items: start; padding-top: 10px; }
-.se2-hb-call span { position: relative; display: flex; flex-direction: column; align-items: center; padding: 22px 10px 0; border-radius: 16px 16px 0 0; background: var(--se-paper); border: 1px solid rgba(0, 0, 0, .1); border-bottom: 0; text-align: center; font-size: 16px; }
+.se2-hb-call span { position: relative; display: flex; flex-direction: column; align-items: center; padding: 22px 10px 0; border-radius: 16px 16px 0 0; background: var(--se-paper); border: 1px solid light-dark(rgba(0, 0, 0, .1), var(--border)); border-bottom: 0; text-align: center; font-size: 16px; }
 .se2-hb-call span i { display: block; width: 2px; height: 70px; margin-top: 18px; background: var(--ink); }
 .se2-hb-call b { grid-column: 1 / -1; padding: 22px; border-radius: 16px; background: var(--ink); color: var(--se-paper); text-align: center; font-size: 17px; font-weight: 500; }
 .se2-hb .se2-rag { padding: 0; }
-.se2-con-open { margin-top: 24px; }
 .se2-note { margin: 16px 0 0; font-size: 14px; color: var(--se-body); }
 .se2-steps { grid-column: 9 / span 4; list-style: none; margin: 0; padding: 0; align-self: center; display: flex; flex-direction: column; gap: 10px; }
 .se2-steps li { position: relative; padding: 24px 24px 26px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, .14); transition: background .3s, border-color .3s, color .3s; }
@@ -115,7 +114,7 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
 /* frameworks: a picker with its bar */
 .se2-fw-bar { display: flex; align-items: center; gap: 12px; height: 60px; margin-top: 36px; padding: 0 18px; border-radius: 16px; border: 1.5px solid var(--ink); background: var(--se-paper); overflow: hidden; }
 .se2-fw-bar b { font-size: 17px; font-weight: 606; letter-spacing: -.02em; white-space: nowrap; }
-.se2-fw-bar span { padding: 5px 9px; border-radius: 6px; border: 1px solid rgba(0, 0, 0, .14); font-size: 13px; color: var(--se-mid); white-space: nowrap; }
+.se2-fw-bar span { padding: 5px 9px; border-radius: 6px; border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-control)); font-size: 13px; color: var(--se-mid); white-space: nowrap; }
 .se2-fw-bar i { margin-left: auto; font-size: 13px; font-style: normal; color: var(--se-body); }
 .se2-fw-h { grid-column: 1 / span 5; }
 .se2-fw-h .l2-body { margin-top: 18px; }
@@ -135,7 +134,7 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
 .se2-end { padding: 12px; border-radius: 24px; background: var(--se-room); color: var(--ink); }
 .se2-end .se2-hb-bar span { font-size: 17px; font-weight: 500; font-family: var(--sans); }
 .se2-end ol { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.se2-end li { display: flex; align-items: center; gap: 14px; height: 54px; padding: 0 16px; border-radius: 12px; background: var(--se-paper); border: 1px solid rgba(0, 0, 0, .08); font-size: 16px; font-weight: 500; }
+.se2-end li { display: flex; align-items: center; gap: 14px; height: 54px; padding: 0 16px; border-radius: 12px; background: var(--se-paper); border: 1px solid light-dark(rgba(0, 0, 0, .08), var(--border)); font-size: 16px; font-weight: 500; }
 .se2-end ol.m:not(.wait) li:first-child { background: var(--ink); color: var(--se-paper); border-color: var(--ink); }
 .se2-end li > span { font-size: 13px; color: var(--se-body); }
 .se2-end li em { margin-left: auto; font-size: 13px; font-style: normal; color: var(--se-body); }
@@ -188,7 +187,7 @@ html.js .se2-w1:not(.go) i.near { transform: scale(.4); }
 .se2-end-out ol { margin: 0 !important; }
 .se2-end-out ol.b li { background: var(--se-card); }
 .se2-end-out ol.wait { grid-column: 1 / -1; opacity: .14; }
-.se2-end-out ol.wait li:first-child { background: var(--se-paper); color: var(--ink); border-color: rgba(0, 0, 0, .08); }
+.se2-end-out ol.wait li:first-child { background: var(--se-paper); color: var(--ink); border-color: light-dark(rgba(0, 0, 0, .08), var(--border)); }
 
 @media (max-width: 900px) {
   .se2 .l2-acts a, .se2-fin .l2-band-acts a, .se2-fin .l2-get-meta a { display: inline-flex; align-items: center; min-height: 44px; }
@@ -291,7 +290,7 @@ html:not(.js) .se2-blinds { display: none; }
 .se2-ways-h { max-width: 640px; }
 .se2-ways-h .l2-lede { margin-top: 18px; }
 .se2-stack { list-style: none; margin: 56px 0 0; padding: 0 0 48px; display: flex; flex-direction: column; gap: 40px; }
-.se2-card { position: sticky; top: calc(88px + var(--i) * 18px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px; align-items: center; padding: 32px; border-radius: 24px; background: var(--se-paper); border: 1px solid rgba(0, 0, 0, .1); }
+.se2-card { position: sticky; top: calc(88px + var(--i) * 18px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px; align-items: center; padding: 32px; border-radius: 24px; background: var(--se-paper); border: 1px solid light-dark(rgba(0, 0, 0, .1), var(--border)); }
 .se2-card-n { margin: 12px 0 0; font-size: 13px; letter-spacing: .12em; color: var(--se-body); }
 .se2-card .l2-body { margin-top: 16px; }
 .se2-card .se2-way { height: min(480px, 60svh); }
@@ -323,3 +322,38 @@ html.js .se2-e-grow:not(.in) .se2-e-in { clip-path: circle(0 at var(--gx, 50%) v
   .se2-tile { animation: none; }
   html.js .se2-e-zoom:not(.in) .se2-e-in, html.js .se2-e-pull:not(.in) .se2-e-in, html.js .se2-e-grow:not(.in) .se2-e-in { transform: none; opacity: 1; clip-path: none; }
 }
+
+/* use it: the example console (7) and the agent prompt (5), side by side before the closing band */
+.se2-use { display: grid; grid-template-columns: 7fr 5fr; gap: clamp(24px, 4vw, 56px); align-items: start; }
+.se2-use-con { min-width: 0; }
+.se2-use-pr { min-width: 0; }
+.se2-con-api span { color: inherit; }
+@media (max-width: 899px) { .se2-use { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- dark mode (docs/DARK-MODE.md): the l2 kit's page tokens and page white are literal values, so this page
+   gives them Hanzo's dark tokens (light values unchanged); the black rooms keep their own ---------- */
+.l2-page.se2 { background: light-dark(#fff, var(--background)); --hair: light-dark(rgba(0, 0, 0, .1), var(--border)); --muted: light-dark(#525252, var(--muted-foreground)); --soft: light-dark(#525252, var(--muted-foreground)); }
+/* the flip board stays a black board in both modes (its tiles are graphite); the top row's ink follows */
+.se2-board { background: light-dark(#0a0a0a, var(--surface-1)); }
+.se2-board-row.top .se2-tile:not(.src) { color: light-dark(#ffffff, var(--primary)); }
+/* the kit's pause (outside the black rooms) and the example console (search/SeUse.jsx) are drawn in literal light
+   greys in Launch.css: their dark values, Hanzo's tokens */
+.se2 .l2-pause { background: light-dark(rgba(255, 255, 255, .92), var(--surface-1)); }
+@media (hover: hover) { .se2 .l2-pause:hover { background: light-dark(#ededed, var(--surface-3)); border-color: light-dark(rgba(0, 0, 0, .3), var(--border-control)); } }
+.se2 [data-room='dark'] .l2-pause, .se2 .l2-pause.dk { background: rgba(28, 28, 31, .92); }
+@media (hover: hover) { .se2 [data-room='dark'] .l2-pause:hover, .se2 .l2-pause.dk:hover { background: #262626; border-color: rgba(255, 255, 255, .3); } }
+.se2 .l2-con { background: light-dark(#fff, var(--surface-1)); border-color: light-dark(rgba(0, 0, 0, .1), var(--border)); }
+.se2 .l2-con-bar { border-bottom-color: light-dark(rgba(0, 0, 0, .08), var(--border)); background: light-dark(#fbfbfb, var(--surface-card-quiet)); }
+.se2 .l2-con-bar > i { background: light-dark(#e4e4e7, var(--surface-3)); }
+.se2 .l2-con-side { border-right-color: light-dark(rgba(0, 0, 0, .08), var(--border)); }
+.se2 .l2-con-ico { color: light-dark(#525252, var(--muted-foreground)); }
+.se2 .l2-con-ico.on { color: light-dark(#fff, var(--primary-foreground)); }
+.se2 .l2-con-tip { color: light-dark(#fff, var(--primary-foreground)); }
+@media (hover: hover) { .se2 .l2-con-ico:hover { background: light-dark(#f2f2f2, var(--surface-2)); } .se2 .l2-con-ico.on:hover { color: light-dark(#fff, var(--primary-foreground)); } }
+.se2 .l2-con-row { background: light-dark(#f2f2f2, var(--surface-2)); }
+.se2 .l2-con-dot { border-color: light-dark(#525252, var(--muted-foreground)); }
+.se2 .l2-con-dot.b { background: light-dark(#525252, var(--muted-foreground)); }
+.se2 .l2-con-st, .se2 .l2-con-foot { color: light-dark(#525252, var(--muted-foreground)); }
+.se2 .l2-con-cap { border-color: light-dark(rgba(0, 0, 0, .08), var(--border)); }
+.se2 .l2-con-foot { border-top-color: light-dark(rgba(0, 0, 0, .08), var(--border)); }
+.se2 .l2-con-open { border-color: light-dark(rgba(0, 0, 0, .12), var(--border-control)); }

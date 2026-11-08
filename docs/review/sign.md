@@ -1,4 +1,5 @@
 # /sign/: James-eye review
+Ready: 2026-11-07, slice D — tiles preview their first sentence on hover (two to a row on phones), phone pricing is a snap rail the toggle steers, the close's rows are a two-column ledger that fits one screen; no-rewind and checkbox fixes from 44097cf7 verified
 Verdict: 7/10
 First complaint: "I let the contract play, it gets to step four, I touch the scroll wheel and it snaps back to an empty page at step one. It's undoing itself in front of me."
 

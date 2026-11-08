@@ -1,4 +1,5 @@
 # /security — James-eye review
+Ready: 2026-11-07, slice D — re-verified the bb7920b4 fixes (chosen plate lifts above the stack on every tab incl. 06, rack grows, bigger place move, band press, phone labels on one line) and the decode signature; h1 now cuts in on CSS from first paint; card part 18 ticked
 
 Verdict: 7/10
 First complaint: "I click 'Where It Sits' and the black Koma plate just disappears. The stack goes all white with two little black slivers poking out the sides. It's meant to lift out and it hides instead. That looks broken."

@@ -147,7 +147,7 @@ Done here: n/a.
 - [x] n/a submit
 - [x] n/a islands that throw
 
-Done here: look.cjs both widths: errors none.
+Done here: look.cjs both widths: errors none. Slice D, 7 Nov: check.mjs at 1470×801 and 375×812: 0 console errors, no Next issue badge, scrollWidth 1470/1470 and 375/375; `desktop-1.jpg`, `desktop-2.jpg`, `phone-1..3.jpg` refreshed.
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary
@@ -155,4 +155,4 @@ Done here: look.cjs both widths: errors none.
 - [x] `V2:` line in `app/sign/page.jsx`
 - [ ] Review 8 or more (re-review pending)
 
-Done here: previous review 6/10 (on an older build); its seven fixes are addressed.
+Done here: previous review 6/10 (on an older build); its seven fixes are addressed. Slice D, 7 Nov: the 7 Nov review's six fixes: no rewind (probe: autoplay reaches 04, a wheel moves it on to 05, never back to 01), checkbox tick in its corner, the close fits one screen at 1470 (two-column ledger), tiles preview their first sentence on hover, "Built on Open Source" has no late mask any more, phone pricing is a snap rail (about 1 screen instead of 3.5).

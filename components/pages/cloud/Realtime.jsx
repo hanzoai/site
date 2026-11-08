@@ -19,14 +19,18 @@
    tenant map, "Get Realtime" growing at the close. Tweens only (ease-emphasis 300 ms, ease-in-out 400–500 ms).
    States differ by fill, weight, dash and a shape, never by hue. Every word and link is Hanzo's; record contents,
    ids and org names are examples.
-   V2: three live clients under the two-line title beside the one ask; then the living graph of the stream with its
-   words beside it; the statement and the subscribe call; use cases on a drag rail; the handshake in the black room;
-   growth beside the tenant map; a calm card strip; the close. Deck greys, tweens only. */
+   V2: 8/10 three live clients under the two-line title beside the one ask; then the living graph of the stream with
+   its words beside it (rests spaced so no name touches another; phones keep the hub's link names in its panel); the
+   statement and the subscribe call close under it; use cases on a drag rail; the handshake in the black room; growth
+   beside the tenant map; the card drawn as three clients taking one record (the close keeps the one contour); the
+   close. Entrances (realtime/RtEnter.jsx): shrink-to-card, tile-flip, card-deal, vertical-ticker, venetian-type. Deck
+   greys, tweens only. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, animate } from 'motion/react';
 import { A } from '../../kit';
 import { useCalm } from '../../ui';
-import { Code, useLive, useSteps } from './Frame';
+import { useLive, useSteps } from './Frame';
+import { LeafCode as Code } from './close3/Leaf';
 import SpecDrawer from '../../v2/SpecDrawer';
 import LaunchClose, { Arr } from './close3/Close';
 import LineMask from '../../v2/LineMask';
@@ -34,6 +38,7 @@ import LivePause, { usePause } from '../../v2/LivePause';
 import RelatedCards from '../../v2/RelatedCards';
 import NoJs from '../../NoJs';
 import RtGraph, { NODES, EVENTS } from './realtime/RtGraph';
+import { ShrinkToCard, FlipVeil, CardDeal, Ticker, Venetian } from './realtime/RtEnter';
 import './Realtime.css';
 
 const KEYS = 'https://platform.hanzo.ai/api-keys';
@@ -94,7 +99,7 @@ function Screens() {
   return (
     <div className="rt-stage" ref={ref} data-paused={paused || undefined}>
       <div className="rt-conn">
-        <b>Live connection</b><span>One open stream</span><span>Records arrive as they change</span>
+        <span className="rt-conn-k">Live connection</span><span>One open stream</span><span>Records arrive as they change</span>
         <span className="rt-acts" aria-hidden="true">{['create', 'update', 'delete'].map((a) => <i key={a} className={a === action ? 'on' : ''}>{a}</i>)}</span>
         <LivePause inline paused={paused} onToggle={pause} className="rt-pause" />
       </div>
@@ -192,6 +197,7 @@ function Gives() {
               <LivePause inline paused={paused} onToggle={pause} className="rt-gpause" />
             </div>
             <RtGraph sel={sel} onPick={pick} onPeek={setPeek} run={run} calm={calm} ev={ev} evAt={evAt} />
+            <FlipVeil />
           </div>
           <div className="rt-facts">
             {/* every part's words in one cell: the panel is as tall as the longest, so changing part never moves a thing */}
@@ -262,8 +268,8 @@ function Rail() {
       <div className="rt-rail-v" ref={wrap} data-cursor="" data-swipe-own>
         {/* inertia that stops hard at either end: no elastic overscroll, so nothing springs back */}
         <motion.div className="rt-rail-in" ref={track} style={{ x }} drag="x" dragConstraints={{ left: min, right: 0 }} dragElastic={0} dragTransition={{ power: 0.25, timeConstant: 260 }}>
-          {USES.map(([t, d, k]) => (
-            <article key={t} className="rt-use">
+          {USES.map(([t, d, k], i) => (
+            <article key={t} className="rt-use" style={{ '--i': i }}>
               <Vignette k={k} />
               <h3 className="lx-title">{t}</h3>
               <p>{d}</p>
@@ -323,7 +329,7 @@ function Handshake() {
         <ol className="rt-calls" data-live={mounted || undefined}>
           {CALLS.map(([t, d], i) => (
             <li key={t} className={at === i ? 'on' : ''}>
-              <button type="button" onClick={() => choose(i)} aria-expanded={at === i} aria-controls={'rt-call-' + i}><span className="lx-num">{i + 1}</span><b>{t}</b></button>
+              <button type="button" onClick={() => choose(i)} aria-expanded={at === i} aria-controls={'rt-call-' + i}><span className="lx-num">{i + 1}</span><span className="rt-call-t">{t}</span></button>
               <p id={'rt-call-' + i}>{d}</p>
             </li>
           ))}
@@ -415,7 +421,7 @@ function Grow() {
 export default function Realtime() {
   return (
     <main className="lx rt" data-cursor="">
-      <section className="rt-hero" data-morph-target data-ask-name="Hanzo Realtime">
+      <ShrinkToCard className="rt-hero" data-morph-target data-ask-name="Hanzo Realtime">
         <div className="lx-wrap">
           <LineMask as="h1" className="lx-display rt-h1" lines={['Your screen updates', 'when the data does']} />
           <div className="rt-hero-grid">
@@ -427,7 +433,7 @@ export default function Realtime() {
             </div>
           </div>
         </div>
-      </section>
+      </ShrinkToCard>
 
       <Gives />
 
@@ -438,13 +444,13 @@ export default function Realtime() {
         </div>
       </section>
 
-      <section className="lx-sec rt-uses">
+      <CardDeal className="lx-sec rt-uses">
         <div className="lx-wrap rt-uses-h">
           <h2 className="lx-headline">Build Interactive Experiences</h2>
           <p className="lx-lede">Hanzo Realtime powers a wide range of applications that demand immediate data updates</p>
         </div>
         <Rail />
-      </section>
+      </CardDeal>
 
       <section className="rt-room lx-dark" data-room="dark"><Handshake /></section>
 
@@ -455,16 +461,16 @@ export default function Realtime() {
             <p className="lx-lede">The parts that scale, and the parts that are simply not in the way</p>
           </div>
           <Grow />
-          <SpecDrawer className="rt-spec" rows={[{ v: 'No polling', l: 'The client asks once, not every second' }, { v: 'Reconnects itself', l: 'A dropped stream reopens with a fresh grant' }, { v: 'Nothing extra to run', l: 'The same binary that serves the API serves the stream' }]} />
+          <Ticker><SpecDrawer className="rt-spec" rows={[{ v: 'No polling', l: 'The client asks once, not every second' }, { v: 'Reconnects itself', l: 'A dropped stream reopens with a fresh grant' }, { v: 'Nothing extra to run', l: 'The same binary that serves the API serves the stream' }]} /></Ticker>
         </div>
       </section>
 
       <RelatedCards className="rt-open" title="Open a stream" items={[['Subscribe to your first collection', 'https://github.com/hanzoai', 'View on GitHub']]}>
-        <div className="rt-open-l">
-          <h2 className="lx-headline">Two calls and the page keeps itself current</h2>
+        <Venetian className="rt-open-l">
+          <h2 className="lx-headline"><span className="rt-vl">Two calls and the page</span> <span className="rt-vl">keeps itself current</span></h2>
           <p className="lx-lede">Mint a grant, open the stream, name a collection. No credit card to start.</p>
           <div className="rt-open-acts"><A to={KEYS} className="lx-text">Start Building</A><A to={DOCS} className="lx-text">Documentation</A></div>
-        </div>
+        </Venetian>
       </RelatedCards>
 
       <LaunchClose name="Realtime" tag="Realtime channels + presence" seed="realtime" data={[30, 3, 2]} ask={['Start Building', KEYS]} cta="realtime.close" />

@@ -1,4 +1,5 @@
 # /pricing — James-eye review
+Ready: 2026-11-07, slice D — one morphing plan panel (one data-thumb, so one solid fill on every tab), the model art answers the plan picked, plan names roll through a clipped slot (no overlap while the Pro row walks), phone "How we bill" folds to its first line (API tab 11,454 → 9,552px), card corrected; Go/Pro asks verified on /pay/confirm/card?plan=go and ?plan=pro-2x
 
 Verdict: 7.5/10
 First complaint: "Better, I know the price straight away and the model art moves now. But it's still a price table with three little pictures stuck in the corner that have nothing to do with the plans. And on Team and API there are two black buttons again."

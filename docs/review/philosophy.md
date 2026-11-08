@@ -1,4 +1,5 @@
 # /philosophy — James-eye review
+Ready: 2026-11-09, slice D — rebuilt on Hanzo's new live copy (explorer with category filter and 8 x 8 index, eight categories whose rows open the sheet, new close; hero walk on the new 64; phone line taps exact); copycheck vs live missing 0. Earlier: 2026-11-07 — arrival on CSS from first paint (h1 cut-in + hexagram draw, no hydration wait), Sequence tile names whole at 1470/1200/900/375/320, card parts 1/3/11/17 corrected; dead screens, tile breaks and the last-third big trigram were fixed in 9f011438/f687922c.
 
 Verdict: 7/10
 First complaint: "It's much better, the panel's gone and nothing jumps. But I scroll and there are whole screens of nothing. 'Five operating laws' sits on its own on a blank screen, then the questions have half the screen empty. And in the list of 64 the names are snapped in half: 'The Receptiv / e', 'Beginnin / g'. That looks broken."

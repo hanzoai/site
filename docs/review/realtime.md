@@ -1,4 +1,5 @@
 # /realtime — James-eye review
+Ready: 2026-11-07, slice D — graph hub re-spaced so no names collide (phones keep hub link names in the panel), gap under the graph closed, the card drawn as three clients taking one record instead of a second contour
 
 Verdict: 7/10
 First complaint: "Top's good, the three screens are alive. Then I scroll and it's seven screens of the same thing: words on the left, the same three little boxes on the right, lots of white around them. It's the right idea, it just goes on too long and nothing gets big. Then there's a big empty gap before the next bit."
