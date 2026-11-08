@@ -124,6 +124,19 @@
 .lgi-mail a:focus-visible { background-size: 100% 2px; }
 .lgi-mail a:active { transform: translateY(1px); }
 
+/* dark (docs/DARK-MODE.md): live hanzo.ai/legal in dark, by role. The page is #0d0d0d; quiet fills and the sheets are
+   live's card surface #171717 with its white 10% hairline (a ring, so nothing moves); body greys are live's #a3a3a3 and
+   #858585 (Scale.css's .w2 keeps its light greys, so they are restated here); the hero carries live's top glow */
+html.dark .lgi.w2 {
+  --soft: #a3a3a3; --faint: #858585;
+  --lgi-quiet: var(--x-fill);
+  --lgi-on-ink: #525252;
+  --lgi-raise: 0 0 0 1px var(--line), 0 24px 48px -28px rgba(0, 0, 0, .6);
+}
+html.dark .lgi-hero { background: radial-gradient(60% 70% at 50% 0%, rgba(229, 229, 229, .09), transparent 70%); }
+html.dark .lgi-sheet, html.dark .lgi-status { background: var(--x-fill); }
+html.dark .lgi-card-d code { background: var(--x-fill); }
+
 @media (max-width: 899px) {
   .lgi-hero { padding: 84px 0 48px; }
   .lgi-hero-g, .lgi-intro-g, .lgi-how-g, .lgi-contact-g { grid-template-columns: minmax(0, 1fr); }

@@ -2,6 +2,7 @@
 
 Verdict: 7/10
 Ready: 8 Nov, copycheck missing 0 of 20 (live hanzo.ai). Rule 4: the index now reads like Hanzo's own: every document shows its kind, title link and Hanzo's line at once (rows-open panels gone), and the five scroll-held room entrances (ripple, grid wave, cursor trail, scramble, ink spread) are removed so every room is in place at first paint; kept the pausable dealing pile, the status sheet, chips and contact sheet. taste/unique OK; 0 console errors, no overlap at 1470x801 and 375x812 (3 checker hits are the clipped `.x-sr` group h2s).
+Dark: 8 Nov, matches live hanzo.ai in dark side by side (docs/gallery/legal/dark-*.jpg); darkcheck OK, lightcheck OK, copycheck 0.
 First complaint: "The paper pile at the top is nice, then it's just a document: a huge paragraph, a list, a grey box and four email addresses, with big empty white gaps between them. On my phone the filter buttons stick and take a quarter of the screen."
 
 Walked: 2026-11-07, dev server warmed first. Playwright Chromium at 1470x801 (wheel scroll in half-screen steps, 900 ms dwell, video recorded) and 375x812 (isMobile, hasTouch, scrolled one full screen height per step), plus 320x700, reduced motion and JS off. Hovered and pressed the chips, rows, row arrows, mail links, pause and ladder with a fine pointer (`(hover: hover)` was true on desktop). Clicked and tapped the filter chips, ran a 45-stop Tab crawl, sampled the hero frames for 10 s at rest, and measured CLS. parity.py `/legal`: OK (text 62/62, links 16/16). taste.py on LegalIndex.jsx/.css: OK.
