@@ -25,7 +25,7 @@
 .mq-globe-cv { position: relative; height: clamp(360px, calc(100svh - 150px), 660px); cursor: grab; touch-action: pan-y; outline: none; border-radius: 24px; -webkit-user-select: none; user-select: none; }
 .mq-globe-cv[data-drag] { cursor: grabbing; }
 .mq-globe-cv:focus-visible { box-shadow: inset 0 0 0 2px var(--ink); }
-.mq-globe-cv canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.mq-globe-cv canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; color: var(--ink); }
 .mq-globe-still { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: rgba(0, 0, 0, .16); stroke-width: .5; transition: opacity .3s var(--e-out); }
 .mq-globe[data-ready] .mq-globe-still { opacity: 0; }
 
@@ -298,3 +298,54 @@
   .mq-spec .lx-spec-v { font-size: 26px; }
 }
 @media (prefers-reduced-motion: reduce) { .mq-tk.run i { animation: none; transform: scaleX(.6); } }
+
+/* ---------- dark (Hanzo's :not(.light), docs/DARK-MODE.md): every value a token from @hanzo/design, by role ----------
+   The shared .lx kit (components/v2/LaunchType.css, LaunchClose.css, SpecDrawer.css) pins its light ink, greys, tiles and
+   sheet in both modes, so the page points them at Hanzo's tokens here. .lx renames --muted and --card, so fills use the
+   foundation's --x-* tokens (computed on <html>): the quiet room and wells on Hanzo's #171717, the conveyor, inspector and
+   tickets on its #0f0f0f card, chips and cells on #262626; ink fills turn light with dark type (Hanzo's primary). The
+   black room (worker.ts) stays black. */
+html:not(.light) .mq {
+  --ink: var(--foreground); --acc: var(--foreground); --acc-soft: var(--x-fill); --muted: var(--muted-foreground); --soft: var(--muted-foreground);
+  --faint: var(--text-tertiary); --silver: var(--x-knob); --card: var(--x-fill); --line: var(--border); --bg: var(--background);
+}
+html:not(.light) .mq .lx-cta { background: var(--primary); color: var(--primary-foreground); }
+html:not(.light) .mq .lx-ghost { border-color: var(--border-control); }
+html:not(.light) .mq :is(.lx-text, .lx-close-repo) { text-decoration-color: var(--text-disabled); }
+html:not(.light) .mq .cf-api i { background: var(--x-knob) !important; color: var(--foreground) !important; }
+html:not(.light) .mq :focus-visible { outline-color: var(--foreground); box-shadow: 0 0 0 4px var(--background); }
+html:not(.light) .mq :is(.lx-close-art, .lx-rel-card) { background: var(--x-fill); }
+html:not(.light) .mq .lx-close-sigil { color: var(--foreground); }
+html:not(.light) .mq .lx-sheet-panel { color: var(--foreground); --ink: var(--foreground); --soft: var(--muted-foreground); --muted: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); }
+html:not(.light) .mq .lx-sheet-bar { background: var(--surface-overlay); }
+html:not(.light) .mq .lx-sheet-x { color: var(--foreground); }
+@media (hover: hover) {
+  html:not(.light) .mq .lx-cta:hover { background: var(--foreground); }
+  html:not(.light) .mq .lx-ghost:hover { border-color: var(--foreground); background: var(--x-fill); }
+  html:not(.light) .mq .lx-sheet-x:hover { background: var(--x-fill); }
+}
+html:not(.light) .mq { --fill: var(--x-knob); --rule: var(--border-control); }
+html:not(.light) .mq :is(.mq-shrink-bg, .mq-rows li, .mq-cfg, .mq-stream p, .mq-fail pre) { background: var(--x-fill); }
+html:not(.light) .mq .mq-tk { background: var(--x-raised); }
+html:not(.light) .mq :is(.mq-key .q i, .mq-conv, .mq-ins, .mq-rows li.on, .mq-rows li.bad, .mq-pri li, .mq-at i, .mq-fail.back pre, .mq-retry) { background: var(--x-raised); }
+html:not(.light) .mq .mq-tk.ok { background: var(--fill); }
+html:not(.light) .mq :is(.mq-tk.run, .mq-pri li.hi) { background: var(--ink); }
+html:not(.light) .mq .mq-cells i { background: var(--x-knob); }
+html:not(.light) .mq :is(.mq-cells i.on, .mq-win i.on, .mq-at.ok.on i) { background: var(--ink); }
+html:not(.light) .mq .mq-at i { border-color: var(--x-knob); }
+html:not(.light) .mq .mq-at.on i { border-color: var(--ink); }
+html:not(.light) .mq .mq-win.next i { border-color: var(--border-control); }
+html:not(.light) .mq .mq-win.next i.on { background: var(--x-knob); }
+html:not(.light) .mq .mq-tk.back { border-color: var(--text-tertiary); }
+html:not(.light) .mq .mq-proc.down i { box-shadow: inset 0 0 0 1.5px var(--text-tertiary); }
+html:not(.light) .mq .mq-globe-still { stroke: var(--border-control); }
+/* a solid ink ticket, row or pill: Hanzo's primary, light with dark type */
+html:not(.light) .mq :is(.mq-tk.run, .mq-tk.run span, .mq-tk.run.hi span, .mq-tk.run.hi b, .mq-pri li.hi, .mq-pri li.hi span, .mq-lock span.on) { color: var(--primary-foreground); }
+html:not(.light) .mq .mq-tk.run i { background: var(--primary-foreground); }
+html:not(.light) .mq .mq-tk.run.risky i { background: repeating-linear-gradient(90deg, var(--primary-foreground) 0 7px, transparent 7px 12px); }
+@media (hover: hover) {
+  html:not(.light) .mq .mq-facts-t button:hover { text-decoration-color: var(--text-disabled); }
+  html:not(.light) .mq .mq-tk.ok:hover { background: var(--x-fill); }
+  html:not(.light) .mq .mq-tk.run:hover { background: var(--primary); }
+  html:not(.light) .mq .mq-retry:hover { background: var(--fill); }
+}

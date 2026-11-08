@@ -13,7 +13,10 @@ import { useEffect, useRef, useState } from 'react';
 import LivePause, { usePause } from '../../v2/LivePause';
 
 const RAD = Math.PI / 180;
-const INK = '10,10,10';
+/* the globe draws in the page's ink on the page's paper, read from CSS (the canvas's color is var(--ink), the page's
+   background is the paper): #0a0a0a on white in bright, Hanzo's foreground on its background in dark (docs/DARK-MODE.md) */
+let INK = '10,10,10', PAPER = '255,255,255';
+const rgb = (c, d) => { const m = c && c.match(/[\d.]+/g); return m && m.length >= 3 ? m.slice(0, 3).join(',') : d; };
 // unlabeled places: where jobs are added (Queue) and where they run (Worker), as [lat, lon]
 const QUEUES = [[38, -96], [51, 2], [-23, -46], [35, 139]];
 const WORKERS = [[47, -122], [50, 9], [1, 104], [-34, 151], [40, -74], [19, 73]];
@@ -184,7 +187,7 @@ export default function MqGlobe({ label }) {
       // the places: Queue as hollow rings, Worker as filled squares
       Q.forEach((p) => {
         const [x, y, , r] = proj(p); const a = hidden(r, 1) ? 0.2 : 1;
-        ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.strokeStyle = `rgba(${INK},${a})`; ctx.lineWidth = 1.6;
+        ctx.fillStyle = `rgba(${PAPER},${a})`; ctx.strokeStyle = `rgba(${INK},${a})`; ctx.lineWidth = 1.6;
         ctx.beginPath(); ctx.arc(x, y, 5.5, 0, 6.283); ctx.fill(); ctx.stroke();
       });
       W.forEach((p) => {
@@ -230,6 +233,10 @@ export default function MqGlobe({ label }) {
     };
     const start = () => { if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); } };
 
+    const tone = () => { INK = rgb(getComputedStyle(c).color, '10,10,10'); PAPER = rgb(getComputedStyle(document.body).backgroundColor, '255,255,255'); dirty = true; };
+    tone();
+    const mo = new MutationObserver(() => { tone(); draw(); });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     size();
     if (!calm) { for (let i = 0; i < 5; i++) { spawn(); jobs[jobs.length - 1].t0 -= i * 0.35; } }
     draw(); setReady(true); start();
@@ -271,7 +278,7 @@ export default function MqGlobe({ label }) {
     el.addEventListener('keydown', key);
     return () => {
       cancelAnimationFrame(raf); raf = 0; seen = false;
-      ro.disconnect(); io.disconnect();
+      ro.disconnect(); io.disconnect(); mo.disconnect();
       document.removeEventListener('visibilitychange', vis);
       el.removeEventListener('pointerdown', down);
       el.removeEventListener('pointermove', move);
