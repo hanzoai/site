@@ -1,3 +1,4 @@
+@import '../models/Journey.css'; /* the models journey and its grid fallback (components/Models.jsx) */
 /* Home's own layer: the spine (an on-this-page index at the right edge, desktop only) */
 .xh-spine { position: fixed; right: 18px; top: 50%; z-index: 40; transform: translateY(-50%); color: #fff; mix-blend-mode: difference; opacity: 0; pointer-events: none; transition: opacity .45s var(--ease); }
 .xh-spine.on { opacity: 1; pointer-events: auto; }
