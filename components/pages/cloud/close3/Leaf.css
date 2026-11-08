@@ -1,0 +1,9 @@
+/* The white code card for LeafCode (Leaf.jsx). Same light values as Frame.css's .cf-code.light, under its own class:
+   Hanzo's stylesheet turns any element classed "light" into a light-scheme island (its tokens and color-scheme), so the
+   card could not follow dark mode with that class. Dark halves are Hanzo's tokens (docs/DARK-MODE.md). */
+.cf-code.lt { background: light-dark(#fff, var(--surface-1)); color: light-dark(#1d1d1f, var(--foreground)); border: 1px solid var(--line); box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .25); }
+.cf-code.lt .cf-code-bar { border-color: var(--line); }
+.cf-code.lt .cf-code-bar > i { background: light-dark(#e3e3e8, var(--surface-3)); }
+.cf-code.lt .cf-code-bar .x-copy { background: light-dark(#fff, var(--surface-1)); border-color: var(--line); color: var(--soft); }
+.cf-code.lt .c { color: var(--faint); }
+.cf-code.lt .cf-mark { background-image: linear-gradient(rgba(212, 212, 212, .4), rgba(212, 212, 212, .4)); }

@@ -1,7 +1,7 @@
 /* PubSub (Cloud 3), on the deck (docs/MASTER.md §3). Grey only: delivery reads by fill, weight, dash and a shape,
    never by hue. The hero is the page's one black room (#000). Surfaces are a flat fill or a 1px hairline, never both;
    nothing here casts a shadow. Type rests at the kit's sizes; this file only sets the objects. */
-.ps { --fill: light-dark(#f2f2f2, #171717); --rule: light-dark(rgba(0, 0, 0, .16), rgba(255, 255, 255, .16)); }
+.ps { --fill: light-dark(#f2f2f2, var(--surface-2)); --rule: light-dark(rgba(0, 0, 0, .16), var(--border-control)); }
 
 /* hero: the black room. Name, line and one ask left (5); the globe and its bus right (8) */
 .ps-hero { background: #000; min-height: calc(100svh - 60px); display: flex; align-items: center; }
@@ -84,53 +84,53 @@
 .ps-facts-in { display: grid; grid-template-columns: 5fr 8fr; gap: clamp(32px, 5vw, 72px); align-items: start; }
 .ps-facts-l { position: sticky; top: 96px; display: flex; flex-direction: column; gap: 32px; }
 .ps-facts-h { font-size: 44px; line-height: 1.05; letter-spacing: -.03em; max-width: 8ch; }
-.ps-figw { position: relative; border-radius: 24px; background: light-dark(#f5f5f5, #171717); padding: 52px 20px 20px; }
-.ps-fign { position: absolute; top: 20px; left: 24px; margin: 0; font: 500 12px/1 var(--mono); letter-spacing: .14em; color: light-dark(#737373, #a3a3a3); font-variant-numeric: tabular-nums; }
+.ps-figw { position: relative; border-radius: 24px; background: light-dark(#f5f5f5, var(--surface-2)); padding: 52px 20px 20px; }
+.ps-fign { position: absolute; top: 20px; left: 24px; margin: 0; font: 500 12px/1 var(--mono); letter-spacing: .14em; color: light-dark(#737373, var(--muted-foreground)); font-variant-numeric: tabular-nums; }
 .ps-figin { aspect-ratio: 340 / 210; }
 .ps-fig { display: block; width: 100%; height: auto; overflow: visible; }
-.ps-fig text { font: 500 13px/1 var(--mono); fill: light-dark(#525252, #ababab); }
-.ps-fig .t-ink { fill: light-dark(#0a0a0a, #e5e5e5); }
-.ps-fig .t-inv { fill: light-dark(#fafafa, #141414); }
-.ps-fig .f-ink { fill: light-dark(#0a0a0a, #e5e5e5); }
-.ps-fig .f-cell { fill: light-dark(#fff, #0f0f0f); stroke: light-dark(#d4d4d4, #404040); stroke-width: 1; }
-.ps-fig .f-sw { fill: light-dark(#fff, #0f0f0f); stroke: light-dark(#0a0a0a, #e5e5e5); stroke-width: 1; transition: fill .3s cubic-bezier(.4, 0, .2, 1); }
-.ps-fig .f-sw.on { fill: light-dark(#0a0a0a, #e5e5e5); }
-.ps-fig .f-out { fill: none; stroke: light-dark(#0a0a0a, #e5e5e5); stroke-width: 1.5; }
-.ps-fig .f-ring { fill: light-dark(#fff, #0f0f0f); stroke: light-dark(#0a0a0a, #e5e5e5); stroke-width: 1.5; }
-.ps-fig .f-hist { fill: light-dark(#e5e5e5, #262626); }
-.ps-fig .s-ink { fill: none; stroke: light-dark(#0a0a0a, #e5e5e5); stroke-width: 1.5; }
-.ps-fig .s-faint { fill: none; stroke: light-dark(#d4d4d4, #404040); stroke-width: 1; }
-.ps-fig .s-wall { stroke: light-dark(#0a0a0a, #e5e5e5); stroke-width: 3; stroke-linecap: round; }
+.ps-fig text { font: 500 13px/1 var(--mono); fill: light-dark(#525252, var(--text-secondary)); }
+.ps-fig .t-ink { fill: light-dark(#0a0a0a, var(--foreground)); }
+.ps-fig .t-inv { fill: light-dark(#fafafa, var(--background)); }
+.ps-fig .f-ink { fill: light-dark(#0a0a0a, var(--foreground)); }
+.ps-fig .f-cell { fill: light-dark(#fff, var(--surface-1)); stroke: light-dark(#d4d4d4, var(--border-control)); stroke-width: 1; }
+.ps-fig .f-sw { fill: light-dark(#fff, var(--surface-1)); stroke: light-dark(#0a0a0a, var(--foreground)); stroke-width: 1; transition: fill .3s cubic-bezier(.4, 0, .2, 1); }
+.ps-fig .f-sw.on { fill: light-dark(#0a0a0a, var(--foreground)); }
+.ps-fig .f-out { fill: none; stroke: light-dark(#0a0a0a, var(--foreground)); stroke-width: 1.5; }
+.ps-fig .f-ring { fill: light-dark(#fff, var(--surface-1)); stroke: light-dark(#0a0a0a, var(--foreground)); stroke-width: 1.5; }
+.ps-fig .f-hist { fill: light-dark(#e5e5e5, var(--surface-3)); }
+.ps-fig .s-ink { fill: none; stroke: light-dark(#0a0a0a, var(--foreground)); stroke-width: 1.5; }
+.ps-fig .s-faint { fill: none; stroke: light-dark(#d4d4d4, var(--border-control)); stroke-width: 1; }
+.ps-fig .s-wall { stroke: light-dark(#0a0a0a, var(--foreground)); stroke-width: 3; stroke-linecap: round; }
 .ps-fig .dash { stroke-dasharray: 4 4; }
-.ps-fig .f-cell.dash, .ps-fig .f-out.dash { stroke: light-dark(#a3a3a3, #737373); }
+.ps-fig .f-cell.dash, .ps-fig .f-out.dash { stroke: light-dark(#a3a3a3, var(--text-tertiary)); }
 .ps-figm { display: none; }
 .ps-flist { list-style: none; margin: 0; padding: 0; }
 .ps-flist li { position: relative; padding: 28px 0 32px; border-top: 1px solid var(--rule); display: flex; flex-direction: column; gap: 10px; }
-.ps-flist li::before { content: ''; position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: light-dark(#0a0a0a, #fafafa); transform: scaleX(0); transform-origin: left; transition: transform .4s cubic-bezier(.4, 0, .2, 1); }
+.ps-flist li::before { content: ''; position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: light-dark(#0a0a0a, var(--primary)); transform: scaleX(0); transform-origin: left; transition: transform .4s cubic-bezier(.4, 0, .2, 1); }
 .ps-flist li.on::before { transform: scaleX(1); }
-.ps-fk { color: light-dark(#737373, #a3a3a3); transition: color .3s cubic-bezier(.4, 0, .2, 1); }
-.ps-ft { margin: 0; font-size: 21px; font-weight: 497; line-height: 1.3; color: light-dark(#737373, #a3a3a3); transition: color .3s cubic-bezier(.4, 0, .2, 1); }
-.ps-fd { margin: 0; max-width: 56ch; font-size: 16px; line-height: 1.6; color: light-dark(#737373, #a3a3a3); transition: color .3s cubic-bezier(.4, 0, .2, 1); }
-.ps-flist li.on .ps-fk, .ps-flist li.on .ps-ft { color: light-dark(#0a0a0a, #e5e5e5); }
-.ps-flist li.on .ps-fd { color: light-dark(#525252, #ababab); }
+.ps-fk { color: light-dark(#737373, var(--muted-foreground)); transition: color .3s cubic-bezier(.4, 0, .2, 1); }
+.ps-ft { margin: 0; font-size: 21px; font-weight: 497; line-height: 1.3; color: light-dark(#737373, var(--muted-foreground)); transition: color .3s cubic-bezier(.4, 0, .2, 1); }
+.ps-fd { margin: 0; max-width: 56ch; font-size: 16px; line-height: 1.6; color: light-dark(#737373, var(--muted-foreground)); transition: color .3s cubic-bezier(.4, 0, .2, 1); }
+.ps-flist li.on .ps-fk, .ps-flist li.on .ps-ft { color: light-dark(#0a0a0a, var(--foreground)); }
+.ps-flist li.on .ps-fd { color: light-dark(#525252, var(--text-secondary)); }
 
 /* the quiet room: the heading left (5), the prompt right (8); then the 4222 spec */
-.ps-room { background: light-dark(#f5f5f5, #171717); padding: clamp(72px, 11vw, 188px) 0; }
+.ps-room { background: light-dark(#f5f5f5, var(--surface-2)); padding: clamp(72px, 11vw, 188px) 0; }
 .ps-room-top { display: grid; grid-template-columns: 5fr 8fr; gap: clamp(32px, 5vw, 72px); align-items: start; margin-bottom: clamp(56px, 7vw, 112px); }
 .ps-room-top .lx-headline { max-width: 10ch; }
 .ps .lx-paste .cf-paste-t { font-size: 21px; }
 .ps-spec .lx-spec-v { font-family: var(--sans); font-size: 44px; letter-spacing: -.03em; }
 /* Frame's Paste and Code on the deck: the prompt a flat graphite tile, events.go a white tile with a hairline */
-.ps .cf-paste-box { background: light-dark(#171717, #0f0f0f); color: #fafafa; border: 0; border-radius: 24px; box-shadow: 0 30px 60px -36px rgba(0, 0, 0, .5), inset 0 0 0 1px light-dark(transparent, rgba(255, 255, 255, .1)); }
+.ps .cf-paste-box { background: light-dark(#171717, var(--surface-1)); color: #fafafa; border: 0; border-radius: 24px; box-shadow: 0 30px 60px -36px rgba(0, 0, 0, .5), inset 0 0 0 1px light-dark(transparent, var(--border)); }
 .ps .cf-paste-bar { border-color: rgba(255, 255, 255, .1); }
 .ps .cf-paste-bar .x-copy { background: #262626; border-color: rgba(255, 255, 255, .1); color: #fafafa; }
 .ps .cf-paste-k { color: #a3a3a3; }
 .ps .cf-caret { background: #fafafa; }
 .ps .cf-paste-code, .ps .cf-code pre { font-size: 13.5px; line-height: 1.65; }
-.ps .cf-code.light { background: light-dark(#fff, #0f0f0f); color: light-dark(#0a0a0a, #e5e5e5); border: 1px solid var(--line); border-radius: 24px; }
-.ps .cf-code.light .cf-code-bar > i { background: light-dark(#e4e4e7, #262626); }
-.ps .cf-code.light .cf-code-k { color: light-dark(#525252, #ababab); }
-.ps .cf-code.light .c { color: light-dark(#737373, #a3a3a3) !important; }
+.ps .cf-code.lt { background: light-dark(#fff, var(--surface-1)); color: light-dark(#0a0a0a, var(--foreground)); border: 1px solid var(--line); border-radius: 24px; }
+.ps .cf-code.lt .cf-code-bar > i { background: light-dark(#e4e4e7, var(--surface-3)); }
+.ps .cf-code.lt .cf-code-k { color: light-dark(#525252, var(--text-secondary)); }
+.ps .cf-code.lt .c { color: light-dark(#737373, var(--muted-foreground)) !important; }
 .ps .lx-close { padding-top: clamp(44px, 5vw, 72px); }
 /* text links answer a press too (the kit's lx-text has a hover but no press) */
 .ps .lx-text, .ps .lx-close-repo { transition: text-decoration-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
@@ -162,7 +162,7 @@
   .ps-facts-l { position: static; }
   .ps-facts-h { font-size: 32px; }
   .ps-figw { display: none; }
-  .ps-figm { display: block; aspect-ratio: 340 / 210; margin-bottom: 8px; padding: 16px; border-radius: 20px; background: light-dark(#f5f5f5, #171717); box-sizing: content-box; }
+  .ps-figm { display: block; aspect-ratio: 340 / 210; margin-bottom: 8px; padding: 16px; border-radius: 20px; background: light-dark(#f5f5f5, var(--surface-2)); box-sizing: content-box; }
   .ps-figm .ps-fig text { font-size: 14px; }
   .ps-ft { font-size: 19px; }
   .ps-fd { font-size: 16px; }
@@ -195,7 +195,7 @@
 .ps-trail[data-trail='armed'] .ps-walk-in { clip-path: inset(0 100% 0 0); }
 .ps-trail[data-trail='play'] .ps-walk-in { clip-path: inset(0 calc(100% - var(--tx, 0%)) 0 0); }
 .ps-trail-dots { position: absolute; inset: 0; pointer-events: none; }
-.ps-trail-dots i { position: absolute; left: -5px; top: -5px; width: 10px; height: 10px; border-radius: 50%; background: light-dark(#0a0a0a, #fafafa); opacity: 0; will-change: transform; }
+.ps-trail-dots i { position: absolute; left: -5px; top: -5px; width: 10px; height: 10px; border-radius: 50%; background: light-dark(#0a0a0a, var(--primary)); opacity: 0; will-change: transform; }
 
 /* 3. spring-snap: each fact snaps in from the right with a small overshoot; the held drawing from the left */
 [data-snap='armed'] { opacity: 0; transform: translateX(56px); }
@@ -211,20 +211,19 @@
 .ps-px-veil { position: absolute; z-index: 2; border-radius: 20px; overflow: hidden; pointer-events: none; }
 .ps-px-l { position: absolute; inset: 0; display: grid; }
 .ps-px-l i { display: block; }
-.ps-px-l i.g0 { background: light-dark(#f5f5f5, #171717); } .ps-px-l i.g1 { background: light-dark(#ededed, #171717); } .ps-px-l i.g2 { background: light-dark(#e5e5e5, #262626); } .ps-px-l i.g3 { background: light-dark(#d4d4d4, #404040); } .ps-px-l i.g4 { background: light-dark(#a3a3a3, #525252); }
+.ps-px-l i.g0 { background: light-dark(#f5f5f5, var(--surface-2)); } .ps-px-l i.g1 { background: light-dark(#ededed, var(--surface-2)); } .ps-px-l i.g2 { background: light-dark(#e5e5e5, var(--surface-3)); } .ps-px-l i.g3 { background: light-dark(#d4d4d4, var(--surface-3)); } .ps-px-l i.g4 { background: light-dark(#a3a3a3, var(--surface-3)); }
 .ps-px[data-px='play'] .ps-px-l i { animation: ps-pxo .22s cubic-bezier(0, 0, .2, 1) var(--t, 0s) forwards; }
 @keyframes ps-pxo { to { opacity: 0; } }
 @media (max-width: 899px) { .ps-cover { margin-top: -80px; border-radius: 24px 24px 0 0; } .ps-facts { padding-bottom: 120px; } }
 
 /* ---------- dark mode (docs/DARK-MODE.md): the kit's .lx tokens are literal values, so this page gives them Hanzo's
    dark ones (light values unchanged); the black room keeps its own (.lx-dark) ---------- */
-.lx.ps { --ink: light-dark(#0a0a0a, #e5e5e5); --acc: light-dark(#0a0a0a, #e5e5e5); --acc-soft: light-dark(#f2f2f2, #171717); --muted: light-dark(#525252, #ababab); --soft: light-dark(#525252, #a3a3a3); --faint: light-dark(#737373, #858585); --silver: light-dark(#d4d4d4, #404040); --card: light-dark(#f5f5f5, #171717); --line: light-dark(rgba(0, 0, 0, .1), rgba(255, 255, 255, .1)); --bg: light-dark(#fff, #0d0d0d); }
-.ps .lx-ghost { border-color: light-dark(rgba(0, 0, 0, .14), rgba(255, 255, 255, .14)); }
+.lx.ps { --ink: light-dark(#0a0a0a, var(--foreground)); --acc: light-dark(#0a0a0a, var(--foreground)); --acc-soft: light-dark(#f2f2f2, var(--surface-2)); --muted: light-dark(#525252, var(--text-secondary)); --soft: light-dark(#525252, var(--muted-foreground)); --faint: light-dark(#737373, var(--text-tertiary)); --silver: light-dark(#d4d4d4, var(--surface-3)); --card: light-dark(#f5f5f5, var(--surface-2)); --line: light-dark(rgba(0, 0, 0, .1), var(--border)); --bg: light-dark(#fff, var(--background)); }
+.ps .lx-ghost { border-color: light-dark(rgba(0, 0, 0, .14), var(--border-control)); }
 .ps .lx-dark .lx-ghost { border-color: rgba(255, 255, 255, .22); }
 /* the kit's ask in a black room reads var(--x-sunk), which is a dark grey in dark mode: keep Hanzo's white primary */
-.ps .lx-dark .lx-cta { background: #fafafa; }
-@media (hover: hover) { .ps .lx-dark .lx-cta:hover { background: #fff; } }
-.ps .cf-code.light .cf-code-bar .x-copy { background: light-dark(#fff, #0f0f0f); }
-/* Hanzo's stylesheet gives any element classed "light" a light colour scheme; the code card's "light" means a white
-   card, so it follows the page's scheme instead */
-.ps .light { color-scheme: inherit; --lightningcss-light: inherit; --lightningcss-dark: inherit; }
+.ps .lx-dark .lx-cta { background: light-dark(#fafafa, var(--primary)); }
+@media (hover: hover) { .ps .lx-dark .lx-cta:hover { background: light-dark(#fff, var(--primary)); } }
+.ps .cf-code.lt .cf-code-bar .x-copy { background: light-dark(#fff, var(--surface-1)); }
+/* shared fills whose dark half reads var(--muted): under the kit's .lx root that name is a text grey, so name the fill */
+.ps .lx-close-art, .ps .lx-rel-card { background: light-dark(#f5f5f5, var(--surface-2)); }

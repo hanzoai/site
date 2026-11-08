@@ -6,12 +6,13 @@
 import { useState } from 'react';
 import { Rise, Copy } from '../../../ui';
 import '../Frame.css';
+import './Leaf.css';
 
 export function LeafCode({ tabs, title, light, mark, className = '' }) {
   const [at] = useState(0);
   const cur = tabs[at];
   return (
-    <div className={`cf-code ${light ? 'light' : ''} ${className}`} data-title={title}>
+    <div className={`cf-code ${light ? 'lt' : ''} ${className}`} data-title={title}>
       <div className="cf-code-bar">
         <i /><i /><i />
         <span className="cf-code-k">{cur.k}</span>
