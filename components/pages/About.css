@@ -593,7 +593,8 @@ html:not(.light) .xab .xst-pause { border-color: var(--border); background: var(
 .xab.zf .xab-car-h { margin: 0; font-size: clamp(2.1rem, 3.55vw, 3.45rem); line-height: 1; letter-spacing: -.042em; font-weight: 600; max-width: 14ch; text-wrap: balance; color: var(--ink); }
 .xab.zf .xab-car-l { margin: 0; max-width: 48ch; font-size: clamp(.98rem, 1.12vw, 1.08rem); line-height: 1.55; color: var(--soft); }
 .xab.zf .xab-car-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; margin-top: 6px; }
-.xab.zf .xab-car-r { display: grid; gap: 8px; }
+.xab.zf .xab-car-r { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.xab.zf .xab-car-r > .xab-tracks, .xab.zf .xab-car-r > .xab-roles { grid-column: 1; }
 .xab.zf .xab-car-r .xab-tracks { height: clamp(120px, 18svh, 170px); }
 .xab.zf .xab-roles { border-top: 1px solid var(--line); }
 .xab.zf .xab-roles li { padding: 16px 0; }
@@ -641,7 +642,6 @@ html:not(.light) .xab .xst-pause { border-color: var(--border); background: var(
   .xab.zf .xab-papers-h .xab-row-links { justify-self: start; margin: 0; }
   .xab.zf .xab-car-g { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
   .xab.zf .xab-car-r .xab-tracks { height: 110px; }
-  .xab.zf .xab-car-r { grid-row: 2; }
   .xab.zf .xab-open-g { margin-top: 0; }
 }
 @media (max-width: 640px) {
