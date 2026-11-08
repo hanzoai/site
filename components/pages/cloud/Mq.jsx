@@ -387,10 +387,10 @@ export default function Mq() {
       </Iris>
 
       {/* 3 · scramble: the heading and the six facts decode; a fact (or a tab) puts the inspector on it */}
-      <Scramble className="lx-sec mq-facts" aria-label="The queue is data, the workers are yours">
+      <Scramble className="lx-sec mq-facts">
         <div className="lx-wrap">
           <div className="mq-facts-top">
-            <h2 className="lx-headline mq-facts-h"><Scr>The queue is data,</Scr> <Scr>the workers are yours</Scr></h2>
+            <h2 className="lx-headline mq-facts-h"><span className="x-sr">The queue is data, the workers are yours</span><span aria-hidden="true"><Scr>The queue is data,</Scr> <Scr>the workers are yours</Scr></span></h2>
             <Inspector cur={sel} go={setSel} />
           </div>
           <ol className="mq-facts-list">
