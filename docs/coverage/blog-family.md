@@ -98,7 +98,7 @@ Done here: films are Hanzo's own `/models/*.webm` with `.webp` posters, played b
 - [x] Every target 44px or more; hovers have tap paths
 - [x] Primary ask above the fold at 375 (title, meta, lede, ask, then 45svh of film)
 
-Done here: under 900px the scene stacks (no pin): title 40px, breadcrumb and meta, lede 17px, the ask, then the plate with its film at 45svh; the rail becomes a sticky reading bar with a contents sheet; at 700px and under the bar carries the post's ask on its right and the minutes left move into the sheet.
+Done here: under 900px the scene stacks (no pin): title 40px, breadcrumb and meta, lede 17px, the ask, then the plate with its film at 45svh; the rail becomes a sticky reading bar with a contents sheet; at 700px and under the bar carries the post's ask on its right and the minutes left move into the sheet. 8 Nov: the Life board's cells are square on phones too (the site's coarse-pointer 44px floor no longer stretches them into stripes; the board is painted by drag, so it opts out with `--tap-target: 0px`).
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Text uses room ink and room soft (#6e6e73 on white, 4.9:1); white 55–78% on black

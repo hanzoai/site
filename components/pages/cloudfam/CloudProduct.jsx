@@ -46,7 +46,7 @@ const POSE = { stage: { rotateX: 12, scale: 1.04, y: 0 }, wide: { rotateX: 0, sc
 
 /* status told by shape, not colour: Generally available is a filled dot, Beta a half dot, a family name a ring */
 const shape = (label) => (/^Generally available$/i.test(label) ? 'ga' : /^Beta$/i.test(label) ? 'beta' : 'fam');
-const Chip = ({ label, className = '' }) => <span className={'xcf-chip ' + shape(label) + ' ' + className}><i aria-hidden="true" />{label}</span>;
+const Chip = ({ label, className = '' }) => <span className={'xcf-chip ' + shape(label) + ' ' + className}><i aria-hidden="true" /><span>{label}</span></span>;
 
 /* the product's place in its family, from its own console sidebar: the one figure every member has (01 / 08 Compute) */
 function figureOf(doc) {
@@ -161,7 +161,8 @@ function Console({ doc, v, fig, previews, sigil }) {
           <div className="xcf-sess">
             <span className="xcf-sess-g" aria-hidden="true">›</span>
             <p className="xcf-sess-t"><span ref={typed} className="xcf-typed">{prompt}</span>{live && <i className="xcf-caret" aria-hidden="true" />}<span ref={ghost} className="xcf-ghost" /></p>
-            {doc.live[0] && <p className="xcf-sess-n">{doc.live[0]}</p>}
+            {/* hanzo.ai draws this note under the running session in the browser (our server snapshots caught it on only some members) */}
+            <p className="xcf-sess-n">{doc.live[0] || 'The service the session above is changing.'}</p>
           </div>
         )}
         <div className="xcf-wbody">
@@ -212,12 +213,16 @@ function Console({ doc, v, fig, previews, sigil }) {
                     <li key={r.name}>
                       <button type="button" className={'xcf-row' + (lit === i ? ' on' : '')} aria-pressed={lit === i} onClick={() => setLit((l) => (l === i ? -1 : i))}>
                         <span className="xcf-row-n">{r.name}</span>
-                        <span className={'xcf-st ' + (/build/i.test(r.state) ? 'build' : 'ok')}><i aria-hidden="true" />{r.state}</span>
+                        <span className={'xcf-st ' + (/build/i.test(r.state) ? 'build' : 'ok')}><i aria-hidden="true" /><span>{r.state}</span></span>
                       </button>
                     </li>
                   ))}
                 </ul>}
-                {w.caption && <p className="xcf-cap">{w.caption}</p>}
+                {/* the picked service's own note (hanzo.ai's), else the window's caption */}
+                <div className="xcf-caps" aria-live="polite">
+                  {w.caption && <p className="xcf-cap" hidden={!!w.rows[lit]?.note || undefined}>{w.caption}</p>}
+                  {w.rows.filter((r) => r.note).map((r) => <p key={r.name} className="xcf-cap" hidden={w.rows[lit]?.name !== r.name || undefined}>{r.note}</p>)}
+                </div>
               </div>
             )}
             <AnimatePresence>
@@ -307,8 +312,10 @@ function Finder({ pairs, here, e }) {
   }, [q, pairs, here]);
   const SHOWN = 6; // with no query: this page's pair and five more; every row stays in the HTML, the rest hidden
   useEffect(() => {
-    if (calm || !seen || q || held || lit >= Math.min(SHOWN, list.length) - 1) return;
-    const id = setTimeout(() => setLit((i) => i + 1), 800);
+    if (calm || !seen || q || held) return;
+    // the light walks the pairs while the room is in view, rests a breath on the last, then starts again from the top
+    const end = lit >= Math.min(SHOWN, list.length) - 1;
+    const id = setTimeout(() => setLit((i) => (end ? 0 : i + 1)), end ? 2400 : 1100);
     return () => clearTimeout(id);
   }, [calm, seen, q, held, list.length, lit]);
   if (!pairs.length) return null;

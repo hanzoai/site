@@ -608,3 +608,28 @@ html:not(.js) .bt .x-line-in { transform: none !important; }
   .x-band h2.bt-band-h { font-size: 32px; }
   .bt-meet-f .bt-face { --s: 30px !important; }
 }
+/* copy kept whole: the case card's label keeps its quiet grey;  */
+.bt-case-h .bt-case-k { color: inherit; }
+
+/* live /bot (8 Nov): the app's own label, the sandbox's run line, and the phone that stays in sync with the web app */
+.bt-app-t { margin: 0 0 10px; font-size: 11px; letter-spacing: .08em; color: #737373; }
+.bt-tl-one { color: #fafafa; }
+.bt-box.on .bt-term .bt-tl:nth-child(6) { animation-delay: 2.5s; }
+.bt-rt { align-content: center; gap: 12px; }
+.bt-rt-ph { width: min(100%, 480px); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 12px 16px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); font-size: 13px; }
+.bt-rt-ph-d { display: inline-flex; gap: 10px; font-weight: 606; }
+.bt-rt-ph-d .x-mono { font-weight: 400; color: #737373; }
+.bt-rt-ph-w { display: inline-flex; align-items: center; gap: 8px; }
+.bt-rt-ph-s { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; font-size: 12px; color: #525252; }
+.bt-rt-ph-s i { width: 6px; height: 6px; border-radius: 50%; background: #0a0a0a; }
+.bt-rt.on .bt-rt-ph-s i { animation: bt-sync 2.4s ease-in-out infinite; }
+@keyframes bt-sync { 50% { transform: scale(.5); } }
+@media (prefers-reduced-motion: reduce) { .bt-rt.on .bt-rt-ph-s i { animation: none; } }
+.bt-rt-ph-c { width: min(100%, 480px); margin: 0; font-size: 13px; color: #525252; }
+/* the routines visual now also holds live's phone strip, so its stage is taller on desktop (phones size to content) */
+@media (min-width: 900px) { .bt-chv:has(> .bt-rt) { height: 560px; } .bt-rt { padding-block: 32px; } }
+/* the ask's state, as live labels it: a quiet 'Waiting for you' until answered, then the ink 'Answered' */
+.bt-answered { display: inline-grid; }
+.bt-answered > span { grid-area: 1 / 1; }
+.bt-answered > span[hidden] { display: block; visibility: hidden; }
+.bt-answered.wait { background: #e4e4e7; color: #0a0a0a; }

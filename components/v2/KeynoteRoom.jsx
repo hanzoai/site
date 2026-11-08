@@ -7,14 +7,16 @@
    - tone: the room: graphite #171717 (code, ledgers; the default) or black #000 (art, the field). At most two per
      page, never back to back.
    Reduced motion: the room is simply full width. */
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion, useMotionTemplate } from 'motion/react';
 import { useWide } from './KeynoteChapters';
 import './Keynote.css';
 
 export default function KeynoteRoom({ children, className = '', from = [6, 7, 24], tone = '#171717', id }) {
   const ref = useRef(null);
-  const calm = useReducedMotion();
+  const reduce = useReducedMotion();
+  const [calm, setCalm] = useState(false); // after mount, so the first render matches the server's HTML
+  useEffect(() => setCalm(!!reduce), [reduce]);
   const wide = useWide();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 15%'] });
   const v = useTransform(p, [0, 1], [wide ? from[0] : 2, 0], { clamp: true });

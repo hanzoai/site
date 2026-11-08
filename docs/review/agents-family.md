@@ -3,6 +3,7 @@
 Reviewed 2026-11-07, walked moving at 1470x801 and 375x812. Members walked: /agents/crew/ and /agents/sdk/ (wheel scroll 400px every 700 ms, rest shots ~1 s apart, hover and press on the asks, seats, find field, console nav, You/Agent, pip/cargo, Copy, the Bots room Dark/Light switch and the close's faces). Proofs in `docs/review/agents/`.
 
 Verdict: 7/10
+Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). Live hanzo.ai/agents/crew now lists 26 agents: re-captured, with Hanzo's own faces and the Bots room screenshots in public/agents/, so the ring shows real faces and the room Hanzo's real window; seats size to the roster so 26 never overlap; console turns read as whole lines. copycheck missing 0 (crew 22, sdk 51); taste/unique OK; 0 console errors (also under reduced motion), no overflow at 1470 and 375. Usable: crew opens each agent's chat and Launch a bot; sdk shows install, the console and the docs.
 
 First complaint: "Press the Light switch on the Bots room and half the room disappears: the names and the DONE marks go white on white. And the agents are still just letters in circles, three times over: the ring, the list, the row at the end. Where are the faces?"
 

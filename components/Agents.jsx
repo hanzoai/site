@@ -30,8 +30,40 @@ function Cmd({ bin, rest, copy }) {
   return (
     <div className="x-cmd x-mono">
       <span className="x-dim">$</span>
-      <span className="x-cmd-t"><b>{bin}</b> {rest}</span>
+      <span className="x-cmd-t"><b>{bin}</b> <span>{rest}</span></span>
       <Copy text={copy} />
+    </div>
+  );
+}
+
+/* Hanzo's own rotation (hanzo.ai home): the agent the CLI accelerates changes every few seconds and its flag types in.
+   Every name stays in the page (the others hidden), so readers and search see the whole list. */
+const ACCEL = [['Claude Code', 'dev --claude'], ['Codex', 'dev --codex'], ['Cursor', 'dev --cursor'], ['Antigravity', 'dev --agy'], ['Gemini CLI', 'dev --gemini']];
+function Accel() {
+  const [at, setAt] = useState(0);
+  const [n, setN] = useState(ACCEL[0][1].length);
+  const box = useRef(null);
+  const seen = useInView(box, { amount: 0.5 });
+  const calm = useReducedMotion();
+  useEffect(() => {
+    if (!seen || calm) return;
+    let t, i = at, k = ACCEL[at][1].length;
+    const next = () => { i = (i + 1) % ACCEL.length; k = 4; setAt(i); setN(k); t = setTimeout(type, 260); };
+    const type = () => { k += 1; setN(k); if (k < ACCEL[i][1].length) t = setTimeout(type, 70); else t = setTimeout(next, 2600); };
+    t = setTimeout(next, 2600);
+    return () => clearTimeout(t);
+  }, [seen, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [, flag] = ACCEL[at];
+  return (
+    <div ref={box}>
+      <p className="x-panel-k xa-acc">
+        {ACCEL.map(([name], i) => <span key={name} className={i === at ? 'on' : ''} aria-hidden={i === at ? undefined : true}>Accelerate {name} with Hanzo</span>)}
+      </p>
+      <div className="x-cmd x-mono">
+        <span className="x-dim">$</span>
+        <span className="x-cmd-t"><b>hanzo</b> <span>{flag.slice(0, n)}</span><span className="x-sr" aria-hidden="true">{ACCEL.filter((_, i) => i !== at).map(([, f]) => f).join(' ')}</span></span>
+        <Copy text={'hanzo ' + flag} />
+      </div>
     </div>
   );
 }
@@ -80,7 +112,7 @@ function Steps() {
   useEffect(() => { fill.set(on / 3); }, [on, fill]);
   return (
     <div className="x-panel" ref={ref}>
-      <div className="x-panel-h"><Mark size={14} /> <b>Hanzo.Agents</b></div>
+      <div className="x-panel-h"><Mark size={14} /> <b><span>Hanzo.Agents</span></b></div>
       <p className="x-panel-k">No human required</p>
       <ol className="x-steps">
         <i className="x-steps-line" aria-hidden="true"><motion.b style={{ scaleY: fill }} /></i>
@@ -145,8 +177,7 @@ export default function Agents() {
             <Cmd bin="curl" rest="-fsSL https://hanzo.sh | sh" copy="curl -fsSL https://hanzo.sh | sh" />
             <div className="x-or small"><span>or</span></div>
             <Cmd bin="npm" rest="i -g hanzo" copy="npm i -g hanzo" />
-            <p className="x-panel-k">Accelerate Claude Code with Hanzo</p>
-            <Cmd bin="hanzo" rest="dev --claude" copy="hanzo dev --claude" />
+            <Accel />
             <p className="x-panel-k">Set up Codex, Cursor and more</p>
             <SetupMenu inline />
           </div>

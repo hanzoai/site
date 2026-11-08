@@ -52,7 +52,7 @@ function Said({ c }) {
     const f = /^([\d,.]+\+?)\s*(.*)$/.exec(c.t);
     return <span className="xvs-said"><b className="xvs-fig x-mono">{f[1]}</b>{f[2] && <span>{' ' + f[2]}</span>}</span>;
   }
-  if (m) return <span className="xvs-said"><b>{m[1]}</b>{m[3] && <span>{(m[2].trim() ? ' ' + m[2].trim() + ' ' : ' ') + m[3]}</span>}</span>;
+  if (m) return <span className="xvs-said"><b><span>{m[1]}</span></b>{m[3] && <span>{(m[2].trim() ? ' ' + m[2].trim() + ' ' : ' ') + m[3]}</span>}</span>;
   return <span className="xvs-said"><span className="xvs-said-p">{c.t}</span></span>;
 }
 
@@ -67,9 +67,10 @@ function Race({ row, cols, stamp }) {
   const [held, setHeld] = useState(false);
   useEffect(() => {
     if (!live || held || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    // one reading pass over the routers after the race lands, then it rests with every figure in ink
+    // reading passes over the routers after the race lands: each pass ends with every figure in ink for a breath, then
+    // the next begins, so the first screen stays quietly alive while it is in view (a hover holds the router you point at)
     let k = 0, t = 0;
-    const step = () => { setAt(k < vals.length ? k : -1); k += 1; if (k <= vals.length) t = setTimeout(step, 2400); };
+    const step = () => { setAt(k < vals.length ? k : -1); k = (k + 1) % (vals.length + 1); t = setTimeout(step, 2400); };
     t = setTimeout(step, 2300);
     return () => clearTimeout(t);
   }, [live, held, vals.length]); // eslint-disable-line react-hooks/exhaustive-deps

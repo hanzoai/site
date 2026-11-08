@@ -47,11 +47,19 @@
 .xvs-race[data-reading] .xvs-race-b i { background: var(--track); }
 .xvs-race[data-reading] li[data-on] .xvs-race-f, .xvs-race[data-reading] li[data-on] .xvs-race-n, .xvs-race[data-reading] li[data-on] .xvs-race-x { color: var(--ink); }
 .xvs-race[data-reading] li[data-on] .xvs-race-b i { background: var(--ink); }
+/* the router being read carries a small blinking read cursor after its name */
+.xvs-race li .xvs-race-n::after { content: ''; display: inline-block; width: 6px; height: .9em; margin-left: 6px; vertical-align: -1px; background: var(--ink); opacity: 0; }
+.xvs-race[data-reading] li[data-on] .xvs-race-n::after { animation: xvs-read 1s steps(1) infinite; }
+@keyframes xvs-read { 0% { opacity: 1; } 50% { opacity: 0; } }
 
 /* provenance stamps: the same three marks the page explains */
 .xvs-stamp { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; font: 400 13px/1 var(--mono); font-style: normal; white-space: nowrap; background: var(--tile); color: var(--muted); }
 .xvs-stamp::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 .xvs-stamp[data-k='ours'] { background: var(--ink); color: #fff; }
+/* our own measurement is live: its dot breathes (the vendors' claims stay still) */
+.xvs-stamp[data-k='ours']::before { animation: xvs-live 2.4s ease-in-out infinite; }
+@keyframes xvs-live { 50% { transform: scale(.55); opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .xvs-stamp::before { animation: none !important; } }
 .xvs-stamp[data-k='theirs'] { color: var(--ink); }
 .xvs-stamp[data-k='theirs']::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
 .xvs-stamp[data-k='none']::before { background: transparent; border: 1.5px dashed currentColor; width: 5px; height: 5px; }

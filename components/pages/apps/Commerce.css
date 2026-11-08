@@ -412,3 +412,19 @@ a.cm-chip:active { transform: scale(.97); }
   .cm-order, .cm-dot, .cm-row-t, .cm-tile-art svg, .cm-run-art svg > *, .cm-spec dd, .cm-spec dd p, .cm-spec-pm::after, .cm-bd-row { transition: none; }
   .cm-fl-c.go, [data-enter], [data-enter] * { animation: none !important; }
 }
+
+/* 8 Nov: the close stands alone on its screen, a full section pad below the ways and Get Commerce */
+.cm-end { padding-top: clamp(116px, 12vw, 188px); }
+
+/* copy rule (8 Nov): titles and links are their own text runs (spans), styled as the b/em they replace */
+.cm code { overflow-wrap: anywhere; }
+.cm-spec dt button > .cm-spec-t { flex: 1; width: auto; font-size: 21px; font-weight: 497; letter-spacing: -.02em; color: inherit; }
+.cm-way .cm-way-t { font-size: 17px; font-weight: 497; color: var(--bz-ink); line-height: 1.3; }
+.cm-way .cm-way-go { justify-self: end; display: inline-flex; gap: .3em; font-size: 16px; font-weight: 497; line-height: 1.5; color: var(--bz-ink); white-space: nowrap; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; transition: transform .25s var(--bz-out); }
+@media (hover: hover) { .cm-way:hover .cm-way-go { transform: translateX(4px); } }
+.cm-end-l { display: block; }
+.cm-endrow .cm-endrow-go { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
+@media (max-width: 899px) {
+  .cm-spec dt button > .cm-spec-t { font-size: 17px; }
+  .cm-way .cm-way-go { justify-self: start; }
+}

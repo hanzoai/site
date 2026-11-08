@@ -20,7 +20,7 @@
    Beyond: "Delegate it yourself": choose where your grant sits and where you write the agent's, and see whether it can
    be delegated, with Hanzo's own sentence on why. Built only from the path rule on this page.
    Every word and link is Hanzo's; the demo's labels (caller, location, can, grant, target) are UI. */
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useDragControls, useReducedMotion } from 'motion/react';
 import { Count } from '../../ui';
 import { useLive, useSteps } from './Frame';
@@ -80,7 +80,9 @@ const STEPS = ['verifies the JWT that IAM signed', 'does a grant this caller hol
 
 /* The hero object and the signature: the check, asked of a graph. */
 function Check() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, reduce] = useLive(0.3);
+  const [calm, setCalm] = useState(false); // read after mount, so the first render (delays) matches the server's HTML
+  useEffect(() => setCalm(!!reduce), [reduce]);
   const paused = useStagePause();
   const [mine, setMine] = useState(null);
   const [step] = useSteps(SCRIPT.length, EVERY, live && !mine && !paused);
@@ -95,6 +97,10 @@ function Check() {
   const land = d(3 + walk);
   const lit = (i) => ok && i >= g && i <= t;
   const pick = (nw, nt) => setMine([nw, nt]);
+  /* the last answer stays on the panel, in the quiet grey, while the next check walks; the new one cuts in over it */
+  const prev = useRef({ key, ok, before: null });
+  if (prev.current.key !== key) prev.current = { key, ok, before: prev.current.ok };
+  const before = prev.current.before;
   /* hovering a request mark names it in the bar (pointer only; the bar's own label returns on leave) */
   const [peek, setPeek] = useState(null);
   return (
@@ -117,7 +123,7 @@ function Check() {
       <div className="az-graph" ref={box}>
         {/* phones: the answer and its question in one line, on the first screen (the full panel stays below) */}
         <p className="az-mini" aria-hidden="true">
-          <span className={'az-mini-a ' + (ok ? 'ok' : 'no')}><span key={'m' + key} className="az-a-t" style={{ animationDelay: land + 's' }}>{ok ? 'true' : 'false'}</span></span>
+          <span className={'az-mini-a ' + (ok ? 'ok' : 'no')}>{before !== null && <span key={'mg' + key} className="az-a-g" aria-hidden="true" style={{ animationDelay: land + 's' }}>{before ? 'true' : 'false'}</span>}<span key={'m' + key} className="az-a-t" style={{ animationDelay: land + 's' }}>{ok ? 'true' : 'false'}</span></span>
           <span className="az-mini-q"><b>{WHO[w][0]}</b><span>{LOC[t]}</span></span>
         </p>
         {G && (
@@ -165,6 +171,7 @@ function Check() {
           <p className="az-k">can</p>
           <p className="az-q"><b>{WHO[w][0]}</b><span>{LOC[t]}</span></p>
           <p className={'az-a ' + (ok ? 'ok' : 'no')}>
+            {before !== null && <span key={'g' + key} className="az-a-g" aria-hidden="true" style={{ animationDelay: land + 's' }}>{before ? 'true' : 'false'}</span>}
             <span key={'a' + key} className="az-a-t" style={{ animationDelay: land + 's' }}>{ok ? 'true' : 'false'}</span>
           </p>
           <ol className="az-steps">
@@ -276,7 +283,7 @@ function Family() {
             {REL.map(([t, to, d]) => (
               <li key={t}>
                 <A to={to} className="az-rel-a">
-                  <b>{t}</b>{d && <span>{d}</span>}
+                  <b><span>{t}</span></b>{d && <span>{d}</span>}
                   {!t.endsWith('→') && <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                 </A>
               </li>
@@ -288,7 +295,7 @@ function Family() {
           <div className="az-throw">
             <motion.div className="az-drag" drag={!calm} dragControls={grab} dragListener={false} dragSnapToOrigin dragElastic={0.5} dragTransition={{ power: 0.25, timeConstant: 220 }}>
               <span className="az-grip" aria-hidden="true" onPointerDown={(e) => grab.start(e)}><i /></span>
-              <ExampleConsole name="Authz" api="/v1/authz" side={SIDE} />
+              <ExampleConsole name="Authz" api="/v1/authz" side={SIDE} cap="The service the session above is changing." />
             </motion.div>
           </div>
           <p className="az-note">Example project. Every name in it is one you would give your own.</p>
@@ -309,6 +316,7 @@ export default function Authz() {
         meta={<span>Apache-2.0 · a library, not a service</span>}
         cta="authz.hero"
         from={1.05}
+        className="az-stage"
       >
         <Check />
       </KeynoteStage>

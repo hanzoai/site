@@ -4,7 +4,7 @@
 .lx-rel-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .lx-rel-grid[data-n='1'] { grid-template-columns: minmax(0, 1fr); }
 .lx-rel-grid[data-n='2'] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.lx-rel-card { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; padding: 0 0 24px; border-radius: 24px; overflow: hidden; background: #f5f5f5; color: var(--ink); text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
+.lx-rel-card { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; padding: 0 0 24px; border-radius: 24px; overflow: hidden; background: light-dark(#f5f5f5, #171717); color: var(--ink); text-decoration: none; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); }
 .lx-rel-art { grid-column: 1 / -1; display: block; height: 160px; margin-bottom: 18px; background: #ededed; overflow: hidden; }
 .lx-rel-grid[data-n='1'] .lx-rel-art { height: 220px; }
 .lx-rel-sigil { width: calc(100% + 140px); height: 100%; margin-left: -70px; display: block; color: #0a0a0a; opacity: .85; transition: transform .5s cubic-bezier(.4, 0, .2, 1); }

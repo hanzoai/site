@@ -1,4 +1,6 @@
 # /benchmarks/* (template) — James-eye review
+
+Ready: 7 Nov 21:50, held up next to /api and /affiliate (James's new bar, no score). Phone tables no longer break words (System column fixed, rest scrolls); 860px detail sheet; tableless chapters show runs as nested squares. taste/unique/parity OK on gpqa, fleet, kai-ag-news; 0 console errors, no overflow at 1470 and 375. Shared, not this template: FamChapters crossfade, FamNext three equal cards, consent card over hero. (8 Nov: copycheck missing 0 on gpqa 0 of 28, zen-6 0 of 69, kai-ag-news 0 of 36, livecodebench 0 of 3 after the GPQA list-price date followed hanzo.ai to Nov 7.)
 Reviewed: 2026-11-07 16:35 UTC, members walked: `/benchmarks/gpqa` and `/benchmarks/fleet`, at 1470x801 and 375x812 (touch phone). How: filmed moving with `scripts/.cloud/motion.mjs` (`shots/benchmarks_gpqa/`, `shots/benchmarks_fleet/`). I also ran my own Playwright walks, saved in `/tmp/claude-0/critic-bench/outB/` (scripts `walkB.js`, `probeB.js`, `idleB.js`). They cover:
 - shots at 150 ms, 1.15 s and 4 s, then screen by screen as I scroll;
 - 18 s idle;

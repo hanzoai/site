@@ -2,18 +2,23 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { EASE, Head, Arrow, Rise } from './ui';
+import useFigures from './home/useFigures';
 
 // placed exactly where Hanzo's own chart places them (log cost across, accuracy up).
 // [name as Hanzo writes it, label on the chart, GPQA Diamond %, $ per 1,000 questions as Hanzo prints it, kind, reported by, date, source]
 // kind: m = one model tested on the same 198 questions, r = a score reported by a lab or an independent evaluation, e = an Enso tier
-const D = [
-  ['DeepSeek V4 Pro 0423', 'DeepSeek V4 Pro', 76.3, '1.05', 'm'], ['Claude Sonnet 5', 'Sonnet 5', 77.8, '42.91', 'm'], ['Claude Fable 5', 'Fable 5', 82.8, '14.95', 'm'], ['Claude Haiku 5.5', 'Haiku 5.5', 83.3, '1.07', 'm'],
-  ['Claude Opus 4.8', 'Opus 4.8', 87.4, '45.01', 'm'], ['Claude Fable 5.1', 'Fable 5.1', 87.9, '46.25', 'm'], ['Claude Sonnet 5.5', 'Sonnet 5.5', 90.4, '10.41', 'm'], ['GPT-5.5', 'GPT-5.5', 90.4, '18.64', 'm'],
-  ['GLM 5.3', 'GLM 5.3', 90.9, '0.945', 'r', 'Epoch AI (independent)', '2026-08-14', 'https://epoch.ai/models/glm-5-3'], ['Claude Opus 5.5', 'Opus 5.5', 90.9, '21.23', 'm'], ['GPT-5.6 Sol', 'GPT-5.6 Sol', 91.9, '10.08', 'm'],
+// single models (each at its best run on the same 198 questions, the cost it filed per 1,000) and Enso's tiers (questions
+// it has seen, at its cost on new ones) come from the research runs hanzo.ai reads (components/home/figures.js); the
+// scores reported by a lab or an independent evaluation are the ones hanzo.ai cites, with their sources.
+const short = (n) => n.replace(/^Claude /, '').replace(/ \d{4}$/, '');
+const c2 = (x) => (x >= 1 ? x.toFixed(2) : String(+x.toPrecision(3)));
+const pointsOf = (GPQA) => [
+  ...GPQA.measured.filter((d) => d.accuracy >= 0.7).map((d) => [d.name, short(d.name), +(d.accuracy * 100).toFixed(1), c2(d.cost), 'm']),
+  ['GLM 5.3', 'GLM 5.3', 90.9, '0.945', 'r', 'Epoch AI (independent)', '2026-08-14', 'https://epoch.ai/models/glm-5-3'],
   ['Grok 4.7', 'Grok 4.7', 92.7, '4.57', 'r', 'Epoch AI (independent)', '2026-09-21', 'https://epoch.ai/models/grok-4-7'],
   ['Kimi K3', 'Kimi K3', 93.5, '10.61', 'r', 'Moonshot AI (lab)', '2026-07-16', 'https://github.com/MoonshotAI/Kimi-K3'],
   ['GPT-6 Sol', 'GPT-6 Sol', 94.3, '5.09', 'r', 'Epoch AI (independent)', '2026-09-22', 'https://epoch.ai/models/gpt-6-sol'],
-  ['Enso Flash', 'Enso Flash', 95.5, '3.26', 'e'], ['Enso', 'Enso', 96.5, '10.03', 'e'], ['Enso Ultra', 'Enso Ultra', 98.0, '14.76', 'e'],
+  ...GPQA.tiers.map((t) => [t.name, t.name, +(t.seen * 100).toFixed(1), c2(t.per1k), 'e']),
 ];
 // Hanzo's words for each point, kept in the page for readers who cannot hover
 const say = (full, a, c, k, who, date, src) => (k === 'm'
@@ -24,16 +29,36 @@ const say = (full, a, c, k, who, date, src) => (k === 'm'
 // the sentence shown on the card: the model's name and score are already its heading, and the source is its link
 const tipText = (p) => (p.e ? p.say : p.say.replace(`${p.full} ${p.a.toFixed(1)}%`, '').replace(/^[,\s]+/, '').replace(p.src ? ' ' + p.src : '', '').replace(/^./, (m) => m.toUpperCase()));
 const KEY = "GPQA Diamond accuracy against what 1,000 questions cost, on a log scale; models under 70% are not drawn. Plain discs are single models tested on the same 198 questions, each at its best run and the cost it filed. Ink discs wearing Hanzo's H are Enso's tiers on questions it has seen, each at its tier's cost on new questions. Dashed discs are scores reported by a lab or an independent evaluation, each at its model's list price times the median tokens a question took in our runs of its lab's models, or of all of them. The frontier, the points no other beats on both accuracy and cost, is GLM 5.3, Enso Flash, Enso, Enso Ultra.";
-const VW = 1152, VH = 470, L = 60, R = 1120, T = 24, B = 412;
-const lx = (c) => L + ((Math.log10(c) - Math.log10(0.8)) / (Math.log10(60) - Math.log10(0.8))) * (R - L);
-const ly = (a) => B - ((a - 75) / 25) * (B - T);
-const cost = (x) => 10 ** (Math.log10(0.8) + ((x - L) / (R - L)) * (Math.log10(60) - Math.log10(0.8)));
+// two drawings of the same chart: wide for desktop, and a taller one for phones so labels, dots and the handle stay
+// readable and touchable at true size (a composition, not a shrunk desktop)
+const DESK = { VW: 1152, VH: 470, L: 60, R: 1120, T: 24, B: 412, ph: false };
+const PHONE = { VW: 640, VH: 660, L: 64, R: 604, T: 40, B: 540, ph: true };
+const geo = (g) => ({
+  ...g,
+  lx: (c) => g.L + ((Math.log10(c) - Math.log10(0.8)) / (Math.log10(60) - Math.log10(0.8))) * (g.R - g.L),
+  ly: (a) => g.B - ((a - 75) / 25) * (g.B - g.T),
+  cost: (x) => 10 ** (Math.log10(0.8) + ((x - g.L) / (g.R - g.L)) * (Math.log10(60) - Math.log10(0.8))),
+});
 
 export default function Pareto() {
+  const { GPQA } = useFigures();
+  const D = useMemo(() => pointsOf(GPQA), [GPQA]);
   const box = useRef(null);
   const seen = useInView(box, { once: true, amount: 0.45 });
   const [hot, setHot] = useState(null);
-  const [cap, setCap] = useState(lx(4));
+  const [ph, setPh] = useState(false);
+  useEffect(() => {
+    const mq = matchMedia('(max-width: 599px)');
+    const on = () => setPh(mq.matches);
+    on(); mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  const g = useMemo(() => geo(ph ? PHONE : DESK), [ph]);
+  const { VW, VH, L, R, T, B, lx, ly } = g;
+  // the budget is kept in dollars, so it holds its place when the drawing changes
+  const [budget, setBudget] = useState(4);
+  const cap = lx(budget);
+  const setCap = (f) => setBudget((b) => g.cost(typeof f === 'function' ? f(lx(b)) : f));
   const [dragging, setDragging] = useState(false);
   // a point's card stays while the pointer travels to its source link; touch keeps it until you tap elsewhere
   const gone = useRef(0);
@@ -44,7 +69,7 @@ export default function Pareto() {
   const pts = useMemo(() => D.map(([full, n, a, cs, k, who, date, src]) => {
     const c = parseFloat(cs);
     return { full, n, a, c, e: k === 'e', r: k === 'r', src, say: say(full, a.toFixed(1), cs, k, who, date, src), x: Math.round(lx(c) * 100) / 100, y: Math.round(ly(a) * 100) / 100 };
-  }).sort((p, q) => p.c - q.c), []);
+  }).sort((p, q) => p.c - q.c), [D, lx, ly]);
   const front = useMemo(() => { let best = -1; return pts.filter((p) => (p.a > best ? ((best = p.a), true) : false)); }, [pts]);
   const path = front.map((p, i) => (i ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ');
   const within = pts.filter((p) => p.x <= cap);
@@ -55,7 +80,8 @@ export default function Pareto() {
   const onDown = (e) => { e.currentTarget.setPointerCapture(e.pointerId); setDragging(true); setCap(toX(e.clientX)); };
   const onMove = (e) => { if (dragging) setCap(toX(e.clientX)); };
   const onKey = (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); setCap((c) => Math.max(L + 4, Math.min(R, c + (e.key === 'ArrowRight' ? 12 : -12)))); } };
-  const c = cost(cap);
+  const c = budget;
+  const r0 = ph ? 9 : 5, r1 = ph ? 12 : 7, hw = ph ? 48 : 14, flip = VW * 0.8;
 
   return (
     <section className="x-sec x-pareto" id="pareto" aria-labelledby="pareto-h">
@@ -69,12 +95,12 @@ export default function Pareto() {
           <div className="x-plot-svg">
           <svg viewBox={`0 0 ${VW} ${VH}`} role="group" aria-label={KEY} onPointerMove={onMove} onPointerUp={() => setDragging(false)}>
             {[75, 80, 85, 90, 95, 100].map((a) => (
-              <g key={a}><line x1={L} x2={R} y1={ly(a)} y2={ly(a)} className="ax" /><text x={L - 12} y={ly(a) + 4} textAnchor="end" className="tick">{a}</text></g>
+              <g key={a}><line x1={L} x2={R} y1={ly(a)} y2={ly(a)} className="ax" /><text x={L - 12} y={ly(a) + (ph ? 8 : 4)} textAnchor="end" className="tick">{a}</text></g>
             ))}
-            {[1, 3, 10, 30].map((v) => <text key={v} x={lx(v)} y={B + 26} textAnchor="middle" className="tick">${v}</text>)}
-            <text x={L} y={T - 8} className="tick">GPQA Diamond %</text>
-            <text x={R} y={B + 50} textAnchor="end" className="tick">cheaper ← $ per 1,000 questions → dearer</text>
-            <motion.rect x={L} y={T} height={B - T} className="x-plot-zone" animate={{ width: cap - L }} transition={{ type: 'spring', stiffness: 400, damping: 40 }} />
+            {[1, 3, 10, 30].map((v) => <text key={v} x={lx(v)} y={B + (ph ? 74 : 26)} textAnchor="middle" className="tick">${v}</text>)}
+            <text x={L} y={T - (ph ? 16 : 8)} className="tick">GPQA Diamond %</text>
+            <text x={R} y={B + (ph ? 112 : 50)} textAnchor="end" className="tick">cheaper ← $ per 1,000 questions → dearer</text>
+            <motion.rect x={L} y={T} height={B - T} className="x-plot-zone" initial={{ width: cap - L }} animate={{ width: cap - L }} transition={{ type: 'spring', stiffness: 400, damping: 40 }} />
             <motion.path d={path} className="front" initial={{ pathLength: 0 }} animate={{ pathLength: seen ? 1 : 0 }} transition={{ duration: 1.6, ease: EASE, delay: 0.9 }} />
             {hot && (
               <g className="guide" aria-hidden="true">
@@ -86,9 +112,9 @@ export default function Pareto() {
               const best = pick && pick.n === p.n;
               const body = (
                 <>
-                  {p.e && <circle cx={p.x} cy={p.y} r="15" className="halo" />}
-                  <circle cx={p.x} cy={p.y} r={p.e ? 7 : 5} />
-                  <text x={p.x + (p.x > 940 ? -12 : 12)} y={p.y + 4} textAnchor={p.x > 940 ? 'end' : 'start'}>{p.n} {p.a.toFixed(1)}%</text>
+                  {p.e && <circle cx={p.x} cy={p.y} r={r1 * 2.1} className="halo" />}
+                  <circle cx={p.x} cy={p.y} r={p.e ? r1 : r0} />
+                  <text x={p.x + (p.x > flip ? -(r1 + 6) : r1 + 6)} y={p.y + (ph ? 8 : 4)} textAnchor={p.x > flip ? 'end' : 'start'}>{p.n} {p.a.toFixed(1)}%</text>
                 </>
               );
               return (
@@ -117,9 +143,9 @@ export default function Pareto() {
               onKeyDown={onKey}
             >
               <line y1={T - 6} y2={B} />
-              <rect x="-14" y={B - 4} width="28" height="22" rx="11" />
-              <path d={`M-4 ${B + 7}l-3 0M4 ${B + 7}l3 0`} />
-              <rect x="-22" y={T - 6} width="44" height={B - T + 30} className="hit" />
+              <rect x={-hw} y={B - 4} width={hw * 2} height={ph ? 44 : 22} rx={ph ? 22 : 11} />
+              <path d={ph ? `M-8 ${B + 18}l-8 0M8 ${B + 18}l8 0` : `M-4 ${B + 7}l-3 0M4 ${B + 7}l3 0`} />
+              <rect x={-Math.max(22, hw)} y={T - 6} width={Math.max(44, hw * 2)} height={B - T + (ph ? 50 : 30)} className="hit" />
             </g>
           </svg>
           {hot && (

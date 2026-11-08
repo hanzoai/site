@@ -26,12 +26,22 @@ export const metadata = {
   formatDetection: { telephone: false, email: false, address: false },
   twitter: { card: 'summary_large_image', site: '@hanzoai' },
 };
-export const viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', interactiveWidget: 'resizes-content', themeColor: '#ffffff', colorScheme: 'light' };
+// the browser chrome follows the theme: Hanzo's own colours (#0A0A0A dark, as live); light stays our white
+export const viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', interactiveWidget: 'resizes-content', themeColor: [{ media: '(prefers-color-scheme: light)', color: '#ffffff' }, { media: '(prefers-color-scheme: dark)', color: '#0A0A0A' }], colorScheme: 'light dark' };
+
+/* Dark mode (docs/DARK-MODE.md). Live hanzo.ai's own pre-paint script, word for word in what it does: the theme saved
+   under localStorage "hanzo.appearance.painted" ({ theme: 'light' | 'dark' | 'system' }), else the device setting,
+   sets html's light/dark + t_light/t_dark, color-scheme and data-scheme before the first paint (no flash). Added: while
+   the theme is "system", a change of the device setting re-applies it, and React never owns these classes (see
+   the hydration check in docs/DARK-MODE.md), so hydration cannot reset them. The server HTML says "light t_light": with JS off it is bright. */
+const THEME = "(function(){try{var d=document.documentElement,s=d.style,c=null;try{c=JSON.parse(localStorage.getItem('hanzo.appearance.painted')||'null')}catch(e){}if(!c||typeof c!=='object')c={vars:{},theme:'system'};var v=c.vars||{};for(var k in v)if(k.slice(0,2)==='--'&&typeof v[k]==='string')s.setProperty(k,v[k]);var t=c.theme;if(t!=='light'&&t!=='dark')t='system';var q=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)');var a=function(){var n=t==='dark'||(t==='system'&&!!q&&q.matches);var l=d.classList;l.toggle('light',!n);l.toggle('dark',n);l.toggle('t_light',!n);l.toggle('t_dark',n);s.colorScheme=n?'dark':'light';d.setAttribute('data-scheme',t)};a();if(q&&t==='system'&&q.addEventListener)q.addEventListener('change',a)}catch(e){}})()";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" data-brand="hanzo" className="light t_light" suppressHydrationWarning>
       <head>
+        {/* the theme, before anything paints */}
+        <script dangerouslySetInnerHTML={{ __html: THEME }} />
         {/* Hanzo's own stylesheet: their header, footer and page content render exactly as they ship them */}
         <link rel="stylesheet" href="/hanzo.css" />
         {/* both faces preload, and both use font-display: block, so text paints once in Zen: no visible swap */}

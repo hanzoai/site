@@ -1,6 +1,7 @@
 # /brand — James-eye review
 
 Verdict: 8/10
+Ready: 8 Nov, held at missing 0 under the real copy check (copycheck 0 of 33): Hanzo's 'Design System' and 'Design Principles' labels restored as mono captions under their headings (no kicker over the h1). 0 console errors (also under reduced motion), no overflow at 1470 and 375. Usable: Download Assets (the ZIP), Press Kit, the colour values with copy.
 First complaint: "The top half is lovely, the logo builds itself and the 01, 02, 03 scene is proper. Then Typography and Components go flat. It's a spec table and some boxes, it reads like a docs page."
 
 Walked 7 Nov 2026 16:55 UTC, HEAD 042dd418, at 1470x801 and 375x812 (isMobile, hasTouch). First screen captured at 0.2/1/3/6 s plus a reload, then wheel-scrolled the full page in 160px steps with about 0.65 s dwell. Hovered, pressed and tapped the hero asks, the pause button, the swatches, the White/Black toggle, the weight slider, the component buttons and the email copy. Also checked layout-shift entries, reduced motion (walked in the viewport, not only fullPage) and JS off. `taste.py` OK (2 files), `parity.py /brand` OK (text 76/76, links 4/4).

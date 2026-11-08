@@ -211,7 +211,7 @@
 .xab-panes .x-tablist { justify-self: start; }
 .xab-open-g > .xab-log { grid-column: 6 / 13; margin-top: 0; }
 .xab-open-g .xab-log li { grid-template-columns: 128px minmax(0, 1fr) max-content; font-size: 13.5px; }
-.xab-log time { white-space: nowrap; }
+.xab-log time, .xab-log .xab-when { white-space: nowrap; }
 .xab-open-g .xab-log li code { display: none; }
 .xab-pane { display: grid; gap: 16px; align-content: start; }
 .xab-pane[hidden] { display: none; }
@@ -219,13 +219,13 @@
 .xab-pane ul { list-style: none; margin: 6px 0 4px; padding: 0; display: grid; gap: 12px; }
 .xab-pane li { font-size: 16px; line-height: 1.5; color: var(--soft); padding-left: 18px; position: relative; }
 .xab-pane li::before { content: ''; position: absolute; left: 0; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: #d4d4d4; }
-.xab-pane li b { color: #f5f5f5; font-weight: 497; }
+.xab-pane li b, .xab-pane .xab-pane-k { color: #f5f5f5; font-weight: 497; }
 .xab-open .x-arrow { color: #fafafa; }
 .xab-log { margin-top: clamp(80px, 10vw, 144px); border-radius: 24px; background: #171717; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08); overflow: hidden; }
 .xab-log-h { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px 24px; padding: 24px clamp(20px, 3vw, 36px); border-bottom: 1px solid var(--hair); }
 .xab-log-h .v2s-title { font-size: clamp(18px, 1.5vw, 22px); color: #f5f5f5; }
 .xab-log-h p { margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; font: 500 14px/1.3 var(--mono); color: var(--soft); }
-.xab-log-h b { color: #f5f5f5; font-weight: 500; }
+.xab-log-h b, .xab-log-h .xab-log-n { color: #f5f5f5; font-weight: 500; }
 .xab-log-h a { display: inline-flex; align-items: center; min-height: 44px; color: #d4d4d4; }
 .xab-live { width: 8px; height: 8px; border-radius: 50%; background: #f5f5f5; box-shadow: 0 0 0 0 rgba(255, 255, 255, .5); }
 @keyframes xab-live { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .45); } 100% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); } }
@@ -237,7 +237,7 @@
 .xab-msg { display: inline-block; padding: 12px 0; margin: -12px 0; color: #f5f5f5; text-decoration: none; } /* a 44px target without moving the row */
 .xab-msg:hover { text-decoration: underline; text-underline-offset: 4px; }
 .xab-log code { font: inherit; color: var(--faint); }
-.xab-log time { text-align: right; color: var(--faint); }
+.xab-log time, .xab-log .xab-when { text-align: right; color: var(--faint); }
 /* the commits land oldest first, newest on top, once */
 .xab-log-f { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 22px clamp(20px, 3vw, 36px); border-top: 1px solid var(--hair); }
 .xab-log-f p { margin: 0; font-size: 15px; color: var(--soft); }
@@ -413,4 +413,22 @@
   .xab-halo, .xab-live, .xab-picks li.hint .xab-sw::before { animation: none; }
   .xab-fig-r { animation: none; }
   .xab-tile-t, .xab-tile-plus, .xab-zen-t, .xab-sw::after { transition: none; }
+}
+
+/* 8 Nov (Ready pass): one idea per beat in "Why we build". Desktop: the figure and its four switches share the screen;
+   the six principles come in after them as their own row. Phones: one switch per row; papers show two and the commit
+   log three (the rest stays in the page, behind "Papers →" and the dashboard link); the founder figures' stair is
+   shallower so the first figure arrives with its heading. */
+@media (min-width: 901px) {
+  .xab-fig { grid-column: 1 / 6; grid-row: 1; }
+  .xab-picks { grid-column: 7 / 13; grid-row: 1; }
+  .xab-tiles { grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: clamp(56px, 9vh, 96px); }
+}
+.xab-figs > div:nth-child(1) { margin-top: clamp(40px, 4.5vw, 64px); }
+.xab-figs > div:nth-child(2) { margin-top: clamp(20px, 2.2vw, 32px); }
+@media (max-width: 900px) {
+  .xab-picks ul { grid-template-columns: minmax(0, 1fr); }
+  .xab-picks li, .xab-picks li:nth-child(even) { padding: 8px 0 10px; border-left: 0; }
+  .xab-papers li:nth-child(n + 3) { display: none; }
+  .xab-log li:nth-child(n + 4) { display: none; }
 }
