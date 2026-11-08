@@ -1,8 +1,8 @@
 /* ---------- operator (v2, deck scale: MASTER.md) ---------- */
 
-/* dark mode: A2's page greys (--soft, --faint, --card, --line) are light values on .a2, so this page takes Hanzo's dark
-   ones (live hanzo.ai in dark: #a3a3a3 body text, #858585 captions, #171717 surface, white 10% hairlines) */
-html.dark .xop { --acc: #e5e5e5; --acc-soft: #171717; --soft: #a3a3a3; --faint: #858585; --card: #171717; --line: rgba(255, 255, 255, .1); }
+/* dark mode: A2's page greys (--soft, --faint, --card, --line) are light values on .a2, so in dark this page points them
+   at Hanzo's own tokens (docs/DARK-MODE.md) */
+html:not(.light) .xop { --acc: var(--foreground); --acc-soft: var(--muted); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --card: var(--muted); --line: var(--border); }
 
 /* the hero is the first dark room: a control room */
 .xop-hero { padding: clamp(104px, 13vh, 140px) 0 clamp(72px, 8vw, 120px); overflow: hidden; }
@@ -47,33 +47,33 @@ html.dark .xop { --acc: #e5e5e5; --acc-soft: #171717; --soft: #a3a3a3; --faint: 
 .xop-cards-copy .a2-headline { margin: 0; }
 .xop-stack-ctl { display: flex; align-items: center; gap: 12px; }
 .xop-nav { display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border-radius: 999px; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(0, 0, .2, 1); }
-@media (hover: hover) { .xop-nav:hover { background: light-dark(#f5f5f5, #171717); } }
+@media (hover: hover) { .xop-nav:hover { background: light-dark(#f5f5f5, var(--muted)); } }
 .xop-nav:active { transform: scale(.97); }
 .xop-nav:focus-visible, .xop-stack:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 .xop-count { min-width: 64px; text-align: center; font-size: 14px; color: var(--soft); }
 .xop-ticks { list-style: none; display: flex; gap: 6px; margin: 0; padding: 0; }
-.xop-ticks li { width: 24px; height: 2px; border-radius: 1px; background: light-dark(#d4d4d4, #262626); transition: background-color .3s cubic-bezier(0, 0, .2, 1); }
+.xop-ticks li { width: 24px; height: 2px; border-radius: 1px; background: light-dark(#d4d4d4, var(--secondary)); transition: background-color .3s cubic-bezier(0, 0, .2, 1); }
 .xop-ticks li.past { background: var(--faint); }
 .xop-ticks li.on { background: var(--ink); }
 .xop-stack { grid-column: 7 / span 6; position: relative; height: 420px; margin: 0; padding: 0; list-style: none; border-radius: var(--r-hero); }
-.xop-sc { position: absolute; inset: 0 0 auto; height: calc(100% - 32px); display: flex; flex-direction: column; gap: 16px; padding: 36px; border-radius: var(--r-hero); background: light-dark(#f5f5f5, #171717); border: 1px solid light-dark(rgba(0, 0, 0, .06), rgba(255, 255, 255, .1)); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); transform-origin: 50% 100%; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
-.xop-sc.alt { background: light-dark(#e5e5e5, #262626); }
+.xop-sc { position: absolute; inset: 0 0 auto; height: calc(100% - 32px); display: flex; flex-direction: column; gap: 16px; padding: 36px; border-radius: var(--r-hero); background: light-dark(#f5f5f5, var(--muted)); border: 1px solid light-dark(rgba(0, 0, 0, .06), var(--border)); box-shadow: 0 24px 60px -16px rgba(0, 0, 0, .18); transform-origin: 50% 100%; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.xop-sc.alt { background: light-dark(#e5e5e5, var(--secondary)); }
 .xop-sc.top { cursor: grab; }
 .xop-sc.top:active { cursor: grabbing; }
 .xop-card-t { margin: 0; font-size: 21px; font-weight: 497; letter-spacing: -.02em; line-height: 1.25; }
 .xop-sc p { margin: 0; font-size: 16px; line-height: 1.6; color: var(--soft); }
 .xop-card-f { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; }
-.xop-sc code { padding: 10px 14px; border-radius: 10px; background: var(--x-raised); font-size: 14px; color: var(--ink); }
+.xop-sc code { padding: 10px 14px; border-radius: 10px; background: light-dark(#fff, var(--background)); font-size: 14px; color: var(--ink); }
 .xop-card-n { font-size: 13px; color: var(--faint); white-space: nowrap; }
 
 /* get: the repository card, quiet; the Band below carries the ask */
 .xop-get { padding: 0 0 clamp(72px, 8vw, 120px); }
-.xop-get-card { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; gap: 16px 32px; padding: 32px; border-radius: var(--r-hero); background: light-dark(#f5f5f5, #171717); }
+.xop-get-card { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; gap: 16px 32px; padding: 32px; border-radius: var(--r-hero); background: light-dark(#f5f5f5, var(--muted)); }
 .xop-get-card .a2-headline { margin: 0; }
 .xop-get-card div > p { margin: 4px 0 0; font-size: 16px; color: var(--soft); }
 .xop-get-meta { display: flex; gap: 20px; margin: 0; font-size: 13px; }
 .xop-get-meta a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); }
-.xop-get-cmd { display: flex; align-items: center; gap: 12px; margin: 0 !important; padding: 6px 6px 6px 14px; border-radius: 10px; background: var(--x-raised); font-size: 14px; }
+.xop-get-cmd { display: flex; align-items: center; gap: 12px; margin: 0 !important; padding: 6px 6px 6px 14px; border-radius: 10px; background: light-dark(#fff, var(--background)); font-size: 14px; }
 .xop-get-cmd code { font: inherit; }
 
 @media (max-width: 900px) {
