@@ -3,4 +3,4 @@
 html[data-pq] header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
 /* on arrival, before any script runs, these pages' hero asks are on screen: the header starts as an outline, and the
    hook takes over (html[data-pq-ready]) once it has looked. Scoped to the pages that call the hook. */
-html:not([data-pq-ready]) body:has(main:is(.xga, .xft, .xfo, .xgr, .xgn, .xhi, .ide, .xin, .xkt)) header[data-slot=masthead] :is(a[data-x-ask], a[href='https://hanzo.ai/signup']) { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+html:not([data-pq-ready]) body:has(main:is(.xga, .xft, .xfo, .xgr, .xgn, .xhi, .ide, .xin, .xkt)) header[data-slot=masthead] :is(a[data-x-ask], a[href='https://hanzo.app/signup']) { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }

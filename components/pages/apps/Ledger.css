@@ -35,16 +35,16 @@ html:not(.light) .ld .cf-code.light .cf-code-bar .x-copy { background: var(--ld-
 html:not(.light) .ld .cf-code.light .cf-code-bar > i, html:not(.light) .ld .cf-code.light .cf-mark { background-color: var(--ld-d-chip); }
 html:not(.light) .ld .cf-code.light .s, html:not(.light) .ld .cf-code.light .cf-code-k { color: var(--ld-d-soft); }
 html:not(.light) .ld .cf-code.light .c { color: var(--ld-d-faint); }
-@media (hover: hover) { html:not(.light):has(main.ld[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]):hover { background-color: var(--glass); } }
+@media (hover: hover) { html:not(.light):has(main.ld[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.app/signup'], a[data-x-ask]):hover { background-color: var(--glass); } }
 
 /* one solid fill per screen: while the hero's or the Band's ask is on screen the header's ask is an outline */
-html:has(main.ld[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]) { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
-@media (hover: hover) { html:has(main.ld[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]):hover { background-color: rgba(0, 0, 0, .05); box-shadow: inset 0 0 0 1px var(--foreground); } }
+html:has(main.ld[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.app/signup'], a[data-x-ask]) { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+@media (hover: hover) { html:has(main.ld[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.app/signup'], a[data-x-ask]):hover { background-color: rgba(0, 0, 0, .05); box-shadow: inset 0 0 0 1px var(--foreground); } }
 /* phones: the header keeps the site's "Try Hanzo" (the ask-name swap is desktop-only), so it is always the outline there
    and the page's "Read the docs" is the only solid ask; never two different solid asks taking turns */
 @media (max-width: 899px) {
-  html:has(main.ld) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
-  html:has(main.ld) header[data-slot=masthead] a[href='https://hanzo.ai/signup']:active { transform: scale(.97); }
+  html:has(main.ld) header[data-slot=masthead] a[href='https://hanzo.app/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+  html:has(main.ld) header[data-slot=masthead] a[href='https://hanzo.app/signup']:active { transform: scale(.97); }
 }
 
 .ld-hero { padding: clamp(88px, 7vw, 96px) 0 0; position: relative; }

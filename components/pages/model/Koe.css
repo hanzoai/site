@@ -29,8 +29,8 @@
 
 /* one solid ask per screen: Koe's own "Request access" is solid (white on the film, ink beside the settled headline);
    while it shows (html[data-ko-ask], Koe.jsx) the header's ask is outlined, after it the header's ask is the solid one */
-html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]) { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); transition: background-color .15s cubic-bezier(0, 0, .2, 1), box-shadow .15s cubic-bezier(0, 0, .2, 1); }
-@media (hover: hover) { html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]):hover { background-color: #f5f5f5; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .4); opacity: 1; } }
+html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.app/signup'], a[data-x-ask]) { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); transition: background-color .15s cubic-bezier(0, 0, .2, 1), box-shadow .15s cubic-bezier(0, 0, .2, 1); }
+@media (hover: hover) { html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.app/signup'], a[data-x-ask]):hover { background-color: #f5f5f5; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .4); opacity: 1; } }
 .lv:has(.ko-v2) .lv-name-ask .x-btn { background: #fafafa; border-color: #fafafa; color: #0a0a0a; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .12s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) { .lv:has(.ko-v2) .lv-name-ask .x-btn:hover { background: #e5e5e5; border-color: #e5e5e5; } }
 .lv:has(.ko-v2) .lv-name-ask .x-btn:active, .ko-v2 .x-btn:active { transform: scale(.97); }
@@ -125,7 +125,7 @@ html[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup
 html:not(.light) .ko-v2[data-on] ~ .lv-close { color: var(--foreground); background: var(--surface-overlay); border-color: var(--border-control); }
 @media (hover: hover) {
   html:not(.light) .ko-v2[data-on] ~ .lv-close:hover { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
-  html:not(.light)[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]):hover { background-color: var(--muted); box-shadow: inset 0 0 0 1px var(--border-selected); }
+  html:not(.light)[data-ko-ask] header[data-slot=masthead] :is(a[href='https://hanzo.app/signup'], a[data-x-ask]):hover { background-color: var(--muted); box-shadow: inset 0 0 0 1px var(--border-selected); }
   html:not(.light) .lv:has(.ko-v2) .lv-body .x-btn:not(.solid):hover { background: var(--muted); border-color: var(--border-strong); }
   html:not(.light) .ko-v2 [data-cta='koe.hero-design']:hover { color: var(--text-primary); }
 }

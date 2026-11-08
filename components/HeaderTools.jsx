@@ -20,7 +20,7 @@ const nameOf = (p) => {
 };
 const go = (router, href) => { if (href.startsWith('/')) router.push(href); else window.open(href, href.startsWith('https://hanzo.ai') ? '_self' : '_blank', 'noopener'); };
 const CHAT = 'https://api.hanzo.ai/v1/chat/public';
-const chatLink = (q) => 'https://hanzo.ai/chat?q=' + encodeURIComponent(q);
+const chatLink = (q) => 'https://hanzo.app/chat?q=' + encodeURIComponent(q);
 
 // phones get bottom sheets that close when the grip is dragged down; read only after a tap opens one, never on the server
 function useSheet(onClose) {

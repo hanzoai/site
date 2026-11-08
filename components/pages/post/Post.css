@@ -31,7 +31,7 @@
 .xbg-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0 17px; margin: 6.5px 0 0; color: var(--mute); }
 /* one solid at a time from the first paint (the /affiliate pattern): the header's ask is outlined on a post until the
    post's hook says none of its own asks is on screen (html[data-xbg-solid]) */
-html:has(main.xbg):not([data-xbg-solid]) header[data-slot=masthead] a[href="https://hanzo.ai/signup"],
+html:has(main.xbg):not([data-xbg-solid]) header[data-slot=masthead] a[href="https://hanzo.app/signup"],
 html:has(main.xbg):not([data-xbg-solid]) header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
 .xbg-chip { display: inline-flex; align-items: center; gap: 10.5px; color: var(--ink2); }
 .xbg-chip::before { content: ''; width: 17px; height: 1px; background: currentColor; }

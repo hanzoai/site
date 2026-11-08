@@ -369,8 +369,8 @@
    few px from the first paint (so nothing shifts later) and the longer label fits beside the logo, search and language */
 @media (max-width: 700px) {
   html:has(main.jn) header[data-slot=masthead] { padding-inline: 16px; gap: 2px; }
-  html:has(main.jn) header[data-slot=masthead] :has(> a[href='https://hanzo.ai/signup'], > a[data-x-ask]) { gap: 2px; }
-  html:has(main.jn) header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]) { padding: 0 12px; }
+  html:has(main.jn) header[data-slot=masthead] :has(> a[href='https://hanzo.app/signup'], > a[data-x-ask]) { gap: 2px; }
+  html:has(main.jn) header[data-slot=masthead] :is(a[href='https://hanzo.app/signup'], a[data-x-ask]) { padding: 0 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .jn-hero-fig { animation: none; }

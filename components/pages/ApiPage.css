@@ -1,7 +1,7 @@
 /* ---------- /api v2 ---------- */
 /* one solid from first paint: until the page's hook hands over to the shared html[data-ask=quiet] flag, the header's ask
    is an outline (the hero's own solid ask is on the first screen); same look as the shared quiet rule in system.css */
-html:not([data-api-ask]):has(main.api) header[data-slot=masthead] a[href="https://hanzo.ai/signup"],
+html:not([data-api-ask]):has(main.api) header[data-slot=masthead] a[href="https://hanzo.app/signup"],
 html:not([data-api-ask]):has(main.api) header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
 .api code { font: 500 .88em/1.4 var(--mono); padding: 2px 7px; border-radius: 7px; background: var(--card); color: var(--ink); white-space: nowrap; }
 

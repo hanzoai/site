@@ -100,13 +100,13 @@ export default function Pricing() {
           <motion.div layout className={'x-plans n' + (tab === 'Personal' ? 3 : 2)}>
             <AnimatePresence mode="popLayout" initial={false}>
               {tab === 'Personal' && [
-                <Plan key="free" i={0} name="Free" desc="Chat and build with Hanzo, free." price="Free" unit="" sub="No card needed" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Instant access · Free forever" head="What’s included" items={['Chat on the web with Enso Auto', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks']} />,
+                <Plan key="free" i={0} name="Free" desc="Chat and build with Hanzo, free." price="Free" unit="" sub="No card needed" cta="Try Hanzo" href="https://hanzo.app/signup" note="Instant access · Free forever" head="What’s included" items={['Chat on the web with Enso Auto', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks']} />,
                 <Plan key="go" i={1} name="Go" desc="Your everyday AI development toolkit, with access to every model and more included usage." price={PLANS.go.price} sub="Billed monthly" cta="Try Hanzo" href={go} note="No commitment · Cancel anytime" head="Everything in Free, plus:" items={['Build apps with Hanzo Dev', 'Connect any MCP server in Hanzo Dev', 'The Hanzo CLI for macOS, Windows and Linux', 'Every model, including Enso Ultra and Kai', 'Usage included on every model', 'Priority inference and priority support', 'Your own agents, working in the background', 'Automations, with daily runs included']} />,
                 <Plan key="pro" i={2} solid name={t.name} desc={t.desc} price={t.price} sub="Billed monthly" cta="Try Hanzo" href={t.href || '/pricing'} note="No commitment · Cancel anytime" head={t.after} items={[...t.f, ...COMMON]}
                   top={<Seg opts={['3x', '5x', '15x', '∞']} val={x} set={setX} id="mult" />} />,
               ]}
               {tab === 'Team' && [
-                <Plan key="team" i={0} solid name="Team" desc="For teams of 2 to 100: every model and usage for each member, one workspace, one bill." sub="Standard & Premium seats · From 2 members" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Organizations can mix Standard and Premium seats · Cancel anytime"
+                <Plan key="team" i={0} solid name="Team" desc="For teams of 2 to 100: every model and usage for each member, one workspace, one bill." sub="Standard & Premium seats · From 2 members" cta="Try Hanzo" href="https://hanzo.app/signup" note="Organizations can mix Standard and Premium seats · Cancel anytime"
                   top={(
                     <>
                       <div className="x-bill"><Seg opts={['Annual', 'Monthly']} val={bill} set={setBill} id="bill" /><span className="x-save">−20%</span></div>
