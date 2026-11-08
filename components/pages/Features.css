@@ -1,23 +1,25 @@
 /* ---------- platform features (deck greys only; colour arrives through Hanzo's model films) ---------- */
 .xft { --acc: #0a0a0a; --acc-ink: #fff; --eo: cubic-bezier(0, 0, .2, 1); --eio: cubic-bezier(.4, 0, .2, 1); --ez: cubic-bezier(.16, 1, .3, 1); }
+/* dark (Hanzo's :not(.light)): Scale.css pins .w2's greys and ask to light values, so the page hands them back to Hanzo's tokens */
+html:not(.light) .xft { --soft: var(--muted-foreground); --faint: var(--text-tertiary); --acc: var(--foreground); --acc-ink: var(--primary-foreground); }
 .xft-inst { position: relative; }
 
 /* hero */
 .xft-hero { padding: 64px 0 clamp(72px, 8vw, 116px); overflow: clip; }
 .xft-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin-bottom: 20px; }
-.xft-kick { margin: 10px 0 0; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: #525252; }
+.xft-kick { margin: 10px 0 0; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: light-dark(#525252, var(--muted-foreground)); }
 .xft-h1 { font-size: clamp(40px, 3.6vw, 52px) !important; max-width: none; }
 .xft-top-r { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 40px; }
 .xft-top-r .w2-lede { max-width: 52ch; }
 .xft-lede { font-size: clamp(17px, 1.4vw, 21px); }
 .xft-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
 @media (max-width: 899px) { .xft-top-r .xft-acts > :first-child { flex-basis: 100%; } .xft-top-r .xft-acts .xft-tlink:nth-of-type(1) { margin-left: -6px; } }
-.xft-tlink { display: inline-flex; align-items: center; min-height: 44px; padding: 0 6px; color: inherit; font-size: 16px; font-weight: 500; text-decoration: underline; text-decoration-color: rgba(10, 10, 10, .3); text-underline-offset: 4px; transition: text-decoration-color .15s var(--eo); }
+.xft-tlink { display: inline-flex; align-items: center; min-height: 44px; padding: 0 6px; color: inherit; font-size: 16px; font-weight: 500; text-decoration: underline; text-decoration-color: light-dark(rgba(10, 10, 10, .3), var(--border-selected)); text-underline-offset: 4px; transition: text-decoration-color .15s var(--eo); }
 @media (hover: hover) { .xft-tlink:hover { text-decoration-color: currentColor; } }
 .xft-tlink:active { transform: scale(.98); }
 
 /* the instrument */
-.xft-inst { padding: clamp(14px, 1.8vw, 22px); border-radius: 28px; background: linear-gradient(180deg, #f6f6f6, #e9e9e9); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 24px 60px -16px rgba(0, 0, 0, .18); }
+.xft-inst { padding: clamp(14px, 1.8vw, 22px); border-radius: 28px; background: linear-gradient(180deg, light-dark(#f6f6f6, var(--secondary)), light-dark(#e9e9e9, var(--muted))); box-shadow: inset 0 1px 0 light-dark(rgba(255, 255, 255, .8), var(--glass)), 0 24px 60px -16px rgba(0, 0, 0, .18); }
 .xft-screen { border-radius: 20px; background: #0a0a0a; color: #fafafa; padding: 16px clamp(18px, 2.2vw, 26px) 20px; }
 .xft-screen-top { display: flex; align-items: center; gap: 12px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #a3a3a3; }
 .xft-screen-top > span:first-child { flex: 1; min-width: 0; }
@@ -28,27 +30,27 @@
 .xft-feat { grid-area: 1 / 1; }
 .xft-feat .xft-feat-t { margin: 0; color: #fafafa; font: 497 26px/1.15 var(--sans); letter-spacing: -.02em; }
 .xft-feat p:not(.xft-feat-t) { margin: 8px 0 0; max-width: 70ch; font-size: 16px; line-height: 1.5; color: #d4d4d4; }
-.xft-find { display: flex; align-items: center; gap: 10px; height: 48px; margin: 12px 0; padding: 0 16px; border-radius: 14px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08); color: #525252; }
-.xft-find:focus-within { box-shadow: 0 0 0 2px #0a0a0a; color: #0a0a0a; }
-.xft-find input { flex: 1; min-width: 0; height: 100%; border: 0; outline: none; background: none; font: 400 16px/1 var(--sans); color: #0a0a0a; }
-.xft-find-n { font-size: 13px; color: #525252; white-space: nowrap; }
+.xft-find { display: flex; align-items: center; gap: 10px; height: 48px; margin: 12px 0; padding: 0 16px; border-radius: 14px; background: light-dark(#fff, var(--background)); box-shadow: 0 0 0 1px light-dark(rgba(0, 0, 0, .08), var(--border-control)); color: light-dark(#525252, var(--muted-foreground)); }
+.xft-find:focus-within { box-shadow: 0 0 0 2px var(--ink); color: var(--ink); }
+.xft-find input { flex: 1; min-width: 0; height: 100%; border: 0; outline: none; background: none; font: 400 16px/1 var(--sans); color: var(--ink); }
+.xft-find-n { font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); white-space: nowrap; }
 .xft-board { display: grid; grid-template-columns: 2fr 2fr 1.05fr; gap: clamp(10px, 1.2vw, 16px); }
 .xft-cluster { display: grid; gap: 8px; align-content: start; }
 .xft-cl-h { margin: 0; display: flex; align-items: center; gap: 8px; padding: 0 4px; font-size: 13px; }
-.xft-cl-h b { font-weight: 606; color: #0a0a0a; }
-.xft-cl-h span { font: 500 12px/1 var(--mono); padding: 4px 7px; border-radius: 999px; background: rgba(0, 0, 0, .07); color: #525252; }
+.xft-cl-h b { font-weight: 606; color: var(--ink); }
+.xft-cl-h span { font: 500 12px/1 var(--mono); padding: 4px 7px; border-radius: 999px; background: light-dark(rgba(0, 0, 0, .07), var(--glass-strong)); color: light-dark(#525252, var(--muted-foreground)); }
 .xft-keys { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .c2 .xft-keys { grid-template-columns: 1fr; }
-.xft-key { position: relative; display: grid; align-content: space-between; gap: 14px; min-height: 84px; padding: 10px 14px 12px; text-align: left; border-radius: 16px; border: 0; background: #fff; color: #0a0a0a; box-shadow: 0 5px 0 #d4d4d4, 0 12px 22px -14px rgba(0, 0, 0, .35); cursor: pointer; transition: transform .15s var(--eio), box-shadow .15s var(--eio), background-color .3s var(--eo), color .3s var(--eo), opacity .3s var(--eo); }
+.xft-key { position: relative; display: grid; align-content: space-between; gap: 14px; min-height: 84px; padding: 10px 14px 12px; text-align: left; border-radius: 16px; border: 0; background: light-dark(#fff, var(--secondary)); color: var(--ink); box-shadow: 0 5px 0 light-dark(#d4d4d4, var(--background)), 0 12px 22px -14px rgba(0, 0, 0, .35); cursor: pointer; transition: transform .15s var(--eio), box-shadow .15s var(--eio), background-color .3s var(--eo), color .3s var(--eo), opacity .3s var(--eo); }
 @media (hover: hover) { .xft-key:hover { transform: translateY(-1px); } }
-.xft-key.down, .xft-key:active { transform: translateY(4px); box-shadow: 0 1px 0 #d4d4d4, 0 4px 10px -8px rgba(0, 0, 0, .3); }
-.xft-key.on { background: #e4e4e7; color: #0a0a0a; transform: translateY(4px); box-shadow: inset 0 0 0 1.5px #0a0a0a, 0 1px 0 #d4d4d4; }
-.xft-key.on:active { transform: translateY(5px); box-shadow: inset 0 0 0 2px #0a0a0a; }
+.xft-key.down, .xft-key:active { transform: translateY(4px); box-shadow: 0 1px 0 light-dark(#d4d4d4, var(--background)), 0 4px 10px -8px rgba(0, 0, 0, .3); }
+.xft-key.on { background: light-dark(#e4e4e7, var(--muted)); color: var(--ink); transform: translateY(4px); box-shadow: inset 0 0 0 1.5px var(--ink), 0 1px 0 light-dark(#d4d4d4, var(--background)); }
+.xft-key.on:active { transform: translateY(5px); box-shadow: inset 0 0 0 2px var(--ink); }
 .xft-key.dim { opacity: .35; }
-.xft-key.hit:not(.on) { box-shadow: 0 5px 0 #d4d4d4, 0 0 0 2px #0a0a0a; }
-.xft-key:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 3px; }
-.xft-cap { font-size: 12px; color: #737373; }
-.xft-key.on .xft-cap { color: #525252; }
+.xft-key.hit:not(.on) { box-shadow: 0 5px 0 light-dark(#d4d4d4, var(--background)), 0 0 0 2px var(--ink); }
+.xft-key:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.xft-cap { font-size: 12px; color: light-dark(#737373, var(--text-tertiary)); }
+.xft-key.on .xft-cap { color: light-dark(#525252, var(--muted-foreground)); }
 .xft-key-t { font: 497 15px/1.2 var(--sans); letter-spacing: -.012em; }
 
 /* product rooms: rows beside a Hanzo film; the second room flips */
@@ -60,16 +62,16 @@
 .xft-prod-h { margin: 0; }
 .xft-prod-h a { display: inline-flex; align-items: center; min-height: 44px; color: inherit; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .3s var(--ez); }
 @media (hover: hover) { .xft-prod-h a:hover { background-size: 100% 1px; } }
-.xft-prod-tag { margin: 8px 0 0; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #525252; }
-.xft-rows { list-style: none; margin: 28px 0 0; padding: 0; border-bottom: 1px solid rgba(0, 0, 0, .1); }
-.xft-rows li { border-top: 1px solid rgba(0, 0, 0, .1); }
-.xft-rows button { display: flex; align-items: baseline; gap: 14px; width: calc(100% + 24px); min-height: 56px; margin: 0 -12px; padding: 14px 12px; border: 0; border-radius: 12px; background: none; color: #737373; text-align: left; cursor: pointer; transition: background-color .15s var(--eo), color .3s var(--eo); }
+.xft-prod-tag { margin: 8px 0 0; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: light-dark(#525252, var(--muted-foreground)); }
+.xft-rows { list-style: none; margin: 28px 0 0; padding: 0; border-bottom: 1px solid light-dark(rgba(0, 0, 0, .1), var(--border)); }
+.xft-rows li { border-top: 1px solid light-dark(rgba(0, 0, 0, .1), var(--border)); }
+.xft-rows button { display: flex; align-items: baseline; gap: 14px; width: calc(100% + 24px); min-height: 56px; margin: 0 -12px; padding: 14px 12px; border: 0; border-radius: 12px; background: none; color: light-dark(#737373, var(--text-tertiary)); text-align: left; cursor: pointer; transition: background-color .15s var(--eo), color .3s var(--eo); }
 .xft-rows button .x-mono { font-size: 12px; font-variant-numeric: tabular-nums; }
 .xft-rows button b { font: 497 17px/1.3 var(--sans); letter-spacing: -.012em; }
-.xft-rows li.on button { color: #0a0a0a; }
-@media (hover: hover) { .xft-rows button:hover { background: rgba(0, 0, 0, .04); color: #0a0a0a; } }
+.xft-rows li.on button { color: var(--ink); }
+@media (hover: hover) { .xft-rows button:hover { background: light-dark(rgba(0, 0, 0, .04), var(--glass)); color: var(--ink); } }
 .xft-rows button:active { transform: scale(.99); }
-.xft-rows button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+.xft-rows button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .xft-film-w { position: relative; }
 .xft-film { position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 20px; background: #000; overflow: hidden; color: #fafafa; text-decoration: none; isolation: isolate; }
 .xft-film .v2-mfilm { z-index: -1; transition: transform .6s var(--ez); }
@@ -86,7 +88,7 @@
 .xft-film-p { position: absolute; right: 14px; top: 14px; z-index: 2; }
 
 /* the close: three film cards, then the one ask */
-.xft-band { background: #f5f5f5; }
+.xft-band { background: light-dark(#f5f5f5, var(--muted)); }
 .xft-band-in { display: grid; justify-items: center; gap: 32px; text-align: center; }
 .xft-band-cards { display: grid; grid-template-columns: 5fr 4fr 3fr; gap: 12px; width: 100%; max-width: 900px; }
 .xft-bc { position: relative; display: flex; align-items: flex-end; height: 160px; padding: 16px; border-radius: 20px; background: #000; color: #fafafa; overflow: hidden; isolation: isolate; text-align: left; text-decoration: none; transition: transform .3s var(--eio); }
@@ -105,7 +107,7 @@
 .xft-film-t { font: 497 21px/1.2 var(--sans); letter-spacing: -.015em; }
 .xft-film-cap { align-items: baseline; }
 .xft-film-cap .x-mono { flex: none; }
-@media (hover: hover) { .xft-rows button:hover { background: #f5f5f5; } .xft-prod.p1 .xft-rows button:hover { background: rgba(255, 255, 255, .08); } }
+@media (hover: hover) { .xft-rows button:hover { background: light-dark(#f5f5f5, var(--secondary)); } .xft-prod.p1 .xft-rows button:hover { background: rgba(255, 255, 255, .08); } }
 /* Hanzo Dev: a full-bleed black room, the film as its ground, the rows in white */
 .xft-prod.p1 { position: relative; background: #000; color: #fafafa; overflow: hidden; isolation: isolate; padding: clamp(116px, 12vw, 188px) 0; }
 .xft-prod.p1 .xft-prod-in { grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); }
@@ -123,7 +125,7 @@
 .xft-prod.p2 .xft-film-w { order: -1; }
 .xft-prod.p2 .xft-film { aspect-ratio: 21 / 9; }
 .xft-prod.p2 .xft-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; border-bottom: 0; }
-.xft-prod.p2 .xft-rows li { border-bottom: 1px solid rgba(0, 0, 0, .1); }
+.xft-prod.p2 .xft-rows li { border-bottom: 1px solid light-dark(rgba(0, 0, 0, .1), var(--border)); }
 /* the title first, then the wide film, then the two rows side by side and the description under them */
 .xft-prod.p2 .xft-prod-in { align-items: start; }
 .xft-prod.p2 .xft-prod-w { display: contents; }
@@ -133,12 +135,12 @@
 
 /* round 4: one description panel (no height change as rows step), phone rooms stack for real, a two-line phone h1 */
 .xft-desc { display: grid; margin-top: 20px; }
-.xft-desc p { grid-area: 1 / 1; margin: 0; max-width: 54ch; font-size: 16px; line-height: 1.55; color: #525252; opacity: 0; transform: translateY(8px); transition: opacity .3s var(--eo), transform .4s var(--ez); }
+.xft-desc p { grid-area: 1 / 1; margin: 0; max-width: 54ch; font-size: 16px; line-height: 1.55; color: light-dark(#525252, var(--muted-foreground)); opacity: 0; transform: translateY(8px); transition: opacity .3s var(--eo), transform .4s var(--ez); }
 .xft-desc p.on { opacity: 1; transform: none; transition: opacity .3s var(--eo) .12s, transform .4s var(--ez) .12s; }
 .xft-desc p:not(.on) { transition-duration: .12s, .4s; }
 .xft-prod.p1 .xft-desc p { color: rgba(255, 255, 255, .78); }
 .xft-prod.p2 .xft-desc { grid-row: 4; margin-top: 0; }
-.xft-rows button[aria-pressed='true'] { color: #0a0a0a; }
+.xft-rows button[aria-pressed='true'] { color: var(--ink); }
 .xft-prod.p1 .xft-rows button[aria-pressed='true'] { color: #fafafa; }
 .xft-top { margin-bottom: 8px; }
 .xft-find { margin: 8px 0; }
@@ -152,7 +154,7 @@
   html.js .xft-gal { position: relative; height: calc(100svh + 170vw + 32px); }
   html.js .xft-gal-stage { position: sticky; top: 0; height: 100svh; overflow: clip; display: flex; align-items: center; }
   html.js .xft-gal-track { display: flex; gap: 16px; padding: 64px 6vw 24px; transform: translate3d(var(--gx, 0px), 0, 0); will-change: transform; }
-  html.js .xft-gal .xft-prod { flex: 0 0 86vw; height: calc(100svh - 112px); padding: 0; display: grid; align-content: center; border-radius: 28px; overflow: hidden; background: #f5f5f5; }
+  html.js .xft-gal .xft-prod { flex: 0 0 86vw; height: calc(100svh - 112px); padding: 0; display: grid; align-content: center; border-radius: 28px; overflow: hidden; background: light-dark(#f5f5f5, var(--muted)); }
   html.js .xft-gal .xft-prod.p1 { background: #000; }
   html.js .xft-gal .xft-prod .w2-wrap { width: 100%; padding-inline: clamp(32px, 4vw, 72px); box-sizing: border-box; }
   html.js .xft-gal .xft-prod.p0 .xft-film { aspect-ratio: auto; height: min(calc(100svh - 240px), 460px); }
@@ -160,8 +162,8 @@
   html.js .xft-gal .xft-prod.p2 .xft-film { aspect-ratio: auto; height: clamp(180px, calc(100svh - 450px), 400px); }
   html.js .xft-gal .xft-prod.p2 .xft-rows button { min-height: 48px; padding-block: 10px; }
   html.js .xft-gal .xft-prod.p2 .xft-desc { margin-top: -8px; }
-  html.js .xft-gal-bar { position: absolute; left: 6vw; right: 6vw; bottom: 10px; display: block; height: 2px; border-radius: 2px; background: #e4e4e4; overflow: hidden; }
-  html.js .xft-gal-bar i { position: absolute; inset: 0; background: #0a0a0a; transform: scaleX(var(--gp, 0)); transform-origin: 0 50%; }
+  html.js .xft-gal-bar { position: absolute; left: 6vw; right: 6vw; bottom: 10px; display: block; height: 2px; border-radius: 2px; background: light-dark(#e4e4e4, var(--secondary)); overflow: hidden; }
+  html.js .xft-gal-bar i { position: absolute; inset: 0; background: var(--ink); transform: scaleX(var(--gp, 0)); transform-origin: 0 50%; }
 }
 /* phones (one block): the h1 on two lines; the display sits in the instrument (never sticky over the keys); the three
    rooms ride the swipe rail, each with its own order: Chat film then rows, Dev words then a film strip, Design title,
@@ -201,7 +203,7 @@
   /* the swipe rail */
   .xft-gal-track { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; padding: 8px 16px 24px; overscroll-behavior-x: contain; scrollbar-width: none; }
   .xft-gal-track::-webkit-scrollbar { display: none; }
-  .xft .xft-gal .xft-prod { flex: 0 0 calc(100% - 36px); min-width: 0; scroll-snap-align: start; border-radius: 24px; overflow: hidden; background: #f5f5f5; padding: 0 0 28px; }
+  .xft .xft-gal .xft-prod { flex: 0 0 calc(100% - 36px); min-width: 0; scroll-snap-align: start; border-radius: 24px; overflow: hidden; background: light-dark(#f5f5f5, var(--muted)); padding: 0 0 28px; }
   .xft .xft-gal .xft-prod.p1 { background: #000; padding: 24px 0 0; }
   .xft .xft-gal .xft-prod.p2 { padding-top: 20px; }
   .xft .xft-gal .xft-prod.p1 .xft-prod-in { gap: 24px; }
@@ -209,3 +211,7 @@
   .xft-gal .xft-prod-w { padding-inline: 18px; }
   .xft .xft-gal .xft-prod .xft-film { border-radius: 0; }
 }
+
+/* dark: the shared .w2-cta is hard-coded ink on white; on this page it takes Hanzo's primary ask in dark (#fafafa, dark text) */
+.xft .w2-cta { background: light-dark(#0a0a0b, var(--primary)); color: light-dark(#fff, var(--primary-foreground)); }
+@media (hover: hover) { .xft .w2-cta:hover { background: light-dark(#2c2c2e, var(--primary-hover)); } }
