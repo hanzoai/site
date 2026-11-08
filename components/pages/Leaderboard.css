@@ -17,6 +17,37 @@
   overflow-x: clip;
 }
 .xlb .pf-btn.solid:hover { background: var(--k-dark); border-color: var(--k-dark); }
+/* dark mode (docs/DARK-MODE.md): the same ramp, re-pointed by role at Hanzo's own dark tokens, as live hanzo.ai wears
+   them (page --background, surfaces --muted / --secondary, text --foreground and --muted-foreground, hairlines --border,
+   primary a light fill with dark type). The two black rooms ([data-room=dark]) keep the light ramp, so they stand as they are. */
+html:not(.light) .xlb {
+  --k-white: var(--background); --k-quiet: var(--muted); --k-muted: var(--secondary); --k-track: var(--secondary);
+  --k-dim: var(--text-tertiary); --k-body: var(--muted-foreground); --k-dark: var(--foreground); --k-ink: var(--foreground);
+  --k-on-ink: var(--primary-foreground); --k-primary: var(--primary);
+  --k-sheen: linear-gradient(160deg, var(--secondary) 0%, var(--muted) 100%);
+  --k-hair: var(--border); --k-hair-2: var(--border-control); --k-hair-3: var(--border-strong);
+  /* live's hero glow, as hanzo.ai draws it in dark */
+  --k-glow: radial-gradient(60% 70% at 50% 0%, rgba(229, 229, 229, .09), transparent 70%);
+}
+html:not(.light) .xlb [data-room='dark'] {
+  --k-white: #ffffff; --k-quiet: #f5f5f5; --k-muted: #ededed; --k-track: #d4d4d4; --k-dim: #737373; --k-body: #525252;
+  --k-dark: #262626; --k-ink: #0a0a0a; --k-hair: rgba(0, 0, 0, .1); --k-hair-2: rgba(0, 0, 0, .14); --k-hair-3: rgba(0, 0, 0, .3);
+  --ink: var(--k-ink); --soft: var(--k-body); --faint: var(--k-dim); --line: var(--k-hair); --card: var(--k-quiet);
+}
+html:not(.light) .xlb-hero { background: var(--k-glow); }
+html:not(.light) .xlb .pf-lede, html:not(.light) .xlb .pf-body:not([data-room='dark'] *) { color: var(--k-body); }
+html:not(.light) .xlb .pf-kick { color: var(--k-dim); }
+/* live's primary button in dark is a white fill with dark type */
+html:not(.light) .xlb-hero .pf-btn.solid { background: var(--k-primary); border-color: var(--k-primary); }
+@media (hover: hover) { html:not(.light) .xlb-hero .pf-btn.solid:hover { background: var(--k-ink); border-color: var(--k-ink); } }
+html:not(.light) .xlb .pf-btn:not(.solid) { border-color: var(--k-hair); }
+html:not(.light) .xlb .pf-obj, html:not(.light) .xlb-tape, html:not(.light) .xlb-calc-out { box-shadow: inset 0 0 0 1px var(--k-hair); }
+html:not(.light) .xlb-step[data-on='true'] .xlb-block b, html:not(.light) .xlb-tags span:first-child { color: var(--k-on-ink); }
+html:not(.light) .xlb-stepper { background: var(--k-quiet); }
+html:not(.light) .xlb-stepper button { background: var(--k-muted); }
+@media (hover: hover) { html:not(.light) .xlb-stepper button:hover:not(:disabled) { color: var(--k-on-ink); } }
+html:not(.light) .xlb-tok-in input::-webkit-slider-thumb { background: var(--k-ink); }
+html:not(.light) .xlb-tok-in input::-moz-range-thumb { background: var(--k-ink); }
 .xlb .pf-plus.ghost i { background: var(--k-muted); }
 
 /* 1. hero: the headline, then the podium as the hero object, all in the first screen */
