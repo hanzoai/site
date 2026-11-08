@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { EASE, Head, Arrow, Count, Rise } from './ui';
+import { CODING as K1, KAI as K2 } from './home/figures';
 
 /* One lane of a race at true speed: every bar grows at the same rate, so the faster one simply stops first. */
 function Lane({ t, max, who, ms, done, label, hi }) {
@@ -66,32 +67,29 @@ export default function Race() {
         <div className="x-races">
           <RaceCard
             kicker="Hanzo Dev vs Claude Code"
-            big={3.02} decimals={2}
+            big={K1.big} decimals={2}
             cap="faster on the same coding tasks"
-            note="Paired over 42 tasks both agents solved · 95% interval 2.06–4.36×."
+            note={`Paired over ${K1.n} tasks both agents solved · 95% interval ${K1.lo}–${K1.hi}×.`}
             title="Median time a task · less time is faster"
-            lanes={[{ who: 'Hanzo Dev', ms: 2290, done: '2.29 s', hi: true }, { who: 'Claude Code', ms: 9520, done: '9.52 s' }]}
+            lanes={[{ who: 'Hanzo Dev', ms: K1.ours.ms, done: K1.ours.done, hi: true }, { who: 'Claude Code', ms: K1.base.ms, done: K1.base.done }]}
             extra={(
               <dl className="x-facts">
-                <div><dt>Settled by search, no model call, 24 tasks</dt><dd className="x-mono">8.22× faster</dd></div>
-                <div><dt>model calls a task</dt><dd className="x-mono">1.0 vs 3.8</dd></div>
+                <div><dt>{`Settled by search, no model call, ${K1.search.n} tasks`}</dt><dd className="x-mono">{`${K1.search.x}× faster`}</dd></div>
+                <div><dt>model calls a task</dt><dd className="x-mono">{`${K1.calls[0]} vs ${K1.calls[1]}`}</dd></div>
               </dl>
             )}
             link={<Arrow href="/benchmarks#coding-agent">Every coding task and both runs</Arrow>}
           />
           <RaceCard
             kicker="Kai vs an LLM call"
-            big={9.6} decimals={1}
+            big={K2.big} decimals={1}
             cap="faster than an LLM call, over the network"
-            note="Each a p50 timed at the client, network included: a Claude Sonnet 5.5 call as Claude Code saw it, over 650 calls, and a Kai decision on api.hanzo.ai, over 100. Served on one GPU with no network, its input repeated, Kai answers in 0.8 ms."
+            note={`Each a p50 timed at the client, network included: a ${K2.model} call as Claude Code saw it, over ${K2.llmN} calls, and a Kai decision on api.hanzo.ai, over ${K2.kaiN}. Served on one GPU with no network, its input repeated, Kai answers in ${K2.gpu.done}.`}
             title="Average time & Kai speedup per call · less time is faster"
             lanes={[
-              { who: 'Kai served on one GPU, no network', ms: 0.8, done: '0.8 ms', hi: true },
-              { who: 'Kai on api.hanzo.ai', ms: 241, done: '241 ms', hi: true },
-              { who: 'Claude Haiku 4.5', ms: 1120, done: '4.7× · 1,120 ms' },
-              { who: 'Claude Sonnet 5.5', ms: 2307, done: '9.6× · 2,307 ms' },
-              { who: 'Claude Opus 5', ms: 3180, done: '13.2× · 3,180 ms' },
-              { who: 'Claude Fable 5.1', ms: 3840, done: '16× · 3,840 ms' },
+              { who: 'Kai served on one GPU, no network', ms: K2.gpu.ms, done: K2.gpu.done, hi: true },
+              { who: 'Kai on api.hanzo.ai', ms: K2.net.ms, done: K2.net.done, hi: true },
+              ...K2.lanes,
             ]}
             link={(
               <div className="x-row-links tight">

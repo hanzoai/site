@@ -2,18 +2,23 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { EASE, Head, Arrow, Rise } from './ui';
+import { GPQA } from './home/figures';
 
 // placed exactly where Hanzo's own chart places them (log cost across, accuracy up).
 // [name as Hanzo writes it, label on the chart, GPQA Diamond %, $ per 1,000 questions as Hanzo prints it, kind, reported by, date, source]
 // kind: m = one model tested on the same 198 questions, r = a score reported by a lab or an independent evaluation, e = an Enso tier
+// single models (each at its best run on the same 198 questions, the cost it filed per 1,000) and Enso's tiers (questions
+// it has seen, at its cost on new ones) come from the research runs hanzo.ai reads (components/home/figures.js); the
+// scores reported by a lab or an independent evaluation are the ones hanzo.ai cites, with their sources.
+const short = (n) => n.replace(/^Claude /, '').replace(/ \d{4}$/, '');
+const c2 = (x) => (x >= 1 ? x.toFixed(2) : String(+x.toPrecision(3)));
 const D = [
-  ['DeepSeek V4 Pro 0423', 'DeepSeek V4 Pro', 76.3, '1.05', 'm'], ['Claude Sonnet 5', 'Sonnet 5', 77.8, '42.91', 'm'], ['Claude Fable 5', 'Fable 5', 82.8, '14.95', 'm'], ['Claude Haiku 5.5', 'Haiku 5.5', 83.3, '1.07', 'm'],
-  ['Claude Opus 4.8', 'Opus 4.8', 87.4, '45.01', 'm'], ['Claude Fable 5.1', 'Fable 5.1', 87.9, '46.25', 'm'], ['Claude Sonnet 5.5', 'Sonnet 5.5', 90.4, '10.41', 'm'], ['GPT-5.5', 'GPT-5.5', 90.4, '18.64', 'm'],
-  ['GLM 5.3', 'GLM 5.3', 90.9, '0.945', 'r', 'Epoch AI (independent)', '2026-08-14', 'https://epoch.ai/models/glm-5-3'], ['Claude Opus 5.5', 'Opus 5.5', 90.9, '21.23', 'm'], ['GPT-5.6 Sol', 'GPT-5.6 Sol', 91.9, '10.08', 'm'],
+  ...GPQA.measured.filter((d) => d.accuracy >= 0.7).map((d) => [d.name, short(d.name), +(d.accuracy * 100).toFixed(1), c2(d.cost), 'm']),
+  ['GLM 5.3', 'GLM 5.3', 90.9, '0.945', 'r', 'Epoch AI (independent)', '2026-08-14', 'https://epoch.ai/models/glm-5-3'],
   ['Grok 4.7', 'Grok 4.7', 92.7, '4.57', 'r', 'Epoch AI (independent)', '2026-09-21', 'https://epoch.ai/models/grok-4-7'],
   ['Kimi K3', 'Kimi K3', 93.5, '10.61', 'r', 'Moonshot AI (lab)', '2026-07-16', 'https://github.com/MoonshotAI/Kimi-K3'],
   ['GPT-6 Sol', 'GPT-6 Sol', 94.3, '5.09', 'r', 'Epoch AI (independent)', '2026-09-22', 'https://epoch.ai/models/gpt-6-sol'],
-  ['Enso Flash', 'Enso Flash', 95.5, '3.26', 'e'], ['Enso', 'Enso', 96.5, '10.03', 'e'], ['Enso Ultra', 'Enso Ultra', 98.0, '14.76', 'e'],
+  ...GPQA.tiers.map((t) => [t.name, t.name, +(t.seen * 100).toFixed(1), c2(t.per1k), 'e']),
 ];
 // Hanzo's words for each point, kept in the page for readers who cannot hover
 const say = (full, a, c, k, who, date, src) => (k === 'm'
