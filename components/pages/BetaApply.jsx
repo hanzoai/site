@@ -302,6 +302,8 @@ function Apply({ program }) {
                     : <Cta kind="quiet" disabled={busy || !canSkip} onClick={() => (last ? enough && submit() : to(step + 1))} id={`beta.${program}.skip`}>Skip</Cta>}
                 </div>
               </div>
+              {/* the paid path, as on /beta: no waitlist, straight to the Go checkout (Zack's GA list, 8 Nov) */}
+              <p className="xba-paid"><a href="https://hanzo.ai/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat" data-cta={`beta.${program}.go-paid`}>Skip the wait, go paid</a></p>
               <label className="xba-trap" aria-hidden="true">
                 <span>Leave this empty</span>
                 <input tabIndex={-1} autoComplete="off" name="website" value={trap} onChange={(e) => setTrap(e.target.value)} />
