@@ -340,3 +340,16 @@ html:not(.js) .xsk-get-done :is(.xsk-gd-out i, .xsk-gd-ok) { transform: none; op
 html:not(.light) .xsk-scenes, html:not(.light) .xsk-pt-vis, html:not(.light) .xsk-get-card { box-shadow: inset 0 0 0 1px var(--border); }
 /* dark: the shared A2 kit sets its greys on .a2 for bright rooms only; this page gives them Hanzo's dark values */
 html:not(.light) .xsk.a2 { --acc: var(--foreground); --acc-soft: var(--muted); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --card: var(--x-raised); --line: var(--border); }
+
+/* Hanzo's dark hero texture, measured from live hanzo.ai dark (8 Nov): 7px dot grid, dots ~35% foreground, densest at the
+   left/right edges and toward the bottom, plus live's top glow radial-gradient(60% 70% at 50% 0%, foreground 9%, transparent 70%).
+   Dark only, so bright stays pixel-identical. Replace .xsk.a2 .xsk-hero with the page's hero class. */
+html:not(.light) .xsk.a2 .xsk-hero { position: relative; isolation: isolate; }
+html:not(.light) .xsk.a2 .xsk-hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0,0,0,.15) 32%, rgba(0,0,0,.15) 64%, #000), linear-gradient(180deg, rgba(0,0,0,.25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .xsk.a2 .xsk-hero::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
