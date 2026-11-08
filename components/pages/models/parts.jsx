@@ -25,8 +25,8 @@ export function useCatalog(need) {
     let gone = false;
     CAT ||= raw().then((data) => Object.fromEntries(data
       .filter((x) => x.pricing && x.pricing.input_per_million != null)
-      .map((x) => [x.id, { in: +x.pricing.input_per_million, out: +x.pricing.output_per_million }]))).catch(() => { CAT = null; return {}; });
-    CAT.then((m) => { if (!gone) setMap(m); });
+      .map((x) => [x.id, { in: +x.pricing.input_per_million, out: +x.pricing.output_per_million }]))).catch(() => { CAT = null; return null; }); // a failed read is no answer (null), not an empty price list
+    CAT.then((m) => { if (!gone && m) setMap(m); });
     return () => { gone = true; };
   }, [need]);
   return map;
@@ -240,7 +240,8 @@ export function Also({ cards }) {
         return (
           <li key={c.href}>
             <A to={c.href} className={'xmf-also-a' + (far ? ' far' : '')} {...(far ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
-              <b>{c.name}<i aria-hidden="true">{far ? '↗' : '→'}</i>{far && <span className="x-sr"> (opens in a new tab)</span>}</b>
+              <b><span>{c.name}</span><i aria-hidden="true">{far ? '↗' : '→'}</i>{far && <span className="x-sr"> (opens in a new tab)</span>}</b>
+              {(c.mid || c.id) && <span className="x-mono xmf-also-id">{c.mid || c.id}</span>}
               {c.ctx && <span className="x-mono xmf-also-c">{c.ctx}</span>}
               {c.desc && <span className="xmf-also-d">{c.desc}</span>}
             </A>

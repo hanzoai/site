@@ -2844,7 +2844,7 @@
 "description": "The relace-search model uses 4-12 `view_file` and `grep` tools in parallel... Call via Hanzo's OpenAI-compatible API. Context: 256K."
 },
 "/models/ricursiveai/ripple-65b-preview": {
-"title": "ricursiveAI/Ripple-65B-Preview — Use via Hanzo AI API",
+"title": "Ripple 65B Preview — Use via Hanzo AI API",
 "description": "Ripple-65B-Preview by ricursiveAI, a 65B model with native tool calling, se... Call via Hanzo's OpenAI-compatible API. Context: 1M."
 },
 "/models/runway/gen-4.5": {

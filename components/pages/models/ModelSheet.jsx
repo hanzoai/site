@@ -78,8 +78,11 @@ function Spec({ g, price, rate, lead }) {
 export default function ModelSheet({ doc }) {
   // the rate is read from api.hanzo.ai as hanzo.ai reads it (the captured rate is the first paint)
   const cat = useCatalog(true);
-  const rate = rateFrom(cat, doc.id, doc.rate);
-  const price = (rate && (doc.rate || !doc.price) ? rateText(rate) : doc.price) || DASH;
+  // once the gateway has answered without this model, hanzo.ai prints "No published rate" (its own words), whatever
+  // the capture once read
+  const unpriced = !!cat && !cat[doc.id] && !cat[doc.id.replace(/^hanzo\//, '')];
+  const rate = unpriced ? null : rateFrom(cat, doc.id, doc.rate);
+  const price = unpriced ? 'No published rate' : (rate && (doc.rate || !doc.price) ? rateText(rate) : doc.price) || DASH;
   // the maker's other models as hanzo.ai lists them now (api.hanzo.ai/v1/models), the captured ones until it answers
   const shelf = useShelf(doc.provider.slug, doc.siblings);
   const live = shelf !== doc.siblings ? shelf.filter((s) => s.href !== doc.route) : null;
@@ -113,11 +116,9 @@ export default function ModelSheet({ doc }) {
   // then the maker's nearest by context and output rate; six at most. Hanzo's other "More from" cards follow as one-line
   // links (Also), the ones without a page here opening hanzo.ai in a new tab and saying so.
   const near = (s) => Math.abs(Math.log10((s.tokens || 1) / (doc.tokens || 1))) + (s.rate && rate ? Math.abs(Math.log10((s.rate.out + 0.01) / (rate.out + 0.01))) : 3);
-  // hanzo.ai's "More from" is the first of the maker's other models in its list; where the capture shows that, it
-  // follows the live list (so a model added since reads as on hanzo.ai)
   const cap = doc.more ? doc.more.cards : [];
-  const lead = (l) => l.slice(0, cap.length).map((c) => c.href).join(' ');
-  const more = live && cap.length && lead(cap) === lead(doc.siblings) ? live.slice(0, Math.max(cap.length, 6)).map((s) => cap.find((c) => c.href === s.href) || s) : cap;
+  // hanzo.ai's own More from (captured), in its order and words: its list is no longer the gateway's (8 Nov)
+  const more = cap;
   const rail = [
     ...more.filter((c) => isLocal(c.href)),
     ...sibs.filter((s) => isLocal(s.href) && !more.some((c) => c.href === s.href)).sort((a, b) => near(a) - near(b)),
@@ -266,7 +267,7 @@ export default function ModelSheet({ doc }) {
                   const sib = sibs.find((x) => x.href === c.href);
                   return (
                     <li key={c.href}>
-                      <SpecCard to={c.href} title={c.name} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...(sib && sib.rate ? [`${money(sib.rate.in)} → ${money(sib.rate.out)}`] : [])]} />
+                      <SpecCard to={c.href} title={c.name} meta={<span className="xmf-id">{c.mid || c.id || (sib && sib.id)}</span>} desc={c.desc} tags={[...(c.ctx ? [c.ctx] : []), ...(sib && sib.rate ? [`${money(sib.rate.in)} → ${money(sib.rate.out)}`] : [])]} />
                     </li>
                   );
                 })}
