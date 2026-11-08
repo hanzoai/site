@@ -3,6 +3,7 @@
 Reviewed 2026-11-07, walked moving at 1470x801 and 375x812 (wheel steps of 400px every 700ms, rest pairs on the first screen and mid-page, hover/press/type/open/copy/Esc/Tab crawl). Proof: `docs/review/base/` (desktop-first.jpg, phone-first.jpg, desktop-walk.jpg, phone-walk.jpg).
 
 Verdict: 7.5/10
+Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). The first record lands at 0.6 s, author cells show the users record they point at, the new record's title fills in as it lands, the deploy console carries Hanzo's own caption again, and on phones the map's zoom ends with the collection card whole across the width (it overshot and cut 'posts' mid-word). copycheck missing 0 of 47; taste/unique OK; 0 console errors (also under reduced motion), no overflow at 1470 and 375. Usable: declare a collection, run the binary, deploy, with Hanzo's docs and GitHub links. Left alone: title cells are still bars (no invented titles under the copy rule).
 
 First complaint: "It's clean, but it looks like a wireframe. Every row and every card is grey placeholder bars, and for the first three seconds the admin just sits there. Make it feel like a real product that's alive the moment I land."
 

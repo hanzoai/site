@@ -161,6 +161,7 @@ function Bill() {
                       <span className="xcm-l-n">{s.name}</span>
                       <span className="xcm-l-d" aria-hidden="true" />
                       <span className="xcm-l-p">{usd(s.c)}</span>
+                      <span className="xcm-l-i">{s.imgs.map((m) => m[1]).join(' · ')}</span>
                     </button>
                   </li>
                 ))}
@@ -213,7 +214,7 @@ function Holding() {
   const chapters = DUTIES.map(([t, d], i) => ({
     kicker: String(i + 1).padStart(2, '0'),
     title: t,
-    body: <p className="pf-lede xcm-duty">{d}<span className="xcm-d-p pf-mono" aria-hidden="true"> $ ?</span></p>,
+    body: <p className="pf-lede xcm-duty"><span>{d}</span><span className="xcm-d-p pf-mono" aria-hidden="true"> $ ?</span></p>,
   }));
   return (
     <SceneWipe className="xcm-dark" label="And the part that is not a line item">

@@ -33,7 +33,7 @@ Done here: links are `A`, `More` and the kit `Cta`; parity links 7/7; the ten no
 - [x] Ends in proof strip, `Band`, footer (the close: one 44px sentence, the ask, a full-width "View on GitHub" row, then the footer about 72px below it)
 - [ ] Card-to-page links use Morph; title lands within 12px (n/a: noun cards open panels in place)
 
-Done here: at 1470×801 the h1 sits at y 267–321 (bottom at 40% of the screen) with the lede beside it at y 194–253, and the full-bleed rail (y 365–725) sits under them, as on the phone (h1 132–174). The order's first move is at 700ms on first view (then every 3.2s), so the t≈1.1s shot already shows stop 02. The journey no longer repeats the hero's cards: each stop is a line drawing that draws itself as its pane lands, with its endpoint rows arriving one by one. Section gaps after the processor switch are about 88px at 1470 (were 160–250px).
+Done here: at 1470×801 the h1 sits at y 267–321 (bottom at 40% of the screen) with the lede beside it at y 194–253, and the full-bleed rail (y 365–725) sits under them, as on the phone (h1 132–174). The order's first move is at 700ms on first view (then every 3.2s), so the t≈1.1s shot already shows stop 02. The journey no longer repeats the hero's cards: each stop is a line drawing that draws itself as its pane lands, with its endpoint rows arriving one by one. Section gaps after the processor switch are about 88px at 1470 (were 160–250px). (8 Nov) The close stands alone: a full section pad (116–188px) now separates it from the ways rows and Get Commerce.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -41,7 +41,7 @@ Done here: at 1470×801 the h1 sits at y 267–321 (bottom at 40% of the screen)
 - [x] Copy button copies exactly the displayed text; failure never says Copied (n/a: no copy button)
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: hero `<Cta to={DOCS} id="commerce.hero" thumb>Read the docs</Cta>`, close `<Cta id="commerce.close">`, "API Platform" is `<Cta kind="link" id="commerce.platform">`.
+Done here: hero `<Cta to={DOCS} id="commerce.hero" thumb>Read the docs</Cta>`, close `<Cta id="commerce.close">`, "API Platform" is `<Cta kind="link" id="commerce.platform">`. (8 Nov) While the close's solid "Read the docs" is on screen the header ask goes quiet, so one solid fill per viewport.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number

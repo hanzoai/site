@@ -350,7 +350,8 @@
   .xbr-dt .x-table th, .xbr-dt .x-table td { padding: 11px 12px; }
 }
 /* the detail sheet opens below the site header, so its title and close stay in view */
-@media (min-width: 901px) { .xbr .v2f-sheet-p { top: 72px; } }
+/* wide enough for the widest captured table (fleet, 749px), so no column is cut on desktop */
+@media (min-width: 901px) { .xbr .v2f-sheet-p { top: 72px; width: min(860px, calc(100vw - 24px)); } }
 /* the source's reply: the run ids the page links, then the page's own figures */
 .xbr-src-reply { display: grid; gap: 18px; }
 .xbr-src-reply pre { margin: 0; font-size: 14px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -371,7 +372,7 @@ html.js .xbr-parts:not([data-seen]) .xbr-parts-g i { transform: scale(.2); opaci
 .xbr-parts-f b { font-size: clamp(26px, 2.4vw, 34px); font-weight: 500; letter-spacing: -.02em; color: var(--ink); white-space: nowrap; }
 .xbr-scale-b { position: relative; flex: 1; min-height: 0; width: auto; max-width: 100%; aspect-ratio: 1; align-self: flex-start; }
 .xbr-sq { position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; border-radius: 6px; transform-origin: 0 100%; transform: scale(var(--s)); transition: transform 1s var(--out) calc(var(--i) * 70ms); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .22); }
-.xbr-sq.b { background: #e4e4e7; box-shadow: none; }
+.xbr-sq.b { background: #e4e4e7; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .22); } /* outlined: the published figure reads as an area, Hanzo's as the dot in its corner */
 .xbr-sq.a { background: var(--ink); box-shadow: none; }
 .xbr-scale .xbr-sq.o { box-shadow: inset 0 0 0 2px var(--ink); }
 .xbr-bars-sq .xbr-sq.a { background: rgba(0, 0, 0, .1); box-shadow: inset 0 0 0 2px var(--ink); }

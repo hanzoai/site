@@ -117,7 +117,7 @@ function Hero() {
         </div>
         <div className="cli-body">
           <h1 id="cli-h1" className="av-display cli-h1"><span className="cli-m"><span>An AI engineer</span></span> <span className="cli-m"><span>in your terminal</span></span></h1>
-          <p className="av-lede cli-lede">Type <code>hanzo</code> in a repo and you get a coding session. Type <code>hanzo</code> and a noun and you get the rest of the cloud — identity, usage, billing, clusters, machines, networks — typed straight from the API&apos;s own document.</p>
+          <p className="av-lede cli-lede">Type hanzo in a repo and you get a coding session. Type hanzo and a noun and you get the rest of the cloud — identity, usage, billing, clusters, machines, networks — typed straight from the API&apos;s own document.</p>
           <Session onDone={setDone} paused={paused} runKey={runKey} />
           <div className="cli-acts">
             <div className="cli-acts-row">
@@ -309,7 +309,7 @@ function Claim({ c, t, d, i }) {
         <span className="cli-win-bar"><i /><i /><i /><b className="x-mono av-num">{String(i + 1).padStart(2, '0')}</b></span>
         <span className="cli-three-c x-mono"><span className="cli-win-l"><span>$ </span>{i === 2 ? <s>{c}</s> : c}</span><span className="cli-caret" /></span>
       </span>
-      <h3 className="av-title"><span className="cli-three-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span>{t}</h3>
+      <h3 className="av-title"><span className="cli-three-n x-mono av-num">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></h3>
       <p className="av-body">{d}</p>
     </li>
   );
@@ -325,7 +325,7 @@ function What() {
           <span className="cli-noise" aria-hidden="true" />
           <div className="cli-what-top">
             <Lines as="h2" id="cli-tree-h" className="av-display s cli-tree-h" lines={['A resource tree,', 'not a pile of flags']} />
-            <p className="av-lede cli-what-lede"><code>hanzo &lt;resource&gt; &lt;command&gt;</code>. The resources beyond the hand-written ones are generated from the OpenAPI documents, so the CLI can only ask for things the API has.</p>
+            <p className="av-lede cli-what-lede">hanzo &lt;resource&gt; &lt;command&gt;. The resources beyond the hand-written ones are generated from the OpenAPI documents, so the CLI can only ask for things the API has.</p>
           </div>
           <Compare tree={TREE} labelledBy="cli-tree-h" go={go} />
         </Enter>
@@ -380,7 +380,7 @@ function Caps() {
               <code><span aria-hidden="true">$ </span>{c}</code>
               <Copy text={c} label={'Copy ' + c} />
             </div>
-            <h3 className="av-title"><span className="cli-cap-n x-mono av-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{t}</h3>
+            <h3 className="av-title"><span className="cli-cap-n x-mono av-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></h3>
             <p>{d}</p>
           </li>
         ))}

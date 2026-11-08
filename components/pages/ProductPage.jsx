@@ -216,7 +216,9 @@ function Console({ p, sents }) {
           {/* the pane's body: the request, or one of Hanzo's sentences, in the same place (the paragraph is read whole below) */}
           <div className="xpd-stack xpd-req-s">
             <div className="xpd-req-b" tabIndex={step === 0 ? 0 : -1} data-lenis-prevent data-swipe-own data-on={step === 0 ? '' : undefined} aria-hidden={step !== 0 || undefined}>
-              <pre><code>{p.tryIt.toks.map(([k, t], i) => <span key={i} data-t data-k={k}>{t}</span>)}</code></pre>
+              {/* the request whole for readers (and the copy check); the coloured tokens below type themselves */}
+              <p className="x-sr">{code}</p>
+              <pre aria-hidden="true"><code>{p.tryIt.toks.map(([k, t], i) => <span key={i} data-t data-k={k}>{t}</span>)}</code></pre>
             </div>
             {sents.map((t, k) => <p key={k} className="xpd-sent" aria-hidden="true" data-on={step === k + 1 ? '' : undefined}>{t}</p>)}
           </div>
@@ -266,14 +268,14 @@ function Measured({ m }) {
             <li key={l.href}>
               <A to={l.href} className="xpd-meas-c">
                 {k === 0 ? <FamGrow to={1.6}><b className="v2f-num v2f-fig" aria-hidden="true">{l.fig}</b></FamGrow> : <b className="v2f-num v2f-fig" aria-hidden="true">{l.fig}</b>}
-                <span className="xpd-meas-t"><b>{l.name}</b>{l.rest ? ': ' + l.rest : ''}</span>
+                <span className="x-sr">{l.text}</span><span className="xpd-meas-t" aria-hidden="true"><b>{l.name}</b>{l.rest ? ': ' + l.rest : ''}</span>
               </A>
             </li>
           ))}
         </ul>
         {!!plain.length && (
           <ul className="xpd-meas-rows" data-enter="rule">
-            {plain.map((l) => <li key={l.href}><A to={l.href} className="xpd-meas-r"><span><b>{l.name}</b>{l.rest ? ': ' + l.rest : ''}</span></A></li>)}
+            {plain.map((l) => <li key={l.href}><A to={l.href} className="xpd-meas-r"><span className="x-sr">{l.text}</span><span aria-hidden="true"><b>{l.name}</b>{l.rest ? ': ' + l.rest : ''}</span></A></li>)}
           </ul>
         )}
       </div>

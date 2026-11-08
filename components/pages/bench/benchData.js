@@ -1,6 +1,7 @@
 /* Server side: one benchmark page (/benchmarks/<slug>, 27 of them) read from Hanzo's captured HTML, flattened into
    blocks the template re-draws, plus the chart hanzo.ai draws in the browser (content/live). The chart's numbers are
    parsed from Hanzo's own table cells; its labels are Hanzo's strings, never ours. */
+// content files are read at render time; the GPQA list-price date follows hanzo.ai (Nov 7 on 8 Nov)
 import fs from 'node:fs';
 import path from 'node:path';
 import { load, find, findAll, textOf, tag, isN } from '../htmltree';

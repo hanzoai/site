@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; prices from `lib/plans.js`
 - [x] Open copy questions for James listed, none decided
 
-Done here: Header carries Persona, Metric, Goal, CTA, Signature, Beyond and V2. The header's "Try Hanzo" is the one solid fill; the page's own "Try Hanzo" (same words) is a quiet `Cta` in the hero and the close (measured: 0 solids inside `<main>` at both sizes). `lib/cta.js` and `lib/plans.js` do not exist yet; the live labels and hrefs are used; no prices on this page.
+Done here: Header carries Persona, Metric, Goal, CTA, Signature, Beyond and V2. The header's "Try Hanzo" is the one solid fill; the page's own "Try Hanzo" (same words) is the solid `Cta` in the hero (the only black on the first screen; the product pills are quiet grey) and in the close; the header rests quiet until the hero ask leaves. `lib/cta.js` and `lib/plans.js` do not exist yet; the live labels and hrefs are used; no prices on this page.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it
@@ -41,7 +41,7 @@ Done here: h1 at 52px (CSS line cut-in), the ask beside it with "Now Available" 
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta id="blockchain.hero|blockchain.close" kind="quiet" thumb>Try Hanzo</Cta>`; the site's header and bar carry "Try Hanzo" (named by `data-ask-name="Hanzo Blockchain"`). The agent code copies through the kit `CodeBlock` (copies the displayed text, says Copied only on success).
+Done here: `<Cta id="blockchain.hero|blockchain.close" kind="solid" thumb>Try Hanzo</Cta>`; the site's header and bar carry "Try Hanzo" (named by `data-ask-name="Hanzo Blockchain"`). The agent code copies through the kit `CodeBlock` (copies the displayed text, says Copied only on success).
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number
@@ -57,7 +57,7 @@ Done here: The counts shown (k / 15 product pages name a chain, "36 chains on it
 - [x] Tables, FAQ, tabs and code use the kit parts
 - [x] `python3 scripts/parity.py /<path>`: 0 missing
 
-Done here: Parity text 153/153, links 16/16. 0 text under 14px at 375 except the kit `CodeBlock` (13.5px code, the MASTER spec). The matrix is `DataTable` (caption, scope headers, sticky first column, own scroll region); code is `CodeBlock`; 19 pieces collapse to 8 with a true count ("Show all 19 pieces"), all in the HTML.
+Done here: Parity text 153/153, links 16/16. 0 text under 14px at 375 except the kit `CodeBlock` (13.5px code, the MASTER spec). The matrix is `DataTable` (caption, scope headers, sticky first column, own scroll region); code is `CodeBlock`; 19 pieces collapse to 8 (5 on a phone) with a true count ("Show all 19 pieces", checked on phone: 5 → 19 → 5), all in the HTML.
 
 ## 7. Visual design system
 - [x] `python3 scripts/taste.py <files>` passes; no literal hex outside tokens
@@ -75,7 +75,7 @@ Done here: taste OK; greys snapped to the deck ramp and `--bz-*` tokens; radii 6
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: Pause, show-all, group toggles, index rows, close rows and matrix cells answer hover with a fill (inside `@media (hover: hover)`), press .97–.995, and a 2px ring; `Cta` brings busy/disabled. No dialogs or inputs on this page. Deleted: see the top of this card.
+Done here: Pause, show-all, group toggles, index rows (arrow +8px and line +4px, even on the row the stage already holds), close rows (arrow +6px) and matrix cells answer hover with a fill (inside `@media (hover: hover)`), press .97–.995, and a 2px ring; `Cta` brings busy/disabled. No dialogs or inputs on this page. Deleted: see the top of this card.
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups
@@ -100,7 +100,7 @@ Done here: No image requests; the only graphics are CSS (dots, chips) and the ki
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: Width 375/375 and 1470/1470 in the film; 0 targets under 44px; the matrix scrolls inside its own region with the product column pinned, cells 44px tall and tap to light; the ask sits at ~290px on a phone, the reel inside the first 660px.
+Done here: Width 375/375 and 1470/1470 in the film; phone h1 3 lines at 40px, the product pills one swipe row that never reflows (CLS 0); 0 targets under 44px; the matrix scrolls inside its own region with the product column pinned, cells 44px tall and tap to light; the ask sits at ~290px on a phone, the reel inside the first 660px.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better

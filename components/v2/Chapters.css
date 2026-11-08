@@ -6,7 +6,7 @@
 .v2-ch-count span { color: var(--ink); }
 .v2-ch-body { margin-top: 24px; }
 .v2-ch-count { margin-top: 14px; }
-.v2-ch-vis { position: relative; border-radius: 28px; overflow: hidden; background: #fff; cursor: pointer; transform-origin: 50% 100%; }
+.v2-ch-vis { position: relative; border-radius: 28px; overflow: hidden; background: var(--x-raised); cursor: pointer; transform-origin: 50% 100%; }
 .v2-ch-index { display: none; }
 
 @media (min-width: 900px) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
@@ -14,7 +14,7 @@
   .v2-ch-in { position: sticky; top: 0; height: 100svh; display: flex; align-items: flex-start; padding-top: calc(60px + clamp(16px, 3vh, 32px)); box-sizing: border-box; }
   .v2-ch-grid { width: 100%; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: 1fr auto; column-gap: var(--v2-gut); height: min(76svh, 700px); position: relative; }
   /* the frame the pictures live in: one hairline and one long shadow, under every chapter */
-  .v2-ch-grid::before { content: ''; grid-column: 5 / 13; grid-row: 1 / 3; border-radius: 28px; border: 1px solid rgba(0, 0, 0, .08); box-shadow: var(--v2-shadow); background: #fff; }
+  .v2-ch-grid::before { content: ''; grid-column: 5 / 13; grid-row: 1 / 3; border-radius: 28px; border: 1px solid rgba(0, 0, 0, .08); box-shadow: var(--v2-shadow); background: var(--x-raised); }
   .v2-ch-item { display: contents; }
   .v2-ch-text { grid-column: 1 / 5; grid-row: 1; align-self: start; padding-right: 16px; opacity: 0; transform: translateY(28px); pointer-events: none;
     transition: opacity .25s var(--v2-ease), transform .3s var(--v2-ease); }

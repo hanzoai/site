@@ -78,7 +78,7 @@ function Admin() {
   const run = live && view === 0 && !paused && hov === null;
   useEffect(() => {
     if (!run) return;
-    const t = setTimeout(() => setN((v) => v + 1), 2600);
+    const t = setTimeout(() => setN((v) => v + 1), n === 9 ? 600 : 2600); // the first record lands within a second
     return () => clearTimeout(t);
   }, [run, n]);
   return (
@@ -109,7 +109,7 @@ function Admin() {
                   <div key={id} className={'bs-tr' + (i === 0 ? ' new' : '') + (hov === id ? ' hov' : '')} onMouseEnter={() => setHov(id)}>
                     <code>{hex(id)}</code>
                     <span><i style={{ width: 38 + ((id * 29) % 50) + '%' }} /></span>
-                    <span className="bs-au"><b /><i style={{ width: 30 + ((id * 17) % 40) + '%' }} /></span>
+                    <span className="bs-au"><b /><code>{hex(id * 7 + 3).slice(0, 4)}</code></span>
                     <span><em className={id % 3 ? 'on' : ''} /></span>
                   </div>
                 ))}
@@ -184,7 +184,8 @@ function ZoomMap({ name, setName }) {
       const ox = r.x + (r.w - L.W * s0) / 2, oy = r.y + (r.h - L.H * s0) / 2;
       const c = L.n.coll;
       const fc = [c[0] + c[2] / 2, c[1] + c[3] / 2];
-      geo.current = { s0, s1: Math.max(sw / c[2], sh / c[3]) * 1.04, fc, f0: [ox + fc[0] * s0, oy + fc[1] * s0], f1: [sw / 2, sh / 2] };
+      // wide: the card fills the stage (cover); phones: it fills the width and stays whole, so no word is cut mid-zoom
+      geo.current = { s0, s1: wide ? Math.max(sw / c[2], sh / c[3]) * 1.04 : Math.min((sw - 24) / c[2], (sh - 32) / c[3]), fc, f0: [ox + fc[0] * s0, oy + fc[1] * s0], f1: [sw / 2, sh / 2] };
       paint(p.get());
       map.current?.setAttribute('data-ready', '');
     };
@@ -396,7 +397,13 @@ function Caps() {
 
 const PLACES = ['Hanzo Cloud', 'a laptop', 'a box', 'a cluster'];
 const SIDE = [['Base', '/base'], ['Datastore', '/datastore'], ['Object Storage', '/s3'], ['Memory', '/cloud/memory']];
-const PROJ = [['gateway', 'Ready'], ['payments-api', 'Ready'], ['checkout-web', 'Building'], ['docs-site', 'Ready']];
+// hanzo.ai's example project, each service with its own note (live /base, 8 Nov), word for word
+const PROJ = [
+  ['gateway', 'Ready', 'Every request enters here, so the limiter does too.'],
+  ['payments-api', 'Ready', 'The service the session above is changing.'],
+  ['checkout-web', 'Building', 'A build is running from the last commit on main.'],
+  ['docs-site', 'Ready', 'Static, published by the same pipeline as the rest.'],
+];
 
 /* Run the binary's object: the same Base in four places. Pick (or hover) a place and its row answers the same records
    path, with the collection you named carried down; the example project's apps read it. */
@@ -405,6 +412,7 @@ function Deploy({ coll }) {
   const [on, setOn] = useState(0);
   const [hand, setHand] = useState(false);
   const [built, setBuilt] = useState(false);
+  const [pj, setPj] = useState('payments-api'); // the service whose note shows under the list; point at or tap another
   // idle: while seen and untouched, the request moves to the next place every 2.8 s; a touch hands it to the visitor
   useEffect(() => {
     if (!live || hand) return;
@@ -449,10 +457,18 @@ function Deploy({ coll }) {
       <ul className="bs-dep-proj" aria-label="Example project">
         {PROJ.map(([n, st]) => {
           const s = n === 'checkout-web' && built ? 'Ready' : st;
-          return <li key={n}><i className={s === 'Building' ? 'b' : ''} aria-hidden="true" /><span>{n}</span><em>{s}</em></li>;
+          return (
+            <li key={n} className={pj === n ? 'on' : undefined}>
+              <button type="button" aria-pressed={pj === n} aria-describedby="bs-dep-note" onClick={() => setPj(n)} onPointerEnter={(e) => e.pointerType === 'mouse' && setPj(n)} onFocus={() => setPj(n)}>
+                <i className={s === 'Building' ? 'b' : ''} aria-hidden="true" /><span>{n}</span><em>{s}</em>
+              </button>
+            </li>
+          );
         })}
       </ul>
-      <p className="bs-dep-cap">Every request enters here, so the limiter does too.</p>
+      <div className="bs-dep-cap" id="bs-dep-note" aria-live="polite">
+        {PROJ.map(([n, , note]) => <p key={n} hidden={pj !== n}>{note}</p>)}
+      </div>
       <div className="bs-dep-foot">
         <span>api.hanzo.ai<b>/v1/base</b></span>
         <A to="https://hanzo.team/" className="bs-dep-open">Open in the console ↗</A>

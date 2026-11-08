@@ -40,8 +40,8 @@
 @media (hover: hover) { .xp-cta:hover i, .xp-ghost:hover i { transform: translateX(4px); } }
 
 /* hero objects and cards: 28px and 16px radii, hairlines, a soft long shadow, no blur */
-.xp-obj { border-radius: 24px; background: #fff; border: 1px solid rgba(0, 0, 0, .1); box-shadow: none; }
-.xp-card { border-radius: 24px; background: #f5f5f5; border: 0; }
+.xp-obj { border-radius: 24px; background: var(--x-raised); border: 1px solid var(--x-e10); box-shadow: none; }
+.xp-card { border-radius: 24px; background: light-dark(#f5f5f5, #171717); border: 0; }
 
 @media (max-width: 900px) {
   .xp-wrap { width: calc(100% - 32px); }

@@ -1,0 +1,1024 @@
+[
+{
+"place": "chat",
+"ask": "Build maxpower: every AI I use in one place, and faster at coding.",
+"answer": "Done. maxpower connects your agents, shares one key, and runs them side by side.",
+"card": true,
+"shell": {
+"tab": "install",
+"lines": [
+[
+0,
+"run",
+"curl -fsSL https://hanzo.sh | sh"
+],
+[
+700,
+"out",
+"  ✓ hanzo (+ hanzo-node, same build)"
+],
+[
+150,
+"out",
+"  ✓ hanzo-mcp (+ mcp, same build)"
+],
+[
+150,
+"out",
+"  ✓ dev"
+],
+[
+150,
+"out",
+"  ✓ gen"
+],
+[
+150,
+"out",
+"  ✓ zt"
+],
+[
+350,
+"out",
+"  ready → ~/.local/bin"
+]
+]
+}
+},
+{
+"place": "dev",
+"run": "Build maxpower",
+"phone": {
+"ask": "Show me the build",
+"cells": [
+"• Wrote app/agents.tsx",
+"• Wrote lib/keys.ts",
+"• Ran pnpm test",
+"  └ pass"
+]
+},
+"steps": [
+"Planned the screens and data",
+[
+"Wrote {file}",
+"app/agents.tsx"
+],
+[
+"Wrote {file}",
+"lib/keys.ts"
+],
+"Tests pass"
+],
+"ship": true,
+"shell": {
+"tab": "up",
+"lines": [
+[
+0,
+"run",
+"hanzo up"
+],
+[
+1600,
+"out",
+"✓ k3s is up — API at https://127.0.0.1:6443"
+],
+[
+150,
+"out",
+"  export KUBECONFIG=~/.kube/hanzo.yaml"
+],
+[
+150,
+"out",
+"  the cloud  http://127.0.0.1:3690"
+]
+]
+}
+},
+{
+"place": "studio",
+"prompt": "Key art for maxpower. Calm and cinematic.",
+"made": [
+{
+"kind": "image",
+"src": "/models/koma.webp",
+"shape": "portrait"
+},
+{
+"kind": "image",
+"src": "/models/iro.webp",
+"shape": "portrait"
+},
+{
+"kind": "image",
+"src": "/models/mori.webp",
+"shape": "portrait"
+}
+],
+"pick": 0,
+"shell": {
+"tab": "dev",
+"lines": [
+[
+0,
+"run",
+"hanzo dev"
+],
+[
+800,
+"head",
+">_ Hanzo Dev"
+],
+[
+500,
+"ask",
+"add a Run all button"
+],
+[
+900,
+"out",
+"• Read app/agents.tsx"
+],
+[
+900,
+"out",
+"• Edited app/agents.tsx"
+]
+]
+},
+"ships": "run"
+},
+{
+"place": "tabs",
+"panes": [
+{
+"name": "claude",
+"run": "hanzo dev --claude",
+"ask": "write the tests",
+"lines": [
+"• Read app/agents.tsx",
+"• Read lib/keys.ts",
+"• Wrote app/agents.test.ts",
+"• Wrote lib/keys.test.ts",
+"• Ran pnpm test",
+"  └ pass",
+"• Ran pnpm test --watch",
+"  └ watching"
+]
+},
+{
+"name": "codex",
+"run": "hanzo dev --codex",
+"ask": "add a settings page",
+"lines": [
+"• Read app/layout.tsx",
+"• Wrote app/settings.tsx",
+"• Edited app/nav.tsx",
+"• Ran pnpm build",
+"  └ done"
+]
+},
+{
+"name": "dev",
+"run": "hanzo dev",
+"ask": "review both",
+"lines": [
+"• Read app/settings.tsx",
+"• Read app/agents.test.ts",
+"• Left one comment",
+"  └ approved ✓"
+]
+}
+]
+},
+{
+"place": "dev",
+"run": "Ship maxpower",
+"phone": {
+"ask": "Ship it",
+"cells": [
+"• Pushed to main",
+"• Built",
+"• Tests pass",
+"  └ live"
+]
+},
+"steps": [
+"Pushed to main"
+],
+"ship": true,
+"shell": {
+"tab": "maxpower",
+"lines": [
+[
+300,
+"run",
+"git push"
+],
+[
+700,
+"out",
+"To git.hanzo.ai/you/maxpower"
+],
+[
+150,
+"out",
+"   main -> main"
+],
+[
+600,
+"run",
+"hanzo status"
+],
+[
+1200,
+"out",
+"applications — 1"
+],
+[
+150,
+"out",
+"  Healthy / Synced  1"
+]
+]
+}
+},
+{
+"place": "studio",
+"prompt": "A launch image for maxpower. Cinematic, please.",
+"made": [
+{
+"kind": "image",
+"src": "/images/models/koma.webp",
+"shape": "wide"
+},
+{
+"kind": "image",
+"src": "/images/models/iro.webp",
+"shape": "wide"
+},
+{
+"kind": "image",
+"src": "/images/models/mori.webp",
+"shape": "wide"
+}
+],
+"pick": 1,
+"status": "Saved to your library"
+},
+{
+"place": "studio",
+"prompt": "Again, a little darker.",
+"made": [
+{
+"kind": "image",
+"src": "/models/zen.webp",
+"shape": "portrait"
+},
+{
+"kind": "image",
+"src": "/models/kai.webp",
+"shape": "portrait"
+},
+{
+"kind": "image",
+"src": "/models/uta.webp",
+"shape": "portrait"
+}
+],
+"pick": 0
+},
+{
+"place": "chat",
+"ask": "Add a leaderboard.",
+"answer": "Added. You are first, for asking nicely.",
+"shell": {
+"tab": "dev",
+"lines": [
+[
+500,
+"ask",
+"add a leaderboard"
+],
+[
+900,
+"out",
+"• Wrote app/board.tsx"
+],
+[
+900,
+"out",
+"• Ran pnpm test"
+],
+[
+700,
+"out",
+"  └ pass"
+]
+]
+},
+"ships": "board"
+},
+{
+"place": "tabs",
+"panes": [
+{
+"name": "claude",
+"run": "hanzo dev --claude",
+"ask": "tabs or spaces?",
+"lines": [
+"  └ spaces.",
+"› are you sure?",
+"  └ very.",
+"› the codex pane says tabs",
+"  └ the codex pane is wrong."
+]
+},
+{
+"name": "codex",
+"run": "hanzo dev --codex",
+"ask": "tabs or spaces?",
+"lines": [
+"  └ tabs.",
+"› the claude pane says spaces",
+"  └ respectfully, no."
+]
+},
+{
+"name": "dev",
+"run": "hanzo dev",
+"ask": "settle it",
+"lines": [
+"• Asked Kai",
+"  └ two spaces.",
+"• Edited .editorconfig",
+"  └ settled. Next."
+]
+}
+],
+"phone": {
+"ask": "Settle tabs or spaces",
+"cells": [
+"• Asked Kai",
+"  └ two spaces.",
+"• Edited .editorconfig",
+"  └ settled"
+]
+}
+},
+{
+"place": "chat",
+"ask": "Make it work offline on a plane.",
+"answer": "It works offline now and syncs when you land. Snacks not included."
+},
+{
+"place": "dev",
+"run": "Offline mode",
+"phone": {
+"ask": "Does it work on a plane?",
+"cells": [
+"• Turned the network off",
+"• Ran pnpm test",
+"  └ pass"
+]
+},
+"steps": [
+[
+"Wrote {file}",
+"lib/offline.ts"
+],
+"Cached the last session",
+"Tests pass"
+],
+"ship": true,
+"shell": {
+"tab": "maxpower",
+"lines": [
+[
+300,
+"run",
+"git push"
+],
+[
+700,
+"out",
+"To git.hanzo.ai/you/maxpower"
+],
+[
+150,
+"out",
+"   main -> main"
+],
+[
+600,
+"run",
+"hanzo status"
+],
+[
+1200,
+"out",
+"applications — 1"
+],
+[
+150,
+"out",
+"  Healthy / Synced  1"
+]
+]
+},
+"ships": "offline"
+},
+{
+"place": "chat",
+"ask": "Fix the flaky test. I am on my phone.",
+"answer": "Fixed from seat 23C. It was a race, and the race lost.",
+"shell": {
+"tab": "dev",
+"lines": [
+[
+500,
+"ask",
+"fix the flaky test"
+],
+[
+900,
+"out",
+"• Read app/sync.test.ts"
+],
+[
+900,
+"out",
+"• Edited app/sync.test.ts"
+],
+[
+900,
+"out",
+"• Ran pnpm test"
+],
+[
+700,
+"out",
+"  └ pass"
+]
+]
+},
+"phone": {
+"ask": "Fix the flaky test",
+"cells": [
+"• Read app/sync.test.ts",
+"• Edited app/sync.test.ts",
+"• Ran pnpm test",
+"  └ pass"
+]
+}
+},
+{
+"place": "studio",
+"prompt": "A six-second loop for the launch.",
+"made": [
+{
+"kind": "video",
+"src": "/models/oto"
+},
+{
+"kind": "video",
+"src": "/models/koe"
+},
+{
+"kind": "video",
+"src": "/models/mori"
+}
+],
+"pick": 0
+},
+{
+"place": "studio",
+"prompt": "A social ad for maxpower: a story, a post and a short video.",
+"made": [
+{
+"kind": "story",
+"src": "/models/iro.webp"
+},
+{
+"kind": "post",
+"src": "/models/koma.webp"
+},
+{
+"kind": "video",
+"src": "/models/uta"
+}
+],
+"status": "Scheduled"
+},
+{
+"place": "chat",
+"ask": "Ship it to the App Store by lunch.",
+"answer": "The release build is ready for review. Lunch is still on you."
+},
+{
+"place": "tabs",
+"panes": [
+{
+"name": "claude",
+"run": "hanzo dev --claude",
+"ask": "write the release notes",
+"lines": [
+"• Read git log",
+"• Wrote CHANGELOG.md",
+"• Edited README.md",
+"  └ done"
+]
+},
+{
+"name": "codex",
+"run": "hanzo dev --codex",
+"ask": "bump the version",
+"lines": [
+"• Edited package.json",
+"• Ran pnpm build",
+"  └ done"
+]
+},
+{
+"name": "gemini",
+"run": "hanzo dev --gemini",
+"ask": "check the screenshots",
+"lines": [
+"• Read store/shots",
+"• Read store/listing.md",
+"  └ all present ✓"
+]
+}
+]
+},
+{
+"place": "dev",
+"run": "Release",
+"phone": {
+"ask": "Release it",
+"cells": [
+"• Tagged the release",
+"• Deployed",
+"  └ live"
+]
+},
+"steps": [
+[
+"Wrote {file}",
+"CHANGELOG.md"
+],
+"Tagged the release"
+],
+"ship": true,
+"shell": {
+"tab": "maxpower",
+"lines": [
+[
+300,
+"run",
+"git push"
+],
+[
+700,
+"out",
+"To git.hanzo.ai/you/maxpower"
+],
+[
+150,
+"out",
+"   main -> main"
+],
+[
+600,
+"run",
+"hanzo status"
+],
+[
+1200,
+"out",
+"applications — 1"
+],
+[
+150,
+"out",
+"  Healthy / Synced  1"
+]
+]
+}
+},
+{
+"place": "chat",
+"ask": "Add a dark mode.",
+"answer": "It was already dark. Now it is dark on purpose.",
+"shell": {
+"tab": "dev",
+"lines": [
+[
+500,
+"ask",
+"add a dark mode"
+],
+[
+900,
+"out",
+"• Edited app/theme.ts"
+],
+[
+900,
+"out",
+"• Ran pnpm test"
+],
+[
+700,
+"out",
+"  └ pass"
+]
+]
+},
+"ships": "dark"
+},
+{
+"place": "chat",
+"ask": "Can the agents explain each change in one sentence?",
+"answer": "Yes. Most of them manage it in one."
+},
+{
+"place": "tabs",
+"panes": [
+{
+"name": "claude",
+"run": "hanzo dev --claude",
+"ask": "review the settings page",
+"lines": [
+"• Read app/settings.tsx",
+"• Read app/nav.tsx",
+"• Left two comments",
+"  └ looks good ✓"
+]
+},
+{
+"name": "codex",
+"run": "hanzo dev --codex",
+"ask": "review the tests",
+"lines": [
+"• Read app/agents.test.ts",
+"• Ran pnpm test",
+"  └ pass",
+"  └ looks good ✓"
+]
+},
+{
+"name": "dev",
+"run": "hanzo dev",
+"ask": "merge both",
+"lines": [
+"• Merged into main",
+"• Ran pnpm test",
+"  └ pass",
+"  └ done"
+]
+}
+]
+},
+{
+"place": "studio",
+"prompt": "Profile pictures for the team. Quiet ones.",
+"made": [
+{
+"kind": "image",
+"src": "/models/zen.webp",
+"shape": "square"
+},
+{
+"kind": "image",
+"src": "/models/koe.webp",
+"shape": "square"
+},
+{
+"kind": "image",
+"src": "/models/enso-square.webp",
+"shape": "square"
+}
+],
+"status": "Saved to your library"
+},
+{
+"place": "chat",
+"ask": "Make the Run all button bigger.",
+"answer": "Bigger. It now reads Run everything, which is what you meant."
+},
+{
+"place": "tabs",
+"panes": [
+{
+"name": "gemini",
+"run": "hanzo dev --gemini",
+"ask": "write the migration",
+"lines": [
+"• Read db/schema.sql",
+"• Wrote db/migrate.sql",
+"• Wrote db/rollback.sql",
+"  └ done"
+]
+},
+{
+"name": "claude",
+"run": "hanzo dev --claude",
+"ask": "check the migration",
+"lines": [
+"• Read db/migrate.sql",
+"• Read db/rollback.sql",
+"  └ safe to run ✓"
+]
+},
+{
+"name": "dev",
+"run": "hanzo dev",
+"ask": "run it locally",
+"lines": [
+"• Ran the migration",
+"• Ran pnpm test",
+"  └ pass",
+"  └ done"
+]
+}
+],
+"phone": {
+"ask": "Run the migration",
+"cells": [
+"• Ran the migration",
+"• Ran pnpm test",
+"  └ pass ✓"
+]
+}
+},
+{
+"place": "chat",
+"ask": "Why is it called maxpower?",
+"answer": "You asked for every AI at once. That is the max."
+},
+{
+"place": "dev",
+"run": "Faster start",
+"phone": {
+"ask": "Make it start faster",
+"cells": [
+"• Profiled the start",
+"• Loaded the agents in parallel",
+"  └ pass"
+]
+},
+"steps": [
+"Profiled the start",
+"Loaded the agents in parallel",
+"Tests pass"
+],
+"ship": true,
+"shell": {
+"tab": "maxpower",
+"lines": [
+[
+300,
+"run",
+"git push"
+],
+[
+700,
+"out",
+"To git.hanzo.ai/you/maxpower"
+],
+[
+150,
+"out",
+"   main -> main"
+],
+[
+600,
+"run",
+"hanzo status"
+],
+[
+1200,
+"out",
+"applications — 1"
+],
+[
+150,
+"out",
+"  Healthy / Synced  1"
+]
+]
+}
+},
+{
+"place": "tabs",
+"panes": [
+{
+"name": "dev",
+"run": "hanzo dev",
+"ask": "write the docs",
+"lines": [
+"• Read app/agents.tsx",
+"• Wrote docs/start.md",
+"• Wrote docs/agents.md",
+"  └ done"
+]
+},
+{
+"name": "claude",
+"run": "hanzo dev --claude",
+"ask": "proofread the docs",
+"lines": [
+"• Read docs/start.md",
+"• Edited docs/start.md",
+"  └ one comma. Worth it."
+]
+},
+{
+"name": "codex",
+"run": "hanzo dev --codex",
+"ask": "run every example",
+"lines": [
+"• Ran the examples",
+"  └ pass ✓"
+]
+}
+]
+},
+{
+"place": "studio",
+"prompt": "A launch banner. Quieter.",
+"made": [
+{
+"kind": "post",
+"src": "/models/zen.webp"
+},
+{
+"kind": "story",
+"src": "/models/kai.webp"
+}
+],
+"status": "Scheduled"
+},
+{
+"place": "chat",
+"ask": "Is maxpower ready for real people?",
+"answer": "It passes its tests and runs on your own cloud. Real people are the next test."
+},
+{
+"place": "chat",
+"ask": "Approve the release from my phone.",
+"answer": "Approved. You can put the phone down now.",
+"shell": {
+"tab": "dev",
+"lines": [
+[
+500,
+"ask",
+"approve the release"
+],
+[
+900,
+"out",
+"• Ran the checks"
+],
+[
+700,
+"out",
+"  └ pass"
+],
+[
+900,
+"out",
+"• Approved"
+]
+]
+},
+"phone": {
+"ask": "Approve the release",
+"cells": [
+"• Ran the checks",
+"  └ pass",
+"• Approved"
+]
+}
+},
+{
+"place": "chat",
+"ask": "What did we ship today?",
+"answer": "maxpower, a leaderboard, offline mode, dark mode, an icon at MAX power, an ad, and a ruling on spaces."
+},
+{
+"place": "chat",
+"ask": "Give the agents the weekend off.",
+"answer": "They declined. They do not have weekends."
+},
+{
+"place": "tabs",
+"panes": [
+{
+"name": "claude",
+"run": "hanzo dev --claude --cloud",
+"ask": "triage new issues",
+"lines": [
+"• Read the new issues",
+"• Labelled them",
+"• Wrote two fixes",
+"• Ran pnpm test",
+"  └ pass",
+"  └ labelled ✓"
+]
+},
+{
+"name": "codex",
+"run": "hanzo dev --codex",
+"ask": "update dependencies",
+"lines": [
+"• Read package.json",
+"• Edited package.json",
+"• Ran pnpm install",
+"• Ran pnpm test",
+"  └ pass ✓"
+]
+},
+{
+"name": "dev",
+"run": "hanzo dev",
+"ask": "run the nightly checks",
+"lines": [
+"• Ran the checks",
+"• Ran pnpm build",
+"  └ pass",
+"  └ all green"
+]
+}
+],
+"shell": {
+"tab": "maxpower",
+"lines": [
+[
+300,
+"run",
+"hanzo dev --claude --cloud"
+],
+[
+600,
+"ask",
+"triage new issues"
+]
+]
+},
+"phone": {
+"ask": "Run the nightly checks",
+"cells": [
+"• Ran the checks",
+"  └ pass"
+]
+}
+},
+{
+"place": "chat",
+"ask": "Good night, maxpower.",
+"answer": "Good night. The agents have the night shift."
+},
+{
+"place": "beta",
+"title": "Join the Hanzo Beta",
+"ask": "Join the Hanzo Beta: frontier models, agentic coding, and ecosystem betas.",
+"answer": "Pick your plan, get early access, and build alongside us.",
+"phone": {
+"ask": "Join the Hanzo Beta",
+"cells": [
+"• Developer Beta: Selected",
+"• Coupon VIBE20 applied",
+"• Ready → hanzo.ai/beta"
+]
+},
+"shell": {
+"tab": "maxpower",
+"lines": [
+[
+300,
+"run",
+"hanzo beta --join"
+],
+[
+700,
+"out",
+"✓ Joined Developer Beta (20% off coupon VIBE20 applied)"
+],
+[
+300,
+"out",
+"  Status: Applications open"
+],
+[
+300,
+"out",
+"  Apply: https://hanzo.ai/beta"
+]
+]
+}
+}
+]

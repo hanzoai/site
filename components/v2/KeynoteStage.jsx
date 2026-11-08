@@ -21,7 +21,7 @@
    Scale rhythm: the h1 rests at 52px (40px on phones); the product object is the one big thing and settles as you scroll.
    Everything on the first screen arrives by CSS at first paint, without waiting for the page's script; with JS off it
    simply stands in place. Reduced motion: the object is in place. */
-import { createContext, useContext, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { Magnetic } from '../ui';
 import { Cta } from '../kit';
@@ -36,7 +36,9 @@ export const useStagePause = () => useContext(Paused);
 
 export default function KeynoteStage({ kick, title, lede, acts = [], meta, look = 'split', from = 1.15, children, className = '', size = '', cta = 'hero', pause = true }) {
   const sec = useRef(null);
-  const calm = useReducedMotion();
+  const reduce = useReducedMotion();
+  const [calm, setCalm] = useState(false); // after mount, so the first render matches the server's HTML
+  useEffect(() => setCalm(!!reduce), [reduce]);
   const wide = useWide();
   const [paused, setPaused] = useState(false);
   const { scrollYProgress: p } = useScroll({ target: sec, offset: ['start start', 'end start'] });
@@ -76,7 +78,7 @@ export default function KeynoteStage({ kick, title, lede, acts = [], meta, look 
         </div>
         <div className="kns-obj-wrap">
           <div className="kns-obj-in">
-            <motion.div className="kns-obj" style={calm ? undefined : { scale, y }}>
+            <motion.div className="kns-obj" style={calm ? { scale: 1, y: 0 } : { scale, y }}>
               <Paused.Provider value={paused}>{children}</Paused.Provider>
             </motion.div>
           </div>

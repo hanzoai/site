@@ -3,6 +3,7 @@
 Reviewed 2026-11-07 ~17:00, walked moving at 1470x801 and 375x812 (Playwright, wheel steps of 400px every 700ms, rest pairs 1s apart, hover/press/click on every control in main, the console drawer opened at both sizes). Proof: `docs/review/billing/desktop-first.jpg`, `desktop-walk.jpg` (the dead white gap after the hero machine releases), `phone-first.jpg`, `phone-walk.jpg` (the hero machine running edge to edge with no gutter).
 
 Verdict: 7.5/10
+Ready: 8 Nov, copycheck missing 0 of 48 (hanzo.ai live), held up next to /api and /affiliate (James's new bar, no score). Hanzo's example console is back in the page as on hanzo.ai (it had been behind a drawer, so its lines were missing): the projects list, "The service the session above is changing.", Open in the console and its caption sit in the Get started column beside the code and the agent prompt; capability titles and code runs are real text runs. Usable: calculator, code, prompt, Read the docs and console in one place. taste/unique OK; 0 console errors, no overflow at 1470 and 375. Shared, tiny: components/pages/cloud/Frame.jsx code runs wrapped in spans, components/v2/Finale.jsx prompt's api label as a span (Launch.css selector).
 
 First complaint: "Better: it's alive and it makes sense now. But I scroll off the hero and get half a screen of nothing, then the same event, meter, invoice machine shows up a third time at the bottom as three dark boxes in a row. Don't repeat the trick, finish it."
 

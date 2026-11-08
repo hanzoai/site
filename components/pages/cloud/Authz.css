@@ -43,12 +43,14 @@
 .az-who-b.on i { background: currentColor; }
 
 /* locations: on the path they fill with ink, hop by hop; a refused target is a dashed outline */
-.az-loc { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 56px; margin-left: calc(var(--lv) * 44px); padding: 0 16px 0 18px; border-radius: 16px; border: 1px solid var(--hair); background: #fff; color: var(--body); font: 400 17px/1.2 var(--mono); text-align: left; cursor: pointer; transition: background-color .3s var(--e-move), border-color .3s var(--e-move), color .3s var(--e-move), transform .15s var(--e-out); }
+.az-loc { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 56px; margin-left: calc(var(--lv) * 38px); padding: 0 14px 0 18px; border-radius: 16px; border: 1px solid var(--hair); background: #fff; color: var(--body); font: 400 16px/1.2 var(--mono); text-align: left; cursor: pointer; transition: background-color .3s var(--e-move), border-color .3s var(--e-move), color .3s var(--e-move), transform .15s var(--e-out); }
 .az-loc.prose { font-family: var(--sans); }
+/* the last, narrowest row holds two lines and a chip line at all times, so picking it never changes its height */
+.az-loc.prose { min-height: 88px; flex-wrap: wrap; align-content: center; row-gap: 6px; }
 .az-loc.target { color: var(--ink); }
 .az-loc.lit { background: var(--ink); border-color: var(--ink); color: #fff; }
 .az-loc.no { border-color: var(--ink); border-style: dashed; }
-.az-tags { display: flex; gap: 6px; flex: none; }
+.az-tags { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
 .az-tag { padding: 5px 8px; border-radius: 6px; border: 1px solid transparent; font: 606 12px/1 var(--mono); font-style: normal; letter-spacing: .08em; text-transform: uppercase; }
 .az-tag.g { border-color: currentColor; }
 .az-tag.t { background: var(--ink); color: #fff; }
@@ -66,9 +68,14 @@
 .az-a-t { display: inline-block; }
 .js .az-a-t { animation: az-cut .4s var(--e-in) both; }
 @keyframes az-cut { from { transform: translate3d(0, 105%, 0); } to { transform: none; } }
+/* the last answer, quiet, under the next one until it lands (so the panel never sits empty) */
+.az-a { position: relative; }
+.az-a-g { position: absolute; left: 0; top: .04em; color: #d4d4d4; animation: az-out .3s var(--e-out) both; }
+@keyframes az-out { to { opacity: 0; transform: translate3d(0, -40%, 0); } }
+html:not(.js) .az-a-g { display: none; }
 .az-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .az-st { position: relative; display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.4; color: var(--ink); }
-.js .az-st { animation: az-show .3s var(--e-out) both; }
+.js .az-st { animation: az-quiet .3s var(--e-out) both; }
 .az-st i { flex: none; position: relative; width: 18px; height: 18px; margin-top: 1px; border-radius: 50%; background: var(--ink); }
 .az-st.ok i::after { content: ''; position: absolute; left: 6px; top: 3px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
 .az-st.no i::before, .az-st.no i::after { content: ''; position: absolute; left: 8px; top: 4px; height: 10px; border-right: 2px solid #fff; transform: rotate(45deg); }
@@ -76,8 +83,9 @@
 .az-st.skip { color: #525252; }
 .az-st.skip i { background: transparent; border: 1.5px dashed #525252; }
 .az-why { margin: auto 0 0; padding-top: 14px; border-top: 1px solid var(--hair); font: 497 14px/1.4 var(--mono); color: #525252; }
-.js .az-why { animation: az-show .3s var(--e-out) both; }
+.js .az-why { animation: az-quiet .3s var(--e-out) both; }
 @keyframes az-show { from { opacity: 0; } to { opacity: 1; } }
+@keyframes az-quiet { from { opacity: .22; } to { opacity: 1; } }
 
 @media (hover: hover) {
   .az-who-b:not(.on):hover, .az-loc:not(.lit):hover { border-color: #a3a3a3; background: #fafafa; color: var(--ink); }
@@ -222,7 +230,7 @@
 /* the kit's text-link asks get a 44px target (the link is 21px of text) */
 .az .x-arrow { min-height: 44px; }
 
-[data-off] .az-tag, [data-off] .az-st, [data-off] .az-why, [data-off] .az-a-t, [data-off] .az-reqs i::after { animation-play-state: paused; }
+[data-off] .az-tag, [data-off] .az-st, [data-off] .az-why, [data-off] .az-a-t, [data-off] .az-a-g, [data-off] .az-reqs i::after { animation-play-state: paused; }
 
 @media (max-width: 899px) {
   .az-bar { min-height: 0; flex-wrap: wrap; padding: 8px 10px 8px 16px; row-gap: 0; }
@@ -241,7 +249,7 @@
   .az-a { font-size: 52px; }
   .az-q b { font-size: 17px; }
   .az-mini { display: flex; align-items: center; gap: 14px; margin: 0; padding: 10px 16px; border-radius: 16px; background: #f5f5f5; }
-  .az-mini-a { flex: none; min-width: 2.4em; overflow: hidden; padding: .04em 0 .1em; font-size: 44px; font-weight: 220; line-height: 1; letter-spacing: -.04em; color: var(--ink); }
+  .az-mini-a { position: relative; flex: none; min-width: 2.4em; overflow: hidden; padding: .04em 0 .1em; font-size: 44px; font-weight: 220; line-height: 1; letter-spacing: -.04em; color: var(--ink); }
   .az-mini-q { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .az-mini-q b { font-size: 16px; font-weight: 497; line-height: 1.2; color: var(--ink); }
   .az-mini-q span { font: 497 14px/1.3 var(--mono); color: #525252; overflow-wrap: anywhere; }
@@ -256,4 +264,12 @@
   .az-dg-legend { font-size: 14px; }
   .az-fam-l, .az-fam-r { grid-column: 1 / -1; }
   .az-rel-a { padding: 17px 0; }
+}
+
+/* phones: the answer sits right under the asks; the pause and the repo line move below the window */
+@media (max-width: 899px) {
+  .az-stage .kns-r { display: contents; }
+  .az-stage .kns-r > * { grid-column: 1 / -1; }
+  .az-stage .kns-obj-wrap { order: 1; }
+  .az-stage .kns-meta { order: 2; }
 }

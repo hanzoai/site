@@ -46,7 +46,8 @@ html:not(.js) .agt .agt-ctl { display: none; }
 /* ---------- 1. hero (the black room) ---------- */
 .agt-hero { position: relative; overflow: hidden; background: #000; color: #fafafa; padding: clamp(56px, 6vw, 88px) 0 clamp(72px, 9vw, 116px); }
 /* Koma's film, feathered into the black at its edge (no hard cut); never dimmed or filtered */
-.agt-bg { position: absolute; top: 0; left: 0; bottom: 0; width: 60%; pointer-events: none; -webkit-mask-image: linear-gradient(90deg, #000 62%, transparent 96%); mask-image: linear-gradient(90deg, #000 62%, transparent 96%); }
+/* it stands between the words and the run, clear of the paragraph */
+.agt-bg { position: absolute; top: 0; left: 17%; bottom: 0; width: 46%; pointer-events: none; -webkit-mask-image: linear-gradient(90deg, #000 62%, transparent 96%); mask-image: linear-gradient(90deg, #000 62%, transparent 96%); }
 .agt-film { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 50% 45%; background: #000; }
 /* without a script Chrome draws its own controls on a video: the film is art, so none */
 .agt-film::-webkit-media-controls, .agt-film::-webkit-media-controls-enclosure, .agt-film::-webkit-media-controls-panel, .agt-film::-webkit-media-controls-start-playback-button, .agt-film::-webkit-media-controls-overlay-play-button { display: none !important; -webkit-appearance: none; }
@@ -182,7 +183,9 @@ html:not(.js) .agt-row { opacity: 1; transform: none; }
 .agt-resp-b { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity .14s cubic-bezier(0, 0, .2, 1), visibility 0s .14s; }
 .agt-resp-b.on { opacity: 1; visibility: visible; transition: opacity .3s var(--em) .14s, visibility 0s .14s; }
 .agt-resp .agt-req { font-size: 12.5px; }
-.agt-resp-a { margin: 8px 0 0; font-size: 14px; line-height: 1.5; color: #fafafa; }
+.agt-resp-a { margin: 8px 0 0; font-size: 14px; line-height: 1.5; color: #fafafa; opacity: 0; transform: translateY(8px); transition: opacity .3s var(--em), transform .4s var(--em); }
+.agt-resp-b.ok .agt-resp-a { opacity: 1; transform: none; }
+html:not(.js) .agt-resp-a { opacity: 1; transform: none; }
 .agt-note { margin: 28px 0 0; padding-bottom: clamp(56px, 6vw, 88px); max-width: 72ch; font-size: 16px; line-height: 1.55; color: #404040; }
 /* JS off: every step's answer listed under the file */
 html:not(.js) .agt-resp-b { grid-area: auto; opacity: 1; visibility: visible; padding-bottom: 12px; }
@@ -237,13 +240,14 @@ html:not(.js) .agt-src { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
   .agt *, .agt *::before, .agt *::after { animation: none !important; }
-  .agt-step-b, .agt-resp-b, .agt-row, .agt-src { transition: none !important; }
+  .agt-step-b, .agt-resp-b, .agt-resp-a, .agt-row, .agt-src { transition: none !important; }
 }
 
 /* ---------- phones ---------- */
 @media (max-width: 900px) {
-  .agt-hero { padding: 96px 0 72px; }
-  .agt-bg { left: auto; right: -14%; top: 40px; width: 78%; height: 300px; bottom: auto; -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 98%), linear-gradient(90deg, transparent 0, #000 30%); mask-image: linear-gradient(180deg, #000 55%, transparent 98%), linear-gradient(90deg, transparent 0, #000 30%); -webkit-mask-composite: source-in; mask-composite: intersect; }
+  /* phones: the film stands above the words, never behind them */
+  .agt-hero { padding: 200px 0 72px; }
+  .agt-bg { left: auto; right: -4%; top: 0; width: 84%; height: 210px; bottom: auto; -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent 98%), linear-gradient(90deg, transparent 0, #000 30%); mask-image: linear-gradient(180deg, #000 55%, transparent 98%), linear-gradient(90deg, transparent 0, #000 30%); -webkit-mask-composite: source-in; mask-composite: intersect; }
   .agt-hero-copy { padding-top: 8px; }
   .agt-hero-copy::before { inset: -40px -16px -24px -40px; background: radial-gradient(closest-side, rgba(0, 0, 0, .82), rgba(0, 0, 0, .62) 60%, rgba(0, 0, 0, 0)); }
   .agt-detail { margin: 0 14px 14px; padding: 14px; }

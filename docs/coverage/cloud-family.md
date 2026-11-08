@@ -85,7 +85,7 @@ Done here: Service rows, sibling tabs, pause, copy, finder rows and related card
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: Signature: the session runs in the console. Supporting: typing, the gliding lit row (`layoutId`), Sigil, scroll (`variety.py` OK, no `Rise`). Kinds: time, scroll, pointer, state, arrival. Walks are one-shot `setTimeout` steps; the finder's idle scan is one pass under 5 s. Reduced motion: prompt typed, rows still, stage flat.
+Done here: Signature: the session runs in the console. Supporting: typing, the gliding lit row (`layoutId`), Sigil, scroll (`variety.py` OK, no `Rise`). Kinds: time, scroll, pointer, state, arrival. Walks are one-shot `setTimeout` steps; the finder's idle scan is one pass under 5 s. Reduced motion: prompt typed, rows still, stage flat. 8 Nov: the family rows open on click, tap or focus only (hover lights a row): opening under a passing mouse moved the page (CLS 0.156 on gpus, now 0.000); the Google Cloud light walks its pairs again and again while in view.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no photo or video)
@@ -101,7 +101,7 @@ Done here: The objects are the product's own console, its endpoint, its Sigil fi
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: `audit.cjs` on gpus, evals, secrets, local at 375: CLS 0, taps list empty, no sideways scroll. The phone prompt keeps one wrapping while it types (no overlap; fixed this round). Ask at about y 270 on the phone.
+Done here: `audit.cjs` on gpus, evals, secrets, local at 375: CLS 0, taps list empty, no sideways scroll. The phone prompt keeps one wrapping while it types (no overlap; fixed this round). Ask at about y 270 on the phone. 8 Nov: an opened row's address stays one line and trails off (it had split mid-word at 375); the Google Cloud room's words sit 20px inside its black card on phones.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -158,4 +158,4 @@ Done here: No network calls. `look.cjs` errors: none on gpus, embeddings, evals,
 - [ ] `V2: <score>/10 <one line>` in the page file's top comment (added after the critic's verdict)
 - [ ] Review read: `docs/review/cloud-family.md` verdict 8 or more (re-review requested after this rework)
 
-Done here: The pages send nothing; per-page `data-cta` ids on the hero asks. Gallery proof in `docs/gallery/cloud/`. Critic verdict before this rework: 5/10; this card is updated with the new verdict.
+Done here: The pages send nothing; per-page `data-cta` ids on the hero asks. Gallery proof in `docs/gallery/cloud/`. Critic verdict before this rework: 5/10; this card is updated with the new verdict. 8 Nov: copycheck missing 0 on all 42 members (cascading headings carry their whole text once, status chips as plain text, the session note on every member).

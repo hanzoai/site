@@ -279,7 +279,7 @@ const REPORTS = [
 function ArtRealtime() {
   return (
     <div className="an-art an-art-rt">
-      {VISITS.slice(0, 4).map(([p, r], i) => <p key={p} style={{ '--an-i': i }}><i /><b>{p}</b><span>{r}</span></p>)}
+      {VISITS.slice(0, 4).map(([p, r], i) => <p key={p} style={{ '--an-i': i }}><i /><b><span className="lf">{p}</span></b><span>{r}</span></p>)}
     </div>
   );
 }
@@ -305,7 +305,7 @@ function ArtFunnel() {
 function ArtEvents() {
   return (
     <div className="an-art an-art-e">
-      {[['signup', '{ … }'], ['button_click', "{ buttonId: 'signup_button' }"], ['purchase_completed', "{ currency: 'USD' }"], ['signup', '{ … }']].map(([e, p], k) => <p key={k} style={{ '--an-i': k }}><b>{e}</b> <span>{p}</span></p>)}
+      {[['signup', '{ … }'], ['button_click', "{ buttonId: 'signup_button' }"], ['purchase_completed', "{ currency: 'USD' }"], ['signup', '{ … }']].map(([e, p], k) => <p key={k} style={{ '--an-i': k }}><b><span className="lf">{e}</span></b> <span>{p}</span></p>)}
     </div>
   );
 }
@@ -327,6 +327,22 @@ function Reports() {
   const ask = REPORTS.flatMap((r, i) => r.ask.map((t) => [t, i]));
   const open = (k, i) => { setQ(k); grid.current?.querySelectorAll('.kno-card')[i]?.click(); };
   const [en, on] = useEnter(0.12);
+  // idle: while the cards are seen and nobody points at them, each one plays its picture in turn, one round, then rests
+  const seen = useInView(grid, { amount: 0.3 });
+  const calm = useReducedMotion();
+  const [held, setHeld] = useState(false);
+  useEffect(() => {
+    const cards = grid.current ? [...grid.current.querySelectorAll('.kno-card')] : [];
+    if (!seen || held || calm || !cards.length) return;
+    let k = 0, t;
+    const step = () => {
+      cards.forEach((c, j) => c.classList.toggle('an-walk', j === k));
+      k += 1;
+      t = setTimeout(k <= cards.length ? step : () => cards.forEach((c) => c.classList.remove('an-walk')), 2400);
+    };
+    t = setTimeout(step, 500);
+    return () => { clearTimeout(t); cards.forEach((c) => c.classList.remove('an-walk')); };
+  }, [seen, held, calm]);
   return (
     <section ref={en} data-en={on} className="kn-sec an-rep en-focus">
       <div className="kn-wrap">
@@ -347,7 +363,7 @@ function Reports() {
             <p className="kn-kick">Ask it as a question</p>
           </div>
         </div>
-        <div ref={grid} className="an-rep-grid">
+        <div ref={grid} className="an-rep-grid" onPointerEnter={() => setHeld(true)} onFocus={() => setHeld(true)}>
           <KeynoteOpen
             cols={3}
             items={REPORTS.map((r, i) => {
@@ -366,15 +382,15 @@ function Reports() {
 /* progress for a chapter picture: the scroll through it on desktop (p); on phones it builds once when seen */
 function useBuild(p, on) {
   const calm = useReducedMotion();
-  const own = useMotionValue(calm ? 1 : 0);
-  const full = useMotionValue(1);
+  // the first render matches the server's (empty) picture; reduced motion completes it right after, never by scroll
+  const own = useMotionValue(0);
   useEffect(() => {
-    if (p || calm || !on) return;
+    if (calm) { own.set(1); return; }
+    if (p || !on) return;
     const c = animate(own, 1, { duration: 1.4, ease: EASE });
     return () => c.stop();
   }, [p, on, calm, own]);
-  if (calm) return full;
-  return p || own;
+  return calm ? own : p || own;
 }
 /* map the build onto a sub-range so the picture is complete well before the chapter ends */
 function useSpan(src, a, b) {
@@ -483,7 +499,7 @@ function Visit() {
     <section ref={en} data-en={on} className="kn-sec an-visit en-noise">
       <div className="kn-wrap">
         <div className="an-ch-head">
-          <h2 className="kn-headline">{'From a visit '}<br />to a number</h2>
+          <h2 className="kn-headline"><span>From a visit</span> <br /><span>to a number</span></h2>
           <div className="an-ch-r">
             <p className="kn-lede">A pageview is not worth much on its own. It gets interesting once it is joined to the step someone stopped at, the campaign that sent them and the money that followed.</p>
             <Cta to="https://docs.hanzo.ai/docs/projects/hanzoai/insights" kind="link" id="analytics.reports-docs">Read how reports work</Cta>
@@ -517,7 +533,7 @@ function AddScript() {
           <h2 className="kn-headline">Add the script</h2>
           <p className="kn-lede">One tag on the page and the dashboard fills in on its own. Host it yourself or let us run it — the software is the same either way.</p>
           <ol className="an-add-l">
-            {[['One tag', 'Paste it into the head of your site. Pageviews start arriving before you have decided what to name anything.'], ['Your data stays yours', 'The events live in your own Postgres, MySQL or MariaDB. Nothing is sampled, and nothing is held back from an export.'], ['Open source, MIT', 'Run it on a small server for as long as you like. The hosted version is the same code with the operations taken care of.']].map(([t, d], i) => <li key={t}><span className="kn-fig">{String(i + 1).padStart(2, '0')}</span><div><b>{t}</b><p>{d}</p></div></li>)}
+            {[['One tag', 'Paste it into the head of your site. Pageviews start arriving before you have decided what to name anything.'], ['Your data stays yours', 'The events live in your own Postgres, MySQL or MariaDB. Nothing is sampled, and nothing is held back from an export.'], ['Open source, MIT', 'Run it on a small server for as long as you like. The hosted version is the same code with the operations taken care of.']].map(([t, d], i) => <li key={t}><span className="kn-fig">{String(i + 1).padStart(2, '0')}</span><div><b><span className="lf">{t}</span></b><p>{d}</p></div></li>)}
           </ol>
           <div className="kn-acts">
             <Cta to="/login" kind="quiet" id="analytics.script">Try Hanzo</Cta>
@@ -572,9 +588,9 @@ function AiPanel() {
   const line = poly(px(ANOM.map(([x, y]) => [x, y * 2.5]), wh));
   return (
     <div className="an-ai-p" ref={ref} data-in={seen ? '' : undefined}>
-      <p className="an-ai-ph"><i />AI Analysis in Action</p>
+      <p className="an-ai-ph"><i /><span>AI Analysis in Action</span></p>
       <div className="an-anom">
-        <div className="an-anom-h"><b>Traffic Anomaly Detection</b><span className="an-flag">Anomaly Detected</span></div>
+        <div className="an-anom-h"><b><span className="lf">Traffic Anomaly Detection</span></b><span className="an-flag">Anomaly Detected</span></div>
         <div className="an-anom-plot" ref={box}>
           <svg viewBox={`0 0 ${wh[0]} ${wh[1]}`} aria-hidden="true"><path d={line} pathLength="1" /></svg>
           <span className="an-spike" aria-hidden="true" />
@@ -584,7 +600,7 @@ function AiPanel() {
       <p className="kn-kick an-ai-s">AI Insights</p>
       <ul className="an-ins">
         {[['Traffic Anomaly', 'Unusual spike detected at 14:32 UTC'], ['Conversion Opportunity', 'Checkout abandonment 23% higher on mobile'], ['Performance Alert', 'API latency increased by 150ms']].map(([a, b], i) => (
-          <li key={a} style={{ '--an-i': i }}><b>{a}</b><span>{b}</span></li>
+          <li key={a} style={{ '--an-i': i }}><b><span className="lf">{a}</span></b><span>{b}</span></li>
         ))}
       </ul>
       <div className="an-rec">
@@ -647,7 +663,7 @@ function Script() {
         <ol className="an-gut" aria-hidden="true">{Array.from({ length: n }, (_, i) => <li key={i}>{i + 1}</li>)}</ol>
         <CodeBlock code={JS} label="analytics.js" />
       </div>
-      <CodeBlock className="an-npm" code="npm install hanzo-analytics" prompt />
+      <CodeBlock className="an-npm" code="npm install hanzo-analytics" />
     </div>
   );
 }
@@ -674,7 +690,7 @@ function ApiSheet() {
       </div>
       <p className="kn-kick">What you are signing up for</p>
       <ul className="an-sign">
-        {[['Your database, your rows', 'It runs against Postgres, MySQL or MariaDB — one you already operate. The raw events stay somewhere you can query directly.'], ['Many sites, one install', 'Add a site, get a tracking id. Group people into teams, and share a board with someone who should not have an account.'], ['Open source, MIT', 'Read it, fork it, run it on a small server for as long as you like. The hosted version exists so you do not have to.']].map(([t, d]) => <li key={t}><b>{t}</b><span>{d}</span></li>)}
+        {[['Your database, your rows', 'It runs against Postgres, MySQL or MariaDB — one you already operate. The raw events stay somewhere you can query directly.'], ['Many sites, one install', 'Add a site, get a tracking id. Group people into teams, and share a board with someone who should not have an account.'], ['Open source, MIT', 'Read it, fork it, run it on a small server for as long as you like. The hosted version exists so you do not have to.']].map(([t, d]) => <li key={t}><b><span className="lf">{t}</span></b><span>{d}</span></li>)}
       </ul>
       <div className="kn-acts">
         <Cta to="https://docs.hanzo.ai/docs/analytics" kind="quiet" id="analytics.api-docs">View Documentation</Cta>
@@ -716,7 +732,7 @@ function AuditDoc() {
         <svg viewBox="0 0 24 24" width="20" height="20"><path d="M7 3h7l4 4v14H7z M14 3v4h4 M10 12h5 M10 15.5h5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" /></svg>
         <span /><span /><span /><span />
       </div>
-      <p><b>Continual internal audits</b> Report on request.</p>
+      <p><b><span className="lf">Continual internal audits</span></b> <span className="lf">Report on request.</span></p>
     </div>
   );
 }
@@ -731,7 +747,7 @@ function Repo() {
     <A to="https://github.com/hanzoai/insights" className="kn-obj an-repo">
       <span className="an-repo-h">
         <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.51-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg>
-        <b>Open source, MIT</b>
+        <b><span className="lf">Open source, MIT</span></b>
         <Arrow />
       </span>
       <span ref={ref} className="an-repo-g" aria-hidden="true" data-in={seen ? '' : undefined}>
@@ -785,10 +801,10 @@ export default function Analytics() {
       <En className="kn-sec an-ai en-deal" data-room="dark">
         <div className="kn-wrap kn-grid an-ai-g">
           <div className="an-ai-t">
-            <h2 className="kn-headline">{'AI-Powered '}<br />{'Observability '}<br />&amp; Monitoring</h2>
+            <h2 className="kn-headline"><span>AI-Powered</span> <br /><span>Observability</span> <br /><span>&amp; Monitoring</span></h2>
             <p className="kn-lede">Proactively identify issues and opportunities with AI-powered insights and monitoring.</p>
             <ul className="an-ai-l">
-              {[['Real-time anomaly detection', 'Automatically identify unusual patterns and potential issues before they impact your business.'], ['Predictive alerts and proactive monitoring', 'Get alerted about potential problems before they occur with AI-powered predictive monitoring.'], ['Deep integration with Hanzo Cloud and Base', 'Connect your analytics with your entire infrastructure for comprehensive visibility.']].map(([t, d]) => <li key={t}><b>{t}</b><span>{d}</span></li>)}
+              {[['Real-time anomaly detection', 'Automatically identify unusual patterns and potential issues before they impact your business.'], ['Predictive alerts and proactive monitoring', 'Get alerted about potential problems before they occur with AI-powered predictive monitoring.'], ['Deep integration with Hanzo Cloud and Base', 'Connect your analytics with your entire infrastructure for comprehensive visibility.']].map(([t, d]) => <li key={t}><b><span className="lf">{t}</span></b><span>{d}</span></li>)}
             </ul>
           </div>
           <div className="an-ai-o"><AiPanel /></div>
@@ -840,7 +856,7 @@ export default function Analytics() {
             <p className="an-res-p">Access comprehensive documentation, tutorials, and examples to help you make the most of Hanzo Analytics.</p>
             <ul className="an-res-l">
               {RES.map(([t, d, to]) => (
-                <li key={t}><A to={to} className="an-r"><b>{t}</b><span>{d}</span><Arrow /></A></li>
+                <li key={t}><A to={to} className="an-r"><b><span className="lf">{t}</span></b><span>{d}</span><Arrow /></A></li>
               ))}
             </ul>
             <Cta to="https://docs.hanzo.ai/docs/analytics" kind="link" id="analytics.resources">Browse All Resources</Cta>
