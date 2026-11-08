@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCalm } from '../../ui';
 import './LiveChat.css';
 
+const top = (box, el) => el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop; // el's offset inside the log
 const STOP = Symbol('stop');
 const still = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -16,14 +17,15 @@ export default function LiveChat({ items, head }) {
   const [thread, setThread] = useState(all);
   const [cur, setCur] = useState(-1);
   const [live, setLive] = useState(false);
+  const [done, setDone] = useState(() => new Set()); // the questions asked so far (their chips settle)
   const log = useRef(null);
   const win = useRef(null);
   const tok = useRef(0);
-  const seq = useRef(0);
   const started = useRef(false);
 
-  // a moving browser starts from an empty conversation; reduced motion keeps the whole one
-  useEffect(() => { if (!still()) { setThread([]); setLive(true); } }, []);
+  // the whole conversation is always there (every question answered, as on Hanzo's page); a moving browser types an
+  // answer again, in place, when its question is asked
+  useEffect(() => { if (!still()) setLive(true); }, []);
   useEffect(() => { if (calm && live) { tok.current++; setLive(false); setThread(all); } }, [calm, live, all]);
 
   const ask = useCallback(async (q) => {
@@ -31,16 +33,18 @@ export default function LiveChat({ items, head }) {
     const box = log.current;
     if (!live) {
       const el = box?.querySelector(`[data-q="${q}"]`);
-      if (box && el) box.scrollTo({ top: el.offsetTop - 12 });
+      if (box && el) box.scrollTo({ top: top(box, el) - 12 });
       return;
     }
     started.current = true;
+    setDone((d) => new Set(d).add(q));
     const id = ++tok.current;
-    const key = 'm' + ++seq.current;
+    const key = 'all' + q;
     const a = items[q][1];
     const set = (f) => setThread((t) => t.map((m) => (m.id === key ? { ...m, ...f } : m)));
-    // the answer in hand finishes at once; the new question goes up, Hanzo types, then answers
-    setThread((t) => [...t.map((m) => (m.n !== undefined || m.wait ? { ...m, n: undefined, wait: false } : m)), { id: key, q, n: 0, wait: true }]);
+    // the answer in hand finishes at once; the window brings the asked question up, Hanzo types, then answers
+    setThread((t) => t.map((m) => (m.id === key ? { ...m, n: 0, wait: true } : m.n !== undefined || m.wait ? { ...m, n: undefined, wait: false } : m)));
+    requestAnimationFrame(() => { const el = box?.querySelector(`[data-q="${q}"]`); if (box && el) box.scrollTo({ top: top(box, el) - 12, behavior: calm ? 'auto' : 'smooth' }); });
     const sleep = (ms) => new Promise((ok, no) => setTimeout(() => (tok.current === id ? ok() : no(STOP)), ms));
     try {
       await sleep(700);
@@ -53,7 +57,7 @@ export default function LiveChat({ items, head }) {
       }
       set({ n: undefined });
     } catch (e) { if (e !== STOP) throw e; }
-  }, [items, live]);
+  }, [items, live, calm]);
 
   // it asks the first question itself once the window is on screen (after its landing)
   useEffect(() => {
@@ -70,10 +74,12 @@ export default function LiveChat({ items, head }) {
   }, [live, ask]);
   useEffect(() => () => { tok.current++; }, []);
 
-  // the window follows the answer as it streams
+  // the window follows the answer as it streams (its own box only, never the page)
   useEffect(() => {
     const box = log.current;
-    if (box && live) box.scrollTop = box.scrollHeight;
+    const m = thread.find((x) => x.n !== undefined);
+    const el = m && box?.querySelector(`[data-q="${m.q}"]`);
+    if (box && el && live) { const end = top(box, el) + el.offsetHeight - box.clientHeight + 12; if (end > box.scrollTop) box.scrollTop = end; }
   }, [thread, live]);
 
   // phones: the chosen chip slides into the row's view (the row scrolls, never the page)
@@ -84,14 +90,13 @@ export default function LiveChat({ items, head }) {
     ul.scrollTo({ left: Math.max(0, li.offsetLeft - 16), behavior: calm ? 'auto' : 'smooth' });
   }, [cur, calm]);
 
-  const asked = new Set(thread.map((m) => m.q));
   return (
     <div className="v2a-wrap v2a-grid agc">
       <div className="agc-l">
         {head}
         <ul className="agc-chips" ref={chips}>
           {items.map(([qq], q) => (
-            <li key={qq} className={'agx-land' + (cur === q ? ' on' : '') + (asked.has(q) && live ? ' done' : '')} style={{ '--i': q + 1 }}>
+            <li key={qq} className={'agx-land' + (cur === q ? ' on' : '') + (done.has(q) && live ? ' done' : '')} style={{ '--i': q + 1 }}>
               <button type="button" aria-pressed={cur === q} aria-controls="agc-log" onClick={() => ask(q)}>
                 <span className="agc-chip-t">{qq}</span>
                 <svg className="agc-chip-i" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
