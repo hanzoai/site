@@ -357,3 +357,7 @@ html:not(.light) .in-pa-n { fill: var(--bg); }
   .in-get .gi-more a { display: inline-flex; align-items: center; min-height: 44px; }
   .in-get .gi-art { position: relative; right: auto; top: auto; width: 72%; margin: 40px 0 0 auto; opacity: 1; }
 }
+
+/* dark: the shared pause puck is white in both modes (LivePause.css); on this page it sits on Hanzo's dark surface,
+   so it takes the dark icon-tile fill (--secondary) under its light glyph, as /kms does */
+html:not(.light) .in .lx-pause:not([aria-pressed='true']) { background: var(--secondary); color: var(--foreground); }

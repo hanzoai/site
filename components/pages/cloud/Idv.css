@@ -280,3 +280,7 @@ html:not(.light) .v2.iv { --ink: var(--foreground); --soft: var(--muted-foregrou
   .iv-sheet-in { opacity: 1 !important; }
   .iv-o *, .iv-stamp, .iv-tk path { transition: none !important; animation: none !important; }
 }
+
+/* dark: the shared pause puck is white in both modes (LivePause.css); on this page it sits on Hanzo's dark surface,
+   so it takes the dark icon-tile fill (--secondary) under its light glyph, as /kms does */
+html:not(.light) .iv .lx-pause:not([aria-pressed='true']) { background: var(--secondary); color: var(--foreground); }

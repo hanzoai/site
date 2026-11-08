@@ -498,3 +498,7 @@ html:not(.light) .mt-pause:not([aria-pressed='true']) { color: var(--ink); }
 /* the close's Sigil and repo underline are drawn in fixed black by the shared close; on this page they take the ink */
 html:not(.light) .mt-close .lx-close-sigil { color: var(--ink); }
 html:not(.light) .mt-close .lx-close-repo { text-decoration-color: var(--border-selected); }
+
+/* dark: the shared pause puck is white in both modes (LivePause.css); on this page it sits on Hanzo's dark surface,
+   so it takes the dark icon-tile fill (--secondary) under its light glyph, as /kms does */
+html:not(.light) .mt .lx-pause:not([aria-pressed='true']) { background: var(--secondary); color: var(--foreground); }

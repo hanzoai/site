@@ -302,3 +302,7 @@ html:not(.light) .v2.ig { --ink: var(--foreground); --soft: var(--muted-foregrou
 
 /* phones: no text under 14px except 11-12px mono capitals */
 @media (max-width: 900px) { .ig-pipe-n { font-size: 14px; } }
+
+/* dark: the shared pause puck is white in both modes (LivePause.css); on this page it sits on Hanzo's dark surface,
+   so it takes the dark icon-tile fill (--secondary) under its light glyph, as /kms does */
+html:not(.light) .ig .lx-pause:not([aria-pressed='true']) { background: var(--secondary); color: var(--foreground); }

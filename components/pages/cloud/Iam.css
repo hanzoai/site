@@ -278,3 +278,7 @@ button.ia-tok:disabled { cursor: default; }
 @media (prefers-reduced-motion: reduce) and (max-width: 900px) {
   .ia .ia-st:last-child .ia-lab { opacity: 1; }
 }
+
+/* dark: the shared pause puck is white in both modes (LivePause.css); on this page it sits on Hanzo's dark surface,
+   so it takes the dark icon-tile fill (--secondary) under its light glyph, as /kms does */
+html:not(.light) .ia .lx-pause:not([aria-pressed='true']) { background: var(--secondary); color: var(--foreground); }

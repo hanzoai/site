@@ -410,3 +410,6 @@ html:not(.light) .km-ship-con .cf-con.light .cf-con-bar i { border-color: var(--
 html:not(.light) .km-ship-con .cf-con.light .cf-con-side { background: var(--x-sunk); }
 html:not(.light) .km-ship-con .cf-con.light .cf-tip { color: var(--x-on-ink); }
 @media (hover: hover) { html:not(.light) .km-ship-con .cf-con.light .cf-con-open:hover { color: var(--x-on-ink); } }
+/* Frame.css steps the selected row and on-icon up to var(--secondary), but inside .cf-con.light that name is Hanzo's light
+   token (the .light class); the row tone captured outside the console keeps them Hanzo's dark secondary */
+html:not(.light) .km-ship-con .cf-con.light .cf-row-bg, html:not(.light) .km-ship-con .cf-con.light .cf-con-ico.on, html:not(.light) .km-ship-con .cf-con.light .cf-con-ico:hover { background: var(--km-con-row); }
