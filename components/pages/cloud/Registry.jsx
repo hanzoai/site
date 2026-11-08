@@ -22,7 +22,8 @@
    Every word and link is Hanzo's; repository and people names are examples. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
-import { Paste, Code, useLive } from './Frame';
+import { Code, useLive } from './Frame';
+import { LeafPaste } from './close3/Leaf';
 import SettleStage from '../../v2/SettleStage';
 import ClipWipe from '../../v2/ClipWipe';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
@@ -370,7 +371,7 @@ function RegConsole() {
             const now = st(n, s);
             return (
               <li key={n} role="option" aria-selected={at === i} tabIndex={0} onClick={() => setAt(i)} onMouseEnter={() => setAt(i)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setAt(i))}>
-                <span className="rg-rc-n"><em>acme/</em>{n}</span>
+                <span className="rg-rc-n"><em>acme/</em><span>{n}</span></span>
                 <span className={'rg-rc-st' + (now === 'Building' ? ' b' : '')}>{now === 'Building' && <b className="rg-rc-spin" aria-hidden="true" />}{now}</span>
               </li>
             );
@@ -474,7 +475,7 @@ export default function Registry() {
             <h3 className="rg-start-h">Get started with Registry</h3>
             <A to={GH} className="lx-text">View on GitHub</A>
           </div>
-          <Paste name="Registry" prompt="Read https://hanzo.ai/skill.md and use Hanzo Registry in my project. Start with: hanzo registry images" className="lx-paste rg-paste" />
+          <LeafPaste name="Registry" api="/v1/registry" prompt="Read https://hanzo.ai/skill.md and use Hanzo Registry in my project. Start with: hanzo registry images" className="lx-paste rg-paste" />
         </div>
       </LaunchClose>
     </main>

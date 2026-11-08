@@ -444,9 +444,10 @@
 /* the gliding pill: one element that moves by transform to the call on screen (no spring) */
 .xpl-ep-bg { position: absolute; left: 14px; right: 14px; top: 14px; height: 44px; border-radius: 12px; background: rgba(255, 255, 255, .1); box-shadow: inset 2px 0 0 var(--k-on); transform: translateY(calc(var(--at) * 44px)); transition: transform var(--k-base) var(--k-io), opacity var(--k-fast) var(--k-out); pointer-events: none; }
 .xpl-ep-bg[data-on='false'] { opacity: 0; }
-.xpl-eps button { position: relative; display: flex; width: 100%; align-items: center; height: 44px; padding: 0 12px; border: 0; border-radius: 12px; background: none; color: var(--k-on-4); font: 497 13px/1.3 var(--mono); text-align: left; cursor: pointer; transition: color var(--k-fast) var(--k-out), transform var(--k-press); }
+.xpl-eps button, .xpl-eps .xpl-ep-b { position: relative; display: flex; width: 100%; align-items: center; height: 44px; padding: 0 12px; border: 0; border-radius: 12px; background: none; color: var(--k-on-4); font: 497 13px/1.3 var(--mono); text-align: left; cursor: pointer; transition: color var(--k-fast) var(--k-out), transform var(--k-press); }
 .xpl-eps button:active { transform: scale(.97); }
-.xpl-eps button .xpl-ep-p { color: var(--k-on-2); font-weight: 497; }
+.xpl-eps button .xpl-ep-p, .xpl-eps .xpl-ep-b .xpl-ep-p { color: var(--k-on-2); font-weight: 497; }
+.xpl-eps .xpl-ep-b { cursor: default; box-sizing: border-box; }
 .xpl-eps button.on .xpl-ep-p { color: var(--k-on); }
 @media (hover: hover) { .xpl-eps button:hover .xpl-ep-p { color: var(--k-on); } }
 .xpl-eps-more { padding: 12px; font: 497 13px/1.3 var(--mono); color: var(--k-on-4); }
@@ -572,7 +573,7 @@
   .xpl-chips li { font-size: 14px; }
   .xpl-row { min-height: 64px; }
   .xpl-row-b b { font-size: 21px; }
-  .xpl-row-b em, .xpl-row-n, .xpl-st, .xpl-win-note, .xpl-win-cap, .xpl-ep, .xpl-ins-f p, .xpl-win-t, .xpl-win-nav a, .xpl-win-tiles a, .xpl-win-n, .xpl-tags span, .xpl-pane p, .xpl-eps button, .xpl-eps-more, .xpl-tile-sd, .xpl-foot, .xpl-zap, .xpl-ring-mid span { font-size: 14px; }
+  .xpl-row-b em, .xpl-row-n, .xpl-st, .xpl-win-note, .xpl-win-cap, .xpl-ep, .xpl-ins-f p, .xpl-win-t, .xpl-win-nav a, .xpl-win-tiles a, .xpl-win-n, .xpl-tags span, .xpl-pane p, .xpl-eps button, .xpl-eps .xpl-ep-b, .xpl-eps-more, .xpl-tile-sd, .xpl-foot, .xpl-zap, .xpl-ring-mid span { font-size: 14px; }
   .xpl-call em { font-size: 14px; }
   .xpl-head, .xpl-lp-g, .xpl-op-g, .xpl-cap-g, .xpl-facts { display: block; }
   .xpl-head { margin-bottom: 44px; }
@@ -621,7 +622,7 @@
   .xpl-eps { display: flex; overflow-x: auto; gap: 4px; padding: 10px; border-right: 0; border-bottom: 1px solid var(--k-line-d); scrollbar-width: none; }
   .xpl-ep-bg { display: none; }
   .xpl-eps li { flex: none; }
-  .xpl-eps button .xpl-ep-h { display: none; }
+  .xpl-eps button .xpl-ep-h, .xpl-eps .xpl-ep-b .xpl-ep-h { display: none; }
   .xpl-eps button.on { background: rgba(255, 255, 255, .1); }
   .xpl-eps-more { white-space: nowrap; }
   .xpl-term-r { min-height: 380px; padding: 20px; }

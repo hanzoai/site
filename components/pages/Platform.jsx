@@ -573,7 +573,7 @@ function Loop() {
 /* ---------- the cloud, plane by plane: sticky chapters ---------- */
 const TILES = [['Chat', '/cloud/chat'], ['Bot', '/bot'], ['Search', '/search'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']];
 const NAV = [['GPUs', '/cloud/gpus'], ['Machines', '/machines'], ['Containers', '/cloud/containers'], ['Functions', '/functions'], ['Edge', '/edge'], ['Applications', '/cloud/applications'], ['Clusters', '/cloud/clusters'], ['Kubernetes', '/cloud/kubernetes']];
-const ROWS = [['gateway', 'Ready'], ['payments-api', 'Ready'], ['checkout-web', 'Building'], ['docs-site', 'Ready']];
+const ROWS = [['gateway', 'Ready', 'Every request enters here, so the limiter does too.'], ['payments-api', 'Ready', 'The service the session above is changing.'], ['checkout-web', 'Building', 'A build is running from the last commit on main.'], ['docs-site', 'Ready', 'Static, published by the same pipeline as the rest.']];
 const LADDER = [['Functions', "Scale to zero between calls.", 14], ['Containers', "Your image, deployed and addressable.", 32], ['Sandboxes', "Isolated shells for agents and untrusted code.", 50], ['Machines', "A whole machine, by the second.", 68], ['GPUs', "Accelerators attached to any of them.", 84], ['Kubernetes', "The substrate all of it runs on.", 100]];
 const DEPLOY = [['Containers', "Deploy an image and invoke it. Deployments, triggers, secrets, metrics and logs are all part of the same surface, so a function you ship is a function you can watch."], ['Machines', "A whole machine, by the second."], ['Sandboxes', "Isolated shells for agents and untrusted code."]];
 
@@ -593,11 +593,11 @@ function ConsoleWin() {
           <Tabs id="xpl-work" tabs={DEPLOY.map(([t]) => t)} value={tab} onChange={setTab} label="Kinds of work" className="xpl-tabs" />
           {DEPLOY.map(([t, d], i) => <TabPanel key={t} id="xpl-work" i={i} value={tab} className="xpl-pane"><p>{d}</p></TabPanel>)}
           <ul className="xpl-win-rows">
-            {ROWS.map(([n, s], i) => (
+            {ROWS.map(([n, s, note], i) => (
               <li key={n} className={s === 'Building' ? 'busy' : ''}>
                 <span className="xpl-win-n">{n}</span>
                 <span className="xpl-st"><i aria-hidden="true" /><span>{s}</span></span>
-                {i === 0 && <span className="xpl-win-note">Every request enters here, so the limiter does too.</span>}
+                <span className="xpl-win-note">{note}</span>
               </li>
             ))}
           </ul>
@@ -712,9 +712,13 @@ function Planes() {
 }
 
 /* ---------- one API: one afternoon of calls, replayed, each path typing itself ---------- */
+/* Hanzo's six listed paths (the left column) and its five-beat tour (the right), as hanzo.ai/platform prints them */
+const EPS = ['/v1/models', '/v1/agent', '/v1/function', '/v1/provisioning/sql', '/v1/provisioning/vector', '/v1/s3/buckets'];
 const OPS = [
   { p: '/v1/models', cap: 'Start with the models.', m: 'GET', d: 'Returns the list of available models from the routing table.', tags: ['Models'] },
-  { p: '/v1/agent' }, { p: '/v1/function' }, { p: '/v1/provisioning/sql' }, { p: '/v1/provisioning/vector' }, { p: '/v1/s3/buckets' },
+  { p: '/v1/ai/routes', cap: 'Blend them behind one route.', m: 'POST', d: 'Create a model-route' },
+  { p: '/v1/chat/completions', cap: 'Ask it something.', m: 'POST', d: 'Implements the OpenAI-compatible chat completions API' },
+  { p: '/v1/agent', cap: 'Hand it your own tools.', m: 'POST', d: "Defines an agent in the caller's org: a model, a system prompt (instructions) and a set of tool names." },
   { p: '/v1/billing/usage', cap: "Watch what it cost.", m: 'GET', d: "Every billed call the caller's org made, attributed to a product", tags: ["AI Metrics", "Billing"] },
 ];
 
@@ -758,15 +762,20 @@ function OneApi() {
           <p className="xpl-body">The same key, organization, project, policy and usage ledger behind every path. The interface changes; the system does not.</p>
         </header>
         <div ref={box} className="xpl-term" data-room="dark">
-          <ul className="xpl-eps" style={{ '--at': Math.min(at, 6) }}>
-            <li className="xpl-ep-bg" aria-hidden="true" data-on={at < 6} />
-            {OPS.slice(0, 6).map((o, i) => (
-              <li key={o.p}>
-                <button type="button" className={at === i ? 'on' : ''} aria-pressed={at === i} onClick={() => { setAt(i); setPlay(false); }}>
-                  <span className="xpl-ep-h">api.hanzo.ai</span><span className="xpl-ep-p">{o.p}</span>
-                </button>
-              </li>
-            ))}
+          <ul className="xpl-eps" style={{ '--at': Math.max(0, EPS.indexOf(OPS[at].p)) }}>
+            <li className="xpl-ep-bg" aria-hidden="true" data-on={EPS.includes(OPS[at].p)} />
+            {EPS.map((p) => {
+              const j = OPS.findIndex((o) => o.p === p);
+              const lit = OPS[at].p === p;
+              return (
+                <li key={p}>
+                  {j < 0 ? <span className="xpl-ep-b"><span className="xpl-ep-h">api.hanzo.ai</span><span className="xpl-ep-p">{p}</span></span>
+                    : <button type="button" className={lit ? 'on' : ''} aria-pressed={lit} onClick={() => { setAt(j); setPlay(false); }}>
+                      <span className="xpl-ep-h">api.hanzo.ai</span><span className="xpl-ep-p">{p}</span>
+                    </button>}
+                </li>
+              );
+            })}
             <li className="xpl-eps-more"><span>api.hanzo.ai/v1/…</span></li>
           </ul>
           <div className="xpl-term-r">

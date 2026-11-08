@@ -3,7 +3,7 @@
    useEnter(ref) arms a section after hydration (so JS off and the server HTML show the final state) and fires it the
    first time it is in view; reduced motion never arms. CSS in Playground.css keys off [data-enter=armed|in].
    useScramble(ref, selector, on): decodes each target's text from scrambled characters to Hanzo's words, left to right;
-   the final text is the server text, restored exactly. */
+   drawn by a ::after overlay (data-scr), so the element's own text is always Hanzo's. */
 import { useEffect, useState } from 'react';
 
 export function useEnter(ref, amount = 0.25) {
@@ -21,24 +21,26 @@ export function useEnter(ref, amount = 0.25) {
 
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=<>/';
 export function useScramble(ref, selector, on, ms = 1100) {
+  // copy rule (8 Nov): the element's own text never changes; the scramble is drawn by ::after from data-scr over it
   useEffect(() => {
     if (!on) return;
-    const nodes = [...(ref.current?.querySelectorAll(selector) || [])]
-      .map((el) => el.firstChild).filter((n) => n && n.nodeType === 3 && n.nodeValue.trim());
-    const finals = nodes.map((n) => n.nodeValue);
+    const els = [...(ref.current?.querySelectorAll(selector) || [])].filter((el) => el.textContent.trim());
+    const finals = els.map((el) => el.textContent);
     let raf = 0;
     const t0 = performance.now();
+    const done = () => els.forEach((el) => el.removeAttribute('data-scr'));
     const tick = (t) => {
       const p = Math.min(1, (t - t0) / ms);
-      nodes.forEach((n, k) => {
+      if (p >= 1) return done();
+      els.forEach((el, k) => {
         const f = finals[k], lit = Math.floor(f.length * Math.min(1, p * 1.15 - k * 0.04));
         let s = f.slice(0, Math.max(0, lit));
         for (let i = Math.max(0, lit); i < f.length; i++) s += f[i] === ' ' ? ' ' : GLYPHS[(Math.random() * GLYPHS.length) | 0];
-        n.nodeValue = p >= 1 ? f : s;
+        el.setAttribute('data-scr', s);
       });
-      if (p < 1) raf = requestAnimationFrame(tick);
+      raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => { cancelAnimationFrame(raf); nodes.forEach((n, k) => { n.nodeValue = finals[k]; }); };
+    return () => { cancelAnimationFrame(raf); done(); };
   }, [ref, selector, on, ms]);
 }

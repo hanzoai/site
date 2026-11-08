@@ -1,5 +1,5 @@
 'use client';
-/* Page-local copies of Frame's Code and Paste for /pubsub, /realtime and /s3 (same markup and classes, so Frame.css
+/* Page-local copies of Frame's Code and Paste for /pubsub, /realtime, /s3, /playground and /registry (same markup and classes, so Frame.css
    styles them as before), with one change each so Hanzo's lines read whole (docs/COPY-RULE.md, copycheck): every code
    line is one element holding exactly that line (a marked line: before, the mark, after), the prompt is one element holding exactly Hanzo's prompt, and the
    api tag is one element ("api /v1/…"), never split into finer spans. A whole comment line keeps the grey (class c). */

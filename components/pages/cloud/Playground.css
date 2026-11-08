@@ -294,3 +294,8 @@ html:not(.js) .pg-cv-item { position: static; transform: none !important; }
   .pg-tiles, .pg-flip { display: none; }
   .pg-cover, .pg-door > * { transform: none !important; opacity: 1 !important; animation: none !important; }
 }
+
+/* scramble overlay (enter.js useScramble): the real text stays in the DOM, unseen, while ::after draws the decode over it */
+.pg-room [data-scr] { -webkit-text-fill-color: transparent; }
+.pg-room [data-scr]:not(.pg-tile-n) { position: relative; }
+.pg-room [data-scr]::after { content: attr(data-scr); position: absolute; inset: 0; -webkit-text-fill-color: currentColor; pointer-events: none; }

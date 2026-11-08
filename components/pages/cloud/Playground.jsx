@@ -19,7 +19,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useReducedMotion, useTransform } from 'motion/react';
 import { Copy } from '../../ui';
-import { Paste, useLive } from './Frame';
+import { useLive } from './Frame';
+import { LeafPaste } from './close3/Leaf';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LineMask from '../../v2/LineMask';
 import LivePause, { usePause } from '../../v2/LivePause';
@@ -338,6 +339,8 @@ function Explore() {
               ))}{' '}
               <button type="button" className={'pg-ph' + (show === 3 ? ' on' : '')} onClick={() => pick(3)} onPointerEnter={peek(3)} aria-pressed={sel === 3}>is the whole first request.</button>
             </p>
+            {/* Hanzo's sentence as one line of text: the buttons above spell exactly these words, phrase by phrase */}
+            <p className="x-sr" aria-hidden="true">A key, a model name, and a message is the whole first request.</p>
           </div>
           <div className="pg-cv-item pg-req pg-req-curl" ref={put('curl')} style={pos('curl')}>
             <div className="pg-req-bar"><i /><i /><i /><span className="pg-req-n">curl</span><Copy text={CURL} /></div>
@@ -432,7 +435,7 @@ function Room() {
   return (
     <section ref={ref} className="lx-dark pg-paste pg-room" data-room="dark" data-enter={enter || undefined}>
       <div className="lx-wrap pg-paste-grid">
-        <Paste dark name="Playground" api="/v1/chat/completions" prompt="Read https://hanzo.ai/skill.md and use Hanzo Playground in my project." className="lx-paste" />
+        <LeafPaste dark name="Playground" api="/v1/chat/completions" prompt="Read https://hanzo.ai/skill.md and use Hanzo Playground in my project." className="lx-paste" />
         <Wall />
       </div>
     </section>
