@@ -211,3 +211,12 @@
   .xst-ledger { clip-path: none !important; }
   .xst-mark { animation: none !important; }
 }
+
+/* dark mode (docs/DARK-MODE.md): Hanzo's default; light is html.light, so every rule here sits under html:not(.light)
+   and bright mode is untouched. The story's tokens take Hanzo's dark tokens through our --x- aliases (they resolve on
+   <html>); the black room, its scrim and type, and the launch's pictures stay as they are. */
+html:not(.light) .xst { --ink: var(--foreground); --body: var(--text-secondary); --muted: var(--muted-foreground); --quiet: var(--faint); --hair: var(--x-e10); --quiet-room: var(--x-sunk); --plate: var(--x-fill); --plate-ink: var(--muted-foreground); }
+html:not(.light) .xst-hero, html:not(.light) .xst-scene { background: var(--bg); }
+html:not(.light) .xst-scene[data-tone='b'] { background: var(--x-fill); }
+html:not(.light) .xst-mark { background: linear-gradient(transparent 60%, var(--x-knob) 60%); }
+html:not(.light) .xst-pic-sigil { color: var(--white-30); }
