@@ -155,3 +155,21 @@
   .xcu-line u.run { animation: none; transform: scaleX(1); }
   .xcu-row-f dt, .xcu-row-f dd { opacity: 1 !important; transform: none !important; transition: none; }
 }
+
+/* dark mode (docs/DARK-MODE.md): Hanzo's default; light is html.light, so every rule here sits under html:not(.light)
+   and bright mode is untouched. Page and deck tokens take Hanzo's dark tokens through our --x- aliases (they resolve on
+   <html>). The case plate and the closing room are black in both modes and stay as they are. */
+html:not(.light) .xcu { --xi: var(--foreground); --sec: var(--muted-foreground); --mut: var(--faint); --raised: var(--x-fill); --sunk: var(--x-knob); --ink: var(--foreground); --ink2: var(--muted-foreground); --muted: var(--faint); --line: var(--x-e10); }
+html:not(.light) .xcu ::selection { background: var(--x-knob); }
+html:not(.light) .xcu :focus-visible { box-shadow: 0 0 0 5px var(--bg); }
+html:not(.light) .xcu-cta:not(.lt) { color: var(--x-on-ink); }
+@media (hover: hover) { html:not(.light) .xcu-cta:not(.lt):hover { background: var(--muted-foreground); } }
+html:not(.light) .vc.xcu .xcu-lede.xcu-wl { color: var(--xi); }
+html:not(.light) .xcu-index, html:not(.light) .xcu-row { border-color: var(--x-e10); }
+@media (max-width: 899px) {
+  html:not(.light) .xcu-years { background: var(--bg); border-bottom-color: var(--x-e10); }
+  html:not(.light) .js .xcu-row:not(.read) .xcu-row-n h3 { color: var(--mut); }
+}
+/* the builders' logos are dark artwork: in dark they are drawn light, at the same quiet weight */
+html:not(.light) .xcu-wall img { filter: grayscale(1) brightness(0) invert(1); opacity: .6; }
+@media (hover: hover) { html:not(.light) .xcu-wall a:hover img { filter: grayscale(1) brightness(0) invert(1); opacity: 1; } }
