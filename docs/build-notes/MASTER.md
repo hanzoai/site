@@ -115,7 +115,7 @@ Hanzo's header, footer and links are unchanged. Re-home a link, never delete one
 - Trust is a stationary row (greyscale, 28 to 32px, linking to `/investors` or `/customers/<slug>`) or a marquee of 25 s or slower that pauses on hover and focus, freezes under reduced motion, hides its duplicate half and has a pause control past 5 s.
 - Show a customer year only where the case copy has it. Figures use `Stat`: tabular numerals, source link and qualifier ("Up to") beside the number, value byte-identical to source. A zero never gets hero size.
 - Benchmarks: a method line from existing text, a zero baseline, Hanzo in ink and the rest in grey, `role="table"`.
-- No seal, certification mark or invented uptime. SOC 2 stays "compatible, not certified".
+- No seal or invented uptime. SOC 2 is named only as "compatible with SOC 2".
 - Every form has the Privacy link and owner line in its submit viewport.
 
 **Tick:** [ ] no unpermitted logo or seal; [ ] figures traced; [ ] marquees pause and freeze; [ ] Privacy link by every submit.
