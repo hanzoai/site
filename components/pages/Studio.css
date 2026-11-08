@@ -168,10 +168,10 @@
 @media (hover: hover) { .xst-what-copy a:hover { text-decoration-thickness: 2px; } }
 .xst-which { grid-column: 8 / span 5; padding: 36px; border-radius: var(--r-hero); background: var(--card); }
 .xst-make { display: flex; flex-wrap: wrap; gap: 8px; }
-.xst-make button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: 500 14px/1 var(--sans); }
+.xst-make button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); font: 500 14px/1 var(--sans); }
 .xst-make button::before { background: var(--ink); }
-@media (hover: hover) { .xst-make button:hover { border-color: #0a0a0a; background: #f5f5f5; } }
-.xst-make button[aria-checked='true'] { color: #fff; border-color: var(--ink); }
+@media (hover: hover) { .xst-make button:hover { border-color: var(--ink); background: light-dark(#f5f5f5, var(--muted)); } }
+.xst-make button[aria-checked='true'] { color: var(--x-on-ink); border-color: var(--ink); }
 .xst-make button[aria-checked='true']::before { opacity: 1; }
 .xst-ans { display: grid; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
 /* changeovers never blend two texts: the outgoing one leaves in 150 ms, the incoming one starts after it and its title
@@ -197,7 +197,7 @@
 .xst-frame img:nth-of-type(2) { object-position: 50% 36%; }
 .xst-frame img:nth-of-type(3) { object-position: 50% 44%; }
 .xst-frame::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 55%, rgba(0, 0, 0, .55)); pointer-events: none; }
-.xst-frame-rig { position: absolute; left: 24px; top: 20px; z-index: 2; padding: 6px 10px; border-radius: 8px; background: var(--acc); color: #fff; font-size: 13px; }
+.xst-frame-rig { position: absolute; left: 24px; top: 20px; z-index: 2; padding: 6px 10px; border-radius: 8px; background: var(--acc); color: var(--x-on-ink); font-size: 13px; }
 .xst-frame-n { position: absolute; right: 24px; top: 22px; z-index: 2; font-size: 13px; color: #fff; }
 .xst-subs { list-style: none; display: grid; margin: 36px 0 0; padding: 0; }
 .xst-subs li { grid-area: 1 / 1; display: grid; grid-template-columns: 64px minmax(0, 5fr) minmax(0, 7fr); gap: 24px; align-items: baseline; opacity: 0; transform: translateY(16px); transition: opacity .15s var(--x-out), transform .15s var(--x-out); }
@@ -209,34 +209,34 @@
 .xst-graph { padding: 72px 0 44px; }
 .xst-gh { margin-bottom: 44px; }
 .xst-gw { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 32px; align-items: stretch; }
-.xst-canvas { --pad: 32px; position: relative; height: 460px; border-radius: var(--r-hero); background-color: #f5f5f5; background-image: radial-gradient(rgba(0, 0, 0, .1) 1px, transparent 1.4px); background-size: 20px 20px; background-position: 10px 10px; }
+.xst-canvas { --pad: 32px; position: relative; height: 460px; border-radius: var(--r-hero); background-color: light-dark(#f5f5f5, var(--x-raised)); background-image: radial-gradient(light-dark(rgba(0, 0, 0, .1), var(--border)) 1px, transparent 1.4px); background-size: 20px 20px; background-position: 10px 10px; }
 .xst-wires { position: absolute; inset: var(--pad); width: calc(100% - 2 * var(--pad)); height: calc(100% - 2 * var(--pad)); overflow: visible; pointer-events: none; }
-.xst-wires path { fill: none; stroke: rgba(0, 0, 0, .16); stroke-width: 1.5; }
-.xst-wires path.lit { stroke: #0a0a0a; opacity: 0; transition: opacity .4s var(--x-io); }
+.xst-wires path { fill: none; stroke: light-dark(rgba(0, 0, 0, .16), var(--border-strong)); stroke-width: 1.5; }
+.xst-wires path.lit { stroke: var(--ink); opacity: 0; transition: opacity .4s var(--x-io); }
 .xst-wires path.lit.on { opacity: 1; }
 .xst-node {
   position: absolute; left: calc(var(--pad) + (100% - 2 * var(--pad)) * var(--x)); top: calc(var(--pad) + (100% - 2 * var(--pad)) * var(--y));
-  width: calc((100% - 2 * var(--pad)) * .22); display: grid; gap: 8px; padding: 12px 14px 14px; border: 0; border-radius: 16px; background: #fff; color: var(--ink);
+  width: calc((100% - 2 * var(--pad)) * .22); display: grid; gap: 8px; padding: 12px 14px 14px; border: 0; border-radius: 16px; background: var(--x-raised); color: var(--ink);
   font: inherit; text-align: left; cursor: pointer; transform: translateY(-50%); transition: transform .3s var(--x-em);
 }
-.xst-node::before, .xst-node::after { content: ''; position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: #fff; border: 1.5px solid #a3a3a3; }
+.xst-node::before, .xst-node::after { content: ''; position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; border-radius: 50%; background: var(--x-raised); border: 1.5px solid light-dark(#a3a3a3, var(--text-tertiary)); }
 .xst-node::before { left: -5px; }
 .xst-node::after { right: -5px; }
 .xst-canvas > .xst-node:nth-child(2)::before, .xst-canvas > .xst-node:nth-child(3)::before, .xst-canvas > .xst-node:nth-child(7)::after { display: none; }
-.xst-node.on::before, .xst-node.on::after, .xst-node.done::before, .xst-node.done::after { border-color: #0a0a0a; }
+.xst-node.on::before, .xst-node.on::after, .xst-node.done::before, .xst-node.done::after { border-color: var(--ink); }
 .xst-node:active { transform: translateY(-50%) scale(.98); transition-duration: .09s; }
-.xst-node:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 4px; box-shadow: 0 0 0 4px #fff; }
+.xst-node:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; box-shadow: 0 0 0 4px var(--bg); }
 @media (hover: hover) { .xst-node:hover { transform: translateY(calc(-50% - 3px)); } }
-.xst-node-ring { position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 1.5px #0a0a0a, 0 24px 60px -16px rgba(0, 0, 0, .18); pointer-events: none; }
+.xst-node-ring { position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 1.5px var(--ink), 0 24px 60px -16px rgba(0, 0, 0, .18); pointer-events: none; }
 .xst-node-k { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--faint); }
-.xst-node-k i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #a3a3a3; }
-.xst-node.done .xst-node-k i, .xst-node.on .xst-node-k i { border-color: #0a0a0a; background: #0a0a0a; }
+.xst-node-k i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid light-dark(#a3a3a3, var(--text-tertiary)); }
+.xst-node.done .xst-node-k i, .xst-node.on .xst-node-k i { border-color: var(--ink); background: var(--ink); }
 .xst-node b { font-size: 14px; font-weight: 500; line-height: 1.3; letter-spacing: -.01em; text-wrap: balance; }
 .xst-node em { font-size: 12px; font-style: normal; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .xst-pane { display: flex; flex-direction: column; gap: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
 .xst-pane-k { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--faint); font-feature-settings: 'tnum'; }
-.xst-pane-k i { position: relative; flex: 1; height: 2px; border-radius: 1px; background: rgba(0, 0, 0, .1); overflow: hidden; }
-.xst-pane-k b { position: absolute; inset: 0; background: #0a0a0a; transform-origin: 0 50%; transition: transform .4s var(--x-io); }
+.xst-pane-k i { position: relative; flex: 1; height: 2px; border-radius: 1px; background: var(--x-e10); overflow: hidden; }
+.xst-pane-k b { position: absolute; inset: 0; background: var(--ink); transform-origin: 0 50%; transition: transform .4s var(--x-io); }
 .xst-pane-st { display: grid; }
 .xst-pane-c { grid-area: 1 / 1; display: grid; align-content: start; gap: 14px; opacity: 0; transform: translateY(16px); clip-path: inset(0 0 100% 0); transition: opacity .15s var(--x-out), transform .15s var(--x-out), clip-path .15s var(--x-out); }
 .xst-pane-c.on { opacity: 1; transform: none; clip-path: inset(0 0 0 0); transition: opacity .3s var(--x-out) .15s, transform .5s var(--x-em) .15s, clip-path .5s var(--x-em) .15s; }
@@ -354,7 +354,7 @@
      pillar's title passes under it (IntersectionObserver, no pin) */
   .xst-reel { height: auto; padding: 56px 0 32px; margin: 0; }
   .xst-reel-stick { position: static; height: auto; display: block; padding-top: 0; overflow: visible; }
-  .xst-frame-pin { position: sticky; top: 60px; z-index: 2; padding: 10px 0 14px; background: #fff; }
+  .xst-frame-pin { position: sticky; top: 60px; z-index: 2; padding: 10px 0 14px; background: var(--bg); }
   .xst-frame { aspect-ratio: 2.39 / 1; border-radius: 16px; }
   .xst-frame-rig { left: 12px; top: 10px; padding: 5px 8px; }
   .xst-frame-n { right: 14px; top: 13px; }
@@ -367,7 +367,7 @@
   .xst-gh { margin-bottom: 28px; }
   .xst-gw { gap: 20px; }
   .xst-canvas { --pad: 0px; height: auto; display: grid; gap: 8px; padding: 14px 14px 14px 30px; }
-  .xst-canvas::before { content: ''; position: absolute; left: 18px; top: 34px; bottom: 34px; width: 1.5px; background: rgba(0, 0, 0, .16); }
+  .xst-canvas::before { content: ''; position: absolute; left: 18px; top: 34px; bottom: 34px; width: 1.5px; background: light-dark(rgba(0, 0, 0, .16), var(--border-strong)); }
   .xst-wires { display: none; }
   .xst-node { position: relative; left: auto; top: auto; width: auto; min-height: 52px; display: flex; align-items: center; gap: 12px; padding: 10px 14px; transform: none; }
   .xst-node:active { transform: scale(.98); }
@@ -408,3 +408,7 @@
   .xst-get-shot img { animation: xst-hold 9s cubic-bezier(.4, 0, .2, 1) infinite alternate; }
 }
 @keyframes xst-hold { from { transform: scale(1.12) translate3d(2%, 0, 0); } to { transform: scale(1.22) translate3d(-3%, -2%, 0); } }
+
+/* dark (as live hanzo.ai draws it): the shared A2 kit's greys take Hanzo's dark tokens on this page, and the node canvas keeps a hairline edge */
+html:not(.light) .xst.a2 { --acc: var(--foreground); --acc-soft: var(--muted); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --card: var(--x-raised); --line: var(--border); }
+html:not(.light) .xst-canvas { box-shadow: inset 0 0 0 1px var(--border); }
