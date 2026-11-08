@@ -203,3 +203,4 @@ html:not(.light) .ts-split, html:not(.light) .ts-get, html:not(.light) .ts-chip 
 /* the close's primary turns into live's light pill in dark (the shared .w2-cta is black in both modes) */
 @media (min-width: 900px) { html:not(.light) .ts-first-acts .w2-cta { background: var(--ink); color: var(--x-on-ink); } }
 @media (hover: hover) and (min-width: 900px) { html:not(.light) .ts-first-acts .w2-cta:hover { background: var(--primary-hover); } }
+html:not(.light) .ts { --soft: var(--muted-foreground); --faint: var(--text-tertiary); } /* the shared .w2 greys are light-only */
