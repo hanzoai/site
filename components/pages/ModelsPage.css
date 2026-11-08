@@ -448,7 +448,7 @@ html:not(.light) .xmo { --ink: var(--foreground); --body: var(--muted-foreground
    kit's own button rule (position: relative) never wins, whatever order the stylesheets load in. */
 .xmo-pill.price { color: #fff; border-color: rgba(255, 255, 255, .45); letter-spacing: 0; white-space: nowrap; }
 .xmo-cards > li { position: relative; }
-.xmo-cards > li > .x-btn.xmo-use { position: absolute; right: 21px; bottom: 21px; top: auto; left: auto; z-index: 2; background: #fff; border-color: #fff; color: #0a0a0a; transition: background .2s, transform .2s cubic-bezier(.2, .8, .2, 1); }
+.xmo-cards > li > .x-btn.xmo-use { position: absolute; right: 21px; bottom: 21px; top: auto; left: auto; z-index: 2; background: #fff; border-color: #fff; transition: background .2s, transform .2s cubic-bezier(.2, .8, .2, 1); }
 .xmo-cards > li > .x-btn.xmo-use::after { content: ''; position: absolute; inset: -5px -4px; }
 .xmo-cards > li > .x-btn.xmo-use:active { transform: scale(.97); }
 @media (hover: hover) { .xmo-cards > li > .x-btn.xmo-use:hover { background: #e8e8e8; border-color: #e8e8e8; } }
