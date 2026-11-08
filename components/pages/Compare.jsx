@@ -211,7 +211,9 @@ function Fig({ v }) {
 function Tally() {
   const [keep, setKeep] = useState(YN);
   const ref = useRef(null);
-  const calm = useReducedMotion();
+  const r0 = useReducedMotion();
+  const [calm, setCalm] = useState(false); // after mount, so the first render matches the server's HTML
+  useEffect(() => setCalm(!!r0), [r0]);
   const seen = useInView(ref, { once: true, amount: 0.35 });
   const go = seen || calm;
   const flip = (i) => setKeep((k) => (k.includes(i) ? k.filter((x) => x !== i) : [...k, i].sort()));
