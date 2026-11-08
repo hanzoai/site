@@ -160,5 +160,6 @@ Wording and prices follow live hanzo.ai as captured on 8 Nov 2026 (`content/live
 - `docs/DARK-MODE.md`: how dark mode is wired, and how to convert or test a page.
 - `docs/COPY-RULE.md`: the rule this redesign follows: no wording changes, checked with `copycheck.mjs`.
 - `docs/MOTION-MAP.md` (+ `motion-map.json`): each page's one signature interaction, so no two pages move alike.
+- `docs/screenshots/`: the handoff spot-checks (home, /pricing, /chat, /models, /about; light and dark; 1470×801 and 375×812).
 - `docs/build-notes/`: the design process: per-page checklists (`coverage/`), page reviews (`review/`), requests,
   plans and the earlier README. Not needed to run or change the site.
