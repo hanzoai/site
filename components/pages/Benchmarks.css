@@ -852,3 +852,64 @@ html.js .xbm-ent[data-ent='conveyor'][data-go] .xbm-tiles > li:nth-child(n+4) { 
 @media (max-width: 900px) { .xbm-rail-l a { padding-block: 15px; } } /* 44px rail tabs on phones */
 /* an open sheet always slides fully in, wide ones too (the phone rule above had the same weight and came later) */
 .xbm-sh[data-open='true'] .xbm-sh-panel, .xbm-sh.wide[data-open='true'] .xbm-sh-panel { transform: none; }
+
+/* ---------- dark (docs/DARK-MODE.md): the page's deck greys become Hanzo's dark tokens; the Zen room, the hardware and
+   dial panels and the close stay as they are (black in both modes). Light is untouched: every rule is under
+   html:not(.light). ---------- */
+html:not(.light) .xbm, html:not(.light) .xbm-in { --j: var(--neutral-600); --acc: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --card: var(--muted); --line: var(--border); }
+html:not(.light) .xbm :is(.pf-lede, .pf-body):not(.xbm-zen *) { color: var(--muted-foreground); }
+html:not(.light) .xbm .pf-plus.ghost i { background: var(--secondary); }
+html:not(.light) .xbm .pf-btn { border-color: var(--border-control); }
+html:not(.light) .xbm .pf-btn:hover { border-color: var(--border-strong); }
+html:not(.light) .xbm .pf-btn.solid { border-color: var(--ink); }
+html:not(.light) .xbm .pf-btn.solid:hover { background: var(--primary-hover); }
+html:not(.light) .xbm-bar { background: var(--secondary); }
+html:not(.light) .xbm-bar.pale b { background: var(--neutral-700); }
+html:not(.light) .xbm-seg button[aria-selected='true'], html:not(.light) .xbm-race-tabs button[aria-selected='true'] { color: var(--x-on-ink); }
+html:not(.light) .xbm-tools button, html:not(.light) .xbm-jump > button, html:not(.light) .xbm-jump-p, html:not(.light) .xbm-tile, html:not(.light) .xbm-all, html:not(.light) .xbm-ev-tabs button, html:not(.light) .xbm-pp, html:not(.light) .xbm-race-tabs button, html:not(.light) .xbm-run-b, html:not(.light) .xbm-lane, html:not(.light) .xbm-fbtn, html:not(.light) .xbm-fg button, html:not(.light) .xbm-fold { background: var(--x-raised); }
+html:not(.light) .xbm-fg button[aria-pressed='true'] { background: var(--ink); color: var(--x-on-ink); }
+html:not(.light) .xbm-fg button[aria-pressed='true'] span { color: var(--neutral-600); }
+@media (hover: hover) {
+  html:not(.light) .xbm-tools button:hover, html:not(.light) .xbm-jump > button:hover, html:not(.light) .xbm-ev-tabs button:hover, html:not(.light) .xbm-race-tabs button:hover, html:not(.light) .xbm-fg button:hover, html:not(.light) .xbm-fold:hover, html:not(.light) .xbm-graph-c:hover { border-color: var(--border-strong); }
+  html:not(.light) .xbm-tile:hover, html:not(.light) .xbm-pp:hover { border-color: var(--border-strong); }
+  html:not(.light) .xbm-run-b:hover { border-color: var(--border-strong); }
+  html:not(.light) .xbm-views a:hover { background: var(--secondary); }
+  html:not(.light) .xbm-sr:hover, html:not(.light) .xbm-sr.on { background: var(--x-sunk); }
+  html:not(.light) .xbm-mine:hover i, html:not(.light) .xbm-chk:hover i { border-color: var(--border-selected); }
+}
+html:not(.light) .xbm-ev-tabs button[aria-selected='true'] { border-color: var(--border-strong); }
+html:not(.light) .xbm-run-b { border-color: var(--border-control); }
+html:not(.light) .xbm-key.reported::before, html:not(.light) .xbm-pt.reported circle:first-child { fill: var(--background); background: var(--background); }
+html:not(.light) .xbm-grid { stroke: var(--border); }
+html:not(.light) .xbm-pt circle:first-child { fill: var(--neutral-600); }
+html:not(.light) .xbm-pt.f circle:first-child { fill: var(--muted-foreground); }
+html:not(.light) .xbm-pt.reported circle:first-child { stroke: var(--muted-foreground); }
+html:not(.light) .xbm-pt.router circle:first-child { fill: var(--acc); }
+html:not(.light) .xbm-rail:not(.dark) { background: var(--bg); }
+html:not(.light) .xbm-lb-r, html:not(.light) .xbm-row, html:not(.light) .xbm-sr { background: var(--bg); }
+html:not(.light) .xbm-duel-d a, html:not(.light) .xbm-duel-l a { text-decoration-color: var(--white-22); }
+html:not(.light) .xbm-mine i, html:not(.light) .xbm-chk i { border-color: var(--border-strong); }
+html:not(.light) .xbm-badge { color: var(--x-on-ink); }
+html:not(.light) .xbm-lane.mid .xbm-badge, html:not(.light) .xbm-lane.slow .xbm-badge { background: var(--secondary); }
+html:not(.light) .xbm-lane-bar { background: var(--secondary); }
+html:not(.light) .xbm-lane.mid .xbm-lane-bar b { background: var(--muted-foreground); }
+html:not(.light) .xbm-lane.slow .xbm-lane-bar b { background: var(--neutral-600); }
+html:not(.light) .xbm-mb { background: repeating-linear-gradient(0deg, transparent 0 21px, var(--border) 21px 22px), repeating-linear-gradient(90deg, transparent 0 21px, var(--border) 21px 22px); }
+/* the command line and the compare tray: ink panels in light; in dark they stay dark panels on Hanzo's card */
+html:not(.light) .xbm-cmd-l, html:not(.light) .xbm-cmp { background: var(--card); box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .xbm-fbtn b { color: var(--x-on-ink); }
+html:not(.light) .xbm :focus-visible, html:not(.light) .xbm-in :focus-visible { outline-color: var(--foreground); }
+html:not(.light) .xbm .xbm-w::before { background: var(--x-raised); }
+html:not(.light) .xbm-pp .xbm-w::before, html:not(.light) .xbm-rows .xbm-w::before { background: var(--muted); }
+html:not(.light) .xbm-vis-tools .xbm-w::before { background: none; box-shadow: inset 0 0 0 1.5px var(--foreground); }
+html:not(.light) .xbm-zen .xbm-w::before { background: rgba(255, 255, 255, .08); }
+html:not(.light) .xbm-fold i { color: var(--x-on-ink); }
+html:not(.light) .xbm-ix-fold i { background: var(--secondary); }
+/* the reading sheet */
+html:not(.light) .xbm-sh-panel { background: var(--x-raised); }
+html:not(.light) .xbm-sh-top { border-bottom-color: var(--border); }
+html:not(.light) .xbm-sh-x { background: var(--secondary); }
+@media (hover: hover) { html:not(.light) .xbm-sh-x:hover { background: var(--secondary-hover); } }
+html:not(.light) .xbm-sh-body { color: var(--muted-foreground); }
+html:not(.light) .xbm-sh-panel::before { background: var(--border-strong); }
+html:not(.light) .xbm-ent[data-ent='sticky-stack'] .xbm-figs-l > li > a { background: var(--bg); }
