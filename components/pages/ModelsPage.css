@@ -176,11 +176,11 @@ html:not(.light) .xmo-chips button[aria-pressed='true'] { background: var(--ink)
 .xmo .x-btn.xmo-use:hover, .xmo-row:hover .x-btn.xmo-use, .xmo-row:focus-within .x-btn.xmo-use { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
 /* the beam: when a filter changes, a band of light sweeps down over the rows that stay */
 .xmo-beam { position: absolute; inset: 0; z-index: 3; overflow: hidden; pointer-events: none; }
-.xmo-beam::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 140px; background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--ink) 9%, transparent) 72%, color-mix(in srgb, var(--ink) 40%, transparent) 99.4%, transparent); transform: translateY(-140px); opacity: 0; }
+.xmo-beam::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 140px; transform: none; background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--ink) 5%, transparent) 72%, color-mix(in srgb, var(--ink) 18%, transparent) 99.4%, transparent); top: -140px; opacity: 0; }
 html:not(.light) .xmo-beam::before { background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--ink) 11%, transparent) 72%, color-mix(in srgb, var(--ink) 55%, transparent) 99.4%, transparent); }
 @media (prefers-reduced-motion: no-preference) {
-  .xmo-beam::before { animation: xmo-beam .95s var(--io) both; }
-  @keyframes xmo-beam { 0% { transform: translateY(-140px); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(var(--beam-to, 520px)); opacity: 0; } }
+  .xmo-beam::before { animation: xmo-beam 1.25s cubic-bezier(.45, .05, .35, 1) both; }
+  @keyframes xmo-beam { 0% { top: -140px; opacity: 0; } 12% { opacity: 1; } 75% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
   .xmo-list-box:has(.xmo-beam) .xmo-row:not([hidden]) { animation: xmo-rowin .5s var(--emph) both; }
   @keyframes xmo-rowin { from { opacity: .35; transform: translateY(6px); } }
 }
