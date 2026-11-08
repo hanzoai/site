@@ -233,7 +233,8 @@ function Local() {
 
 /* ---------- what we publish: one chapter per ecosystem ---------- */
 const MONTHS = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
-const LANGC = ['#0a0a0a', '#404040', '#737373', '#a3a3a3', '#d4d4d4', '#e4e4e7'];
+// the language greys, ink first; in dark the ramp turns over onto Hanzo's neutrals so the first stays the brightest
+const LANGC = ['light-dark(#0a0a0a, var(--neutral-200))', 'light-dark(#404040, var(--neutral-300))', 'light-dark(#737373, var(--neutral-400))', 'light-dark(#a3a3a3, var(--neutral-500))', 'light-dark(#d4d4d4, var(--neutral-600))', 'light-dark(#e4e4e7, var(--neutral-700))'];
 
 function Dash({ at }) {
   const e = useOSS().eco[at];
