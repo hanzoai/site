@@ -16,7 +16,7 @@
 
 /* the year: a flat quiet strip across the page, the lead figure on it, the months as bars a playhead reads */
 .xos-year { position: relative; isolation: isolate; overflow: hidden; margin-top: 44px; min-height: clamp(220px, 17vw, 248px); padding: 27px 32px 0; border-radius: var(--r-hero); background: var(--card); display: grid; grid-template-rows: auto auto 1fr; }
-.xos-year-s { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .12); z-index: -1; }
+.xos-year-s { position: absolute; inset: 0; width: 100%; height: 100%; color: light-dark(rgba(0, 0, 0, .12), rgba(255, 255, 255, .14)); z-index: -1; }
 .xos-year-h { display: flex; justify-content: space-between; gap: 12px; margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .xos-year-h > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .xos-year-h > span:last-child { flex: none; }
@@ -24,7 +24,7 @@
 .xos-lead .v2f-grow { transform-origin: 0% 100%; }
 .xos-lead .v2f-fig { color: var(--ink); white-space: nowrap; }
 .xos-lead-l { font-size: 16px; color: var(--soft); max-width: 46ch; }
-.xos-year-w { align-self: end; height: 88px !important; margin-top: 17px; color: #d4d4d4; gap: clamp(4px, .6vw, 10px) !important; }
+.xos-year-w { align-self: end; height: 88px !important; margin-top: 17px; color: light-dark(#d4d4d4, #404040); gap: clamp(4px, .6vw, 10px) !important; }
 .xos-year-w b::before { background: var(--ink) !important; }
 .xos-year.tick { grid-template-rows: auto auto 1fr; }
 
@@ -46,7 +46,7 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos-tick { align-self: end; margin: 27px -32px 27px; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
 .xos-tick-r { display: flex; width: max-content; animation: xos-tick calc(var(--n) * 4.5s) linear infinite; }
 .xos-tick-r > span { display: flex; flex: none; }
-.xos-tick i { flex: none; padding: 10px 17px; margin-right: 10px; border-radius: 999px; background: #fff; font: 400 14px/1 var(--mono); font-style: normal; color: var(--ink); white-space: nowrap; }
+.xos-tick i { flex: none; padding: 10px 17px; margin-right: 10px; border-radius: 999px; background: var(--x-raised); font: 400 14px/1 var(--mono); font-style: normal; color: var(--ink); white-space: nowrap; }
 @keyframes xos-tick { to { transform: translateX(-50%); } }
 
 /* the waveform: bars rise once; a playhead reads them where the page wants life */
@@ -66,6 +66,12 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos-ghr-r .xos-zero { margin-top: 10px; }
 .xos-stats div.nil dd { font-size: 16px; font-weight: 400; color: var(--muted); }
 .xos-tick:hover .xos-tick-r { animation-play-state: paused; }
+/* dark (live hanzo.ai's dark palette): the family kit's tokens are fixed light values on .v2f, so the page sets their
+   dark values here; the primary flips to Hanzo's light fill with dark text */
+html.dark .xos { background: var(--bg); --acc: #fafafa; --acc-ink: #0a0a0a; --acc-soft: #171717; --ink: #e5e5e5; --soft: #a3a3a3; --muted: #a3a3a3; --faint: #858585; --card: #171717; --silver: #404040; --hair: rgba(255, 255, 255, .1); --float: 0 24px 60px -16px rgba(0, 0, 0, .6); }
+html.dark .xos .v2f-btn { border-color: rgba(255, 255, 255, .14); }
+html.dark .xos .v2f-btn.solid { color: #0a0a0a; }
+@media (hover: hover) { html.dark .xos .v2f-btn:hover { border-color: rgba(255, 255, 255, .4); } html.dark .xos .v2f-btn.solid:hover { background: #e5e5e5; border-color: #e5e5e5; } }
 /* the two text links ("On Hanzo Forge", "Every organization"): a faint rule that draws in on hover, the arrow nudges */
 .xos .x-arrow { color: var(--ink); text-decoration: none; }
 .xos .x-arrow > span { position: relative; }
@@ -97,7 +103,7 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos-fr dd { margin: 0; color: var(--ink); white-space: nowrap; }
 .xos-fr .v2f-grow { transform-origin: 0% 100%; }
 .xos-fr dt { width: 100%; max-width: 44ch; font-size: 16px; line-height: 1.45; color: var(--soft); }
-.xos-share { display: block; margin-top: 12px; height: 6px; border-radius: 3px; background: #e5e5e5; overflow: hidden; }
+.xos-share { display: block; margin-top: 12px; height: 6px; border-radius: 3px; background: light-dark(#e5e5e5, #262626); overflow: hidden; }
 .xos-share i { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
 .xos-zero { display: flex; flex-wrap: wrap; gap: 4px 17px; margin: 17px 0 0; font-size: 14px; color: var(--muted); }
 .xos-zero b { font-weight: 606; color: var(--soft); font-feature-settings: 'tnum'; }
@@ -111,28 +117,28 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: 16px/1 var(--sans); color: var(--ink); }
 .xos-search input::-webkit-search-cancel-button { -webkit-appearance: none; }
 .xos-search:focus-within { box-shadow: 0 0 0 2px var(--ink); }
-.xos-seg { display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); }
+.xos-seg { display: inline-flex; gap: 2px; padding: 4px; border-radius: 999px; border: 1px solid light-dark(rgba(0, 0, 0, .14), rgba(255, 255, 255, .14)); }
 .xos-seg button { position: relative; flex: none; min-height: 40px; min-width: 48px; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: var(--soft); cursor: pointer; display: grid; place-items: center; transition: color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
 @media (hover: hover) { .xos-seg button:hover { color: var(--ink); } }
 .xos-seg button:active { transform: scale(.97); transition-duration: var(--press); }
-.xos-seg button[aria-pressed='true'] { color: #fff; }
+.xos-seg button[aria-pressed='true'] { color: var(--x-on-ink); }
 .xos-seg button > span:not(.xos-seg-bg) { position: relative; display: grid; place-items: center; }
 .xos-seg button .xos-seg-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--ink); }
 .xos-chips { display: flex; gap: 8px; margin: 0 0 27px; overflow-x: auto; scrollbar-width: none; padding: 2px; }
 .xos-chips::-webkit-scrollbar { display: none; }
-.xos-chips button { flex: none; display: inline-grid; place-items: center; min-height: 40px; min-width: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--soft); font: 400 14px/1 var(--sans); cursor: pointer; transition: background-color var(--ui) var(--ease-o), color var(--ui) var(--ease-o), border-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
-@media (hover: hover) { .xos-chips button:hover { color: var(--ink); border-color: rgba(0, 0, 0, .4); } }
+.xos-chips button { flex: none; display: inline-grid; place-items: center; min-height: 40px; min-width: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid light-dark(rgba(0, 0, 0, .14), rgba(255, 255, 255, .14)); background: var(--x-raised); color: var(--soft); font: 400 14px/1 var(--sans); cursor: pointer; transition: background-color var(--ui) var(--ease-o), color var(--ui) var(--ease-o), border-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
+@media (hover: hover) { .xos-chips button:hover { color: var(--ink); border-color: light-dark(rgba(0, 0, 0, .4), rgba(255, 255, 255, .4)); } }
 .xos-chips button:active { transform: scale(.98); transition-duration: var(--press); }
 .xos-chips button { position: relative; }
 .xos-chips button > span:not(.xos-chip-bg) { position: relative; display: inline-grid; place-items: center; }
-.xos-chips button[aria-pressed='true'] { border-color: var(--ink); color: #fff; }
+.xos-chips button[aria-pressed='true'] { border-color: var(--ink); color: var(--x-on-ink); }
 /* one ink pill glides between the language chips (300 ms, ease-emphasis) */
 .xos-chip-bg { position: absolute; inset: -1px; border-radius: 999px; background: var(--ink); }
 
 .xos-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--hair); }
 .xos-list li[hidden] { display: none; }
-.xos-row { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr) minmax(0, 168px) auto; align-items: center; gap: 0 27px; padding: 20px 12px; border-bottom: 1px solid var(--hair); background: #fff; transition: background-color var(--ui) var(--ease-o); }
-@media (hover: hover) { .xos-row:hover { background: #f5f5f5; } }
+.xos-row { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr) minmax(0, 168px) auto; align-items: center; gap: 0 27px; padding: 20px 12px; border-bottom: 1px solid var(--hair); background: var(--bg); transition: background-color var(--ui) var(--ease-o); }
+@media (hover: hover) { .xos-row:hover { background: light-dark(#f5f5f5, #171717); } }
 .xos-row:hover .xos-wave b, .xos-row:focus-within .xos-wave b { display: block; animation: xos-read 3.2s cubic-bezier(.4, 0, .2, 1) infinite; }
 .xos-no { font-size: 13px; color: var(--muted); }
 .xos-row-m { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
@@ -149,8 +155,8 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos-row-s { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; margin: 0; font-size: 13px; color: var(--muted); }
 .xos-row-s span { display: inline-flex; align-items: center; gap: 4px; }
 .xos-lang { font: 606 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); }
-.xos-arch { padding: 3px 8px; border-radius: 99px; border: 1px solid rgba(0, 0, 0, .14); letter-spacing: .06em; text-transform: uppercase; }
-.xos-row-w { color: #d4d4d4; height: 32px !important; }
+.xos-arch { padding: 3px 8px; border-radius: 99px; border: 1px solid light-dark(rgba(0, 0, 0, .14), rgba(255, 255, 255, .14)); letter-spacing: .06em; text-transform: uppercase; }
+.xos-row-w { color: light-dark(#d4d4d4, #404040); height: 32px !important; }
 .xos-list li.lead .xos-row { padding: 20px 12px; }
 .xos-list li.lead .xos-name { font-size: 26px; letter-spacing: -.02em; }
 .xos-list li.lead .xos-desc { -webkit-line-clamp: 2; font-size: 16px; }
@@ -160,20 +166,20 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 @media (hover: hover) { .xos-gh:hover { background: var(--card); color: var(--ink); } }
 .xos-gh:active { transform: scale(.94); transition-duration: var(--press); }
 .xos-forge { display: inline-flex; align-items: center; min-height: 36px; color: var(--soft); text-decoration: none; padding: 0 12px; border-radius: 99px; border: 1px solid rgba(0, 0, 0, .14); font-size: 13px; transition: color var(--ui) var(--ease-o), border-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
-@media (hover: hover) { .xos-forge:hover { color: var(--ink); border-color: rgba(0, 0, 0, .4); } }
+@media (hover: hover) { .xos-forge:hover { color: var(--ink); border-color: light-dark(rgba(0, 0, 0, .4), rgba(255, 255, 255, .4)); } }
 .xos-forge:active { transform: scale(.97); transition-duration: var(--press); }
 .xos-empty { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 17px; margin: 27px 0 0; padding: 27px 0; color: var(--soft); font-size: 16px; }
 .xos-empty .v2f-btn { gap: 10px; }
 .xos-more { margin: 27px 0 0; }
 .xos-plus { gap: 10px; }
 .xos-plus i { font: 400 22px/1 var(--sans); font-style: normal; }
-.xos-spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(0, 0, 0, .14); border-top-color: var(--ink); animation: xos-spin .8s linear infinite; }
+.xos-spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid light-dark(rgba(0, 0, 0, .14), rgba(255, 255, 255, .14)); border-top-color: var(--ink); animation: xos-spin .8s linear infinite; }
 @keyframes xos-spin { to { transform: rotate(360deg); } }
 
 /* the open card: the row grows into it */
 .xos-modal { position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center; padding: 24px; }
 .xos-scrim { position: absolute; inset: 0; border: 0; background: rgba(0, 0, 0, .32); cursor: default; }
-.xos-card { position: relative; width: min(960px, 100%); max-height: calc(100dvh - 48px); overflow: auto; background: #fff; box-shadow: var(--float); overscroll-behavior: contain; }
+.xos-card { position: relative; width: min(960px, 100%); max-height: calc(100dvh - 48px); overflow: auto; background: var(--x-raised); box-shadow: var(--float); overscroll-behavior: contain; }
 .xos-card-in { display: flex; flex-direction: column; gap: 27px; padding: clamp(27px, 3.4vw, 44px); }
 .xos-card-h { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
 .xos-card-h h3 { margin: 0; font-size: 44px; font-weight: 497; letter-spacing: -.03em; line-height: 1.05; overflow-wrap: anywhere; }
@@ -190,7 +196,7 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 .xos-stats-c dd span { font-size: 16px; color: var(--soft); }
 .xos-stats-w { margin-left: auto; }
 .xos-stats dd.xos-when { font-size: 16px; font-weight: 400; color: var(--soft); letter-spacing: 0; line-height: 1.3; }
-.xos-card-w { height: 96px; gap: 8px; color: #d4d4d4; }
+.xos-card-w { height: 96px; gap: 8px; color: light-dark(#d4d4d4, #404040); }
 .xos-clone { border-radius: 16px; background: #171717; color: #fafafa; padding: 16px; }
 .xos-clone-h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; font-size: 13px; color: #a3a3a3; letter-spacing: .06em; }
 .xos-src { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, .08); }
@@ -212,7 +218,7 @@ html.js .xos-list:not([data-in]) > li { animation-play-state: paused; }
 
 /* the close: its own moment, a quiet room with the organization's contour full width and the one ask */
 .xos .xos-close { position: relative; overflow: hidden; isolation: isolate; padding: clamp(116px, 14vw, 188px) 0; background: var(--card); color: var(--ink); text-align: center; }
-.xos-close-s { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .2); z-index: -1; }
+.xos-close-s { position: absolute; inset: 0; width: 100%; height: 100%; color: light-dark(rgba(0, 0, 0, .2), rgba(255, 255, 255, .2)); z-index: -1; }
 .xos-close-g { display: flex; flex-direction: column; align-items: center; gap: 17px; }
 .xos .xos-close-b { gap: 10px; }
 
