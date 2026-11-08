@@ -28,7 +28,7 @@ light and dark mode from Hanzo's own **`@hanzo/appearance`** and **`@hanzo/desig
 | Understand light and dark | [Light and dark mode](#light-and-dark-mode) |
 | Confirm the sign-up and checkout hand-offs | [Hand-offs to Hanzo's real flows](#hand-offs-to-hanzos-real-flows) (one file: `lib/handoff.js`) |
 | Know where it differs from live | [Known differences from live](#known-differences-from-live) · [Before it goes live](#before-it-goes-live-on-hanzoai) |
-| Know which branch to use | **`main`**. The rest are history: [docs/BRANCHES.md](docs/BRANCHES.md) |
+| Know which branch to use | **`main`**, the only branch. Design history is archived: [docs/BRANCHES.md](docs/BRANCHES.md) |
 
 ## What changed vs live hanzo.ai
 
@@ -266,7 +266,7 @@ Wording and prices follow live hanzo.ai as captured on 8 Nov 2026 (`content/live
 ## Docs
 
 - `docs/RELEASE-NOTES.md`: what changed, page by page, in plain English.
-- `docs/BRANCHES.md`: every branch and its status. `main` is the release.
+- `docs/BRANCHES.md`: `main` is the only branch and the release; how to reach the archived design history.
 - `docs/screenshots/`: the handoff spot-checks (home, /pricing, /chat, /models, /about; light and dark; 1470×801 and 375×812).
 - `docs/DARK-MODE.md`: how dark mode is wired, and how to convert or test a page.
 - `docs/MOTION-MAP.md` (+ `motion-map.json`): each page's one signature interaction, so no two pages move alike.
