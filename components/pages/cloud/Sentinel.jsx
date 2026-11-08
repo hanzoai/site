@@ -375,7 +375,7 @@ function Pic({ i }) {
     </div>
   );
   if (i === 3) return (
-    <ul className="sn2-acc">{['account 1', 'account 2', 'account 3', 'account 4'].map((a, k) => <li key={a} style={{ '--k': k }}><i style={{ background: ['#0a0a0a', '#404040', '#737373', '#a3a3a3'][k] }} />{a}<em className="l2-mono">{k % 2 ? 'staging' : 'production'}</em></li>)}</ul>
+    <ul className="sn2-acc">{['account 1', 'account 2', 'account 3', 'account 4'].map((a, k) => <li key={a} style={{ '--k': k }}><i style={{ background: `var(--sn2-acc${k})` }} />{a}<em className="l2-mono">{k % 2 ? 'staging' : 'production'}</em></li>)}</ul>
   );
   if (i === 4) return <Route />;
   return (
