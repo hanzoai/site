@@ -100,7 +100,7 @@ async function figures() {
     for (const slug of SHOWN) {
       const p = list.find?.((x) => x.slug === slug);
       need(p && int(p.price) && (p.priceAnnual == null || int(p.priceAnnual)), 'plan ' + slug);
-      plans[slug] = { name: p.name, price: p.price / 100, priceAnnual: p.priceAnnual == null ? null : p.priceAnnual / 100, interval: p.interval, perSeat: !!p.perSeat };
+      plans[slug] = { name: p.name, price: p.price / 100, priceAnnual: p.priceAnnual == null ? null : p.priceAnnual / 100, interval: p.interval, perSeat: !!p.perSeat, minSeats: p.limits?.minSeats ?? null, maxMembers: p.limits?.maxMembers ?? null };
     }
     return { source: PLANS, fetched_at, currency: 'usd', plans };
   };
