@@ -244,3 +244,7 @@
 /* dark (docs/DARK-MODE.md): the shared l2 frame takes Hanzo's dark on this page; light-dark() keeps bright exactly as it was */
 .wd2.l2-page { background: var(--bg); --hair: light-dark(rgba(0, 0, 0, .1), var(--border)); --muted: light-dark(#525252, var(--muted-foreground)); --soft: light-dark(#525252, var(--muted-foreground)); }
 html:not(.light) .wd2 .l2-pause:not(.dk) { background: var(--surface-overlay); }
+/* dark only: Hanzo's halftone dot field behind the hero, as live hanzo.ai draws it (8px grid in --foreground at 17%,
+   dense at the side edges, thinning toward the top and centre); isolation keeps it under the hero content */
+html:not(.light) .wd2 .l2-stage > .l2-stage-pin { isolation: isolate; }
+html:not(.light) .wd2 .l2-stage > .l2-stage-pin::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 17%, transparent) 2.4px, transparent 2.9px) 0 0 / 8px 8px; -webkit-mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); mask-composite: intersect; }
