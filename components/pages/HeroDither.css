@@ -1,0 +1,9 @@
+/* Hanzo's hero halftone (see HeroDither.jsx): live's absolute layer, 108% box at -4%, 34% opacity, page foreground.
+   Dark only: bright mode keeps the page exactly as it was. */
+.hz-dither { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.hz-dither-d { position: absolute; top: -4%; left: -4%; width: 108%; height: 108%; opacity: .34; color: var(--foreground, #e5e5e5); }
+.hz-dither canvas { display: block; width: 100%; height: 100%; }
+html.light .hz-dither { display: none; }
+/* under the hero's content and over its own background: the hero becomes its own stacking context (dark only, so bright
+   mode's blending is untouched) */
+html:not(.light) :has(> .hz-dither) { isolation: isolate; }

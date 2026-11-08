@@ -16,6 +16,7 @@ import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
+import HeroDither from '../HeroDither';
 import { Field, CopyStatus, useCatalog, rateFrom, money } from './parts';
 import './models.css';
 
@@ -55,6 +56,7 @@ export default function ProviderShelf({ doc }) {
     <main className="xmf xmf-prov">
       <CopyStatus />
       <section className="xmf-launch xmf-maker" aria-labelledby="xmf-h1">
+        <HeroDither />
         <div className="xmf-art" aria-hidden="true">
           <Sigil seed={doc.route} data={[n, Math.max(0, ...tokens), outs.length ? Math.min(...outs) : 0, outs.length ? Math.max(...outs) : 0]} className="xmf-sigil" still={paused} />
         </div>

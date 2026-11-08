@@ -19,6 +19,7 @@ import MaskFig from '../../v2/MaskFig';
 import Sigil from '../../Sigil';
 import ModelFilm, { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
+import HeroDither from '../HeroDither';
 import { Field, Bill, Codes, Loose, RateBars, Reach, Also, CopyStatus, useCatalog, useShelf, rateFrom, rateText, money, isLocal } from './parts';
 import './models.css';
 
@@ -128,6 +129,7 @@ export default function ModelSheet({ doc }) {
     <main className="xmf xmf-model">
       <CopyStatus />
       <section className="xmf-launch" ref={hero} aria-labelledby="xmf-h1">
+        <HeroDither />
         <div className="x-wrap xmf-launch-g">
           <div className="xmf-launch-t">
             <h1 id="xmf-h1" className={'xmf-name ' + size(doc.name)} data-morph-target>
