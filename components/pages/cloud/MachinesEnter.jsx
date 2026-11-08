@@ -93,7 +93,9 @@ export function Dissolve({ as: Tag = 'section', className = '', children, ...res
     const g = c.getContext('2d');
     const img = g.createImageData(w, h);
     const n = w * h, r = new Float32Array(n), shade = new Uint8Array(n);
-    for (let i = 0; i < n; i++) { r[i] = Math.random(); shade[i] = 229 + ((Math.random() * 27) | 0); }
+    // grain in the page's own light: near-white in bright, near Hanzo's dark page in dark (its :not(.light) rule)
+    const base = document.documentElement.classList.contains('light') ? 229 : 13;
+    for (let i = 0; i < n; i++) { r[i] = Math.random(); shade[i] = base + ((Math.random() * 27) | 0); }
     const paint = (t) => {
       const d = img.data;
       for (let i = 0, j = 0; i < n; i++, j += 4) {

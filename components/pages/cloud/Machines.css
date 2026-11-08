@@ -474,3 +474,18 @@ a.mc-chip:focus-visible { outline: 2px solid var(--mc-ink); outline-offset: 3px;
 @media (prefers-reduced-motion: reduce) {
   .mc-tile { transform: none !important; }
 }
+
+/* Dark (Hanzo's :not(.light), docs/DARK-MODE.md): every value is a token from @hanzo/design, by role. The shared .v2
+   scope pins its light ink and greys in both modes (components/v2/v2scale.css), so the page points them at Hanzo's
+   tokens here. Light surfaces become the page and Hanzo's muted and secondary surfaces; ink fills turn light with dark
+   type (Hanzo's primary). The black rooms (hero, the card's sheet, the close's rack) keep their values. */
+html:not(.light) .mc {
+  --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); --card: var(--muted);
+  --mc-ink: var(--foreground); --mc-g5: var(--muted-foreground); --mc-g6: var(--text-tertiary); --mc-s2: var(--secondary); --mc-brand: var(--secondary);
+  --mc-w: var(--background); --mc-w1: var(--secondary); --mc-w2: var(--muted); --mc-w3: var(--muted); --mc-w4: var(--surface-card-quiet);
+  --acc: var(--mc-ink); background: var(--background);
+}
+html:not(.light) .mc .mc-hero, html:not(.light) .mc .mc-zsheet, html:not(.light) .mc .mc-close-art { --mc-w: #fff; }
+html:not(.light) .mc .mc-con-ask, html:not(.light) .mc .mc-art.a3 b:first-child, html:not(.light) .mc .mc-map[data-at='1'] .mc-map-accts span { color: var(--primary-foreground); }
+@media (hover: hover) { html:not(.light) .mc .mc-ch .pc-dots button:hover { background-color: var(--border); } }
+html:not(.light) .mc .mc-art.a1 i { background: var(--muted-foreground); }
