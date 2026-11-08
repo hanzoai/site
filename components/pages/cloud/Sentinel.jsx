@@ -39,7 +39,19 @@ const still = () => typeof matchMedia === 'function' && matchMedia('(prefers-red
 const glyph = () => GLY[Math.floor(Math.random() * GLY.length)];
 const isGlyph = (ch) => /[0-9A-Za-zÀ-ɏ]/.test(ch);
 
+/* copy rule (8 Nov): while an effect has the line cut into letters or reels, Hanzo's whole line stays in the page as
+   one piece of text beside it (visually hidden, aria-hidden), and leaves again the moment the line is whole */
+function keep(el) {
+  const s = document.createElement('span');
+  s.className = 'x-sr';
+  s.setAttribute('aria-hidden', 'true');
+  s.textContent = el.textContent;
+  el.after(s);
+  return () => s.remove();
+}
+
 function split(el) {
+  const drop = keep(el);
   const nodes = [];
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue.trim()) nodes.push(n);
@@ -59,7 +71,7 @@ function split(el) {
     pairs.push([box, n]);
   });
   cells.forEach(([c]) => { c.style.width = c.getBoundingClientRect().width + 'px'; });
-  return { cells, undo: () => pairs.forEach(([box, n]) => box.parentNode && box.parentNode.replaceChild(n, box)) };
+  return { cells, undo: () => { pairs.forEach(([box, n]) => box.parentNode && box.parentNode.replaceChild(n, box)); drop(); } };
 }
 
 function decode(el, dur = 700) {
@@ -110,6 +122,7 @@ function roll(el, delay = 0) {
   if (!el || el.__busy) return;
   if (still()) { el.classList.add('go'); return; }
   el.__busy = true;
+  const drop = keep(el);
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   const nodes = [];
   for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue.trim()) nodes.push(n);
@@ -140,7 +153,7 @@ function roll(el, delay = 0) {
   el.classList.add('go');
   reels.forEach((r, i) => { r.style.transitionDelay = delay + i * 60 + 'ms'; });
   requestAnimationFrame(() => requestAnimationFrame(() => reels.forEach((r) => r.classList.add('on'))));
-  setTimeout(() => { pairs.forEach(([box, n]) => box.parentNode && box.parentNode.replaceChild(n, box)); el.__busy = false; }, delay + reels.length * 60 + 560);
+  setTimeout(() => { pairs.forEach(([box, n]) => box.parentNode && box.parentNode.replaceChild(n, box)); drop(); el.__busy = false; }, delay + reels.length * 60 + 560);
 }
 
 /* <Dec>: decodes once when it arrives (or types / rolls, for the entrances), and re-scrambles on hover or tap */
