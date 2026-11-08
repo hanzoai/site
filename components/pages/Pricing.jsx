@@ -65,12 +65,12 @@ const List = ({ items }) => <ul className="xpr-list">{items.map((t) => <li key={
 const FREE = ['Chat on the web with Enso Free and Zen Free', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks'];
 const GO = ['Build apps with Hanzo Dev', 'Connect any MCP server in Hanzo Dev', 'The Hanzo CLI for macOS, Windows and Linux', 'Every model, including Enso Ultra and Kai', 'Usage included on every model', 'Priority inference and priority support', 'Your own agents, working in the background', 'Automations, with daily runs included'];
 const COMMON = ['Early access to new models and features', 'Train custom models on your data', 'Hanzo Engine to run models on your own hardware', 'Dedicated support'];
-// to: only Pro has a checkout on Hanzo's page; the others offer the buying specialist until theirs exists
+// to: every plan goes straight to its checkout, with the plan ids live /bot's plan buttons use (Zack's GA list, 8 Nov)
 const PRO = [
   { x: '3x', name: 'Pro', price: 15, to: PAY('pro-2x'), head: 'Everything in Go, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['3x more usage than Go', '3x higher limits than Go', 'Hanzo Bot: 1 bot of your own'] },
-  { x: '5x', name: 'Dev', price: 45, head: 'Everything in Pro, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['5x more usage than Go', '5x higher limits than Go', 'Hanzo Bot: 2 bots of your own'] },
-  { x: '15x', name: 'Max', price: 95, head: 'Everything in Dev, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['15x more usage than Go', '15x higher limits than Go', 'Hanzo Bot: 5 bots of your own'] },
-  { x: '∞', name: 'Ultra', price: 195, head: 'Everything in Max, plus:', d: 'For the biggest workloads. Usage beyond what is included is paid from your prepaid balance at list price', f: ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price', 'Hanzo Bot: 10 bots of your own'] },
+  { x: '5x', name: 'Dev', price: 45, to: PAY('dev-5x'), head: 'Everything in Pro, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['5x more usage than Go', '5x higher limits than Go', 'Hanzo Bot: 2 bots of your own'] },
+  { x: '15x', name: 'Max', price: 95, to: PAY('max-10x'), head: 'Everything in Dev, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['15x more usage than Go', '15x higher limits than Go', 'Hanzo Bot: 5 bots of your own'] },
+  { x: '∞', name: 'Ultra', price: 195, to: PAY('ultra'), head: 'Everything in Max, plus:', d: 'For the biggest workloads. Usage beyond what is included is paid from your prepaid balance at list price', f: ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price', 'Hanzo Bot: 10 bots of your own'] },
 ];
 
 /* the compare sheet: every personal plan's own lines; a line holds from the plan that adds it upward */
@@ -142,7 +142,7 @@ function planOf(id, s = DEF) {
   if (id === 'go') return { name: 'Go', d: 'Your everyday AI development toolkit, with access to every model and more included usage.', fig: '$8', sub: 'Billed monthly', cta: ['Try Hanzo', PAY('go'), 'pricing.go'], note: 'No commitment · Cancel anytime', head: 'Everything in Free, plus:', items: GO.slice(0, 4), col: 1 };
   if (id === 'pro') {
     const i = Math.max(0, PRO.findIndex((q) => q.x === s.x)), q = PRO[i];
-    return { name: q.name, ladder: true, d: q.d, fig: '$' + q.price, sub: 'Billed monthly', cta: q.to ? ['Try Hanzo', q.to, 'pricing.pro'] : [BUY, HELP, 'pricing.help'], note: 'No commitment · Cancel anytime', head: q.head, items: q.f, col: 2 + i };
+    return { name: q.name, ladder: true, d: q.d, fig: '$' + q.price, sub: 'Billed monthly', cta: q.to ? ['Try Hanzo', q.to, 'pricing.' + q.name.toLowerCase()] : [BUY, HELP, 'pricing.help'], note: 'No commitment · Cancel anytime', head: q.head, items: q.f, col: 2 + i };
   }
   if (id === 'team') {
     const k = s.bill === 'Annual' ? 0 : 1;
