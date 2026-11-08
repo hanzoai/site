@@ -1,0 +1,1922 @@
+{
+ "/about": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/": {
+  "notDark": false,
+  "count": 19,
+  "samples": [
+   {
+    "t": "-   return next(req)",
+    "ratio": 1.09,
+    "fg": "color(srgb 0.873333 0.373726 0.373726)",
+    "bg": "rgb(15,15,15)",
+    "cls": "is_Text font_mono _ws-_platformweb_pre _"
+   },
+   {
+    "t": "+   const token = bearer(req)",
+    "ratio": 1.09,
+    "fg": "color(srgb 0.477451 0.82902 0.606863)",
+    "bg": "rgb(15,15,15)",
+    "cls": "is_Text font_mono _ws-_platformweb_pre _"
+   },
+   {
+    "t": "+   if (!token) return deny()",
+    "ratio": 1.09,
+    "fg": "color(srgb 0.477451 0.82902 0.606863)",
+    "bg": "rgb(15,15,15)",
+    "cls": "is_Text font_mono _ws-_platformweb_pre _"
+   },
+   {
+    "t": "+   req.user = await verify(token)",
+    "ratio": 1.09,
+    "fg": "color(srgb 0.477451 0.82902 0.606863)",
+    "bg": "rgb(15,15,15)",
+    "cls": "is_Text font_mono _ws-_platformweb_pre _"
+   },
+   {
+    "t": "+   return next(req)",
+    "ratio": 1.09,
+    "fg": "color(srgb 0.477451 0.82902 0.606863)",
+    "bg": "rgb(15,15,15)",
+    "cls": "is_Text font_mono _ws-_platformweb_pre _"
+   },
+   {
+    "t": "✓ 14 passed (42ms)",
+    "ratio": 1.09,
+    "fg": "color(srgb 0.477451 0.82902 0.606863)",
+    "bg": "rgb(15,15,15)",
+    "cls": "is_Text font_mono _ws-_platformweb_pre _"
+   },
+   {
+    "t": "POST",
+    "ratio": 1.17,
+    "fg": "color(srgb 0.477451 0.82902 0.606863)",
+    "bg": "rgb(23,23,23)",
+    "cls": "is_Text font_mono _col-color-mixin163136"
+   },
+   {
+    "t": "POST",
+    "ratio": 1.17,
+    "fg": "color(srgb 0.477451 0.82902 0.606863)",
+    "bg": "rgb(23,23,23)",
+    "cls": "is_Text font_mono _col-color-mixin163136"
+   }
+  ]
+ },
+ "/affiliate": {
+  "notDark": false,
+  "count": 4,
+  "samples": [
+   {
+    "t": "hello@hanzo.ai",
+    "ratio": 1.02,
+    "fg": "rgb(10, 10, 11)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "01",
+    "ratio": 1.02,
+    "fg": "rgb(10, 10, 11)",
+    "bg": "rgb(13,13,13)",
+    "cls": "xaf-q-i xp-count"
+   },
+   {
+    "t": "POST /v1/affiliate/apply",
+    "ratio": 1.02,
+    "fg": "rgb(10, 10, 11)",
+    "bg": "rgb(13,13,13)",
+    "cls": "xaf-sum-code"
+   },
+   {
+    "t": "referral",
+    "ratio": 1.02,
+    "fg": "rgb(10, 10, 11)",
+    "bg": "rgb(13,13,13)",
+    "cls": "x-link"
+   }
+  ]
+ },
+ "/agents": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/agents/crew": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/analytics": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/api": {
+  "notDark": false,
+  "count": 27,
+  "samples": [
+   {
+    "t": "One API for",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "models, agents",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "and tools",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "POST /v1/chat/completions",
+    "ratio": 1.06,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(0,0,0)",
+    "cls": "x-mono"
+   },
+   {
+    "t": "Core endpoints",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": "av-head"
+   },
+   {
+    "t": "/v1/chat/completions",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": "api-row-p x-mono"
+   },
+   {
+    "t": "A completion from any model your organization can ",
+    "ratio": 2.3,
+    "fg": "rgb(171, 171, 171)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "/v1/responses",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": "api-row-p x-mono"
+   }
+  ]
+ },
+ "/authz": {
+  "notDark": false,
+  "count": 2,
+  "samples": [
+   {
+    "t": "acme/prod",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   },
+   {
+    "t": "acme/prod/web",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   }
+  ]
+ },
+ "/auto": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/automations": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "All",
+    "ratio": 1.03,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(15,15,15)",
+    "cls": ""
+   }
+  ]
+ },
+ "/base": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/benchmarks/cronquestions": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/benchmarks": {
+  "notDark": false,
+  "count": 6,
+  "samples": [
+   {
+    "t": "Prefill, tokens a second",
+    "ratio": 1.03,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(15,15,15)",
+    "cls": ""
+   },
+   {
+    "t": "GPQA Diamond · 12 runs",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   },
+   {
+    "t": "Accuracy",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   },
+   {
+    "t": "Chart",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   },
+   {
+    "t": "Largest lead",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   },
+   {
+    "t": "Newest",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   }
+  ]
+ },
+ "/beta": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/beta/apply": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/beta/research": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/billing": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "Issued",
+    "ratio": 1.03,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(15,15,15)",
+    "cls": "bl2-chip l2-mono issued"
+   }
+  ]
+ },
+ "/blockchain": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/blog": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/blockchain/bundler": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/bot": {
+  "notDark": false,
+  "count": 4,
+  "samples": [
+   {
+    "t": "iPhone",
+    "ratio": 2.63,
+    "fg": "rgba(255, 255, 255, 0.3)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "Telegram",
+    "ratio": 2.63,
+    "fg": "rgba(255, 255, 255, 0.3)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "Discord",
+    "ratio": 2.63,
+    "fg": "rgba(255, 255, 255, 0.3)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "Signal",
+    "ratio": 2.63,
+    "fg": "rgba(255, 255, 255, 0.3)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   }
+  ]
+ },
+ "/blog/kai-decision-models": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/brand": {
+  "notDark": false,
+  "count": 7,
+  "samples": [
+   {
+    "t": "Hanzo White",
+    "ratio": 1.39,
+    "fg": "rgb(0, 0, 0)",
+    "bg": "rgb(38,38,38)",
+    "cls": ""
+   },
+   {
+    "t": "Gray 900",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Gray 800",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Gray 700",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Gray 600",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Gray 500",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Gray 400",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   }
+  ]
+ },
+ "/bounty": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/buying-specialist": {
+  "notDark": false,
+  "count": 4,
+  "samples": [
+   {
+    "t": "We have a team of 10 developers →",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Explain Standard vs Premium seats →",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Looking for dedicated VPC & HIPAA →",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Compare Team vs Enterprise →",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   }
+  ]
+ },
+ "/captable": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/careers": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/careers/academic-research-intern": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/chrome": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "Allowlist",
+    "ratio": 1.31,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(38,38,38)",
+    "cls": ""
+   }
+  ]
+ },
+ "/chat": {
+  "notDark": false,
+  "count": 2,
+  "samples": [
+   {
+    "t": "Zen",
+    "ratio": 1.03,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(15,15,15)",
+    "cls": ""
+   },
+   {
+    "t": "Reasoning",
+    "ratio": 2.45,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(15,15,15)",
+    "cls": "cht-tag"
+   }
+  ]
+ },
+ "/cli": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "login",
+    "ratio": 1.03,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(15,15,15)",
+    "cls": "x-mono"
+   }
+  ]
+ },
+ "/cloud/ai-metrics": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/compare": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/commerce": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "Stripe",
+    "ratio": 1.03,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(15,15,15)",
+    "cls": ""
+   }
+  ]
+ },
+ "/compare/model-routing": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/comparison": {
+  "notDark": false,
+  "count": 5,
+  "samples": [
+   {
+    "t": "Every image above has a release cadence, and a CVE",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "Taking one is a cron. Proving a restore works is a",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "One replica of each is a single point of failure. ",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "Each of these has its own users and its own idea o",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "Someone answers when it pages at 3am, and that per",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   }
+  ]
+ },
+ "/computer": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/console": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/contact": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/contact-sales": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/crawl": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/customers": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/dashboards": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/customers/damon-motorcycles": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/dataroom": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/datastore": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/desktop": {
+  "notDark": false,
+  "count": 17,
+  "samples": [
+   {
+    "t": "Hanzo Desktop",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Build agents on your own machine",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": "av-lede dk-lede"
+   },
+   {
+    "t": "GitHub",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Open in the console",
+    "ratio": 1.48,
+    "fg": "rgb(212, 212, 212)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "What you can build in it",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": "av-display s"
+   },
+   {
+    "t": "Free and open source. Download it, and the first a",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": "av-lede"
+   },
+   {
+    "t": "Available everywhere you work",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": "av-head"
+   },
+   {
+    "t": "Native installers for macOS (Apple Silicon + Intel",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": "av-body"
+   }
+  ]
+ },
+ "/design": {
+  "notDark": false,
+  "count": 35,
+  "samples": [
+   {
+    "t": "Create visuals,\ndecks, docs, ads,\nvideos &\ninterac",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": "dz-h1-t"
+   },
+   {
+    "t": "Your AI design studio inside Hanzo. Upload any fil",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": "dz-lede"
+   },
+   {
+    "t": "Read the docs",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Need full multi-shot AI cinema & camera rigs? Open",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Visuals, images, posters, presentations, documents",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Upload any file — even an MP3/WAV track to build a",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Export vector PDFs, 16:9 slide decks, multi-aspect",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "One conversation, every creative artifact in a tab",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": "av-display s"
+   }
+  ]
+ },
+ "/dns": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "/v1/dns",
+    "ratio": 2,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(229,229,229)",
+    "cls": ""
+   }
+  ]
+ },
+ "/dev": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/edge": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "Apple Silicon",
+    "ratio": 1.03,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(15,15,15)",
+    "cls": ""
+   }
+  ]
+ },
+ "/download": {
+  "notDark": false,
+  "count": 14,
+  "samples": [
+   {
+    "t": "Download Hanzo",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "The desktop app, the CLI, and the extension for yo",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": "av-lede dl-top-r"
+   },
+   {
+    "t": "Desktop",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "v1.1.52",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": "x-mono"
+   },
+   {
+    "t": "Hanzo CLI",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "v8.5.910",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": "x-mono"
+   },
+   {
+    "t": "Browser extension",
+    "ratio": 1.26,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "v1.9.31",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": "x-mono"
+   }
+  ]
+ },
+ "/enso": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/engine": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/extension": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/enterprise": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/flow": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/features": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/founder": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/functions": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/gallery": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/gateway": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "JWT",
+    "ratio": 1.17,
+    "fg": "rgb(0, 0, 0)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   }
+  ]
+ },
+ "/gen": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/grants": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/guard": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/gui": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/help/privacy/model-training": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/history": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/hsm": {
+  "notDark": false,
+  "count": 4,
+  "samples": [
+   {
+    "t": "AWS KMS",
+    "ratio": 1.02,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(13,13,13)",
+    "cls": "hs-vendor-t"
+   },
+   {
+    "t": "Azure Key Vault",
+    "ratio": 2.63,
+    "fg": "rgba(255, 255, 255, 0.3)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "Google Cloud KMS",
+    "ratio": 2.63,
+    "fg": "rgba(255, 255, 255, 0.3)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "Zymbit",
+    "ratio": 2.63,
+    "fg": "rgba(255, 255, 255, 0.3)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   }
+  ]
+ },
+ "/iam": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/ide": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/identity": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/idv": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "Jumio",
+    "ratio": 1.03,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(15,15,15)",
+    "cls": "iv-v-t"
+   }
+  ]
+ },
+ "/ingress": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/insights": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/integrations": {
+  "notDark": false,
+  "count": 2,
+  "samples": [
+   {
+    "t": "All",
+    "ratio": 1.02,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "19",
+    "ratio": 1.01,
+    "fg": "rgba(10, 10, 10, 0.55)",
+    "bg": "rgb(13,13,13)",
+    "cls": "pf-mono"
+   }
+  ]
+ },
+ "/integrations/anthropic-sdk": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/investors": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/iro": {
+  "notDark": false,
+  "count": 3,
+  "samples": [
+   {
+    "t": "Produce high-resolution campaign assets adapted fo",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": "cr-fit-x"
+   },
+   {
+    "t": "Accelerate visual development phases for entertain",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": "cr-fit-x"
+   },
+   {
+    "t": "Synthesize stylistically coherent editorial illust",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": "cr-fit-x"
+   }
+  ]
+ },
+ "/jin": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/kai/guide": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/kai": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "Kai",
+    "ratio": 1.16,
+    "fg": "rgb(229, 229, 229)",
+    "bg": "rgb(245,245,245)",
+    "cls": "ka-card-n"
+   }
+  ]
+ },
+ "/kms": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/kata": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/koma": {
+  "notDark": false,
+  "count": 3,
+  "samples": [
+   {
+    "t": "Turn treatment scripts and concept art into dynami",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": "cr-fit-x"
+   },
+   {
+    "t": "Generate product-centric commercial variants with ",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": "cr-fit-x"
+   },
+   {
+    "t": "Rapidly construct dynamic narrative cutscenes matc",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": "cr-fit-x"
+   }
+  ]
+ },
+ "/koe": {
+  "notDark": false,
+  "count": 3,
+  "samples": [
+   {
+    "t": "Dub episodic television and movies into internatio",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": "cr-fit-x"
+   },
+   {
+    "t": "Deliver thousands of hours of high-performance cha",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": "cr-fit-x"
+   },
+   {
+    "t": "Cast an entire ensemble of distinct characters fro",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": "cr-fit-x"
+   }
+  ]
+ },
+ "/learn": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/leaderboard": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/legal": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/ledger": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "send",
+    "ratio": 1.31,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(38,38,38)",
+    "cls": ""
+   }
+  ]
+ },
+ "/machines": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "1x H100",
+    "ratio": 1,
+    "fg": "rgb(0, 0, 0)",
+    "bg": "rgb(0,0,0)",
+    "cls": ""
+   }
+  ]
+ },
+ "/legal/acceptable-use": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/mcp": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/metrics": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/models": {
+  "notDark": false,
+  "count": 28,
+  "samples": [
+   {
+    "t": "Enso routes.",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": "on"
+   },
+   {
+    "t": "Kai decides.",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Zen reasons.",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Three families",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": "xmo-tag"
+   },
+   {
+    "t": "routes",
+    "ratio": 2.52,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(255,255,255)",
+    "cls": "xmo-verb"
+   },
+   {
+    "t": "Enso",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Picks the model for every call, in every modality.",
+    "ratio": 1,
+    "fg": "rgba(255, 255, 255, 0.78)",
+    "bg": "rgb(255,255,255)",
+    "cls": "xmo-fam-d"
+   },
+   {
+    "t": "Explore Enso →",
+    "ratio": 1.04,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   }
+  ]
+ },
+ "/models/aion-labs": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/mori": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/mq": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/newsletter": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/network": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/o11y": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/node": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/operative": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "Hanzo",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   }
+  ]
+ },
+ "/open-source": {
+  "notDark": false,
+  "count": 4,
+  "samples": [
+   {
+    "t": "Hanzo",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": "xos-eco-n"
+   },
+   {
+    "t": "1,734",
+    "ratio": 1.06,
+    "fg": "rgba(10, 10, 10, 0.55)",
+    "bg": "rgb(23,23,23)",
+    "cls": "pf-mono"
+   },
+   {
+    "t": "Hanzo",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": "xos-eco-n"
+   },
+   {
+    "t": "38",
+    "ratio": 1.06,
+    "fg": "rgba(10, 10, 10, 0.55)",
+    "bg": "rgb(23,23,23)",
+    "cls": "pf-mono"
+   }
+  ]
+ },
+ "/operator": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/oss/crowdstart": {
+  "notDark": false,
+  "count": 3,
+  "samples": [
+   {
+    "t": "crowdstart/crowdstart.com",
+    "ratio": 1,
+    "fg": "rgba(0, 0, 0, 0)",
+    "bg": "rgb(13,13,13)",
+    "cls": "xos-nm-t"
+   },
+   {
+    "t": "crowdstart/hustle",
+    "ratio": 1,
+    "fg": "rgba(0, 0, 0, 0)",
+    "bg": "rgb(13,13,13)",
+    "cls": "xos-nm-t"
+   },
+   {
+    "t": "crowdstart/quill",
+    "ratio": 1,
+    "fg": "rgba(0, 0, 0, 0)",
+    "bg": "rgb(13,13,13)",
+    "cls": "xos-nm-t"
+   }
+  ]
+ },
+ "/oto": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/payments": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/philosophy": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/platform": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/playground": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "Image",
+    "ratio": 1.03,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(15,15,15)",
+    "cls": ""
+   }
+  ]
+ },
+ "/pricing": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/press": {
+  "notDark": false,
+  "count": 5,
+  "samples": [
+   {
+    "t": "SVG",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "PNG",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "SVG",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "PNG",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": "ICO",
+    "ratio": 2.49,
+    "fg": "rgb(82, 82, 82)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   }
+  ]
+ },
+ "/pubsub": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "ack every",
+    "ratio": 1.06,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(0,0,0)",
+    "cls": ""
+   }
+  ]
+ },
+ "/products/agents": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/referral": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/realtime": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/research": {
+  "notDark": false,
+  "count": 2,
+  "samples": [
+   {
+    "t": "github.com/hanzoai",
+    "ratio": 1,
+    "fg": "rgba(0, 0, 0, 0)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   },
+   {
+    "t": ", and the platform pays the open-source authors wh",
+    "ratio": 1,
+    "fg": "rgba(0, 0, 0, 0)",
+    "bg": "rgb(13,13,13)",
+    "cls": ""
+   }
+  ]
+ },
+ "/registry": {
+  "notDark": false,
+  "count": 2,
+  "samples": [
+   {
+    "t": "01",
+    "ratio": 1.02,
+    "fg": "rgba(255, 255, 255, 0.55)",
+    "bg": "rgb(250,250,250)",
+    "cls": "rg-zm-n"
+   },
+   {
+    "t": "IAM Token Auth",
+    "ratio": 1,
+    "fg": "rgb(250, 250, 250)",
+    "bg": "rgb(250,250,250)",
+    "cls": ""
+   }
+  ]
+ },
+ "/s3": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/risk": {
+  "notDark": false,
+  "count": 1,
+  "samples": [
+   {
+    "t": "all four facts carried",
+    "ratio": 2,
+    "fg": "rgb(163, 163, 163)",
+    "bg": "rgb(229,229,229)",
+    "cls": ""
+   }
+  ]
+ },
+ "/sdks": {
+  "notDark": false,
+  "count": 2,
+  "samples": [
+   {
+    "t": "OpenAI",
+    "ratio": 1.06,
+    "fg": "rgb(0, 0, 0)",
+    "bg": "rgb(10,10,10)",
+    "cls": ""
+   },
+   {
+    "t": "Python",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   }
+  ]
+ },
+ "/search": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/security": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/sentinel": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/sign": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/skills": {
+  "notDark": false,
+  "count": 3,
+  "samples": [
+   {
+    "t": "API design",
+    "ratio": 1,
+    "fg": "rgb(0, 0, 0)",
+    "bg": "rgb(0,0,0)",
+    "cls": ""
+   },
+   {
+    "t": "rate limiting",
+    "ratio": 1,
+    "fg": "rgb(0, 0, 0)",
+    "bg": "rgb(0,0,0)",
+    "cls": ""
+   },
+   {
+    "t": "Redis",
+    "ratio": 1,
+    "fg": "rgb(0, 0, 0)",
+    "bg": "rgb(0,0,0)",
+    "cls": ""
+   }
+  ]
+ },
+ "/sms-opt-in": {
+  "notDark": false,
+  "count": 5,
+  "samples": [
+   {
+    "t": "What",
+    "ratio": 2.3,
+    "fg": "rgb(171, 171, 171)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "How often",
+    "ratio": 2.3,
+    "fg": "rgb(171, 171, 171)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Cost",
+    "ratio": 2.3,
+    "fg": "rgb(171, 171, 171)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "How to stop",
+    "ratio": 2.3,
+    "fg": "rgb(171, 171, 171)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   },
+   {
+    "t": "Purchases",
+    "ratio": 2.3,
+    "fg": "rgb(171, 171, 171)",
+    "bg": "rgb(255,255,255)",
+    "cls": ""
+   }
+  ]
+ },
+ "/slack": {
+  "notDark": false,
+  "count": 16,
+  "samples": [
+   {
+    "t": "Code",
+    "ratio": 1.13,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(25,25,28)",
+    "cls": ""
+   },
+   {
+    "t": "12",
+    "ratio": 2.13,
+    "fg": "rgb(72, 72, 74)",
+    "bg": "rgb(13,13,16)",
+    "cls": ""
+   },
+   {
+    "t": "12",
+    "ratio": 2.13,
+    "fg": "rgb(72, 72, 74)",
+    "bg": "rgb(13,13,16)",
+    "cls": ""
+   },
+   {
+    "t": "13",
+    "ratio": 2.13,
+    "fg": "rgb(72, 72, 74)",
+    "bg": "rgb(13,13,16)",
+    "cls": ""
+   },
+   {
+    "t": "13",
+    "ratio": 2.13,
+    "fg": "rgb(72, 72, 74)",
+    "bg": "rgb(13,13,16)",
+    "cls": ""
+   },
+   {
+    "t": "14",
+    "ratio": 2.13,
+    "fg": "rgb(72, 72, 74)",
+    "bg": "rgb(13,13,16)",
+    "cls": ""
+   },
+   {
+    "t": "14",
+    "ratio": 2.13,
+    "fg": "rgb(72, 72, 74)",
+    "bg": "rgb(13,13,16)",
+    "cls": ""
+   },
+   {
+    "t": "15",
+    "ratio": 2.13,
+    "fg": "rgb(72, 72, 74)",
+    "bg": "rgb(13,13,16)",
+    "cls": ""
+   }
+  ]
+ },
+ "/solutions/agents": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/solutions": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/stream": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/startups": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/support": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/studio": {
+  "notDark": false,
+  "count": 2,
+  "samples": [
+   {
+    "t": "Koma",
+    "ratio": 1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(10,10,10)",
+    "cls": ""
+   },
+   {
+    "t": "AI film direction",
+    "ratio": 1.03,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(15,15,15)",
+    "cls": "s"
+   }
+  ]
+ },
+ "/tabs": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/tag": {
+  "notDark": false,
+  "count": 7,
+  "samples": [
+   {
+    "t": "#bug-button-darkmode",
+    "ratio": 1.2,
+    "fg": "rgba(255, 255, 255, 0.8)",
+    "bg": "rgb(229,229,229)",
+    "cls": ""
+   },
+   {
+    "t": "1",
+    "ratio": 1.26,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(229,229,229)",
+    "cls": ""
+   },
+   {
+    "t": "2",
+    "ratio": 1.26,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(229,229,229)",
+    "cls": ""
+   },
+   {
+    "t": "3",
+    "ratio": 1.26,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(229,229,229)",
+    "cls": ""
+   },
+   {
+    "t": "4",
+    "ratio": 1.26,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(229,229,229)",
+    "cls": ""
+   },
+   {
+    "t": "5",
+    "ratio": 1.26,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(229,229,229)",
+    "cls": ""
+   },
+   {
+    "t": "6",
+    "ratio": 1.26,
+    "fg": "rgb(255, 255, 255)",
+    "bg": "rgb(229,229,229)",
+    "cls": ""
+   }
+  ]
+ },
+ "/team": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/telemetry": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/templates": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/treasury": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/tunnel": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/trust": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/uta": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/ui": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/world": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/visor": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/zen": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/zap": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/zen/models": {
+  "notDark": false,
+  "count": 3,
+  "samples": [
+   {
+    "t": "All",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   },
+   {
+    "t": "5",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   },
+   {
+    "t": "Hanzo’s order",
+    "ratio": 1.1,
+    "fg": "rgb(10, 10, 10)",
+    "bg": "rgb(23,23,23)",
+    "cls": ""
+   }
+  ]
+ },
+ "/zen/7": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/zen/zen6-max": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ }
+}
