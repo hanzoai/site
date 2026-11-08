@@ -18,6 +18,7 @@
 // Goal: find the post worth reading now and open it
 // CTA: Read the latest (the newest post) in the masthead and the ask bar; the close is the kit Band, Every post (hanzo.blog)
 // Metric: post opens (data-cta="blog.*")
+// 8 Nov (the home's bar): every section one frame at 1470 x 801; split headings with the drawn hairline; lit corners and drifting halftone; the cover plate swings back in 3D as each page turns (the cinematic moment); the contents are a fixed-height pane beside the publishing strip, which filters it (every post stays in the page); all six issue numbers in the page
 // Signature: a magazine cover that turns itself: the headline wipes and a silver curtain crosses the art plate as it changes
 // Beyond: the publishing strip: a bar per month counted from Hanzo's own post dates that narrows the contents to a month
 // V2: 8/10 motion map: signature word-light (the masthead lede lights word by word; pointer, tap and arrow keys take the light), entrances ink-spread (cover plate), typewriter (on-site titles), pendulum (publishing strip), tilt-3d-hover (contents), diagonal-wipe (band); no pinned month headings, no scroll-linked band, old row/card reveals removed. Round 6: phone month bars fit the column (9 equal columns, no rail), active All 24 outlined not filled, one All 24 control, tighter cover-to-films gap. Round 5: masthead cuts in by CSS from first paint, the cover plate's first contour frame is server SVG (BlogIndexFrame), header outlined from first paint while the page's solid is on screen (no flip), phone strip scrolls inside the column with All 24 under it, card art clipped to its radius, big card fills the column, AnimatePresence popLayout. Round 4: JS off shows one cover story (NoJs, no <noscript>); one solid per screen (masthead "Read the latest" solid on desktop where the header quiets, outlined on phones beside the header's solid); the on-site trio plays Hanzo's own films (Zen, Enso, Kai) so four real visuals show with the cover; the contents show one month at a time, the bars swap it in and out, All 24 opens all; the count sits under Contents; trio tilt, count-up, idle bar sweep and row arrival kept
@@ -119,9 +120,7 @@ function Cover() {
   // the cinematic moment: as the timer turns the page, the plate swings back on its spine like a cover turning, and the
   // new art settles in behind the silver curtain
   const [plate, turn] = useAnimate();
-  const first = useRef(true);
   useEffect(() => {
-    if (first.current) { first.current = false; return; }
     if (calm || how.current === 'hand' || !plate.current) return;
     turn(plate.current, { rotateY: [0, -11, 0], scale: [1, 0.965, 1] }, { duration: 1.15, times: [0, 0.45, 1], ease: [0.65, 0, 0.35, 1] });
   }, [at, calm, plate, turn]);
