@@ -1,4 +1,4 @@
-.lx-pause { position: absolute; top: 12px; right: 12px; z-index: 4; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border-radius: 50%; border: 1px solid var(--x-e10); background: var(--x-raised); color: #0a0a0a; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); touch-action: manipulation; }
+.lx-pause { position: absolute; top: 12px; right: 12px; z-index: 4; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border-radius: 50%; border: 1px solid var(--x-e10); background: #fff; color: #0a0a0a; cursor: pointer; transition: background-color .15s cubic-bezier(0, 0, .2, 1), transform .15s cubic-bezier(0, 0, .2, 1); touch-action: manipulation; }
 .lx-pause.dark { background: #171717; border-color: rgba(255, 255, 255, .14); color: #fafafa; }
 .lx-pause:active { transform: scale(.97); transition-duration: .09s; }
 .lx-pause[aria-pressed='true'] { background: #0a0a0a; color: #fff; }
