@@ -397,3 +397,17 @@ html:not(.js) .ds-index li { color: var(--ink); }
 /* ---------- dark mode (8 Nov, docs/DARK-MODE.md): the Keynote deck pins its tokens light on .kn, so this page points
    them at Hanzo's dark tokens; every light value above is unchanged ---------- */
 html:not(.light) .ds { --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); --body: var(--muted-foreground); --quiet: var(--text-tertiary); --hair: var(--border); background: var(--background); }
+/* dark: data marks stay dim unless they are the ones being read (as live hanzo.ai/datastore draws them in dark) */
+html:not(.light) .ds .ds-file:not(.on) .ds-blocks i { background: var(--secondary-hover); }
+html:not(.light) .ds .ds-file.on { background: var(--secondary); border-color: var(--foreground); color: var(--foreground); }
+html:not(.light) .ds .ds-file.on .ds-blocks i { background: var(--foreground); }
+html:not(.light) .ds .ds-beam { opacity: .35; }
+html:not(.light) .ds :is(.ds-s-file span i, .ds-parts i, .ds-dn i, .ds-time i, .ds-index-b b) { background: var(--secondary-hover); }
+html:not(.light) .ds .ds-time i { background: var(--border-selected); }
+html:not(.light) .ds .ds-mv i { background: var(--muted-foreground); }
+html:not(.light) .ds .ds-index li[data-on] .ds-index-b b { background: var(--foreground); }
+html:not(.light) .ds .ds-x-name { background: var(--secondary); border-color: var(--border-strong); color: var(--foreground); }
+html:not(.light) .ds .ds-x-part i { background: var(--secondary-hover); }
+html:not(.light) .ds :is(.ds-x-obj.s0 .ds-x-col.read, .ds-x-obj.s1 .ds-x-col.vec) .ds-x-name { border-color: var(--foreground); }
+html:not(.light) .ds :is(.ds-x-obj.s0 .ds-x-col.read .ds-x-part i, .ds-x-obj.s1 .ds-x-col.vec .ds-x-part:nth-child(-n+2) i, .ds-x-obj.s2 .ds-x-part.run i) { background: var(--foreground); }
+html:not(.light) .ds .ds-x-obj.s3 .ds-x-part i { background: var(--muted-foreground); }
