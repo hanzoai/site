@@ -2,14 +2,14 @@
    56px field with 17px text, deck curves (no springs), flat surfaces (a hairline, never with a shadow).
    Tokens come from components/pages/company/deck.css on .vc. The five entrances are at the end of this file. */
 .xsp { overflow-x: clip; }
-.xsp ::selection { background: rgba(0, 0, 0, .1); }
-.xsp :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 5px #fff; }
+.xsp ::selection { background: light-dark(rgba(0, 0, 0, .1), var(--selection)); }
+.xsp :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 5px var(--bg); }
 /* the match mark is drawn (a fill and an underline as shadows), so marking a word never moves a line */
-.xsp mark { padding: 0; background: #ededed; color: var(--ink); border-radius: 2px; box-shadow: 0 0 0 2px #ededed, inset 0 -2px 0 var(--ink); }
+.xsp mark { padding: 0; background: light-dark(#ededed, var(--surface-3)); color: var(--ink); border-radius: 2px; box-shadow: 0 0 0 2px light-dark(#ededed, var(--surface-3)), inset 0 -2px 0 var(--ink); }
 .xsp-big { height: 48px; padding: 0 27px; font-size: 16px; }
 .xsp-go { display: inline-flex; }
 .xsp-pane .x-btn { transition: background-color var(--d-fast) var(--e-out), border-color var(--d-fast) var(--e-out); }
-@media (hover: hover) { .xsp-pane .x-btn.solid:hover { background: #262626; border-color: #262626; } }
+@media (hover: hover) { .xsp-pane .x-btn.solid:hover { background: light-dark(#262626, var(--primary-hover)); border-color: light-dark(#262626, var(--primary-hover)); } }
 
 /* 1. the h1 and its lede (8 and 5, bottom-aligned); the help-finder: the question screens left, the summary right */
 .xsp-hero { padding: clamp(72px, 9vw, 116px) 0 clamp(72px, 11vw, 116px); }
@@ -23,7 +23,7 @@
 
 /* the two questions as two hairlines: the one you are on, and the one answered, are ink */
 .xsp-steps { display: flex; gap: 6.5px; }
-.xsp-steps i { flex: 1; height: 2px; border-radius: 2px; background: #e5e5e5; transition: background-color var(--d-slow) var(--e-io); }
+.xsp-steps i { flex: 1; height: 2px; border-radius: 2px; background: light-dark(#e5e5e5, var(--surface-3)); transition: background-color var(--d-slow) var(--e-io); }
 .xsp-steps i.on { background: var(--ink); }
 /* one screen at a time: the rail slides; it is clipped (never a scroll box, so focus cannot pull it), with room for rings */
 .xsp-track { overflow: clip; margin: -6px; }
@@ -31,20 +31,20 @@
 .xsp-q { flex: 0 0 100%; min-width: 0; padding: 6px; transition: opacity var(--d-slow) var(--e-io); }
 
 
-.xsp-search { display: flex; align-items: center; gap: 13px; height: 56px; padding: 0 6px 0 20px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--ink2); transition: border-color var(--d-fast) var(--e-out), box-shadow var(--d-fast) var(--e-out); }
-@media (hover: hover) { .xsp-search:hover { border-color: rgba(0, 0, 0, .3); } }
+.xsp-search { display: flex; align-items: center; gap: 13px; height: 56px; padding: 0 6px 0 20px; border-radius: 999px; background: var(--x-raised); border: 1px solid var(--line); color: var(--ink2); transition: border-color var(--d-fast) var(--e-out), box-shadow var(--d-fast) var(--e-out); }
+@media (hover: hover) { .xsp-search:hover { border-color: light-dark(rgba(0, 0, 0, .3), var(--white-30)); } }
 /* the pill carries the one focus ring (ink, with a white halo), concentric with it; the field inside draws none */
-.xsp-search:focus-within { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink), 0 0 0 5px #fff; }
+.xsp-search:focus-within { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink), 0 0 0 5px var(--bg); }
 .xsp .xsp-search input:focus-visible, .xsp .xsp-search input:focus { outline: none; box-shadow: none; }
 .xsp-search svg { flex: none; }
 .xsp-search input { flex: 1; min-width: 0; height: 100%; border: 0; outline: none; background: none; font: 400 17px/1 var(--sans); color: var(--ink); caret-color: var(--ink); }
 .xsp-search input::-webkit-search-cancel-button { display: none; }
-.xsp-pause, .xsp-next, .xsp-back { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); cursor: pointer; transition: border-color var(--d-fast) var(--e-out), background-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
-.xsp-next { background: var(--ink); border-color: var(--ink); color: #fff; }
+.xsp-pause, .xsp-next, .xsp-back { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--white-14)); background: var(--x-raised); color: var(--ink); cursor: pointer; transition: border-color var(--d-fast) var(--e-out), background-color var(--d-fast) var(--e-out), color var(--d-fast) var(--e-out), transform var(--d-press) var(--e-out); }
+.xsp-next { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
 .xsp-pause:active, .xsp-next:active, .xsp-back:active { transform: scale(.97); }
 @media (hover: hover) {
-  .xsp-pause:hover, .xsp-back:hover { border-color: rgba(0, 0, 0, .4); }
-  .xsp-next:hover { background: #262626; border-color: #262626; }
+  .xsp-pause:hover, .xsp-back:hover { border-color: light-dark(rgba(0, 0, 0, .4), var(--white-40)); }
+  .xsp-next:hover { background: light-dark(#262626, var(--primary-hover)); border-color: light-dark(#262626, var(--primary-hover)); }
   .xsp-next:hover svg { transform: translateX(2px); }
 }
 .xsp-next svg { transition: transform var(--d-base) var(--e-io); }
@@ -58,12 +58,12 @@
 .xsp-way svg { transition: transform var(--d-base) var(--e-io); }
 .xsp-way.match { color: var(--ink2); }
 .xsp-way.best { color: var(--ink); border-color: var(--ink); }
-.xsp-way.picked { background: var(--ink); border-color: var(--ink); color: #fff; }
+.xsp-way.picked { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
 .xsp-way:active { transform: scale(.98); }
-@media (hover: hover) { .xsp-way:hover { color: var(--ink); background: var(--tile); } .xsp-way.picked:hover { background: #262626; color: #fff; } .xsp-way:hover svg { transform: translateX(4px); } }
+@media (hover: hover) { .xsp-way:hover { color: var(--ink); background: var(--tile); } .xsp-way.picked:hover { background: light-dark(#262626, var(--primary-hover)); color: var(--x-on-ink); } .xsp-way:hover svg { transform: translateX(4px); } }
 
 /* the summary: your words, the way, its one action */
-.xsp-answer { position: relative; overflow: hidden; padding: clamp(27px, 3vw, 44px); background: #fff; border: 1px solid var(--line); border-radius: 28px; }
+.xsp-answer { position: relative; overflow: hidden; padding: clamp(27px, 3vw, 44px); background: var(--x-raised); border: 1px solid var(--line); border-radius: 28px; }
 .xsp-said { display: flex; align-items: center; gap: 10px; height: 0; margin: 0; overflow: hidden; opacity: 0; font: 400 16px/1.3 var(--mono); color: var(--ink); min-width: 0; transition: height var(--d-base) var(--e-io), margin var(--d-base) var(--e-io), opacity var(--d-fast) var(--e-out); }
 .xsp-said.on { height: 22px; margin-bottom: 17px; opacity: 1; }
 .xsp-said svg { flex: none; }
@@ -139,3 +139,7 @@
 @media (prefers-reduced-motion: reduce) {
   .xsp-rail, .xsp-q, .xsp-steps i, .xsp-said { transition: none; }
 }
+
+/* dark mode (docs/DARK-MODE.md): the Company deck kit (company/deck.css) states its own greys on .vc; here they take Hanzo's
+   dark tokens. The closing band is black in both modes. */
+html:not(.light) .vc.xsp { --ink: var(--foreground); --ink2: var(--text-helper); --muted: var(--text-helper); --quiet: var(--surface-2); --card: var(--surface-2); --tile: var(--surface-3); --line: var(--border); }
