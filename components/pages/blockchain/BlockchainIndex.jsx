@@ -367,7 +367,7 @@ function Matrix({ b, all }) {
         ))}</p>
         <p className="bci-read x-mono" aria-live={mine ? 'polite' : 'off'}>{read}</p>
         <div className="bci-mx" data-swipe-own onPointerLeave={() => setHot(null)} style={{ '--cols': cols.length }}>
-          {hot && <style>{`${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > *, ` : ''}.bci-mx .x-table tr > :nth-child(${c + 2}) { background-color: #f5f5f5; } ${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > :nth-child(${c + 2}) { background-color: #d4d4d4; }` : ''} .bci-mx .x-table thead th:nth-child(${c + 2}) .bci-vh { color: #0a0a0a; }`}</style>}
+          {hot && <style>{`${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > *, ` : ''}.bci-mx .x-table tr > :nth-child(${c + 2}) { background-color: light-dark(#f5f5f5, var(--x-fill)); } ${r >= 0 ? `.bci-mx .x-table tbody tr:nth-child(${r + 1}) > :nth-child(${c + 2}) { background-color: light-dark(#d4d4d4, var(--secondary)); }` : ''} .bci-mx .x-table thead th:nth-child(${c + 2}) .bci-vh { color: var(--ink); }`}</style>}
           <DataTable
             caption="Products × chains"
             cols={[{ key: 'p', label: 'Product' }, ...cols.map(([x], j) => ({ key: 'c' + j, label: <span className="bci-vh">{x}</span> })), { key: 'n', label: 'chains', num: true }]}
