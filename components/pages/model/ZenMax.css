@@ -2,7 +2,7 @@
    Hanzo's deck only (docs/MASTER.md 3.1): neutrals, sizes 12–112 from the scale, 1152 container, 13-column 8/5 splits,
    radii 6/12/24 and 20 for art, deck durations and curves. The deck values live here as page tokens until tokens.css lands. */
 .zx {
-  --zx-ink: #0a0a0a; --zx-muted: #525252; --zx-quiet: #737373; --zx-room: #f5f5f5; --zx-line: rgba(0, 0, 0, .1);
+  --zx-ink: var(--ink); --zx-muted: light-dark(#525252, var(--muted-foreground)); --zx-quiet: light-dark(#737373, var(--text-tertiary)); --zx-room: light-dark(#f5f5f5, var(--muted)); --zx-line: var(--x-e10);
   --zx-gut: clamp(16px, 4vw, 32px); --zx-pad: clamp(72px, 11vw, 188px);
   --zx-out: cubic-bezier(0, 0, .2, 1); --zx-move: cubic-bezier(.4, 0, .2, 1); --zx-emph: cubic-bezier(.16, 1, .3, 1);
   --zx-press: 90ms; --zx-fast: 150ms; --zx-base: 300ms; --zx-slow: 400ms; --zx-slower: 500ms;
@@ -28,7 +28,7 @@
   --t0: 29svh; --h0: 62svh; /* the resting card: its bottom edge on the crumb's baseline (9svh up), 62svh tall */
   --top: calc(var(--t0) + (60px - var(--t0)) * var(--k));
   --fl: max(var(--edge), var(--lk)); --fr: calc(var(--lk) + var(--cw) * var(--s)); --fb: calc(var(--top) + var(--h0) * var(--s)); /* the film's visible box */
-  position: sticky; top: 0; height: 100svh; overflow: hidden; background: #fff; /* the white the name blends against */
+  position: sticky; top: 0; height: 100svh; overflow: hidden; background: var(--bg); /* the page colour the name sits on */
 }
 @media (max-width: 1300px) { .zx-stage-pin { --s0: 2.05; } }
 @media (max-width: 1100px) { .zx-stage-pin { --s0: 1.95; } }
@@ -115,15 +115,15 @@
 .zx-rt-lit { opacity: 0; transform-box: fill-box; transform-origin: 0 50%; transform: scaleX(.3); transition: opacity var(--zx-base) var(--zx-out), transform var(--zx-slow) var(--zx-emph); }
 .zx-rt:not([data-at='0']) .zx-rt-lit { opacity: 1; transform: none; transition-delay: .3s; }
 .zx-rt-ctx { opacity: 0; transition: opacity var(--zx-base) var(--zx-out); }
-.zx-rt-track { fill: rgba(0, 0, 0, .08); }
+.zx-rt-track { fill: light-dark(rgba(0, 0, 0, .08), var(--border)); }
 .zx-rt-fill { transform-box: fill-box; transform-origin: 0 50%; transform: scaleX(0); transition: transform var(--zx-slower) var(--zx-emph); }
 .zx-rt:is([data-at='2'], [data-at='3']) .zx-rt-ctx { opacity: 1; }
 .zx-rt:is([data-at='2'], [data-at='3']) .zx-rt-fill { transform: none; transition-delay: .15s; }
 .zx-rt-tool { clip-path: inset(0 33% 0 0); transition: clip-path var(--zx-slower) var(--zx-emph); }
 .zx-rt[data-at='3'] .zx-rt-tool { clip-path: inset(0); }
-.zx-rt .zx-rt-chev { stroke: #fafafa; }
-.zx-rt-code { fill: rgba(255, 255, 255, .55); }
-.zx-rt-caret { fill: #fafafa; }
+.zx-rt .zx-rt-chev { stroke: light-dark(#fafafa, var(--primary-foreground)); } /* on the ink terminal, which turns light in dark */
+.zx-rt-code { fill: light-dark(rgba(255, 255, 255, .55), var(--primary-foreground)); }
+.zx-rt-caret { fill: light-dark(#fafafa, var(--primary-foreground)); }
 .zx-rt[data-at='3'] .zx-rt-caret { animation: zx-blink 1s steps(1) .5s 4; } /* blinks four times, then rests lit */
 @keyframes zx-blink { 50% { opacity: 0; } }
 
@@ -140,6 +140,7 @@
 .zx-four { color: var(--zx-ink); }
 .zx-pin { position: sticky; top: 14svh; align-self: start; }
 .zx-panel { border-radius: 24px; background: #0a0a0a; color: #fafafa; overflow: hidden; }
+html:not(.light) .zx-panel { box-shadow: inset 0 0 0 1px var(--border); } /* the black rack panel keeps its black; in dark Hanzo's border holds it off the page */
 .zx-bar { display: flex; align-items: center; justify-content: space-between; gap: 10.5px; padding: 10.5px 17px 10.5px 10.5px; border-bottom: 1px solid rgba(255, 255, 255, .1); }
 .zx-seg { display: flex; gap: 4px; padding: 6px; border-radius: 12px; background: #171717; }
 .zx-chip { min-height: 36px; padding: 0 17px; border-radius: 6px; border: 1px solid transparent; background: transparent; color: rgba(255, 255, 255, .78); font: 606 14px/1 var(--sans); white-space: nowrap; cursor: pointer; transition: background-color var(--zx-fast) var(--zx-out), color var(--zx-fast) var(--zx-out), border-color var(--zx-fast) var(--zx-out), transform var(--zx-fast) var(--zx-out); }
@@ -192,7 +193,7 @@
 .zx-fig[data-peek] > span { transform: scale(.75); }
 @media (hover: hover) and (pointer: fine) {
   .zx-sheet:has(thead th:nth-child(2) .zx-col[aria-pressed='false']:hover) tbody tr > :nth-child(2),
-  .zx-sheet:has(thead th:nth-child(3) .zx-col[aria-pressed='false']:hover) tbody tr > :nth-child(3) { background-color: rgba(0, 0, 0, .04); }
+  .zx-sheet:has(thead th:nth-child(3) .zx-col[aria-pressed='false']:hover) tbody tr > :nth-child(3) { background-color: light-dark(rgba(0, 0, 0, .04), var(--secondary)); }
 }
 .zx-sheet { margin-top: 27px; background: transparent; }
 .zx-sheet table { width: 100%; table-layout: fixed; }
@@ -210,7 +211,7 @@
 .zx-drawer { margin-top: 44px; border-top: 1px solid var(--zx-line); border-bottom: 1px solid var(--zx-line); }
 .zx-drawer-b { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 17px; min-height: 72px; padding: 0; border: 0; background: none; color: var(--zx-ink); font: 497 21px/1.2 var(--sans); text-align: left; cursor: pointer; transition: transform var(--zx-fast) var(--zx-out); }
 .zx-drawer-b:active { transform: scale(.99); transition-duration: var(--zx-press); }
-.zx-drawer-b i { position: relative; flex: none; width: 44px; height: 44px; border-radius: 999px; background: #fff; transition: transform var(--zx-base) var(--zx-move); }
+.zx-drawer-b i { position: relative; flex: none; width: 44px; height: 44px; border-radius: 999px; background: var(--x-raised); transition: transform var(--zx-base) var(--zx-move); }
 @media (hover: hover) { .zx-drawer-b:hover i { transform: rotate(90deg); } .zx-drawer-b:hover i[data-open] { transform: rotate(45deg); } }
 .zx-drawer-b i::before, .zx-drawer-b i::after { content: ''; position: absolute; left: 50%; top: 50%; width: 14px; height: 1.5px; margin: -.75px 0 0 -7px; border-radius: 1px; background: var(--zx-ink); }
 .zx-drawer-b i::after { transform: rotate(90deg); }
@@ -223,8 +224,8 @@
 .zx-spec { padding-bottom: 72px; }
 .zx-close { position: relative; margin-top: -40px; padding: 0 0 var(--zx-pad); } /* one section step: the close's card rises 40px into the sheet's room */
 .zx-close-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 27px; align-items: end; }
-.zx-close-art { position: relative; aspect-ratio: 4 / 5; border-radius: 20px; background: #e4e4e7; overflow: hidden; }
-.zx-sig { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(0, 0, 0, .55); }
+.zx-close-art { position: relative; aspect-ratio: 4 / 5; border-radius: 20px; background: light-dark(#e4e4e7, var(--muted)); overflow: hidden; }
+.zx-sig { position: absolute; inset: 0; width: 100%; height: 100%; color: light-dark(rgba(0, 0, 0, .55), var(--muted-foreground)); }
 .zx-close-t { padding: 0 0 4px 44px; }
 .zx-state { margin: 0; max-width: 32ch; font-size: 26px; font-weight: 497; line-height: 1.25; letter-spacing: -.02em; text-wrap: balance; }
 
@@ -247,7 +248,7 @@
   .zx-prom { padding: 72px 0; }
   .zx-prom-g { grid-template-columns: minmax(0, 1fr); gap: 17px; }
   /* the drawing rides under the header while the rows scroll beneath it, so each row changes it as it reaches mid-screen */
-  .zx-prom-art { position: sticky; top: 76px; z-index: 2; height: 34svh; padding-bottom: 10.5px; background: #fff; display: flex; justify-content: center; }
+  .zx-prom-art { position: sticky; top: 76px; z-index: 2; height: 34svh; padding-bottom: 10.5px; background: var(--bg); display: flex; justify-content: center; }
   .zx-rt { border-radius: 20px; width: 100%; height: 100%; aspect-ratio: auto; }
   .zx-prom-l li { min-height: 30svh; padding: 27px 0; }
   .js .zx-prom-l li:not([data-on]) h2, .js .zx-prom-l li:not([data-on]) p { color: var(--zx-quiet); }

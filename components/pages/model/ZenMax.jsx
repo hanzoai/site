@@ -25,6 +25,7 @@ import { motion, useInView } from 'motion/react';
 import { EASE, Count, useCalm } from '../../ui';
 import { A, More, Cta, Film, DataTable } from '../../kit';
 import Sigil from '../../Sigil';
+import useScheme from './scheme';
 import { media } from '../../../lib/models';
 import { arrows } from './live';
 import ParticleRack from './zenmax/ParticleRack';
@@ -269,12 +270,13 @@ function Promises() {
 
 /* 5 The close. Entrance line-draw: the art card's outline draws round, then the card fills and its field shows. */
 function Close() {
+  const scheme = useScheme(); // the field's ink follows the page: re-keyed so it redraws on a device switch
   const [ref, inn] = useIn(0.35);
   return (
     <section className="zx-close" ref={ref} data-in={inn} data-ask-hide>
       <div className="zx-w zx-close-g">
         <div className="zx-close-art" aria-hidden="true">
-          <div className="zx-close-fill"><Sigil seed="zen6-max" data={[9216, 5760, 2304, 1440, 31]} className="zx-sig" /></div>
+          <div className="zx-close-fill"><Sigil key={scheme} seed="zen6-max" data={[9216, 5760, 2304, 1440, 31]} className="zx-sig" /></div>
           <Outline />
         </div>
         <div className="zx-close-t">
