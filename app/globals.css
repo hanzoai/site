@@ -761,3 +761,9 @@ a.x-mbtn { color: inherit; text-decoration: none; }
 .x-races > .x-cost:nth-child(2)::before { background: radial-gradient(60% 50% at 100% 0%, color-mix(in srgb, var(--ink) 12%, transparent), transparent 70%), repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 9%, transparent) 0 1px, transparent 1px 12px); -webkit-mask-image: radial-gradient(90% 80% at 100% 0%, #000, transparent 75%); mask-image: radial-gradient(90% 80% at 100% 0%, #000, transparent 75%); }
 .x-races > .x-cost:hover, .x-races > .x-race:hover { box-shadow: 0 24px 60px -30px rgba(0, 0, 0, .55); }
 @media (prefers-reduced-motion: reduce) { .x-race:hover, .x-cost:hover { translate: none; } }
+
+/* ---------- James 8 Nov: home in dark has light and rhythm, not one long black scroll (dark mode only; light unchanged) ---------- */
+html.dark main > section.x-sec { background-image: radial-gradient(70% 45% at 50% 0%, rgba(255, 255, 255, .07), transparent 70%); }
+html.dark main > section.x-sec:nth-of-type(even):not([data-room='dark']) { background-color: #141417; border-top: 1px solid rgba(255, 255, 255, .05); border-bottom: 1px solid rgba(255, 255, 255, .05); }
+html.dark .x-faster { background: radial-gradient(90% 60% at 50% 0%, #202024, #121214 55%, #0c0c0d); border-top: 1px solid rgba(255, 255, 255, .07); border-bottom: 1px solid rgba(255, 255, 255, .07); }
+html.dark .x-band { background: radial-gradient(80% 70% at 50% 100%, #1b1b1e, #0f0f10 70%); }
