@@ -54,7 +54,7 @@ export default function IngressGlobe({ onPhase }) {
   const calm = useReducedMotion();
   const [paused, togglePause] = usePause();
   const live = seen && !paused && !calm;
-  const st = useRef({ yaw: -0.25, tilt: 0.38, vy: 0, vt: 0, clock: 9.4, drag: null, last: 0, idleAt: -10, raf: 0, size: [0, 0], dpr: 1 });
+  const st = useRef({ yaw: -0.25, tilt: 0.38, vy: 0, vt: 0, clock: 9.4, drag: null, last: 0, idleAt: -10, raf: 0, size: [0, 0], dpr: 1, ink: '10, 10, 10' });
   const liveRef = useRef(live);
   liveRef.current = live;
   const phaseRef = useRef(-1);
@@ -75,12 +75,12 @@ export default function IngressGlobe({ onPhase }) {
       return [cx + X * R * lift, cy - Y * R * lift, Z2];
     };
     // the limb (the soft body is the disc's CSS background, so JS off shows the same sphere)
-    g.strokeStyle = 'rgba(10, 10, 10, .14)'; g.lineWidth = 1;
+    g.strokeStyle = `rgba(${s.ink}, .14)`; g.lineWidth = 1;
     g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.stroke();
     for (const p of DOTS) {
       const [x, y, z] = proj(p);
       if (z < 0) continue;
-      g.fillStyle = `rgba(10, 10, 10, ${(0.1 + z * 0.32).toFixed(3)})`;
+      g.fillStyle = `rgba(${s.ink}, ${(0.1 + z * 0.32).toFixed(3)})`;
       g.beginPath(); g.arc(x, y, 0.8 + z * 0.9, 0, TAU); g.fill();
     }
     const clock = s.clock;
@@ -103,12 +103,12 @@ export default function IngressGlobe({ onPhase }) {
         for (let k = 0; k <= end; k++) {
           const u = k / n, q = proj(slerp(a, z, u), 1 + hgt * Math.sin(Math.PI * u));
           if (prev && q[2] > -0.05 && prev[2] > -0.05) {
-            g.strokeStyle = `rgba(10, 10, 10, ${(fade * (0.25 + 0.6 * u)).toFixed(3)})`;
+            g.strokeStyle = `rgba(${s.ink}, ${(fade * (0.25 + 0.6 * u)).toFixed(3)})`;
             g.beginPath(); g.moveTo(prev[0], prev[1]); g.lineTo(q[0], q[1]); g.stroke();
           }
           prev = q;
         }
-        if (p < 1 && prev && prev[2] > -0.05) { g.fillStyle = `rgba(10, 10, 10, ${fade.toFixed(3)})`; g.beginPath(); g.arc(prev[0], prev[1], 2.4, 0, TAU); g.fill(); }
+        if (p < 1 && prev && prev[2] > -0.05) { g.fillStyle = `rgba(${s.ink}, ${fade.toFixed(3)})`; g.beginPath(); g.arc(prev[0], prev[1], 2.4, 0, TAU); g.fill(); }
       };
       const p1 = age / LEG1, p2 = (age - LEG1) / LEG2;
       leg(src, EDGE, p1, 1.3);
@@ -120,7 +120,7 @@ export default function IngressGlobe({ onPhase }) {
     for (const p of SRC) {
       const [x, y, z] = proj(p);
       if (z < 0) continue;
-      g.fillStyle = `rgba(10, 10, 10, ${(0.35 + z * 0.5).toFixed(3)})`;
+      g.fillStyle = `rgba(${s.ink}, ${(0.35 + z * 0.5).toFixed(3)})`;
       g.beginPath(); g.arc(x, y, 2.6, 0, TAU); g.fill();
     }
     // the backends: ink squares; the one out of rotation is hollow
@@ -129,19 +129,19 @@ export default function IngressGlobe({ onPhase }) {
       const a = z < 0 ? 0.18 : 1;
       const sz = hits.has(i) ? 6.5 : 5.5;
       g.lineWidth = 1.6;
-      if (i === DOWN && down) { g.strokeStyle = `rgba(10, 10, 10, ${a})`; g.strokeRect(x - sz, y - sz, sz * 2, sz * 2); }
-      else { g.fillStyle = `rgba(10, 10, 10, ${a})`; g.fillRect(x - sz, y - sz, sz * 2, sz * 2); }
+      if (i === DOWN && down) { g.strokeStyle = `rgba(${s.ink}, ${a})`; g.strokeRect(x - sz, y - sz, sz * 2, sz * 2); }
+      else { g.fillStyle = `rgba(${s.ink}, ${a})`; g.fillRect(x - sz, y - sz, sz * 2, sz * 2); }
     });
     // the edge: a filled point in a ring that opens each time a request lands
     {
       const [x, y, z] = proj(EDGE);
       const a = z < 0 ? 0.2 : 1;
-      g.fillStyle = `rgba(10, 10, 10, ${a})`;
+      g.fillStyle = `rgba(${s.ink}, ${a})`;
       g.beginPath(); g.arc(x, y, 5, 0, TAU); g.fill();
-      g.strokeStyle = `rgba(10, 10, 10, ${(a * 0.55).toFixed(3)})`; g.lineWidth = 1.4;
+      g.strokeStyle = `rgba(${s.ink}, ${(a * 0.55).toFixed(3)})`; g.lineWidth = 1.4;
       g.beginPath(); g.arc(x, y, 11, 0, TAU); g.stroke();
       if (edgeHit > 0 && z >= 0) {
-        g.strokeStyle = `rgba(10, 10, 10, ${(edgeHit * 0.6).toFixed(3)})`;
+        g.strokeStyle = `rgba(${s.ink}, ${(edgeHit * 0.6).toFixed(3)})`;
         g.beginPath(); g.arc(x, y, 11 + (1 - edgeHit) * 14, 0, TAU); g.stroke();
       }
     }
@@ -184,10 +184,15 @@ export default function IngressGlobe({ onPhase }) {
       c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
       draw();
     };
+    // the globe draws in the page's ink (CSS color: var(--ink)), read again when <html>'s light/dark class changes
+    const tone = () => { const m = getComputedStyle(c).color.match(/[\d.]+/g) || [10, 10, 10]; s.ink = `${m[0]}, ${m[1]}, ${m[2]}`; };
+    tone();
     fit();
     const ro = new ResizeObserver(fit);
     ro.observe(c);
-    return () => ro.disconnect();
+    const mo = new MutationObserver(() => { tone(); draw(); });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => { ro.disconnect(); mo.disconnect(); };
   }, [draw]);
 
   useEffect(() => {
