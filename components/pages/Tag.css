@@ -146,6 +146,7 @@
 .xtg-cv-t > span { display: grid; gap: 2px; }
 .xtg-cv-t b { font-size: 16px; }
 .xtg-cv-t span span { font-size: 12.5px; color: #a3a3a3; }
+.xtg-cv-k { display: block; margin: 0 0 4px; font-size: 11.5px; letter-spacing: .1em; color: #a3a3a3; }
 .xtg-cv-q { margin: 0; padding: 8px 12px; border: 1px solid rgba(255, 255, 255, .08); background: #171717; border-radius: 10px; font-size: 14px; line-height: 1.45; color: rgba(255, 255, 255, .78); }
 
 /* ---------- channels: the headline beside the one thing a session produces, the pull request ---------- */

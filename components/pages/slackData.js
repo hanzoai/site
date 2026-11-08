@@ -43,7 +43,7 @@ export const ANSWER = { who: 'hanzo', time: '9:31 AM', body: ['Traced to ', ['co
 export const PEOPLE = {
   hanzo: { name: 'Hanzo', role: 'APP', init: 'H' },
   dev: { name: 'Dev', role: 'Software', face: 'dev', init: 'D' },
-  qa: { name: 'Qa', role: 'Quality', face: 'sci', init: 'Q' },
+  qa: { name: 'Sci', role: 'Quality', face: 'sci', init: 'S' },
   zoe: { name: 'Zoe Maxwell', role: 'Design', init: 'ZM' },
   harry: { name: 'Harry Boone', role: 'Eng', init: 'HB' },
 };
@@ -56,19 +56,21 @@ export const SESSION = [
   { tab: 0, msgs: [{ who: 'dev', time: '9:31 AM', trace: [['Thinking', 'Checking the best fix for dark mode.'], ['Searched Codebase', '3 results found in components/ui/ and styles/'], ['Read 2 files', null, ['BuyNowButton.tsx', 'styles.css']], ['Done']], body: ['Found the issue: text color is too light on dark backgrounds. What color should we use instead?'] }] },
   { tab: 1, msgs: [{ who: 'harry', time: '9:32 AM', body: [['at', '@Zoe Maxwell'], ', what color should we use?'] }, { sys: 'Zoe Maxwell was added to #bug-button-darkmode by Harry Boone.' }] },
   { tab: 1, msgs: [{ who: 'zoe', time: '9:34 AM', body: ["Let's keep the pink and switch the text to ", ['code', '#1A1A1A'], '.'] }] },
-  { tab: 2, msgs: [{ who: 'dev', time: '9:36 AM', body: ['Done! Updated ', ['code', 'styles/cta-button.css'], ' and wrote the root-cause summary in Canvas. ', ['at', '@Qa'], ' running e2e checks now.'], canvas: true }] },
+  { tab: 2, msgs: [{ who: 'dev', time: '9:36 AM', body: ['Done! Updated ', ['code', 'styles/cta-button.css'], ' and wrote the root-cause summary in Canvas. ', ['at', '@Sci'], ' running e2e checks now.'], canvas: true }] },
   { tab: 1, msgs: [{ who: 'qa', time: '9:41 AM', body: ['Verified e2e across Chromium & Safari — WCAG AAA contrast (8.9:1) and checkout specs 28/28 green.'] }] },
   { tab: 0, msgs: [{ done: 'PR \u0023418 merged · E2E green' }] },
 ];
 
-export const CANVAS = { title: 'Fix: Button Dark Mode', meta: 'Canvas · Updated just now', open: 'Open →' };
+export const CANVAS = { title: 'Fix: Button Dark Mode', meta: 'Canvas · Updated just now', open: 'Open →', kind: 'Canvas',
+  // the canvas itself, word for word as live hanzo.ai/slack and /tag show it (8 Nov)
+  parts: [['OVERVIEW', 'Fixes a dark-mode contrast regression on the primary CTA button where light foreground text (#E5E7EB) rendered against the pink accent fill.'], ['ROOT CAUSE', 'Global dark theme inherited --text-light onto .cta-button without scoping foreground contrast to the accent surface token.'], ['VERIFICATION', 'WCAG AAA contrast ratio (8.9:1) verified on dark surface']] };
 
 export const WINDOW = {
-  title: 'Slack — Karma Style (karma.style) · #bug-button-darkmode',
+  title: 'Slack — Hanzo AI (hanzo.ai) · #bug-button-darkmode',
   ready: 'Session ready', working: 'Working · Session channel', badge: 'Working', prReady: 'PR ready',
-  team: 'Karma Style', host: 'karma.style', nav: ['Threads', 'Drafts & sent'],
-  groups: [['SUPPORT', ['incident-alert']], ['CODE CHANNELS', ['bug-button-darkmode', 'tryon-3d-lookbook']]],
-  repo: 'karma/storefront', branch: 'main → update-cta-button-color', artifacts: 'Artifacts 3', archive: 'Archive Channel',
+  team: 'Hanzo AI', host: 'hanzo.ai', nav: ['Threads', 'Drafts & sent'],
+  groups: [['SUPPORT', ['incident-alert']], ['CODE CHANNELS', ['bug-button-darkmode', 'feat-wimse-tokens']]],
+  repo: 'hanzoai/app', branch: 'main → update-cta-button-color', artifacts: 'Artifacts 3', archive: 'Archive Channel',
 };
 
 export const TABS = ['Code', 'View', 'Canvas'];

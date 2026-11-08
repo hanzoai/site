@@ -93,12 +93,11 @@ function Diff() {
 }
 
 function Canvas() {
-  const say = [['dev', SESSION[0].msgs[0].body], ['zoe', SESSION[2].msgs[0].body], ['qa', SESSION[4].msgs[0].body]];
   return (
     <div className={`${P}-cv`}>
       <p className={`${P}-cv-t`}>{CANVAS.title}</p>
-      <p className={`${P}-cv-m`}>{CANVAS.meta}</p>
-      <ol>{say.map(([w, b]) => <li key={w}><Face who={w} p={P} size={22} /><span><b>{PEOPLE[w].name}</b> <Parts body={b} p={P} /></span></li>)}</ol>
+      <p className={`${P}-cv-m`}>{CANVAS.kind}</p>
+      <dl className={`${P}-cv-d`}>{CANVAS.parts.map(([k, t]) => <div key={k}><dt className="x-mono">{k}</dt><dd>{t}</dd></div>)}</dl>
     </div>
   );
 }

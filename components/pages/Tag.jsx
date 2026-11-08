@@ -78,7 +78,7 @@ const NODES = [
   { k: 's5', step: 5, label: STEPS[5], xy: at(210, 29), side: 'l' },
 ];
 // 41 enabled channels around the one that was tagged: 42, as the setup card says
-const NAMED = [['incident-alert', [12, 16]], ['tryon-3d-lookbook', [88, 12]]];
+const NAMED = [['incident-alert', [12, 16]], ['feat-wimse-tokens', [88, 12]]];
 const FIELD = Array.from({ length: 39 }, (_, k) => { const r = 47 * Math.sqrt((k + 3) / 42); const a = k * 137.508; return at(a, r); });
 
 function Moment({ n, archived, setArchived }) {
@@ -100,8 +100,7 @@ function Moment({ n, archived, setArchived }) {
   if (n.k === 'canvas') return (
     <div className={`${P}-cv`}>
       <p className={`${P}-cv-t`}><i aria-hidden="true" /><span><b><span className={`${P}-t`}>{CANVAS.title}</span></b><span>{CANVAS.meta}</span></span></p>
-      <p className={`${P}-cv-q`}><Parts body={SESSION[0].msgs[0].body} p={P} /></p>
-      <p className={`${P}-cv-q`}><Parts body={SESSION[2].msgs[0].body} p={P} /></p>
+      {CANVAS.parts.map(([k, t]) => <p key={k} className={`${P}-cv-q`}><span className={`${P}-cv-k x-mono`}>{k}</span><span>{t}</span></p>)}
     </div>
   );
   return (
