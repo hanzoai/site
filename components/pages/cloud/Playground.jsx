@@ -47,7 +47,9 @@ function useSteps(n, ms, live) {
   }, [at, live, mine, n, ms]);
   return [at, (i) => { setAt(i); setMine(true); }, mine];
 }
-const rnd = (i) => { const x = Math.sin(i * 91.7) * 43758.5453; return x - Math.floor(x); };
+// rounded: Math.sin of large arguments can differ in the last digits between the server and the browser (hydration)
+const rnd = (i) => { const x = Math.sin(i * 91.7) * 43758.5453; return Math.round((x - Math.floor(x)) * 1e4) / 1e4; };
+const r2 = (v) => Math.round(v * 100) / 100;
 
 function Chat() {
   return (
@@ -80,7 +82,7 @@ function Embeddings() {
     <svg className="pg-emb" viewBox="0 0 300 200" aria-hidden="true">
       {Array.from({ length: 42 }).map((_, i) => {
         const h = hubs[i % 3];
-        return <motion.circle key={i} r="4" className={'c' + (i % 3)} initial={{ cx: rnd(i + 9) * 300, cy: rnd(i + 99) * 200, opacity: 0 }} animate={{ cx: h[0] + (rnd(i) - 0.5) * 60, cy: h[1] + (rnd(i + 50) - 0.5) * 44, opacity: 1 }} transition={{ duration: 1.4, ease: EASE, delay: 0.2 + (i % 14) * 0.03 }} />;
+        return <motion.circle key={i} r="4" className={'c' + (i % 3)} initial={{ cx: r2(rnd(i + 9) * 300), cy: r2(rnd(i + 99) * 200), opacity: 0 }} animate={{ cx: r2(h[0] + (rnd(i) - 0.5) * 60), cy: r2(h[1] + (rnd(i + 50) - 0.5) * 44), opacity: 1 }} transition={{ duration: 1.4, ease: EASE, delay: 0.2 + (i % 14) * 0.03 }} />;
       })}
     </svg>
   );
