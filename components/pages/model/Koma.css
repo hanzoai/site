@@ -41,3 +41,7 @@
   .kf-shots { grid-template-columns: repeat(2, 1fr); }
   .kf-line { padding: 14px 12px 16px; }
 }
+
+/* dark: the shared Creative.css draws these two headings in #0a0a0a in both modes; on this page they take Hanzo's
+   foreground in dark until the shared file is converted */
+html:not(.light) .lv:has(> .lv-stage[data-hero=koma]) :is(.cr-caps-h, .cr-fits-list h3) { color: var(--foreground); }

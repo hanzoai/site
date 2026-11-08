@@ -54,3 +54,7 @@
 @media (hover: hover) { .lv:has(> [data-hero=iro]) .lv-ch-rail button:hover::before { transform: scaleY(1); } }
 /* dark (docs/DARK-MODE.md): the rail's hover hairline draws in Hanzo's ink */
 html:not(.light) .lv:has(> [data-hero=iro]) .lv-ch-rail button::before { background: var(--foreground); }
+
+/* dark: the shared Creative.css draws these two headings in #0a0a0a in both modes; on this page they take Hanzo's
+   foreground in dark until the shared file is converted */
+html:not(.light) .lv:has(> .lv-stage[data-hero=iro]) :is(.cr-caps-h, .cr-fits-list h3) { color: var(--foreground); }

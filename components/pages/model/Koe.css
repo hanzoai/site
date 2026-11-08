@@ -131,3 +131,7 @@ html:not(.light) .ko-v2[data-on] ~ .lv-close { color: var(--foreground); backgro
 }
 html:not(.light) .ko-v2[data-on] ~ .lv-close:active { background: var(--primary-hover); color: var(--primary-foreground); }
 html:not(.light) .lv:not([data-calm]):has(.ko-v2[data-on]) .lv-name[data-gone] .lv-name-h { color: var(--foreground); }
+
+/* dark: the shared Creative.css draws these two headings in #0a0a0a in both modes; on this page they take Hanzo's
+   foreground in dark until the shared file is converted */
+html:not(.light) .lv:has(> .lv-stage[data-hero=koe]) :is(.cr-caps-h, .cr-fits-list h3) { color: var(--foreground); }
