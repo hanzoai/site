@@ -94,7 +94,7 @@ const KINDS = [['macOS', 'Apple Silicon and Intel'], ['Linux', 'x86 and ARM'], [
 const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 
 function useField(canvas, wrap) {
-  const st = useRef({ pts: [], w: 0, h: 0, dpr: 1, rings: [], t0: 0, mode: 0, last: 0 });
+  const st = useRef({ pts: [], w: 0, h: 0, dpr: 1, rings: [], t0: 0, mode: 0, last: 0, ink: '10, 10, 10', inkAt: 0 });
   useEffect(() => {
     const el = wrap.current, cv = canvas.current;
     if (!el || !cv) return;
@@ -121,10 +121,16 @@ function useField(canvas, wrap) {
       pts.forEach((p) => { p.f /= far; });
       s.pts = pts;
     };
+    // the ink comes from CSS (.eg-cv canvas { color: var(--ink) }), so the field is dark dots on white and light dots on
+    // Hanzo's dark; it is re-read when <html>'s theme class changes
+    const ink = () => { const m = getComputedStyle(cv).color.match(/[\d.]+/g); st.current.ink = m ? m.slice(0, 3).join(', ') : '10, 10, 10'; st.current.inkAt = performance.now(); };
+    ink();
     build();
     const ro = new ResizeObserver(build);
     ro.observe(el);
-    return () => ro.disconnect();
+    const mo = new MutationObserver(ink);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => { ro.disconnect(); mo.disconnect(); };
   }, [canvas, wrap]);
   return st;
 }
@@ -146,7 +152,7 @@ function draw(s, cv, t, mode, calm) {
       const at = 0.3 + p.f * 2.2;
       const q = Math.min(1, Math.max(0, (e - at) / 0.6));
       if (q > 0 && q < 1) {
-        c.strokeStyle = `rgba(10, 10, 10, ${0.4 * (1 - q)})`;
+        c.strokeStyle = `rgba(${s.ink}, ${0.4 * (1 - q)})`;
         c.beginPath(); c.moveTo(sx, sy); c.lineTo(sx + (p.x - sx) * q, sy + (p.y - sy) * q); c.stroke();
       }
       if (q >= 1) p.lit = 1;
@@ -162,7 +168,7 @@ function draw(s, cv, t, mode, calm) {
     s.rings = s.rings.filter((r) => t - r.b < 1.8);
     for (const r of s.rings) {
       const a = (t - r.b) / 1.8;
-      c.strokeStyle = `rgba(10, 10, 10, ${0.8 * (1 - a) * (1 - a)})`;
+      c.strokeStyle = `rgba(${s.ink}, ${0.8 * (1 - a) * (1 - a)})`;
       c.lineWidth = 1.5;
       c.beginPath(); c.arc(r.p.x, r.p.y, 3 + (1 - (1 - a) * (1 - a)) * 22, 0, Math.PI * 2); c.stroke();
       r.p.lit = Math.max(r.p.lit, 1 - a);
@@ -181,7 +187,7 @@ function draw(s, cv, t, mode, calm) {
     if (mode === 1 && !calm) p.lit *= 0.985;
     const lit = p.lit;
     const back = mode === 0 && fore >= 0 && !big;
-    c.fillStyle = `rgba(10, 10, 10, ${big ? 0.9 : back ? (small ? 0.1 : 0.18) : 0.24 + lit * 0.76})`;
+    c.fillStyle = `rgba(${s.ink}, ${big ? 0.9 : back ? (small ? 0.1 : 0.18) : 0.24 + lit * 0.76})`;
     c.beginPath(); c.arc(p.x, p.y, mode === 0 ? (big ? 3.4 : 2.2) : 2.2 + lit * 1.6, 0, Math.PI * 2); c.fill();
   }
 }
@@ -226,8 +232,11 @@ function Field() {
   // reduced motion: each fact's final frame, drawn once
   useEffect(() => {
     if (!calm || !canvas.current) return;
-    const id = setTimeout(() => canvas.current && draw(s.current, canvas.current, performance.now() / 1000, at, true), 60);
-    return () => clearTimeout(id);
+    const paint = () => canvas.current && draw(s.current, canvas.current, performance.now() / 1000, at, true);
+    const id = setTimeout(paint, 60);
+    const mo = new MutationObserver(() => setTimeout(paint, 30));
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => { clearTimeout(id); mo.disconnect(); };
   }, [calm, at, s]);
   return (
     <section className="eg-field" ref={ref} aria-labelledby="eg-field-h" data-paused={hold ? '' : undefined} data-mine={mine ? '' : undefined}>
