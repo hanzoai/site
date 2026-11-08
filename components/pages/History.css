@@ -195,3 +195,5 @@ html:not(.light) .xhi-plate.logo.lt img { filter: brightness(0) invert(1); }
    here it is Hanzo's primary ask */
 html:not(.light) .xhi .x-band .x-btn.solid { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
 @media (hover: hover) { html:not(.light) .xhi .x-band .x-btn.solid:hover { background: var(--primary-hover); border-color: var(--primary-hover); } }
+/* your year: the plate sits on the muted card, so its dark face takes Hanzo's secondary */
+html:not(.light) .xhi-you-a .xhi-plate-word { background: var(--secondary); }
