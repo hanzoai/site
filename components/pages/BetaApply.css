@@ -98,3 +98,9 @@
 @media (prefers-reduced-motion: reduce) {
   .xba-bars i, .xba-check path, .xba-opt, .xba-line { transition: none; }
 }
+
+/* the paid path under the form's actions: a quiet underlined link, 44px tall to tap */
+.xba-paid { margin: 12px 0 0; }
+.xba-paid a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; color: var(--soft); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; transition: color .15s; }
+.xba-paid a:hover { color: var(--ink); }
+.xba-paid a:active { transform: translateY(1px); }
