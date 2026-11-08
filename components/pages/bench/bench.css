@@ -472,3 +472,46 @@ html.js .xbr-facts-s:not([data-seen]) .xbr-facts dt, html.js .xbr-facts-s:not([d
 .xbr-band-link.x-arrow { color: #fafafa; min-height: 44px; }
 /* a row's name and its "run" link are separate words in Hanzo's table (the capture drops the space between them) */
 .xbr-dt th a, .xbr-dt td a { margin-left: .45em; color: var(--muted); text-underline-offset: 3px; }
+
+/* ---------- dark (docs/DARK-MODE.md): fam.css's .v2f deck tokens have no dark rule, so this family maps them to Hanzo's
+   dark tokens here, on its own root. Hanzo's --muted/--card are shadowed by .v2f, so the quiet fill uses --surface-1.
+   The source room, the band, the command line and the ink figure stay dark in both modes. Light is untouched. ---------- */
+html:not(.light) .xbr { --acc: var(--foreground); --acc-ink: var(--primary-foreground); --acc-soft: var(--surface-1); --ink: var(--foreground); --soft: var(--muted-foreground); --muted: var(--muted-foreground); --faint: var(--text-tertiary); --card: var(--surface-1); --silver: var(--neutral-600); --hair: var(--border); --xbr-hl: var(--glass-strong); background: var(--bg); }
+/* fam.css pieces on this page */
+html:not(.light) .xbr .v2f-body a, html:not(.light) .xbr a.v2f-link { text-decoration-color: var(--white-30); }
+html:not(.light) .xbr .v2f-btn, html:not(.light) .xbr .v2f-spec-btn { border-color: var(--border-control); }
+@media (hover: hover) {
+  html:not(.light) .xbr .v2f-btn:hover, html:not(.light) .xbr .v2f-spec-btn:hover { border-color: var(--border-strong); }
+  html:not(.light) .xbr .v2f-btn.solid:hover, html:not(.light) .xbr .v2f-btn.acc:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+  html:not(.light) .xbr .v2f-next-c:hover { background: var(--secondary); }
+}
+html:not(.light) .xbr .v2f-ch-nav button i { background: var(--border-control); }
+html:not(.light) .xbr .v2f-next-c .v2f-next-s { color: var(--white-30); }
+html:not(.light) .xbr .v2f-next-go { border-color: var(--border-strong); }
+/* the family's own pieces */
+html:not(.light) .xbr-crumb a, html:not(.light) :is(.xbr-facts, .xbr-p, .xbr-more, .xbr-lede, .xbr-spec) a { text-decoration-color: var(--white-30); }
+html:not(.light) .xbr-turn-v button[aria-pressed='true'], html:not(.light) .xbr-cols button[aria-pressed='true'], html:not(.light) .xbr-tr.chart .xbr-tr-val { color: var(--x-on-ink); }
+html:not(.light) .xbr-cols button:not([aria-pressed='true']), html:not(.light) .xbr-walk, html:not(.light) .xbr-ch-fig.line { background: var(--x-raised); }
+html:not(.light) .xbr-cols button:not([aria-pressed='true']):hover { border-color: var(--border-strong); }
+html:not(.light) .xbr-walk { border-color: var(--border-control); }
+@media (hover: hover) { html:not(.light) .xbr-walk:hover { border-color: var(--border-strong); } }
+html:not(.light) .xbr-ro-t { background: var(--border); }
+html:not(.light) .xbr-key.b { background: var(--border-strong); }
+html:not(.light) .xbr-bar.bb { background: var(--border-strong); }
+html:not(.light) .xbr-bars li:not(.lit) .xbr-bar.ba { background: var(--neutral-600); }
+html:not(.light) .xbr-bars li::before { background: var(--surface-1); }
+html:not(.light) .xbr-tr.chart .xbr-dot { box-shadow: 0 0 0 4px var(--background); }
+html:not(.light) .xbr-base { border-top-color: var(--white-30); }
+html:not(.light) .xbr-p { color: var(--text-secondary); }
+html:not(.light) .xbr-tw th { background: var(--bg); }
+html:not(.light) .xbr-sq, html:not(.light) .xbr-sq.b { box-shadow: inset 0 0 0 1px var(--border-strong); }
+html:not(.light) .xbr-sq.b, html:not(.light) .xbr-scale-k .xbr-key.b { background: var(--secondary); }
+html:not(.light) .xbr-sq.a { box-shadow: none; }
+html:not(.light) .xbr-scale .xbr-sq.o { box-shadow: inset 0 0 0 2px var(--ink); }
+html:not(.light) .xbr-bars-sq .xbr-sq.a { background: var(--glass-strong); box-shadow: inset 0 0 0 2px var(--ink); }
+@media (hover: hover) {
+  html:not(.light) .xbr-ch .v2f-ch-nav button:hover i { background: var(--white-30); }
+  html:not(.light) .xbr-crumb a:hover, html:not(.light) :is(.xbr-more, .xbr-facts, .xbr-p, .xbr-spec) a:hover { background-color: var(--glass); box-shadow: 0 0 0 3px var(--glass); }
+  html:not(.light) .xbr-turn-v button:not([aria-pressed='true']):hover { background: var(--glass); }
+  html:not(.light) .xbr-cols button[aria-pressed='true']:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+}
