@@ -25,7 +25,7 @@
 
   /* 3 noise-dissolve: Paste and ship comes out of a grey grain that thins away */
   html.js .ia [data-entrance='noise-dissolve']::after { content: ''; position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0;
-    background: #fafafa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+    background: var(--x-sunk) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
   html.js .ia [data-entrance='noise-dissolve']:not([data-in])::after { opacity: 1; }
   html.js .ia [data-entrance='noise-dissolve']:not([data-in]) > * { opacity: 0; }
   html.js .ia [data-entrance='noise-dissolve'][data-in]::after { animation: ia-grain 800ms steps(8, end) both; }
