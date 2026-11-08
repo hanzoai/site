@@ -100,7 +100,7 @@ html:not(.js) .zc-hold { display: none; }
 .zc-fa { position: absolute; inset: 0; }
 .zc-fa i { display: block; }
 /* 18 models: 18 marks, the five Zen5 in ink; a wave of light runs through them */
-.zc-fa-18 { display: grid; grid-template-columns: repeat(18, minmax(0, 1fr)); justify-items: center; }
+.zc-fa-18 { display: grid; grid-template-columns: repeat(19, minmax(0, 1fr)); justify-items: center; }
 .zc-fa-18 i { width: 6px; height: 100%; border-radius: 3px; background: var(--track); transform-origin: 50% 100%; animation: zc-wave 3.6s var(--eio) calc(var(--k) * .12s + .6s) infinite; }
 .zc-fa-18 i[data-z] { background: var(--ink); }
 @keyframes zc-wave { 0%, 60%, 100% { opacity: 1; } 30% { opacity: .35; } }

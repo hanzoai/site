@@ -68,7 +68,7 @@ const ROWS = [
 ];
 const TIERS = ['ultra max', 'ultra', 'pro max', 'pro', 'starter'];
 const SORTS = [['hanzo', 'Hanzo’s order'], ['size', 'By size'], ['ctx', 'By context']];
-const FIGS = [['18', 'Models'], ['2M', 'Max Context'], ['$0.01/MTok', 'From'], ['MoE + Dense', 'Architectures'], ['7', 'Modalities']];
+const FIGS = [['19', 'Models'], ['2M', 'Max Context'], ['$0.01/MTok', 'From'], ['MoE + Dense', 'Architectures'], ['7', 'Modalities']];
 const MAXP = 284, ctxW = (k) => (Math.log2(k) - 4) / (Math.log2(1024) - 4);
 
 /* desktop with motion allowed: the pinned figures run; phones and reduced motion read the same content as a list */
@@ -115,7 +115,7 @@ function Stage() {
               <span className="x-line zc-h1-2"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: T.line, ease: EMPH, delay: 0.16 }}>Complete API Catalog</motion.span></span>
             </h1>
             <p className="zc-badge"><i aria-hidden="true" /><span>Zen 6 and Zen 6 Flash available now · Zen 7 in research preview</span></p>
-            <p className="zc-lede"><span>Built for agentic coding and multimodal work.</span> <b>18</b> <span>foundation models from</span> <A to="https://zoo.industries">Zoo Labs Foundation</A> <span>across language, code, vision, image, audio, and retrieval.</span> <span>Zen MoDE (Mixture of Diverse Experts) architecture.</span> <span>From $0.01/MTok.</span></p>
+            <p className="zc-lede"><span>Built for agentic coding and multimodal work.</span> <b>19</b> <span>foundation models from</span> <A to="https://zoo.industries">Zoo Labs Foundation</A> <span>across language, code, vision, image, audio, and retrieval.</span> <span>Zen MoDE (Mixture of Diverse Experts) architecture.</span> <span>From $0.01/MTok.</span></p>
             <div className="zc-acts">
               <Cta to="https://platform.hanzo.ai/api-keys" id="zen-models.hero" thumb>Get API key</Cta>
               <a href="#zen5" className="x-arrow" data-cta="zen-models.hero-explore"><span>Explore Models</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></a>
@@ -190,7 +190,7 @@ const grow = (k, prop = 'scaleX', step = 0.04) => ({
 });
 function FigArt({ i, still = false }) {
   if (i === 0) return (
-    <div className="zc-fa zc-fa-18">{Array.from({ length: 18 }, (_, k) => <motion.i key={k} data-z={k < 5 || undefined} style={{ '--k': k }} {...(still ? {} : grow(k, 'scaleY', 0.025))} />)}</div>
+    <div className="zc-fa zc-fa-18">{Array.from({ length: 19 }, (_, k) => <motion.i key={k} data-z={k < 5 || undefined} style={{ '--k': k }} {...(still ? {} : grow(k, 'scaleY', 0.025))} />)}</div>
   );
   if (i === 1) return (
     <div className="zc-fa zc-fa-ctx">
@@ -421,7 +421,7 @@ export default function ZenCatalog() {
         <div className="zc-end-rule" aria-hidden="true"><span /></div>
         <div className="zc-wrap zc-end-in">
           <h2 id="zc-b" className="zc-end-h">Ready to build with Zen?</h2>
-          <p className="zc-lede-d">All 18 Zen models available via OpenAI-compatible API. Start building today.</p>
+          <p className="zc-lede-d">All 19 Zen models available via OpenAI-compatible API. Start building today.</p>
           <div className="zc-acts">
             <Cta to="/signup" id="zen-models.close">Get Started</Cta>
             <Cta to="/dev" kind="link" id="zen-models.close-dev">Try Hanzo Dev</Cta>
