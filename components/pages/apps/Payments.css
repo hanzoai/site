@@ -24,7 +24,7 @@
 
 /* the phone: a drawn device. Spacing is in em so the hero and the chapter share one drawing at two sizes; type uses
    the deck's px steps through three variables (small, medium, figure). The frame and screen radii are the device's. */
-.pay-phone { --t-s: 13px; --t-m: 16px; --t-fig: 44px; flex: none; font-size: 15px; width: 19.5em; padding: .55em; border-radius: 3.3em; background: light-dark(#000000, #262626); }
+.pay-phone { --t-s: 13px; --t-m: 16px; --t-fig: 44px; flex: none; font-size: 15px; width: 19.5em; padding: .55em; border-radius: 3.3em; background: light-dark(#000000, var(--secondary)); }
 .pay-phone.big { --t-s: 14px; --t-m: 17px; --t-fig: 64px; font-size: 18px; }
 .pay-phone-in { position: relative; height: 39.5em; border-radius: 2.75em; background: var(--x-raised); padding: 3.4em 1.35em 1.35em; display: flex; flex-direction: column; gap: 1em; overflow: hidden; }
 .pay-island { position: absolute; top: .8em; left: 50%; width: 6.4em; height: 1.85em; margin-left: -3.2em; border-radius: 999px; background: #000000; }
@@ -488,12 +488,16 @@ html.js .pay-stack[data-in] .pay-case.c1 { animation-delay: .14s; } html.js .pay
 
 /* dark (live hanzo.ai's dark palette): the Business kit's tokens are fixed light values on .bz, so the page sets their dark
    values; the calculator room is black in both modes and keeps its own colours */
-html.dark .pay { --bz-ink: #e5e5e5; --bz-muted: #a3a3a3; --bz-quiet: #858585; --bz-line: rgba(255, 255, 255, .1); --bz-paper: #0d0d0d; --bz-room: #171717; --bz-card: #171717; --bz-tile: #262626; --bz-track: #525252; --bz-graphite: #262626; --acc-soft: #262626; background: var(--bg); }
-/* the code pane (Frame.css draws its light face in fixed colours; dark here as live's code panels: #0f0f0f, white 10% rule) */
-html.dark .pay .cf-code.light { background: var(--x-raised); color: var(--ink); border-color: var(--line); box-shadow: none; }
-html.dark .pay .cf-code.light .cf-code-bar > i { background: #262626; }
-html.dark .pay .cf-code.light .cf-code-bar .x-copy { background: var(--x-raised); }
-html.dark .pay .cf-code.light .s { color: #a3a3a3; }
-html.dark .pay .cf-code.light .k { color: #cccccc; }
-html.dark .pay .cf-code.light .c { color: #858585; }
-html.dark .pay .cf-code.light .cf-mark { background: #262626; color: #e5e5e5; }
+html:not(.light) .pay { --bz-ink: var(--foreground); --bz-muted: var(--muted-foreground); --bz-quiet: var(--text-tertiary); --bz-line: var(--border); --bz-paper: var(--background); --bz-room: var(--muted); --bz-card: var(--muted); --bz-tile: var(--secondary); --bz-track: var(--text-disabled); --bz-graphite: var(--secondary); --acc-soft: var(--secondary); background: var(--bg); }
+/* the code pane (Frame.css draws its light face in fixed colours; dark here as live's code panels). Its `light` class
+   is also Hanzo's light-scope class, so Hanzo's tokens read light inside it: only our root-resolved tokens are used here */
+html:not(.light) .pay .cf-code.light { background: var(--x-raised); color: var(--ink); border-color: var(--line); box-shadow: none; }
+html:not(.light) .pay .cf-code.light .cf-code-bar { border-color: var(--line); }
+html:not(.light) .pay .cf-code.light .cf-code-bar > i { background: var(--x-knob); }
+html:not(.light) .pay .cf-code.light .cf-code-bar .x-copy { background: var(--x-raised); border-color: var(--line); color: var(--soft); }
+html:not(.light) .pay .cf-code.light .cf-code-k { color: var(--faint); }
+html:not(.light) .pay .cf-code.light .cf-ln { color: var(--ink); }
+html:not(.light) .pay .cf-code.light .s { color: var(--soft); }
+html:not(.light) .pay .cf-code.light .k { color: var(--ink); }
+html:not(.light) .pay .cf-code.light .c { color: var(--faint); }
+html:not(.light) .pay .cf-code.light .cf-mark { background: var(--x-knob); color: var(--ink); }
