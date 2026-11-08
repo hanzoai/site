@@ -62,7 +62,7 @@ const Ck = () => <svg className="xpr-ck" viewBox="0 0 16 16" width="16" height="
 const List = ({ items }) => <ul className="xpr-list">{items.map((t) => <li key={t}><Ck />{t}</li>)}</ul>;
 
 /* ---------- the plans, as Hanzo lists them ---------- */
-const FREE = ['Chat on the web with Enso Free and Zen Free', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks'];
+const FREE = ['Chat on the web with Enso Auto', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks'];
 const GO = ['Build apps with Hanzo Dev', 'Connect any MCP server in Hanzo Dev', 'The Hanzo CLI for macOS, Windows and Linux', 'Every model, including Enso Ultra and Kai', 'Usage included on every model', 'Priority inference and priority support', 'Your own agents, working in the background', 'Automations, with daily runs included'];
 const COMMON = ['Early access to new models and features', 'Train custom models on your data', 'Hanzo Engine to run models on your own hardware', 'Dedicated support'];
 // to: only Pro has a checkout on Hanzo's page; the others offer the buying specialist until theirs exists
@@ -605,9 +605,9 @@ function ApiMore({ on }) {
 
 /* ---------- questions ---------- */
 const QA = [
-  ['What is free?', 'Running your own private AI on your own machine, and the open Zen weights, free forever. The free models on the API, on a daily pool. Everything open source is yours to download and run.'],
+  ['What is free?', 'Running your own private AI on your own machine, and the open Zen weights, free forever. Enso Auto on the Free plan, on a daily pool. Everything open source is yours to download and run.'],
   ['What does a plan cost?', 'Exactly the price on its card, by the month or, where a year is sold, by the year. Free costs nothing. Team is priced per member, from 2 members. Paid plans include usage on every model; top up prepaid credit anytime for more. Enterprise is priced with our team.'],
-  ["What happens when I reach my plan's included usage?", "Switch to Enso Free and keep chatting, or keep using any model with prepaid credit, which you can add anytime. Your plan's usage renews every billing period."],
+  ["What happens when I reach my plan's included usage?", "Keep using any model with prepaid credit, which you can add anytime. Your plan's usage renews every billing period."],
   ['What is a bill made of?', 'Four components, and every charge is one of them: model inference, the computer an agent runs on, web tools, and media generation. Each appears on your spend breakdown under its own name, so a month adds up to four lines you can check rather than one you have to trust.'],
   ['Which charges are quoted before they run?', "Model calls and compute. Both can be bounded from above before they happen, so an agent that would breach its budget is refused rather than discovered on an invoice. Web calls and media renders cannot be — a provider's charge and a render's cost are only known afterwards — so those are billed at what they actually cost, and a render runs only while the agent's per-task cap has room for it."],
   ['How are tokens billed?', 'Per token, in five tiers that never overlap: input, cached reads, cache writes, output and reasoning, at the tariff for the completion window the request asked for. Amounts are carried as integer micro-dollars, so nothing rounds in our favor.'],
@@ -634,7 +634,7 @@ const QA = [
 
 /* ---------- the hero object: the models the bill covers, as Hanzo's own art ---------- */
 // "every model on one bill": Enso, Zen and Kai deal onto the page, then the strip answers the plan you pick with the
-// models that plan's own lines name: Free lights "Enso Free and Zen Free"; Go and every plan above it light "Every model,
+// models that plan's own lines name: Free lights "Enso Auto"; Go and every plan above it light "Every model,
 // including Enso Ultra and Kai". A model the plan does not cover rests low and small (never dimmed). Hanzo's media is the only colour.
 const ART = [['enso', 'Enso'], ['zen', 'Zen'], ['kai', 'Kai']];
 function Art({ lit }) {
@@ -660,7 +660,7 @@ export default function Pricing() {
   const [ats, setAts] = useState([0, 0, 0]); // the plan picked in each set (the lowest by default: Free, Team, Pay as you go)
   const at = ats[tab];
   const setAt = (i) => { setLive(true); setAts((a) => a.map((v, j) => (j === tab ? i : v))); };
-  const artOn = tab === 0 && at === 0 ? [0, 1] : [0, 1, 2];
+  const artOn = tab === 0 && at === 0 ? [0] : [0, 1, 2];
   const [src, setSrc] = useState(null);
   const [lit, setLit] = useState(-1);
   const [live, setLive] = useState(false); // the panel eases its height only once a hand has touched it
