@@ -18,6 +18,7 @@ import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform 
 import { EASE } from '../../ui';
 import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
+import useScheme from './scheme';
 import './ZenSeven.css';
 
 const GROWS = ['expanded multimodal reasoning', 'longer context', 'improved agentic coding performance'];
@@ -60,6 +61,7 @@ function usePhone() {
 function Stage({ still, setStill }) {
   const box = useRef(null);
   const phone = usePhone(); // phone: the stage is not pinned, so the settle runs over the stage leaving the screen
+  const scheme = useScheme(); // the field's ink follows the page (docs/DARK-MODE.md): re-keyed so it redraws on a switch
   const { scrollYProgress: p } = useScroll({ target: box, offset: phone ? ['start start', 'end start'] : ['start start', 'end end'] });
   const k = useTransform(p, phone ? [0, 0.45] : [0, 0.7], [1, 0], { clamp: true }); // 1 = risen from below, 0 = settled
   const ke = useTransform(k, (v) => v * (2 - v)); // eased out; ZenSeven.css turns it into translate and scale
@@ -71,13 +73,13 @@ function Stage({ still, setStill }) {
         <button type="button" className="z7-pause" aria-pressed={still} onClick={() => setStill(!still)}>{still ? 'Play' : 'Pause'}<span className="z7-vh"> the moving fields</span></button>
         <motion.div className="z7-art" aria-hidden="true" style={{ '--k': ke }}>
           {/* three layers on white: the black 7, the field over it, white with a 7-shaped hole on top (so no box edge shows) */}
-          <svg className="z7-mask" viewBox="0 0 600 700" preserveAspectRatio="xMidYMid slice"><text x="300" y="640" textAnchor="middle" className="z7-glyph">7</text></svg>
-          <Sigil seed="zen-7" data={[7, 6, 2.0]} className="z7-sig" still={still} />
+          <svg className="z7-mask" viewBox="0 0 600 700" preserveAspectRatio="xMidYMid slice"><text x="300" y="640" textAnchor="middle" className="z7-glyph z7-ink7">7</text></svg>
+          <Sigil key={scheme} seed="zen-7" data={[7, 6, 2.0]} className="z7-sig" still={still} />
           <svg className="z7-mask" viewBox="0 0 600 700" preserveAspectRatio="xMidYMid slice">
             <defs>
               <mask id="z7-cut"><rect x="-10" y="-10" width="620" height="720" fill="#fff" /><text x="300" y="640" textAnchor="middle" className="z7-glyph">7</text></mask>
             </defs>
-            <rect x="-10" y="-10" width="620" height="720" fill="#fff" mask="url(#z7-cut)" />
+            <rect x="-10" y="-10" width="620" height="720" fill="#fff" className="z7-cover" mask="url(#z7-cut)" />
           </svg>
         </motion.div>
         <div className="z7-w z7-copy">
