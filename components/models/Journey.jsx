@@ -166,7 +166,7 @@ export default function Journey({ models, media, lede, onFail }) {
       <div className="x-mj-stage" ref={stage}>
         <div className="x-mj-dots" aria-hidden="true" />
         <div className="x-mj-glow" aria-hidden="true" />
-        <img className="x-mj-poster" src={media(m.slug, 'webp')} alt="" aria-hidden="true" key={m.slug} />
+        <img className="x-mj-poster" src={media(m.slug, 'webp')} alt="" aria-hidden="true" key={'poster-' + m.slug} />
         <canvas
           ref={canvas}
           className="x-mj-gl"
@@ -181,7 +181,7 @@ export default function Journey({ models, media, lede, onFail }) {
         <svg className="x-mj-wires" aria-hidden="true">
           {m.tags.map((t, k) => <line key={m.slug + t} ref={(el) => { lines.current[k] = el; }} />)}
         </svg>
-        <div className="x-mj-labels" aria-hidden="true" key={m.slug}>
+        <div className="x-mj-labels" aria-hidden="true" key={'labels-' + m.slug}>
           {m.tags.map((t, k) => (
             <span key={t} className="x-mj-label" ref={(el) => { labels.current[k] = el; }} style={{ '--k': k }}><i />{t}</span>
           ))}

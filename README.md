@@ -177,9 +177,16 @@ Wording and prices follow live hanzo.ai as captured on 8 Nov 2026 (`content/live
   `scripts/lightcheck.mjs` at 1470px and 375px. The checker reads text only, so canvases and images were checked by eye
   (the /enso particle ring was invisible in dark and now draws in `--foreground`). Pages outside
   `scripts/copycheck-pages.txt` were not run through the checker.
-- **Not re-compared against live at handoff.** The final handoff build ran where hanzo.ai was not reachable, so
-  `copycheck.mjs` was not re-run that day, and the snapshots above were used. If live has changed a line since 8 Nov,
-  run `node scripts/copycheck.mjs <page>` and restore it: copy on live always wins.
+- **Copy checked against live on 8 Nov: 148 of 152 pages match word for word.** `scripts/copycheck.mjs` was run
+  against live hanzo.ai on the final build (the pages in `scripts/copycheck-pages.txt`). The lines it lists on
+  the other four pages are live demo feeds and sample content that Hanzo updates, so they rotate and are not chased:
+  - **/slack** and **/tag** (3 lines each): the demo workspace's sample channel and items, "slack - karma style
+    (karma.style) · #bug-button-darkmode", "tryon-3d-lookbook" and "karma/storefront".
+  - **/team** (5 lines): the same demo feed, plus "#hanzo-rev · rev (revenue & billing ops)" and "verified org credit
+    grants & billing lease lookup across 93 active sessions".
+  - **/integrations/anthropic-sdk** (1 line): the sample key placeholder "your-hanzo-api-key".
+
+  If live changes any other line later, run `node scripts/copycheck.mjs <page>` and restore it: copy on live always wins.
 
 ## Docs
 

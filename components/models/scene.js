@@ -303,8 +303,9 @@ export function createScene(canvas, { models, media, theme, onReady }) {
       stop();
       disposables.forEach((d) => d.dispose && d.dispose());
       scene.environment?.dispose?.();
+      // no forceContextLoss(): the canvas element outlives this scene when React remounts the component (Strict Mode in
+      // dev), and a new renderer on a canvas whose context was force-lost fails (getShaderPrecisionFormat returns null)
       renderer.dispose();
-      renderer.forceContextLoss?.();
     },
   };
 }
