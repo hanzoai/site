@@ -291,7 +291,7 @@
    three clients' timelines and the same record landing on all three at once; hover carries it along together */
 .rt-open .lx-rel-sigil { display: none; }
 .rt-open .lx-rel-art { position: relative; }
-.rt-open .lx-rel-art::before { content: ''; position: absolute; inset: 0 24px; background: linear-gradient(light-dark(#a3a3a3, var(--text-tertiary)), light-dark(#a3a3a3, var(--text-tertiary))) 0 30% / 100% 1px no-repeat, linear-gradient(light-dark(#a3a3a3, var(--text-tertiary)), light-dark(#a3a3a3, var(--text-tertiary))) 0 50% / 100% 1px no-repeat, linear-gradient(light-dark(#a3a3a3, var(--text-tertiary)), light-dark(#a3a3a3, var(--text-tertiary))) 0 70% / 100% 1px no-repeat; }
+.rt-open .lx-rel-art::before { content: ''; position: absolute; inset: 0 24px; background: linear-gradient(light-dark(#a3a3a3, var(--surface-3)), light-dark(#a3a3a3, var(--surface-3))) 0 30% / 100% 1px no-repeat, linear-gradient(light-dark(#a3a3a3, var(--surface-3)), light-dark(#a3a3a3, var(--surface-3))) 0 50% / 100% 1px no-repeat, linear-gradient(light-dark(#a3a3a3, var(--surface-3)), light-dark(#a3a3a3, var(--surface-3))) 0 70% / 100% 1px no-repeat; }
 .rt-open .lx-rel-art::after { content: ''; position: absolute; left: 32%; top: calc(30% - 6px); width: 36px; height: 12px; border-radius: 6px; background: light-dark(#0a0a0a, var(--primary)); box-shadow: 0 calc(var(--rt-gap, 32px)) 0 light-dark(#0a0a0a, var(--primary)), 0 calc(var(--rt-gap, 32px) * 2) 0 light-dark(#0a0a0a, var(--primary)); transition: transform .5s cubic-bezier(.4, 0, .2, 1); }
 .rt-open .lx-rel-grid[data-n='1'] .lx-rel-art { --rt-gap: 32px; }
 @media (hover: hover) { .rt-open .lx-rel-card:hover .lx-rel-art::after { transform: translateX(72px); } }
@@ -416,7 +416,7 @@
 .rg-l { stroke: light-dark(rgba(0, 0, 0, .16), var(--border-control)); stroke-width: 1; transition: stroke .15s cubic-bezier(0, 0, .2, 1), stroke-width .15s cubic-bezier(0, 0, .2, 1); }
 .rg-l.on { stroke: light-dark(#0a0a0a, var(--foreground)); stroke-width: 1.75; }
 .rg-l.ev { stroke-dasharray: 3 4; }
-.rg-ln { font: 500 13.5px/1 var(--mono); fill: light-dark(#525252, var(--text-secondary)); opacity: 0; paint-order: stroke; stroke: light-dark(#f5f5f5, var(--surface-2)); stroke-width: 5px; stroke-linejoin: round; transition: opacity .15s cubic-bezier(0, 0, .2, 1); pointer-events: none; }
+.rg-ln { font: 500 13.5px/1 var(--mono); fill: light-dark(#525252, var(--muted-foreground)); opacity: 0; paint-order: stroke; stroke: light-dark(#f5f5f5, var(--surface-2)); stroke-width: 5px; stroke-linejoin: round; transition: opacity .15s cubic-bezier(0, 0, .2, 1); pointer-events: none; }
 .rg-ln.on { opacity: 1; }
 .rg-rec { fill: light-dark(#0a0a0a, var(--foreground)); }
 .rg-rec.stop { fill: light-dark(#f5f5f5, var(--surface-2)); stroke: light-dark(#0a0a0a, var(--foreground)); stroke-width: 1.5; stroke-dasharray: 2 2; }
@@ -428,7 +428,7 @@
 .rg-n.sel .rg-s:not(.ring) { fill: light-dark(#0a0a0a, var(--foreground)); }
 .rg-n.no .rg-s { stroke-dasharray: 3 2; }
 .rg-t { font: 500 14.5px/1 var(--mono); fill: light-dark(#0a0a0a, var(--foreground)); paint-order: stroke; stroke: light-dark(#f5f5f5, var(--surface-2)); stroke-width: 5px; stroke-linejoin: round; transition: fill .15s cubic-bezier(0, 0, .2, 1); }
-.rg-st { font: 500 13.5px/1 var(--mono); fill: light-dark(#525252, var(--text-secondary)); paint-order: stroke; stroke: light-dark(#f5f5f5, var(--surface-2)); stroke-width: 5px; stroke-linejoin: round; }
+.rg-st { font: 500 13.5px/1 var(--mono); fill: light-dark(#525252, var(--muted-foreground)); paint-order: stroke; stroke: light-dark(#f5f5f5, var(--surface-2)); stroke-width: 5px; stroke-linejoin: round; }
 .rg-n.no .rg-st { fill: light-dark(#0a0a0a, var(--foreground)); }
 .rg-n.dim .rg-t, .rg-n.dim .rg-st { fill: light-dark(#737373, var(--muted-foreground)); }
 .rg-n.dim .rg-s { stroke: light-dark(#737373, var(--muted-foreground)); }

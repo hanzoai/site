@@ -257,7 +257,7 @@ html.js .s3-strip { animation: s3-up .3s var(--lx-ease) both; }
 
 /* ---------- the five entrances (s3/S3Enter.jsx), each once; final state with JS off or reduced motion ---------- */
 /* text-mask-film: a strip of shards runs through the heading's letters like film through a gate, then the ink returns */
-.s3-film[data-fm='armed'], .s3-film[data-fm='play'] { background: repeating-linear-gradient(90deg, light-dark(#0a0a0a, var(--foreground)) 0 14px, light-dark(#d4d4d4, var(--surface-3)) 14px 18px, light-dark(#525252, var(--text-secondary)) 18px 30px, light-dark(#e5e5e5, var(--surface-3)) 30px 33px) 0 0 / 66px 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.s3-film[data-fm='armed'], .s3-film[data-fm='play'] { background: repeating-linear-gradient(90deg, light-dark(#0a0a0a, var(--foreground)) 0 14px, light-dark(#d4d4d4, var(--surface-3)) 14px 18px, light-dark(#525252, var(--muted-foreground)) 18px 30px, light-dark(#e5e5e5, var(--surface-3)) 30px 33px) 0 0 / 66px 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .s3-film[data-fm='play'] { animation: s3-film 1.8s cubic-bezier(.4, 0, .2, 1) forwards; }
 @keyframes s3-film { 0% { background-position: 0 0; } 85% { background-position: 660px 0; -webkit-text-fill-color: transparent; } 100% { background-position: 660px 0; -webkit-text-fill-color: var(--ink); } }
 /* iris: the peel's stage opens on a circle from its centre */

@@ -88,7 +88,7 @@
 .ps-fign { position: absolute; top: 20px; left: 24px; margin: 0; font: 500 12px/1 var(--mono); letter-spacing: .14em; color: light-dark(#737373, var(--muted-foreground)); font-variant-numeric: tabular-nums; }
 .ps-figin { aspect-ratio: 340 / 210; }
 .ps-fig { display: block; width: 100%; height: auto; overflow: visible; }
-.ps-fig text { font: 500 13px/1 var(--mono); fill: light-dark(#525252, var(--text-secondary)); }
+.ps-fig text { font: 500 13px/1 var(--mono); fill: light-dark(#525252, var(--muted-foreground)); }
 .ps-fig .t-ink { fill: light-dark(#0a0a0a, var(--foreground)); }
 .ps-fig .t-inv { fill: light-dark(#fafafa, var(--background)); }
 .ps-fig .f-ink { fill: light-dark(#0a0a0a, var(--foreground)); }
