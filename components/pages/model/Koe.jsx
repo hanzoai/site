@@ -51,7 +51,7 @@ function shape(pr, seed) {
 }
 
 function Booth() {
-  const stage = useRef(null), cv = useRef(null), sEl = useRef(null), csEl = useRef(null), cells = useRef([]), letters = useRef([]);
+  const stage = useRef(null), cv = useRef(null), sEl = useRef(null), csEl = useRef(null), lineEl = useRef(null), cells = useRef([]), letters = useRef([]);
   const [pi, setPi] = useState(0);
   const [play, setPlay] = useState(true);
   const pagePaused = usePaused(); // the stage's one Pause holds the booth too
@@ -95,6 +95,7 @@ function Booth() {
     const sec = Math.floor(s.t), cs = Math.floor((s.t % 1) * 100);
     if (sEl.current) sEl.current.textContent = String(Math.min(5, sec));
     if (csEl.current) csEl.current.textContent = String(s.t >= LEN ? 0 : cs).padStart(2, '0');
+    if (lineEl.current) lineEl.current.textContent = `00:0${Math.min(5, sec)}.${String(s.t >= LEN ? 0 : cs).padStart(2, '0')} / 00:05.00 · TTFT: 180ms`; // Hanzo's timecode line, whole
     mark(s.t);
   });
 
@@ -105,7 +106,7 @@ function Booth() {
     <div className="ko-booth" ref={stage}>
       <div className="ko-top">
         <p className="mb-mono">FLOW-MATCHING ACOUSTIC STAGE · STREAMING PHONEMES</p>
-        <p className="ko-tc mb-tnum"><span>00:0</span><span ref={sEl}>1</span>.<span ref={csEl}>90</span> <span className="ko-tc-of">/ 00:05.00 · TTFT: 180ms</span></p>
+        <p className="ko-tc mb-tnum"><span className="x-sr" ref={lineEl}>00:01.90 / 00:05.00 · TTFT: 180ms</span><span aria-hidden="true"><span>00:0</span><span ref={sEl}>1</span>.<span ref={csEl}>90</span> <span className="ko-tc-of">/ 00:05.00 · TTFT: 180ms</span></span></p>
         <button type="button" className="mb-chip" aria-pressed={play} onClick={() => setPlay(!play)}>{play ? 'Pause' : 'Play'}</button>
       </div>
       <div className="ko-wave" role="slider" tabIndex={0} aria-label="Voice waveform: seek" aria-valuemin={0} aria-valuemax={LEN} aria-valuenow={1.9} onKeyDown={(e) => { const k = { ArrowRight: 0.25, ArrowLeft: -0.25 }[e.key]; if (k) { e.preventDefault(); S.current.t = Math.max(0, Math.min(LEN, S.current.t + k)); S.current.hold = 0; } }}>

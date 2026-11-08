@@ -33,7 +33,7 @@ const EASE = [0.16, 1, 0.3, 1];
 // JS off: the hero's lede, asks and counter show, and every pinned scene stacks readable (PLAN 2.3, 2.17)
 const NOJS = { __html: '<style>.xin-roll-f[aria-hidden=true]{display:none!important}.xin-hero-l,.xin-hero-o,.xin-stats li{opacity:1!important;transform:none!important}.xin-pin{height:auto!important}.xin-pin-st{position:static!important;height:auto!important}.xin-pin-g{display:block!important}.xin-pin-s{display:grid!important;padding:48px 0}.xin-pin-s *{opacity:1!important;transform:none!important}</style>' };
 const H = ECO[0];
-const LAST_DAY = Math.max(...[...H.heat].map((c, i) => (c === '.' ? -1 : i))); // the newest day in the heatmap (Nov 6)
+const LAST_DAY = Math.max(...[...H.heat].map((c, i) => (c === '.' ? -1 : i))); // the newest day in the heatmap (Nov 7)
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 // the seven measured figures: Hanzo's own name for each, its subject, the figure and the page that carries its runs
@@ -281,8 +281,8 @@ const Interval = ({ on }) => ( // 3.02×, 95% interval 2.06–4.36×, on an axis
   </span>
 );
 const RESULTS = [
-  { key: 'ds', k: 'Research.DecisionSuite', m: 'Kai', v: '16 of 16', t: 'Decision Suite tasks won by Kai', d: <><span>Each set on</span> <span className="x-mono">Oct 15, 2026</span><span>, with its public data and the runs of both models.</span></>, to: '/benchmarks#decision-suite', go: 'Each task and its runs →', vis: (on) => <Dots n={16} lit={16} cols={4} on={on} /> },
-  { key: 'lcb', k: 'Research.LiveCodeBench', m: '175 questions', v: '93.7%', d: <><span className="xin-pin-p">Enso as enso-bench measured it on 2026-07-19, beside each single model on the same questions. Each bar is a run&apos;s accuracy.</span><span className="xin-pin-p"><span>LiveCodeBench&apos;s recent problems: Enso</span> <b className="x-mono">93.7%</b>, <span>164 of 175 right, against 93.1% for gpt-5.6-sol, the next model on the same questions.</span></span></>, to: '/enso', vis: (on) => <Bars rows={LCB} max={100} on={on} fmt={(v) => v.toFixed(1) + '%'} /> },
+  { key: 'ds', k: 'Research.DecisionSuite', m: 'Kai', v: '16 of 16', t: 'Decision Suite tasks won by Kai', d: <><span>Each set on</span> <span className="x-mono">Oct 15, 2026,</span> <span>with its public data and the runs of both models.</span></>, to: '/benchmarks#decision-suite', go: 'Each task and its runs →', vis: (on) => <Dots n={16} lit={16} cols={4} on={on} /> },
+  { key: 'lcb', k: 'Research.LiveCodeBench', m: '175 questions', v: '93.7%', d: <><span className="xin-pin-p">Enso as enso-bench measured it on 2026-07-19, beside each single model on the same questions. Each bar is a run&apos;s accuracy.</span><span className="xin-pin-p"><span>LiveCodeBench&apos;s recent problems: Enso</span> <b className="x-mono"><span>93.7%,</span></b> <span>164 of 175 right, against 93.1% for gpt-5.6-sol, the next model on the same questions.</span></span></>, to: '/enso', vis: (on) => <Bars rows={LCB} max={100} on={on} fmt={(v) => v.toFixed(1) + '%'} /> },
   { key: 'gpqa', m: 'Enso Ultra', v: '95.6%', t: 'GPQA Diamond', d: '152 of 159 new questions right, against 93.1% for the best single model on the same questions.', to: '/enso', vis: (on) => <Dots n={159} lit={152} cols={20} on={on} /> },
   { key: 'kai', m: 'Kai', v: '0.8 ms', t: 'One decision, served', d: 'Kai on GPU, each a p50: 0.3 ms cached, 0.4 ms through the runtime, 0.8 ms served over HTTP.', to: '/kai', vis: (on) => <Bars rows={[['cached', 0.3], ['runtime', 0.4], ['HTTP', 0.8]]} max={0.8} on={on} fmt={(v) => v + ' ms'} /> },
   { key: 'dev', m: 'Hanzo Dev', v: '3.02×', t: 'Faster on the same coding tasks', d: 'Over the 42 tasks both agents solved, 95% interval 2.06–4.36×.', to: '/dev', vis: (on) => <Interval on={on} /> },
@@ -351,7 +351,7 @@ function Public() {
               {[...H.heat].map((c, i) => <i key={i} className={(c === '.' ? 'x' : 'l' + c) + (i === LAST_DAY ? ' now' : '')} />)}
             </div>
           </div>
-          <div className="xin-heat-f"><span>Commits a day, from Nov 7, 2025 to Nov 6, 2026</span><span className="xin-leg">Less {[0, 1, 2, 3, 4].map((l) => <i key={l} className={'l' + l} />)} More</span></div>
+          <div className="xin-heat-f"><span>Commits a day, from Nov 8, 2025 to Nov 7, 2026</span><span className="xin-leg">Less {[0, 1, 2, 3, 4].map((l) => <i key={l} className={'l' + l} />)} More</span></div>
         </figure>
         <div className="xin-commits">
           <h3 className="vc-title">Latest commits</h3>

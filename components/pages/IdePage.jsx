@@ -467,7 +467,7 @@ export default function IdePage() {
   return (
     <main className="a2 ide">
       <Stage />
-      <A2Paste name="IDE" text="Read https://hanzo.ai/skill.md and use Hanzo IDE in my project. Start with: hanzo code" />
+      <A2Paste name="IDE" text="Read https://hanzo.ai/skill.md and use Hanzo IDE in my project. Start with: hanzo code" api="/v1/code" />
       <Engine />
       <Promises />
       <Teach />

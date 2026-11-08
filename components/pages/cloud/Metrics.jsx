@@ -428,7 +428,7 @@ function Room() {
             <div className="mt-paste-box">
               <div className="mt-paste-bar">
                 <span className="mt-paste-k">Agent prompt</span>
-                <span className="mt-api"><i>api</i><span>/v1/event/insights</span></span>
+                <span className="mt-api"><i><span>api</span></i><span>/v1/event/insights</span></span>
                 <span className="mt-copy" onClickCapture={send}><Copy text={PROMPT} /></span>
               </div>
               <pre className="mt-paste-code"><code><span>{PROMPT}</span></code><span className="mt-caret" aria-hidden="true" /></pre>

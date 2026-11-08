@@ -22,7 +22,7 @@ const W = 240; // working width in pixels: the noise is computed here and the ca
 const STEPS = 50;
 
 function Canvas() {
-  const wrap = useRef(null), cv = useRef(null), stepEl = useRef(null), range = useRef(null);
+  const wrap = useRef(null), cv = useRef(null), stepEl = useRef(null), lineEl = useRef(null), range = useRef(null);
   const [a, setA] = useState(1);
   const aNow = useRef(1);
   aNow.current = a; // an exiting canvas (old aspect) must never take the ref back
@@ -70,6 +70,7 @@ function Canvas() {
     }
     g.putImageData(out, 0, 0);
     if (stepEl.current) stepEl.current.textContent = String(step);
+    if (lineEl.current) lineEl.current.textContent = `FLOW-MATCHING CONVERGENCE: STEP ${step}/50 · CFG: 7.0`; // Hanzo's readout line, whole, as it reads now
     if (range.current && document.activeElement !== range.current) range.current.value = String(step);
     range.current?.style.setProperty('--f', (((step - 1) / (STEPS - 1)) * 100).toFixed(1) + '%');
   };
@@ -108,7 +109,7 @@ function Canvas() {
         </AnimatePresence>
         <p className="ir-tag ir-tl mb-mono">CANVAS: 2048 × 2048 · 16-BIT FLOAT</p>
         {/* Hanzo's own line, word for word, for readers and the copy check; the readout beside it counts the live step */}
-        <p className="ir-tag ir-bl mb-mono"><span className="x-sr">FLOW-MATCHING CONVERGENCE: STEP 3/50 · CFG: 7.0</span><span aria-hidden="true">FLOW-MATCHING CONVERGENCE: STEP <span className="ir-n" ref={stepEl}>3</span>/50 <span className="ir-cfg">· CFG: 7.0</span></span></p>
+        <p className="ir-tag ir-bl mb-mono"><span className="x-sr" ref={lineEl}>FLOW-MATCHING CONVERGENCE: STEP 3/50 · CFG: 7.0</span><span aria-hidden="true">FLOW-MATCHING CONVERGENCE: STEP <span className="ir-n" ref={stepEl}>3</span>/50 <span className="ir-cfg">· CFG: 7.0</span></span></p>
       </div>
       <div className="ir-ctl">
         <button type="button" className="mb-chip ir-play" aria-pressed={play} onClick={() => { const s = S.current; if (s.step >= STEPS) { reseed(); s.step = 1; } setPlay(!play); }}>{play ? 'Pause' : 'Play'}</button>
