@@ -115,11 +115,38 @@ Other plan links, as live has them. /pricing: Free goes to `/signup`, Enterprise
 and `/contact-sales` (`components/pages/Pricing.jsx`, `planOf` and `cardOf`). Home pricing: Free and Team to `https://hanzo.ai/signup`, API to `https://platform.hanzo.ai`,
 Enterprise and Volume to `/pricing` (`components/home/Pricing.jsx` lines 103–125).
 
+## Hand-offs to Hanzo's real flows
+
+Nine app and checkout pages from Zack's list are designed here: `/pay`, `/pay/cart`, `/pay/confirm/card`, `/signup`,
+`/login`, `/auth/callback`, `/onboarding`, `/docs/quickstart`, `/docs/cli` (code in `components/pages/flow/`). **This
+site never collects a card number, a password or a one-time code.** Each page shows the plan, the total and one action,
+and that action hands off to Hanzo's real system. Every hand-off URL is a named constant in **one file,
+`lib/handoff.js`**. Values marked CONFIRM could not be read from live hanzo.ai when this was built (its app pages were
+unreachable, 8 Nov 2026); Hanzo's team confirms them before launch.
+
+| Constant | Value | Status |
+|---|---|---|
+| `CARD_FORM_URL` | `https://hanzo.ai/pay/confirm/card` with live's own `plan`, `returnUrl` (+ `interval`, `quantity` for Team) | CONFIRM: if this site serves hanzo.ai/pay/*, point it at the origin that renders the real card form (the app, or a Stripe-hosted link), or pay buttons come back here |
+| `IAM_ORIGIN`, `IAM_CLIENT_ID` | `https://hanzo.id`, `hanzo-ai` | from live's own docs |
+| `IAM_AUTHORIZE_URL` | `https://hanzo.id/v1/iam/oauth/authorize` | CONFIRM (live documents the token endpoint `/v1/iam/oauth/token`) |
+| `AUTH_CALLBACK_URL` | `https://hanzo.ai/auth/callback` | this site's callback page |
+| `IAM_GOOGLE` | `provider=google` | CONFIRM: the parameter that opens hanzo.id on Google |
+| `IAM_SIGNUP` | `prompt=create` (OpenID Connect's standard sign-up prompt) | CONFIRM |
+| `AUTH_COMPLETE_URL` | `null` | CONFIRM: where the callback hands the code to finish sign-in. While unset, people go straight to their next step |
+| `API_KEYS_URL`, `DOCS_*_URL`, `PLATFORM_URL` | platform.hanzo.ai/api-keys, docs.hanzo.ai | live's own links |
+
+Plan links: every id a link carries resolves to a real plan (`resolvePlan` in `lib/plans.js`): `go`, `pro-2x`,
+`dev-5x`, `max-10x`, `ultra`, `team`, `team-premium`, and plan names (`plan=pro`) too. A link with no plan, or an
+unknown one, shows a plan picker rather than a dead end. Redirects only follow paths on this site (`safeNext`) and
+return buyers only to hanzo.ai hosts (`safeReturn`). The header's Log in now opens `/login`. The app steps (/pay,
+/pay/cart, /pay/confirm/card, /auth/callback, /onboarding) are `noindex` and left out of the sitemap. Dark check for
+these pages: `PAGES=scripts/flow-pages.txt node scripts/darkcheck.mjs` (0 of 13). Screenshots: `docs/screenshots/zack-pages-3/`.
+
 ## Before it goes live on hanzo.ai
 
 1. **Merge `public/` from the current site.** Model videos (`/models/*.webm`), `/images/models/*`, `/memoji/*` and other
    media are referenced at their existing hanzo.ai paths and are not in this repo.
-2. **App routes are not in this repo:** `/chat` (the app), `/pay/*`, `/signup`, `/login`, dashboards. Links point at
+2. **App routes are not in this repo:** `/chat` (the app) and dashboards. (`/pay/*`, `/signup`, `/login`, `/auth/callback` and `/onboarding` are designed here and hand off to Hanzo's real checkout and hanzo.id; see [Hand-offs](#hand-offs-to-hanzos-real-flows).) Links point at
    them as they are today. Serve them from the app with edge rewrites, or drop `output: 'export'` in `next.config.mjs` and
    add Next.js `rewrites()` to the app's origin.
 3. **Build with network** (no `HZ_LIVE_OFFLINE`), so figures and plan prices are fresh from api.hanzo.ai.
