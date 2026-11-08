@@ -7,8 +7,8 @@
    bugfix card's frame and the team line as text; buttons are the kit's Cta.
    Persona: a team lead choosing where people and agents work together (MASTER 1, founders / buyers).
    Goal: start a team. CTA: "Create your team" (hanzo.team/start). Metric: signup_start (cta_click team.hero).
-   Signature: the shared canvas, where named human and agent cursors work one card from report to Done (Zoe reports,
-   Dev takes it and fixes it, Sci verifies and moves it to Done).
+   Signature: Hanzo's tracker board working itself, where a named agent cursor walks the eight CRM cards and each
+   card's progress counts up to Hanzo's figure as its owner takes it, synced to the phone strip (live /team, 9 Nov).
    Supporting (3): the canvas tilting up and settling on scroll; pinned chapters; masked kinetic lines.
    Beyond: the ten channels open in one fixed frame (channel, crew face, name and role) so you can walk your team's
    channel before you create it; the code session steps by hand with the diff lighting as the decision lands.
@@ -72,170 +72,142 @@ function Cursor({ c, name, tone, agent }) {
 
 const COLS = ['Backlog', 'Doing', 'Done'];
 const CREW = [['vi', 'Vi'], ['opera', 'Opera'], ['mana', 'Mana'], ['dev', 'Dev'], ['des', 'Des'], ['fin', 'Fin'], ['huma', 'Huma'], ['mark', 'Mark'], ['sal', 'Sal'], ['sci', 'Sci'], ['su', 'Su'], ['cyber', 'Cyber']];
-const DMS = [['rev', 'Rev', "You're right that it's a bu..."], ['lang', 'Lang', 'i18n is still stalled becau...'], ['law', 'Law', 'The updated motions are...'], ['mo', 'Mo', "I'm Mo now. I posted a h..."], ['mu', 'Mu', "I'm set up in #hanzo-mus..."], ['data', 'Data', "Today's #hanzo-data upd..."], ['gov', 'Gov', "I'm set up to run the gov ..."]];
-const TASK_TEXT = 'Checkout button fails on mobile Safari when Apple Pay dismisses.';
+// Hanzo's tracker board, as live hanzo.ai/team shows it (9 Nov): four columns, two cards each, every card's owner an agent
+const TRACK = [
+  ['BACKLOG – 7', 'todo', [['CRM-1', 'Devops', 'Set up cluster monitoring & telemetry', 12, 'opera'], ['CRM-2', 'Research', 'Analyze and cluster search queries', 35, 'sci']]],
+  ['TO DO – 6', 'todo', [['CRM-8', 'Sales', 'Sales planning & enterprise deal desk', 20, 'rev'], ['CRM-11', 'Backend', 'Deduplicate contacts on CRM import', 40, 'dev']]],
+  ['IN PROGRESS – 3', 'doing', [['CRM-15', 'QA', 'Conduct custdev interview w/ client', 90, 'sal'], ['CRM-16', 'Feature', 'Add view-resource for MVP Deal Screen', 65, 'des']]],
+  ['DONE – 3', 'done', [['CRM-17', 'Backend', 'Ship seat-count billing reconciliation', 100, 'rev'], ['CRM-19', 'Feature', 'Cut first release of the deal screen', 100, 'dev']]],
+];
+const CARDS = TRACK.flatMap(([, , cards], c) => cards.map((k) => [...k, c]));
+const NAME = { opera: 'Opera', sci: 'Sci', rev: 'Rev', dev: 'Dev', sal: 'Sal', des: 'Des' };
+const TABS = ['Tracker Board', '23 AI Teammates', 'Virtual Office'];
+const Ring = ({ v, size = 12 }) => {
+  const r = size / 2 - 1.5, c = 2 * Math.PI * r;
+  return (
+    <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} aria-hidden="true" className="xtm-ring">
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeOpacity=".2" strokeWidth="1.5" />
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray={c} strokeDashoffset={c * (1 - v / 100)} transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+    </svg>
+  );
+};
 
+/* The board works itself: one agent cursor walks the cards in order, and as it lands the card's owner takes it and its
+   progress counts up to Hanzo's figure; each landing syncs to the phone strip below ("Web + Mobile synced" answers).
+   Plays once when first seen after the curtain, then the cursor breathes; Pause / Replay; a click on a card sends the
+   cursor there. SSR and JS off show the finished board with Hanzo's figures. */
 function Canvas({ ok }) {
-  const box = useRef(null), board = useRef(null), taskEl = useRef(null);
+  const box = useRef(null), board = useRef(null), scroller = useRef(null), cards = useRef([]);
   const seen = useInView(box, { amount: 0.25 });
   const calm = useReducedMotion();
-  const [phase, setPhase] = useState('rest'); // story → drift (the cursors breathe after Done) → rest; one control pauses or replays
+  const [phase, setPhase] = useState('rest');
   const liveRef = useRef(null);
-  const [stage, setStage] = useState(0); // the story's first frame is what the page's HTML shows: it never plays its end first
-  const [said, setSaid] = useState(0);
-  const [steps, setSteps] = useState(0);
-  const zoe = useCursor(40, 30), dev = useCursor(220, 250), qa = useCursor(300, 290);
-  const [view, setView] = useState('board'); // board (#bugfix) → Rev's thread (Revenue & Billing Ops)
-  const [rev, setRev] = useState(0);
-  const thread = useRef(null);
-  const [run, setRun] = useState(0); // the story plays once when first seen after the curtain, then rests on Done; Replay plays it again
+  const [at, setAt] = useState(-1); // the card being worked
+  const [shown, setShown] = useState(() => CARDS.map((k) => k[3]));
+  const [sync, setSync] = useState(0);
+  const [who, setWho] = useState('opera');
+  const agent = useCursor(40, 40);
+  const [run, setRun] = useState(0);
   const played = useRef(false);
-
+  const count = (i, live) => new Promise((done) => {
+    const to = CARDS[i][3];
+    if (calm) { setShown((s) => s.map((v, j) => (j === i ? to : v))); done(); return; }
+    const t0 = performance.now();
+    const step = (t) => {
+      if (!live.on) { done(); return; }
+      const k = Math.min(1, (t - t0) / 700), e = 1 - Math.pow(1 - k, 3);
+      setShown((s) => s.map((v, j) => (j === i ? Math.round(to * e) : v)));
+      if (k < 1) requestAnimationFrame(step); else done();
+    };
+    requestAnimationFrame(step);
+  });
+  const land = async (i, live, sleep) => {
+    const el = cards.current[i], sc = scroller.current;
+    if (!el || !board.current) return;
+    // on a phone the board scrolls sideways: bring the card's column into view inside the window (never the page)
+    if (sc && sc.scrollWidth > sc.clientWidth + 2) sc.scrollTo({ left: Math.max(0, el.offsetLeft - 12), behavior: calm ? 'auto' : 'smooth' });
+    const [x, y] = offs(el, board.current);
+    setWho(CARDS[i][4]);
+    const ft = el.querySelector('.xtm-tk-ft'); // the footer's empty middle: the label hangs into blank space, never over words
+    agent.go(Math.min(x + el.offsetWidth * 0.36, board.current.scrollWidth - 76), y + (ft ? ft.offsetTop + 6 : el.offsetHeight * 0.7), calm);
+    await sleep(900);
+    setAt(i);
+    await count(i, live);
+    setSync((s) => s + 1);
+    await sleep(420);
+  };
   useEffect(() => {
     if (!calm && (!seen || !ok || (played.current && run === 0))) return;
     played.current = true;
     const live = { on: true };
     liveRef.current = live;
     const sleep = (ms) => sleepFor(calm ? 0 : ms, live);
-    const near = (fx = 0.72, fy = 0.62) => {
-      const el = taskEl.current;
-      const [x, y] = offs(el, board.current);
-      return [Math.min(x + el.offsetWidth * fx, board.current.offsetWidth - 76), y + el.offsetHeight * fy];
-    };
-    const cl = (x) => Math.min(x, board.current.offsetWidth - 76); // a cursor's label always stays inside the board
-    const home = (c, fx, fy) => c.go(cl(board.current.offsetWidth * fx), board.current.offsetHeight * fy, calm);
     (async () => {
       try {
         setPhase(calm ? 'rest' : 'story');
-        {
-          setView('board'); setRev(0); setStage(0); setSaid(0); setSteps(0);
-          await sleep(500);
-          zoe.go(...near(), calm); await sleep(1300);
-          setSaid(1); await sleep(1500);
-          home(zoe, 0.5, 0.45);
-          dev.go(...near(), calm); await sleep(1400);
-          setStage(1); await sleep(700);
-          dev.go(...near(), calm); setSaid(2); await sleep(900);
-          for (let i = 1; i <= 3; i++) { setSteps(i); await sleep(950); }
-          qa.go(...near(0.4, 0.82), calm); await sleep(1300);
-          setStage(2); await sleep(700);
-          qa.go(...near(0.4, 0.82), calm); setSaid(3);
-          home(dev, 0.22, 0.42); await sleep(1200);
-          home(qa, 0.8, 0.6);
-          await sleep(2600);
-          setView('rev');
-          for (let i = 1; i <= 5; i++) { await sleep(i === 1 ? 700 : 1300); setRev(i); }
-        }
+        await sleep(500);
+        for (let i = 0; i < CARDS.length; i++) await land(i, live, sleep);
+        setAt(-1);
         if (live.on) setPhase(calm ? 'rest' : 'drift');
       } catch (e) { if (e !== 'stop') throw e; }
     })();
     return () => { live.on = false; };
   }, [seen, calm, run, ok]); // eslint-disable-line react-hooks/exhaustive-deps
+  const finish = () => { setShown(CARDS.map((k) => k[3])); setAt(-1); };
   const control = () => {
     if (phase === 'rest') { setRun((r) => r + 1); return; }
-    if (liveRef.current) liveRef.current.on = false; // pause: jump to the finished picture and rest
-    setStage(2); setSaid(3); setSteps(3); setRev(5); setPhase('rest');
+    if (liveRef.current) liveRef.current.on = false; // pause: the finished board, at rest
+    finish(); setPhase('rest');
   };
-  const open = (v) => { if (liveRef.current) liveRef.current.on = false; setStage(2); setSaid(3); setSteps(3); setRev(5); setView(v); setPhase(calm ? 'rest' : 'drift'); };
-  useEffect(() => { const t = thread.current; if (t && view === 'rev') t.scrollTo({ top: t.scrollHeight, behavior: calm ? 'auto' : 'smooth' }); }, [rev, view, calm]);
-  const rmsg = (n, me, children) => (
-    <div className={'xtm-rm' + (me ? ' me' : '') + (rev >= n ? ' on' : '')}>{!me && <Face n="rev" size={22} />}<div className="xtm-rb">{children}</div></div>
-  );
+  const pick = (i) => {
+    if (liveRef.current) liveRef.current.on = false;
+    finish();
+    const live = { on: true };
+    liveRef.current = live;
+    setPhase('story');
+    land(i, live, (ms) => sleepFor(calm ? 0 : ms, live)).then(() => { if (live.on) { setAt(-1); setPhase(calm ? 'rest' : 'drift'); } }).catch(() => {});
+  };
 
-  const card = (key, title, who) => <div className="xtm-card" key={key}><span>{title}</span><Face n={who} size={22} /></div>;
-  const task = (
-    <motion.div className="xtm-card task" layoutId="xtm-task" ref={taskEl} transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}>
-      <span>{TASK_TEXT}</span>
-      <span className="xtm-task-f"><Face n="vi" size={22} />{stage >= 1 && <Face n="dev" size={22} />}{stage >= 2 && <Face n="sci" size={22} />}</span>
-    </motion.div>
-  );
-  const msg = (n, who, time, children) => (
-    <motion.div className="xtm-msg" initial={false} animate={said >= n ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} transition={{ duration: 0.5, ease: EASE }}>
-      <Face n={who[0]} size={30} />
-      <div><p className="xtm-who"><b>{who[1]}</b><span>{time}</span></p>{children}</div>
-    </motion.div>
-  );
   return (
-    <div className="xtm-win" ref={box}>
-      <aside className="xtm-dock">
-        <p className="xtm-dock-t" aria-hidden="true"><span>⌕</span><span>+</span></p>
-        <ul className="xtm-dcrew">{CREW.map(([f, n]) => <li key={n}><Face n={f} size={34} />{f === 'vi' && <span className="xtm-star" aria-hidden="true">★</span>}<span>{n}</span></li>)}</ul>
-        <ul className="xtm-dms">
-          {DMS.map(([f, n, t]) => f === 'rev'
-            ? <li key={n}><button type="button" className={view === 'rev' ? 'on' : ''} aria-pressed={view === 'rev'} onClick={() => open('rev')}><Face n={f} size={26} /><span><b>{n}</b><span>{t}</span></span></button></li>
-            : <li key={n}><Face n={f} size={26} /><span><b>{n}</b><span>{t}</span></span></li>)}
-        </ul>
-        <p className="xtm-me"><span className="xtm-av">Z</span><b>Zach Kelling</b><span aria-hidden="true">⊞</span></p>
-      </aside>
-      <div className="xtm-main">
-        <header className="xtm-win-h">
-          <span className="xtm-org"><b>Hanzo</b><span className="x-mono">hanzo.ai</span></span>
-          <ul>{['bugfix', 'security', 'launch', 'ops'].map((c, i) => i === 0
-            ? <li key={c} className={view === 'board' ? 'on' : ''}><button type="button" aria-pressed={view === 'board'} onClick={() => open('board')}><span className="x-mono">#</span>{c}</button></li>
-            : <li key={c}><span className="x-mono">#</span>{c}</li>)}</ul>
-          <span className="xtm-win-t x-mono">Hanzo Team · the workspace for humans and AI</span>
-          {!calm && (
-            <button type="button" className="xtm-replay" aria-label={phase === 'rest' ? 'Replay' : 'Pause'} onClick={control}>
-              {phase === 'rest'
-                ? <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4.5 10a5.5 5.5 0 1 0 1.7-4M4.5 3.5V6.5h3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>}
-            </button>
-          )}
-        </header>
-        <div className="xtm-panes" data-view={view}>
-        <div className="xtm-body" aria-hidden={view !== 'board'}>
-          <div className="xtm-board" ref={board} data-phase={phase} data-stage={stage}>
-            {COLS.map((c, i) => (
-              <div className="xtm-col" key={c} data-col={c}>
-                <p className="x-mono">{c}</p>
-                {i === 0 && card('a', 'Email', 'su')}
-                {stage === i && task}
-                {i === 1 && card('b', 'Science & R&D Ops', 'sci')}
-                {i === 2 && card('c', 'Docs & Specs', 'des')}
-              </div>
-            ))}
-            <Cursor c={zoe} name="Zoe" tone="human" />
-            <Cursor c={dev} name="Dev" tone="agent a" agent />
-            <Cursor c={qa} name="Sci" tone="agent b" agent />
-          </div>
-          <div className="xtm-chat">
-            {msg(1, ['vi', 'Zoe'], '9:42 AM', <p>{TASK_TEXT} <em>@Dev</em></p>)}
-            {msg(2, ['dev', 'Dev'], '', (
-              <>
-                <p>Fixed unhandled promise in PaySheet.tsx:84 and opened PR #{418}.</p>
-                <ul className="xtm-steps">
-                  {['Reproduced in WebKit mobile', 'Patched PaySheet.tsx:84', `Opened PR #${418} (+18 -4)`].map((s, i) => <li key={s} className={steps > i ? 'ok' : ''}><span aria-hidden="true">{steps > i ? '✓' : '○'}</span><span className="xtm-t">{s}</span></li>)}
-                </ul>
-              </>
-            ))}
-            {msg(3, ['sci', 'Sci'], '9:44 AM', <p>Verified e2e on iOS 18 &amp; Chromium — 42/42 specs green.</p>)}
-          </div>
-        </div>
-        <div className="xtm-rev" aria-hidden={view !== 'rev'}>
-          <div className="xtm-rev-c">
-            <p className="xtm-rev-h"><Face n="rev" size={22} /><b>Rev</b><span>Revenue &amp; Billing Ops</span></p>
-            <div className="xtm-rev-t" ref={thread}>
-              {rmsg(1, true, <p>hanzo has a credit grant this is some kind of bug?</p>)}
-              {rmsg(2, false, <p>Probably, yes. If the org has a grant but the lease reads $0, it&apos;s likely looking up the wrong account, under user ID &quot;hanzo&quot; instead of the org&apos;s ID. I&apos;m checking the grant and the account the lease charges now.</p>)}
-              {rmsg(3, true, <p>its z/hanzo</p>)}
-              {rmsg(4, false, (
-                <>
-                  <p>You&apos;re right that it&apos;s a bug. Here&apos;s what I found across the billing and lease services:</p>
-                  <ul><li><span aria-hidden="true">•</span><span>The org shows $156.6K prepaid, but the lease checks a wallet tied to user ID hanzo instead of org z/hanzo.</span></li><li><span aria-hidden="true">•</span><span>All 93 sessions run with a doubled org prefix, so the grant lookup misses the org wallet.</span></li></ul>
-                  <ol><li><span aria-hidden="true">1.</span><span>Make grok-bot-iam an admin acting as the hanzo org.</span></li><li><span aria-hidden="true">2.</span><span>Move $20 onto wallet hanzo while the lease patch rolls out.</span></li></ol>
-                </>
-              ))}
-              {rmsg(5, false, <p>Tell me when it&apos;s done and I&apos;ll re-send all six fixes and check them on the live site. I&apos;ve posted the cause in #hanzo-revenue. Longer term, a platform rule that a member can&apos;t spend org credits on leases will block every agent this way, and it&apos;s worth fixing.</p>)}
+    <div className="xtm-win xtm-tk" ref={box}>
+      <header className="xtm-win-h">
+        <span className="xtm-org"><b>hanzo.team</b></span>
+        <ul className="xtm-tk-tabs">{TABS.map((t, i) => <li key={t} className={i === 0 ? 'on' : ''}>{t}</li>)}</ul>
+        <span className="xtm-tk-pct x-mono"><Ring v={83} size={14} />83% To do</span>
+        {!calm && (
+          <button type="button" className="xtm-replay" aria-label={phase === 'rest' ? 'Replay' : 'Pause'} onClick={control}>
+            {phase === 'rest'
+              ? <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4.5 10a5.5 5.5 0 1 0 1.7-4M4.5 3.5V6.5h3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>}
+          </button>
+        )}
+      </header>
+      <div className="xtm-tk-sc" ref={scroller}>
+        <div className="xtm-tk-board" ref={board} data-phase={phase}>
+          {TRACK.map(([head, st, list], c) => (
+            <div className="xtm-tk-col" key={head}>
+              <p className="xtm-tk-head x-mono"><i data-st={st} /><span>{head}</span></p>
+              {list.map(([id, tag, title, , own]) => {
+                const i = CARDS.findIndex((k) => k[0] === id);
+                return (
+                  <button type="button" key={id} ref={(el) => { cards.current[i] = el; }} className="xtm-tk-card" data-on={at === i || undefined} data-col={c} onClick={() => pick(i)} aria-label={`${id} ${title}`}>
+                    <span className="xtm-tk-top"><span className="x-mono">{id}</span><span className="xtm-tk-tag">{tag}</span></span>
+                    <span className="xtm-tk-t">{title}</span>
+                    <span className="xtm-tk-ft x-mono"><span className="xtm-tk-pc"><Ring v={shown[i]} />{shown[i]}%</span><span className="xtm-tk-own">@{own}</span></span>
+                  </button>
+                );
+              })}
             </div>
-            <p className="xtm-rev-in" aria-hidden="true"><span>+</span><span>Message Rev</span><i>|||</i></p>
-          </div>
-          <div className="xtm-rev-p">
-            <p className="xtm-rev-id"><Face n="rev" size={48} /><b>Rev</b></p>
-            <p className="xtm-rev-tabs" aria-hidden="true"><span>Details</span><span>Library</span><span className="on">Computer</span></p>
-            <div className="xtm-rev-s"><span className="xtm-rev-eyes" aria-hidden="true">– –</span><span className="xtm-rev-z">Computer is asleep</span><span>Verified org credit grants &amp; billing lease lookup across 93 active sessions</span></div>
-            <p className="xtm-rev-cap">Rev&apos;s screen</p>
-          </div>
+          ))}
+          <Cursor c={agent} name={NAME[who]} tone="agent a" agent />
         </div>
+      </div>
+      <div className="xtm-tk-ph">
+        <p className="xtm-tk-ph-h x-mono"><b>9:41</b><span className="xtm-tk-dev"><i /><span>iPhone · hanzo.team Mobile</span></span><span className="xtm-tk-sync" key={sync} data-hot={sync > 0 || undefined}>Web + Mobile synced</span></p>
+        <div className="xtm-tk-row">
+          <span className="xtm-tk-rev"><Face n="rev" size={30} /><i /></span>
+          <span className="xtm-tk-rt"><span className="xtm-tk-rn">#hanzo-rev · Rev (Revenue &amp; Billing Ops)</span><span>Verified org credit grants &amp; billing lease lookup across 93 active sessions</span></span>
+          <span className="xtm-tk-fs">{['dev', 'cyber', 'mark', 'sci'].map((f) => <Face key={f} n={f} size={22} />)}</span>
         </div>
       </div>
     </div>
@@ -269,6 +241,7 @@ function Hero() {
         <motion.div className="xtm-stage-in" style={{ rotateX, scale }}>
           <Canvas ok={ok} />
         </motion.div>
+        <p className="xtm-tk-cap x-mono">Hanzo Team · the workspace for humans and AI</p>
       </div>
     </section>
   );

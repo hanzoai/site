@@ -34,8 +34,8 @@ Done here: The layout's skip link reaches `#main`. The links are `Cta`, `Lk` (th
 - [x] ~~Morph~~ n/a: no card opens into a page
 
 Done here:
-- The right column's fade and the canvas story both wait for `useArrived`, so Zoe's first walk happens where people can see it. After Done the cursors breathe (one mover), with Pause and Replay.
-- The hero window is Hanzo's workspace as live shows it (8 Nov): a dock with the crew of twelve and their `/agents/*.png` portraits, seven DMs with live's previews and Zach Kelling. After the #bugfix board story, Rev's "Revenue & Billing Ops" thread plays in and Rev's computer rests asleep; the Rev row and #bugfix are presses that switch the pane (both panes share one grid cell, so nothing shifts).
+- The right column's fade and the board story both wait for `useArrived`, so the first walk happens where people can see it. After the last card the cursor breathes, with Pause and Replay; a click on any card sends the cursor there.
+- The hero window is Hanzo's tracker board as live shows it (9 Nov): hanzo.team with Tracker Board / 23 AI Teammates / Virtual Office and 83% To do, four columns (BACKLOG – 7, TO DO – 6, IN PROGRESS – 3, DONE – 3) with live's eight CRM cards, and the phone strip (9:41, iPhone · hanzo.team Mobile, Web + Mobile synced, #hanzo-rev · Rev). One agent cursor walks the cards, each card's progress counts up to Hanzo's figure as its owner takes it, and every landing syncs to the phone strip. Live dropped the DMs, Rev's thread and the sleeping computer, so they are gone here too. On phones the board scrolls sideways inside the window and follows the cursor.
 - With JS off the lede, asks, docs link and whole canvas show; the cursors are hidden and the chapters stack.
 - Narrative: canvas hero, three pinned chapters, together, the rooms (miniatures), the dark workflow room, the code window, leaders, the spec, the close.
 
