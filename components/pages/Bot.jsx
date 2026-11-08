@@ -315,7 +315,7 @@ function Sandbox({ on }) {
   return (
     <div className={'bt-vis bt-box' + (on ? ' on' : '')} aria-hidden="true">
       <div className="bt-win">
-        <div className="bt-win-bar"><i /><i /><i /><span className="x-mono">sandbox</span><Face k="p" size={26} id="mark" /></div>
+        <div className="bt-win-bar"><i /><i /><i /><span className="x-mono">sandbox · ubuntu-24.04</span><Face k="p" size={26} id="mark" /></div>
         <div className="bt-win-body">
           <div className="bt-br">
             <span className="bt-url x-mono">hanzo.ai/pricing</span>
@@ -328,6 +328,7 @@ function Sandbox({ on }) {
             <span className="bt-tl"><b>$</b>npm install -g @hanzo/bot</span>
             <span className="bt-tl"><b>$</b><span>hanzo-bot onboard --install-daemon</span></span>
             <span className="bt-tl"><b>$</b>hanzo bot runs list</span>
+            <span className="bt-tl bt-tl-one">$ hanzo-bot run --browser --channel #hanzo-marketing</span>
             <span className="bt-tl o">#hanzo-marketing · Weekdays around 9:00 AM</span>
             <span className="bt-tl"><b>$</b><i className="bt-caret" /></span>
           </div>
@@ -386,6 +387,7 @@ function Thread({ on }) {
   return (
     <div className="bt-vis bt-app">
       <aside className="bt-side">
+        <p className="bt-app-t x-mono">hanzo.bot · Web App</p>
         <div className="bt-search">Search</div>
         <p className="bt-side-h">Teammates <span className="x-mono"><i className="bt-live" aria-hidden="true" />{desOn ? '2 working' : '1 working'}</span></p>
         <ul className="bt-mates">
@@ -428,13 +430,20 @@ function Routines({ on }) {
         <ul>
           {list.map(([t, wh], i) => (
             <li key={t} style={{ '--i': i }}>
-              <span><b>{t}</b><span className="x-mono">{wh}</span></span>
+              <span><b><span>{t}</span></b><span className="x-mono">{wh}</span></span>
               <button type="button" role="switch" aria-checked={sw[i]} aria-label={t} className={'bt-sw' + (sw[i] ? ' on' : '')} onClick={() => setSw(sw.map((v, k) => (k === i ? !v : v)))}><i /></button>
             </li>
           ))}
         </ul>
         <span className="bt-rt-new">+ New routine</span>
       </div>
+      {/* hanzo.ai's phone beside the web app: the same bot, synced (live /bot, 8 Nov) */}
+      <div className="bt-rt-ph">
+        <span className="bt-rt-ph-d"><span className="x-mono">9:41</span><span>iPhone · hanzo.bot Mobile</span></span>
+        <span className="bt-rt-ph-w"><Face k="p" size={24} id="mark" /><span>Mark · Mobile App</span></span>
+        <span className="bt-rt-ph-s x-mono"><i aria-hidden="true" /><span>Synced live with Web</span></span>
+      </div>
+      <p className="bt-rt-ph-c">Tap any teammate to hand off from phone or web</p>
     </div>
   );
 }
