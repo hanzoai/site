@@ -5,7 +5,7 @@
 /* dark mode (docs/DARK-MODE.md): ink and A2's page greys point at Hanzo's tokens; --blk keeps the black objects black */
 html:not(.light) .xov { --ink: var(--foreground); --acc: var(--foreground); --acc-soft: var(--muted); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --card: var(--muted); --line: var(--border); }
 html:not(.light) .xov-term, html:not(.light) .xov-cmd { box-shadow: inset 0 0 0 1px var(--border); }
-html:not(.light) .xov-hero { background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); } /* live's hero glow */
+html:not(.light) .xov-hero { position: relative; background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); } /* live's hero glow */
 .xov .a2-sec { padding: clamp(72px, 8vw, 116px) 0; }
 
 /* hero: the name, then its lede on the same bottom line, then the desktop inside its container */

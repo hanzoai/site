@@ -28,6 +28,7 @@ import A2Room from '../v2/A2Room';
 import A2Grow from '../v2/A2Grow';
 import { T, EMPH, INOUT, MOVE } from '../v2/A2Motion';
 import { useEnter } from './operative/entrances';
+import HeroDither from './HeroDither';
 import '../v2/A2.css';
 import './Operative.css';
 
@@ -164,6 +165,7 @@ function Hero() {
   const flat = (ev) => { ev.currentTarget.style.setProperty('--rx', '0deg'); ev.currentTarget.style.setProperty('--ry', '0deg'); };
   return (
     <section className="xov-hero" ref={ref} aria-labelledby="xov-h1">
+      <HeroDither />
       <div className="a2-wrap a2-grid xov-top">
         <A2Lines as="h1" id="xov-h1" className="a2-display xov-h1" lines={['Hanzo', 'Operative']} now />
         <p className="a2-kick">Computer use, in a container</p>
