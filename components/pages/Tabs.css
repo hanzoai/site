@@ -253,7 +253,7 @@
 /* the source is the object */
 .xtb-src { flex-direction: column; align-items: flex-start; justify-content: center; gap: 14px; color: #f5f5f7; text-decoration: none; }
 .xtb-src b { padding: 14px 22px; border: 2px solid #f5f5f7; border-radius: 14px; font-size: 28px; letter-spacing: .08em; transition: background .3s, color .3s; }
-.xtb-src span { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 17px; }
+.xtb-src > span { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 17px; }
 .xtb-src span i { display: inline-block; transition: transform .3s var(--ease); }
 .xtb-src:active b { transform: scale(.98); }
 .xtb-src:focus-visible { outline: 2px solid #f5f5f7; outline-offset: 6px; border-radius: 14px; }
