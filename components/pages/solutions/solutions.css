@@ -1,6 +1,6 @@
 /* ---------- /solutions family: a solution's reel, and the three-way selector ---------- */
 .xsl-hero { position: relative; padding: clamp(36px, 5vw, 80px) 0 clamp(56px, 7vw, 104px); overflow: hidden; }
-.xsl-sigil { position: absolute; left: 0; top: 0; width: 55%; height: 100%; color: #0a0a0a; opacity: .1; pointer-events: none; -webkit-mask-image: linear-gradient(90deg, #000 40%, transparent); mask-image: linear-gradient(90deg, #000 40%, transparent); }
+.xsl-sigil { position: absolute; left: 0; top: 0; width: 55%; height: 100%; color: var(--ink); opacity: .1; pointer-events: none; -webkit-mask-image: linear-gradient(90deg, #000 40%, transparent); mask-image: linear-gradient(90deg, #000 40%, transparent); }
 .xsl-hero-g { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
 .xsl-pill { display: inline-flex; margin: 0 0 20px; padding: 6px 12px; border-radius: 999px; background: var(--card); font-size: 12px; letter-spacing: .06em; color: var(--soft); }
 .xsl-h1 { margin: 0; font-size: clamp(2.6rem, 5.2vw, 5rem); font-weight: 560; letter-spacing: -.05em; line-height: .98; text-wrap: balance; }
@@ -60,7 +60,7 @@
 .xsl-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 .xsl-sec { background: var(--card); }
 .xsl-sec-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 16px; }
-.xsl-sec-i { padding: 26px; border-radius: 22px; background: #fff; }
+.xsl-sec-i { padding: 26px; border-radius: 22px; background: var(--x-raised); }
 .xsl-sec-i h3 { margin: 0 0 10px; font-size: 19px; font-weight: 560; letter-spacing: -.02em; }
 .xsl-sec-i p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--soft); }
 .xsl-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 36px; padding: 0; list-style: none; }
@@ -74,13 +74,13 @@
 .xsl-ovl-pick button span { position: relative; }
 .xsl-ovl-pick button[aria-pressed='true'] { color: var(--ink); }
 .xsl-ovl-pick button:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
-.xsl-ovl-bg { position: absolute; inset: 0; border-radius: 999px; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
+.xsl-ovl-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--x-knob); box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
 .xsl-ovl-g { display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 16px; }
-.xsl-col { padding: 18px; border-radius: 18px; background: #fff; }
-.xsl-col.both { background: #0a0a0a; color: #fff; }
+.xsl-col { padding: 18px; border-radius: 18px; background: var(--x-raised); }
+.xsl-col.both { background: light-dark(#0a0a0a, var(--surface-3)); color: light-dark(#fff, var(--text-primary)); }
 .xsl-col h3 { margin: 0 0 12px; font: 500 12px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
-.xsl-col.both h3 { color: #a1a1a6; }
-.xsl-col.both h3 b { font-size: 22px; color: #fff; margin-right: 6px; letter-spacing: 0; }
+.xsl-col.both h3 { color: light-dark(#a1a1a6, var(--text-helper)); }
+.xsl-col.both h3 b { font-size: 22px; color: light-dark(#fff, var(--text-primary)); margin-right: 6px; letter-spacing: 0; }
 .xsl-col ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
 .xsl-col li { padding: 6px 10px; border-radius: 99px; background: var(--card); font-size: 13.5px; }
 .xsl-col.both li { background: rgba(255, 255, 255, .14); }
