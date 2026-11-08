@@ -50,8 +50,12 @@ const DIFF = [
 const DEV_TEST = 'pnpm test src/middleware/auth.test.ts';
 const DEV_OK = '14 passed (42ms)';
 
-const DONE = DEMO.flatMap(([q, a]) => [{ role: 'user', text: q }, { role: 'ai', text: a, model: 'zen', state: 'done' }]);
-const FIRST = [{ role: 'user', text: DEMO[0][0] }, { role: 'ai', state: 'wait', model: 'enso' }]; // the server's frame: the question has arrived
+// hanzo.ai/chat's own window conversation (live, 8 Nov), word for word: it is there from the first paint, as on live
+const CONVO = [
+  ['How do black holes form?', ['A star much heavier than the Sun burns through its fuel, and its core collapses under its own gravity.', 'When what is left is heavy enough, nothing can stop the collapse, and not even light escapes it.']],
+  ['And what makes the aurora?', ['Charged particles from the Sun reach the gas high above the poles.', 'The gas glows as they strike it: oxygen green and red, nitrogen blue and purple.']],
+];
+const DONE = CONVO.flatMap(([q, a]) => [{ role: 'user', text: q }, { role: 'ai', text: a, model: 'zen', state: 'done' }]);
 const ROUTED = MODELS.filter((m) => m.slug !== 'enso');
 const ENSO = MODELS[0];
 const ZEN = MODELS.find((m) => m.slug === 'zen');
@@ -100,16 +104,15 @@ function Listen({ text }) {
 }
 
 /* Messages arrive with a CSS rise, so the server's first frame paints at once. */
-function Msg({ m, live }) {
+function Msg({ m, think }) {
   if (m.role === 'user') return <li className="cht-q">{m.text}</li>;
   const who = MODELS.find((x) => x.slug === m.model) || ENSO;
   return (
     <li className="cht-a">
       <span className="cht-who"><Img src={pic(who.slug)} alt="" w={18} h={18} priority />{who.name}</span>
-      {m.state === 'wait' && <span className="cht-dots" role="img" aria-label={ENSO.name}><i /><i /><i /></span>}
-      {m.state === 'stream' && <p className="cht-text"><span ref={live} /><span className="cht-caret" aria-hidden="true" /></p>}
-      {m.state === 'done' && <p className="cht-text">{m.text}</p>}
-      {m.state === 'done' && <span className="cht-tools"><Copy text={m.text} /><Listen text={m.text} /></span>}
+      {think && <span className="cht-dots" role="img" aria-label={ENSO.name}><i /><i /><i /></span>}
+      {m.state === 'done' && m.text.map((t) => <p key={t} className="cht-text">{t}</p>)}
+      {m.state === 'done' && <span className="cht-tools"><Copy text={m.text.join('\n\n')} /><Listen text={m.text.join(' ')} /></span>}
     </li>
   );
 }
@@ -167,7 +170,8 @@ function Ctl({ demo }) {
 /* The window: Hanzo's own conversation plays once (about 7 s), then rests. Focus the composer and it is yours; send,
    and the press hands off to Hanzo Chat (nothing is sent from this page). */
 function Window() {
-  const [msgs, setMsgs] = useState(FIRST);
+  const [msgs, setMsgs] = useState(DONE);
+  const [think, setThink] = useState(-1); // the answer Enso is routing right now (its dots show; its words stay)
   const [route, setRoute] = useState({ phase: 'scan', pick: null });
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
@@ -176,33 +180,20 @@ function Window() {
   const [find, setFind] = useState(null);
   const [side, setSide] = useState(false); // desktop: the recents drawer, closed by default so the chat has the room
   const input = useRef(null);
-  const live = useRef(null);
   const log = useRef(null);
   const box = useRef(null);
 
   const scan = async (sleep, n) => { setRoute({ phase: 'scan', pick: null }); for (let s = 0; s < n; s++) { setAt(s % ROUTED.length); await sleep(125); } };
-  const stream = async (sleep, a) => {
-    setRoute({ phase: 'pick', pick: 'zen' });
-    setMsgs((m) => [...m.slice(0, -1), { role: 'ai', state: 'stream', model: 'zen', text: a }]);
-    await sleep(40);
-    for (let i = 0; i <= a.length; i += 2) { if (live.current) live.current.textContent = a.slice(0, i); await sleep(22); }
-    setMsgs((m) => [...m.slice(0, -1), { role: 'ai', state: 'done', model: 'zen', text: a }]);
-  };
+  // the conversation stays whole; Enso routes each answer in turn (its dots on that answer, the rail scanning), then Zen lights
   const demo = useDemo(box, async (sleep) => {
-    setMine(false); setSel(0);
+    setMine(false); setSel(0); setMsgs(DONE);
     if (input.current) input.current.value = '';
-    setMsgs(FIRST);
-    await scan(sleep, 9); // the question is already in: Enso decides at once
-    await stream(sleep, DEMO[0][1]);
-    await sleep(900);
-    const [q, a] = DEMO[1];
-    const el = input.current;
-    for (let i = 1; i <= q.length; i++) { if (el) el.value = q.slice(0, i); await sleep(34 + (i % 4) * 8); }
-    await sleep(260);
-    if (el) el.value = '';
-    setMsgs((m) => [...m, { role: 'user', text: q }, { role: 'ai', state: 'wait', model: 'enso' }]);
-    await scan(sleep, 8);
-    await stream(sleep, a);
+    for (let k = 0; k < CONVO.length; k++) {
+      setThink(2 * k + 1);
+      await scan(sleep, 9);
+      setThink(-1); setRoute({ phase: 'pick', pick: 'zen' });
+      await sleep(1600);
+    }
   }, { amount: 0.2 });
 
   // reduced motion: no script runs, so show the whole final conversation from its start
@@ -211,7 +202,7 @@ function Window() {
 
   const takeOver = () => {
     if (mine) return;
-    demo.stop(); setMine(true); setSel(-1);
+    demo.stop(); setMine(true); setSel(-1); setThink(-1);
     if (input.current) input.current.value = '';
     setMsgs([]); setRoute({ phase: 'idle', pick: null });
   };
@@ -222,11 +213,11 @@ function Window() {
     setTimeout(() => { window.location.href = href(OPEN); }, 280);
   };
   const open = (i) => {
-    demo.stop(); setSel(i);
+    demo.stop(); setSel(i); setThink(-1);
     if (i === 0) { setMine(false); setMsgs(DONE); setRoute({ phase: 'pick', pick: 'zen' }); }
     else { setMine(true); setMsgs([]); setRoute({ phase: 'idle', pick: null }); }
   };
-  const fresh = () => { demo.stop(); setMine(true); setSel(-1); setMsgs([]); setRoute({ phase: 'idle', pick: null }); input.current?.focus(); };
+  const fresh = () => { demo.stop(); setThink(-1); setMine(true); setSel(-1); setMsgs([]); setRoute({ phase: 'idle', pick: null }); input.current?.focus(); };
   const list = RECENTS.map((t, i) => [t, i]).filter(([t]) => !find || t.toLowerCase().includes(find.toLowerCase()));
 
   return (
@@ -265,7 +256,7 @@ function Window() {
             ) : msgs.length === 0 && mine ? (
               <div className="cht-empty"><p className="cht-empty-t">Ask anything</p></div>
             ) : (
-              <ul className="cht-msgs">{msgs.map((m, i) => <Msg key={i} m={m} live={live} />)}</ul>
+              <ul className="cht-msgs">{msgs.map((m, i) => <Msg key={i} m={m} think={think === i} />)}</ul>
             )}
           </div>
           <form className="cht-composer" onSubmit={send}>

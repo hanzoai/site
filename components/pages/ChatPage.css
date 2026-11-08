@@ -461,3 +461,6 @@
 @media (max-width: 900px) { .cht-tools-g { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 @media (max-width: 600px) { .cht-tools-g { grid-template-columns: minmax(0, 1fr); } }
 @media (prefers-reduced-motion: reduce) { .cht-tool { transition: none; } }
+
+/* live writes each answer as two paragraphs */
+.cht-text + .cht-text { margin-top: 8px; }
