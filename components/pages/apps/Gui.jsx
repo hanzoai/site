@@ -67,7 +67,7 @@ function Welcome({ v, parts, delay = 0 }) {
   const r = ROUND[v.rounded];
   const tr = delay ? { ...SHAPE, delay, backgroundColor: { ...INK, delay }, color: { ...INK, delay } } : SHAPE;
   return (
-    <motion.div layout className={'gu-w' + (parts ? ' parts' : '')} data-part="YStack" style={{ '--pad': SPACE[v.p] }} initial={false} animate={{ borderRadius: r, backgroundColor: BG[v.bg] }} transition={tr}>
+    <motion.div layout className={'gu-w' + (parts ? ' parts' : '')} data-part="YStack" data-bg={v.bg} style={{ '--pad': SPACE[v.p] }} initial={false} animate={{ borderRadius: r, backgroundColor: BG[v.bg] }} transition={tr}>
       <motion.span layout="position" className="gu-t" data-part="Text" initial={false} animate={{ color: dark ? '#f5f5f5' : '#0a0a0a' }} transition={tr}>Hello, Hanzo</motion.span>
       <motion.span layout="position" className="gu-b" data-part="Button" initial={false} animate={{ backgroundColor: dark ? '#f5f5f5' : '#0a0a0a', color: dark ? '#0a0a0a' : '#ffffff', borderRadius: r * 0.6 }} transition={tr}>Get started</motion.span>
     </motion.div>
