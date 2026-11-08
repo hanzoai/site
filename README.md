@@ -69,6 +69,23 @@ scripts/             build and checking tools (see Scripts)
 docs/                DARK-MODE.md, COPY-RULE.md, MOTION-MAP.md, and build-notes/ (the design process; not needed to run)
 ```
 
+## The home page
+
+`app/page.jsx` renders `components/pages/Home.jsx` (James approved this design on 8 Nov). Every section reads in one frame
+at 1470×801: its title and its content fit on one screen. Top to bottom:
+
+| Section | Component | Notes |
+|---|---|---|
+| Hero, typing product demo | `components/Hero.jsx`, `home/HeroScenes.jsx` | The scenes' data is in `home/hero-scenes.json` |
+| Backed by / Trusted by | `Marquee` (`components/Chrome.jsx`) | Logos in `public/logos/` (white in dark, black in light) |
+| Models: a 3D journey, Enso to Mori | `components/Models.jsx`, `components/models/Journey.jsx`, `models/scene.js` | Scrolling moves a camera through the nine models; drag turns one, click opens its page. **three.js (0.186.1) loads only by dynamic import**, in its own chunk, when the section comes near; it is never in the page's first load. Phones, reduced motion and browsers without WebGL get the static card grid |
+| Products: dock and stage | `components/home/Platform.jsx`, `home/platform.css` | |
+| Agents, Race, Cheaper, Pareto | `components/Agents.jsx`, `Race.jsx`, `Cheaper.jsx`, `Pareto.jsx` | Figures are worked out on the server (`home/snapshot.js`) and re-read live in the browser (`home/useFigures.js`) |
+| Open source | `components/Open.jsx` | |
+| Pricing | `components/home/Pricing.jsx` | Prices and links from `lib/plans.js` |
+
+The one-frame layout, split headings and lit halftone are in `components/home/wow.css`.
+
 ## Light and dark mode
 
 Hanzo's own system, exactly as live hanzo.ai runs it. Full detail: `docs/DARK-MODE.md`.
