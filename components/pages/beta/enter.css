@@ -75,3 +75,10 @@
 @keyframes xbt-curl { from { transform: rotate(-45deg) translateY(75vmax); } to { transform: rotate(-45deg) translateY(-95vmax); } }
 @keyframes xbt-flap { 0% { transform: scaleY(0); } 45% { transform: scaleY(1); } 100% { transform: scaleY(.4); } }
 @keyframes xbt-show { from { opacity: 0; } to { opacity: 1; } }
+
+/* dark (docs/DARK-MODE.md): the stamp on a paper pass reads in the page's ink; the curl peels the page's own dark */
+html:not(.light) .xbt-pass:not(.dark) .xbt-mark { color: var(--ink); background: var(--surface-overlay); }
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.light) .xbt .xbt-curl { background: var(--bg); }
+  html.js:not(.light) .xbt .xbt-curl::after { background: linear-gradient(to bottom, var(--secondary), var(--muted) 60%, var(--bg)); }
+}
