@@ -729,3 +729,35 @@ a.x-mbtn { color: inherit; text-decoration: none; }
   header button[aria-controls="menu-company"] { position: relative; }
   header button[aria-controls="menu-company"]::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
 }
+
+/* ---------- James 8 Nov: race + cost cards smaller and more immersive, each with its own look; copy unchanged ---------- */
+.x-race, .x-cost { position: relative; overflow: hidden; isolation: isolate; padding: clamp(18px, 2vw, 26px); border-radius: 22px; transition: border-color .4s var(--ease), translate .5s var(--ease), box-shadow .5s var(--ease); }
+.x-race:hover, .x-cost:hover { translate: 0 -3px; }
+.x-race::before, .x-cost::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; transition: opacity .6s var(--ease); }
+.x-race-big { margin-top: 12px; font-size: clamp(2.75rem, 4.4vw, 4.1rem); }
+.x-race-cap { margin-top: 6px; font-size: 15.5px; }
+.x-race-note { margin-top: 8px; font-size: 12.5px; }
+.x-race-title { margin: 16px 0 8px; }
+.x-lanes { gap: 10px; }
+.x-lane-h { font-size: 12.5px; margin-bottom: 5px; }
+.x-lane-track { height: 4px; }
+.x-race-end { padding-top: 16px; }
+.x-facts { margin-top: 14px; padding-top: 12px; gap: 8px; }
+.x-cost-big { margin-top: 10px; font-size: clamp(2.2rem, 3.6vw, 3.3rem); }
+.x-vol { margin: 16px 0 10px; }
+/* Hanzo Dev vs Claude Code: a speed track - fine horizontal lanes streaking out of a light at the top left, the winning bar glowing */
+.x-races > .x-race:first-child { border-color: rgba(255, 255, 255, .1); background: #0b0b0d; }
+.x-races > .x-race:first-child::before { background: radial-gradient(85% 55% at 0% 0%, rgba(255, 255, 255, .16), transparent 62%), repeating-linear-gradient(0deg, rgba(255, 255, 255, .08) 0 1px, transparent 1px 10px); -webkit-mask-image: linear-gradient(100deg, #000 10%, transparent 72%); mask-image: linear-gradient(100deg, #000 10%, transparent 72%); }
+.x-races > .x-race:first-child .x-lane.hi .x-lane-track b { box-shadow: 0 0 16px rgba(245, 245, 247, .6); }
+/* Kai vs an LLM call: Hanzo's halftone - a dot field glowing from the top right, bars as thin light lines */
+.x-races > .x-race:nth-child(2) { border-color: rgba(255, 255, 255, .07); background: radial-gradient(70% 60% at 100% 0%, #18181b, #0b0b0d 70%); }
+.x-races > .x-race:nth-child(2)::before { background: radial-gradient(circle, rgba(255, 255, 255, .36) 1px, transparent 1.6px) 0 0 / 11px 11px; -webkit-mask-image: radial-gradient(75% 70% at 100% 0%, #000, transparent 72%); mask-image: radial-gradient(75% 70% at 100% 0%, #000, transparent 72%); }
+.x-races > .x-race:nth-child(2) .x-lane-track { height: 2px; }
+.x-races > .x-race:nth-child(2) .x-lane.hi .x-lane-track b { box-shadow: 0 0 10px rgba(245, 245, 247, .7); }
+/* Enso (cheaper): stacked price bands rising from the bottom, like layers of cost falling away */
+.x-races > .x-cost:first-child::before { background: repeating-linear-gradient(180deg, transparent 0 22px, color-mix(in srgb, var(--ink) 9%, transparent) 22px 23px); -webkit-mask-image: linear-gradient(0deg, #000, transparent 55%); mask-image: linear-gradient(0deg, #000, transparent 55%); }
+.x-races > .x-cost:first-child { background: linear-gradient(180deg, var(--card), color-mix(in srgb, var(--card) 88%, var(--ink))); }
+/* Kai (cheaper): a fine diagonal hatch from the top right and a soft lit corner */
+.x-races > .x-cost:nth-child(2)::before { background: radial-gradient(60% 50% at 100% 0%, color-mix(in srgb, var(--ink) 12%, transparent), transparent 70%), repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 9%, transparent) 0 1px, transparent 1px 12px); -webkit-mask-image: radial-gradient(90% 80% at 100% 0%, #000, transparent 75%); mask-image: radial-gradient(90% 80% at 100% 0%, #000, transparent 75%); }
+.x-races > .x-cost:hover, .x-races > .x-race:hover { box-shadow: 0 24px 60px -30px rgba(0, 0, 0, .55); }
+@media (prefers-reduced-motion: reduce) { .x-race:hover, .x-cost:hover { translate: none; } }
