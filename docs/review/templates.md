@@ -1,5 +1,5 @@
 # /templates: James-eye review
-Ready: 8 Nov 00:35, copycheck missing 0 of 52 (rendered capture) and 1 of 7 on the pre-JS capture: "Reading the templates from api.hanzo.ai" is Hanzo's loading line, gone once its grid loads (ours ships the twelve templates in the page, so it never loads). Hanzo's images kept (1 of 1). Edit in Hanzo, the agent strip names and the setup menu's four guide links now read as Hanzo's own lines. taste/unique/parity OK (96/96, 45/45); no overlap at 1470 and 375; the only console errors are the template previews from hanzo.ai, blocked in this sandbox.
+Ready: 9 Nov, live copycheck missing 0 of 75 after Hanzo's update. The list is live's 29 templates in live's order (17 new, among them Instrument, Fernline, Warp Tunnel and Emptykit) with its 11 kinds (new: 3D & Shaders, AI/SaaS, App, Component Library), every preview Hanzo shows. On wide screens the sideways shelf now runs as two rows (10 previews on screen, page 8,027px instead of 17,091px), past twelve the dot row gives way to the 01 / 29 count and arrows, and the arrows sit right so a long kind and name never meet them. taste, parity (96/96, 45/45) and unique OK; 0 console errors, no overlap at 1470 and 375.
 
 
 Verdict: 7/10

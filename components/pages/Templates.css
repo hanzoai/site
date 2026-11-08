@@ -404,3 +404,15 @@ html:not(.js) .xtp-card:not(.front), html:not(.js) .xtp-pause { display: none; }
 @keyframes xtp-shut-in { 0%, 47% { opacity: 0; } 48%, 100% { opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) { .xtp-roll-d, .xtp-eg, .xtp-hg .w2-oc > li { transition: none; } .xtp-band::before, .xtp-band::after { display: none; } }
+
+/* 9 Nov: Hanzo's list grew to 29. Wide screens run the shelf as two rows, so the sideways stretch stays about the length
+   it was for twelve and more previews are on screen at once; past twelve the dot row gives way to the count and arrows. */
+.xtp-dots[hidden] { display: none !important; }
+@media (min-width: 1200px) { .xtp-counts-l { column-gap: clamp(16px, 1.9vw, 28px); } }
+@media (min-width: 900px) {
+  .xtp-nav { justify-content: flex-end; } /* the readout holds the left edge, the arrows and count the right, so a long kind and name never meet them */
+  .xtp-hg.wide ul.w2-oc.xtp-tiles { display: grid !important; grid-auto-flow: column; grid-template-rows: repeat(2, auto); grid-auto-columns: min(21vw, 300px); gap: 16px !important; }
+  .xtp-hg.wide ul.w2-oc.xtp-tiles > li { width: auto; }
+  .xtp-hg.wide .xtp-tiles .w2-oc-card { padding: 10px 10px 16px; gap: 6px; }
+  .xtp-hg.wide .xtp-tiles .w2-oc-art { margin: 0 0 6px; }
+}

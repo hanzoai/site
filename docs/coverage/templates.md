@@ -27,7 +27,7 @@ Done here: parity links 45/45.
 - [x] Sells in 5 s; the deck riffles within 3.6 s and the address types on load
 - [x] h1 CSS cut-in painted by the server; "Templates" sits under the h1
 - [x] JS off legible
-- [x] Deck hero → drifting wall of twelve → dark setup room → closing band
+- [x] Deck hero → drifting wall of twenty-nine (live's list since 9 Nov) → dark setup room → closing band
 - [x] Ends on a band with the one ask and the front window, small, then footer
 - [x] Wall tiles open into sheets (Morph-style layout open)
 
@@ -76,7 +76,7 @@ Done here: gate hues []; every literal in `Templates.css` is a deck value (#fff,
 Done here: a drag marks the card and its click is swallowed, so a flick never opens chat.
 
 ## 9. Motion and interaction
-- [x] Signature (MOTION-MAP `h-gallery`): on wide screens with motion the vertical scroll drives all twelve tiles sideways for one stretch (the section grows by the rail's overflow, measured 4,544px at 1470, and its rail sticks for that stretch, then lets go); phones, JS off and reduced motion get the same twelve as a native horizontal rail (swipe or scroll, snap proximity). Keyboard: focusing a tile scrolls the page to where that tile is in view (tile 9 focused lands at x 441–901 of 1470). The hero deck still riffles and drags (kept); sheets, magnetic and the typing terminal stay. No pinned chapter scene; order is hero deck → sideways gallery → counts by kind → setup room → close.
+- [x] Signature (MOTION-MAP `h-gallery`): on wide screens with motion the vertical scroll drives all twenty-nine tiles sideways for one stretch, as two rows since 9 Nov (page 8,027px at 1470) (the section grows by the rail's overflow, measured 4,544px at 1470, and its rail sticks for that stretch, then lets go); phones, JS off and reduced motion get the same twelve as a native horizontal rail (swipe or scroll, snap proximity). Keyboard: focusing a tile scrolls the page to where that tile is in view (tile 9 focused lands at x 441–901 of 1470). The hero deck still riffles and drags (kept); sheets, magnetic and the typing terminal stay. No pinned chapter scene; order is hero deck → sideways gallery → counts by kind → setup room → close.
 - [x] Entrances, page-local (`components/pages/templates/Motion.jsx` + `Templates.css`), in order: velocity-skew (the hero deck leans with scroll speed, up to 5°, and eases back), fold-out (each gallery tile unfolds from its top hinge, rotateX −78° to 0, as the rail carries it in), count-roll (the twelve by kind as figures whose digits roll 0–9 to their value; each re-deals the deck), explode-gather (the setup room's five pieces start scattered and gather), shutter (two ink bars close from top and bottom, then open on the close). Each arms only after hydration and only if its section starts below the fold, so server HTML, JS off and reduced motion show the final state. Measured at 1470×801 and 375×812: 0 console errors, no horizontal page scroll.
 - [x] The gallery rings the tile the deck has in front, and while in view every preview drifts slowly down its page, out of step (16 s, `translate`, paused off screen); the terminal types its commands character by character (32 ms a key, one rAF loop) each time its room comes into view or the template changes
 - [x] Idle (riffle), pointer (drag, magnetic), state (filter re-deal, sheets), time (address typing), arrival (h1)
