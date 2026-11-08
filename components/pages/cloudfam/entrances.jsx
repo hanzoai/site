@@ -54,7 +54,8 @@ export function Enter({ kind, as = 'section', className = '', children, ...rest 
 export function Letters({ text, on }) {
   if (!on || !text) return text || null;
   let n = 0;
-  return text.split(/(\s+)/).map((w, i) => (/^\s+$/.test(w) || !w ? w : (
+  // the heading reads once, whole (screen readers and the copy check); the falling letters are the picture of it
+  return <><span className="x-sr">{text}</span><span aria-hidden="true">{text.split(/(\s+)/).map((w, i) => (/^\s+$/.test(w) || !w ? w : (
     <span key={i} className="xe-w">{Array.from(w).map((ch, k) => <span key={k} className="xe-l" style={{ '--i': Math.min(n++, 40) }}>{ch}</span>)}</span>
-  )));
+  )))}</span></>;
 }

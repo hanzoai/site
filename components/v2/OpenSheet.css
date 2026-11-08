@@ -8,12 +8,12 @@
 .w2-oc-t { font-size: clamp(22px, 1.95vw, 28px); font-weight: 600; line-height: 1.1; letter-spacing: -.03em; text-wrap: balance; }
 .w2-oc-d { font-size: 16px; line-height: 1.5; color: var(--soft); max-width: 36ch; }
 .w2-oc-card.dark .w2-oc-d { color: #a1a1a6; }
-.w2-oc-plus { position: absolute; right: 20px; top: 20px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #fff; color: var(--ink); font-size: 22px; line-height: 1; box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 6px 16px -8px rgba(0, 0, 0, .3); transition: transform .35s var(--ease), background .25s, color .25s; }
+.w2-oc-plus { position: absolute; right: 20px; top: 20px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--x-raised); color: var(--ink); font-size: 22px; line-height: 1; box-shadow: 0 1px 0 rgba(0, 0, 0, .04), 0 6px 16px -8px rgba(0, 0, 0, .3); transition: transform .35s var(--ease), background .25s, color .25s; }
 .w2-oc-card:hover .w2-oc-plus { transform: rotate(90deg); background: var(--acc); color: var(--acc-ink, #fff); }
 
 .w2-sheet-host { position: fixed; inset: 0; z-index: 1200; display: grid; place-items: center; padding: 24px; }
 .w2-sheet-back { position: absolute; inset: 0; border: 0; padding: 0; background: rgba(10, 10, 12, .42); cursor: pointer; }
-.w2-sheet { position: relative; width: min(880px, 100%); max-height: min(86svh, 920px); overflow: auto; overscroll-behavior: contain; border-radius: 28px; background: #fff; color: var(--ink); box-shadow: 0 40px 120px -30px rgba(0, 0, 0, .45); }
+.w2-sheet { position: relative; width: min(880px, 100%); max-height: min(86svh, 920px); overflow: auto; overscroll-behavior: contain; border-radius: 28px; background: var(--x-raised); color: var(--ink); box-shadow: 0 40px 120px -30px rgba(0, 0, 0, .45); }
 .w2-sheet.wide { width: min(1120px, 100%); }
 .w2-sheet-in { position: relative; padding: clamp(28px, 4vw, 56px); }
 .w2-sheet-x { position: sticky; top: 0; float: right; display: grid; place-items: center; width: 44px; height: 44px; margin: -12px -12px 0 12px; border: 0; border-radius: 50%; background: var(--card); color: var(--ink); font-size: 26px; line-height: 1; cursor: pointer; z-index: 2; }
@@ -32,7 +32,7 @@
   .w2-sheet-host { padding: 0; place-items: end stretch; }
   .w2-sheet { width: 100%; max-height: 90svh; border-radius: 28px 28px 0 0; }
 }
-.w2-detail { display: inline-flex; align-items: center; gap: 12px; height: 48px; padding: 0 8px 0 22px; border: 1px solid rgba(0, 0, 0, .12); border-radius: 999px; background: #fff; color: var(--ink); font: 500 16px/1 var(--sans); cursor: pointer; align-self: flex-start; }
+.w2-detail { display: inline-flex; align-items: center; gap: 12px; height: 48px; padding: 0 8px 0 22px; border: 1px solid var(--x-e12); border-radius: 999px; background: var(--x-raised); color: var(--ink); font: 500 16px/1 var(--sans); cursor: pointer; align-self: flex-start; }
 .w2-detail i { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--acc); color: var(--acc-ink, #fff); font-style: normal; font-size: 20px; transition: transform .35s var(--ease); }
 .w2-detail { transition: border-color .2s, background .2s, transform var(--dur-press, .1s); }
 .w2-detail:active { transform: scale(.98); }

@@ -1,6 +1,7 @@
 # /compare — James-eye review
 
 Verdict: 8/10
+Ready: 8 Nov, held at missing 0 under the real copy check (copycheck 0 of 21): each row name reads as a whole line in the table and on phone cards; the closed detail sheet no longer pushes the page 1052px sideways (shared DetailSheet.css) and reduced motion no longer breaks hydration (tally here; shared MaskLines and SceneWipe). 0 console errors (also under reduced motion), no overflow at 1470 and 375. Usable: every row with its source, Model routing APIs.
 First complaint: "Tidy and honest, but the top is just a heading and a table. I want one moment that makes me stop."
 
 Walked 7 Nov 15:10 (third walk, after the shared system landed), page file at `575d9913` (`components/pages/Compare.jsx`, `Compare.css`), unchanged during the walk. Judged by `docs/JAMES.md` and `docs/MASTER.md`. Filmed moving at 1470×801 and 375×812 (wheel and finger scroll, dwell on every screen, hover and press on desktop, taps on phone), plus reduced motion and JS off. Stills: `review/compare/desktop-walk.jpg`, `review/compare/phone-walk.jpg`. The machine was overloaded, so motion is judged from frames.

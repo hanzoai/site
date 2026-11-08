@@ -15,7 +15,9 @@ const EASE = [0.16, 1, 0.3, 1];
 export default function MaskLines({ as = 'h2', lines, className = '', delay = 0, amount = 0.4, id, style }) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount });
-  const reduce = useReducedMotion();
+  const r0 = useReducedMotion();
+  const [reduce, setReduce] = useState(false); // read after mount, so the first render matches the server's HTML
+  useEffect(() => setReduce(!!r0), [r0]);
   // a first visit opens behind the arrival curtain (components/arrival.js): wait for it to lift, or no one sees the cut-in
   const [ready, setReady] = useState(true);
   useEffect(() => {
@@ -39,7 +41,7 @@ export default function MaskLines({ as = 'h2', lines, className = '', delay = 0,
             className="pf-mask-in"
             initial={reduce ? false : { y: '105%' }}
             animate={(seen && ready) || reduce ? { y: '0%' } : { y: '105%' }}
-            transition={{ duration: 0.7, ease: EASE, delay: delay + i * 0.06 }}
+            transition={reduce ? { duration: 0 } : { duration: 0.7, ease: EASE, delay: delay + i * 0.06 }}
           >
             {l}
           </motion.span>

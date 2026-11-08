@@ -28,7 +28,7 @@ export function Prompt({ name, prompt, api, className = '' }) {
       <div className="l2-pr-box">
         <div className="l2-pr-bar">
           <span className="l2-pr-k">Agent prompt</span>
-          {api && <span className="l2-pr-api"><i>api</i>{api}</span>}
+          {api && <span className="l2-pr-api"><span className="l2-pr-api-k">api</span> <span>{api}</span></span>}
           <Copy text={prompt} />
         </div>
         <pre className="l2-pr-code"><code>{prompt}</code></pre>

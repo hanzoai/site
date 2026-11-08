@@ -107,7 +107,7 @@ Done here: The hero objects are product-style data UI drawn from Hanzo's own fig
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: No overflow at either size (`errs.js`: overflow 0). Layout shift measured with a full scroll: desktop 0.002; phone 0.057, all of it from the shared footer (0.026 + 0.031), none from this page. The context dial's number crosses inside a fixed 64px box, so it no longer shifts. The sub-nav rail is opaque (#fff, #000 in Zen 6) with a hairline, so nothing shows through it. On the phone the stage lies flat, pinned scenes stack and paired panels swipe. The ask sits at about 500px from the top at 375.
+Done here: No overflow at either size (`errs.js`: overflow 0). Layout shift measured with a full scroll: desktop 0.002; phone 0.057, all of it from the shared footer (0.026 + 0.031), none from this page. The context dial's number crosses inside a fixed 64px box, so it no longer shifts. The sub-nav rail is opaque (#fff, #000 in Zen 6) with a hairline, so nothing shows through it. On the phone the stage lies flat, pinned scenes stack and paired panels swipe. The ask sits at about 500px from the top at 375. (8 Nov) Rail tabs are 44px tall on phones; the context dial stacks Prefill and Decode on phones so its values never wrap.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured: body #525252 on white is 7.8:1, captions #737373 4.7:1, white 55% on black about 6:1
@@ -124,7 +124,7 @@ Done here: Tabs use `role=tab` and `aria-selected`, toggles use `aria-pressed`, 
 - [x] No poller; no third-party request before consent
 - [x] Nothing heavy run on James's laptop (cloud only)
 
-Done here: 0 console errors at both sizes (`errs.js`), 0 hydration diffs (`hyd.js`). The dial's fill variable sits on its wrapper and the page's inputs carry `suppressHydrationWarning`, because a screenshot taken before hydration writes an inline caret style on every input. Motion is transform, opacity and clip-path only. Scroll-linked opacity uses function transforms, because Motion's ScrollTimeline acceleration misread the sticky runway. Idle loops stop off screen (`useInView`).
+Done here: 0 console errors at both sizes (`errs.js`), 0 hydration diffs (`hyd.js`). The dial's fill variable sits on its wrapper and the page's inputs carry `suppressHydrationWarning`, because a screenshot taken before hydration writes an inline caret style on every input. Motion is transform, opacity and clip-path only. Scroll-linked opacity uses function transforms, because Motion's ScrollTimeline acceleration misread the sticky runway. Idle loops stop off screen (`useInView`). (8 Nov) Layout shift: the context dial's sentence for every length sits in one grid cell and its values reserve their lines, so stepping no longer moves the page: CLS over a full walk 0.000 phone (was 0.336), 0.002 desktop (was 0.049).
 
 ## 14. SEO and machine files
 - [x] Title and description match live (`app/benchmarks/page.jsx` equals `content/pages.json`)
@@ -164,4 +164,4 @@ Done here: "All 11" resets Your suites. The board view is kept in the address. T
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
 - [x] Review read: `docs/review/benchmarks.md` (5/10); every listed fix addressed in round 2
 
-Done here: Round 2 proofs: `desktop-r2.jpg` and `phone-r2.jpg` (first screens). Earlier: `desktop.mp4`, `desktop.jpg` and `phone-1..3.jpg`.
+Done here: Round 2 proofs: `desktop-r2.jpg` and `phone-r2.jpg` (first screens). Earlier: `desktop.mp4`, `desktop.jpg` and `phone-1..3.jpg`. (8 Nov) Ready by the new bar; proof in docs/gallery/benchmarks/ (desktop-hero, phone-1..3).

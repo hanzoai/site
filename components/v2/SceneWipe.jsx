@@ -11,7 +11,9 @@ import './ProofScale.css';
 
 export default function SceneWipe({ children, className = '', dark = true, tone = '#000', label, id }) {
   const ref = useRef(null);
-  const reduce = useReducedMotion();
+  const r0 = useReducedMotion();
+  const [reduce, setReduce] = useState(false); // read after mount, so the first render matches the server's HTML
+  useEffect(() => setReduce(!!r0), [r0]);
   const [wide, setWide] = useState(true);
   useEffect(() => { const m = matchMedia('(min-width: 901px)'); const f = () => setWide(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.1'] });

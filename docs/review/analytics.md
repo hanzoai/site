@@ -3,6 +3,7 @@
 Reviewed 7 Nov 2026, ~17:00, walked moving at 1470x801 and 375x812 (wheel scroll 400px / 700ms, rest pairs, hover + press on 49 controls, JS off, 3 lone reloads per size for hydration).
 
 Verdict: 7.5/10
+Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). The report cards now play their pictures one at a time while seen (one round, then rest), every hover answers without a hover media flag, the privacy link fills, reduced motion no longer breaks hydration (funnel build here; shared KeynoteStage 3 lines), and copy is restored to one text run per line. copycheck missing 0 of 148; taste/unique OK; 0 console errors (also under reduced motion), no overflow at 1470 and 375. Usable: the script section shows the tag, the npm line and the API, with Hanzo's docs links. Left alone: the phone page is long (14.5k px).
 
 First complaint: "This is the Base page with a different dashboard in the window: same headline on the left, same browser frame on the right, same little pause button and mono line under the ask. It's alive and it's clean, but Analytics needs its own moment, not the cloud template."
 

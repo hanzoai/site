@@ -16,7 +16,7 @@
      6. Proof: figures already in the copy, counting once (enters by stretch-scroll). 7. The Band, with the five ticks.
    Deck greys; colour only through Koma's film. Every word and line of code is Hanzo's. */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView } from 'motion/react';
+import { motion, AnimatePresence, useInView, useScroll, useMotionValueEvent } from 'motion/react';
 import { useDemo } from '../v2/AppDemo';
 import { EASE, Copy, useCalm } from '../ui';
 import { More, Film, Cta, Band, Stat } from '../kit';
@@ -257,12 +257,12 @@ function hl(line) {
   const out = [];
   let last = 0;
   line.replace(TOK, (m, c, s, k, n, i) => {
-    if (i > last) out.push(line.slice(last, i));
+    if (i > last) out.push(<span key={'p' + i}>{line.slice(last, i)}</span>); // plain runs are spans too (one text run each)
     out.push(<span key={i} className={c ? 'c' : s ? 's' : k ? 'k' : 'n'}>{m}</span>);
     last = i + m.length;
     return m;
   });
-  out.push(line.slice(last));
+  if (last < line.length) out.push(<span key="end">{line.slice(last)}</span>);
   return out;
 }
 
@@ -289,10 +289,38 @@ function Script() {
   }, [va, vb]);
 
   const jump = (i) => {
-    setView(i);
+    setView(i); setTyp({ j: 0, k: 0 });
     const c = code.current, row = rows.current[chunks[i][0]];
     if (c && row) c.scrollTo({ top: Math.max(0, row.offsetTop - 18), behavior: calm ? 'auto' : 'smooth' });
   };
+
+  // the scene follows the scroll (no pin): as the file passes, each step takes the stage in turn; a click holds a
+  // step until the scroll crosses into the next one
+  const ed = useRef(null);
+  const last = useRef(0);
+  const { scrollYProgress } = useScroll({ target: ed, offset: ['start 0.7', 'end 0.4'] });
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    const i = Math.max(0, Math.min(LAST, Math.floor(p * STEPS.length)));
+    if (i !== last.current) { last.current = i; jump(i); }
+  });
+
+  // the step's requests write themselves under the code, then its answer lands (the server HTML has them whole)
+  const seen = useInView(ed, { once: true, amount: 0.3 });
+  const [typ, setTyp] = useState({ j: 99, k: 0 });
+  useEffect(() => { if (!still()) setTyp({ j: 0, k: 0 }); }, []);
+  useEffect(() => {
+    if (!seen || calm) { if (calm) setTyp({ j: 99, k: 0 }); return; }
+    const calls = CALLS[view];
+    let j = 0, k = 0, t;
+    const tick = () => {
+      k += 3;
+      if (k >= split(calls[j])[1].length) { j += 1; k = 0; if (j >= calls.length) { setTyp({ j: 99, k: 0 }); return; } setTyp({ j, k }); t = setTimeout(tick, 160); return; }
+      setTyp({ j, k }); t = setTimeout(tick, 14);
+    };
+    t = setTimeout(tick, 220);
+    return () => clearTimeout(t);
+  }, [view, seen, calm]);
+  const typed = typ.j >= 99;
 
   // phones: the index is a row of pills; the chosen step slides into its view (the row scrolls, never the page)
   const index = useRef(null);
@@ -309,7 +337,7 @@ function Script() {
         <p className="v2a-lede agt-sc-lede agx-v" style={ven(1, 90)}>Every step is one request. This file makes them all, as it was run against production.</p>
         <p className="v2a-folio agx-v" style={ven(2, 90)}>Headless</p>
       </div>
-      <div className="v2a-wrap agt-ed">
+      <div className="v2a-wrap agt-ed" ref={ed}>
         <ol className="agt-index" ref={index} aria-label="The five steps in the script">
           {STEPS.map(([t], i) => (
             <li key={t} className={'agx-v' + (view === i ? ' on' : '')} style={ven(i + 3, 70)}>
@@ -342,9 +370,9 @@ function Script() {
           {/* each step's requests and its answer, stacked in one cell sized by the tallest */}
           <div className="agt-resp" id="agt-resp">
             {STEPS.map(([t, d], i) => (
-              <div key={t} className={'agt-resp-b' + (view === i ? ' on' : '')} aria-hidden={view !== i}>
+              <div key={t} className={'agt-resp-b' + (view === i ? ' on' : '') + (view !== i || typed ? ' ok' : '')} aria-hidden={view !== i}>
                 <div className="agt-out x-mono">
-                  {CALLS[i].map((c, j) => <Req key={j} c={c} />)}
+                  {CALLS[i].map((c, j) => <Req key={j} c={c} shown={view !== i || typed || j < typ.j ? undefined : j > typ.j ? 0 : typ.k} caret={view === i && !typed && j === typ.j} />)}
                 </div>
                 <p className="agt-resp-a">{d}</p>
               </div>

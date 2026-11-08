@@ -146,7 +146,7 @@
 ]
 },
 {
-"p": "Each system's frontier run, else its v1 run, else its fill run: the three put the same prompts to a model. A run cost is the input and output tokens the run records at the price list's rate for its own model id, the router's included, at list prices, Nov 6, 2026; a dash is a run that records no tokens, a model the list does not price, or a list that could not be read."
+"p": "Each system's frontier run, else its v1 run, else its fill run: the three put the same prompts to a model. A run cost is the input and output tokens the run records at the price list's rate for its own model id, the router's included, at list prices, Nov 7, 2026; a dash is a run that records no tokens, a model the list does not price, or a list that could not be read."
 },
 {
 "h2": "What this does not establish"

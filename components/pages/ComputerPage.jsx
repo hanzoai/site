@@ -112,6 +112,12 @@ function Machine() {
     const t = setTimeout(() => setAtS((v) => (v + 1) % SLIDES.length), DWELL);
     return () => clearTimeout(t);
   }, [at, mine, live]);
+  // a pick holds its step while the visitor reads it, then the demo carries on by itself (never a frozen hero)
+  useEffect(() => {
+    if (!mine) return;
+    const t = setTimeout(() => setMine(false), DWELL * 3);
+    return () => clearTimeout(t);
+  }, [mine, at]);
   const key = (e, i) => {
     const n = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!n) return;
     const j = (i + n + SLIDES.length) % SLIDES.length; pick(j);
