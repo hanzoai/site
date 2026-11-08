@@ -396,3 +396,5 @@
 /* ---------- dark mode (8 Nov, docs/DARK-MODE.md): the Keynote deck pins its tokens light on .kn, so this page points
    them at Hanzo's dark tokens; every light value above is unchanged ---------- */
 html:not(.light) .dn { --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); --body: var(--muted-foreground); --quiet: var(--text-tertiary); --hair: var(--border); background: var(--background); }
+/* dark: the latency bars are drawn in Hanzo's muted grey, not white */
+html:not(.light) .dn .dn-par-l i b { background: var(--muted-foreground); }
