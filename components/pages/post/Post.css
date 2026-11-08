@@ -148,6 +148,8 @@ html:not(.js) .xbg-gist-track i { transform: none; }
 /* Game of Life */
 .xbg-life { margin: 0; display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 17px 44px; align-items: start; }
 .xbg-board { display: grid; gap: 2px; padding: 10.5px; border-radius: 24px; background: var(--room-surface); touch-action: none; }
+/* the board is one control painted by drag, not 160 tap targets: the site's coarse-pointer 44px floor would stretch its cells into stripes */
+.xbg-board { --tap-target: 0px; }
 .xbg-board button { aspect-ratio: 1; width: 100%; min-width: 0; min-height: 0; height: auto; padding: 0; border: 0; border-radius: 3px; background: var(--hz-100); cursor: crosshair; transition: background-color 150ms cubic-bezier(0, 0, .2, 1), transform 150ms cubic-bezier(.4, 0, .2, 1); }
 @media (hover: hover) { .xbg-board button:hover { background: var(--hz-200); } }
 .xbg-board button[data-on='1'] { background: var(--ink2); transform: scale(.94); }

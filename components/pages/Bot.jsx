@@ -130,7 +130,7 @@ function Org() {
             ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
             : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>}
         </button>
-        <span className="bt-ws"><b>Hanzo Bot · AI teammates</b><span className="bt-ch-name"># <span>{w.channel}</span></span><span className="bt-cat">{w.category}</span></span>
+        <span className="bt-ws"><b><span>Hanzo Bot · AI teammates</span></b><span className="bt-ch-name"># <span>{w.channel}</span></span><span className="bt-cat">{w.category}</span></span>
         <span className="bt-uc x-mono"><i className={live ? 'on' : ''} />USE CASE {w.num}</span>
       </div>
       <div className="bt-chart" ref={chart}>
@@ -265,7 +265,7 @@ function Case({ w }) {
         <div className="bt-line"><Face k="p" size={36} id={w.primary.id} /><div><p className="bt-meta"><b>{w.primary.name}</b> <span>{w.primary.role} · {w.primary.time}</span></p><p>{w.primary.reply}</p><p className="bt-art x-mono">{w.primary.codeOrArtifact}</p></div></div>
         <div className="bt-line"><Face k="v" size={36} id={w.verifier.id} /><div><p className="bt-meta"><b>{w.verifier.name}</b> <span>{w.verifier.role} · {w.verifier.time}</span></p><span className="bt-badge x-mono">{w.verifier.badge}</span><p>{w.verifier.reply}</p></div></div>
       </div>
-      <p className="bt-case-h x-mono">AUTOMATED WORKFLOW <span>{w.steps.length} / {w.steps.length} steps complete</span></p>
+      <p className="bt-case-h x-mono"><span className="bt-case-k">AUTOMATED WORKFLOW</span> <span>{w.steps.length} / {w.steps.length} steps complete</span></p>
       <ol className="bt-steps">{w.steps.map((s) => <li key={s}><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>{s}</li>)}</ol>
       <p className="bt-case-h x-mono">TOOLS &amp; SANDBOXES USED</p>
       <ul className="bt-chips">{w.tools.map((t) => <li key={t}>{t}</li>)}</ul>
@@ -315,7 +315,7 @@ function Sandbox({ on }) {
   return (
     <div className={'bt-vis bt-box' + (on ? ' on' : '')} aria-hidden="true">
       <div className="bt-win">
-        <div className="bt-win-bar"><i /><i /><i /><span className="x-mono">sandbox</span><Face k="p" size={26} id="mark" /></div>
+        <div className="bt-win-bar"><i /><i /><i /><span className="x-mono">sandbox · ubuntu-24.04</span><Face k="p" size={26} id="mark" /></div>
         <div className="bt-win-body">
           <div className="bt-br">
             <span className="bt-url x-mono">hanzo.ai/pricing</span>
@@ -326,8 +326,9 @@ function Sandbox({ on }) {
           </div>
           <div className="bt-term x-mono">
             <span className="bt-tl"><b>$</b>npm install -g @hanzo/bot</span>
-            <span className="bt-tl"><b>$</b>hanzo-bot onboard --install-daemon</span>
+            <span className="bt-tl"><b>$</b><span>hanzo-bot onboard --install-daemon</span></span>
             <span className="bt-tl"><b>$</b>hanzo bot runs list</span>
+            <span className="bt-tl bt-tl-one">$ hanzo-bot run --browser --channel #hanzo-marketing</span>
             <span className="bt-tl o">#hanzo-marketing · Weekdays around 9:00 AM</span>
             <span className="bt-tl"><b>$</b><i className="bt-caret" /></span>
           </div>
@@ -386,6 +387,7 @@ function Thread({ on }) {
   return (
     <div className="bt-vis bt-app">
       <aside className="bt-side">
+        <p className="bt-app-t x-mono">hanzo.bot · Web App</p>
         <div className="bt-search">Search</div>
         <p className="bt-side-h">Teammates <span className="x-mono"><i className="bt-live" aria-hidden="true" />{desOn ? '2 working' : '1 working'}</span></p>
         <ul className="bt-mates">
@@ -395,7 +397,7 @@ function Thread({ on }) {
         </ul>
       </aside>
       <div className="bt-main">
-        <div className="bt-main-h"><Face k="p" size={26} id="mark" /><b>Mark · Marketing</b><span className="bt-plus x-mono">+<span>1</span></span></div>
+        <div className="bt-main-h"><Face k="p" size={26} id="mark" /><b><span>Mark · Marketing</span></b><span className="bt-plus x-mono">+<span>1</span></span></div>
         <div className="bt-tlog">
           <Msg on={at(0)} cls="you"><p>Write the launch post for crypto top-ups, and ask Des for a header.</p></Msg>
           <Msg on={at(1)} face="mark"><p>Drafted. Agents can now top up in USDC or USDT over the API and pay as they go.</p></Msg>
@@ -403,7 +405,8 @@ function Thread({ on }) {
           <Msg on={at(3)} cls="from"><p className="bt-from">Message from Des · Designer</p><div className="bt-quote"><b>Des · Designer</b><p>Top up in USDC or USDT.</p><span className="bt-file x-mono">header.mp4</span></div></Msg>
           <Msg on={at(4)} face="mark"><p>Des sent the header. Here is /pricing with the new line.</p><div className="bt-card"><span className="x-mono">hanzo.ai/pricing</span><p>Agents can top up in USDC or USDT over the API.</p><span className="bt-file x-mono">pricing.png</span></div></Msg>
           <Msg on={at(5)} cls="ask">
-            <span className="bt-answered x-mono" style={{ opacity: pick ? 1 : 0 }}>Answered</span>
+            {/* hanzo.ai's ask card: 'Waiting for you' until you pick, then 'Answered'; both share one cell, so nothing moves */}
+            <span className={'bt-answered x-mono' + (pick ? '' : ' wait')}><span hidden={!!pick || undefined}>Waiting for you</span><span hidden={!pick || undefined}>Answered</span></span>
             <p>Should /pricing include that sentence about crypto top-ups?</p>
             <div className="bt-yn">
               <button type="button" data-sound="tick" className={pick === 'yes' ? 'on' : ''} onClick={() => { setPick('yes'); if (b < 7) setB(7); }} tabIndex={at(5) ? 0 : -1}>Yes, add it</button>
@@ -423,18 +426,25 @@ function Routines({ on }) {
   return (
     <div className={'bt-vis bt-rt' + (on ? ' on' : '')}>
       <div className="bt-rt-card">
-        <div className="bt-rt-top"><Face k="p" size={40} id="mark" /><b>Mark · Marketing</b></div>
+        <div className="bt-rt-top"><Face k="p" size={40} id="mark" /><b><span>Mark · Marketing</span></b></div>
         <div className="bt-rt-tabs" aria-hidden="true"><span>Details</span><span>Library</span><span>Computer</span><span className="on">Routines</span></div>
         <ul>
           {list.map(([t, wh], i) => (
             <li key={t} style={{ '--i': i }}>
-              <span><b>{t}</b><span className="x-mono">{wh}</span></span>
+              <span><b><span>{t}</span></b><span className="x-mono">{wh}</span></span>
               <button type="button" role="switch" aria-checked={sw[i]} aria-label={t} className={'bt-sw' + (sw[i] ? ' on' : '')} onClick={() => setSw(sw.map((v, k) => (k === i ? !v : v)))}><i /></button>
             </li>
           ))}
         </ul>
         <span className="bt-rt-new">+ New routine</span>
       </div>
+      {/* hanzo.ai's phone beside the web app: the same bot, synced (live /bot, 8 Nov) */}
+      <div className="bt-rt-ph">
+        <span className="bt-rt-ph-d"><span className="x-mono">9:41</span><span>iPhone · hanzo.bot Mobile</span></span>
+        <span className="bt-rt-ph-w"><Face k="p" size={24} id="mark" /><span>Mark · Mobile App</span></span>
+        <span className="bt-rt-ph-s x-mono"><i aria-hidden="true" /><span>Synced live with Web</span></span>
+      </div>
+      <p className="bt-rt-ph-c">Tap any teammate to hand off from phone or web</p>
     </div>
   );
 }
@@ -637,7 +647,7 @@ function InstallStage() {
           <ol className="bt-start-r">
             {STEPS3.map(([t, d], i) => (
               <li key={t} className={(lit(i) ? 'lit' : '') + (k < 3 && i === step ? ' now' : '')}>
-                <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span><b>{t}</b><span>{d}</span>
+                <span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span><b><span>{t}</span></b><span>{d}</span>
               </li>
             ))}
           </ol>
@@ -797,7 +807,7 @@ function Pricing() {
           <dl className="bt-feats">
             {FEATS.map(([t, d], i) => (
               <div key={t} className={hl === i ? 'on' : ''} onMouseEnter={() => { setHl(i); setHold(true); }} onMouseLeave={() => setHold(false)}>
-                <dt><span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span>{t}</dt><dd>{d}</dd>
+                <dt><span className="x-mono av-num">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></dt><dd>{d}</dd>
               </div>
             ))}
           </dl>

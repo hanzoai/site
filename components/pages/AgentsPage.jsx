@@ -257,12 +257,12 @@ function hl(line) {
   const out = [];
   let last = 0;
   line.replace(TOK, (m, c, s, k, n, i) => {
-    if (i > last) out.push(line.slice(last, i));
+    if (i > last) out.push(<span key={'p' + i}>{line.slice(last, i)}</span>); // plain runs are spans too (one text run each)
     out.push(<span key={i} className={c ? 'c' : s ? 's' : k ? 'k' : 'n'}>{m}</span>);
     last = i + m.length;
     return m;
   });
-  out.push(line.slice(last));
+  if (last < line.length) out.push(<span key="end">{line.slice(last)}</span>);
   return out;
 }
 

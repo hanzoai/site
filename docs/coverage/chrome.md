@@ -82,7 +82,7 @@ Done here: pause/replay, inspector tabs, policy radios, try chips and pills pres
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit
 
-Done here: signature agent run (time and state: steps, panes, the channel tab filling), Stage settle and the black room opening (scroll), pinned chapters (scroll), the handoff rail walking Chrome → Team → Slack → Bot with the scroll (or jumping to the product you point at), the window's pointer tilt (at most 1.6°, fine pointers only, through the shared `useTilt`, no glow), the capability renders crossfading on hover/focus (state), the policy pill at 300 ms ease. variety.py: 4 counted techniques (tilt, layoutId, useScroll, clipPath), 0 Rise. The run plays once and rests; reduced motion shows the finished run. The run's end plays the kit's faint 'done' chime (`play('done')`); policy radios and try chips carry `data-sound="tick"`; inspector tabs tick through the kit's `[role=tab]` rule.
+Done here: signature agent run (time and state: steps, panes, the channel tab filling), Stage settle and the black room opening (scroll), pinned chapters (scroll), the handoff rail walking Chrome → Team → Slack → Bot with the scroll (or jumping to the product you point at), the window's pointer tilt (at most 1.6°, fine pointers only, through the shared `useTilt`, no glow), the capability renders crossfading on hover/focus (state), the policy pill at 300 ms ease. variety.py: 4 counted techniques (tilt, layoutId, useScroll, clipPath), 0 Rise. The run plays once and rests; reduced motion shows the finished run. Once it rests the window stays alive (8 Nov): the CDP dot breathes and the side panel's field waits at a blinking caret; the Paste prompt also waits at a caret, so no screen is still. Capability rows' padding now eases with the row (no 24px jump of the rows below). The run's end plays the kit's faint 'done' chime (`play('done')`); policy radios and try chips carry `data-sound="tick"`; inspector tabs tick through the kit's `[role=tab]` rule.
 
 ## 10. Media
 - [x] `Film` and `Pic` only; sizes and posters set (n/a: no media)
@@ -147,7 +147,7 @@ Done here: the only copy is the agent prompt (copies exactly what is shown); the
 - [x] A failed submit keeps its values and shows no success (n/a: no form)
 - [x] A thrown island does not blank the page
 
-Done here: nothing is fetched; the tester runs in the page; an empty address shows no verdict rather than a false one; console errors none.
+Done here: nothing is fetched; the tester runs in the page; an empty address shows no verdict rather than a false one; console errors none, also under reduced motion: the hero window's tilt style is now the same on server and client (reduced motion drops only the pointer handlers), which fixed a hydration mismatch (8 Nov).
 
 ## 18. Measurement and handover
 - [x] `data-cta` on every primary; events only through `lib/track.js`

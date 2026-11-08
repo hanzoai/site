@@ -71,7 +71,7 @@ function Open({ st }) {
                 <a href={it.url} target="_blank" rel="noopener noreferrer" tabIndex={i === 0 && !arrived ? -1 : undefined}>
                   <span className="xbo-dot" aria-hidden="true" />
                   <span className="xbo-iss-t">{it.title}</span>
-                  <span className="xbo-iss-r x-mono">{`${it.repo}#${it.number}`}{it.tier && <em>{it.tier}</em>}</span>
+                  <span className="xbo-iss-r x-mono"><span>{`${it.repo}#${it.number}`}</span>{it.tier && <em>{it.tier}</em>}</span>
                 </a>
               </div>
             </li>
@@ -297,8 +297,8 @@ function Standings() {
             <li key={who} style={{ '--k': i }}>
               <span className="xbo-pos x-mono">{`#${i + 1}`}</span>
               <span className="xbo-who">
-                <b>{who}</b>
-                <span className="xbo-role">{role}{up && <em className="xbo-up">{up}</em>}</span>
+                <b><span>{who}</span></b>
+                <span className="xbo-role"><span>{role}</span>{up && <em className="xbo-up">{up}</em>}</span>
                 <span className="xbo-line x-mono">{line}</span>
               </span>
               <span className="xbo-pts xp-fig">{n(pts)}<small> pts</small></span>
@@ -339,7 +339,7 @@ function Lane({ p, i, org }) {
   return (
     <li className="xbo-lane">
       <span className="xbo-org-n x-mono">{`#${i + 1}`}</span>
-      <span className="xbo-org-w"><b>{h}</b><span className="xbo-badge">{badge}</span><span className="xbo-req x-mono">{req}</span></span>
+      <span className="xbo-org-w"><b><span>{h}</span></b><span className="xbo-badge">{badge}</span><span className="xbo-req x-mono">{req}</span></span>
       <span className="xbo-org-bar" aria-hidden="true"><motion.i style={{ scaleX, width: (to * 100).toFixed(1) + '%' }} /></span>
       <span className="xbo-org-t x-mono">{n(t)} tokens</span>
     </li>
@@ -454,7 +454,7 @@ function Take({ st }) {
                       <button type="button" aria-pressed={pick === i} data-sound="tick" onClick={() => choose(i)}>
                         <span className="xbo-dot" aria-hidden="true" />
                         <span className="xbo-q-t">{x.title}</span>
-                        <span className="xbo-q-r x-mono">{`${x.repo}#${x.number}`}{x.tier && <em>{x.tier}</em>}</span>
+                        <span className="xbo-q-r x-mono"><span>{`${x.repo}#${x.number}`}</span>{x.tier && <em>{x.tier}</em>}</span>
                       </button>
                     </li>
                   ))}

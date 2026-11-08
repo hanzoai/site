@@ -17,7 +17,8 @@ async function text(url) {
     document.querySelectorAll('details').forEach((d) => (d.open = true));
     for (let y = 0; y < document.documentElement.scrollHeight; y += 700) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 120)); }
   });
-  await new Promise((r) => setTimeout(r, 800));
+  // hanzo.ai counts its figures up from zero (prices, ×-faster, commits per org): read once they have landed, not mid-count
+  await new Promise((r) => setTimeout(r, 6000));
   // textContent (not innerText) so hidden tabs, accordions and visually-hidden copy still count
   const t = await p.evaluate(() => {
     const main = document.querySelector('main') || document.body;

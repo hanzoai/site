@@ -99,6 +99,14 @@
 "title": "Get there first — Hanzo AI",
 "description": "Early access to Dev, Studio, Kai, Enso and Zen."
 },
+"/beta/apply": {
+"title": "Beta access — Hanzo AI",
+"description": "New releases before they ship."
+},
+"/beta/research": {
+"title": "Research access — Hanzo AI",
+"description": "Research models and checkpoints to evaluate before release."
+},
 "/billing": {
 "title": "Hanzo Billing — Hanzo AI",
 "description": "Recurring subscriptions, usage-based pricing, prorated upgrades, dunning, and tax."

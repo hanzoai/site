@@ -15,7 +15,7 @@ Tick what applies. Strike the rest as `n/a: reason`. Fill each `Done here:` line
 - [x] No dead or self-looping button; prices from `lib/plans.js` (plan prices are Hanzo's four plans as printed; `lib/plans.js` is not on main yet)
 - [x] Open copy questions for James listed, none decided
 
-Done here: the top comment carries Persona, Goal, CTA, `Metric: signup_start`, Signature and Beyond; the header's "Try Hanzo" is the one solid fill (SYSTEM.md §5), the page's hero and close asks with the same words are quiet kit Ctas; the audit counts 0 page-owned solid buttons in the first 1470×801 view.
+Done here: the top comment carries Persona, Goal, CTA, `Metric: signup_start`, Signature and Beyond; the header's "Try Hanzo" is the one solid fill (SYSTEM.md §5), the page's hero and close asks with the same words are quiet kit Ctas; the audit counts 0 page-owned solid buttons in the first 1470×801 view. (8 Nov) The hero "Try Hanzo" is the solid fill while it is on screen (header goes quiet, also on phones), so the first screen has exactly one solid ask.
 
 ## 2. Information architecture and navigation
 - [x] One `<main id="main">`; skip link reaches it (the layout's, untouched)
@@ -75,7 +75,7 @@ Done here: taste OK; colours are `--bz-*` tokens plus #000000, #fafafa, #fdfdfd,
 - [x] Inputs 16px or larger; no bare `:hover`
 - [x] Forks this page deleted: listed below
 
-Done here: pause, chips, the close row, the Documentation / For Developers / Custom Solution rows (fill #f2f2f2 and the link steps 4px, measured transparent → rgb(242,242,242)) and the Growth card have a hover answer inside `@media (hover: hover)`; the hero "Documentation →" draws an underline in from the left and steps its arrow 4px; press scale .97 and a 2px focus ring; the two range inputs have labels, 44px hit areas and `aria-valuetext`.
+Done here: pause, chips, the close row, the Documentation / For Developers / Custom Solution rows (fill #f2f2f2 and the link steps 4px, measured transparent → rgb(242,242,242)) and the Growth card have a hover answer inside `@media (hover: hover)`; the hero "Documentation →" draws an underline in from the left and steps its arrow 4px; press scale .97 and a 2px focus ring; the two range inputs have labels, 44px hit areas and `aria-valuetext`. (8 Nov) The inline "Captable, Inc." link answers hover (underline thickens and steps down).
 
 ## 9. Motion and interaction
 - [x] One signature, at most 3 supporting techniques, at most 2 fade-ups

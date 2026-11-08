@@ -153,3 +153,7 @@
 
 @media (prefers-reduced-motion: reduce) { .xbt-sk.run i, .xbt-sk.run b { animation: none; } .xbt-tiles, .xbt-tiles > li, .xbt-tiles > li > div { transform: none !important; } }
 [data-off] .xbt-sk i, [data-off] .xbt-sk b { animation-play-state: paused; }
+
+/* Hanzo's own pass letters (A, B, C), as on hanzo.ai/beta: a small key in the card's top-left corner */
+.xbt-key { position: absolute; top: clamp(20px, 2.4vw, 32px); left: clamp(20px, 2.4vw, 32px); z-index: 2; display: grid; place-items: center; min-width: 28px; height: 28px; padding: 0 6px; border-radius: 8px; border: 1px solid rgba(0, 0, 0, .14); font-size: 12px; color: var(--hz-950); pointer-events: none; }
+.xbt-pass.dark .xbt-key { border-color: rgba(255, 255, 255, .3); color: #f5f5f7; }

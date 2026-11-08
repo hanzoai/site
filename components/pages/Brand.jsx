@@ -143,6 +143,8 @@ function Hero() {
         <div className="xbr-hero-c">
           {/* CSS cut-in from first paint at 0.1 s (MaskLines' base 0.5 s minus 0.4) */}
           <MaskLines as="h1" id="xbr-h1" now delay={-0.4} stagger={0.06} lines={['Hanzo Brand', 'Guidelines.']} className="vc-display" />
+          {/* Hanzo's own label for this page, set under the headline (never a kicker over it) */}
+          <p className="vc-kick xbr-kick">Design System</p>
           {/* visible in the server HTML: a transform-only CSS rise, never an opacity gate */}
           <div className="xbr-hero-f">
             <p className="vc-lede">How to build interfaces that look like the rest of Hanzo across our platform and products.</p>
@@ -174,6 +176,7 @@ function Principles() {
   return (
     <section className="xbr-pr" aria-label="Design Principles" data-enter="pull-back">
       <div className="vc-wrap xbr-pb">
+        <p className="vc-kick">Design Principles</p>
         {PRINCIPLES.map(([t, d], i) => (
           <div className={'xbr-pr-row r' + i} key={t}>
             <div className="xbr-pr-w">
@@ -392,7 +395,7 @@ function Assets() {
           </div>
           <a href="/press/hanzo-press-kit.zip" download className="xbr-dl-a" data-thumb="Download Assets" data-cta="brand.assets">
             <span className="xbr-dl-i" aria-hidden="true"><svg viewBox="0 0 16 16" width="20" height="20"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-            Logos and brand assets (ZIP)
+            <span>Logos and brand assets (ZIP)</span>
           </a>
         </div>
         <div className="xbr-help">

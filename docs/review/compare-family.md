@@ -3,6 +3,7 @@
 Reviewed: main, page files at `8c3aede`. The family has one member, `/compare/model-routing`, walked moving at 1470×801 and 375×812 (videos, hovers, presses, idle checks, JS-off and reduced-motion checks; the once-per-visit loader skipped).
 
 Verdict: 7/10
+Ready: 8 Nov, held up next to /api and /affiliate (James's new bar, no score). Walked /compare/model-routing (the one member): the race sits above the button on phones and stamps read at 13px; this pass keeps the first screen quietly alive (the race reads the routers in turn with a blinking read cursor while in view, a hover holds one) and lets our own "we ran this" stamp breathe; the verdict words ("not measured by us") sit in plain text spans so every live line reads word for word. copycheck missing 0 of 12; taste/unique OK; 0 console errors (also reduced motion), no overflow at 1470 and 375 (the ledger scrolls inside its own wrap on phones). Fix 3 ("Models reachable", "Only where they differ") left as is: copy is frozen. Shared, not this page: the phone Ask bar floats over the bottom edge.
 
 First complaint: "It's honest and it's calm, I like that. But once the numbers finish racing, the first screen just stops, and on my phone the race is below the button. And the table is a lot of small grey text."
 

@@ -149,17 +149,24 @@ function useOneSolidOnPhone() {
     const H = document.documentElement;
     const mq = matchMedia('(max-width: 700px)');
     const el = document.querySelector('main.xab [data-cta="about.hero"]');
+    // the closing band's solid "Explore Open Roles": while it is on screen the header's ask is quiet at every width
+    const band = document.querySelector('main.xab .x-band [data-cta="about.band"], main.xab .x-band .x-btn, main.xab .x-band a');
     if (!el) return;
-    let mine = false, vis = false;
+    let mine = false, vis = false, inBand = false, t = 0;
     const apply = () => {
-      if (mq.matches && vis) { H.dataset.ask = 'quiet'; mine = true; }
+      if ((mq.matches && vis) || inBand) { H.dataset.ask = 'quiet'; mine = true; }
       else if (mine) { delete H.dataset.ask; mine = false; }
     };
     const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; apply(); });
     io.observe(el);
+    const bo = new IntersectionObserver(([e]) => { inBand = e.isIntersecting; apply(); });
+    if (band) bo.observe(band);
+    // the shell rewrites data-ask about 80 ms after the scroll settles on desktop; say it again after it while the band shows
+    const onScroll = () => { clearTimeout(t); if (inBand) t = setTimeout(apply, 160); };
+    addEventListener('scroll', onScroll, { passive: true });
     const timers = [300, 1400].map((ms) => setTimeout(apply, ms)); // after the shell's own first pass
     mq.addEventListener('change', apply);
-    return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
+    return () => { io.disconnect(); bo.disconnect(); clearTimeout(t); removeEventListener('scroll', onScroll); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
   }, []);
 }
 
@@ -477,13 +484,13 @@ function Founders({ portraits = [] }) {
 /* ---------- 5. the Zen of Hanzo: a pinned scene (AboutZen.jsx) ---------- */
 
 /* ---------- 6. the dark room: open source, deterministic safety, and the commits as they land ---------- */
-const COMMITS = [
-  ['hanzoai/ui', 'Merge pull request \u0023299 from hanzoai/fix/footer-signature-no-crop', 'b44e122', 'Nov 6, 06:04 UTC', 'https://github.com/hanzoai/ui/commit/b44e1221957bb7e96d3c82c509109bb98300c92a'],
-  ['hanzoai/desktop', 'chore(desktop): finalize 1.1.53 skin, guest/LSA integration, and UI primitive repairs', 'ddfcd04', 'Nov 6, 05:53 UTC', 'https://github.com/hanzoai/desktop/commit/ddfcd04565afa1b27a6480fd7fc2a9de0ec84e94'],
-  ['hanzoai/desktop', 'Update css', 'e749213', 'Nov 6, 05:39 UTC', 'https://github.com/hanzoai/desktop/commit/e7492134d79dc3c7c1def579a2305cba7c8092f5'],
-  ['hanzoai/desktop', "feat(desktop): hanzo.ai's app stack, macOS window controls, and the window's own skin", '421d4f2', 'Nov 6, 05:39 UTC', 'https://github.com/hanzoai/desktop/commit/421d4f233bd6516367293b496c6000c3a2219cde'],
-  ['hanzoai/ui', 'fix(footer): keep full Hanzo wordmark and punctuation visible at responsive widths', '72c079f', 'Nov 6, 05:20 UTC', 'https://github.com/hanzoai/ui/commit/72c079f77bf1683373a719f575f3541006c72457'],
-  ['hanzoai/homebrew-tap', 'hanzo 8.5.910', '098a650', 'Nov 6, 05:10 UTC', 'https://github.com/hanzoai/homebrew-tap/commit/098a650e94d36cbf48af446d647845ff90686929'],
+const COMMITS = [ // the six hanzo.ai/about shows (8 Nov), word for word
+  ['hanzoai/build', 'feat(customize): move Bots to its own left-sidebar section under Agents (v0.2.112)', '59d85b4', 'Nov 7, 08:12 UTC', 'https://github.com/hanzoai/build/commit/59d85b4ee9e194dee6f6f724f6ac1bae6b0115c1'],
+  ['hanzoai/app', 'Merge pull request \u002338 from hanzoai/bots', '87c232f', 'Nov 7, 08:03 UTC', 'https://github.com/hanzoai/app/commit/87c232fe181ca6d01cbf032d25e2c0c73da36c6d'],
+  ['hanzoai/personas', 'Merge pull request \u00232 from hanzoai/names-ed-mo', '9d67b12', 'Nov 7, 07:59 UTC', 'https://github.com/hanzoai/personas/commit/9d67b12ddd54b481b5ad411e89a137011862531f'],
+  ['hanzoai/personas', "personas 1.2.1: Ed, Mo and Art by the owner's names", '8a182bb', 'Nov 7, 07:58 UTC', 'https://github.com/hanzoai/personas/commit/8a182bb5c58efe34335f5c2ccab7494ed0ea2cd1'],
+  ['hanzoai/app', 'agents: the twelve leads are Team, the other 22 seats run 24/7 as Bots (0.3.41)', '7b01c57', 'Nov 7, 07:57 UTC', 'https://github.com/hanzoai/app/commit/7b01c57d1ec617efb318bf25a3152087dce032c5'],
+  ['hanzoai/app', 'Merge pull request \u002337 from hanzoai/seats', '3979848', 'Nov 7, 07:47 UTC', 'https://github.com/hanzoai/app/commit/3979848f8a8f82bae2dfef77f59ec18daba85a1e'],
 ];
 
 const PANES = [
@@ -500,7 +507,7 @@ function Log() {
     <div className={'xab-log' + (seen ? ' in' : '')} ref={ref}>
       <div className="xab-log-h">
         <h3 className="v2s-title">Proof of Work: Recent Commits by Our Core Team</h3>
-        <p><span className="xab-live" aria-hidden="true" />Public Activity <b>1700+ repositories</b> <A to="https://github.com/hanzoai">github.com/hanzoai</A></p>
+        <p><span className="xab-live" aria-hidden="true" /><span>Public Activity</span> <span className="xab-log-n">1700+ repositories</span> <A to="https://github.com/hanzoai">github.com/hanzoai</A></p>
       </div>
       <ul>
         {COMMITS.map(([repo, msg, sha, when, to], i) => (
@@ -508,7 +515,7 @@ function Log() {
             <span className="xab-repo">{repo}</span>
             <A to={to} className="xab-msg">{msg}</A>
             <code>{sha}</code>
-            <time>{when}</time>
+            <span className="xab-when">{when}</span>
           </li>
         ))}
       </ul>
@@ -526,7 +533,7 @@ function Open() {
     <section className="v2s-sec xab-open" data-room="dark" aria-labelledby="xab-open-h">
       <div className="v2s-wrap">
         <div className="v2s-head">
-          <h2 id="xab-open-h" className="v2s-display xab-open-h">Verifiable code. <span className="xab-dim">Calibrated decisions.</span></h2>
+          <h2 id="xab-open-h" className="v2s-display xab-open-h"><span>Verifiable code.</span> <span className="xab-dim">Calibrated decisions.</span></h2>
           <p className="v2s-cap">Open Source &amp; Deterministic Safety</p>
           <p className="v2s-lede xab-open-l">Opaque black-box platforms ask you to trust what you cannot inspect. Hanzo pairs public source code and open specifications with calibrated decision bounds and full infrastructure sovereignty.</p>
         </div>
@@ -537,7 +544,7 @@ function Open() {
               <TabPanel key={t} id="xab-pane" i={i} value={pane} className="xab-pane">
                 <p className="xab-pk">{k}</p>
                 <p className="v2s-body">{d}</p>
-                <ul>{items.map(([b, s]) => <li key={b}><b>{b}</b> {s}</li>)}</ul>
+                <ul>{items.map(([b, s]) => <li key={b}><span className="xab-pane-k">{b}</span> <span>{s}</span></li>)}</ul>
                 <Link2 to={to}>{l}</Link2>
               </TabPanel>
             ))}
