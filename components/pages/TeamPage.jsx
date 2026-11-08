@@ -8,7 +8,7 @@
    Persona: a team lead choosing where people and agents work together (MASTER 1, founders / buyers).
    Goal: start a team. CTA: "Create your team" (hanzo.team/start). Metric: signup_start (cta_click team.hero).
    Signature: the shared canvas, where named human and agent cursors work one card from report to Done (Zoe reports,
-   Dev takes it and fixes it, Qa verifies and moves it to Done).
+   Dev takes it and fixes it, Sci verifies and moves it to Done).
    Supporting (3): the canvas tilting up and settling on scroll; pinned chapters; masked kinetic lines.
    Beyond: the ten channels open in one fixed frame (channel, crew face, name and role) so you can walk your team's
    channel before you create it; the code session steps by hand with the diff lighting as the decision lands.
@@ -30,10 +30,10 @@ const EASE = [0.16, 1, 0.3, 1];
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Lk = ({ to, children, className = '' }) => <A to={to} className={'x-arrow ' + className}><span>{children}</span><Arrow /></A>;
 const ASK = ['Create your team', 'https://hanzo.team/start'];
-// Hanzo's memoji, drawn as a background over a grey disc with the person's own initial: if it can't load, the disc stands in
-const INI = { data: 'D', vi: 'Z', sci: 'Q', dev: 'D', des: 'D', doc: 'D', su: 'S', sal: 'S', opera: 'O', cyber: 'C', mark: 'M', fin: 'F', law: 'L' };
+// Hanzo's agent portraits (/agents/*.png, as live shows them), drawn over a grey disc with the initial: if one can't load, the disc stands in
+const INI = { data: 'D', vi: 'V', sci: 'S', dev: 'D', des: 'D', doc: 'D', su: 'S', sal: 'S', opera: 'O', cyber: 'C', mark: 'M', fin: 'F', law: 'L' };
 const Face = ({ n, size = 28 }) => (
-  <span className="xtm-face" style={{ width: size, height: size, '--img': `url(https://hanzo.ai/memoji/${n}.svg)` }} data-i={INI[n] || n[0].toUpperCase()} aria-hidden="true" />
+  <span className="xtm-face" style={{ width: size, height: size, '--img': `url(https://hanzo.ai/agents/${n}.png)` }} data-i={INI[n] || n[0].toUpperCase()} aria-hidden="true" />
 );
 // JS off: the hero's words, asks and the canvas show in their final state (the stage keeps no transform)
 const NOJS = { __html: '<style>.xtm-cur{display:none!important}.xtm-hero-r,.xtm-stage-in{opacity:1!important;transform:none!important}.xtm-chap{height:auto!important}.xtm-chap-st{position:static!important;height:auto!important}.xtm-chap-g{display:block!important}.xtm-chap-s{display:grid!important;padding:48px 0}.xtm-chap-s *{opacity:1!important;transform:none!important}.xtm-panels{display:block!important}.xtm-panel{grid-area:auto!important;margin-bottom:12px}.xtm-panel[aria-hidden=true]{visibility:visible!important;display:block!important}</style>' };
@@ -71,6 +71,8 @@ function Cursor({ c, name, tone, agent }) {
 }
 
 const COLS = ['Backlog', 'Doing', 'Done'];
+const CREW = [['vi', 'Vi'], ['opera', 'Opera'], ['mana', 'Mana'], ['dev', 'Dev'], ['des', 'Des'], ['fin', 'Fin'], ['huma', 'Huma'], ['mark', 'Mark'], ['sal', 'Sal'], ['sci', 'Sci'], ['su', 'Su'], ['cyber', 'Cyber']];
+const DMS = [['rev', 'Rev', "You're right that it's a bu..."], ['lang', 'Lang', 'i18n is still stalled becau...'], ['law', 'Law', 'The updated motions are...'], ['mo', 'Mo', "I'm Mo now. I posted a h..."], ['mu', 'Mu', "I'm set up in #hanzo-mus..."], ['data', 'Data', "Today's #hanzo-data upd..."], ['gov', 'Gov', "I'm set up to run the gov ..."]];
 const TASK_TEXT = 'Checkout button fails on mobile Safari when Apple Pay dismisses.';
 
 function Canvas({ ok }) {
@@ -83,6 +85,9 @@ function Canvas({ ok }) {
   const [said, setSaid] = useState(0);
   const [steps, setSteps] = useState(0);
   const zoe = useCursor(40, 30), dev = useCursor(220, 250), qa = useCursor(300, 290);
+  const [view, setView] = useState('board'); // board (#bugfix) → Rev's thread (Revenue & Billing Ops)
+  const [rev, setRev] = useState(0);
+  const thread = useRef(null);
   const [run, setRun] = useState(0); // the story plays once when first seen after the curtain, then rests on Done; Replay plays it again
   const played = useRef(false);
 
@@ -103,7 +108,7 @@ function Canvas({ ok }) {
       try {
         setPhase(calm ? 'rest' : 'story');
         {
-          setStage(0); setSaid(0); setSteps(0);
+          setView('board'); setRev(0); setStage(0); setSaid(0); setSteps(0);
           await sleep(500);
           zoe.go(...near(), calm); await sleep(1300);
           setSaid(1); await sleep(1500);
@@ -117,6 +122,9 @@ function Canvas({ ok }) {
           qa.go(...near(0.4, 0.82), calm); setSaid(3);
           home(dev, 0.22, 0.42); await sleep(1200);
           home(qa, 0.8, 0.6);
+          await sleep(2600);
+          setView('rev');
+          for (let i = 1; i <= 5; i++) { await sleep(i === 1 ? 700 : 1300); setRev(i); }
         }
         if (live.on) setPhase(calm ? 'rest' : 'drift');
       } catch (e) { if (e !== 'stop') throw e; }
@@ -126,8 +134,13 @@ function Canvas({ ok }) {
   const control = () => {
     if (phase === 'rest') { setRun((r) => r + 1); return; }
     if (liveRef.current) liveRef.current.on = false; // pause: jump to the finished picture and rest
-    setStage(2); setSaid(3); setSteps(3); setPhase('rest');
+    setStage(2); setSaid(3); setSteps(3); setRev(5); setPhase('rest');
   };
+  const open = (v) => { if (liveRef.current) liveRef.current.on = false; setStage(2); setSaid(3); setSteps(3); setRev(5); setView(v); setPhase(calm ? 'rest' : 'drift'); };
+  useEffect(() => { const t = thread.current; if (t && view === 'rev') t.scrollTo({ top: t.scrollHeight, behavior: calm ? 'auto' : 'smooth' }); }, [rev, view, calm]);
+  const rmsg = (n, me, children) => (
+    <div className={'xtm-rm' + (me ? ' me' : '') + (rev >= n ? ' on' : '')}>{!me && <Face n="rev" size={22} />}<div className="xtm-rb">{children}</div></div>
+  );
 
   const card = (key, title, who) => <div className="xtm-card" key={key}><span>{title}</span><Face n={who} size={22} /></div>;
   const task = (
@@ -144,11 +157,22 @@ function Canvas({ ok }) {
   );
   return (
     <div className="xtm-win" ref={box}>
-      <aside className="xtm-rail" aria-hidden="true"><b>H</b><i /><i /><i /></aside>
+      <aside className="xtm-dock">
+        <p className="xtm-dock-t" aria-hidden="true"><span>⌕</span><span>+</span></p>
+        <ul className="xtm-dcrew">{CREW.map(([f, n]) => <li key={n}><Face n={f} size={34} />{f === 'vi' && <span className="xtm-star" aria-hidden="true">★</span>}<span>{n}</span></li>)}</ul>
+        <ul className="xtm-dms">
+          {DMS.map(([f, n, t]) => f === 'rev'
+            ? <li key={n}><button type="button" className={view === 'rev' ? 'on' : ''} aria-pressed={view === 'rev'} onClick={() => open('rev')}><Face n={f} size={26} /><span><b>{n}</b><span>{t}</span></span></button></li>
+            : <li key={n}><Face n={f} size={26} /><span><b>{n}</b><span>{t}</span></span></li>)}
+        </ul>
+        <p className="xtm-me"><span className="xtm-av">Z</span><b>Zach Kelling</b><span aria-hidden="true">⊞</span></p>
+      </aside>
       <div className="xtm-main">
         <header className="xtm-win-h">
           <span className="xtm-org"><b>Hanzo</b><span className="x-mono">hanzo.ai</span></span>
-          <ul>{['bugfix', 'security', 'launch', 'ops'].map((c, i) => <li key={c} className={i === 0 ? 'on' : ''}><span className="x-mono">#</span>{c}</li>)}</ul>
+          <ul>{['bugfix', 'security', 'launch', 'ops'].map((c, i) => i === 0
+            ? <li key={c} className={view === 'board' ? 'on' : ''}><button type="button" aria-pressed={view === 'board'} onClick={() => open('board')}><span className="x-mono">#</span>{c}</button></li>
+            : <li key={c}><span className="x-mono">#</span>{c}</li>)}</ul>
           <span className="xtm-win-t x-mono">Hanzo Team · the workspace for humans and AI</span>
           {!calm && (
             <button type="button" className="xtm-replay" aria-label={phase === 'rest' ? 'Replay' : 'Pause'} onClick={control}>
@@ -158,7 +182,8 @@ function Canvas({ ok }) {
             </button>
           )}
         </header>
-        <div className="xtm-body">
+        <div className="xtm-panes" data-view={view}>
+        <div className="xtm-body" aria-hidden={view !== 'board'}>
           <div className="xtm-board" ref={board} data-phase={phase} data-stage={stage}>
             {COLS.map((c, i) => (
               <div className="xtm-col" key={c} data-col={c}>
@@ -171,7 +196,7 @@ function Canvas({ ok }) {
             ))}
             <Cursor c={zoe} name="Zoe" tone="human" />
             <Cursor c={dev} name="Dev" tone="agent a" agent />
-            <Cursor c={qa} name="Qa" tone="agent b" agent />
+            <Cursor c={qa} name="Sci" tone="agent b" agent />
           </div>
           <div className="xtm-chat">
             {msg(1, ['vi', 'Zoe'], '9:42 AM', <p>{TASK_TEXT} <em>@Dev</em></p>)}
@@ -183,8 +208,34 @@ function Canvas({ ok }) {
                 </ul>
               </>
             ))}
-            {msg(3, ['sci', 'Qa'], '9:44 AM', <p>Verified e2e on iOS 18 &amp; Chromium — 42/42 specs green.</p>)}
+            {msg(3, ['sci', 'Sci'], '9:44 AM', <p>Verified e2e on iOS 18 &amp; Chromium — 42/42 specs green.</p>)}
           </div>
+        </div>
+        <div className="xtm-rev" aria-hidden={view !== 'rev'}>
+          <div className="xtm-rev-c">
+            <p className="xtm-rev-h"><Face n="rev" size={22} /><b>Rev</b><span>Revenue &amp; Billing Ops</span></p>
+            <div className="xtm-rev-t" ref={thread}>
+              {rmsg(1, true, <p>hanzo has a credit grant this is some kind of bug?</p>)}
+              {rmsg(2, false, <p>Probably, yes. If the org has a grant but the lease reads $0, it&apos;s likely looking up the wrong account, under user ID &quot;hanzo&quot; instead of the org&apos;s ID. I&apos;m checking the grant and the account the lease charges now.</p>)}
+              {rmsg(3, true, <p>its z/hanzo</p>)}
+              {rmsg(4, false, (
+                <>
+                  <p>You&apos;re right that it&apos;s a bug. Here&apos;s what I found across the billing and lease services:</p>
+                  <ul><li><span aria-hidden="true">•</span><span>The org shows $156.6K prepaid, but the lease checks a wallet tied to user ID hanzo instead of org z/hanzo.</span></li><li><span aria-hidden="true">•</span><span>All 93 sessions run with a doubled org prefix, so the grant lookup misses the org wallet.</span></li></ul>
+                  <ol><li><span aria-hidden="true">1.</span><span>Make grok-bot-iam an admin acting as the hanzo org.</span></li><li><span aria-hidden="true">2.</span><span>Move $20 of credit onto wallet hanzo while the lease patch rolls out.</span></li></ol>
+                </>
+              ))}
+              {rmsg(5, false, <p>Tell me when it&apos;s done and I&apos;ll re-send all six fixes and check them on the live site. I&apos;ve posted the cause in #hanzo-revenue. Longer term, a platform rule that a member can&apos;t spend org credits on leases will block every agent this way, and it&apos;s worth fixing.</p>)}
+            </div>
+            <p className="xtm-rev-in" aria-hidden="true"><span>+</span><span>Message Rev</span><i>|||</i></p>
+          </div>
+          <div className="xtm-rev-p">
+            <p className="xtm-rev-id"><Face n="rev" size={48} /><b>Rev</b></p>
+            <p className="xtm-rev-tabs" aria-hidden="true"><span>Details</span><span>Library</span><span className="on">Computer</span></p>
+            <div className="xtm-rev-s"><span className="xtm-rev-eyes" aria-hidden="true">– –</span><span className="xtm-rev-z">Computer is asleep</span><span>Verified org credit grants &amp; billing lease lookup across 93 active sessions</span></div>
+            <p className="xtm-rev-cap">Rev&apos;s screen</p>
+          </div>
+        </div>
         </div>
       </div>
     </div>
@@ -224,7 +275,7 @@ function Hero() {
 }
 
 /* ---------- 2. what it is: three pinned chapters ---------- */
-const MATES = [['dev', 'Dev', 'Repos, PRs, CI'], ['sci', 'Qa', 'E2E specs, WebKit'], ['cyber', 'Cyber', 'Security, audits'], ['des', 'Des', 'UI, tokens, specs'], ['mark', 'Mark', 'Launch, growth'], ['su', 'Su', 'Triage, replies'], ['opera', 'Opera', 'Deploys, infra']];
+const MATES = [['dev', 'Dev', 'Repos, PRs, CI'], ['sci', 'Sci', 'E2E specs, WebKit'], ['cyber', 'Cyber', 'Security, audits'], ['des', 'Des', 'UI, tokens, specs'], ['mark', 'Mark', 'Launch, growth'], ['su', 'Su', 'Triage, replies'], ['opera', 'Opera', 'Deploys, infra']];
 const CHANNELS = ['bugfix', 'security', 'launch', 'support', 'ops', 'research', 'deals', 'finance', 'legal', 'growth'];
 const WHAT = [
   ['01', 'Channels for every part of the work', 'A channel for each team and project, direct messages, and threads that keep a decision next to the question that started it.'],
@@ -240,7 +291,7 @@ const SceneChannels = () => (
       <div className="xtm-v-m"><span className="xtm-av">ZM</span><p><b>Zoe Maxwell</b>Checkout button is unresponsive on mobile Safari when Apple Pay sheet closes.</p></div>
       <div className="xtm-v-r">
         <div className="xtm-v-m"><Face n="dev" size={28} /><p><b>Dev</b>Cleared lock in finally block and opened PR #{418}.</p></div>
-        <div className="xtm-v-m"><Face n="sci" size={28} /><p><b>Qa</b><span className="x-mono">42/42 E2E GREEN</span></p></div>
+        <div className="xtm-v-m"><Face n="sci" size={28} /><p><b>Sci</b><span className="x-mono">42/42 E2E GREEN</span></p></div>
       </div>
       <p className="xtm-v-typing"><Face n="vi" size={20} /><i /><i /><i /></p>
     </div>
@@ -443,7 +494,7 @@ const Pic = ({ g }) => {
   );
   if (g === 'inbox') return (
     <ul className="xtm-pic inbox" aria-hidden="true">
-      {[['vi', 'Zoe Maxwell', '@Dev'], ['dev', 'Harry Boone', '@Zoe Maxwell'], ['dev', 'Dev', '@Qa']].map(([f, who, at], i) => (
+      {[['vi', 'Zoe Maxwell', '@Dev'], ['dev', 'Harry Boone', '@Zoe Maxwell'], ['dev', 'Dev', '@Sci']].map(([f, who, at], i) => (
         <motion.li key={who + at} {...once(true, { y: 10, opacity: 0 }, { y: 0, opacity: 1 }, 0.2 + i * 0.08)}><Face n={f} size={24} /><b>{who}</b><em>{at}</em></motion.li>
       ))}
     </ul>
@@ -490,12 +541,12 @@ function Bugfix() {
         <p className="x-mono xtm-uc"><span>USE CASE</span> <b>01</b></p>
       </div>
       <h3 className="vc-title">E2E Bug Reproduction, Patch &amp; Verification</h3>
-      <p className="xtm-case-d">A human drops a one-line bug report in #bugfix. @Dev reproduces it, patches the component, and opens a pull request while @Qa verifies the fix end-to-end across browsers.</p>
+      <p className="xtm-case-d">A human drops a one-line bug report in #bugfix. @Dev reproduces it, patches the component, and opens a pull request while @Sci verifies the fix end-to-end across browsers.</p>
       <div className="xtm-case-g">
         <div className="xtm-thread">
           <div className="xtm-m"><span className="xtm-av">ZM</span><div><p className="xtm-who"><b>Zoe Maxwell</b><span>10:14 AM</span></p><p>Checkout button is unresponsive on mobile Safari when Apple Pay sheet closes — <em>@Dev</em> can we patch this before noon?</p></div></div>
           <div className="xtm-m"><Face n="dev" size={32} /><div><p className="xtm-who"><b>Dev</b><span>Software · 10:14 AM</span></p><p>Reproduced in WebKit simulator: oncancel left the sheet lock active in PaySheet.tsx:84. Cleared lock in finally block and opened PR #{418}.</p><p className="xtm-pr x-mono">PR #{418} · fix(checkout): release PaySheet lock on cancel (+14 -3)</p></div></div>
-          <div className="xtm-m"><Face n="sci" size={32} /><div><p className="xtm-who"><b>Qa</b><span>Quality · 10:15 AM</span></p><p className="xtm-green x-mono">42/42 E2E GREEN</p><p>Verified e2e across iOS 18 Safari &amp; Chromium — 42/42 checkout specs green. Ready to merge.</p></div></div>
+          <div className="xtm-m"><Face n="sci" size={32} /><div><p className="xtm-who"><b>Sci</b><span>Science · 10:15 AM</span></p><p className="xtm-green x-mono">42/42 E2E GREEN</p><p>Verified e2e across iOS 18 Safari &amp; Chromium — 42/42 checkout specs green. Ready to merge.</p></div></div>
         </div>
         <div className="xtm-auto">
           <p className="x-mono"><b><span className="xtm-t">AUTOMATED WORKFLOW</span></b> <span>4 / 4 steps complete</span></p>
@@ -504,7 +555,7 @@ function Bugfix() {
           <ul className="xtm-chips">{['GitHub', 'Playwright', 'Safari WebKit', 'CI Runner'].map((t) => <li key={t}>{t}</li>)}</ul>
         </div>
       </div>
-      <p className="xtm-run">Run <b>#bugfix</b> with <b>Dev</b> &amp; <b>Qa</b> in your workspace: <Lk to="https://hanzo.team">Open Hanzo Team</Lk></p>
+      <p className="xtm-run">Run <b>#bugfix</b> with <b>Dev</b> &amp; <b>Sci</b> in your workspace: <Lk to="https://hanzo.team">Open Hanzo Team</Lk></p>
     </div>
   );
 }
@@ -576,6 +627,8 @@ function Channel() {
   const s = hyd ? r + 1 : 6; // the server and JS-off render the finished session
   const setS = (v) => setR(v - 1);
   const show = (k) => (s >= k ? ' on' : '');
+  const [pick, setPick] = useState(null); // the artifact tab: the session turns to View once Sci verifies, a press holds a tab
+  const tab = pick || (s >= 5 ? 'View' : 'Code');
   return (
     <section className="vc-sec xtm-code" aria-label="CODE CHANNELS &amp; ARTIFACTS" ref={box}>
       <div className="vc-grid">
@@ -594,7 +647,7 @@ function Channel() {
       </div>
       <div className="vc-wrap">
         <div className="xtm-app">
-          <div className="xtm-app-bar"><i /><i /><i /><span className="x-mono">hanzo.team — Karma Style (karma.style) · #bug-button-darkmode</span><em className="x-mono"><span className="xtm-t">Session ready</span></em></div>
+          <div className="xtm-app-bar"><i /><i /><i /><span className="x-mono">hanzo.team — Karma Style (karma.style) · #bug-button-darkmode</span><em className="x-mono"><span className="xtm-t">Working · Session channel</span></em></div>
           <div className="xtm-app-g">
             <aside className="xtm-side">
               <p className="xtm-ws"><b>Karma Style</b><span>karma.style</span></p>
@@ -602,7 +655,7 @@ function Channel() {
               <p className="xtm-sec x-mono">SUPPORT</p>
               <ul><li># incident-alert</li></ul>
               <p className="xtm-sec x-mono">CODE CHANNELS</p>
-              <ul><li className="on"># bug-button-darkmode <em>PR ready</em></li><li># tryon-3d-lookbook</li><li># karma/storefront</li></ul>
+              <ul><li className="on"># bug-button-darkmode <em>Working</em></li><li># tryon-3d-lookbook</li><li># karma/storefront</li></ul>
             </aside>
             <div className="xtm-conv">
               <p className="xtm-branch x-mono"><span>main → update-cta-button-color</span><span>#bug-button-darkmode</span><b>Artifacts 3</b></p>
@@ -627,11 +680,11 @@ function Channel() {
               </div>
               <div className={'xtm-cm' + show(4)}>
                 <p className="xtm-who"><Face n="dev" size={24} /><b>Dev</b><span>9:36 AM</span></p>
-                <p>Done! Updated <code>styles/cta-button.css</code> and wrote the root-cause summary in Canvas. <em>@Qa</em> running e2e checks now.</p>
-                <p className="xtm-canvas"><b><span className="xtm-t">Fix: Button Dark Mode</span></b><span>Canvas · Updated just now</span><a href="#xtm-diff">Open →</a></p>
+                <p>Done! Updated <code>styles/cta-button.css</code> and wrote the root-cause summary in Canvas. <em>@Sci</em> running e2e checks now.</p>
+                <p className="xtm-canvas"><b><span className="xtm-t">Fix: Button Dark Mode</span></b><span>Canvas · Updated just now</span><a href="#xtm-diff" onClick={() => setPick('Canvas')}>Open →</a></p>
               </div>
               <div className={'xtm-cm' + show(5)}>
-                <p className="xtm-who"><Face n="sci" size={24} /><b>Qa</b><span>9:41 AM</span></p>
+                <p className="xtm-who"><Face n="sci" size={24} /><b>Sci</b><span>9:41 AM</span></p>
                 <p>Verified e2e across Chromium &amp; Safari — WCAG AAA contrast (8.9:1) and checkout specs 28/28 green.</p>
               </div>
               <div className={'xtm-cm done' + show(6)}>
@@ -640,20 +693,35 @@ function Channel() {
               </div>
             </div>
             <div className="xtm-art" id="xtm-diff">
-              <div className="xtm-art-h"><b>Artifacts</b><span role="presentation"><i>Code</i><i>View</i><i>Canvas</i></span></div>
+              <div className="xtm-art-h"><b>Artifacts</b><span role="tablist" aria-label="Artifacts">{['Code', 'View', 'Canvas'].map((t) => <button key={t} type="button" role="tab" aria-selected={tab === t} className={tab === t ? 'on' : ''} onClick={() => setPick(t)}>{t}</button>)}</span></div>
+              <div className="xtm-art-b" data-tab={tab}>
+              <div className="xtm-art-code" aria-hidden={tab !== 'Code'}>
               <p className="xtm-cmp x-mono">Comparing main → update-cta-button-color</p>
               <p className="xtm-stat x-mono">1 commit · 3 files changed · <b className="a">+32</b> <b className="d">-9</b></p>
               <div className="xtm-file x-mono"><span>styles/cta-button.css</span><em>Viewed</em></div>
               <ol className={'xtm-diff x-mono' + (s >= 3 ? ' hot' : '')}>
                 {DIFF.map(([a, b, k, t], i) => <li key={i} className={k}><span>{a}</span><span>{b}</span><code><span className="xtm-t">{t}</span></code></li>)}
               </ol>
+              </div>
+              <div className="xtm-art-view" aria-hidden={tab !== 'View'}>
+                <p className="xtm-pv-l x-mono">{`BEFORE (LOW CONTRAST · 1.9:1)`}</p>
+                <p className="xtm-pv before"><span>Buy Now — $49</span></p>
+                <p className="xtm-pv-l x-mono">{`AFTER FIX (#${'1A1A1A'} ON #${'F472B6'} · 8.9:1)`}</p>
+                <p className={'xtm-pv after' + (s >= 3 ? ' hot' : '')}><span>Buy Now — $49</span></p>
+                <p className="xtm-pv-c x-mono">#bug-button-darkmode</p>
+                <p className="xtm-pv-n">Live preview sandboxes the branch build so design and engineering can approve visual changes directly inside the channel.</p>
+              </div>
+              <div className="xtm-art-canvas" aria-hidden={tab !== 'Canvas'}>
+                <p className="xtm-canvas"><b><span className="xtm-t">Fix: Button Dark Mode</span></b><span>Canvas · Updated just now</span></p>
+              </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div className="vc-grid xtm-code-f">
         <div className="xtm-roles">
-          {[['dev', 'Dev', 'Software'], ['sci', 'Qa', 'Quality']].map(([f, n, r]) => <span key={n}><Face n={f} size={24} /><b>{n}</b>{r}</span>)}
+          {[['dev', 'Dev', 'Software'], ['sci', 'Sci', 'Science']].map(([f, n, r]) => <span key={n}><Face n={f} size={24} /><b>{n}</b>{r}</span>)}
           {[['Zoe Maxwell', 'Design'], ['Harry Boone', 'Eng']].map(([n, r]) => <span key={n}><b>{n}</b>{r}</span>)}
         </div>
         <div className="xtm-same">
