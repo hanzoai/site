@@ -14,13 +14,17 @@
    :not(.light): dark is the default (live's server HTML says class="t_dark"), light is the .light class. */
 html:not(.light) {
   --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border);
-  --card: var(--muted); --bg: var(--background);
+  --card: var(--popover); --bg: var(--background); /* --card is Hanzo's dark card, #0f0f0f, as live (read through --popover, the same
+     colour in @hanzo/design, since this rule restates --card itself) */
   /* --x-raised is Hanzo's dark card, #0f0f0f (@hanzo/design --card and --popover; live's card background). It reads
      --popover because --card on <html> is ours (the muted fill) and would shadow Hanzo's card colour here. */
   --x-raised: var(--popover); --x-on-ink: var(--primary-foreground); --x-sunk: var(--surface-card-quiet); --x-knob: var(--secondary);
   --x-fill: var(--muted); --x-e10: var(--border); --x-e12: var(--border-control); --x-e15: var(--border-control);
 }
 html { background: var(--bg); -webkit-text-size-adjust: 100%; }
+/* Footer wordmark in dark: live draws it in --foreground at opacity .18 (dark grey). components/Chrome.jsx raises the
+   link's own opacity to 1 as the page ends, so in dark its contents carry live's .18 (light keeps today's look). */
+html:not(.light) [data-slot=footer-signature] > * { opacity: .18; }
 /* light-dark() and the browser's own controls follow the html class, never the device alone (JS off stays bright) */
 html.light { color-scheme: light; } html:not(.light) { color-scheme: dark; }
 html.lenis, html.lenis body { height: auto; }
