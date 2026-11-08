@@ -549,9 +549,9 @@ html:not(.light) .xst-make button[aria-checked='true'] { background: var(--ink);
 .xst-subs li.on .xst-sub-d > p { padding-bottom: 18px; }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .xst-reel { animation: xst-curtain linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
+    .xst-reel { view-timeline-name: --xst-reel; animation: xst-curtain linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
     @keyframes xst-curtain { from { clip-path: inset(0 6% round 56px); } to { clip-path: inset(0 0 round 0); } }
-    .xst-lb { animation: xst-letterbox linear both; animation-timeline: view(); animation-range: entry 10% cover 45%; }
+    .xst-lb { animation: xst-letterbox linear both; animation-timeline: --xst-reel; animation-range: entry 10% cover 45%; } /* both bars on the room's timeline */
     @keyframes xst-letterbox { from { height: 50%; } 70% { height: 12.5%; } to { height: 0; } }
     .xst-reel::after { animation: xst-spill linear both; animation-timeline: view(); animation-range: entry 10% cover 50%; }
     @keyframes xst-spill { from { opacity: 0; } }
