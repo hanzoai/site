@@ -28,6 +28,7 @@ import { Paste } from './Frame';
 import '../../v2/LaunchType.css';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
 import LivePause, { usePause } from '../../v2/LivePause';
+import HeroDither from '../HeroDither';
 import { Enter, Typed, useEnter } from '../network/Enter';
 import './Network.css';
 
@@ -264,6 +265,7 @@ function Hero() {
   useEffect(() => scrollYProgress.on('change', (p) => setInView(p < 0.95)), [scrollYProgress]);
   return (
     <section className="nw-hero" ref={ref} data-morph-target data-ask-name="Hanzo Network">
+      <HeroDither />
       {/* entrance 1, split-merge: the words slide in from the left, the graph from the right, and meet */}
       <div className="lx-wrap nw-hero-grid nw-en nw-en-split" ref={enterRef} data-enter={st}>
         <div className="nw-hero-copy">

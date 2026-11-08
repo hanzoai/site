@@ -407,3 +407,5 @@ html:not(.light) .nw .nw-pause[aria-pressed='true'] { background: var(--x-raised
   html:not(.light) .nw :is(.nw-pause:hover, .nw-pause[aria-pressed='true']:hover) { background: var(--x-fill); color: var(--foreground); }
 }
 html:not(.light) .nw .nw-pastes .cf-paste-box { box-shadow: inset 0 0 0 1px var(--border); }
+/* live's hero halftone (components/pages/HeroDither, dark only) fills the hero under its content */
+html:not(.light) .nw .nw-hero { position: relative; }
