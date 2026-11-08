@@ -558,4 +558,13 @@ html:not(.js) .xpr-bills > li { display: grid !important; }
 .xpr.zf .xpr-room { padding-top: clamp(28px, 5svh, 48px); }
 .xpr.zf .xpr-cards.n2 .xpr-c-seats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .xpr.zf .xpr-c-seats > div { display: grid; gap: 2px; align-content: start; }
-.xpr.zf .xpr-c-seats span, .xpr.zf .xpr-c-seats small { font-size: 12.5px; line-height: 1.35; }
+.xpr.zf .xpr-c-seats > div > span, .xpr.zf .xpr-c-seats > div > small { font-size: 12.5px; line-height: 1.35; }
+.xpr.zf .xpr-cards.n2 { max-width: none; }
+.xpr.zf .xpr-cards.n2 .xpr-c-inc .xpr-list { columns: 2; column-gap: 20px; }
+.xpr.zf .xpr-cards.n2 .xpr-c-inc .xpr-list li { break-inside: avoid; }
+@media (max-width: 900px) { .xpr.zf .xpr-cards.n2 .xpr-c-inc .xpr-list { columns: 1; } }
+.xpr.zf .xpr-cards.n2 .xpr-c-seats { margin-top: 8px; gap: 8px; }
+.xpr.zf .xpr-cards.n2 .xpr-c-seats > div { padding: 10px 12px; border-radius: 14px; }
+.xpr.zf .xpr-cards.n2 .xpr-c-seats .xpr-seat-p { margin-top: 2px; font-size: 24px; }
+.xpr.zf .xpr-cards.n2 .xpr-c-acts .xpr-note { margin: 0; }
+.xpr.zf .xpr-cards.n2 .xpr-c-price { margin-top: 8px; } .xpr.zf .xpr-cards.n2 .xpr-c-acts { margin-top: 10px; } .xpr.zf .xpr-cards.n2 .xpr-c-inc { margin-top: 10px; padding-top: 10px; }
