@@ -364,3 +364,23 @@ a.ct-chip:active { transform: scale(.97); }
 /* 8 Nov (Ready pass): the inline "Captable, Inc." link answers a hover like the page's other links */
 .ct-oss .bz-body a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; transition: text-underline-offset .2s var(--ease), text-decoration-thickness .2s var(--ease); }
 @media (hover: hover) { .ct-oss .bz-body a:hover { text-decoration-thickness: 2px; text-underline-offset: 5px; } }
+
+/* ---------- dark (docs/DARK-MODE.md): Biz.css's .bz palette has no dark rule, so /captable maps it to Hanzo's dark tokens
+   here on main.ct. The waterfall room and the popular plan stay dark in both modes. Light is untouched. ---------- */
+html:not(.light) .ct { --bz-ink: var(--foreground); --bz-muted: var(--muted-foreground); --bz-quiet: var(--text-tertiary); --bz-line: var(--border);
+  --bz-paper: var(--card); --bz-room: var(--muted); --bz-card: var(--muted); --bz-tile: var(--secondary); --bz-track: var(--neutral-600); --acc-soft: var(--secondary);
+  background: var(--bg); }
+/* Biz.css pieces on this page */
+html:not(.light) .ct .bz-sheet-btn { border-color: var(--border-control); }
+@media (hover: hover) { html:not(.light) .ct .bz-sheet-btn:hover { border-color: var(--border-strong); } html:not(.light) .ct .bz-open-card:hover .bz-open-plus { color: var(--x-on-ink); } }
+html:not(.light) .ct .cf-mark, html:not(.light) .ct .cf-code.light .cf-mark { background-color: var(--x-knob); }
+html:not(.light) .ct .cf-code.light .s { color: var(--soft); }
+html:not(.light) .ct .cf-code.light .c { color: var(--faint); }
+/* the page's own pieces */
+@media (hover: hover) { html:not(.light) .ct .ct-acts [data-cta='captable.hero']:hover { background-color: var(--primary-hover); border-color: var(--primary-hover); } }
+html:not(.light) .ct-pause, html:not(.light) .ct-slide input::-webkit-slider-thumb, html:not(.light) .ct-sep::before, html:not(.light) .ct-doc { background: var(--x-raised); }
+html:not(.light) .ct-slide input::-moz-range-thumb { background: var(--x-raised); }
+html:not(.light) .ct-pause[aria-pressed='true'], html:not(.light) .ct-popular { color: var(--x-on-ink); }
+html:not(.light) .ct-plan.pop .ct-popular { color: var(--bz-graphite); }
+html:not(.light) .ct-oss .bz-body a { text-decoration-color: var(--white-30); }
+html:not(.light) .ct-fork-d.up { fill: var(--bg); }

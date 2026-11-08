@@ -3,16 +3,16 @@
 
 /* ---------- signature: word-light, the masthead lede read word by word ---------- */
 .xbl-wl { cursor: default; border-radius: 6px; }
-.xbl-wl:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 6px; }
+.xbl-wl:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; }
 .xbl-w { transition: color .2s cubic-bezier(0, 0, .2, 1); }
 @media (prefers-reduced-motion: no-preference) {
   .xbl-wl .xbl-w { animation: xbl-light-a .5s cubic-bezier(0, 0, .2, 1) both; animation-delay: calc(.45s + var(--w) * 130ms); }
   .xbl-wl.again .xbl-w { animation-name: xbl-light-b; animation-delay: calc(var(--w) * 110ms); }
-  .xbl-wl.hand .xbl-w { animation: none; color: #a3a3a3; }
-  .xbl-wl.hand .xbl-w.lit { color: #0a0a0a; }
+  .xbl-wl.hand .xbl-w { animation: none; color: light-dark(#a3a3a3, var(--text-tertiary)); }
+  .xbl-wl.hand .xbl-w.lit { color: var(--ink); }
 }
-@keyframes xbl-light-a { from { color: #d4d4d4; } to { color: #0a0a0a; } }
-@keyframes xbl-light-b { from { color: #d4d4d4; } to { color: #0a0a0a; } }
+@keyframes xbl-light-a { from { color: light-dark(#d4d4d4, var(--text-disabled)); } to { color: var(--ink); } }
+@keyframes xbl-light-b { from { color: light-dark(#d4d4d4, var(--text-disabled)); } to { color: var(--ink); } }
 
 /* ---------- 1. ink-spread: the cover plate (first screen, so it plays from the first paint) ---------- */
 @property --xbl-ink { syntax: '<percentage>'; inherits: false; initial-value: 160%; }

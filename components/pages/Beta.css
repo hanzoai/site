@@ -157,3 +157,24 @@
 /* Hanzo's own pass letters (A, B, C), as on hanzo.ai/beta: a small key in the card's top-left corner */
 .xbt-key { position: absolute; top: clamp(20px, 2.4vw, 32px); left: clamp(20px, 2.4vw, 32px); z-index: 2; display: grid; place-items: center; min-width: 28px; height: 28px; padding: 0 6px; border-radius: 8px; border: 1px solid rgba(0, 0, 0, .14); font-size: 12px; color: var(--hz-950); pointer-events: none; }
 .xbt-pass.dark .xbt-key { border-color: rgba(255, 255, 255, .3); color: #f5f5f7; }
+
+/* ---------- dark (docs/DARK-MODE.md): the hz ramp is constant, so the sketch tiles, the Design partner pass and their
+   sheet follow Hanzo's dark tokens here; the film tiles, the film passes and the dark close stay as they are.
+   Light is untouched: every rule is under html:not(.light). ---------- */
+html:not(.light) .xbt-prod { color: var(--ink); text-decoration-color: var(--white-30); }
+@media (hover: hover) { html:not(.light) .xbt-prod:hover { text-decoration-color: var(--ink); } }
+html:not(.light) .xbt-shelf-k { color: var(--faint); }
+html:not(.light) .xbt-pause { background: var(--x-raised); color: var(--ink); }
+html:not(.light) .xbt-tile:not(.film), html:not(.light) .xbt-pass:not(.dark) { background: var(--muted); }
+html:not(.light) .xbt-tile:not(.film) { outline-color: var(--border); }
+@media (hover: hover) { html:not(.light) .xbt-tile:not(.film):hover { outline-color: var(--border-strong); } }
+html:not(.light) .xbt-tile:not(.film) .xbt-tile-n { color: var(--ink); }
+html:not(.light) .xbt-tile::after { background: var(--x-raised); color: var(--ink); }
+html:not(.light) .xbt-sk { background: var(--bg); }
+html:not(.light) .xbt-sk i, html:not(.light) .xbt-sk.studio i { background: var(--secondary); }
+html:not(.light) .xbt-sk.dev i.add, html:not(.light) .xbt-sk.studio i:nth-child(2) { background: var(--muted-foreground); }
+html:not(.light) .xbt-sk.dev i.del { background: var(--neutral-600); }
+html:not(.light) .xbt-sk.studio b { background: var(--foreground); box-shadow: 0 0 0 4px var(--glass-strong); }
+html:not(.light) .xbt-pass:not(.dark) .xbt-plus, html:not(.light) .xbt-close { background: var(--x-raised); color: var(--ink); }
+html:not(.light) .xbt-pass:not(.dark) .xbt-key { border-color: var(--border-control); color: var(--ink); }
+html:not(.light) .xbt-sheet:not(.dark) { background: var(--x-raised); }

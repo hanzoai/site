@@ -58,15 +58,15 @@
 .cf-code .c { color: #6e6e73; }
 .cf-code .s { color: #d4d4d4; }
 .cf-code .k { color: #a3a3a3; }
-.cf-code.light { background: var(--x-raised); color: light-dark(#1d1d1f, var(--foreground)); border: 1px solid var(--line); box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .25); }
+.cf-code.light { background: var(--x-raised); color: #1d1d1f; border: 1px solid var(--line); box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .25); }
 .cf-code.light .cf-code-bar { border-color: var(--line); }
-.cf-code.light .cf-code-bar > i { background: light-dark(#e3e3e8, var(--secondary)); }
+.cf-code.light .cf-code-bar > i { background: #e3e3e8; }
 .cf-code.light .cf-code-bar .x-copy { background: var(--x-raised); border-color: var(--line); color: var(--soft); }
 .cf-code.light .cf-code-tabs { background: var(--card); }
 .cf-code.light .cf-code-tabs button[aria-selected='true'] { color: var(--x-on-ink); }
 .cf-code.light .cf-code-tab-bg { background: var(--ink); }
-.cf-code.light .s { color: light-dark(#737373, var(--text-tertiary)); }
-.cf-code.light .k { color: light-dark(#525252, var(--muted-foreground)); }
+.cf-code.light .s { color: #737373; }
+.cf-code.light .k { color: #525252; }
 .cf-code.light .c { color: var(--faint); }
 
 .cf-mark { color: inherit; padding: 1px 2px; margin: 0 -2px; border-radius: 4px; background: linear-gradient(rgba(212, 212, 212, .32), rgba(212, 212, 212, .32)) no-repeat 0 0 / 100% 100%; animation: cf-mark .5s var(--ease) both; }
@@ -135,7 +135,7 @@ a.cf-chip:hover { border-color: light-dark(rgba(0, 0, 0, .22), var(--border-sele
 @media (prefers-reduced-motion: reduce) { .cf-dot.b { animation: none; } }
 .cf-con.light { background: var(--x-raised); color: var(--ink); border-color: var(--x-e10); box-shadow: 0 50px 100px -60px rgba(0, 0, 0, .35); }
 .cf-con.light .cf-con-bar, .cf-con.light .cf-con-foot { border-color: var(--line); }
-.cf-con.light .cf-con-bar i { border-color: light-dark(#d1d1d6, var(--border-control)); }
+.cf-con.light .cf-con-bar i { border-color: #d1d1d6; }
 .cf-con.light .cf-con-title { color: var(--soft); }
 .cf-con.light .cf-con-side { background: var(--x-sunk); border-color: var(--line); }
 .cf-con.light .cf-con-ico { color: var(--faint); }
@@ -190,8 +190,17 @@ a.cf-chip:hover { border-color: light-dark(rgba(0, 0, 0, .22), var(--border-sele
 }
 @media (prefers-reduced-motion: reduce) { .cf-caret { animation: none; } }
 
-/* dark mode (docs/DARK-MODE.md): in dark the paper window is Hanzo's card, so its selected row, hovered icon and the
-   tab track step up to Hanzo's secondary to stay visible on it */
+/* dark mode (docs/DARK-MODE.md). Hanzo's tokens/colors.css gives any element with the class .light the light palette
+   and color-scheme, so inside .cf-con.light and .cf-code.light Hanzo's tokens and light-dark() read light. These rules
+   use only the site's html-level tokens (--ink, --soft, --faint, --x-*), which keep their dark values in there. */
+html:not(.light) .cf-code.light { color: var(--ink); }
+html:not(.light) .cf-code.light .cf-code-bar > i { background: var(--x-knob); }
+html:not(.light) .cf-code.light .s { color: var(--faint); }
+html:not(.light) .cf-code.light .k { color: var(--soft); }
+html:not(.light) .cf-con.light .cf-con-bar i { border-color: var(--x-e15); }
 html:not(.light) .cf-con.light .cf-row-bg,
 html:not(.light) .cf-con.light .cf-con-ico:hover, html:not(.light) .cf-con.light .cf-con-ico.on,
-html:not(.light) .cf-code.light .cf-code-tabs { background: var(--secondary); }
+html:not(.light) .cf-code.light .cf-code-tabs { background: var(--x-knob); }
+/* a highlighted token in the paper code pane: the site's knob grey in dark (some families fill the mark with a light
+   grey for bright mode), keeping the wipe */
+html:not(.light) .cf-code.light .cf-mark { background-color: transparent; background-image: linear-gradient(var(--x-knob), var(--x-knob)); }

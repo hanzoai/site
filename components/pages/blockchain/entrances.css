@@ -52,3 +52,8 @@ html.js .bce-lensbox:is([data-st='armed'], [data-st='play']) > .bce-lens-base { 
   .bce[data-st], .bce[data-st] * { animation: none !important; transition: none !important; }
   .bce-lens, .bce-film-m { display: none !important; }
 }
+
+/* dark mode (docs/DARK-MODE.md): the film's mask is the page's own background with light letters, multiplied over the
+   grey film, so the letters are still the windows; the lens is a disc of the page with an ink ring */
+html:not(.light) .bce-film-t { background: var(--film-bg, var(--background)); color: var(--primary); mix-blend-mode: multiply; }
+html:not(.light) .bce-lens { background: var(--lens-bg, var(--bg)); box-shadow: 0 0 0 1px var(--ink), 0 18px 40px rgba(0, 0, 0, .14); }
