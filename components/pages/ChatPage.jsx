@@ -25,6 +25,7 @@ import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
 import { useDemo } from '../v2/AppDemo';
 import { MODELS } from '../../lib/models';
+import '../v2/AppLines.css'; // the shared v2a type and wrap (it came in with AppLines before the grid replaced the chapters)
 import './ChatPage.css';
 
 const OPEN = '/login?next=%2Fchat';
