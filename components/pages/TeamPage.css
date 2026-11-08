@@ -449,7 +449,7 @@
   .xtm-cur span { font-size: 12px; padding: 3px 7px; }
   .xtm-lead-l, .xtm-code-l { margin-top: 28px; }
   .xtm-pic.board { gap: 6px; }
-  .xtm-mcard { margin: 30px 4px 0; padding: 6px; font-size: 12px; }
+  .xtm-mcard { margin: 30px 4px 0; padding: 6px; font-size: 12px; line-height: 1.2; }
   .xtm-mcard.low { margin-top: 100px; }
   .xtm-mc { min-height: 170px; }
   .xtm-pic.agents { grid-template-columns: minmax(0, 1fr); }

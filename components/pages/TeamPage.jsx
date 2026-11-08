@@ -190,7 +190,7 @@ function Canvas({ ok }) {
                 <p className="x-mono">{c}</p>
                 {i === 0 && card('a', 'Email', 'su')}
                 {stage === i && task}
-                {i === 1 && card('b', 'Release Ops', 'opera')}
+                {i === 1 && card('b', 'Science & R&D Ops', 'sci')}
                 {i === 2 && card('c', 'Docs & Specs', 'des')}
               </div>
             ))}
@@ -222,7 +222,7 @@ function Canvas({ ok }) {
                 <>
                   <p>You&apos;re right that it&apos;s a bug. Here&apos;s what I found across the billing and lease services:</p>
                   <ul><li><span aria-hidden="true">•</span><span>The org shows $156.6K prepaid, but the lease checks a wallet tied to user ID hanzo instead of org z/hanzo.</span></li><li><span aria-hidden="true">•</span><span>All 93 sessions run with a doubled org prefix, so the grant lookup misses the org wallet.</span></li></ul>
-                  <ol><li><span aria-hidden="true">1.</span><span>Make grok-bot-iam an admin acting as the hanzo org.</span></li><li><span aria-hidden="true">2.</span><span>Move $20 of credit onto wallet hanzo while the lease patch rolls out.</span></li></ol>
+                  <ol><li><span aria-hidden="true">1.</span><span>Make grok-bot-iam an admin acting as the hanzo org.</span></li><li><span aria-hidden="true">2.</span><span>Move $20 onto wallet hanzo while the lease patch rolls out.</span></li></ol>
                 </>
               ))}
               {rmsg(5, false, <p>Tell me when it&apos;s done and I&apos;ll re-send all six fixes and check them on the live site. I&apos;ve posted the cause in #hanzo-revenue. Longer term, a platform rule that a member can&apos;t spend org credits on leases will block every agent this way, and it&apos;s worth fixing.</p>)}
@@ -384,7 +384,7 @@ const TOGETHER = [
   ['Email', 'The inbox is sorted and the replies are drafted in your voice. You approve them as a batch.', ['su', 'vi']],
   ['Fundraising', 'The deck and the model are built, the intros are drafted, and the meeting lands on the calendar.', ['fin', 'vi']],
   ['Docs & Specs', 'Shared specifications stay linked to issues, pull requests, and channel decisions without drifting out of date.', ['doc', 'dev']],
-  ['Release Ops', 'Changelogs, CI status, and rollout checks post straight to the room where your engineers coordinate deploys.', ['opera', 'dev']],
+  ['Science & R&D Ops', 'Run LillyMol MedChem screens, targets + crew Slurm DAGs, pytest-wdl proteomics, and admiral/brms.mmrm clinical tables right from #research.', ['vi', 'sci']],
 ];
 /* the work being handed over: the row crossing the middle of the screen sends its relay from one face to the other */
 function useMid(box, sel) {
@@ -468,7 +468,7 @@ const Pic = ({ g }) => {
     <div className="xtm-pic board" aria-hidden="true">
       {COLS.map((c, i) => <div key={c} className="xtm-mc" style={{ gridColumn: i + 1 }}><span className="x-mono">{c}</span></div>)}
       <span className="xtm-mcard" style={{ gridArea: '1 / 1' }}>Email<Face n="su" size={18} /></span>
-      <motion.span className="xtm-mcard" style={{ gridArea: '1 / 2' }} {...once(true, { x: '0%' }, { x: 'calc(100% + 10px)' }, 0.5)}>Release Ops<Face n="opera" size={18} /></motion.span>
+      <motion.span className="xtm-mcard" style={{ gridArea: '1 / 2' }} {...once(true, { x: '0%' }, { x: 'calc(100% + 10px)' }, 0.5)}>Science &amp; R&amp;D Ops<Face n="sci" size={18} /></motion.span>
       <span className="xtm-mcard low" style={{ gridArea: '1 / 3' }}>Docs &amp; Specs<Face n="des" size={18} /></span>
     </div>
   );
