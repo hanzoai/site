@@ -26,9 +26,13 @@ import SpecCard, { useSpecTilt } from '../v2/SpecCard';
 import MaskFig from '../v2/MaskFig';
 import { media, bySlug } from '../../lib/models';
 import { ROWS, OTHERS } from './models/rates';
+import { BOARD } from './benchmarksData';
 import { CopyStatus } from './models/parts';
 import './ModelsPage.css';
 
+/* Kai's suites won against Jev, counted from Hanzo's research runs (the rows /benchmarks reads, api.hanzo.ai/v1/research/runs),
+   the way hanzo.ai prints it: one line, "11 · Suites won · Kai vs Jev". */
+const WON = BOARD.filter((b) => b.k > b.j).length;
 const SPRING = { duration: 0.3, ease: [0.16, 1, 0.3, 1] }; // the deck has no springs: ease-emphasis, 300 ms
 
 /* A link with its arrow as text, the way Hanzo writes them. */
@@ -157,7 +161,7 @@ function Stage() {
 /* ---------- 2. three families: the dark room ---------- */
 const FAM = [
   { slug: 'enso', verb: 'routes', name: 'Enso', d: 'Picks the model for every call, in every modality.', to: '/enso' },
-  { slug: 'kai', verb: 'decides', name: 'Kai', d: 'Answers a choice, a score or a yes/no, with the probability of each.', to: '/kai', stat: 11 },
+  { slug: 'kai', verb: 'decides', name: 'Kai', d: 'Answers a choice, a score or a yes/no, with the probability of each.', to: '/kai', stat: WON },
   { slug: 'zen', verb: 'reasons', name: 'Zen', d: 'Open weights for the code, the copy, the images and the voice.', to: '/zen', foot: 'Zen 6 and Zen 6 Flash now · Zen 7 in research preview' },
 ];
 
@@ -193,7 +197,7 @@ function Families() {
                   <p className="xmo-verb">{f.verb}</p>
                   <h3>{f.name}</h3>
                   <p className="xmo-fam-d">{f.d}</p>
-                  {f.stat && <p className="xmo-fam-stat"><b className="x-mono"><MaskFig>{f.stat}</MaskFig></b><span>Suites won · Kai vs Jev</span></p>}
+                  {f.stat && <p className="xmo-fam-stat">{`${f.stat} · Suites won · Kai vs Jev`}</p>}
                   {f.foot && <p className="xmo-fam-foot">{f.foot}</p>}
                   <Lk to={f.to} onClick={(e) => open(e, e.currentTarget.closest('.xmo-fam-c').querySelector('.xmo-fam-film'), f.slug)}>{`Explore ${f.name}`}</Lk>
                 </div>
@@ -269,7 +273,7 @@ function Figures() {
         </header>
         {/* the figure has its own box (room for its ×1.75 peak above it); the label sits on the line below, never beside */}
         <div className="xmo-fig-big" ref={big}>
-          <div className="xmo-num-box"><motion.p className="xmo-num x-mono" style={{ scale: grow }}><MaskFig>11</MaskFig></motion.p></div>
+          <div className="xmo-num-box"><motion.p className="xmo-num x-mono" style={{ scale: grow }}><MaskFig>{WON}</MaskFig></motion.p></div>
           <p className="xmo-num-k">Suites won · Kai vs Jev</p>
         </div>
         {DUELS.map((d, i) => (
