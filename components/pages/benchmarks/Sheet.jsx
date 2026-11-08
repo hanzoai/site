@@ -12,7 +12,7 @@ import NoJs from '../../NoJs';
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 const NOJS = '.xbm-sh{position:static!important;visibility:visible!important;pointer-events:auto!important;margin:24px 0}.xbm-sh-scrim,.xbm-sh-x,.xbm-plus{display:none!important}.xbm-sh-panel{position:static!important;transform:none!important;width:auto!important;max-height:none!important;box-shadow:none!important;border:1px solid rgba(0,0,0,.08)}';
 
-export default function Sheet({ label, kicker, title, children, ghost = false, wide = false }) {
+export default function Sheet({ label, kicker, title, children, ghost = false, wide = false, id: bid }) {
   const [open, setOpen] = useState(false);
   const [host, setHost] = useState(null);
   const btn = useRef(null);
@@ -20,8 +20,9 @@ export default function Sheet({ label, kicker, title, children, ghost = false, w
   const x = useRef(null);
   const id = useId();
 
-  // the sheet lives inside <main> (fixed to the viewport all the same), so its words stay part of the page
-  useEffect(() => setHost(document.querySelector('main') || document.body), []);
+  // the sheet lives inside <main> (fixed to the viewport all the same), so its words stay part of the page; on the
+  // benchmarks page it goes in main's one sheet tray (display: contents), so the overlays never read as sections
+  useEffect(() => setHost(document.querySelector('main .xbm-sheets') || document.querySelector('main') || document.body), []);
   useEffect(() => {
     if (!open) return;
     const sx = scrollX, sy = scrollY;
@@ -74,7 +75,7 @@ export default function Sheet({ label, kicker, title, children, ghost = false, w
   return (
     <>
       <NoJs css={NOJS} />
-      <button ref={btn} type="button" className={'pf-plus xbm-plus' + (ghost ? ' ghost' : '')} aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}>
+      <button ref={btn} id={bid} type="button" className={'pf-plus xbm-plus' + (ghost ? ' ghost' : '')} aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}>
         <i aria-hidden="true">
           <svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
         </i>
