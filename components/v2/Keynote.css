@@ -39,7 +39,7 @@
 .kn-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid var(--hair); background: var(--x-raised); color: var(--ink); font: 497 16px/1 var(--sans); text-decoration: none; white-space: nowrap; cursor: pointer; transition: border-color .15s var(--e-out), background-color .15s var(--e-out), transform .15s var(--e-out); }
 .kn-btn.solid { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
 @media (hover: hover) {
-  .kn-btn:hover { border-color: rgba(0, 0, 0, .3); background-color: light-dark(#f5f5f5, #171717); }
+  .kn-btn:hover { border-color: rgba(0, 0, 0, .3); background-color: light-dark(#f5f5f5, var(--muted)); }
   .kn-btn.solid:hover { background-color: #262626; }
 }
 .kn-btn:active { transform: scale(.97); transition-duration: 90ms; }
@@ -73,7 +73,7 @@
 
 /* the pause control every self-running demo carries (WCAG 2.2.2): in the flow, first in the DOM, never over content */
 .kn-pause { position: relative; flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--hair); background: var(--x-raised); color: var(--ink); display: inline-grid; place-items: center; cursor: pointer; transition: background-color .15s var(--e-out), transform .15s var(--e-out); }
-@media (hover: hover) { .kn-pause:hover { background-color: light-dark(#f5f5f5, #171717); } }
+@media (hover: hover) { .kn-pause:hover { background-color: light-dark(#f5f5f5, var(--muted)); } }
 .kn-pause:active { transform: scale(.97); transition-duration: 90ms; }
 .kn-pause[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
 .kn-pause:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 3px; }

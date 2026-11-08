@@ -4,7 +4,7 @@
 .kno-card { position: relative; flex: 1; display: flex; flex-direction: column; text-align: left; gap: 0; padding: 0; border: 1px solid var(--hair); background: var(--x-raised); color: var(--ink); cursor: pointer; overflow: hidden; font: inherit; transition: border-color .15s var(--e-out), scale .15s var(--e-out); }
 .kno-card:active { scale: .97; transition-duration: 90ms; }
 .kno-card:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 3px; }
-.kno-art { position: relative; aspect-ratio: 4 / 3; background: light-dark(#f5f5f5, #171717); overflow: hidden; }
+.kno-art { position: relative; aspect-ratio: 4 / 3; background: light-dark(#f5f5f5, var(--muted)); overflow: hidden; }
 .kno-art > * { width: 100%; height: 100%; }
 .kno-art > * { transition: transform .8s var(--ease); }
 @media (hover: hover) {
