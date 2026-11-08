@@ -5,6 +5,38 @@
   --ld-w10: rgba(255, 255, 255, .1); --ld-w14: rgba(255, 255, 255, .14); --ld-w30: rgba(255, 255, 255, .3); --ld-w55: rgba(255, 255, 255, .55); --ld-w78: rgba(255, 255, 255, .78);
 }
 
+/* dark mode (docs/DARK-MODE.md): the Business ramp re-pointed by role at Hanzo's own dark tokens, as live hanzo.ai wears
+   them: page --background, the book and its rows on --background / --muted with --border rings, the lit row --secondary,
+   text --foreground / --muted-foreground / --text-tertiary, ink fills a light --foreground with dark type. The two black
+   rooms ([data-room=dark]: capabilities and the Band) keep the light ramp, so they stand exactly as they are. */
+html:not(.light) .ld {
+  --bz-ink: var(--foreground); --bz-muted: var(--muted-foreground); --bz-quiet: var(--text-tertiary); --bz-line: var(--border);
+  --bz-paper: var(--background); --bz-room: var(--muted); --bz-card: var(--muted); --bz-tile: var(--secondary);
+  --bz-track: var(--secondary); --ld-mist: var(--secondary); --acc-soft: var(--secondary);
+  --ld-on-ink: var(--primary-foreground);
+  /* the same tokens held here for the sheet's .cf-code.light, where Hanzo's .light rule puts its light set back */
+  --ld-d-well: var(--muted); --ld-d-ink: var(--foreground); --ld-d-soft: var(--muted-foreground); --ld-d-faint: var(--text-tertiary);
+  --ld-d-chip: var(--secondary); --ld-d-bg: var(--background);
+  background: var(--background);
+}
+html:not(.light) .ld [data-room='dark'] {
+  --bz-ink: #0a0a0a; --bz-muted: #525252; --bz-quiet: #737373; --bz-line: rgba(0, 0, 0, .1);
+  --bz-paper: #ffffff; --bz-room: #f5f5f5; --bz-card: #f2f2f2; --bz-tile: #ededed; --bz-track: #d4d4d4; --ld-mist: #e4e4e7;
+  --acc: var(--bz-ink); --acc-wash: var(--bz-room); --acc-soft: #e4e4e7;
+}
+/* live's hero glow, as hanzo.ai draws it in dark */
+html:not(.light) .ld-hero { background: radial-gradient(60% 70% at 50% 0%, rgba(229, 229, 229, .09), transparent 70%); }
+html:not(.light) .ld-note:not(.bad):not(.read) { color: var(--ld-on-ink); }
+html:not(.light) .ld-ns { background: var(--muted); color: var(--muted-foreground); box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .ld .cf-paste-box { color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border); }
+/* the sheet's code (shared cloud Frame.css, bright in dark): live's code well, --muted under --foreground */
+html:not(.light) .ld .cf-code.light { background: var(--ld-d-well); color: var(--ld-d-ink); }
+html:not(.light) .ld .cf-code.light .cf-code-bar .x-copy { background: var(--ld-d-bg); color: var(--ld-d-soft); }
+html:not(.light) .ld .cf-code.light .cf-code-bar > i, html:not(.light) .ld .cf-code.light .cf-mark { background-color: var(--ld-d-chip); }
+html:not(.light) .ld .cf-code.light .s, html:not(.light) .ld .cf-code.light .cf-code-k { color: var(--ld-d-soft); }
+html:not(.light) .ld .cf-code.light .c { color: var(--ld-d-faint); }
+@media (hover: hover) { html:not(.light):has(main.ld[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]):hover { background-color: var(--glass); } }
+
 /* one solid fill per screen: while the hero's or the Band's ask is on screen the header's ask is an outline */
 html:has(main.ld[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]) { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
 @media (hover: hover) { html:has(main.ld[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]):hover { background-color: rgba(0, 0, 0, .05); box-shadow: inset 0 0 0 1px var(--foreground); } }
