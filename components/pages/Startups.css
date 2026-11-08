@@ -10,16 +10,16 @@
 .xst-flap { font: 600 clamp(2.75rem, 5vw, 4.75rem)/1 var(--sans); letter-spacing: -.03em; color: var(--ink); }
 .xst-flap span { border-radius: 10px; padding: .08em .05em; }
 /* the shared split-flap tiles are drawn in bright greys; in dark they take the page's muted and recessed fills */
-html.dark .xst-flap span { background: linear-gradient(var(--x-fill) 50%, var(--x-sunk) 50%); box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .04); }
+html:not(.light) .xst-flap span { background: linear-gradient(var(--x-fill) 50%, var(--x-sunk) 50%); box-shadow: inset 0 -1px 0 var(--glass); }
 
 /* the program: a ladder of tiles */
 /* the program: one ladder, rungs as hairline rows; the rung you are on is big, the others rest at medium */
 .xst-ladder { list-style: none; margin: 32px 0 0; padding: 0; display: grid; border-bottom: 1px solid var(--line); }
 .xst-ladder li { position: relative; display: grid; grid-template-columns: 96px minmax(0, 6fr) minmax(0, 5fr); grid-template-areas: 'n h b' 'n h f'; align-items: center; column-gap: clamp(16px, 3vw, 48px); min-height: 168px; padding: 28px 0; border-top: 1px solid var(--line); cursor: default; outline: none; }
 .xst-ladder li:focus-visible { box-shadow: inset 0 0 0 2px var(--ink); border-radius: 12px; }
-.xst-rung { grid-area: n; align-self: start; padding-top: 14px; font-size: 13px; color: light-dark(#737373, #858585); transition: color .3s cubic-bezier(0, 0, .2, 1); }
-.xst-ladder .xp-head { grid-area: h; margin: 0; font-size: 44px; line-height: 1.05; transform-origin: 0 50%; transform: scale(.6); color: light-dark(#737373, #858585); transition: transform .5s cubic-bezier(.16, 1, .3, 1), color .3s cubic-bezier(0, 0, .2, 1); }
-.xst-ladder .xp-body { grid-area: b; margin: 0; max-width: 44ch; color: light-dark(#737373, #858585); transition: color .3s cubic-bezier(0, 0, .2, 1); }
+.xst-rung { grid-area: n; align-self: start; padding-top: 14px; font-size: 13px; color: light-dark(#737373, var(--text-tertiary)); transition: color .3s cubic-bezier(0, 0, .2, 1); }
+.xst-ladder .xp-head { grid-area: h; margin: 0; font-size: 44px; line-height: 1.05; transform-origin: 0 50%; transform: scale(.6); color: light-dark(#737373, var(--text-tertiary)); transition: transform .5s cubic-bezier(.16, 1, .3, 1), color .3s cubic-bezier(0, 0, .2, 1); }
+.xst-ladder .xp-body { grid-area: b; margin: 0; max-width: 44ch; color: light-dark(#737373, var(--text-tertiary)); transition: color .3s cubic-bezier(0, 0, .2, 1); }
 .xst-rung-fig { grid-area: f; margin-top: 12px; opacity: .35; transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
 .xst-flap.sm { font-size: 32px; }
 .xst-ladder li.on .xp-head { transform: none; color: var(--ink); }
@@ -28,7 +28,7 @@ html.dark .xst-flap span { background: linear-gradient(var(--x-fill) 50%, var(--
 .xst-ladder li.past .xst-rung { color: var(--ink); }
 .xst-ladder li::after { content: ''; position: absolute; left: 0; top: -1px; width: 100%; height: 1px; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; transition: transform .9s cubic-bezier(.16, 1, .3, 1); }
 .xst-ladder li.on::after, .xst-ladder li.past::after { transform: none; }
-@media (hover: hover) { .xst-ladder li:not(.on):hover .xp-head { color: light-dark(#404040, #a3a3a3); } }
+@media (hover: hover) { .xst-ladder li:not(.on):hover .xp-head { color: light-dark(#404040, var(--muted-foreground)); } }
 @media (max-width: 899px) {
   .xst-ladder li { grid-template-columns: 1fr; grid-template-areas: 'n' 'h' 'b' 'f'; row-gap: 10px; min-height: 0; padding: 22px 0; }
   .xst-rung { padding-top: 0; }
@@ -58,9 +58,9 @@ html.js .xst-step.on { animation: xst-step .4s cubic-bezier(.16, 1, .3, 1) both;
 html:not(.js) .xst-steps, html:not(.js) .xst-next, html:not(.js) .xst-prev { display: none; }
 html.js .xst-submit.later { display: none; }
 .xst-steps { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
-.xst-steps i { flex: 1; max-width: 120px; height: 3px; border-radius: 2px; background: light-dark(#e4e4e7, #262626); transform-origin: 0 50%; transition: background .3s cubic-bezier(0, 0, .2, 1); }
+.xst-steps i { flex: 1; max-width: 120px; height: 3px; border-radius: 2px; background: light-dark(#e4e4e7, var(--secondary)); transform-origin: 0 50%; transition: background .3s cubic-bezier(0, 0, .2, 1); }
 .xst-steps i.done, .xst-steps i.on { background: var(--ink); }
-.xst-steps span { margin-left: 10px; font-size: 13px; color: light-dark(#525252, #a3a3a3); }
+.xst-steps span { margin-left: 10px; font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); }
 .xst-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .xst-nav button { gap: 12px; }
 .xst-prev { width: 48px; padding: 0 !important; }
@@ -91,10 +91,10 @@ html.js .xst-submit.later { display: none; }
 .xst-board.tick .x-flap span:nth-child(8) { animation-delay: 420ms; }
 @media (prefers-reduced-motion: reduce) { .xst-board.tick .x-flap span { animation: none; } }
 /* the asks: one solid ink, one outline; inverted in the dark room; press .97, hover changes the fill */
-.xst .xp-cta { background: var(--ink); color: light-dark(#fafafa, #0a0a0a); border: 0; transition: background .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
-.xst .xp-ghost { background: transparent; color: var(--ink); border: 1px solid light-dark(rgba(0, 0, 0, .16), rgba(255, 255, 255, .16)); transition: border-color .15s cubic-bezier(0, 0, .2, 1), background .15s, transform 90ms; }
+.xst .xp-cta { background: var(--ink); color: light-dark(#fafafa, var(--primary-foreground)); border: 0; transition: background .15s cubic-bezier(0, 0, .2, 1), transform 90ms cubic-bezier(0, 0, .2, 1); }
+.xst .xp-ghost { background: transparent; color: var(--ink); border: 1px solid light-dark(rgba(0, 0, 0, .16), var(--border-strong)); transition: border-color .15s cubic-bezier(0, 0, .2, 1), background .15s, transform 90ms; }
 .xst .xp-cta:active, .xst .xp-ghost:active { transform: scale(.97); }
-@media (hover: hover) { .xst .xp-cta:hover { background: light-dark(#262626, #fafafa); } .xst .xp-ghost:hover { border-color: var(--ink); background: light-dark(#f5f5f5, #171717); } }
+@media (hover: hover) { .xst .xp-cta:hover { background: light-dark(#262626, var(--primary)); } .xst .xp-ghost:hover { border-color: var(--ink); background: light-dark(#f5f5f5, var(--muted)); } }
 .xst .xp-cta:focus-visible, .xst .xp-ghost:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; box-shadow: 0 0 0 4px var(--bg); }
 .xst [data-room='dark'] .xp-cta { background: #fafafa; color: #0a0a0a; }
 .xst [data-room='dark'] .xp-ghost { color: #fafafa; border-color: rgba(255, 255, 255, .3); }
@@ -102,7 +102,7 @@ html.js .xst-submit.later { display: none; }
 /* single choices as pills (no browser select): a hollow dot that fills when chosen */
 .xst-row.one { grid-template-columns: minmax(0, 1fr); }
 .xst-choice legend i { font-style: normal; color: var(--faint); }
-.xst-hint { margin-left: 8px; font: 400 13px/1 var(--mono); color: light-dark(#737373, #858585); }
+.xst-hint { margin-left: 8px; font: 400 13px/1 var(--mono); color: light-dark(#737373, var(--text-tertiary)); }
 .xst-choice .xst-chips button[aria-checked='true'] { border-color: var(--ink); background: var(--x-raised); }
 .xst-dot { width: 14px !important; height: 14px !important; border-radius: 50% !important; }
 .xst-choice button[aria-checked='true'] .xst-dot { background: var(--ink); border-color: var(--ink); box-shadow: inset 0 0 0 3px var(--x-raised); }
@@ -126,16 +126,16 @@ html.js .xst-submit.later { display: none; }
 .xst-f label i { font-style: normal; color: var(--faint); }
 .xst-f .xst-lt, .xst-set .xst-lt { font-weight: inherit; color: inherit; }
 .xst-uses .xst-u-t, .xst-byo-t .xst-u-t { display: block; font-size: inherit; font-weight: 500; color: var(--ink); }
-.xst-f input, .xst-f select, .xst-f textarea { width: 100%; box-sizing: border-box; min-height: 60px; padding: 16px 20px; border-radius: 16px; border: 1px solid light-dark(rgba(0, 0, 0, .14), rgba(255, 255, 255, .1)); background: light-dark(#fff, #171717); font: 400 17px/1.4 var(--sans); color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s; }
+.xst-f input, .xst-f select, .xst-f textarea { width: 100%; box-sizing: border-box; min-height: 60px; padding: 16px 20px; border-radius: 16px; border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border)); background: light-dark(#fff, var(--muted)); font: 400 17px/1.4 var(--sans); color: var(--ink); outline: none; transition: border-color .2s, box-shadow .2s; }
 .xst-f textarea { resize: vertical; }
 .xst-f input:focus-visible, .xst-f select:focus-visible, .xst-f textarea:focus-visible { border-color: var(--xp-accent); box-shadow: 0 0 0 4px rgba(115, 115, 115, .14); }
 .xst-f input::placeholder, .xst-f textarea::placeholder { color: var(--faint); }
 .xst-set { margin: 0; padding: 0; border: 0; display: grid; gap: 10px; }
 .xst-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .xst-chips button, .xst-uses button, .xst-byo-t { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--x-e10); background: var(--card); font: 500 15px/1.3 var(--sans); color: var(--ink); text-align: left; cursor: pointer; transition: background .2s, border-color .2s, transform .15s var(--xp-ease); }
-.xst-chips button:hover, .xst-uses button:hover, .xst-byo-t:hover { background: light-dark(#ececef, #262626); }
+.xst-chips button:hover, .xst-uses button:hover, .xst-byo-t:hover { background: light-dark(#ececef, var(--secondary)); }
 .xst-chips button:active, .xst-uses button:active, .xst-byo-t:active { transform: scale(.98); }
-.xst-chips i, .xst-uses i, .xst-byo-t i { display: grid; place-items: center; flex: none; width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid light-dark(rgba(0, 0, 0, .3), rgba(255, 255, 255, .3)); color: transparent; transition: background .2s, border-color .2s, color .2s; }
+.xst-chips i, .xst-uses i, .xst-byo-t i { display: grid; place-items: center; flex: none; width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid light-dark(rgba(0, 0, 0, .3), var(--border-selected)); color: transparent; transition: background .2s, border-color .2s, color .2s; }
 .xst-byo-t i { width: 20px; height: 20px; }
 .xst [aria-pressed='true'] > i { background: var(--xp-accent); border-color: var(--xp-accent); color: #fff !important; }
 .xst-chips button[aria-pressed='true'], .xst-uses button[aria-pressed='true'], .xst-byo-t[aria-pressed='true'] { border-color: var(--xp-accent); background: var(--x-raised); }
@@ -147,7 +147,7 @@ html.js .xst-submit.later { display: none; }
 .xst-uses span span, .xst-byo-t span span { font-size: 13.5px; font-weight: 400; color: var(--soft); }
 .xst-byo-t { width: 100%; align-items: flex-start; padding: 14px; }
 .xst-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-.xst-err { margin: 0; padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(64, 64, 64, .3); background: rgba(64, 64, 64, .06); font-size: 14px; color: light-dark(#404040, #e5e5e5); }
+.xst-err { margin: 0; padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(64, 64, 64, .3); background: rgba(64, 64, 64, .06); font-size: 14px; color: light-dark(#404040, var(--foreground)); }
 .xst-submit { justify-self: start; }
 .xst-submit:disabled { opacity: .5; cursor: progress; }
 .xst-fine { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--faint); }
@@ -210,13 +210,13 @@ html.js .xst-submit.later { display: none; }
 /* Ready pass (7 Nov) */
 /* hero: one quiet card (outline, no lift shadow) that leans toward a fine pointer; the program peeks under it */
 .xst-fig { box-shadow: none; transition: border-color .3s cubic-bezier(0, 0, .2, 1); }
-@media (hover: hover) { .xst-fig:hover { border-color: light-dark(rgba(0, 0, 0, .2), rgba(255, 255, 255, .2)); } }
+@media (hover: hover) { .xst-fig:hover { border-color: light-dark(rgba(0, 0, 0, .2), var(--border-focus)); } }
 .xst-hero { padding-bottom: 40px; }
 .xst.xp .xst-prog { padding-top: 24px; }
 /* stage and investor chips: a hover you can see */
-@media (hover: hover) { .xst-chips button:hover, .xst-uses button:hover, .xst-byo-t:hover { background: light-dark(#e4e4e7, #262626); border-color: light-dark(rgba(0, 0, 0, .3), rgba(255, 255, 255, .3)); } }
+@media (hover: hover) { .xst-chips button:hover, .xst-uses button:hover, .xst-byo-t:hover { background: light-dark(#e4e4e7, var(--secondary)); border-color: light-dark(rgba(0, 0, 0, .3), var(--border-selected)); } }
 /* errors sit under the field they belong to */
-.xst-err-i { margin: 8px 0 0; font-size: 14px; line-height: 1.4; color: light-dark(#404040, #e5e5e5); }
+.xst-err-i { margin: 8px 0 0; font-size: 14px; line-height: 1.4; color: light-dark(#404040, var(--foreground)); }
 .xst-err-i::before { content: '— '; color: var(--ink); }
 .xst-f [aria-invalid='true'], .xst-chips[aria-invalid='true'] button { border-color: var(--ink); }
 /* the close: shorter, and it holds the free track as its object */
@@ -248,7 +248,7 @@ html.js .xst-submit.later { display: none; }
 @keyframes xst-scan { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
 
 /* Hanzo's hero picture (Zen, /models/zen.webp) restored at the head of the credits card, bleeding to its edges */
-.xst-art { justify-self: stretch; display: block; margin: calc(-1 * clamp(28px, 3.2vw, 48px)) calc(-1 * clamp(28px, 3.2vw, 48px)) 6px; aspect-ratio: 16 / 8; overflow: hidden; background: light-dark(#f5f5f5, #171717); }
+.xst-art { justify-self: stretch; display: block; margin: calc(-1 * clamp(28px, 3.2vw, 48px)) calc(-1 * clamp(28px, 3.2vw, 48px)) 6px; aspect-ratio: 16 / 8; overflow: hidden; background: light-dark(#f5f5f5, var(--muted)); }
 .xst-art img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transform: scale(1.04); transition: transform 1.2s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) { .xst-fig:hover .xst-art img { transform: scale(1.08); } }
 @media (max-width: 899px) { .xst-art { margin: -16px -20px 4px; aspect-ratio: 16 / 6; } }
