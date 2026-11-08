@@ -34,6 +34,8 @@ html:not(.light) .xlb [data-room='dark'] {
   --k-dark: #262626; --k-ink: #0a0a0a; --k-hair: rgba(0, 0, 0, .1); --k-hair-2: rgba(0, 0, 0, .14); --k-hair-3: rgba(0, 0, 0, .3);
   --ink: var(--k-ink); --soft: var(--k-body); --faint: var(--k-dim); --line: var(--k-hair); --card: var(--k-quiet);
 }
+/* live's hero halftone (HeroDither, dark only) fills the hero */
+html:not(.light) .xlb-hero { position: relative; }
 html:not(.light) .xlb-hero { background: var(--k-glow); }
 html:not(.light) .xlb .pf-lede, html:not(.light) .xlb .pf-body:not([data-room='dark'] *) { color: var(--k-body); }
 html:not(.light) .xlb .pf-kick { color: var(--k-dim); }

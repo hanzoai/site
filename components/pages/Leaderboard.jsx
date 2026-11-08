@@ -36,6 +36,7 @@ import { Arrive, Cascade, FocusPull, useArrive } from './leaderboard/entrances';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Leaderboard.css';
+import HeroDither from './HeroDither';
 
 const ISSUES = 'https://github.com/search?type=issues&s=created&o=desc&q=is%3Aissue%20is%3Aopen%20label%3Abounty%20archived%3Afalse%20org%3Ahanzoai%20org%3Ahanzo-apps%20org%3Ahanzo-go%20org%3Ahanzo-js';
 const n = (v) => v.toLocaleString('en-US');
@@ -183,6 +184,7 @@ function Podium() {
 function Hero() {
   return (
     <section className="xlb-hero" aria-labelledby="xlb-h1">
+      <HeroDither />
       <div className="pf-wrap">
         <div className="xlb-hero-top">
           <div className="xlb-hero-h">
