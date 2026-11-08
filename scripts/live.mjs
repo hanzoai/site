@@ -1,8 +1,19 @@
 // Two jobs, both reading hanzo.ai as it is today.
-// 1. No arguments: refresh the figures the site shows from Hanzo's own public sources, over plain HTTPS (no browser).
-//    Each source writes content/live/_<name>.json with `source` and `fetched_at`; a source that fails, is rate-limited
-//    or returns something unexpected keeps its last good file, and the run still exits 0 so a build never fails here.
-//    npm run build runs it first (prebuild). GITHUB_TOKEN, when set, lets it read GitHub (120 orgs > 60 requests an hour).
+// 1. No arguments: refresh every figure the site shows from the same sources hanzo.ai itself reads, over plain HTTPS
+//    (no browser), each into content/live/_<name>.json with `source` and `fetched_at`:
+//      _git.json       api.hanzo.ai/v1/git/activity (the commit calendar)
+//      _oss.json       hanzo.ai's own home bundle: its snapshot of git activity and GitHub (the open-source tiles, the
+//                      calendar's dates and the repository cards), read as text from the page's scripts, never run
+//      _research.json  api.hanzo.ai/v1/research/runs (coding.repair, decision.latency, enso.gpqa_diamond), summary view
+//      _models.json    api.hanzo.ai/v1/models and /v1/pricing/models (per-million prices and model names)
+//      _pricing.json   api.hanzo.ai/v1/billing/plans (plan prices)
+//      _github.json    GitHub repo counts, only with HZ_LIVE_GITHUB=1 and GITHUB_TOKEN (no page reads it; hanzo.ai's own
+//                      GitHub figures come in _oss.json)
+//    It FAILS LOUDLY: if any source fails, is rate-limited or returns something unexpected, it names that source, keeps
+//    the last good file (never a half-written one) and exits 1, so `npm run build` (prebuild) stops instead of
+//    shipping stale figures. To build from the snapshots on purpose (no network, a known-good run), set
+//    HZ_LIVE_OFFLINE=1: no source is read and the run exits 0. In the cloud sandbox Node's fetch needs
+//    NODE_USE_ENV_PROXY=1 NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt.
 // 2. --pages [/path ...]: render hanzo.ai pages in headless Chrome and keep what a visitor sees (content/live/<path>.json
 //    { text, links }, parity.py's reference). A browser job: not on James's laptop unless he asks (docs/MASTER.md section 5).
 import fs from 'node:fs';
@@ -16,12 +27,19 @@ if (args.length) await pages(args.filter((a) => a !== '--pages'));
 else await figures();
 
 async function figures() {
+  if (process.env.HZ_LIVE_OFFLINE === '1') {
+    console.log('HZ_LIVE_OFFLINE=1: no source read; every content/live/_*.json snapshot is kept as it is.');
+    return;
+  }
   const fetched_at = new Date().toISOString();
-  const get = async (url, headers = {}) => {
+  const failed = [];
+  const res = async (url, headers = {}) => {
     const r = await fetch(url, { headers: { 'user-agent': 'hanzo-site-live', ...headers }, signal: AbortSignal.timeout(30000) });
     if (!r.ok) throw Object.assign(new Error(`${r.status} from ${url}${r.headers.get('x-ratelimit-remaining') === '0' ? ' (rate limited)' : ''}`), { status: r.status });
-    return r.json();
+    return r;
   };
+  const get = async (url, headers = {}) => (await res(url, headers)).json();
+  const text = async (url) => (await res(url)).text();
   const int = (n) => Number.isInteger(n) && n >= 0;
   const need = (ok, what) => { if (!ok) throw new Error('unexpected data: ' + what); };
   const n = (x) => x.toLocaleString('en-US');
@@ -86,24 +104,91 @@ async function figures() {
     return { source: PLANS, fetched_at, currency: 'usd', plans };
   };
 
+  // hanzo.ai's home shows its open-source figures from a snapshot built into its own page (its read of
+  // api.hanzo.ai/v1/git/activity and GitHub, with the repository cards); the live API has moved on since, so the same
+  // figures come from that snapshot. The page's scripts are read as text and the snapshot is the JSON literal inside
+  // them; nothing from hanzo.ai is run.
+  const HOME = 'https://hanzo.ai/';
+  const ESC = { n: '\n', t: '\t', r: '\r', b: '\b', f: '\f', v: '\v', 0: '\0' };
+  const unjs = (s) => s.replace(/\\(u[0-9a-fA-F]{4}|x[0-9a-fA-F]{2}|[\s\S])/g, (_, c) => (c.length > 1 ? String.fromCharCode(parseInt(c.slice(1), 16)) : ESC[c] ?? c));
+  const scripts = async () => {
+    const html = await text(HOME);
+    const list = [...new Set(html.match(/\/_next\/static\/chunks\/[\w.-]+\.js/g) || [])].map((c) => new URL(c, HOME).href);
+    need(list.length > 0, 'no scripts on ' + HOME);
+    return list;
+  };
+  const oss = async () => {
+    let snap = null, cal = null, from = null;
+    for (const url of await scripts()) {
+      const js = await text(url);
+      if (!js.includes('"estate"') || !js.includes('"faces"')) continue;
+      for (const m of js.matchAll(/JSON\.parse\('((?:[^'\\]|\\.)*)'\)/g)) {
+        let d; try { d = JSON.parse(unjs(m[1])); } catch { continue; }
+        if (d && d.estate && d.groups) snap = d;
+        else if (d && d.from && d.to && d.groups) cal = d;
+      }
+      from = url;
+      if (snap) break;
+    }
+    need(snap && cal, "the open-source snapshot in hanzo.ai's scripts");
+    const e = snap.estate;
+    need([e.commits, e.merges, e.orgs, e.public].every(int) && Array.isArray(e.monthly) && e.window?.to, 'estate');
+    const groups = Object.fromEntries(Object.entries(snap.groups).map(([k, g]) => {
+      need([g.stars, g.forks, g.repos].every(int), 'group ' + k);
+      return [k, { name: g.name, repos: g.repos, public: g.public, stars: g.stars, forks: g.forks, top: (g.top || []).map((r) => ({ repo: r.repo, description: r.description ?? '', language: r.language ?? '', stars: r.stars, forks: r.forks, commits: r.commits, months: r.months, contributors: r.contributors, faces: r.faces ?? [], pushed: r.pushed, forge: r.forge, site: r.site ?? null })) }];
+    }));
+    need((groups.hanzo?.top || []).length > 0, 'repository cards');
+    return { source: HOME + ' (its built-in snapshot of https://api.hanzo.ai/v1/git/activity and GitHub)', script: from, fetched_at, read: snap.read, estate: { window: e.window, months: e.months, orgs: e.orgs, repos: e.repos, public: e.public, commits: e.commits, merges: e.merges, monthly: e.monthly }, calendar: { from: cal.from, to: cal.to }, forge: snap.forge, groups };
+  };
+
+  // the coding race, Kai's speed and Enso's cost, as hanzo.ai's home reads them (summary view, every run)
+  const RUNS = 'https://api.hanzo.ai/v1/research/runs?org=hanzo';
+  const research = async () => {
+    const one = async (q) => { const d = await get(`${RUNS}&${q}&view=summary&limit=200`); need(Array.isArray(d.data) && d.data.length > 0, q); return d.data; };
+    const [repair, latency, gpqa] = await Promise.all([
+      one('benchmark=coding.repair&category=all,vs-claude-code'),
+      one('benchmark=decision.latency&metric=p50ms'),
+      one('benchmark=enso.gpqa_diamond&category=all,vs-claude-code'),
+    ]);
+    return { source: RUNS + '&benchmark={coding.repair,decision.latency,enso.gpqa_diamond}&view=summary&limit=200', fetched_at, repair, latency, gpqa };
+  };
+
+  // per-million prices (Kai against the frontier LLMs) and the display names of the models on the GPQA chart
+  const MODELS = 'https://api.hanzo.ai/v1/models?id=anthropic/claude-fable-5.1,anthropic/claude-opus-5,anthropic/claude-sonnet-5.5,enso,enso-flash,enso-pro,enso-ultra,kai,openai/gpt-5.5,openai/gpt-6-astra,zen6,zen6-coder,zen6-flash';
+  const PRICES = 'https://api.hanzo.ai/v1/pricing/models?id=anthropic/claude-fable-5,anthropic/claude-fable-5.1,anthropic/claude-haiku-5.5,anthropic/claude-opus-4.8,anthropic/claude-opus-5.5,anthropic/claude-sonnet-5,anthropic/claude-sonnet-5.5,deepseek/deepseek-v4-pro,openai/gpt-4o,openai/gpt-5.5,openai/gpt-5.6-sol,openai/gpt-6-sol,moonshotai/kimi-k3,x-ai/grok-4.7,z-ai/glm-5.3,enso,enso-flash,enso-ultra,kai';
+  const models = async () => {
+    const [m, p] = await Promise.all([get(MODELS), get(PRICES)]);
+    need(Array.isArray(m.data) && m.data.some((x) => x.id === 'kai' && x.pricing?.input_per_million > 0), 'models with prices');
+    need(Array.isArray(p.models) && p.models.length > 0, 'pricing models');
+    return { source: MODELS + ' and ' + PRICES, fetched_at, models: m.data.map((x) => ({ id: x.id, name: x.name, pricing: x.pricing })), names: Object.fromEntries(p.models.map((x) => [x.id ?? x.name, x.fullName ?? x.name])) };
+  };
+
   const run = async (name, job, say) => {
     const file = path.join(OUT, name);
     try {
       const data = await job();
       fs.writeFileSync(file + '.tmp', JSON.stringify(data) + '\n');
       fs.renameSync(file + '.tmp', file); // whole file or nothing: a half-written snapshot would break the build
-      console.log(`${name.padEnd(14)}live  ${say(data)}`);
+      console.log(`${name.padEnd(15)}live  ${say(data)}`);
     } catch (e) {
       let was = null;
       try { was = JSON.parse(fs.readFileSync(file, 'utf8')).fetched_at; } catch {}
-      console.log(`${name.padEnd(14)}${was ? 'kept snapshot from ' + was : 'NO DATA AND NO SNAPSHOT'}: ${e.message}`);
+      console.log(`${name.padEnd(15)}${was ? 'kept snapshot from ' + was : 'NO DATA AND NO SNAPSHOT'}: ${e.message}`);
+      failed.push(`${name}: ${e.message}`);
     }
   };
   await run('_git.json', git, (d) => `${n(d.commits)} commits · ${n(d.merges)} merges · ${n(d.week)} in 7 days · ${d.orgs} orgs · ${d.days.length} days ${d.window.from}…${d.window.to}`);
   await Promise.all([
-    run('_github.json', github, (d) => `${n(d.repos)} original public repos in ${d.orgs} orgs`),
+    process.env.HZ_LIVE_GITHUB === '1' ? run('_github.json', github, (d) => `${n(d.repos)} original public repos in ${d.orgs} orgs`) : console.log('_github.json  skipped: no page reads it (HZ_LIVE_GITHUB=1 and a GITHUB_TOKEN refresh it)'),
     run('_pricing.json', pricing, (d) => Object.entries(d.plans).map(([k, p]) => `${k} $${p.price}${p.priceAnnual != null ? '/$' + p.priceAnnual : ''}`).join(' · ')),
+    run('_oss.json', oss, (d) => `${n(d.estate.commits)} commits · ${n(d.estate.merges)} merges · ${n(Object.values(d.groups).reduce((s, g) => s + g.stars, 0))} stars · ${d.groups.hanzo.top.length} cards · read ${d.read}`),
+    run('_research.json', research, (d) => `${d.repair.length} coding.repair · ${d.latency.length} decision.latency · ${d.gpqa.length} enso.gpqa_diamond runs`),
+    run('_models.json', models, (d) => `${d.models.length} models · ${Object.keys(d.names).length} names`),
   ]);
+  if (failed.length) {
+    console.error(`\nLIVE FIGURES FAILED (${failed.length}): the build stops rather than ship stale figures.\n  ${failed.join('\n  ')}\nFix the source, or set HZ_LIVE_OFFLINE=1 to build from the snapshots on purpose.`);
+    process.exit(1);
+  }
 }
 
 async function pages(paths) {
