@@ -405,7 +405,8 @@ function Thread({ on }) {
           <Msg on={at(3)} cls="from"><p className="bt-from">Message from Des · Designer</p><div className="bt-quote"><b>Des · Designer</b><p>Top up in USDC or USDT.</p><span className="bt-file x-mono">header.mp4</span></div></Msg>
           <Msg on={at(4)} face="mark"><p>Des sent the header. Here is /pricing with the new line.</p><div className="bt-card"><span className="x-mono">hanzo.ai/pricing</span><p>Agents can top up in USDC or USDT over the API.</p><span className="bt-file x-mono">pricing.png</span></div></Msg>
           <Msg on={at(5)} cls="ask">
-            <span className="bt-answered x-mono" style={{ opacity: pick ? 1 : 0 }}>Answered</span>
+            {/* hanzo.ai's ask card: 'Waiting for you' until you pick, then 'Answered'; both share one cell, so nothing moves */}
+            <span className={'bt-answered x-mono' + (pick ? '' : ' wait')}><span hidden={!!pick || undefined}>Waiting for you</span><span hidden={!pick || undefined}>Answered</span></span>
             <p>Should /pricing include that sentence about crypto top-ups?</p>
             <div className="bt-yn">
               <button type="button" data-sound="tick" className={pick === 'yes' ? 'on' : ''} onClick={() => { setPick('yes'); if (b < 7) setB(7); }} tabIndex={at(5) ? 0 : -1}>Yes, add it</button>

@@ -628,3 +628,8 @@ html:not(.js) .bt .x-line-in { transform: none !important; }
 .bt-rt-ph-c { width: min(100%, 480px); margin: 0; font-size: 13px; color: #525252; }
 /* the routines visual now also holds live's phone strip, so its stage is taller on desktop (phones size to content) */
 @media (min-width: 900px) { .bt-chv:has(> .bt-rt) { height: 560px; } .bt-rt { padding-block: 32px; } }
+/* the ask's state, as live labels it: a quiet 'Waiting for you' until answered, then the ink 'Answered' */
+.bt-answered { display: inline-grid; }
+.bt-answered > span { grid-area: 1 / 1; }
+.bt-answered > span[hidden] { display: block; visibility: hidden; }
+.bt-answered.wait { background: #e4e4e7; color: #0a0a0a; }
