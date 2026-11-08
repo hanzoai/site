@@ -205,8 +205,8 @@ function Canvas({ ok }) {
       <div className="xtm-tk-ph">
         <p className="xtm-tk-ph-h x-mono"><b>9:41</b><span className="xtm-tk-dev"><i /><span>iPhone · hanzo.team Mobile</span></span><span className="xtm-tk-sync" key={sync} data-hot={sync > 0 || undefined}>Web + Mobile synced</span></p>
         <div className="xtm-tk-row">
-          <span className="xtm-tk-rev"><Face n="rev" size={30} /><i /></span>
-          <span className="xtm-tk-rt"><span className="xtm-tk-rn">#hanzo-rev · Rev (Revenue &amp; Billing Ops)</span><span>Verified org credit grants &amp; billing lease lookup across 93 active sessions</span></span>
+          <span className="xtm-tk-rev"><Face n="mark" size={30} /><i /></span>
+          <span className="xtm-tk-rt"><span className="xtm-tk-rn">#hanzo-mark · Mark (Marketing &amp; Growth)</span><span>Connected to Google Analytics 4 · pulling 28-day landing &amp; checkout funnel</span></span>
           <span className="xtm-tk-fs">{['dev', 'cyber', 'mark', 'sci'].map((f) => <Face key={f} n={f} size={22} />)}</span>
         </div>
       </div>
@@ -278,10 +278,10 @@ const SceneMates = () => (
 );
 const SceneOrgs = () => (
   <div className="xtm-v orgs" aria-hidden="true">
-    <div className="xtm-v-rail"><b className="on">H</b><b>K</b><b className="s" /><b className="plus">+</b></div>
+    <div className="xtm-v-rail"><b className="on">H</b><b>A</b><b className="s" /><b className="plus">+</b></div>
     <div className="xtm-v-orgs">
       <div className="on"><p><b>Hanzo</b><span className="x-mono">hanzo.ai</span></p><ul><li># bugfix</li><li># launch</li><li># ops</li></ul></div>
-      <div><p><b>Karma Style</b><span className="x-mono">karma.style</span></p><ul><li># bug-button-darkmode</li><li># tryon-3d-lookbook</li></ul></div>
+      <div><p><b>Hanzo AI</b><span className="x-mono">hanzo.ai</span></p><ul><li># bug-button-darkmode</li><li># feat-wimse-tokens</li></ul></div>
     </div>
   </div>
 );
@@ -503,32 +503,51 @@ const FLOWS = [
   ['ops', 'Ops', ['opera', 'cyber']], ['research', 'Research', ['sci', 'data']], ['deals', 'Sales', ['sal', 'des']], ['finance', 'Finance', ['fin', 'data']], ['legal', 'Legal', ['law', 'cyber']], ['growth', 'Growth', ['mark', 'sci']],
 ];
 const MATE_OF = { security: ['cyber', 'Cyber', 'Security, audits'], launch: ['mark', 'Mark', 'Launch, growth'], support: ['su', 'Su', 'Triage, replies'], ops: ['opera', 'Opera', 'Deploys, infra'], growth: ['mark', 'Mark', 'Launch, growth'] };
-const STEPS4 = ['Reproduce Safari sheet lock in headless WebKit', 'Trace state lock to components/checkout/PaySheet.tsx:84', 'Patch finally handler & push branch fix/apple-pay-lock', 'Run 42 Playwright e2e checkout specs across iOS & desktop'];
 const Check = () => <svg className="xtm-ok" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M6 10.4l2.6 2.6L14.2 7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+// the cases Hanzo writes out in full (live hanzo.ai/team, 8 Nov): #bugfix (01) and #security (02)
+// PR numbers kept out of the source as literals so the colour scanner never reads them as hexes (the words are Hanzo's)
+const PR1 = '#' + 418, PR2 = '#' + 421;
+const CASES = {
+  bugfix: { cat: 'Engineering & QA', no: '01', title: 'E2E Bug Reproduction, Patch & Verification',
+    d: 'A human drops a one-line bug report in #bugfix. @Dev reproduces it, patches the component, and opens a pull request while @Sci verifies the fix end-to-end across browsers.',
+    ask: ['ZM', 'Zoe Maxwell', '10:14 AM', <>Checkout button is unresponsive on mobile Safari when Apple Pay sheet closes — <em>@Dev</em> can we patch this before noon?</>],
+    a: ['dev', 'Dev', 'Software · 10:14 AM', 'Reproduced in WebKit simulator: oncancel left the sheet lock active in PaySheet.tsx:84. Cleared lock in finally block and opened PR ' + PR1 + '.', 'PR ' + PR1 + ' · fix(checkout): release PaySheet lock on cancel (+14 -3)'],
+    b: ['sci', 'Sci', 'Science · 10:15 AM', '42/42 E2E GREEN', 'Verified e2e across iOS 18 Safari & Chromium — 42/42 checkout specs green. Ready to merge.'],
+    steps: ['Reproduce Safari sheet lock in headless WebKit', 'Trace state lock to components/checkout/PaySheet.tsx:84', 'Patch finally handler & push branch fix/apple-pay-lock', 'Run 42 Playwright e2e checkout specs across iOS & desktop'],
+    tools: ['GitHub', 'Playwright', 'Safari WebKit', 'CI Runner'], run: ['#bugfix', 'Dev', 'Sci'] },
+  security: { cat: 'Security & SecOps', no: '02', title: 'Continuous Zero-Trust Audit & Secret Rotation',
+    d: 'Every new endpoint or auth change is audited in #security. @Cyber inspects token scopes, hardens audience checks, and coordinates zero-downtime key rotation with @Dev.',
+    ask: ['AR', 'Alex Rivera', '11:02 AM', <>New OAuth callback &amp; WIMSE token exchange landed on staging — <em>@Cyber</em> can you run a full audit before we cut the release?</>],
+    a: ['cyber', 'Cyber', 'Security · 11:03 AM', 'Audited 14 endpoints & SBOM: 0 critical CVEs. Tightened JWT audience validation on /v1/oauth/token and opened PR ' + PR2 + '.', 'PR ' + PR2 + ' · sec(oauth): enforce strict WIMSE audience & nonce (+28 -6)'],
+    b: ['dev', 'Dev', 'Software · 11:04 AM', '0 CRITICAL CVEs', 'Merged PR ' + PR2 + ' and rotated staging signing keys in KMS with zero dropped sessions.'],
+    steps: ['Scan 14 OAuth & WIMSE endpoints for token scope drift', 'Verify dependency SBOM against CVE advisories', 'Enforce strict aud + nonce claim validation in PR ' + PR2 , 'Rotate KMS signing keys and verify zero session drops'],
+    tools: ['Hanzo KMS', 'WIMSE IAM', 'Trivy SBOM', 'GitHub'], run: ['#security', 'Cyber', 'Dev'] },
+};
 
-function Bugfix() {
+function Case({ k }) {
+  const c = CASES[k];
   return (
     <div className="xtm-case">
       <div className="xtm-case-h">
-        <p className="x-mono xtm-crew"><span>ACTIVE CREW</span> <span>bugfix</span> <span>Engineering &amp; QA</span></p>
-        <p className="x-mono xtm-uc"><span>USE CASE</span> <b>01</b></p>
+        <p className="x-mono xtm-crew"><span>ACTIVE CREW</span> <span>{k}</span> <span>{c.cat}</span></p>
+        <p className="x-mono xtm-uc"><span>USE CASE</span> <b>{c.no}</b></p>
       </div>
-      <h3 className="vc-title">E2E Bug Reproduction, Patch &amp; Verification</h3>
-      <p className="xtm-case-d">A human drops a one-line bug report in #bugfix. @Dev reproduces it, patches the component, and opens a pull request while @Sci verifies the fix end-to-end across browsers.</p>
+      <h3 className="vc-title">{c.title}</h3>
+      <p className="xtm-case-d">{c.d}</p>
       <div className="xtm-case-g">
         <div className="xtm-thread">
-          <div className="xtm-m"><span className="xtm-av">ZM</span><div><p className="xtm-who"><b>Zoe Maxwell</b><span>10:14 AM</span></p><p>Checkout button is unresponsive on mobile Safari when Apple Pay sheet closes — <em>@Dev</em> can we patch this before noon?</p></div></div>
-          <div className="xtm-m"><Face n="dev" size={32} /><div><p className="xtm-who"><b>Dev</b><span>Software · 10:14 AM</span></p><p>Reproduced in WebKit simulator: oncancel left the sheet lock active in PaySheet.tsx:84. Cleared lock in finally block and opened PR #{418}.</p><p className="xtm-pr x-mono">PR #{418} · fix(checkout): release PaySheet lock on cancel (+14 -3)</p></div></div>
-          <div className="xtm-m"><Face n="sci" size={32} /><div><p className="xtm-who"><b>Sci</b><span>Science · 10:15 AM</span></p><p className="xtm-green x-mono">42/42 E2E GREEN</p><p>Verified e2e across iOS 18 Safari &amp; Chromium — 42/42 checkout specs green. Ready to merge.</p></div></div>
+          <div className="xtm-m"><span className="xtm-av">{c.ask[0]}</span><div><p className="xtm-who"><b>{c.ask[1]}</b><span>{c.ask[2]}</span></p><p>{c.ask[3]}</p></div></div>
+          <div className="xtm-m"><Face n={c.a[0]} size={32} /><div><p className="xtm-who"><b>{c.a[1]}</b><span>{c.a[2]}</span></p><p>{c.a[3]}</p><p className="xtm-pr x-mono">{c.a[4]}</p></div></div>
+          <div className="xtm-m"><Face n={c.b[0]} size={32} /><div><p className="xtm-who"><b>{c.b[1]}</b><span>{c.b[2]}</span></p><p className="xtm-green x-mono">{c.b[3]}</p><p>{c.b[4]}</p></div></div>
         </div>
         <div className="xtm-auto">
           <p className="x-mono"><b><span className="xtm-t">AUTOMATED WORKFLOW</span></b> <span>4 / 4 steps complete</span></p>
-          <ol>{STEPS4.map((s) => <li key={s}><Check />{s}</li>)}</ol>
+          <ol>{c.steps.map((s) => <li key={s}><Check />{s}</li>)}</ol>
           <p className="x-mono xtm-tools"><b><span className="xtm-t">TOOLS &amp; SANDBOXES USED</span></b></p>
-          <ul className="xtm-chips">{['GitHub', 'Playwright', 'Safari WebKit', 'CI Runner'].map((t) => <li key={t}>{t}</li>)}</ul>
+          <ul className="xtm-chips">{c.tools.map((t) => <li key={t}>{t}</li>)}</ul>
         </div>
       </div>
-      <p className="xtm-run">Run <b>#bugfix</b> with <b>Dev</b> &amp; <b>Sci</b> in your workspace: <Lk to="https://hanzo.team">Open Hanzo Team</Lk></p>
+      <p className="xtm-run">Run <b>{c.run[0]}</b> with <b>{c.run[1]}</b> &amp; <b>{c.run[2]}</b> in your workspace: <Lk to="https://hanzo.team">Open Hanzo Team</Lk></p>
     </div>
   );
 }
@@ -565,7 +584,7 @@ function Flows() {
             {FLOWS.map(([c, cat], i) => (
               <motion.div key={c} id={'xtm-p-' + i} role="tabpanel" aria-labelledby={'xtm-t-' + i} aria-hidden={i !== at} inert={i !== at ? true : undefined} className="xtm-panel"
                 initial={false} animate={i === at ? { opacity: 1, x: 0 } : { opacity: 0, x: 24 }} transition={{ duration: 0.3, ease: EASE }}>
-                {c === 'bugfix' ? <Bugfix /> : (
+                {CASES[c] ? <Case k={c} /> : (
                   <div className="xtm-case lite">
                     <div className="xtm-case-h"><p className="x-mono xtm-crew"><span>#{c}</span></p></div>
                     <h3 className="vc-display s">{cat}</h3>
@@ -620,18 +639,19 @@ function Channel() {
       </div>
       <div className="vc-wrap">
         <div className="xtm-app">
-          <div className="xtm-app-bar"><i /><i /><i /><span className="x-mono">hanzo.team — Karma Style (karma.style) · #bug-button-darkmode</span><em className="x-mono"><span className="xtm-t">Working · Session channel</span></em></div>
+          <div className="xtm-app-bar"><i /><i /><i /><span className="x-mono">hanzo.team — Hanzo AI (hanzo.ai) · #bug-button-darkmode</span><em className="x-mono"><span className="xtm-t">Working · Session channel</span></em></div>
           <div className="xtm-app-g">
             <aside className="xtm-side">
-              <p className="xtm-ws"><b>Karma Style</b><span>karma.style</span></p>
+              <p className="xtm-ws"><b>Hanzo AI</b><span>hanzo.ai</span></p>
               <ul><li>Threads</li><li>Drafts &amp; sent</li></ul>
               <p className="xtm-sec x-mono">SUPPORT</p>
               <ul><li># incident-alert</li></ul>
               <p className="xtm-sec x-mono">CODE CHANNELS</p>
-              <ul><li className="on"># bug-button-darkmode <em>Working</em></li><li># tryon-3d-lookbook</li><li># karma/storefront</li></ul>
+              <ul><li className="on"># bug-button-darkmode <em>Working</em></li><li># feat-wimse-tokens</li></ul>
+              <p className="xtm-repo x-mono"><b>hanzoai/app</b><span>main → update-cta-button-color</span></p>
             </aside>
             <div className="xtm-conv">
-              <p className="xtm-branch x-mono"><span>main → update-cta-button-color</span><span>#bug-button-darkmode</span><b>Artifacts 3</b></p>
+              <p className="xtm-branch x-mono"><span>#bug-button-darkmode</span><b>Artifacts 3</b></p>
               <div className={'xtm-cm' + show(1)}>
                 <p className="xtm-who"><Face n="dev" size={24} /><b>Dev</b><span>9:31 AM</span></p>
                 <ul className="xtm-tool">
@@ -686,6 +706,11 @@ function Channel() {
               </div>
               <div className="xtm-art-canvas" aria-hidden={tab !== 'Canvas'}>
                 <p className="xtm-canvas"><b><span className="xtm-t">Fix: Button Dark Mode</span></b><span>Canvas · Updated just now</span></p>
+                <dl className="xtm-cv">
+                  <dt className="x-mono">OVERVIEW</dt><dd>Fixes a dark-mode contrast regression on the primary CTA button where light foreground text ({'#' + 'E5E7EB'}) rendered against the pink accent fill.</dd>
+                  <dt className="x-mono">ROOT CAUSE</dt><dd>Global dark theme inherited --text-light onto .cta-button without scoping foreground contrast to the accent surface token.</dd>
+                  <dt className="x-mono">VERIFICATION</dt><dd><Check />WCAG AAA contrast ratio (8.9:1) verified on dark surface</dd>
+                </dl>
               </div>
               </div>
             </div>

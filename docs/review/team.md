@@ -1,4 +1,5 @@
 # /team — James-eye review
+Ready: 8 Nov, live copycheck missing 0 of 124 after Hanzo's update: phone strip is #hanzo-mark · Mark (Marketing & Growth), the workflows room writes out #security (USE CASE 02, PR #421, KMS rotation) beside #bugfix, the code channel is Hanzo AI (hanzo.ai) with #feat-wimse-tokens, the hanzoai/app repo card and the Canvas overview, root cause and verification; Karma Style dropped as live has. Dark mode on Hanzo's tokens; lightcheck 0 diffs, darkcheck OK, taste/unique OK, 0 console errors, no sideways scroll at 1470 and 375 in both modes.
 Ready: 9 Nov, live copycheck missing 0 of 127 after Hanzo's update (live hanzo.ai), Hanzo's images kept: the hero window is now live's tracker board (eight CRM cards in four columns, Tracker Board / 23 AI Teammates / Virtual Office, 83% To do) with the iPhone strip (#hanzo-rev · Rev, Web + Mobile synced); an agent cursor walks the cards and each progress counts up to Hanzo's figure; DMs, Rev's thread and the sleeping computer removed as live removed them. taste/unique OK; 0 console errors, no overflow at 1470 and 375 (the one desktop overlap hit is the masked chapter heading, clean on screenshots).
 
 
