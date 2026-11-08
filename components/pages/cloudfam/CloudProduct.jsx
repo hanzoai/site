@@ -218,7 +218,11 @@ function Console({ doc, v, fig, previews, sigil }) {
                     </li>
                   ))}
                 </ul>}
-                {w.caption && <p className="xcf-cap">{w.caption}</p>}
+                {/* the picked service's own note (hanzo.ai's), else the window's caption */}
+                <div className="xcf-caps" aria-live="polite">
+                  {w.caption && <p className="xcf-cap" hidden={!!w.rows[lit]?.note || undefined}>{w.caption}</p>}
+                  {w.rows.filter((r) => r.note).map((r) => <p key={r.name} className="xcf-cap" hidden={w.rows[lit]?.name !== r.name || undefined}>{r.note}</p>)}
+                </div>
               </div>
             )}
             <AnimatePresence>

@@ -526,3 +526,7 @@ button.xcf-note.on { background: var(--k-ink); border-color: var(--k-ink); color
   .xcf-mask > span { animation: none; }
   .xro-p, .xro-pi { transition: none; }
 }
+/* the caption and each service's note share one cell: picking another service never moves the panel */
+.xcf-caps { display: grid; }
+.xcf-caps > .xcf-cap { grid-area: 1 / 1; }
+.xcf-caps > .xcf-cap[hidden] { display: block; visibility: hidden; }
