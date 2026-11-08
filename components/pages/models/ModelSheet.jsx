@@ -19,7 +19,7 @@ import MaskFig from '../../v2/MaskFig';
 import Sigil from '../../Sigil';
 import ModelFilm, { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
-import { Field, Bill, Codes, Loose, RateBars, Reach, Also, CopyStatus, useCatalog, rateFrom, rateText, money, isLocal } from './parts';
+import { Field, Bill, Codes, Loose, RateBars, Reach, Also, CopyStatus, useCatalog, useShelf, rateFrom, rateText, money, isLocal } from './parts';
 import './models.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
@@ -80,7 +80,10 @@ export default function ModelSheet({ doc }) {
   const cat = useCatalog(true);
   const rate = rateFrom(cat, doc.id, doc.rate);
   const price = (rate && (doc.rate || !doc.price) ? rateText(rate) : doc.price) || DASH;
-  const sibs = doc.siblings.map((s) => ({ ...s, rate: rateFrom(cat, s.id, s.rate) }));
+  // the maker's other models as hanzo.ai lists them now (api.hanzo.ai/v1/models), the captured ones until it answers
+  const shelf = useShelf(doc.provider.slug, doc.siblings);
+  const live = shelf !== doc.siblings ? shelf.filter((s) => s.href !== doc.route) : null;
+  const sibs = (live || doc.siblings).map((s) => ({ ...s, rate: rateFrom(cat, s.id, s.rate) }));
   // the hero figure is Hanzo's short form ("1M", "33K": the spec value, else the shelf card's); a sentence-long value
   // ("32,768 tokens (YaRN…)") stays whole in the spec sheet. Never a number Hanzo did not print.
   const ctxFig = doc.ctx && doc.ctx.length <= 6 ? doc.ctx : doc.cardCtx;
@@ -110,7 +113,11 @@ export default function ModelSheet({ doc }) {
   // then the maker's nearest by context and output rate; six at most. Hanzo's other "More from" cards follow as one-line
   // links (Also), the ones without a page here opening hanzo.ai in a new tab and saying so.
   const near = (s) => Math.abs(Math.log10((s.tokens || 1) / (doc.tokens || 1))) + (s.rate && rate ? Math.abs(Math.log10((s.rate.out + 0.01) / (rate.out + 0.01))) : 3);
-  const more = doc.more ? doc.more.cards : [];
+  // hanzo.ai's "More from" is the first of the maker's other models in its list; where the capture shows that, it
+  // follows the live list (so a model added since reads as on hanzo.ai)
+  const cap = doc.more ? doc.more.cards : [];
+  const lead = (l) => l.slice(0, cap.length).map((c) => c.href).join(' ');
+  const more = live && cap.length && lead(cap) === lead(doc.siblings) ? live.slice(0, Math.max(cap.length, 6)).map((s) => cap.find((c) => c.href === s.href) || s) : cap;
   const rail = [
     ...more.filter((c) => isLocal(c.href)),
     ...sibs.filter((s) => isLocal(s.href) && !more.some((c) => c.href === s.href)).sort((a, b) => near(a) - near(b)),
