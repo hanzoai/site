@@ -247,3 +247,6 @@ html:not(.js) .eo-disc-a { display: none; }
 .eo-go { min-height: 44px; }
 .eo-orbit .x-band .eo-go { color: rgba(255, 255, 255, .78); transition: color .2s; }
 @media (hover: hover) { .eo-orbit .x-band .eo-go:hover { color: #fff; } }
+
+/* Hanzo's line on the default (enso-auto) leads the three tiers (live hanzo.ai, 9 Nov) */
+.eo-auto { max-width: 46ch; margin: 0 0 clamp(24px, 3vw, 40px); font-size: clamp(1.25rem, 1.8vw, 1.625rem); line-height: 1.35; letter-spacing: -.015em; color: var(--ink); text-wrap: pretty; }

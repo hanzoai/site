@@ -316,6 +316,7 @@ const ALL = Object.fromEntries([...ROWS, ...OTHERS].map((r) => [r[0], r]));
 /* ---------- 5. the catalogue ---------- */
 const ENSO = [
   ['enso', 'Enso', '900K', "Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow.", ['text']],
+  ['enso-auto', 'Enso', '900K', "Routes each request to one tier by the reasoning depth it asks for: enso-flash at off, none, minimal, low, default; enso-pro at medium, high; enso-ultra at xhigh, max. It bills at the price of the tier that answers; the price shown is a request's that states no depth. When nothing pays for that tier it answers on enso-free, at no charge, and says so.", ['text']],
   ['enso-flash', 'Enso Flash', '900K', 'Fast, economical Enso tier for high-volume, low-latency everyday work, with 1M-context overflow.', ['text']],
   ['enso-ultra', 'Enso Ultra', '1M', 'Adaptive fan-out — probes a task-appropriate model, escalates to a top-K panel only when needed, then verifies-then-selects the best answer.', ['text']],
 ];
@@ -646,7 +647,7 @@ const CODE = [
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer $HANZO_API_KEY" \\
   -d '{
-    "model": "enso",
+    "model": "enso-auto",
     "messages": [{"role": "user", "content": "Hello!"}]
   }'`],
   ['Python', `from openai import OpenAI
@@ -657,7 +658,7 @@ client = OpenAI(
 )
 
 response = client.chat.completions.create(
-    model="enso",
+    model="enso-auto",
     messages=[{"role": "user", "content": "Hello!"}],
 )
 print(response.choices[0].message.content)`],
@@ -669,7 +670,7 @@ const client = new OpenAI({
 })
 
 const response = await client.chat.completions.create({
-  model: 'enso',
+  model: 'enso-auto',
   messages: [{ role: 'user', content: 'Hello!' }],
 })
 console.log(response.choices[0].message.content)`],
@@ -690,7 +691,7 @@ func main() {
 	resp, _ := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: "enso",
+			Model: "enso-auto",
 			Messages: []openai.ChatCompletionMessage{
 				{Role: openai.ChatMessageRoleUser, Content: "Hello!"},
 			},
