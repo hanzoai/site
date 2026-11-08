@@ -272,3 +272,57 @@ html.js .nd-h1 .lx-line + .lx-line > span { animation-delay: .06s; }
   .nd-caret.on { animation: none; opacity: 1; }
   .nd-lean { transition: none; }
 }
+
+/* ---------- dark (Hanzo's :not(.light), docs/DARK-MODE.md): every value a token from @hanzo/design, by role ----------
+   The shared .lx root (components/v2/LaunchType.css) pins its light ink, greys, tile and hairline in both modes, so the
+   page points them at Hanzo's tokens here. .lx renames --muted and --card, so fills below use the foundation's --x-*
+   tokens (computed on <html>): the machine and its tiles on Hanzo's #171717, the readout on its #0f0f0f card, tracks
+   and idle bars on #262626; ink fills turn light with dark type (Hanzo's primary). Black wells stay black. */
+html:not(.light) .nd {
+  --ink: var(--foreground); --acc: var(--foreground); --acc-soft: var(--x-fill); --muted: var(--muted-foreground); --soft: var(--muted-foreground);
+  --faint: var(--text-tertiary); --silver: var(--x-knob); --card: var(--x-fill); --line: var(--border); --bg: var(--background);
+}
+html:not(.light) .nd .lx-cta { background: var(--primary); color: var(--primary-foreground); }
+html:not(.light) .nd .lx-ghost { border-color: var(--border-control); }
+html:not(.light) .nd :is(.lx-text, .lx-close-repo) { text-decoration-color: var(--text-disabled); }
+html:not(.light) .nd .cf-api i { background: var(--x-knob) !important; color: var(--foreground) !important; }
+html:not(.light) .nd :focus-visible { outline-color: var(--foreground); box-shadow: 0 0 0 4px var(--background); }
+html:not(.light) .nd :is(.lx-close-art, .lx-rel-card) { background: var(--x-fill); }
+html:not(.light) .nd .lx-close-sigil { color: var(--foreground); }
+html:not(.light) .nd .lx-sheet-panel { color: var(--foreground); --ink: var(--foreground); --soft: var(--muted-foreground); --muted: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); }
+html:not(.light) .nd .lx-sheet-bar { background: var(--surface-overlay); }
+html:not(.light) .nd .lx-sheet-x { color: var(--foreground); }
+@media (hover: hover) {
+  html:not(.light) .nd .lx-cta:hover { background: var(--foreground); }
+  html:not(.light) .nd .lx-ghost:hover { border-color: var(--foreground); background: var(--x-fill); }
+  html:not(.light) .nd .lx-sheet-x:hover { background: var(--x-fill); }
+}
+html:not(.light) .nd .nd-docs-a { text-decoration-color: var(--text-disabled); }
+html:not(.light) .nd :is(.nd-sub, .nd-tenth, .nd-ch-t, .nd-mac-n, .nd-quiet em, .nd-big, .nd-hw span.on, .nd-r0 li, .nd-r1 li.on, .nd-r2 code, .nd-r3 .yes, .nd-r4, .nd-r4-ps code, .nd-r5-t, .nd-drive button, .cf-paste-t, .nd-docs-a) { color: var(--foreground); }
+html:not(.light) .nd :is(.nd-tenth-l, .nd-why-m, .nd-ch-d, .nd-mac-r, .nd-r2 span, .cf-paste-d, .nd-docs .lx-kick) { color: var(--muted-foreground); }
+html:not(.light) .nd :is(.nd-cap, .nd-quiet, .nd-r4-ps span, .nd-drive-p) { color: var(--text-tertiary); }
+html:not(.light) .nd :is(.nd-r1 li, .nd-r3 .no, .nd-r4-ps li.off code) { color: var(--text-disabled); }
+html:not(.light) .nd .nd-r1 li.on { color: var(--foreground); }
+html:not(.light) .nd :is(.nd-mac, .nd-ladder button, .nd-r1 i, .nd-r2 li, .nd-r4-ps li) { background: var(--x-fill); }
+html:not(.light) .nd .nd-read { background: var(--x-raised); }
+html:not(.light) .nd .nd-cmd { background: var(--background); }
+html:not(.light) .nd :is(.nd-ladder b, .nd-rail i, .nd-r5 li, .nd-sheet i) { background: var(--x-knob); }
+html:not(.light) .nd :is(.nd-ladder button.on b, .nd-rail button[aria-current] i, .nd-mac[data-status='on'] .nd-led, .nd-chain li.new, .nd-r1 b, .nd-r2 li.lit, .nd-r4-ps i, .nd-r5 li:last-child.in, .nd-sheet em, .nd-drive button[aria-pressed='true']) { background: var(--foreground); }
+html:not(.light) .nd :is(.nd-r2 li.lit code, .nd-r2 li.lit span, .nd-drive button[aria-pressed='true']) { color: var(--primary-foreground); }
+html:not(.light) .nd .nd-r4-ps li.off { background: none; box-shadow: inset 0 0 0 1px var(--border-control); }
+html:not(.light) .nd .nd-r4-ps li.off i { background: transparent; }
+html:not(.light) .nd .nd-tenth-p { box-shadow: inset 0 0 0 1px var(--border-control); }
+html:not(.light) .nd .nd-chain li { box-shadow: inset 0 0 0 1px var(--x-knob); }
+html:not(.light) .nd :is(.nd-chain li.set, .nd-chain li.new) { box-shadow: none; }
+html:not(.light) .nd .nd-r3 .yes::before { box-shadow: inset 0 0 0 2px var(--foreground); }
+html:not(.light) .nd .nd-drive { border-color: var(--border-control); }
+html:not(.light) .nd .nd-cmd { box-shadow: inset 0 0 0 1px var(--border); }
+@media (hover: hover) {
+  html:not(.light) .nd .nd-tenth:hover .nd-tenth-p { background: var(--foreground); color: var(--primary-foreground); }
+  html:not(.light) .nd :is(.nd-rail button:hover, .nd-drive button:not([aria-pressed='true']):hover) { background: var(--x-fill); }
+  html:not(.light) .nd .nd-ladder button:hover { background: var(--x-knob); }
+  html:not(.light) .nd :is(.nd-rail button:hover i, .nd-ladder button:hover b) { background: var(--muted-foreground); }
+  html:not(.light) .nd :is(.nd-rail button[aria-current]:hover i, .nd-ladder button.on:hover b) { background: var(--foreground); }
+}
+html:not(.light) .nd .nd-mac { box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .nd .cf-paste-box { box-shadow: inset 0 0 0 1px var(--border); }
