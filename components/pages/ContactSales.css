@@ -159,3 +159,35 @@ html.x-arriving .xcs-in, html.x-arriving .xcs-up { animation-play-state: paused;
   .xcs-rail { -webkit-mask-image: none; mask-image: none; }
   .xcs-ring { animation-duration: 2s; }
 }
+
+/* dark mode (docs/DARK-MODE.md): Hanzo's default; light is html.light, so every rule here sits under html:not(.light)
+   and bright mode is untouched. The deck tokens (shadowed on .vc) take Hanzo's dark tokens through our --x- aliases,
+   which resolve on <html>; white surfaces and black alphas follow; ink fills keep their text on --x-on-ink. */
+html:not(.light) .xcs { --ink: var(--foreground); --ink2: var(--muted-foreground); --muted: var(--faint); --quiet: var(--x-fill); --card: var(--x-fill); --tile: var(--x-knob); --line: var(--x-e10); }
+html:not(.light) .xcs ::selection { background: var(--x-knob); }
+html:not(.light) .xcs :focus-visible { box-shadow: 0 0 0 5px var(--bg); }
+html:not(.light) .xcs-card { background: var(--x-raised); }
+html:not(.light) .xcs-progress { background: var(--x-knob); }
+html:not(.light) .xcs-step input, html:not(.light) .xcs-step textarea { background: var(--x-fill); }
+html:not(.light) .xcs-step:not(.bad) input:not(:focus), html:not(.light) .xcs-step:not(.bad) textarea:not(:focus) { box-shadow: inset 0 0 0 1px var(--x-e15); }
+@media (hover: hover) { html:not(.light) .xcs-size:hover { border-color: var(--x-e15); } }
+html:not(.light) .xcs-size.on, html:not(.light) .xcs-pick.on, html:not(.light) .xcs-round.solid, html:not(.light) .xcs-send, html:not(.light) .xcs-sent-i, html:not(.light) .xcs-inc-l .xcs-round[aria-pressed='true'] { color: var(--x-on-ink); }
+html:not(.light) .xcs-pick, html:not(.light) .xcs-round { border-color: var(--x-e15); background: var(--x-raised); }
+html:not(.light) .xcs-pick.on, html:not(.light) .xcs-round.solid, html:not(.light) .xcs-inc-l .xcs-round[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); }
+@media (hover: hover) {
+  html:not(.light) .xcs-round:hover { border-color: var(--ink2); }
+  html:not(.light) .xcs-round.solid:hover, html:not(.light) .xcs-send:hover { background: var(--muted-foreground); }
+}
+html:not(.light) .xcs-ring { border-color: var(--x-e15); border-top-color: var(--x-on-ink); }
+html:not(.light) .xcs-inc-n { color: var(--white-30); }
+html:not(.light) .xcs-logo::after { background: var(--x-knob); }
+html:not(.light) .xcs-inc-l li.lit .xcs-inc-n { color: var(--muted); }
+html:not(.light) .xcs-inc-l li.on .xcs-inc-n { color: var(--ink); }
+/* the alert mark's "!" is drawn white on an ink disc: in dark it takes the text-on-ink colour */
+html:not(.light) .xcs-bang path, html:not(.light) .xcs-fail svg path { stroke: var(--x-on-ink); }
+/* Hanzo's customer logos are dark artwork: in dark they are drawn light, at the same quiet weight */
+html:not(.light) .xcs-logo img { filter: grayscale(1) brightness(0) invert(1); opacity: .5; }
+@media (hover: hover) { html:not(.light) .xcs-logo:hover img { opacity: 1; } }
+html:not(.light) .xcs-logo:focus-visible img { opacity: 1; }
+/* the shared Band's solid ask fills with --x-fill (#171717 in dark) under black type; here it keeps Hanzo's primary */
+html:not(.light) .xcs .x-band .x-btn.solid { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
