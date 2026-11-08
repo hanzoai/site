@@ -34,16 +34,15 @@ export default function MagnetGrid({ stage, onRipple, label }) {
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const ctx = c.getContext('2d');
     if (!ctx) return undefined;
-    const css = getComputedStyle(host);
-    const parse = (raw) => { // the tokens come back as #rrggbb or rgb(r, g, b)
-      const v = raw.trim();
-      const h = v.match(/^#([0-9a-f]{6})$/i);
-      if (h) return [0, 2, 4].map((i) => parseInt(h[1].slice(i, i + 2), 16));
+    // the tokens, resolved by the browser to rgb(r, g, b) / rgba(r, g, b, a) (dark mode: Hanzo's tokens can carry alpha)
+    const parse = (v) => {
       const m = v.match(/\d+(\.\d+)?/g);
-      return m ? m.slice(0, 3).map(Number) : [212, 212, 212];
+      return m ? [...m.slice(0, 3).map(Number), m[3] != null ? Number(m[3]) : 1] : [212, 212, 212, 1];
     };
-    const rest = parse(css.getPropertyValue('--mg-rest') || css.color);
-    const ink = parse(css.getPropertyValue('--mg-ink') || css.color);
+    const resolve = (name) => { const e = document.createElement('i'); e.style.color = `var(${name})`; host.appendChild(e); const c = getComputedStyle(e).color; e.remove(); return parse(c); };
+    let rest, ink;
+    const read = () => { rest = resolve('--mg-rest'); ink = resolve('--mg-ink'); };
+    read();
     let W = 0, H = 0, dpr = 1, dots = [], raf = 0, seen = true;
     const ptr = { x: 0, y: 0, on: false };
     const rings = [];
@@ -64,8 +63,8 @@ export default function MagnetGrid({ stage, onRipple, label }) {
       ctx.clearRect(0, 0, W, H);
       for (const d of dots) {
         const k = d.k;
-        const col = rest.map((v, i) => Math.round(v + (ink[i] - v) * k));
-        ctx.fillStyle = `rgb(${col[0]},${col[1]},${col[2]})`;
+        const col = rest.map((v, i) => (i < 3 ? Math.round(v + (ink[i] - v) * k) : v + (ink[i] - v) * k));
+        ctx.fillStyle = col[3] < 1 ? `rgba(${col[0]},${col[1]},${col[2]},${col[3]})` : `rgb(${col[0]},${col[1]},${col[2]})`;
         const s = 1.3 + k * 1.5;
         ctx.beginPath(); ctx.arc(d.x + d.dx, d.y + d.dy, s, 0, Math.PI * 2); ctx.fill();
       }
@@ -119,13 +118,16 @@ export default function MagnetGrid({ stage, onRipple, label }) {
     build(); draw(); setLive(true);
     const ro = new ResizeObserver(() => { build(); draw(); });
     ro.observe(host);
+    // the page's mode changes on <html> (light / dark, docs/DARK-MODE.md): re-read the tokens and redraw
+    const mo = new MutationObserver(() => { read(); draw(); });
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     const io = new IntersectionObserver(([en]) => { seen = en.isIntersecting; if (seen) kick(); }, { threshold: 0 });
     io.observe(host);
     st.addEventListener('pointermove', move);
     st.addEventListener('pointerleave', leave);
     st.addEventListener('pointerdown', down);
     return () => {
-      cancelAnimationFrame(raf); ro.disconnect(); io.disconnect();
+      cancelAnimationFrame(raf); ro.disconnect(); mo.disconnect(); io.disconnect();
       st.removeEventListener('pointermove', move); st.removeEventListener('pointerleave', leave); st.removeEventListener('pointerdown', down);
     };
   }, [stage]);

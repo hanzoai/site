@@ -14,18 +14,18 @@
 .xpd-stage { position: relative; padding-bottom: clamp(56px, 7vw, 116px); }
 
 /* the console: light, outlined, wide; the request on the left, Hanzo's API table on the right */
-.xpd-con { position: relative; border-radius: var(--r-hero); background: #fff; border: 1px solid var(--hair); overflow: hidden; }
+.xpd-con { position: relative; border-radius: var(--r-hero); background: var(--x-raised); border: 1px solid var(--hair); overflow: hidden; }
 .xpd-con-bar { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 12px 0 22px; border-bottom: 1px solid var(--hair); font-size: 13px; color: var(--muted); }
 .xpd-con-sp { flex: 1; }
 .xpd-host { flex: none; }
 /* the steps: Hanzo's "Try it" and one per sentence; the pill slides to the step the console is on */
-.xpd-steps { display: flex; gap: 2px; margin-left: 14px; padding: 3px; border-radius: 999px; background: #f5f5f5; }
-.xpd-step { position: relative; min-width: 44px; height: 34px; padding: 0 12px; border: 0; border-radius: 999px; background: none; color: #525252; font-size: 13px; font-weight: 606; letter-spacing: .04em; cursor: pointer; transition: color var(--ui) var(--ease-o); }
+.xpd-steps { display: flex; gap: 2px; margin-left: 14px; padding: 3px; border-radius: 999px; background: light-dark(#f5f5f5, var(--x-fill)); }
+.xpd-step { position: relative; min-width: 44px; height: 34px; padding: 0 12px; border: 0; border-radius: 999px; background: none; color: light-dark(#525252, var(--muted-foreground)); font-size: 13px; font-weight: 606; letter-spacing: .04em; cursor: pointer; transition: color var(--ui) var(--ease-o); }
 .xpd-step > span:last-child { position: relative; z-index: 1; white-space: nowrap; }
 .xpd-step-bg { z-index: 0; }
-.xpd-step-bg { position: absolute; inset: 0; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1px var(--hair); }
+.xpd-step-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--x-raised); box-shadow: inset 0 0 0 1px var(--hair); }
 .xpd-step[aria-selected='true'] { color: var(--ink); }
-@media (hover: hover) { .xpd-step[aria-selected='false']:hover { color: var(--ink); background: #ededed; } }
+@media (hover: hover) { .xpd-step[aria-selected='false']:hover { color: var(--ink); background: light-dark(#ededed, var(--secondary)); } }
 .xpd-step:active { transform: scale(.97); transition: transform var(--press) var(--ease-o); }
 .xpd-step:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
 
@@ -39,21 +39,21 @@ html.js .xpd-stack > :not([data-on]) { transform: translateY(-14px); }
 .xpd-pane-l { align-items: baseline; }
 .xpd-req-s { flex: 1; min-height: 0; margin-top: 16px; }
 .xpd-sent { margin: 0; padding: 0 24px 24px 0; align-self: start; font-size: 26px; font-weight: 497; line-height: 1.25; letter-spacing: -.02em; color: var(--ink); max-width: 26ch; text-wrap: pretty; }
-.xpd-replay { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .14); background: #fff; color: var(--ink); cursor: pointer; transition: border-color var(--ui) var(--ease-o), background-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
-@media (hover: hover) { .xpd-replay:hover { border-color: rgba(0, 0, 0, .4); background: #f5f5f5; } }
+.xpd-replay { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-strong)); background: var(--x-raised); color: var(--ink); cursor: pointer; transition: border-color var(--ui) var(--ease-o), background-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
+@media (hover: hover) { .xpd-replay:hover { border-color: light-dark(rgba(0, 0, 0, .4), var(--border-selected)); background: light-dark(#f5f5f5, var(--x-fill)); } }
 .xpd-replay:active { transform: scale(.97); transition-duration: var(--press); }
 .xpd-con-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); height: min(calc(100svh - 300px), 470px); min-height: 400px; }
 .xpd-pane-h { margin: 0; font-size: 12px; font-weight: 606; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .xpd-req { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 22px 0 0 24px; border-right: 1px solid var(--hair); }
 .xpd-req-b { position: relative; min-height: 0; padding: 0 24px 24px 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .xpd-req-b:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
-.xpd-req pre { margin: 0; font: 400 14px/1.75 var(--mono); white-space: pre; color: #525252; }
+.xpd-req pre { margin: 0; font: 400 14px/1.75 var(--mono); white-space: pre; color: light-dark(#525252, var(--muted-foreground)); }
 .xpd-req [data-k='bright'] { color: var(--ink); font-weight: 606; }
 .xpd-req [data-k='key'] { color: var(--ink); }
-.xpd-req [data-k='string'] { color: #525252; }
-.xpd-req [data-k='punctuation'] { color: #737373; }
+.xpd-req [data-k='string'] { color: light-dark(#525252, var(--muted-foreground)); }
+.xpd-req [data-k='punctuation'] { color: light-dark(#737373, var(--text-tertiary)); }
 .xpd-req [data-cur]::after { content: ''; display: inline-block; width: .55em; height: 1.1em; margin-right: -.55em; vertical-align: -.2em; background: var(--ink); }
-.xpd-res { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 22px 24px 18px; background: #fafafa; }
+.xpd-res { display: flex; flex-direction: column; min-width: 0; min-height: 0; padding: 22px 24px 18px; background: var(--x-sunk); }
 .xpd-res-h { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
 .xpd-res-l { margin: 0; font-size: 14px; line-height: 1.45; color: var(--soft); }
 .xpd-ops { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; }
@@ -63,36 +63,36 @@ html.js .xpd-stack > :not([data-on]) { transform: translateY(-14px); }
 .xpd-rows { position: relative; }
 .xpd-op { position: relative; padding: 11px 10px; border-bottom: 1px solid var(--hair); border-radius: 0; transition: background-color var(--base) var(--ease-o); }
 .xpd-op:last-child { border-bottom: 0; }
-@media (hover: hover) { .xpd-op:hover { background: rgba(0, 0, 0, .03); } }
+@media (hover: hover) { .xpd-op:hover { background: light-dark(rgba(0, 0, 0, .03), var(--glass)); } }
 /* the light: a 1px fill under the rows, placed and sized by transform only, sliding between the rows a sentence names */
-.xpd-light { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: #ededed; transform-origin: 0 0; opacity: 0; transition: transform var(--slower) var(--inout), opacity var(--base) var(--ease-o); pointer-events: none; }
+.xpd-light { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: light-dark(#ededed, var(--secondary)); transform-origin: 0 0; opacity: 0; transition: transform var(--slower) var(--inout), opacity var(--base) var(--ease-o); pointer-events: none; }
 .xpd-light[data-on] { opacity: 1; }
 .xpd-path { display: block; font: 500 14px/1.4 var(--mono); color: var(--ink); }
 .xpd-what { font-size: 14px; line-height: 1.45; color: var(--soft); transition: color var(--base) var(--ease-o); }
 .xpd-op[data-lit] .xpd-what { color: var(--ink); }
 /* while a sentence is on, the operations it does not name step back to grey (their words stay legible) */
-.xpd-con:not([data-step='0']) .xpd-op:not([data-lit]) .xpd-path { color: #737373; transition: color var(--base) var(--ease-o); }
+.xpd-con:not([data-step='0']) .xpd-op:not([data-lit]) .xpd-path { color: light-dark(#737373, var(--text-tertiary)); transition: color var(--base) var(--ease-o); }
 /* while the request types, the rows wait as quiet placeholders, then land (opacity and translate only) */
 .xpd-op > * { transition: opacity var(--reveal) var(--ease-o), transform var(--slower) var(--out); }
 .xpd-con[data-armed] .xpd-op:not([data-in]) > * { opacity: 0; transform: translateY(8px); }
 html.js .xpd-con:not([data-armed]):not([data-done]) .xpd-req pre,
 html.js .xpd-con:not([data-armed]):not([data-done]) .xpd-op > * { visibility: hidden; animation: xpd-show 0s 3.5s forwards; }
 @keyframes xpd-show { to { visibility: visible; } }
-.xpd-m { display: inline-grid; place-items: center; min-width: 48px; height: 24px; padding: 0 7px; border-radius: 6px; font-size: 12px; font-weight: 606; letter-spacing: .04em; color: #fff; background: var(--ink); }
+.xpd-m { display: inline-grid; place-items: center; min-width: 48px; height: 24px; padding: 0 7px; border-radius: 6px; font-size: 12px; font-weight: 606; letter-spacing: .04em; color: var(--x-on-ink); background: var(--ink); }
 /* a read is drawn as an outline, a write as a fill: told apart by shape, not hue */
-.xpd-m[data-m='GET'] { color: var(--ink); background: transparent; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .3); }
+.xpd-m[data-m='GET'] { color: var(--ink); background: transparent; box-shadow: inset 0 0 0 1px light-dark(rgba(0, 0, 0, .3), var(--border-selected)); }
 
 /* section heads: the one big word of their screen */
 .xpd-sec-h { margin: 0 0 clamp(32px, 4vw, 56px); font-size: 44px; font-weight: 497; line-height: 1.05; letter-spacing: -.03em; }
 
 /* measured: Hanzo's figures, then the results without one as rows */
-.xpd-meas { background: #f5f5f5; }
+.xpd-meas { background: light-dark(#f5f5f5, var(--x-fill)); }
 .xpd-meas-g { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; }
 .xpd-meas-g li { grid-column: span 6; }
 .xpd-meas-g li:nth-child(4n + 1), .xpd-meas-g li:nth-child(4n + 4) { grid-column: span 7; }
 .xpd-meas-g li:nth-child(4n + 2), .xpd-meas-g li:nth-child(4n + 3) { grid-column: span 5; }
-.xpd-meas-c { display: flex; flex-direction: column; justify-content: space-between; gap: 32px; height: 100%; min-height: 240px; box-sizing: border-box; padding: 32px; border-radius: var(--r-card); background: #fff; color: var(--ink); text-decoration: none; transition: background-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
-@media (hover: hover) { .xpd-meas-c:hover { background: #fafafa; } .xpd-meas-c:hover .xpd-meas-t b { text-decoration: underline; text-underline-offset: 3px; } }
+.xpd-meas-c { display: flex; flex-direction: column; justify-content: space-between; gap: 32px; height: 100%; min-height: 240px; box-sizing: border-box; padding: 32px; border-radius: var(--r-card); background: var(--x-raised); color: var(--ink); text-decoration: none; transition: background-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
+@media (hover: hover) { .xpd-meas-c:hover { background: var(--x-sunk); } .xpd-meas-c:hover .xpd-meas-t b { text-decoration: underline; text-underline-offset: 3px; } }
 .xpd-meas-c:active { transform: scale(.97); transition-duration: var(--press); }
 .xpd-meas-t { font-size: 16px; line-height: 1.5; color: var(--soft); max-width: 44ch; }
 .xpd-meas-t b, .xpd-meas-r b { color: var(--ink); font-weight: 606; }
@@ -105,11 +105,11 @@ html.js .xpd-con:not([data-armed]):not([data-done]) .xpd-op > * { visibility: hi
 .xpd-os-l li { border-bottom: 1px solid var(--hair); }
 .xpd-os-c { position: relative; display: grid; grid-template-columns: 56px minmax(0, 4fr) minmax(0, 5fr) minmax(120px, 2fr); align-items: center; gap: 24px; min-height: 96px; padding: 16px 0; color: var(--ink); text-decoration: none; border-radius: 16px; transition: background-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
 .xpd-os-c:active { transform: scale(.99); transition-duration: var(--press); }
-.xpd-os-c[aria-current] { background: #f5f5f5; }
-@media (hover: hover) { .xpd-os-c:not([aria-current]):hover { background: #fafafa; } }
+.xpd-os-c[aria-current] { background: light-dark(#f5f5f5, var(--x-fill)); }
+@media (hover: hover) { .xpd-os-c:not([aria-current]):hover { background: var(--x-sunk); } }
 .xpd-os-i { padding-left: 20px; font-size: 13px; color: var(--muted); }
 .xpd-os-n { font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.1; }
-.xpd-os-c:not([aria-current]) .xpd-os-n { color: #404040; }
+.xpd-os-c:not([aria-current]) .xpd-os-n { color: light-dark(#404040, var(--text-secondary)); }
 @media (hover: hover) { .xpd-os-c:hover .xpd-os-n { color: var(--ink); } }
 .xpd-os-d { font-size: 16px; line-height: 1.45; color: var(--soft); max-width: 44ch; }
 .xpd-os-k { display: flex; align-items: baseline; justify-content: flex-end; gap: 10px; padding-right: 20px; color: var(--muted); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
@@ -124,8 +124,8 @@ html.js .xpd-con:not([data-armed]):not([data-done]) .xpd-op > * { visibility: hi
 .xpd-docs ul, .xpd-site ul { list-style: none; margin: 16px 0 0; padding: 0; }
 .xpd-docs .x-arrow { display: inline-flex; align-items: center; min-height: 44px; font-size: 16px; }
 .xpd-site ul { display: flex; flex-wrap: wrap; gap: 8px; }
-.xpd-site a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); color: var(--ink); text-decoration: none; font-size: 15px; transition: border-color var(--ui) var(--ease-o), background-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
-@media (hover: hover) { .xpd-site a:hover { border-color: var(--ink); background: #f5f5f5; } }
+.xpd-site a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-strong)); color: var(--ink); text-decoration: none; font-size: 15px; transition: border-color var(--ui) var(--ease-o), background-color var(--ui) var(--ease-o), transform 150ms var(--ease-o); }
+@media (hover: hover) { .xpd-site a:hover { border-color: var(--ink); background: light-dark(#f5f5f5, var(--x-fill)); } }
 .xpd-site a:active { transform: scale(.97); transition-duration: var(--press); }
 
 .xpd-band.x-band { margin: 0 var(--gut) var(--gut); padding: clamp(72px, 9vw, 140px) 0; border-radius: var(--r-hero); background: #000; color: #fafafa; text-align: center; }
@@ -175,7 +175,7 @@ html.js .xpd-con:not([data-armed]):not([data-done]) .xpd-op > * { visibility: hi
   .xpd-os-d { grid-column: 1 / -1; grid-row: 2; font-size: 16px; }
   .xpd-os-k, .xpd-os-c:not([aria-current]) .xpd-os-k { opacity: 1; grid-column: 2; grid-row: 1; padding-right: 0; }
   .xpd-os-k b { font-size: 21px; }
-  .xpd-os-k span { display: inline; margin-left: 6px; font-size: 13px; color: #525252; }
+  .xpd-os-k span { display: inline; margin-left: 6px; font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); }
   .xpd-docs, .xpd-site { grid-column: 1 / -1; }
   .xpd-site { margin-top: 32px; }
   .xpd-band.x-band { margin: 0 12px 12px; border-radius: 20px; padding: 72px 0; }
@@ -214,4 +214,13 @@ html.js .xpd-con:not([data-armed]):not([data-done]) .xpd-op > * { visibility: hi
   html.js .xpd-band[data-enter]:not([data-in]) { clip-path: inset(18% 22% round 999px); }
   html.js .xpd-band[data-enter] .xpd-band-g > * { transition: opacity .6s var(--ease-o) .35s, transform .9s var(--out) .35s; }
   html.js .xpd-band[data-enter]:not([data-in]) .xpd-band-g > * { opacity: 0; transform: translateY(24px); }
+}
+
+/* dark mode (docs/DARK-MODE.md): the family's greys (components/v2/fam.css .v2f) are light-only, so on these pages they
+   resolve to Hanzo's dark tokens and the page sits on Hanzo's background like live; the black band keeps its own */
+html:not(.light) .xpd {
+  --acc: var(--primary); --acc-ink: var(--primary-foreground); --acc-soft: var(--x-fill);
+  --ink: var(--foreground); --soft: var(--muted-foreground); --muted: var(--muted-foreground); --faint: var(--text-tertiary);
+  --card: var(--x-fill); --silver: var(--secondary-hover); --hair: var(--border);
+  background: var(--bg);
 }

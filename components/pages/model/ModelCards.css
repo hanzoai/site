@@ -1,8 +1,8 @@
 /* Hanzo's black model cards (mc-), measured from live hanzo.ai: docs/refs/hanzo-model-cards/SPEC.md */
-.mc { background: #fff; }
+.mc { background: var(--x-raised); }
 .mc-wrap { width: min(100% - 48px, 1201px); margin-inline: auto; }
 .mc-h { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.2; color: var(--ink); text-wrap: balance; }
-.mc-sub { margin: 14px 0 0; font-size: 16px; line-height: 1.5; color: #525252; }
+.mc-sub { margin: 14px 0 0; font-size: 16px; line-height: 1.5; color: light-dark(#525252, var(--muted-foreground)); }
 .mc-grid { list-style: none; margin: 40px 0 0; padding: 0; display: grid; grid-template-columns: 2fr repeat(4, 1fr); grid-template-rows: 220px 220px; gap: 12px; }
 .mc-cell { min-width: 0; }
 .mc-cell.big { grid-row: span 2; }

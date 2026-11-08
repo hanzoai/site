@@ -58,7 +58,7 @@
 /* the dark room (at most one per page) */
 .v2-dark { background: #000; color: #f5f5f7; --soft: #a3a3a3; --faint: #737373; --line: rgba(255, 255, 255, .12); --card: #161617; }
 .v2-dark .v2-btn { color: #f5f5f7; border-color: rgba(255, 255, 255, .24); }
-.v2-dark .v2-btn.solid { background: var(--x-fill); color: #000; border-color: #f5f5f7; }
+.v2-dark .v2-btn.solid { background: #f5f5f7; color: #000; border-color: #f5f5f7; }
 @media (hover: hover) {
   .v2-dark .v2-btn:hover { border-color: #f5f5f7; background: rgba(255, 255, 255, .08); }
   .v2-dark .v2-btn.solid:hover { background: #e4e4e7; border-color: #e4e4e7; }

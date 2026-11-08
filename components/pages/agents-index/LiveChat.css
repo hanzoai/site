@@ -4,21 +4,23 @@
 .agc-l { grid-column: 1 / 6; }
 .agc-l .v2a-head { margin: 0; }
 .agc-chips { list-style: none; margin: 28px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.agc-chips button { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 16px; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 12px 16px; border: 0; border-radius: 16px; background: none; text-align: left; font: 400 17px/1.35 var(--sans); color: #525252; cursor: pointer; transition: background-color .3s cubic-bezier(0, 0, .2, 1), color .3s, box-shadow .3s, transform .1s; }
+.agc-chips button { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 16px; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 12px 16px; border: 0; border-radius: 16px; background: none; text-align: left; font: 400 17px/1.35 var(--sans); color: light-dark(#525252, var(--muted-foreground)); cursor: pointer; transition: background-color .3s cubic-bezier(0, 0, .2, 1), color .3s, box-shadow .3s, transform .1s; }
 .agc-chip-t { display: inline-block; transition: transform .35s cubic-bezier(.16, 1, .3, 1); }
 .agc-chip-i { opacity: .35; transition: opacity .3s, transform .35s cubic-bezier(.16, 1, .3, 1); }
 .agc-chips button:active { transform: scale(.98); }
-.agc-chips button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
+.agc-chips button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 @media not all and (pointer: coarse) {
-  .agc-chips button:hover { background: #f5f5f5; color: #0a0a0a; }
+  .agc-chips button:hover { background: light-dark(#f5f5f5, var(--secondary)); color: var(--ink); }
   .agc-chips button:hover .agc-chip-t { transform: translateX(6px); }
   .agc-chips button:hover .agc-chip-i { opacity: 1; transform: translateX(3px); }
 }
-.agc-chips li.done button { color: #404040; }
-.agc-chips li.on button { color: #0a0a0a; background: #f5f5f5; box-shadow: inset 0 0 0 1.5px #0a0a0a; }
+.agc-chips li.done button { color: light-dark(#404040, var(--text-secondary)); }
+.agc-chips li.on button { color: var(--ink); background: light-dark(#f5f5f5, var(--secondary)); box-shadow: inset 0 0 0 1.5px var(--ink); }
 .agc-chips li.on .agc-chip-i { opacity: 1; }
 
 .agc-win { grid-column: 6 / 14; border-radius: 28px; background: #0a0a0a; color: #fafafa; overflow: hidden; box-shadow: 0 80px 140px -70px rgba(0, 0, 0, .45), 0 0 0 1px rgba(0, 0, 0, .92); }
+/* dark: the window keeps its black and takes Hanzo's hairline */
+html:not(.light) .agc-win { box-shadow: 0 80px 140px -70px rgba(0, 0, 0, .45), 0 0 0 1px var(--border); }
 .agc-bar { display: flex; align-items: center; gap: 14px; height: 54px; padding: 0 20px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 .agc-dots3 { display: flex; gap: 7px; }
 .agc-dots3 i { width: 12px; height: 12px; border-radius: 50%; background: #404040; }
@@ -50,7 +52,7 @@ html:not(.js) .agc-q span { animation: none; }
   .agc-chips { flex-direction: row; overflow-x: auto; scrollbar-width: none; gap: 6px; margin: 20px -16px 0; padding: 0 16px 4px; }
   .agc-chips::-webkit-scrollbar { display: none; }
   .agc-chips li { flex: none; }
-  .agc-chips button { width: auto; min-height: 46px; padding: 10px 16px; white-space: nowrap; font-size: 14px; background: #f5f5f5; }
+  .agc-chips button { width: auto; min-height: 46px; padding: 10px 16px; white-space: nowrap; font-size: 14px; background: light-dark(#f5f5f5, var(--muted)); }
   .agc-chip-i { display: none; }
   .agc-chips button { grid-template-columns: auto; }
   .agc-win { border-radius: 22px; }

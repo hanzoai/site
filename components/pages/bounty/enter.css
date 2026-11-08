@@ -6,7 +6,7 @@
 .xbo-flow { position: relative; }
 .xbe [data-enter='conveyor'] > * { transition: transform 1s cubic-bezier(.22, .8, .2, 1), opacity .4s linear; transition-delay: calc(var(--k, 0) * 160ms); }
 .xbe [data-enter='conveyor']:not(.in) > * { transform: translateX(min(70vw, 900px)); opacity: 0; }
-.xbo-flow::after { content: ''; position: absolute; left: 0; right: 0; bottom: -18px; height: 2px; opacity: 0; pointer-events: none; background: repeating-linear-gradient(90deg, var(--hz-300) 0 14px, transparent 14px 28px); background-size: 28px 2px; }
+.xbo-flow::after { content: ''; position: absolute; left: 0; right: 0; bottom: -18px; height: 2px; opacity: 0; pointer-events: none; background: repeating-linear-gradient(90deg, light-dark(var(--hz-300), var(--border-strong)) 0 14px, transparent 14px 28px); background-size: 28px 2px; }
 .xbe [data-enter='conveyor'].in::after { animation: xbe-belt 1.3s cubic-bezier(.22, .8, .2, 1) both; }
 @keyframes xbe-belt { 0% { opacity: 1; transform: translateX(0); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateX(-112px); } }
 

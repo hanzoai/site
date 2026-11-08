@@ -10,7 +10,7 @@
 .cf-hero.stack .cf-kick, .cf-hero.stack .cf-h1 { grid-column: 1; }
 .cf-hero.stack .cf-sub, .cf-hero.stack .cf-lede, .cf-hero.stack .cf-acts { grid-column: 2; }
 .cf-hero.stack .cf-sub { grid-row: 2; align-self: end; margin: 0 0 6px; }
-.cf-kick { justify-self: start; display: inline-flex; align-items: center; gap: 8px; margin: 0 0 22px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); font: 500 12.5px/1 var(--mono); letter-spacing: .02em; color: var(--soft); background: #fff; }
+.cf-kick { justify-self: start; display: inline-flex; align-items: center; gap: 8px; margin: 0 0 22px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); font: 500 12.5px/1 var(--mono); letter-spacing: .02em; color: var(--soft); background: var(--x-raised); }
 .cf-hero.dark .cf-h1, .cf-hero.dark .cf-sub { color: #f5f5f7; }
 .cf-hero.dark .cf-kick { background: #111113; border-color: rgba(255, 255, 255, .12); color: #a1a1a6; }
 .cf-kick svg { flex: none; }
@@ -58,15 +58,15 @@
 .cf-code .c { color: #6e6e73; }
 .cf-code .s { color: #d4d4d4; }
 .cf-code .k { color: #a3a3a3; }
-.cf-code.light { background: #fff; color: #1d1d1f; border: 1px solid var(--line); box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .25); }
+.cf-code.light { background: var(--x-raised); color: light-dark(#1d1d1f, var(--foreground)); border: 1px solid var(--line); box-shadow: 0 30px 60px -40px rgba(0, 0, 0, .25); }
 .cf-code.light .cf-code-bar { border-color: var(--line); }
-.cf-code.light .cf-code-bar > i { background: #e3e3e8; }
-.cf-code.light .cf-code-bar .x-copy { background: #fff; border-color: var(--line); color: var(--soft); }
+.cf-code.light .cf-code-bar > i { background: light-dark(#e3e3e8, var(--secondary)); }
+.cf-code.light .cf-code-bar .x-copy { background: var(--x-raised); border-color: var(--line); color: var(--soft); }
 .cf-code.light .cf-code-tabs { background: var(--card); }
-.cf-code.light .cf-code-tabs button[aria-selected='true'] { color: #fff; }
+.cf-code.light .cf-code-tabs button[aria-selected='true'] { color: var(--x-on-ink); }
 .cf-code.light .cf-code-tab-bg { background: var(--ink); }
-.cf-code.light .s { color: #737373; }
-.cf-code.light .k { color: #525252; }
+.cf-code.light .s { color: light-dark(#737373, var(--text-tertiary)); }
+.cf-code.light .k { color: light-dark(#525252, var(--muted-foreground)); }
 .cf-code.light .c { color: var(--faint); }
 
 .cf-mark { color: inherit; padding: 1px 2px; margin: 0 -2px; border-radius: 4px; background: linear-gradient(rgba(212, 212, 212, .32), rgba(212, 212, 212, .32)) no-repeat 0 0 / 100% 100%; animation: cf-mark .5s var(--ease) both; }
@@ -76,11 +76,11 @@
 /* related */
 .cf-related-k { margin: 0 0 14px; font: 500 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
 .cf-related ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
-.cf-rel { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px 0 18px; border-radius: 999px; border: 1px solid var(--line); background: #fff; text-decoration: none; font-size: 15px; color: var(--ink); transition: border-color .25s var(--ease), transform .35s var(--ease); }
+.cf-rel { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px 0 18px; border-radius: 999px; border: 1px solid var(--line); background: var(--x-raised); text-decoration: none; font-size: 15px; color: var(--ink); transition: border-color .25s var(--ease), transform .35s var(--ease); }
 .cf-rel b { font-weight: 560; }
 .cf-rel span { color: var(--soft); font-size: 14px; }
 .cf-rel svg { color: var(--faint); transition: transform .35s var(--ease), color .25s; }
-.cf-rel:hover { border-color: rgba(0, 0, 0, .22); }
+.cf-rel:hover { border-color: light-dark(rgba(0, 0, 0, .22), var(--border-selected)); }
 .cf-rel:hover svg { transform: translateX(3px); color: var(--ink); }
 
 /* get */
@@ -89,10 +89,10 @@
 .cf-get-h { margin: 0; font-size: clamp(2.8rem, 6vw, 5.6rem); font-weight: 560; letter-spacing: -.05em; line-height: .95; text-wrap: balance; }
 .cf-get-tag { margin: 16px 0 0; font-size: clamp(1.05rem, 1.4vw, 1.3rem); color: var(--soft); }
 .cf-get-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
-.cf-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: 500 13px/1 var(--mono); color: var(--ink); text-decoration: none; }
+.cf-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--x-raised); font: 500 13px/1 var(--mono); color: var(--ink); text-decoration: none; }
 .cf-chip > span { color: var(--faint); }
 .cf-chip em { font-style: normal; color: var(--soft); padding-left: 8px; border-left: 1px solid var(--line); }
-a.cf-chip:hover { border-color: rgba(0, 0, 0, .22); }
+a.cf-chip:hover { border-color: light-dark(rgba(0, 0, 0, .22), var(--border-selected)); }
 .cf-get-acts { display: flex; flex-wrap: wrap; gap: 10px; }
 .cf-get-mark { position: absolute; right: 0; top: -40px; pointer-events: none; }
 .cf-get.dark { background: #050506; color: #f5f5f7; border-top: 0; }
@@ -133,14 +133,14 @@ a.cf-chip:hover { border-color: rgba(0, 0, 0, .22); }
 .cf-con-title { text-decoration: none; } .cf-con-title:hover { color: #f5f5f7; }
 @media (max-width: 900px) { .cf-con-main li { height: 48px; } .cf-con-foot { flex-wrap: wrap; } .cf-tip { display: none; } }
 @media (prefers-reduced-motion: reduce) { .cf-dot.b { animation: none; } }
-.cf-con.light { background: #fff; color: var(--ink); border-color: rgba(0, 0, 0, .1); box-shadow: 0 50px 100px -60px rgba(0, 0, 0, .35); }
+.cf-con.light { background: var(--x-raised); color: var(--ink); border-color: var(--x-e10); box-shadow: 0 50px 100px -60px rgba(0, 0, 0, .35); }
 .cf-con.light .cf-con-bar, .cf-con.light .cf-con-foot { border-color: var(--line); }
-.cf-con.light .cf-con-bar i { border-color: #d1d1d6; }
+.cf-con.light .cf-con-bar i { border-color: light-dark(#d1d1d6, var(--border-control)); }
 .cf-con.light .cf-con-title { color: var(--soft); }
-.cf-con.light .cf-con-side { background: #fafafa; border-color: var(--line); }
+.cf-con.light .cf-con-side { background: var(--x-sunk); border-color: var(--line); }
 .cf-con.light .cf-con-ico { color: var(--faint); }
 .cf-con.light .cf-con-ico:hover, .cf-con.light .cf-con-ico.on { color: var(--ink); background: var(--card); }
-.cf-con.light .cf-tip { background: var(--ink); color: #fff; }
+.cf-con.light .cf-tip { background: var(--ink); color: var(--x-on-ink); }
 .cf-con.light .cf-row-bg { background: var(--card); }
 .cf-con.light .cf-name { color: var(--ink); }
 .cf-con.light .cf-dot { border-color: var(--faint); }
@@ -149,7 +149,7 @@ a.cf-chip:hover { border-color: rgba(0, 0, 0, .22); }
 .cf-con.light .cf-cap p { border-color: var(--line); color: var(--ink); }
 .cf-con.light .cf-con-foot b { color: var(--ink); }
 .cf-con.light .cf-con-open { border-color: var(--line); color: var(--ink); }
-.cf-con.light .cf-con-open:hover { background: var(--ink); color: #fff; }
+.cf-con.light .cf-con-open:hover { background: var(--ink); color: var(--x-on-ink); }
 
 .cf-sess { gap: 10px; }
 .cf-sess p { margin: 0; }
@@ -161,7 +161,7 @@ a.cf-chip:hover { border-color: rgba(0, 0, 0, .22); }
 @keyframes cf-spin { to { transform: rotate(360deg); } }
 .cf-sess-done { padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .1); font-size: 14.5px; color: #6e6e73; transition: color .4s, border-color .4s; }
 .cf-sess-done.on { color: #a3a3a3; border-color: rgba(163, 163, 163, .4); }
-.cf-con.light .cf-sess-me { background: var(--ink); color: #fff; }
+.cf-con.light .cf-sess-me { background: var(--ink); color: var(--x-on-ink); }
 .cf-con.light .cf-sess-step { color: var(--ink); }
 @media (prefers-reduced-motion: reduce) { .cf-sess-step i { animation: none; } }
 
@@ -189,3 +189,9 @@ a.cf-chip:hover { border-color: rgba(0, 0, 0, .22); }
   .cf-kick { font-size: 13px; }
 }
 @media (prefers-reduced-motion: reduce) { .cf-caret { animation: none; } }
+
+/* dark mode (docs/DARK-MODE.md): in dark the paper window is Hanzo's card, so its selected row, hovered icon and the
+   tab track step up to Hanzo's secondary to stay visible on it */
+html:not(.light) .cf-con.light .cf-row-bg,
+html:not(.light) .cf-con.light .cf-con-ico:hover, html:not(.light) .cf-con.light .cf-con-ico.on,
+html:not(.light) .cf-code.light .cf-code-tabs { background: var(--secondary); }

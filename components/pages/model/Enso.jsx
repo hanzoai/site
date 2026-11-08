@@ -1,5 +1,5 @@
 'use client';
-/* Enso: one endpoint that routes every request. v2 launch page (Launch + Chapters, ink on white, Enso's own film).
+/* Enso: one endpoint that routes every request. v2 page: Hanzo's own clear hero (8 Nov), then Chapters, ink on white, Enso's own film.
    Signature: the switchboard. Requests stream in by themselves, pass through Enso, which weighs quality, speed and
    cost, and land in the tier made for them (Flash at volume, Pro while someone waits, Ultra where a wrong answer is
    expensive). Send any of Hanzo's own task words by hand.
@@ -10,7 +10,10 @@ import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/rea
 import { EASE } from '../../ui';
 import { A, More, Cta, Img, Stat, DataTable, Band } from '../../kit';
 import { useLoop, fit, rng } from './live';
-import Launch, { Lines, ring, film } from '../../v2/Launch';
+import { Lines, film } from '../../v2/Launch';
+import { FilmPause } from '../../v2/ModelFilm';
+import './Model.css';
+import '../../v2/Launch.css';
 import ModelCards from './ModelCards';
 import ModelFilm, { usePaused } from '../../v2/ModelFilm';
 import './Enso.css';
@@ -154,10 +157,14 @@ function Form() {
   );
 }
 
+/* GA item 17: the way to buy. Enso ships in every plan; Go ($8/month, "access to every model", /pricing) goes straight to its card checkout. */
+const GO = '/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat';
+const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'enso.go-' + slot} className="eo-go">Every model through Enso, Go is $8/month</Cta>;
+
 const TIERS = [
   { name: 'Enso Flash', code: 'enso', inp: '$0.33', out: '$1.65', ctx: true, axis: 0, why: 'at volume', wb: 'https://platform.hanzo.ai/workbench?model=enso', desc: 'For chat, extraction, classification and simple agent steps at volume.' },
-  { name: 'Enso Pro', code: 'enso-pro', inp: '$4.40', out: '$22', ctx: false, axis: 1, why: 'while someone waits', wb: 'https://platform.hanzo.ai/workbench?model=enso-pro', desc: 'For coding, code review and agents that answer while someone waits.' },
-  { name: 'Enso Ultra', code: 'enso-ultra', inp: '$5.50', out: '$27.50', ctx: true, axis: 2, why: 'a wrong answer is expensive', wb: 'https://platform.hanzo.ai/workbench?model=enso-ultra', desc: 'For work where a wrong answer is expensive: research, security review and long autonomous runs.' },
+  { name: 'Enso Pro', code: 'enso-pro', inp: '$4.40', out: '$22', ctx: '262K', axis: 1, why: 'while someone waits', wb: 'https://platform.hanzo.ai/workbench?model=enso-pro', desc: 'For coding, code review and agents that answer while someone waits.' },
+  { name: 'Enso Ultra', code: 'enso-ultra', inp: '$5.50', out: '$27.50', ctx: true, axis: 2, why: 'a wrong answer is expensive', wb: 'https://platform.hanzo.ai/workbench?model=enso-ultra', desc: 'For work where a wrong answer is expensive: research, security review and long autonomous runs.', more: 'For hard reasoning over long material: it thinks at high effort, holds a 1M-token context and reads images.' },
 ];
 const AXES = ['cost', 'speed', 'quality'];
 // Hanzo's own task words from each tier, in the order the board sends them by itself
@@ -284,7 +291,7 @@ function Switchboard() {
             </div>
             <span className="eo-why">{AXES[tr.axis]} · {tr.why}</span>
             <p className="eo-last" aria-hidden="true"><i />{last[i]}</p>
-            <p className="eo-lane-p mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span>{tr.ctx && <> <b>1M</b> <span>context</span></>}</p>
+            <p className="eo-lane-p mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span>{tr.ctx === true ? <> <b>1M</b> <span>context</span></> : tr.ctx ? <> <span>{`${tr.ctx} context`}</span></> : null}</p>
           </li>
         ))}
       </ol>
@@ -460,7 +467,6 @@ function Gpqa() {
   );
 }
 
-const RING = ring((W, H, wide) => (wide ? { x: W * 0.71, y: H * 0.5, r: Math.min(H * 0.39, W * 0.24) } : { x: W / 2, y: H * 0.25, r: Math.min(W * 0.34, H * 0.17) }));
 const TIER_TASKS = TIERS.map((_, i) => TASKS.filter(([, k]) => k === i).map(([w]) => w));
 
 // a chapter's picture: Enso's own film, framed a little closer each tier, with that tier's card laid on it
@@ -488,7 +494,8 @@ const CHAPTERS = TIERS.map((tr, i) => ({
     <>
       <p className="eo-ch-price mb-tnum"><b>{tr.inp}</b> <span>in · per 1M tokens</span> <b>{tr.out}</b> <span>out</span></p>
       <p>{tr.desc}</p>
-      <p className="eo-meta">{tr.ctx && <span><b>1M</b> context</span>}<span>OpenAI-compatible API</span><span>Anthropic-compatible API</span></p>
+      {tr.more && <p>{tr.more}</p>}
+      <p className="eo-meta">{tr.ctx === true ? <span><b>1M</b> context</span> : tr.ctx ? <span>{`${tr.ctx} context`}</span> : null}<span>OpenAI-compatible API</span><span>Anthropic-compatible API</span></p>
       <p className="eo-acts">
         <A to="/login" className="eo-l">Try Hanzo</A>
         <A to={tr.wb} className="eo-l">Open in Workbench</A>
@@ -514,6 +521,27 @@ function Tier({ c, i }) {
   );
 }
 
+/* The hero's Enso: Hanzo's film inside the ensō, at the size of a feature, not a takeover. It is the opener's landing
+   (data-hero, then data-ready once the poster decodes); the one pause beside it stops every film and demo on the page. */
+function Feature() {
+  const box = useRef(null);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const img = box.current.querySelector('img');
+    const done = () => setReady(true);
+    if (img.complete) img.decode().then(done, done); else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
+  }, []);
+  return (
+    <div className="eo-feat" ref={box}>
+      <div className="eo-feat-ring" data-hero="enso" data-ready={ready ? '' : undefined} aria-hidden="true">
+        <Img src={film('enso', 'webp')} w={1200} h={1500} priority />
+        <ModelFilm slug="enso" />
+      </div>
+      <FilmPause className="eo-feat-pause" />
+    </div>
+  );
+}
+
 export default function Enso() {
   const room = useEnter(lens, '0px 0px -12% 0px');
   const cards = useEnter(ink, '0px 0px -12% 0px');
@@ -524,40 +552,44 @@ export default function Enso() {
     return () => removeEventListener('pointermove', f);
   }, []);
   return (
-    <Launch
-      slug="enso"
-      ask={{ label: 'Try Hanzo', to: '/login', id: 'enso.first' }}
-      shape={RING}
-      headClass="eo-head"
-      head={
-        <>
-          <Lines id="eo-h" lines={['The right intelligence.', 'Every time.']} />
-          <p className="lv-lede">One endpoint for every frontier model. Enso routes each request for quality, speed and cost.</p>
-          <div className="lv-acts">
-            <Cta kind="quiet" to="/login" id="enso.hero" thumb>Try Hanzo</Cta>
-            <Cta to="https://platform.hanzo.ai" kind="link" id="enso.hero-platform">API Platform</Cta>
-            <More to="https://github.com/hanzoai/enso">Docs on GitHub</More>
+    <main className="x-model lv eo" data-cursor="">
+      {/* Hanzo's own hero, as clear as theirs (COPY-RULE 4, 8 Nov): the crumb, the two-line headline, the lede and the
+          three asks, word for word, with Enso's film held in its ensō beside them. Nothing pins, nothing takes the screen. */}
+      <section className="eo-hero" aria-labelledby="eo-h">
+        <div className="x-wrap eo-hero-g">
+          <div className="eo-head eo-hero-t">
+            <Lines as="h1" id="eo-h" lines={['The right intelligence.', 'Every time.']} reveal />
+            <p className="lv-lede">One endpoint for every frontier model. Enso routes each request for quality, speed and cost.</p>
+            <div className="lv-acts">
+              <Cta kind="quiet" to="/login" id="enso.hero" thumb>Try Hanzo</Cta>
+              <Cta to="https://platform.hanzo.ai" kind="link" id="enso.hero-platform">API Platform</Cta>
+              <More to="https://github.com/hanzoai/enso">Docs on GitHub</More>
+            </div>
+            <p className="eo-buy"><Plan slot="hero" /></p>
+            <p className="lv-crumb">Hanzo / Enso</p>
           </div>
-          <p className="lv-crumb">Hanzo / Enso</p>
-        </>
-      }
-    >
-      {/* order (motion map: lead with the signature): particles form the ring → tiers (fold-out) → router room (cursor-lens)
-          → model cards (ink-spread) → GPQA (word-shuffle; the figures still count up) → band (orbit-in) */}
-      <Form />
-      <section id="eo-tiers" className="eo-tiers" aria-label="Enso">
-        <div className="x-wrap">{CHAPTERS.map((c, i) => <Tier key={c.title} c={c} i={i} />)}</div>
-      </section>
-      {/* the dark room: the live router; each tier's lane carries its own prices (one object, not a second table) */}
-      <section className="lv-room lv-sec eo-live eo-lens" data-room="dark" aria-label="Enso" ref={room}>
-        <div className="x-wrap">
-          <Switchboard />
-          <p className="eo-all"><More to="/models/enso">All Enso models</More></p>
+          <Feature />
         </div>
       </section>
-      <div className="eo-ink" ref={cards}><ModelCards slug="enso" /></div>
-      <Gpqa />
-      <div className="eo-orbit" ref={band}><Band title="The right intelligence. Every time." action="Try Hanzo" to="/login" /></div>
-    </Launch>
+      <div className="x-model-body lv-body">
+        {/* order (motion map: lead with the signature): particles form the ring → tiers (fold-out) → router room (cursor-lens)
+            → model cards (ink-spread) → GPQA (word-shuffle; the figures still count up) → band (orbit-in) */}
+        <Form />
+        <section id="eo-tiers" className="eo-tiers" aria-label="Enso">
+          <div className="x-wrap"><p className="eo-auto">The default for everyone, Free plan included: it picks the tier for each request and bills at the tier that answers.</p></div>
+          <div className="x-wrap">{CHAPTERS.map((c, i) => <Tier key={c.title} c={c} i={i} />)}</div>
+        </section>
+        {/* the dark room: the live router; each tier's lane carries its own prices (one object, not a second table) */}
+        <section className="lv-room lv-sec eo-live eo-lens" data-room="dark" aria-label="Enso" ref={room}>
+          <div className="x-wrap">
+            <Switchboard />
+            <p className="eo-all"><More to="/models/enso">All Enso models</More></p>
+          </div>
+        </section>
+        <div className="eo-ink" ref={cards}><ModelCards slug="enso" /></div>
+        <Gpqa />
+        <div className="eo-orbit" ref={band}><Band title="The right intelligence. Every time." action="Try Hanzo" to="/login" note={<Plan slot="close" />} /></div>
+      </div>
+    </main>
   );
 }

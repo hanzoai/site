@@ -432,3 +432,38 @@
   .xab-papers li:nth-child(n + 3) { display: none; }
   .xab-log li:nth-child(n + 4) { display: none; }
 }
+
+/* ---------- dark (docs/DARK-MODE.md): the page follows Hanzo's dark tokens; the dark room and the media stay as they are.
+   Light is untouched: every rule below is scoped to html:not(.light). ---------- */
+html:not(.light) .xab { --acc: var(--foreground); --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --hair: var(--border); --tile: var(--muted); background: var(--bg); }
+html:not(.light) .xab-glide circle, html:not(.light) .xab-ts circle, html:not(.light) .xab-hand-dot { fill: var(--background); }
+html:not(.light) .xab-glide line, html:not(.light) .xab-hand line { stroke: var(--white-30); }
+html:not(.light) .xab-base, html:not(.light) .xab-tick line { stroke: var(--white-30); }
+html:not(.light) .xab-ghost { stroke: var(--border-strong); }
+html:not(.light) .xab-dia .xab-shape, html:not(.light) .xab-shape { fill: var(--glass); }
+html:not(.light) .xab-fig.all .xab-dia .xab-shape { fill: var(--white-14); }
+html:not(.light) .xab-sw { background: var(--border-control); }
+html:not(.light) .xab-sw::after { background: var(--x-knob); }
+html:not(.light) .xab-picks li.on .xab-sw::after { background: var(--primary-foreground); }
+html:not(.light) .xab-tile { background: var(--muted); }
+@media (hover: hover) { html:not(.light) .xab-tile:hover { background: var(--secondary); } }
+html:not(.light) .xab-tile.cue { background: var(--secondary); }
+html:not(.light) .xab-tile-plus { background: var(--x-raised); }
+html:not(.light) .xab-tile:hover .xab-tile-plus, html:not(.light) .xab-tile.cue .xab-tile-plus { color: var(--x-on-ink); }
+html:not(.light) .xab-ring { stroke: var(--border-control); }
+html:not(.light) .xab-pic, html:not(.light) .xab-rt.plain .xab-rt-media { background: var(--muted); }
+html:not(.light) .xab-pic-sigil, html:not(.light) .xab-rt.plain .xab-rt-sigil { color: var(--foreground); }
+html:not(.light) .xab-open { box-shadow: 0 0 0 1px var(--border); }
+html:not(.light) .xab-paper::before { background: var(--muted); }
+html:not(.light) .xab-track { stroke: var(--white-22); }
+html:not(.light) .xab-tracks.lit .xab-line { stroke: var(--white-22); }
+html:not(.light) .xab-wl.on .xab-wl-w { color: var(--text-disabled); }
+html:not(.light) .xab-wl.on .xab-wl-w.lit { color: var(--ink); }
+/* the Story kit's asks and pause on this page (story.css is shared with /history and /blog, so its dark lives here) */
+html:not(.light) .xab .v2s-btn { border-color: var(--border); background: var(--x-raised); }
+html:not(.light) .xab .v2s-btn.solid { background: var(--ink); color: var(--x-on-ink); border-color: var(--ink); }
+@media (hover: hover) { html:not(.light) .xab .v2s-btn:hover { border-color: var(--border-strong); } html:not(.light) .xab .v2s-btn.solid:hover { background: var(--primary-hover); } }
+html:not(.light) .xab .v2s-link, html:not(.light) .xab .v2s-tlink { text-decoration-color: var(--white-30); }
+html:not(.light) .xab :focus-visible { box-shadow: 0 0 0 5px var(--background); }
+html:not(.light) .xab .xst-pause { border-color: var(--border); background: var(--x-raised); color: var(--foreground); }
+@media (hover: hover) { html:not(.light) .xab .xst-pause:hover { border-color: var(--border-strong); } }

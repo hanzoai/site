@@ -271,7 +271,7 @@ header[data-slot='masthead'] { transition: background-color .45s var(--ease), co
 .x-modal-desc { margin: 0; font-size: 19px; line-height: 1.45; color: #c7c7cc; }
 .x-mtags.static { margin: 4px 0 10px; }
 .x-modal-links { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
-.x-modal .x-btn.solid { background: var(--x-fill); color: #000; border-color: #f5f5f7; }
+.x-modal .x-btn.solid { background: #f5f5f7; color: #000; border-color: #f5f5f7; }
 .x-modal .x-arrow { color: #f5f5f7; }
 .x-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .14); color: #fff; display: grid; place-items: center; cursor: pointer; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 
@@ -370,7 +370,7 @@ header[data-slot='masthead'] { transition: background-color .45s var(--ease), co
 .x-lane.hi .x-lane-v { color: inherit; }
 .x-lane-track { position: relative; display: flex; height: 6px; border-radius: 6px; background: rgba(255, 255, 255, .08); }
 .x-lane-track b { display: block; height: 100%; width: 100%; border-radius: 6px; background: #5a5a60; transform-origin: 0 50%; }
-.x-lane.hi .x-lane-track b { background: var(--x-fill); }
+.x-lane.hi .x-lane-track b { background: #f5f5f7; }
 .x-lane-track em { position: absolute; right: -2px; top: 50%; translate: 100% -50%; font-style: normal; font-size: 11px; color: #f5f5f7; padding-left: 6px; }
 .x-facts { margin: 22px 0 0; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid rgba(255, 255, 255, .08); padding-top: 16px; }
 .x-facts div { display: flex; justify-content: space-between; gap: 12px; font-size: 13.5px; }
@@ -647,7 +647,7 @@ a.x-mbtn { color: inherit; text-decoration: none; }
 .x-band h2 { margin: 0 auto; max-width: 18ch; font-size: clamp(2.6rem, 6vw, 5.5rem); font-weight: 560; letter-spacing: -.045em; line-height: 1; color: #f5f5f7; }
 .x-band p { margin: 22px auto 0; max-width: 54ch; font-size: clamp(1.05rem, 1.4vw, 1.3rem); line-height: 1.5; color: #a1a1a6; }
 .x-band-act { margin-top: 36px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.x-band .x-btn.solid { background: var(--x-fill); color: #000; border-color: #f5f5f7; height: 52px; padding: 0 30px; font-size: 16px; }
+.x-band .x-btn.solid { background: #f5f5f7; color: #000; border-color: #f5f5f7; height: 52px; padding: 0 30px; font-size: 16px; }
 .x-band-note { margin: 0 !important; font-size: 14px !important; }
 .x-band-note a { color: #f5f5f7; }
 
