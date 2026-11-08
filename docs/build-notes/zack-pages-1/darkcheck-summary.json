@@ -1,0 +1,37 @@
+{
+ "/beta": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/pricing": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/beta/apply": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/beta/research": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/chat": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/dev": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ },
+ "/about": {
+  "notDark": false,
+  "count": 0,
+  "samples": []
+ }
+}
