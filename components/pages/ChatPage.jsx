@@ -18,12 +18,11 @@
    Demo words: /chat's own recents and copy, and Hanzo's own black holes and aurora exchange and Dev session from
    hanzo.ai's home (content/live/index.json). Greys only: colour arrives through Hanzo's model artwork. */
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { motion } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
 import { A, Img, Cta, Band } from '../kit';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
-import AppLines from '../v2/AppLines';
 import { useDemo } from '../v2/AppDemo';
 import { MODELS } from '../../lib/models';
 import './ChatPage.css';
@@ -436,9 +435,18 @@ function Tool({ t, d, k, i }) {
     return () => io.disconnect();
   }, []);
   const again = () => setPlay((n) => n + 1);
+  // the scene is drawn at 560 × 400 and scaled to the card, so it reads the same at every width
+  const art = useRef(null);
+  useEffect(() => {
+    const el = art.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => el.style.setProperty('--k', String(el.clientWidth / 560)));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
   return (
     <li className="cht-tool" ref={ref} style={{ '--i': i }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') again(); }} onFocus={again} tabIndex={-1}>
-      <div className="v2a-ch-art cht-tool-art" data-play={play ? '' : undefined} aria-hidden="true">
+      <div ref={art} className="v2a-ch-art cht-tool-art" data-play={play ? '' : undefined} aria-hidden="true">
         <div className="cht-tool-scale" key={play}><Art k={k} /></div>
       </div>
       <div className="cht-tool-b">

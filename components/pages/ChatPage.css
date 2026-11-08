@@ -442,3 +442,22 @@
   .cht-art-memory .cht-carry { width: 40px; height: 40px; rotate: 90deg; }
 }
 @media (max-width: 900px) { .cht-who-go { display: inline-flex; align-items: center; min-height: 44px; } }
+
+/* 8 Nov (James: match hanzo.ai/chat): the six tools as Hanzo lays them out, one heading over a three-by-two grid of
+   cards; each card keeps its small scene in a dark window above its words */
+.cht-tools { padding-block: clamp(96px, 10vw, 160px); }
+.cht-tools-h { text-align: center; margin: 0 auto clamp(36px, 4vw, 56px); max-width: 24ch; text-wrap: balance; }
+.cht-tools-g { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.cht-tool { display: flex; flex-direction: column; border-radius: 24px; background: #f5f5f5; overflow: hidden; outline: none; transition: transform .45s var(--emph), background-color .3s var(--emph); }
+.cht-tool:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.cht-tool-art { position: relative; aspect-ratio: 7 / 5; margin: 8px 8px 0; border-radius: 18px; overflow: hidden; background: #171717; }
+.cht-tool-scale { position: absolute; left: 0; top: 0; width: 560px; height: 400px; transform: scale(var(--k, .6)); transform-origin: 0 0; }
+.cht-tool-b { display: grid; gap: 8px; padding: 20px 22px 24px; }
+.cht-tool-i { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: #fff; color: var(--ink); }
+.cht-tool-t { margin: 6px 0 0; font-size: 17px; font-weight: 500; letter-spacing: -.01em; color: var(--ink); }
+.cht-tool-d { margin: 0; font-size: 15px; line-height: 1.5; color: #525252; }
+@media (hover: hover) { .cht-tool:hover { transform: translateY(-4px); background: #ededed; } }
+.cht-tool:active { transform: scale(.98); }
+@media (max-width: 900px) { .cht-tools-g { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+@media (max-width: 600px) { .cht-tools-g { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .cht-tool { transition: none; } }
