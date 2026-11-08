@@ -363,3 +363,50 @@ html:not(.js) .km-cell-open { clip-path: none; }
 .km .x-codeblock .x-copy { transition: background-color .15s var(--km-move), color .15s var(--km-move), border-color .15s var(--km-move), transform 90ms var(--km-move); }
 @media (hover: hover) { .km .x-codeblock .x-copy:hover { background: var(--km-veil-dark-on); border-color: rgba(255, 255, 255, .32); color: var(--km-black-ink); } }
 .km .x-codeblock .x-copy:active { transform: scale(.98); }
+
+/* dark mode, on Hanzo's tokens. The black pieces (the secret, the ciphertext, the key, the vault room, the disk room)
+   are black in both modes and keep their values; the light pieces around them turn over. */
+html:not(.light) .km { --acc: var(--foreground); --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); --btn-solid-hover: var(--primary-hover); }
+html:not(.light) .km .v2-dark, html:not(.light) .km [data-room='dark'] { --ink: #0a0a0a; }
+html:not(.light) .km-sub, html:not(.light) .km-seal-k, html:not(.light) .km-ship-cap .km-cap-s { color: var(--soft); }
+@media (hover: hover) { html:not(.light) .km-hero .x-btn:not(.solid):hover { border-color: var(--ink); background: var(--x-fill); } }
+html:not(.light) .km-vault { background: var(--x-raised); box-shadow: var(--km-float), 0 0 0 1px var(--border); }
+html:not(.light) .km-secret, html:not(.light) .km-ct { box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .km-vers { background: var(--x-fill); }
+html:not(.light) .km-ver { background: var(--secondary); color: var(--soft); }
+html:not(.light) .km-ver b, html:not(.light) .km-ver em { color: var(--ink); }
+html:not(.light) .km-ver.cur { box-shadow: inset 0 0 0 2px var(--ink); }
+html:not(.light) .km-stale { background: var(--secondary-hover); color: var(--ink); }
+html:not(.light) .km-log { background: var(--x-fill); }
+html:not(.light) .km-log li { color: var(--soft); }
+html:not(.light) .km-log li.in { color: var(--ink); }
+html:not(.light) .km-log i { background: var(--border-strong); }
+html:not(.light) .km-log i.a { background: var(--ink); }
+html:not(.light) .km-seal-box input { border-color: var(--border-control); background: var(--background); color: var(--ink); caret-color: var(--ink); }
+@media (hover: hover) { html:not(.light) .km-seal-box input:hover { border-color: var(--border-focus); } }
+html:not(.light) .km-seal-box input:focus { border-color: var(--ink); }
+html:not(.light) .km-seal-box input::placeholder { color: var(--soft); }
+html:not(.light) .km-seal-box input:focus-visible { outline-color: var(--ink); box-shadow: 0 0 0 3px var(--bg); }
+html:not(.light) .km-seal-chain span { background: var(--secondary); color: var(--ink); }
+html:not(.light) .km-seal-chain span.off { background: transparent; color: var(--soft); text-decoration-color: var(--border-selected); }
+html:not(.light) .km-seal-chain i { background: var(--soft); }
+html:not(.light) .km-ship { background: var(--x-fill); --faint: var(--muted-foreground); }
+html:not(.light) .km-api { color: var(--ink); }
+html:not(.light) .km-api i { background: var(--ink); color: var(--x-on-ink); }
+html:not(.light) .km-rel-a { color: var(--ink); }
+html:not(.light) .km-rel-a span, html:not(.light) .km-rel-a svg { color: var(--soft); }
+@media (hover: hover) {
+  html:not(.light) .km-rel-a:hover { background: var(--x-raised); }
+  html:not(.light) .km-rel-a:hover svg { color: var(--ink); }
+}
+html:not(.light) .km-rel-a:focus-visible { outline-color: var(--ink); box-shadow: 0 0 0 4px var(--bg); }
+@media (hover: hover) { html:not(.light) .km .cf-con.light .cf-con-title:hover { color: var(--ink); } }
+@media (prefers-reduced-motion: no-preference) { html.js:not(.light) .km-blinds i { background: var(--x-raised); } }
+/* the shared example console's light face draws #fff and #fafafa, and its .light class brings Hanzo's light tokens with
+   it; this page's copy turns over with the page, on Hanzo's dark tokens read outside that class */
+html:not(.light) .km-ship-con { --km-con-row: var(--secondary); --km-con-edge: var(--border); --km-con-dot: var(--border-strong); }
+html:not(.light) .km-ship-con .cf-con.light { --card: var(--km-con-row); background: var(--x-raised); border-color: var(--km-con-edge); }
+html:not(.light) .km-ship-con .cf-con.light .cf-con-bar i { border-color: var(--km-con-dot); }
+html:not(.light) .km-ship-con .cf-con.light .cf-con-side { background: var(--x-sunk); }
+html:not(.light) .km-ship-con .cf-con.light .cf-tip { color: var(--x-on-ink); }
+@media (hover: hover) { html:not(.light) .km-ship-con .cf-con.light .cf-con-open:hover { color: var(--x-on-ink); } }
