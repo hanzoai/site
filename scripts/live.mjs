@@ -104,6 +104,10 @@ async function figures() {
     run('_github.json', github, (d) => `${n(d.repos)} original public repos in ${d.orgs} orgs`),
     run('_pricing.json', pricing, (d) => Object.entries(d.plans).map(([k, p]) => `${k} $${p.price}${p.priceAnnual != null ? '/$' + p.priceAnnual : ''}`).join(' · ')),
   ]);
+  // /open-source shows the figures hanzo.ai's own deployed build read (per-org commits this year, contributors, the past
+  // 7 days, latest commits); its reader keeps the last good snapshot on any failure, so this never fails a build either
+  const { spawnSync } = await import('node:child_process');
+  spawnSync(process.execPath, [path.join(ROOT, 'components/pages/openSource/read.mjs')], { stdio: 'inherit' });
 }
 
 async function pages(paths) {
