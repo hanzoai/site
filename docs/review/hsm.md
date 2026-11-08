@@ -1,4 +1,6 @@
 # /hsm — James-eye review
+
+Ready: 8 Nov, held up next to /api and /agents (no score). Phones get one stage: the module sticks at the top of the black room and lights each fact's plate as that fact reaches it (no more black void before the room arrives), hero callouts sit on the stack's edges, Paste and ship is its own stage with the prompt typing in large and Copy as the payoff (cards no longer ride over each other), the close is the module names as type, paused play mark is ink on white, every chosen pill answers hover. taste/unique/parity OK (text 28/28, links 2/2); 0 console errors, no overflow/overlap at 1470x801 and 375x812. 8 Nov copy rule: copycheck missing 0 of 20.
 7 Nov, round 4. Walked moving at 1470x801, 375x812 and 320x640 (phone: isMobile, hasTouch) with Playwright. At each size: frames at 0, 1 and 3 s with no input, then wheel scrolls one screen at a time with a 1.5 s dwell, hover and press on desktop, taps on phone, and a prefers-reduced-motion load at both main sizes. I also measured CLS, horizontal overflow and console output.
 
 Verdict: 7/10

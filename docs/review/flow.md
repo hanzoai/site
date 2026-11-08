@@ -1,4 +1,6 @@
 # /flow — James-eye review
+
+Ready: 8 Nov, held up next to /api and /agents (no score). The round-5 rework holds on a fresh walk (chain told only by the hero graph and the playground, stage centred with no dead band, 32px returned value with a running bar, pause and counter under node 06, reduced motion shows 06 / 06 finished, Previous/Next and Documentation hovers, deck greys); this pass adds a hover on the lit playground step and a press on the GitHub chip. Not doable here: there is no Hanzo Flow screenshot or film to use (fix 2), and the phone header ask is shared (components/Ask.jsx). taste/unique/parity OK (text 40/40, links 4/4); 0 console errors from this page (only the shared footer hydration warning, which /agents shows too), no overflow/overlap at 1470x801 and 375x812. 8 Nov copy rule: copycheck missing 0 of 25 (Hanzo's words now sit whole in their own elements, nothing reworded).
 7 Nov, round 4, walked at 1470x801, 375x812 and 320 (isMobile, hasTouch) with Playwright Chromium: frames at 0/1/3 s untouched, wheel-scrolled a screen at a time with 1.5 s dwell through every pinned chapter, hovered/pressed every main control on desktop, tapped on phone, opened a figure card, ran Copy and the playground's Next, and reloaded under prefers-reduced-motion at desktop and 375.
 
 Verdict: 6/10

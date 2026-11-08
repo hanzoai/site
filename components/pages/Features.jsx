@@ -8,7 +8,7 @@
    Entrances: pixel-resolve (hero words), grid-wave (the keyboard's keys, by distance from the pointer), tilt-3d-hover (Hanzo Chat room's film),
    underline-sweep (Hanzo Dev room's heading and rows), spring-snap (Hanzo Design & Cloud room).
    Motion budget: signature = the sideways gallery; supporting = the self-playing keyboard (approved demo, kept), rows that step and open (state), films (idle), magnetic primary.
-   No live AI call (MASTER 3.3): the footer keeps Hanzo's own chat box. The one spring is the spring-snap entrance.
+   No live AI call (MASTER 3.3): the footer keeps Hanzo's own chat box. No springs: spring-snap lands on a hard ease-out, no overshoot.
    Colour: none in the UI (0 hues); colour arrives only through Hanzo's model films. One page pause stops the films and the rows; the display has its own.
    Keyboard: Hanzo's ten features are keycaps on one keyboard, set in three clusters (Hanzo Chat, Hanzo Dev, Hanzo
    Design & Cloud). It plays itself, a key pressing every couple of seconds and its feature lighting on the display
@@ -73,9 +73,10 @@ function Instrument() {
     return KEYS.map((k, i) => [i, words(k.t + ' ' + k.d + ' ' + k.g)]).filter(([, kw]) => w.every((x) => kw.some((y) => y.startsWith(x)))).map(([i]) => i);
   }, [q]);
   const press = (i, hand) => { setAt(i); setDown(i); if (hand) setMine(true); setTimeout(() => setDown((d) => (d === i ? -1 : d)), 180); };
+  const first = useRef(true); // the first self-press lands within a second of arrival, then one every 2.1 s
   useEffect(() => {
     if (mine || calm || !seen || paused) return;
-    const t = setTimeout(() => press((at + 1) % KEYS.length), 2100);
+    const t = setTimeout(() => { first.current = false; press((at + 1) % KEYS.length); }, first.current ? 900 : 2100);
     return () => clearTimeout(t);
   }, [at, mine, calm, seen, paused]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -98,7 +99,7 @@ function Instrument() {
         </div>
         <div className="xft-screen-body">
           {KEYS.map((f, i) => (
-            <motion.div key={f.t} className="xft-feat" initial={false} animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -16 : 16 }} transition={{ duration: 0.45, ease: EASE }} aria-hidden={i !== at}>
+            <motion.div key={f.t} className="xft-feat" initial={false} animate={i === at ? { opacity: 1, y: 0 } : { opacity: 0, y: i < at ? -16 : 16 }} transition={i === at ? { duration: 0.45, delay: 0.12, ease: EASE } : { duration: 0.15, ease: EASE }} aria-hidden={i !== at}>
               <p className="xft-feat-t">{f.t}</p>
               <p>{f.d}</p>
             </motion.div>
@@ -149,6 +150,7 @@ function Hero() {
             <div className="xft-acts">
               <Magnetic strength={0.25}><A to="/chat?skip=login" className="w2-cta" data-thumb="Open Chat" data-cta="features.hero">Open Chat <i aria-hidden="true">→</i></A></Magnetic>
               <A to="/dev" className="xft-tlink">Launch Dev</A>
+              <A to="/signup" className="xft-tlink">Try Hanzo</A>
             </div>
           </div>
         </div>
@@ -190,7 +192,7 @@ function Product({ gi }) {
             ))}
           </ol>
           {/* one panel holds every description in the same cell, so it is as tall as the longest and never moves the page */}
-          <div className="xft-desc" id={'xft-d' + gi} aria-live="polite">
+          <div className="xft-desc" id={'xft-d' + gi} aria-live={mine ? 'polite' : 'off'}>
             {fs.map(([t, d], i) => <p key={t} className={row === i ? 'on' : ''} aria-hidden={row !== i}>{d}</p>)}
           </div>
         </div>
@@ -235,10 +237,26 @@ function Gallery() {
   );
 }
 
+// hanzo.ai/features is the one page whose <main> wraps its site footer too (its outer <main> holds header, page and footer),
+// so Hanzo's footer lines are part of this page's copy. While this page is mounted, the shared footer (server HTML, not
+// React-managed) sits inside our <main> as its last child: same order on screen, same structure as Hanzo's. It goes
+// back to its place when the page unmounts.
+function useFooterInMain(root) {
+  useEffect(() => {
+    const host = document.querySelector('[data-x-shell="footer"]');
+    const main = root.current;
+    if (!host || !main) return;
+    const nodes = [...host.childNodes];
+    nodes.forEach((n) => main.appendChild(n));
+    return () => nodes.forEach((n) => host.appendChild(n));
+  }, [root]);
+}
+
 export default function Features() {
   usePhoneAsk();
   const root = useRef(null);
   useFeaturesEnter(root);
+  useFooterInMain(root);
   return (
     <main id="main" className="xft w2 gx" ref={root}>
       <NoJs />

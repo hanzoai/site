@@ -12,24 +12,36 @@
 .xfo-lede { margin-top: 36px; }
 .xfo-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin-top: 40px; }
 .xfo-hero-obj { grid-column: 8 / span 5; }
-.xfo-pr { padding: clamp(24px, 2.8vw, 36px); display: grid; gap: 26px; }
+.xfo-pr { --rx: 0deg; --ry: 0deg; --xfo-50: light-dark(#f5f5f5, var(--muted)); --xfo-300: light-dark(#d4d4d4, var(--border-control)); padding: clamp(24px, 2.8vw, 36px); display: grid; gap: 26px; transform: perspective(1200px) rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
 .xfo-pr-top { display: flex; align-items: center; gap: 12px; color: var(--soft); font-size: 14px; min-width: 0; }
 .xfo-pr-top span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .xfo-diff { display: grid; gap: 8px; padding: 18px; border-radius: 16px; background: var(--card); }
 .xfo-diff span { display: grid; grid-template-columns: 18px 1fr; align-items: center; gap: 8px; height: 18px; }
 .xfo-diff b { font: 500 14px/1 var(--mono); color: var(--faint); }
-.xfo-diff i { height: 8px; border-radius: 4px; background: rgba(0, 0, 0, .12); }
-.xfo-diff .add i { background: var(--hz-700); } .xfo-diff .add b { color: var(--hz-950); }
-.xfo-diff .del i { background: var(--hz-200); } .xfo-diff .del b { color: var(--hz-500); }
+.xfo-diff i { height: 8px; border-radius: 4px; background: var(--x-e12); }
+.xfo-diff .add i { background: light-dark(#3a3a3c, var(--muted-foreground)); } .xfo-diff .add b { color: light-dark(#0a0a0b, var(--foreground)); }
+.xfo-diff .del i { background: light-dark(#c7c7cc, var(--secondary)); } .xfo-diff .del b { color: light-dark(#6e6e73, var(--muted-foreground)); }
 .xfo-pr-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 /* the badge swaps inside a fixed, clipped slot so Open and Merged never overlap */
 .xfo-slot { position: relative; display: grid; width: 136px; height: 44px; overflow: clip; border-radius: 999px; }
 .xfo-slot > span { grid-area: 1 / 1; }
-.xfo-badge { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px 0 14px; border-radius: 999px; background: var(--hz-white); border: 1.5px solid var(--hz-950); color: var(--hz-950); font: 560 16px/1 var(--sans); }
-.xfo-badge.merged { background: var(--hz-950); color: var(--hz-white); }
-.xfo-btn { display: grid; place-items: center; min-width: 120px; height: 48px; padding: 0 20px; border-radius: 12px; border: 1px solid var(--hz-300); background: var(--hz-white); color: var(--hz-950); font: 497 16px/1 var(--sans); transition: transform 90ms, background .3s, border-color .3s; }
+.xfo-badge { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px 0 14px; border-radius: 999px; background: var(--x-raised); border: 1.5px solid light-dark(#0a0a0b, var(--foreground)); color: light-dark(#0a0a0b, var(--foreground)); font: 560 16px/1 var(--sans); }
+.xfo-badge.merged { background: light-dark(#0a0a0b, var(--primary)); color: var(--x-on-ink); }
+.xfo-btn { display: grid; place-items: center; min-width: 120px; height: 48px; padding: 0 20px; border-radius: 12px; border: 1px solid var(--xfo-300); background: var(--x-raised); color: light-dark(#0a0a0b, var(--foreground)); font: 497 16px/1 var(--sans); transition: transform 90ms, background .3s, border-color .3s; }
 .xfo-btn.press { transform: scale(.97); }
-.xfo-btn.done { background: var(--hz-50); border-color: var(--hz-100); }
+.xfo-btn.done { background: var(--xfo-50); border-color: light-dark(#e5e5e5, var(--border)); }
+/* the merged tick draws itself as a stroke */
+.xfo-tick { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 24; stroke-dashoffset: 24; animation: xfo-tick .4s cubic-bezier(.16, 1, .3, 1) .08s forwards; }
+@keyframes xfo-tick { to { stroke-dashoffset: 0; } }
+/* once merged, a review mark walks the diff line by line, slowly, so the first screen stays alive */
+.xfo-diff { position: relative; }
+.xfo-diff span { position: relative; }
+.xfo-diff span::before { content: ''; position: absolute; inset: -4px -10px; border-radius: 6px; background: light-dark(rgba(0, 0, 0, .045), var(--glass)); opacity: 0; }
+.xfo-pr.merged .xfo-diff span::before { animation: xfo-walk 8.4s linear infinite; }
+.xfo-pr.merged .xfo-diff span:nth-child(2)::before { animation-delay: 1.2s; } .xfo-pr.merged .xfo-diff span:nth-child(3)::before { animation-delay: 2.4s; }
+.xfo-pr.merged .xfo-diff span:nth-child(4)::before { animation-delay: 3.6s; } .xfo-pr.merged .xfo-diff span:nth-child(5)::before { animation-delay: 4.8s; }
+.xfo-pr.merged .xfo-diff span:nth-child(6)::before { animation-delay: 6s; } .xfo-pr.merged .xfo-diff span:nth-child(7)::before { animation-delay: 7.2s; }
+@keyframes xfo-walk { 0% { opacity: 0; } 3% { opacity: 1; } 12% { opacity: 1; } 16% { opacity: 0; } 100% { opacity: 0; } }
 
 /* the scrubbed scene */
 .xfo-scene { position: relative; height: 320svh; }
@@ -41,16 +53,16 @@
 .xfo-big-u { margin: 12px 0 0; font-size: 15px; letter-spacing: .04em; color: var(--soft); }
 .xfo-none { margin-top: 40px; max-width: 34ch; }
 .xfo-lv { grid-column: 7 / span 6; list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
-.xfo-lv-c { position: relative; display: grid; gap: 12px; padding: clamp(28px, 3vw, 44px); border-radius: 24px; border: 1px solid var(--line); background: var(--hz-white); transition: border-color .5s var(--xp-ease); }
-.xfo-lv-c.on { border-color: var(--hz-950); }
+.xfo-lv-c { position: relative; display: grid; gap: 12px; padding: clamp(28px, 3vw, 44px); border-radius: 24px; border: 1px solid var(--line); background: var(--x-raised); transition: border-color .5s var(--xp-ease); }
+.xfo-lv-c.on { border-color: light-dark(#0a0a0b, var(--foreground)); }
 .xfo-lv-k { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); transition: color .4s; }
 .xfo-lv-c.on .xfo-lv-k { color: var(--xp-accent); }
 .xfo-pour { height: 10px; margin-top: 8px; border-radius: 5px; background: var(--card); overflow: hidden; }
-.xfo-pour i { display: block; height: 100%; border-radius: 5px; background: var(--hz-950); transform-origin: 0 50%; }
+.xfo-pour i { display: block; height: 100%; border-radius: 5px; background: light-dark(#0a0a0b, var(--muted-foreground)); transform-origin: 0 50%; }
 .xfo-lv-e { display: flex; align-items: center; gap: 10px; margin: 4px 0 0; font: 497 17px/1.3 var(--sans); letter-spacing: -.015em; color: var(--faint); transition: color .4s; }
-.xfo-lv-e span { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid currentColor; font-size: 13px; }
+.xfo-lv-e span[aria-hidden] { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid currentColor; font-size: 13px; }
 .xfo-lv-c.on .xfo-lv-e { color: var(--ink); }
-.xfo-lv-c.on .xfo-lv-e span { background: var(--xp-accent); border-color: var(--xp-accent); color: var(--hz-white); }
+.xfo-lv-c.on .xfo-lv-e span[aria-hidden] { background: var(--xp-accent); border-color: var(--xp-accent); color: var(--x-on-ink); }
 .xfo-scene.flat { height: auto; padding: 120px 0; }
 .xfo-scene.flat .xfo-pin { position: static; height: auto; }
 
@@ -60,15 +72,15 @@
 .xfo-mine-c { display: grid; }
 .xfo-mine-c > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 18px; }
 .xfo-st { display: inline-flex; align-items: center; gap: 6px; }
-.xfo-st button { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line); background: var(--hz-white); font: 400 22px/1 var(--sans); color: var(--ink); cursor: pointer; transition: background .15s, border-color .15s, transform 90ms; }
-@media (hover: hover) { .xfo-st button:hover:not(:disabled) { background: var(--hz-50); border-color: var(--hz-300); } }
+.xfo-st button { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--line); background: var(--x-raised); font: 400 22px/1 var(--sans); color: var(--ink); cursor: pointer; transition: background .15s, border-color .15s, transform 90ms; }
+@media (hover: hover) { .xfo-st button:hover:not(:disabled) { background: light-dark(#f5f5f5, var(--muted)); border-color: light-dark(#d4d4d4, var(--border-strong)); } }
 .xfo-st button:active:not(:disabled) { transform: scale(.97); }
 .xfo-st button:disabled { opacity: .35; cursor: default; }
 .xfo-st button:focus-visible { outline: 2px solid var(--xp-accent); outline-offset: 2px; }
 .xfo-st output { min-width: 84px; text-align: center; font-size: 18px; }
 .xfo-mine-big { grid-column: 1 / span 5; }
 .xfo-mine-r { margin: 0; display: grid; gap: 12px; color: var(--soft); font-size: 17px; }
-.xfo-mine-r b { font: 497 44px/1.05 var(--sans); letter-spacing: -.03em; color: var(--hz-400); transition: color .3s; }
+.xfo-mine-r b { font: 497 44px/1.05 var(--sans); letter-spacing: -.03em; color: light-dark(#86868b, var(--text-tertiary)); transition: color .3s; }
 .xfo-mine-r.on b { color: var(--ink); }
 
 /* the dark room: the repositories and the open bounties */
@@ -78,7 +90,7 @@
 .xfo-orgs li { font: 497 44px/1.15 var(--sans); letter-spacing: -.03em; color: rgba(255, 255, 255, .3); transition: color .4s cubic-bezier(0, 0, .2, 1) calc(var(--i, 0) * .22s); }
 .xfo-repos.lit .xfo-orgs li { color: #fafafa; }
 .xfo-repos.lit .xfo-orgs li:nth-child(even) { color: rgba(255, 255, 255, .55); }
-.xfo-any { margin-top: 40px; color: #a3a3a3; }
+.xfo-repos .xfo-any { margin-top: 40px; color: #a3a3a3; }
 .xfo-open { grid-column: 8 / span 5; display: grid; gap: 20px; justify-items: start; }
 .xfo-open ul { list-style: none; margin: 0; padding: 0; width: 100%; border-top: 1px solid rgba(255, 255, 255, .1); }
 .xfo-open li a { display: grid; grid-template-columns: 1fr 20px; gap: 6px 12px; padding: 18px 0; border-bottom: 1px solid rgba(255, 255, 255, .1); color: #fafafa; text-decoration: none; }
@@ -99,17 +111,15 @@
 .xfo-repos .xfo-every::after { content: '→'; margin-left: 8px; transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
 @media (hover: hover) { .xfo-repos .xfo-every:hover { background: rgba(255, 255, 255, .08) !important; border-color: rgba(255, 255, 255, .55) !important; } .xfo-repos .xfo-every:hover::after { transform: translateX(4px); } }
 .xfo-repos .xfo-every:active { transform: scale(.97); }
-/* the hero diff draws in once, line by line, after the pull request arrives */
-.xfo-diff i { transform-origin: left; transform: scaleX(0); }
-.xfo-pr.go .xfo-diff i { animation: xfo-draw .8s cubic-bezier(.16, 1, .3, 1) .3s both; }
-html:not(.js) .xfo-diff i { transform: none; }
-.xfo-pr.go .xfo-diff span:nth-child(1) i { animation-delay: .3s; } .xfo-pr.go .xfo-diff span:nth-child(2) i { animation-delay: .38s; } .xfo-pr.go .xfo-diff span:nth-child(3) i { animation-delay: .46s; }
-.xfo-pr.go .xfo-diff span:nth-child(4) i { animation-delay: .54s; } .xfo-pr.go .xfo-diff span:nth-child(5) i { animation-delay: .62s; } .xfo-pr.go .xfo-diff span:nth-child(6) i { animation-delay: .7s; } .xfo-pr.go .xfo-diff span:nth-child(7) i { animation-delay: .78s; }
+/* the hero diff draws in from the first paint, line by line (CSS only, no wait for hydration); .go only starts the merge */
+.xfo-diff i { transform-origin: left; animation: xfo-draw .6s cubic-bezier(.16, 1, .3, 1) .15s both; }
+.xfo-diff span:nth-child(2) i { animation-delay: .2s; } .xfo-diff span:nth-child(3) i { animation-delay: .25s; }
+.xfo-diff span:nth-child(4) i { animation-delay: .3s; } .xfo-diff span:nth-child(5) i { animation-delay: .35s; } .xfo-diff span:nth-child(6) i { animation-delay: .4s; } .xfo-diff span:nth-child(7) i { animation-delay: .45s; }
 @keyframes xfo-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 /* the submit row: the ask and the Privacy Policy beside it */
 .xfo-send-row { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 8px; }
 .xfo-send-row .xfo-send { margin-top: 0; }
-.xfo-priv { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; color: #525252; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.xfo-priv { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; color: light-dark(#525252, var(--muted-foreground)); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 @media (hover: hover) { .xfo-priv:hover { color: var(--ink); } }
 .xfo-st output { display: inline-grid; overflow: hidden; font-variant-numeric: tabular-nums; }
 .xfo-roll { display: inline-block; grid-area: 1 / 1; }
@@ -117,7 +127,7 @@ html:not(.js) .xfo-diff i { transform: none; }
 .xfo-mine-s { padding-top: 72px !important; }
 .xfo-claim { padding-top: 116px !important; }
 .xfo-qa { padding-bottom: 0 !important; }
-@media (prefers-reduced-motion: reduce) { .xfo-diff i, .xfo-pr.go .xfo-diff i { animation: none; transform: none; } .xfo-orgs li { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .xfo-diff i { animation: none; transform: none; } .xfo-orgs li { transition: none; } .xfo-pr { transform: none; transition: none; } .xfo-tick { animation: none; stroke-dashoffset: 0; } .xfo-pr.merged .xfo-diff span::before { animation: none; } }
 @media (max-width: 900px) { .xfo-repos-l { position: static; } }
 
 /* the claim */
@@ -135,7 +145,7 @@ html:not(.js) .xfo-diff i { transform: none; }
 .xfo-send { grid-column: 1 / -1; justify-self: start; margin-top: 8px; }
 .xfo-sent { display: grid; gap: 16px; justify-items: start; padding: clamp(28px, 3.2vw, 48px); border-radius: 24px; background: var(--card); outline: none; }
 .xfo-sent:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
-.xfo-sent-i { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--hz-950); color: var(--hz-white); }
+.xfo-sent-i { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: light-dark(#0a0a0b, var(--primary)); color: var(--x-on-ink); }
 .xfo-sent-u { font-size: 14px; color: var(--soft); overflow-wrap: anywhere; }
 .xfo-sent p { margin: 0; font: 497 21px/1.3 var(--sans); color: var(--ink); }
 .xfo-refused { outline: none; }
@@ -165,5 +175,9 @@ html:not(.js) .xfo-diff i { transform: none; }
   .xfo-orgs li { font-size: 32px; }
 }
 
-.xfo-pr-k { flex: none; font: 560 14px/1 var(--sans); color: var(--hz-950); padding-right: 10px; border-right: 1px solid var(--line); }
+.xfo-pr-k { flex: none; font: 560 14px/1 var(--sans); color: light-dark(#0a0a0b, var(--foreground)); padding-right: 10px; border-right: 1px solid var(--line); }
 .xfo-lv-h { margin-bottom: 8px; }
+
+/* dark (docs/DARK-MODE.md): on a card (--x-raised is Hanzo's muted there) a muted fill would vanish, so the diff panel and the
+   level's track sit on Hanzo's secondary */
+html:not(.light) .xfo-diff, html:not(.light) .xfo-pour { background: var(--secondary); }

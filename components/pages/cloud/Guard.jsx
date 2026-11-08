@@ -269,7 +269,7 @@ function Yours() {
           <div className="gd-ed-dials">
             <div className="gd-chips" role="group" aria-label="each detector">
               {KINDS.map((k) => (
-                <button key={k} type="button" aria-pressed={on[k]} onClick={() => setOn((o) => ({ ...o, [k]: !o[k] }))}><Cascade text={NAME[k]} from={KINDS.slice(0, KINDS.indexOf(k)).reduce((s, x) => s + NAME[x].length, 0)} /></button>
+                <button key={k} type="button" aria-pressed={on[k]} onClick={() => setOn((o) => ({ ...o, [k]: !o[k] }))}><span className="gd-lcw"><Cascade text={NAME[k]} from={KINDS.slice(0, KINDS.indexOf(k)).reduce((s, x) => s + NAME[x].length, 0)} /></span></button>
               ))}
             </div>
             <div className="gd-seg" role="radiogroup" aria-label="marker text">

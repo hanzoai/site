@@ -3,7 +3,7 @@
 
 /* 1. grid-wave (hero art): a grid of tiles in the art's own grey clears by distance from the pointer */
 .xgr-grid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(7, 1fr); pointer-events: none; }
-.xgr-grid span { background: var(--hz-50); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06); opacity: 0; }
+.xgr-grid span { background: var(--x-fill); box-shadow: inset 0 0 0 1px light-dark(rgba(0, 0, 0, .06), var(--border)); opacity: 0; }
 html:not(.js) .xgr-grid { display: none; }
 html.js .xgr-hero:not(.xgr-in) .xgr-grid span { opacity: 1; animation: xgr-tile-out .5s cubic-bezier(.16, 1, .3, 1) 3s both; } /* safety: clears even if the hook never runs */
 .xgr-hero.xgr-in .xgr-grid span { animation: xgr-tile-out .5s cubic-bezier(.16, 1, .3, 1) var(--d, 0ms) both; }
@@ -27,10 +27,10 @@ html.js .xgr-how[data-enter]:not(.xgr-in) :is(.xgr-how-h, .xgr-line, .xgr-steps 
 .xgr-pix-b { position: absolute; inset: 0; display: grid; border-radius: 24px; overflow: hidden; pointer-events: none; opacity: 0; }
 .xgr-pix-b.c { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); }
 .xgr-pix-b.f { grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(6, 1fr); }
-.xgr-pix-b span { background: #ededed; }
-.xgr-pix-b span:nth-child(3n) { background: #e5e5e5; }
-.xgr-pix-b span:nth-child(5n + 1) { background: #f5f5f5; }
-.xgr-pix-b span:nth-child(7n + 2) { background: #e4e4e7; }
+.xgr-pix-b span { background: light-dark(#ededed, var(--muted)); }
+.xgr-pix-b span:nth-child(3n) { background: light-dark(#e5e5e5, var(--secondary)); }
+.xgr-pix-b span:nth-child(5n + 1) { background: light-dark(#f5f5f5, var(--card)); }
+.xgr-pix-b span:nth-child(7n + 2) { background: light-dark(#e4e4e7, var(--secondary-hover)); }
 html:not(.js) .xgr-pix-b { display: none; }
 html.js .xgr-gets[data-enter]:not(.xgr-in) .xgr-pix-b { opacity: 1; }
 html.js .xgr-gets[data-enter]:not(.xgr-in) :is(.xgr-gets-l, .xgr-gets-g) { filter: blur(4px); }
@@ -46,7 +46,7 @@ html.js .xgr-gets[data-enter]:not(.xgr-in) :is(.xgr-gets-l, .xgr-gets-g) { filte
 
 /* 5. shrink-to-card (the application): as you leave it, it folds into a quiet card */
 .xgr-apply[data-enter] { isolation: isolate; transform: scale(calc(1 - var(--xgr-p, 0) * .06)); transform-origin: 50% 100%; }
-.xgr-apply[data-enter]::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: 24px; background: #f5f5f5; opacity: var(--xgr-p, 0); pointer-events: none; }
+.xgr-apply[data-enter]::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: 24px; background: light-dark(#f5f5f5, var(--muted)); opacity: var(--xgr-p, 0); pointer-events: none; }
 
 /* the signature, stamp: each sheet drops a little, squashes on landing and settles, its number pressed in after it;
    an impression ring spreads from where it was struck (a click or tap stamps it again from that point) */
@@ -56,17 +56,13 @@ html.js .xgr-sheet-li[data-stamp]:not(.xgr-stamped) .xgr-sheet { opacity: 0; tra
 .xgr-sheet-li.xgr-stamped .xgr-sheet { animation: xgr-stamp .72s both; }
 .xgr-sheet-li.xgr-stamped .xgr-sheet-n { animation: xgr-stamp-n .6s .22s both; }
 .xgr-sheet-li.xgr-stamped .xgr-ink { animation: xgr-ink .8s cubic-bezier(.16, 1, .3, 1) .3s both; }
-@keyframes xgr-stamp {
-  0% { opacity: 0; transform: translateY(-36px) scale(1.04); animation-timing-function: cubic-bezier(.55, 0, .9, .4); }
-  42% { opacity: 1; transform: translateY(0) scale(1.012, .975); animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
-  70% { transform: scale(.998, 1.004); }
-  100% { opacity: 1; transform: none; }
-}
-@keyframes xgr-stamp-n { 0% { opacity: 0; transform: scale(1.6); animation-timing-function: cubic-bezier(.55, 0, .9, .4); } 55% { opacity: 1; transform: scale(.94); animation-timing-function: cubic-bezier(.16, 1, .3, 1); } 100% { opacity: 1; transform: none; } }
+/* no squash, no overshoot (MASTER: no springs): it accelerates down and stops dead; the ring carries the weight */
+@keyframes xgr-stamp { 0% { opacity: 0; transform: translateY(-36px) scale(1.04); animation-timing-function: cubic-bezier(.55, 0, .9, .4); } 55% { opacity: 1; transform: none; } 100% { opacity: 1; transform: none; } }
+@keyframes xgr-stamp-n { 0% { opacity: 0; transform: scale(1.6); animation-timing-function: cubic-bezier(.55, 0, .9, .4); } 60% { opacity: 1; transform: none; } 100% { opacity: 1; transform: none; } }
 @keyframes xgr-ink { from { opacity: .3; transform: scale(.4); } to { opacity: 0; transform: scale(9); } }
 /* the application being filed: each answer is pressed onto the card the moment it has one */
 .xgr-file dl > div.on dd { animation: xgr-file-stamp .42s both; transform-origin: 0 100%; }
-@keyframes xgr-file-stamp { 0% { transform: translateY(-6px) scale(1.04); opacity: .4; animation-timing-function: cubic-bezier(.55, 0, .9, .4); } 50% { transform: scale(1.01, .96); opacity: 1; animation-timing-function: cubic-bezier(.16, 1, .3, 1); } 100% { transform: none; opacity: 1; } }
+@keyframes xgr-file-stamp { 0% { transform: translateY(-6px) scale(1.04); opacity: .4; animation-timing-function: cubic-bezier(.55, 0, .9, .4); } 60% { transform: none; opacity: 1; } 100% { transform: none; opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
   .xgr-grid, .xgr-pix-b, .xgr-ink { display: none !important; }

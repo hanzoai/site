@@ -39,7 +39,7 @@ Done here: the h1 is plain server HTML (no mask holding it back on a slow machin
 - [x] Copy button copies exactly the displayed text; failure never says Copied
 - [x] `data-cta` and `data-thumb` on every primary
 
-Done here: `<Cta id="gen.hero" thumb>` and `<Cta id="gen.band">`; secondaries carry `gen.*` ids. Desktop: the shared Ask swaps the header to a solid "Get API key" after the hero (outlined while the hero's ask shows). Phones: `usePhoneAsk` swaps the header to "Get API key" after the hero (it fits) and outlines it while a solid page ask or the shared slim bar is on screen; the shared bar rises only where it covers nothing, so it often stays down. Every Copy copies the shown command; `$` is `user-select: none` and not copied.
+Done here: `<Cta id="gen.hero" thumb>` and `<Cta id="gen.band">`; secondaries carry `gen.*` ids. Desktop: the shared Ask swaps the header to a solid "Get API key" after the hero (outlined while the hero's ask shows). Phones (measured 8 Nov at 375×812): `usePhoneAsk` outlines the header's "Try Hanzo" while the hero's "Get API key" is on screen, so one solid shows at a time; after the hero the header goes back to a solid "Try Hanzo", because the hook keeps Hanzo's label when "Get API key" would end 2.7px past the 16px gutter (right edge 361.7 > 359), and the shared slim bar did not rise at any depth (0, 900, 2000, 4000, 6000). So on phones the page's own ask shows in the hero and the closing room only; asked of the shared owner (docs/requests/apps1.md item 1). Every Copy copies the shown command; `$` is `user-select: none` and not copied.
 
 ## 5. Trust and proof
 - [x] No logo without documented permission; no seal; no invented number

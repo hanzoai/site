@@ -1,4 +1,7 @@
 # /gen — James-eye review
+
+Ready: 8 Nov, held up next to /api and /agents (no score). Read and Paste now share one screen (links in two compact columns with a hover wash, the prompt beside them with a live caret), the hero sits clear of the header with the index peeking above the fold, the card corrected on the phone ask (the header stays "Try Hanzo" after the hero because "Get API key" overruns the shared hook's gutter by 2.7px; shared, in docs/requests/apps1.md item 1). taste/unique/parity OK (text 164/164, links 10/10); 0 console errors from the page (the one shared footer hydration warning shows on /agents too), no overflow/overlap at 1470x801 and 375x812. 8 Nov copy rule: copycheck missing 0 of 76 (Hanzo's words now sit whole in their own elements, nothing reworded).
+
 Verdict: 7/10
 First complaint: "On the phone there are two black buttons at the top, 'Try Hanzo' and 'Get API key'. Which one am I meant to press? And once I scroll past the hero, the ask is gone."
 (Walked 7 Nov at HEAD `2b6f82fd`, at 1470×801 (fine pointer) and 375×812 (isMobile, hasTouch), plus 375×667 and 320. API, platform and form hosts were blocked.)

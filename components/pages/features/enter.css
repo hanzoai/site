@@ -34,14 +34,13 @@ html.js .xft-prod[data-enter='sweep']:not(.xft-in) .xft-prod-h a { background-si
   100% { transform: scaleX(0); transform-origin: 100% 50%; }
 }
 
-/* 5. spring-snap (Hanzo Design & Cloud): the room snaps in from the side and overshoots on a spring */
+/* 5. spring-snap (Hanzo Design & Cloud): the room snaps in from the side on a hard ease-out and lands (no overshoot:
+   MASTER bans springs) */
 html.js .xft-prod[data-enter='snap']:not(.xft-in) .xft-prod-in { opacity: 0; transform: translateX(120px); }
-.xft-prod[data-enter='snap'].xft-in:not(.xft-done) .xft-prod-in { animation: xft-snap .85s linear backwards; }
+.xft-prod[data-enter='snap'].xft-in:not(.xft-done) .xft-prod-in { animation: xft-snap .6s cubic-bezier(.7, 0, .2, 1) backwards; }
 @keyframes xft-snap {
-  0% { opacity: 0; transform: translateX(120px); animation-timing-function: cubic-bezier(.3, 0, .5, 1); }
-  40% { opacity: 1; transform: translateX(-16px); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-  65% { transform: translateX(6px); animation-timing-function: cubic-bezier(.4, 0, .6, 1); }
-  85% { transform: translateX(-2px); }
+  0% { opacity: 0; transform: translateX(120px); }
+  30% { opacity: 1; }
   100% { opacity: 1; transform: none; }
 }
 

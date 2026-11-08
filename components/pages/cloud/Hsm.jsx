@@ -43,7 +43,8 @@ function useEnter() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return undefined;
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.setAttribute('data-in', ''); io.disconnect(); } }, { threshold: 0.25 });
+    // a quarter in view, or (for a section taller than the screen, like the room on a phone) its top fifth of the screen
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.setAttribute('data-in', ''); io.disconnect(); } }, { threshold: [0.25, 0.04], rootMargin: '0px 0px -20% 0px' });
     io.observe(el);
     return () => io.disconnect();
   }, []);
@@ -178,6 +179,30 @@ function Room() {
   };
   // the light rests on the first fact until the visitor moves it
   useEffect(() => { const c = centre(0); if (c) { lx.set(c[0]); ly.set(c[1]); } }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  // phones: the module stays stuck at the top of the room and the facts scroll up under it; the fact that reaches the
+  // reading line just below the module takes the light (and lights its plate), so the one stage answers every fact
+  useEffect(() => {
+    const mq = matchMedia('(max-width: 900px)');
+    let raf = 0;
+    const f = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        if (!mq.matches) return;
+        const vis = room.current?.querySelector('.hc-vis');
+        const line = (vis ? vis.getBoundingClientRect().bottom : 0) + innerHeight * 0.12;
+        let best = 0, gap = Infinity;
+        facts.current.forEach((el, i) => {
+          if (!el) return;
+          const b = el.getBoundingClientRect();
+          const d = Math.abs(b.top + Math.min(b.height, 120) / 2 - line);
+          if (d < gap) { gap = d; best = i; }
+        });
+        setAt(best);
+      });
+    };
+    addEventListener('scroll', f, { passive: true });
+    return () => { cancelAnimationFrame(raf); removeEventListener('scroll', f); };
+  }, []);
 
   const under = (y) => {
     let best = at, gap = Infinity;
@@ -276,8 +301,7 @@ const Gh = () => <svg viewBox="0 0 16 16" width="14" height="14" fill="currentCo
 /* Paste and ship, page-local (the shared ShipPrompt's words and layout, its own stage): the prompt keys itself in once
    as it arrives, a caret at its end, and Copy answers when the line is whole. The full prompt is in the HTML (screen
    readers and scripts-off read it whole); Copy copies exactly that. Reduced motion: the whole line, no keying.
-   Entrance: sticky-stack. The words card and the prompt card each stick near the top as you scroll past, the prompt
-   card stacking onto the words card. */
+   Entrance: stack. The words card rises in, then the prompt card rises in under it. */
 const PROMPT = 'Read https://hanzo.ai/skill.md and use Hanzo HSM in my project.';
 function Ship() {
   const enter = useEnter();

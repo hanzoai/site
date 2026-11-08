@@ -170,7 +170,7 @@ function Index() {
   return (
     <nav className="xgn-index" aria-label="Hanzo Gen">
       <div className="av-wrap">
-        <ol>{INDEX.map(([h, t], i) => <li key={h}><a href={h}><span className="x-mono av-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{t}</a></li>)}</ol>
+        <ol>{INDEX.map(([h, t], i) => <li key={h}><a href={h}><span className="x-mono av-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></a></li>)}</ol>
       </div>
     </nav>
   );
@@ -195,7 +195,7 @@ function Lns({ lines, out }) {
     <ol className="xgn-lns">
       {lines.map(([c, n], i) => (
         <li key={i}>
-          <code className="x-mono"><span className="xgn-ps" aria-hidden="true">$</span>{c}{n && (out ? <span className="xgn-out">{n}</span> : <span className="xgn-cm">{'  '}{n}</span>)}</code>
+          <code className="x-mono"><span className="xgn-ps" aria-hidden="true">$</span><span className="xgn-c">{c}</span>{n && (out ? <span className="xgn-out">{n}</span> : <span className="xgn-cm">{'  '}{n}</span>)}</code>
           <Copy text={c} className="xgn-cp" />
         </li>
       ))}
@@ -226,7 +226,7 @@ function Install() {
         <div className="xgn-inst-l">
           <Lines as="h2" id="xgn-inst-h" className="av-head" lines={['One line, then any agent.']} />
           <p className="av-body">Linux and macOS. hanzo.sh downloads gen’s native build and checks it: its checksum always, its provenance with a signed-in gh. Run it again to upgrade.</p>
-          <p className="xgn-note">Sign in once with the Hanzo CLI, <code>hanzo auth login</code>, and every session is linked to your account.</p>
+          <p className="xgn-note">Sign in once with the Hanzo CLI, hanzo auth login, and every session is linked to your account.</p>
           <div className="xgn-rel">
             <A to="https://github.com/hanzoai/gen/releases/tag/v0.1.0" className="xgn-arrow" data-cta="gen.release">Latest release v0.1.0 →</A>
             <A to="https://github.com/hanzoai/gen/releases" className="xgn-arrow" data-cta="gen.builds">Every build →</A>
@@ -387,7 +387,7 @@ function Cli() {
 
 /* ---------- questions (the kit FAQ: every answer in the HTML, each with its own address) ---------- */
 const QA = [
-  ['How do I install it?', <><code>curl -fsSL https://hanzo.sh | sh -s gen</code> installs gen alone; <code>curl -fsSL https://hanzo.sh | sh</code> installs every Hanzo tool, gen and the Hanzo CLI included. Run either again to upgrade. On Windows, take the build from the release page.</>],
+  ['How do I install it?', 'curl -fsSL https://hanzo.sh | sh -s gen installs gen alone; curl -fsSL https://hanzo.sh | sh installs every Hanzo tool, gen and the Hanzo CLI included. Run either again to upgrade. On Windows, take the build from the release page.'],
   ['Is gen the same as hanzo dev?', 'The same harness. The Hanzo CLI links it, so gen --claude and hanzo dev --claude take the same flags and run the same session. Bare gen, like bare hanzo dev, opens Hanzo Dev.'],
   ['Does every agent run on Hanzo’s models?', 'Only when you pass --cloud, and only an agent that can name another endpoint. Without it, each agent keeps the account it is signed in to.'],
   ['What does Hanzo bill?', 'On --cloud, the agent’s model calls, on your Hanzo account. On the agent’s own account, only what Hanzo’s tools handled for it.'],
@@ -424,27 +424,30 @@ function Read() {
           <Lines as="h2" id="xgn-read-h" className="av-head xgn-read-l" lines={['The harness, the agent, the CLI.']} />
           <p className="av-body xgn-read-r">Where to get Gen, what it runs, and the same harness in the CLI.</p>
         </div>
-        <div className="xgn-cols">
-          {READ.map(([h, items]) => (
-            <div key={h}>
-              <h3 className="xgn-col-h">{h}</h3>
-              <ul className="xgn-links">
-                {items.map(([to, t, d]) => {
-                  const inner = <><span><b>{t}</b>{d && <span className={to === '#install' ? 'x-mono' : ''}>{d}</span>}</span><i aria-hidden="true">→</i></>;
-                  return <li key={t}>{to.startsWith('#') ? <a href={to} className="xgn-link">{inner}</a> : <A to={to} className="xgn-link">{inner}</A>}</li>;
-                })}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div className="av-grid xgn-paste">
-          <div className="xgn-paste-l">
-            <p className="av-title">Paste and ship</p>
-            <p className="av-body">Paste this into any agent. It reads the skill manifest and calls Gen from there.</p>
+        {/* one screen: the links (two columns, compact rows) beside the one object, the prompt to paste */}
+        <div className="av-grid xgn-read-g">
+          <div className="xgn-cols">
+            {READ.map(([h, items]) => (
+              <div key={h}>
+                <h3 className="xgn-col-h">{h}</h3>
+                <ul className="xgn-links">
+                  {items.map(([to, t, d]) => {
+                    const inner = <><span><b>{t}</b>{d && <span className={to === '#install' ? 'x-mono' : ''}>{d}</span>}</span><i aria-hidden="true">→</i></>;
+                    return <li key={t}>{to.startsWith('#') ? <a href={to} className="xgn-link">{inner}</a> : <A to={to} className="xgn-link">{inner}</A>}</li>;
+                  })}
+                </ul>
+              </div>
+            ))}
           </div>
-          <div className="xgn-prompt">
-            <pre className="x-mono">{PASTE}</pre>
-            <div className="xgn-prompt-f"><span className="xgn-prompt-k x-mono">Agent prompt</span><Copy text={PASTE} label="Copy the agent prompt" /></div>
+          <div className="xgn-paste">
+            <div className="xgn-paste-l">
+              <p className="av-title">Paste and ship</p>
+              <p className="av-body">Paste this into any agent. It reads the skill manifest and calls Gen from there.</p>
+            </div>
+            <div className="xgn-prompt">
+              <pre className="x-mono">{PASTE}<span className="xgn-cur" aria-hidden="true" /></pre>
+              <div className="xgn-prompt-f"><span className="xgn-prompt-k x-mono">Agent prompt</span><Copy text={PASTE} label="Copy the agent prompt" /></div>
+            </div>
           </div>
         </div>
       </div>

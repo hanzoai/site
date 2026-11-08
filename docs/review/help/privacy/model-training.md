@@ -1,5 +1,6 @@
 # /help/privacy/model-training — James-eye review
 7 Nov, round 6, walked at 1470x801, 375x812 and 320 (phone: isMobile, hasTouch) with Playwright from node: frames at 0, 0.5, 1 and 3 s with no input, wheel-scrolled a screen at a time with 1.5 s dwell, hovered and pressed every main control on desktop, tapped every TOC row and demo control on phone, cookie card dismissed, reduced-motion loads at 1470 and 375, console and overflow collected.
+Ready: 8 Nov, held up next to /api and /agents (no score); kept simple per COPY-RULE 4. The panel shows and the text says (no repeated paragraph), one switch on screen at a time, phone 04 rows are the checklist, section label is its number, phone mock clipped to its bezel, switch answers hover, More bottom-aligned. copycheck missing 0 of 18; taste/unique/parity OK (text 45/45, links 4/4); 0 console errors, no overflow/overlap at 1470x801 and 375x812.
 
 Verdict: 7/10
 

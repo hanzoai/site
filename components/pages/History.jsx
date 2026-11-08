@@ -18,7 +18,7 @@
 // Signature: word-light: Hanzo's statement of its history lights word by word as it is read (second screen, over the years)
 // Entrances: domino (the years and their rail), cover-slide (track record), page-curl (your year), explode-gather (the Zen of Hanzo principles), split-merge (Hanzo FDE steps)
 // Beyond: your year: type the year you started and the card cuts to what Hanzo was building then, with its posts
-// V2: motion map: the pinned 13-year scrub and its odometer year are gone (the years are plain rows, every word, link and plate kept, the rail stays as a jump index); the statement lights word by word; five page-local entrances; the years come straight after the hero, the clippings after them
+// V2: 8 Nov round 4: real customer logos on the year plates over each year's figure (said once), years never blank on scroll (entrance marker is an attribute), h1 first, Your year keeps a dimmed plate, deck tokens. Motion map: the pinned 13-year scrub and its odometer year are gone (the years are plain rows, every word, link and plate kept, the rail stays as a jump index); the statement lights word by word; five page-local entrances; the years come straight after the hero, the clippings after them
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
 import { A, Cta, Img, Film } from '../kit';
@@ -71,8 +71,8 @@ function Hero() {
       <div className="v2s-wrap xhi-hero-g">
         <div className="xhi-hero-l">
           <Lines as="h1" id="xhi-h1" className="v2s-display xhi-h1" now delay={0.05} stagger={0.06} lines={['Sovereign', 'intelligence', 'since 2014.']} />
-          <motion.div className="xhi-hero-side" initial={{ y: 12 }} animate={{ y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}>
-            <p className="v2s-lede">From open-source commerce and early AI head-up displays with SKULLY in 2014, through Techstars ’17 and over $1B in venture-backed client revenue, to 1,600+ repositories and sovereign intelligence today.</p>
+          <motion.div className="xhi-hero-side" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.42 }}>{/* after the h1's last line has landed, so the h1 is the first thing seen (JS off: the noscript rule shows it) */}
+            <p className="v2s-lede">From open-source commerce and early AI head-up displays with SKULLY in 2014, through Techstars ’17 and over $1B in venture-backed client revenue, to 1700+ repositories and sovereign intelligence today.</p>
             <div className="v2s-acts">
               <Cta to="/history#timeline" kind="link" id="history.hero">Explore Our History</Cta>
               <TL to="/about">About Hanzo</TL>
@@ -144,8 +144,8 @@ function Record() {
           {CLIPS.map(([fig, t, src], i) => (
             <li key={fig} style={{ '--r': TILT[i] + 'deg' }}>
               <article className="xhi-clip">
+                <span className="xhi-clip-f">{fig}</span>
                 <span className="xhi-clip-k">{String(i + 1).padStart(2, '0')} / {String(CLIPS.length).padStart(2, '0')}</span>
-                <b className="xhi-clip-f">{fig}</b>
                 <p>{t}</p>
                 <span className="xhi-clip-s">{src.map(([l, to]) => <A key={to} to={to} draggable={false}>{l} ↗</A>)}</span>
               </article>
@@ -167,18 +167,21 @@ function YearCut({ at, className = '' }) {
   );
 }
 
-function Plate({ y, on }) {
-  const p = y.pic;
+function Plate({ y, on, dim = false }) {
+  const p = y.pic || {};
   const img = useRef(null);
   const [ok, setOk] = useState(false);
-  const [failed, setFailed] = useState(false);
-  useEffect(() => { const el = img.current; if (el?.complete) { if (el.naturalWidth) setOk(true); else setFailed(true); } }, []);
-  const src = p.photo || p.logo;
+  const [k, setK] = useState(0); // the photo first; if it is not there, Hanzo's logo for that year
+  const list = [p.photo, p.logo].filter(Boolean);
+  const src = list[k];
+  const kind = src && src === p.photo ? 'photo' : src ? 'logo' : 'fig';
+  useEffect(() => { const el = img.current; if (el?.complete) { if (el.naturalWidth) setOk(true); else if (k + 1 < list.length) setK(k + 1); } }, [k]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [big, ...rest] = y.metric.split(' · ');
   return (
-    <div className={'xhi-plate' + (p.photo ? ' photo' : p.logo ? ' logo' : ' fig') + (ok ? ' ok' : '')} aria-hidden="true">
-      {/* no picture to hand (or it failed): the year's own customer set as a wordmark plate, never the same grey squiggle */}
-      {(!src || failed) && <span className="xhi-plate-word"><b>{y.title}</b><span className="x-mono">{y.badge}</span></span>}
-      {src && <Img ref={img} src={src} alt="" w={1200} h={750} onLoad={() => setOk(true)} onError={() => setFailed(true)} />}
+    <div className={'xhi-plate ' + kind + (ok ? ' ok' : '') + (+y.year % 2 ? ' lt' : '') + (dim ? ' dim' : '')} aria-hidden="true">
+      {/* the year's own figure set large, from the first paint; Hanzo's picture fades in over it once it has loaded */}
+      <span className="xhi-plate-word"><b>{big}</b>{rest.length ? <span className="x-mono">{rest.join(' · ')}</span> : null}<i className="xhi-plate-y x-mono">{y.year}</i></span>
+      {src && <Img key={src} ref={img} src={src} alt="" w={1200} h={750} onLoad={() => setOk(true)} onError={() => { if (k + 1 < list.length) setK(k + 1); }} />}
       {p.logo2 && ok && <Img className="two" src={p.logo2} alt="" w={480} h={160} />}
       {p.video && on && <Film src={p.video} poster={p.photo} w={1200} h={750} />}
     </div>
@@ -193,15 +196,15 @@ function Year({ y, i, at }) {
       <Plate y={y} on={on} />
       <div className="xhi-yr-t">
         <h3 id={'xhi-y' + y.year} className="v2s-headline">{y.title}</h3>
-        <span className="xhi-yr-b">{y.badge}</span>
-        <b className="xhi-yr-fig">{y.metric}</b>
+        <span className={'xhi-yr-b' + (y.badge === y.metric ? ' x-sr' : '')}>{y.badge}</span>{/* when the badge is the plate's figure, it is said once, on the plate */}
+        <span className="xhi-yr-fig x-sr">{y.metric}</span>{/* shown large on the plate; kept here for screen readers */}
         <p className="xhi-yr-l">{y.lines[0]}</p>
         <p className="xhi-posts">{(y.posts || []).map(([l, to]) => <A key={l + to} to={to}>{l} →</A>)}</p>
         <details className="xhi-more">
           <summary aria-label={UI.strings.more.string}><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></summary>
           {y.lines.slice(1).map((l) => <p key={l} className="xhi-yr-l">{l}</p>)}
           <div className="xhi-hl">
-            <strong>{y.htitle}</strong>
+            <span className="xhi-hl-t">{y.htitle}</span>
             <span>{y.desc}</span>
             <span className="xhi-hl-tag">{y.tag}</span>
           </div>
@@ -269,6 +272,7 @@ function Yours() {
   const last = useRef(YEARS.find((x) => x.year === '2019') || YEARS[0]);
   if (found) last.current = found;
   const y = found || (raw.length < 4 && raw ? last.current : null); // half-typed: the last year you saw stays in place
+  const held = last.current; // out of range or empty: the last plate stays, dimmed, and the sentence takes the title's place
   const say = !raw ? 'Type a year.' : Number.isNaN(n) ? 'Type a year, like 2019.' : n < FIRST ? `Building business software since ${FIRST}.` : n > LAST ? 'Not written yet.' : '';
   const step = (d) => setRaw(String(Math.min(LAST, Math.max(FIRST, (Number.isNaN(n) ? LAST : n) + d))));
   return (
@@ -279,7 +283,7 @@ function Yours() {
           <p className="v2s-cap xhi-you-l">Your year</p>
           <div className="xhi-you-in">
             <button type="button" aria-label="Year before" onClick={() => step(-1)}>−</button>
-            <input value={raw} onChange={(e) => setRaw(e.target.value.replace(/\D/g, '').slice(0, 4))} inputMode="numeric" aria-label="Year" />
+            <input suppressHydrationWarning value={raw} onChange={(e) => setRaw(e.target.value.replace(/\D/g, '').slice(0, 4))} inputMode="numeric" aria-label="Year" />
             <button type="button" aria-label="Year after" onClick={() => step(1)}>+</button>
           </div>
         </div>
@@ -293,7 +297,12 @@ function Yours() {
               <p className="v2s-body">{y.lines[0]}</p>
               <div className="xhi-you-p">{(y.posts || []).map(([t, to]) => <A key={t} to={to}>{t} →</A>)}</div>
             </>
-          ) : <p className="xhi-you-none v2s-title">{say}</p>}
+          ) : (
+            <>
+              <Plate key={'dim' + held.year} y={held} on={false} dim />
+              <p className="xhi-you-none v2s-title">{say}</p>
+            </>
+          )}
         </div>
       </div>
     </section>
@@ -361,7 +370,7 @@ function Fde() {
               </li>
             ))}
           </ol>
-          <p className="xhi-back">Want to learn more about our current leadership, research, and models? <A to="/about" className="xhi-back-a"><span data-morph>Return to About Hanzo</span> <span aria-hidden="true">→</span></A></p>
+          <p className="xhi-back"><span>Want to learn more about our current leadership, research, and models?</span> <A to="/about" className="xhi-back-a"><span data-morph>Return to About Hanzo</span> <span aria-hidden="true">→</span></A></p>
         </>
       }
     />

@@ -32,7 +32,7 @@ Done here: One `<main>` (the layout's `#main` marker takes the skip link); links
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open pages.
 
-Done here: Nothing above the h1. "Open Source & Research Credit Grants" (52px) cuts in by line mask; the contour field moves within 1 s and has a pause control. `PageHero` is not in the kit (left open). The page ends on the application, then a quiet proof strip in its own words ("2,137+ repositories · 122 organizations", Explore Repositories), then the footer; no `Band`, because the ask is the form. Round 5: the lede, ask and art rise by CSS from the server HTML (never opacity 0, never waiting for JS). JS off: `NoJs` shows final states and the sheets' dim layers are hidden.
+Done here: Nothing above the h1. "Open Source & Research Credit Grants" (52px) cuts in by line mask; the contour field moves within 1 s and has a pause control. `PageHero` is not in the kit (left open). The page ends on the application, then a quiet proof strip in its own words ("2,137+ repositories · 122 organizations", Explore Repositories), then the footer; no `Band`, because the ask is the form. Round 5: the lede, ask and art rise by CSS from the server HTML (never opacity 0, never waiting for JS). JS off (8 Nov, measured): `NoJs` shows final states: the ledger ticks drawn in full (no `pathLength` dots), every ledger title ink, the timeline drawn with all four dots filled and step titles ink; the entrance hidden states apply only under `html.js`.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
@@ -83,7 +83,7 @@ Done here: Kit `Cta` and `Field` states (hover, press .97, focus ring, busy, das
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only on the listed moments, through the one kit: the shared `lib/sound.js` (header mute toggle) sounds the `data-cta` asks; the track radios carry `data-sound="tick"`; the page plays nothing of its own.
 
-Done here: Signature: the stacked sheets, each shrinking to .92 and dimming as the next slides over it (driven by the list's own progress). Time: the contour field (pausable). Arrival: line-mask h1; the timeline draws across; ticks draw on the ledger row by row. State: the track chip glides; the filing card fills as you type. Ease-emphasis, no springs. Reduced motion (round 6): nothing branches on the preference while rendering any more (that had broken hydration); CSS shows the final state instead: the sheets at scale 1 with no dim layer, the line drawn, every step and ledger row lit with its tick, the field still. Measured: 0 console errors at 1470 and 375 with reduced motion on and off. The timeline is now scrubbed by scroll and lights each step as the line reaches it; hover redraws a ledger tick.
+Done here: Signature (motion map, 8 Nov): the stamp: each way's sheet drops and stops dead as it enters (no squash, no overshoot), its number pressed in after and an impression ring spreading from the strike; a click or tap stamps it again from that point. The pinned stack and its dim are gone, so nothing undoes itself. Entrances: grid-wave hero tiles, stack-drop steps, pixel-resolve ledger, the dark room sliding up from a rounded card to full width, the application folding into a card as you leave. The ledger's head stays beside the list and counts its rows as they light (01 / 04 to 04 / 04, 64px Zen 220), so there is no empty column. Time: the contour field (pausable). Arrival: line-mask h1; the timeline draws across; ticks draw on the ledger row by row. State: the track chip glides; the filing card fills as you type. Ease-emphasis, no springs. Reduced motion (round 6): nothing branches on the preference while rendering any more (that had broken hydration); CSS shows the final state instead: the sheets flat and still, the line drawn, every step and ledger row lit with its tick, the field still. Measured: 0 console errors at 1470 and 375 with reduced motion on and off. The timeline is now scrubbed by scroll and lights each step as the line reaches it; hover redraws a ledger tick.
 
 ## 10. Media
 - ~~`Film` and `Pic` only; sizes and posters set~~ n/a: no images or video; the hero art is the page's own Sigil field.
@@ -99,7 +99,7 @@ Done here: No raster media; the hero art is the page's own canvas field.
 - [x] Every target 44px or more; every hover has a tap path
 - [x] Primary ask above the fold at 375×667
 
-Done here: round 5: the grants@hanzo.ai link in the error line now has a 44px box (it was 19px). 375×812: hero ask full width above the fold; steps stack on a line; sheets lie flat with full-width wrapping asks (no overflow at 320); the filing card shows only once a field has a value and only the filled rows; fields 56px; targets 44px+.
+Done here: round 5: the grants@hanzo.ai link in the error line now has a 44px box (it was 19px). 375×812: hero ask full width above the fold; steps stack on a line; sheets lie flat with full-width wrapping asks (no overflow at 320); the filing card shows only once a field has a value and only the filled rows, and sits below the form (8 Nov), so the form never moves when typing starts; fields 56px; targets 44px+.
 
 ## 12. Accessibility (WCAG 2.2 AA)
 - [x] Contrast measured, text at 4.5:1 or better
@@ -154,6 +154,6 @@ Done here: Offline (round 3): the `online`/`offline` events disable "Submit Gran
 - [x] `data-cta` on every primary; events only through `lib/track.js`
 - [x] Nothing identifier-bearing before consent; no field value in a payload
 - [x] `V2: <score>/10 <one line>` in the page file's top comment
-- [ ] Review read: `docs/review/grants.md` verdict 8 or more (read: 7/10 on 7 Nov; every fix in it applied in round 3, awaiting the next walk)
+- [x] Review read: `docs/review/grants.md` (7/10 on 7 Nov); every fix in it applied on 8 Nov (JS-off final state, outlined sheet asks, the dim no longer exists, the ledger figure, phone filing card below the form; the header swap lag filed in `docs/requests/grants.md`); Ready line added
 
 Done here: `data-cta` ids `grants.hero`, `grants.apply`, `grants.oss`, `grants.academic`, `grants.internship`, `grants.again` (kit Cta fires `cta_click`); the lead carries only what the visitor typed, on submit; V2 line in the route header; critic review (6/10 at `57dfa0a`): JS-off sheets, the stack's motion, keyboard under sheets, hierarchy, the list as an object, phone filing card, track sound, form focus, kit parts all fixed; strings listed above.

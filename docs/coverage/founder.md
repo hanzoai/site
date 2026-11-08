@@ -32,11 +32,11 @@ Done here: The page's own `<main>` (no id; the layout's `#main` marker before it
 - [ ] Ends in proof strip, `Band`, footer
 - ~~Card-to-page links use Morph; title lands within 12px~~ n/a: no cards that open pages.
 
-Done here: Nothing above the h1. "Merge a pull request. / Get Pro." (52px) cuts in by line mask; the hero pull request is on screen from the first paint, its diff draws in line by line once it lands, and it merges once about 1.1 s after it is seen (round 3: wait cut from 1.4 s to 0.9 s) and stays merged. `PageHero` is not in the kit (left open). The page ends on the claim then the footer, so the ask is the last thing; a kit `Band` would repeat it (left open). JS off: `NoJs` plus a page rule lay the scene flat.
+Done here: Nothing above the h1. "Merge a pull request. / Get Pro." (52px) cuts in by line mask; the hero pull request is on screen from the first paint, its diff draws in line by line from the first paint (CSS, done by about 0.9 s, no wait for hydration), and it merges once about 1.1 s after it is seen and stays merged: the ✓ draws as a stroke, then a review mark walks the diff line by line so the first screen stays alive; a fine pointer tilts the card up to 2.5° (flat on leave, none under reduced motion). `PageHero` is not in the kit (left open). The page ends on the claim then the footer, so the ask is the last thing; a kit `Band` would repeat it (left open). JS off: `NoJs` plus a page rule lay the scene flat.
 
 ## 4. Conversion system
 - [x] `<Cta>` only; no raw `.x-btn`
-- [x] Sticky ask in the header after the hero, same label (desktop: the shared Ask; phones: the page-local `usePhoneAsk` outlines the header while the page's ask shows and swaps it to "Claim a merged pull request" after the hero; shared request in `docs/requests/founder.md`)
+- [x] Sticky ask in the header after the hero, same label (desktop: the shared Ask; phones: the header keeps "Try Hanzo" (the page's ask does not fit), outlined via `html[data-pq]` (page-local `usePhoneAsk`) while a page solid is on screen; shared request in `docs/requests/founder.md`)
 - ~~Copy button copies exactly the displayed text; failure never says Copied~~ n/a: no copy control.
 - [x] `data-cta` and `data-thumb` on every primary
 

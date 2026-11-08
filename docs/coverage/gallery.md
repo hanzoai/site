@@ -69,7 +69,7 @@ Done here: parity text 32/32, links 5/5. Each template's full sentence is read o
 Done here: taste OK (2 files). Colour enters only through Hanzo's Zen film on the plaque; the frames are ink on silver or white on black.
 
 ## 8. UI component library
-- [x] Every control has hover, press, focus-visible (frames press to .98, links press 1px, viewer arrows .94)
+- [x] Every control has hover, press, focus-visible (frames press to .98 and the lit one lifts 4px, on the individual `scale`/`translate` properties so motion's inline transform no longer overrides them: measured scale 0.98 while pressed, translate 0 -4px when lit; links press 1px, viewer arrows .94)
 - [x] Focus ring visible on every stop of a Tab crawl
 - [ ] Dialogs are native (a `role=dialog` that traps focus, closes on Esc and returns focus to its frame)
 - [x] No bare `:hover` (all inside `@media (hover: hover)`)
@@ -84,7 +84,7 @@ Done here: tiles are flat (a 1px inset line; the lit frame an ink line), only th
 - [x] Reduced motion shows the final state; no `setInterval`
 - [x] Sound only through the shared kit (no page sounds)
 
-Done here: idle (film, walking light, the stage stepping fork → deploy → submit), pointer (hover holds the light, magnetic ask), state (viewer, stage buttons), time (typed prompt), arrival (h1 cut-in); the only scroll move is the wall's settle.
+Done here: idle (film, walking light, the stage stepping fork → deploy → submit), pointer (hover holds the light, magnetic ask), state (viewer, stage buttons), time (typed prompt), arrival (h1 cut-in); two scroll moves: the wall's settle (page scroll, first screen) and the Moves window, which rises 80px and grows from .94 as it comes up the screen, driven by its own position (so it is seen on both sizes).
 
 ## 10. Media
 - [x] Film through the shared `ModelFilm` (poster first, plays only on screen, never under reduced motion)
@@ -133,7 +133,7 @@ Done here: `app/gallery/page.jsx` keeps "Gallery — Hanzo AI" and the live desc
 - n/a: maker and model pages
 - n/a: prices
 
-Done here: the viewer grows out of the clicked frame (its transform origin is that frame's centre; 500 ms ease-emphasis) and shrinks back the same way; after stepping it closes as a short fade. No shared-layout projection is used any more, so nothing on the wall can fly. Round 4, measured: every frame's box at +40, +80, +160 and +240 ms after closing a stepped viewer matches its slot to 0px, at 1470×801 and 375×812.
+Done here: the viewer grows out of the clicked frame (its transform origin is that frame's centre; 500 ms ease-emphasis) and shrinks back the same way; after stepping it closes as a short fade. No shared-layout projection is used any more, so nothing on the wall can fly. Round 4, measured: every frame's box at +40, +80, +160 and +240 ms after closing a stepped viewer matches its slot to 0px, at 1470×801 and 375×812. Closing returns focus to the frame with `preventScroll`, so the page does not move (closing on frame 06 from the top: scrollY 0 before and after).
 
 ## 16. Developer experience
 - [x] One prompt block; copy equals display (kit `Copy`)

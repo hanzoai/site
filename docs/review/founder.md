@@ -1,4 +1,6 @@
 # /founder — James-eye review
+
+Ready: 8 Nov, held up next to /api and /agents (no score). The hero diff now draws from the first paint, the merge ends in a drawn ✓ and a review mark that keeps walking the diff, the card tilts under a fine pointer, steppers tick, deck greys replace the shared Apple greys, and the phone header line in the card is true. taste/unique/parity OK (text 37/37, links 1/2: the miss is Cloudflare's email-protection artifact, the support@hanzo.ai mailto is on the page); 0 console errors, no overflow/overlap at 1470x801 and 375x812. 8 Nov copy rule: copycheck missing 0 of 41 (six open bounties as on hanzo.ai, titles readable whole, Hanzo's 'Asking GitHub…' line kept for the loading state).
 Verdict: 7/10
 First complaint: "For the first second the card on the right is just an empty grey box with some plus signs in it. Then it fills, merges, and after that nothing on the screen moves again unless I scroll."
 (walked 7 Nov 2026 at HEAD `28a731ae`; the walk started on `b593b6af` and HEAD moved twice during it (`d7ce999c` changed the founder ask href and `usePhoneAsk`), so every ask and header finding below was re-measured on `28a731ae`; 1470×801 fine pointer and 375×812 touch, also 320×700, 375×667, reduced motion, JS off; api.hanzo.ai answered with an intercepted 500, so no real claim was sent)
