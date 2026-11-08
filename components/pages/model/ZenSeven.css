@@ -47,8 +47,6 @@
 .z7-brings-g { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 27px; align-items: start; }
 .z7-h2 { margin: 0; max-width: 14ch; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
 .z7-para { margin: 0; max-width: 44ch; font-size: 21px; line-height: 1.42; color: var(--z7-ink); text-wrap: pretty; }
-.z7-para mark { background: none; color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; text-decoration-color: transparent; transition: text-decoration-color var(--z7-fast) var(--z7-out); }
-.z7-para mark.on { text-decoration-color: var(--z7-ink); }
 .z7-line { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 7fr) minmax(0, 3fr); align-items: center; margin-top: 72px; }
 .z7-node { display: grid; align-content: end; gap: 6.5px; min-height: 220px; padding: 27px; border-radius: 24px; background: var(--z7-room); color: var(--z7-ink); text-decoration: none; transition: transform var(--z7-fast) var(--z7-out), background-color 400ms var(--z7-out), color 400ms var(--z7-out); }
 .z7-node span { font: 400 14px/1.4 var(--mono); color: var(--z7-muted); transition: transform 300ms var(--z7-emph), color 400ms var(--z7-out); }

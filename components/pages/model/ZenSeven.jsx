@@ -25,11 +25,22 @@ const LINES = ['Zen 7', 'Frontier', 'Foundation'];
 
 /* the paragraph with each phrase the line carries marked, so a lit or hovered station underlines its own words */
 const PARA = "Zen 7 is the next open-weight generation from Zoo Labs Foundation, built on the same lineage as Zen 6 but with expanded multimodal reasoning, longer context, and improved agentic coding performance. Trained with identity and agentic coding data from Hanzo's own platform.";
+/* Hanzo's sentence stays one unbroken run of text (James, 8 Nov: copy word for word); the lit phrases are underlined with
+   the CSS Custom Highlight API instead of being wrapped in elements. Without the API the sentence simply shows plain. */
+const HL_CSS = '::highlight(z7-grow) { color: var(--z7-ink); text-decoration: underline 1px var(--z7-ink); text-underline-offset: 5px; }';
 function Para({ on }) {
-  const out = []; let rest = PARA;
-  GROWS.forEach((g, i) => { const at = rest.indexOf(g); out.push(rest.slice(0, at), <mark key={g} className={on[i] ? 'on' : ''}>{g}</mark>); rest = rest.slice(at + g.length); });
-  out.push(rest);
-  return <p className="z7-para">{out}</p>;
+  const ref = useRef(null);
+  const key = on.join('');
+  useEffect(() => {
+    const n = ref.current && ref.current.firstChild;
+    if (!n || typeof CSS === 'undefined' || !CSS.highlights || typeof Highlight === 'undefined') return;
+    if (!document.getElementById('z7-hl-css')) { const st = document.createElement('style'); st.id = 'z7-hl-css'; st.textContent = HL_CSS; document.head.appendChild(st); } // the CSS parser here rejects ::highlight(), so it is added at runtime
+    const h = new Highlight();
+    GROWS.forEach((g, i) => { if (!on[i]) return; const at = n.data.indexOf(g); if (at < 0) return; const r = new Range(); r.setStart(n, at); r.setEnd(n, at + g.length); h.add(r); });
+    CSS.highlights.set('z7-grow', h);
+    return () => CSS.highlights.delete('z7-grow');
+  }, [key]); // eslint-disable-line react-hooks/exhaustive-deps
+  return <p ref={ref} className="z7-para">{PARA}</p>;
 }
 
 /* reduced motion only after mount: the server cannot know it, so the first client render must match the server HTML */
