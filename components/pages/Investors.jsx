@@ -23,7 +23,7 @@ import { A, Img, Cta } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
 import useArrived from './company/useArrived';
-import { ECO } from './openSourceData';
+import { H } from './investorsEco';
 import '../v2/vc-type.css';
 import './company/deck.css';
 import usePhoneAsk from './usePhoneAsk';
@@ -32,7 +32,7 @@ import './Investors.css';
 const EASE = [0.16, 1, 0.3, 1];
 // JS off: the hero's lede, asks and counter show, and every pinned scene stacks readable (PLAN 2.3, 2.17)
 const NOJS = { __html: '<style>.xin-roll-f[aria-hidden=true]{display:none!important}.xin-hero-l,.xin-hero-o,.xin-stats li{opacity:1!important;transform:none!important}.xin-pin{height:auto!important}.xin-pin-st{position:static!important;height:auto!important}.xin-pin-g{display:block!important}.xin-pin-s{display:grid!important;padding:48px 0}.xin-pin-s *{opacity:1!important;transform:none!important}</style>' };
-const H = ECO[0];
+// H: Hanzo's commit record as /investors shows it live (investorsEco.js)
 const LAST_DAY = Math.max(...[...H.heat].map((c, i) => (c === '.' ? -1 : i))); // the newest day in the heatmap (Nov 7)
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
