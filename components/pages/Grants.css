@@ -228,3 +228,5 @@ html:not(.js) .xgr-gets-fig { display: none; }
 
 /* dark (docs/DARK-MODE.md): the sheets and the ledger sit as Hanzo's dark cards, a hairline round each, as live's do */
 html:not(.light) .xgr-sheet:not(.s1), html:not(.light) .xgr-sheetlist { box-shadow: inset 0 0 0 1px var(--border); }
+/* the pause button sits on the art's muted fill: Hanzo's secondary keeps it apart */
+html:not(.light) .xgr-pause { background: var(--secondary); }
