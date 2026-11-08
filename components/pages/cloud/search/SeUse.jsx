@@ -2,7 +2,7 @@
 /* "Use it" for /search: Hanzo's example console and the agent prompt, side by side on the page (Hanzo prints both on
    the page; they used to sit in a drawer, outside <main>). Page-local copies of components/v2/x-hamilton/Console.jsx
    and Finale's Prompt (same markup and classes, so Launch.css styles them), changed only so each Hanzo line reads
-   whole (docs/COPY-RULE.md): "api.hanzo.ai" is its own element, the api tag is one element ("api /v1/search") and
+   whole (docs/build-notes/COPY-RULE.md): "api.hanzo.ai" is its own element, the api tag is one element ("api /v1/search") and
    the prompt is one element holding exactly Hanzo's prompt. */
 import { useState } from 'react';
 import { motion } from 'motion/react';

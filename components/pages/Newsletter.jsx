@@ -5,7 +5,7 @@
 // Beyond: the issue drawn before you commit: each line Hanzo promises is a line on the paper (point at one and it lights), your address is written on it as you type, and it folds into an envelope once the confirm link is out.
 /* The Hanzo newsletter.
    Persona: a builder who wants Hanzo's releases in the inbox. Goal: subscribe. CTA: "Subscribe". Metric: lead_submit.
-   One screen, read in Hanzo's own order (rule 4, docs/COPY-RULE.md: a simple page stays simple): the title, the lede,
+   One screen, read in Hanzo's own order (rule 4, docs/build-notes/COPY-RULE.md: a simple page stays simple): the title, the lede,
    the three things an issue carries, the form and the line under it; the paper issue beside them.
    0 UI hues. The form sends exactly what hanzo.ai sends: POST
    https://api.hanzo.ai/v1/marketing/subscribe {email, source, locale}. */
