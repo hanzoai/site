@@ -6,3 +6,7 @@ out/
 .next-dev/
 shots/
 __pycache__/
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+QWEN.md

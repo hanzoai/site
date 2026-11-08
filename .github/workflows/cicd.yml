@@ -1,0 +1,17 @@
+# The one pipeline: hanzoai/ci's build.yml, driven by hanzo.yml. Every push and
+# pull request runs the test; a push to main also publishes hanzo.ai.
+name: CI/CD
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+jobs:
+  cicd:
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    uses: hanzoai/ci/.github/workflows/build.yml@v2
+    secrets: inherit

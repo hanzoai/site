@@ -26,7 +26,7 @@ light and dark mode from Hanzo's own **`@hanzo/appearance`** and **`@hanzo/desig
 | Run or deploy it | [Run it](#run-it) · [Deploy](#deploy) |
 | Change a price, plan or checkout link | [Prices, plans and checkout links](#prices-plans-and-checkout-links) (one file: `lib/plans.js`) |
 | Understand light and dark | [Light and dark mode](#light-and-dark-mode) |
-| Confirm the sign-up and checkout hand-offs | [Hand-offs to Hanzo's real flows](#hand-offs-to-hanzos-real-flows) (one file: `lib/handoff.js`) |
+| Know where sign-in, checkout and the app live | [The app is hanzo.app](#the-app-is-hanzoapp) |
 | Know where it differs from live | [Known differences from live](#known-differences-from-live) · [Before it goes live](#before-it-goes-live-on-hanzoai) |
 | Know which branch to use | **`main`**, the only branch. Design history is archived: [docs/BRANCHES.md](docs/BRANCHES.md) |
 
@@ -205,26 +205,14 @@ hanzo.ai's sitemap, plus the home page) and adds 9 sign-up and checkout pages. F
 
   Live does not show these, and each can be removed without affecting the rest of its page.
 
-### New pages
+### Sign-in and checkout
 
-- **Nine sign-up and checkout pages** (Zack's round 3), in `components/pages/flow/`: `/pay`, `/pay/cart`,
-  `/pay/confirm/card`, `/signup`, `/login`, `/auth/callback`, `/onboarding`, `/docs/quickstart` and `/docs/cli`.
-- **They never collect a card number, a password or a one-time code.** Each page shows the plan, the total and one
-  action. That action hands off to Hanzo's real checkout or to hanzo.id.
-- **Behaviour of each page:**
-  - `/pay` passes a link that names a plan on to the cart, and sends anything else to `/pricing`.
-  - `/signup` offers Google or email on hanzo.id, with the chosen plan beside it.
-  - `/auth/callback` shows a calm waiting state, then the next step. A failed sign-in says so plainly, with "Try
-    again".
-  - `/onboarding` takes two steps, then sends paid plans on to checkout.
-- **All the hand-off URLs are in one file, `lib/handoff.js`.** The ones marked CONFIRM could not be read from live and
-  need Hanzo's confirmation before launch.
-- **The app steps stay out of search.** `/pay`, `/pay/cart`, `/pay/confirm/card`, `/auth/callback` and `/onboarding`
-  are `noindex` and are left out of the sitemap.
+- **They are hanzo.app's.** The redesign's mock sign-up and checkout pages were removed when the site moved to
+  hanzoai/site: every sign-in, sign-up and pay link opens hanzo.app (see [The app is hanzo.app](#the-app-is-hanzoapp)).
 
 ### Live data
 
-- **Each build reads live figures first.** `npm run build` runs `scripts/live.mjs`, which refreshes
+- **Each build reads live figures first.** `pnpm build` runs `scripts/live.mjs`, which refreshes
   `content/live/_*.json` from:
   - the commit calendar (`/v1/git/activity`);
   - research runs (`/v1/research/runs`);
@@ -321,32 +309,32 @@ hanzo.ai's sitemap, plus the home page) and adds 9 sign-up and checkout pages. F
 
 ## Run it
 
-Node 20 or newer. Next.js is 16.4.5 (upgraded from 15.5.4 with the official codemod on 8 Nov; Turbopack is the default
+Node 22.18 or newer, pnpm (corepack). Next.js is 16.4.5 (upgraded from 15.5.4 with the official codemod on 8 Nov; Turbopack is the default
 bundler, Cache Components stays off because the site is a static export, React stays on 19.2.8).
 
 ```bash
-npm ci
+pnpm install
 ```
 
 ```bash
-npm run dev       # http://localhost:4180, hot reload
+pnpm dev           # http://localhost:4180, hot reload
 ```
 
 ```bash
-npm run build     # static export of every page into out/
+pnpm build       # static export of every page into out/
 ```
 
 ```bash
-npm run preview   # serves out/ on http://localhost:4181
+pnpm preview   # serves out/ on http://localhost:4181
 ```
 
-**`npm run build` reads live figures first.** `prebuild` runs `scripts/live.mjs`. It refreshes `content/live/_*.json`
+**`pnpm build` reads live figures first.** `prebuild` runs `scripts/live.mjs`. It refreshes `content/live/_*.json`
 from api.hanzo.ai and hanzo.ai: commit calendar, research runs, model rates and plan prices. If any source fails, the
 build stops rather than ship stale numbers. To build from the saved snapshots on purpose (offline, or in CI without
 network), run:
 
 ```bash
-HZ_LIVE_OFFLINE=1 npm run build
+HZ_LIVE_OFFLINE=1 pnpm build
 ```
 
 In dev and preview, any file this repo lacks (Hanzo's own model
@@ -354,7 +342,7 @@ videos, `/images/…`, `/memoji/…`) is fetched from hanzo.ai, so pages look co
 
 ## Deploy
 
-`npm run build` writes the whole site as static files to `out/` (`output: 'export'` in `next.config.mjs`,
+`pnpm build` writes the whole site as static files to `out/` (`output: 'export'` in `next.config.mjs`,
 `trailingSlash: true`, so `/pricing` is `out/pricing/index.html`). Serve `out/` from any static host or CDN
 (Cloudflare Pages, Vercel, Netlify, S3 + CloudFront, nginx). There is no server to run. Do the steps in
 [Before it goes live](#before-it-goes-live-on-hanzoai) first: merge `public/` media and route the app paths.
@@ -423,16 +411,13 @@ Hanzo's own system, exactly as live hanzo.ai runs it. Full detail: `docs/DARK-MO
 
 ## Prices, plans and checkout links
 
-**Change plan prices and checkout links in one file: `lib/plans.js`.** Every page reads them from there: home, /pricing,
-/bot, /buying-specialist, /dev, /chat, /enso, /benchmarks, /studio, /beta and /agents. The values match Hanzo's billing
-API (`content/live/_pricing.json`, from api.hanzo.ai/v1/billing/plans, 8 Nov 2026).
-
-| What | Where |
-|---|---|
-| Go, Pro, Dev, Max, Ultra monthly prices and their checkout plan ids (`go`, `pro-2x`, `dev-5x`, `max-10x`, `ultra`) | `lib/plans.js` lines 9–16 |
-| Team seats (Standard $20/$25, Premium $100/$125), Enterprise seat ($20/month, 20-seat minimum), the 20% yearly saving | `lib/plans.js` lines 20–25 |
-| Card checkout link (`/pay/confirm/card?plan=…&returnUrl=…`) | `lib/plans.js` line 30 (`checkout`); full-URL form line 32 |
-| Team checkout from /pricing; Team cart from the buying specialist (`/pay/cart?plan=team…`) | `lib/plans.js` lines 34 and 36 |
+**Plan prices are Hanzo's billing API, never typed here.** `scripts/live.mjs` (prebuild) writes
+`content/live/_pricing.json` from `GET api.hanzo.ai/v1/billing/plans`, and `lib/plans.js` reads it: Go, Pro, Dev,
+Max and Ultra by the month (no personal plan has a year), Team and Team Premium per seat by the month or the year,
+Enterprise per seat by the year, with each plan's minimum seats. A price is changed in admin.hanzo.ai and reaches the
+next build. Every page that shows a plan reads `lib/plans.js`: home, /pricing, /bot, /buying-specialist, /dev, /chat,
+/enso, /benchmarks, /studio, /beta and /agents. Checkout links (`checkout`, `teamCheckout`, `teamCart`) open
+hanzo.app's card form and return there. `pnpm test` holds the two to each other.
 
 These prices are **not** plan prices, so they stay where they are shown. Each one is Hanzo's copy:
 
@@ -451,32 +436,12 @@ Other plan links, as live has them. /pricing: Free goes to `/signup`, Enterprise
 and `/contact-sales` (`components/pages/Pricing.jsx`, `planOf` and `cardOf`). Home pricing: Free and Team to `https://hanzo.ai/signup`, API to `https://platform.hanzo.ai`,
 Enterprise and Volume to `/pricing` (`components/home/Pricing.jsx` lines 103–125).
 
-## Hand-offs to Hanzo's real flows
+## The app is hanzo.app
 
-Nine app and checkout pages are designed here: `/pay`, `/pay/cart`, `/pay/confirm/card`, `/signup`,
-`/login`, `/auth/callback`, `/onboarding`, `/docs/quickstart`, `/docs/cli` (code in `components/pages/flow/`). **This
-site never collects a card number, a password or a one-time code.** Each page shows the plan, the total and one action,
-and that action hands off to Hanzo's real system. Every hand-off URL is a named constant in **one file,
-`lib/handoff.js`**. Values marked CONFIRM could not be read from live hanzo.ai when this was built (its app pages were
-unreachable, 8 Nov 2026); Hanzo's team confirms them before launch.
-
-| Constant | Value | Status |
-|---|---|---|
-| `CARD_FORM_URL` | `https://hanzo.ai/pay/confirm/card` with live's own `plan`, `returnUrl` (+ `interval`, `quantity` for Team) | CONFIRM: if this site serves hanzo.ai/pay/*, point it at the origin that renders the real card form (the app, or a Stripe-hosted link), or pay buttons come back here |
-| `IAM_ORIGIN`, `IAM_CLIENT_ID` | `https://hanzo.id`, `hanzo-ai` | from live's own docs |
-| `IAM_AUTHORIZE_URL` | `https://hanzo.id/v1/iam/oauth/authorize` | CONFIRM (live documents the token endpoint `/v1/iam/oauth/token`) |
-| `AUTH_CALLBACK_URL` | `https://hanzo.ai/auth/callback` | this site's callback page |
-| `IAM_GOOGLE` | `provider=google` | CONFIRM: the parameter that opens hanzo.id on Google |
-| `IAM_SIGNUP` | `prompt=create` (OpenID Connect's standard sign-up prompt) | CONFIRM |
-| `AUTH_COMPLETE_URL` | `null` | CONFIRM: where the callback hands the code to finish sign-in. While unset, people go straight to their next step |
-| `API_KEYS_URL`, `DOCS_*_URL`, `PLATFORM_URL` | platform.hanzo.ai/api-keys, docs.hanzo.ai | live's own links |
-
-Plan links: every id a link carries resolves to a real plan (`resolvePlan` in `lib/plans.js`): `go`, `pro-2x`,
-`dev-5x`, `max-10x`, `ultra`, `team`, `team-premium`, and plan names (`plan=pro`) too. A link with no plan, or an
-unknown one, shows a plan picker rather than a dead end. Redirects only follow paths on this site (`safeNext`) and
-return buyers only to hanzo.ai hosts (`safeReturn`). The header's Log in now opens `/login`. The app steps (/pay,
-/pay/cart, /pay/confirm/card, /auth/callback, /onboarding) are `noindex` and left out of the sitemap. Dark check for
-these pages: `PAGES=scripts/flow-pages.txt node scripts/darkcheck.mjs` (0 of 13). Screenshots: `docs/screenshots/zack-pages-3/`.
+hanzo.ai is the signed-out site. Chat, sign-in, sign-up, checkout and every app room are
+[hanzo-inc/app](https://hanzo.app) on hanzo.app. `lib/route.js` sends any path this site has no page for to
+`https://hanzo.app` (`lib/app.js`), so `/login?next=%2Fchat` opens hanzo.app's sign-in and `checkout('go')` opens
+hanzo.app's card form. This site never collects a card, a password or a code.
 
 ## Before it goes live on hanzo.ai
 
@@ -494,9 +459,9 @@ these pages: `PAGES=scripts/flow-pages.txt node scripts/darkcheck.mjs` (0 of 13)
 
 | Script | What it does |
 |---|---|
-| `node scripts/copycheck.mjs /pricing /about …` | **Compare our copy with live hanzo.ai.** Opens live hanzo.ai and our dev server (`npm run dev`, or `HZ_BASE=…`) in headless Chrome. Lists every line of live text missing from ours in `shots/copycheck/<page>.txt`. "missing 0" means every word is there. Needs Chrome (`CHROME=/path/to/chrome` on Linux). |
+| `node scripts/copycheck.mjs /pricing /about …` | **Compare our copy with live hanzo.ai.** Opens live hanzo.ai and our dev server (`pnpm dev`, or `HZ_BASE=…`) in headless Chrome. Lists every line of live text missing from ours in `shots/copycheck/<page>.txt`. "missing 0" means every word is there. Needs Chrome (`CHROME=/path/to/chrome` on Linux). |
 | `node scripts/live.mjs` | Refresh the figure snapshots in `content/live/_*.json` (runs before every build). `--pages /x /y` re-reads those pages' live text. |
-| `npm run capture` / `npm run extract` | Re-capture pages from hanzo.ai into `content/`, and re-read the home's header, footer and logos. |
+| `pnpm capture` / `pnpm extract` | Re-capture pages from hanzo.ai into `content/`, and re-read the home's header, footer and logos. |
 | `HZ_BASE=http://localhost:4180 node scripts/darkcheck.mjs` | Dark-mode readability: opens every page in `scripts/copycheck-pages.txt` in dark, and flags visible text under 3:1 contrast against its background. Done means 0 pages. `CHROME=/path/to/chrome` on Linux (run as root it also needs `--no-sandbox`). |
 | `HZ_OLD=… node scripts/lightcheck.mjs /page` | Light mode unchanged: compares every element's computed colours with an older build. |
 | `node --test scripts/*.test.mjs components/**/*.test.mjs` | Unit tests. Tests that open a browser need `CHROME=…`. |
