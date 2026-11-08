@@ -440,10 +440,10 @@ function Ends() {
       </div>
       <div className="nw-two">
         <A to="https://platform.hanzo.ai/api-keys" className="nw-end" data-cursor="" onPointerEnter={send('call')} onFocus={() => !calm && setFlow((f) => ({ way: 'call', n: f.n + 1 }))}>
-          <b>Get an API Key</b><span className="lx-kick">call it</span><Ar />
+          <span className="nw-end-t">Get an API Key</span><span className="lx-kick">call it</span><Ar />
         </A>
         <A to="/node" className="nw-end serve" data-cursor="" onPointerEnter={send('serve')} onFocus={() => !calm && setFlow((f) => ({ way: 'serve', n: f.n + 1 }))}>
-          <b data-morph data-cursor="">Provide Compute</b><span className="lx-kick">serve it</span><Ar />
+          <span className="nw-end-t" data-morph data-cursor="">Provide Compute</span><span className="lx-kick">serve it</span><Ar />
         </A>
       </div>
     </div>
@@ -474,7 +474,7 @@ function Facts({ lend, setLend }) {
           <ol className="nw-facts">
             {FACTS.map(([t, d], i) => (
               <li key={t} className={'nw-fact' + (i === step ? ' on' : '')} onPointerEnter={(e) => e.pointerType === 'mouse' && pick(i)}>
-                <h3 className="nw-fact-t"><button type="button" aria-pressed={i === step} onClick={() => pick(i)}><span className="nw-fact-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>{t}</button></h3>
+                <h3 className="nw-fact-t"><button type="button" aria-pressed={i === step} onClick={() => pick(i)}><span className="nw-fact-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></button></h3>
                 <p className="nw-fact-d">{d}</p>
                 {i === 4 && <Lend k={lend} setK={(k) => { setLend(k); pick(4); }} />}
               </li>
