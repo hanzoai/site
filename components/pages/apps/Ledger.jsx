@@ -221,7 +221,7 @@ curl -X POST http://localhost:3068/v2/main/transactions \\
   -d '{
     "postings": [
       { "source": "users:001", "destination": "merchants:042", "amount": ${c.v}, "asset": "USD/2" },
-      { "source": "users:001", "destination": "platform:fees", "amount": ${c.f}, "asset": "USD/2" }
+      { "source": "users:001", "destination": "platform:fees", "amount": ${String(c.f).padStart(String(c.v).length + 1)}, "asset": "USD/2" }
     ],
     "metadata": { "order": "ord_42" }
   }'

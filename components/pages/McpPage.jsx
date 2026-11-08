@@ -106,8 +106,8 @@ function Hero() {
             <span className="mcp-h1-d"><Lines lines={['The complete MCP runtime', 'for coding, decisions,', 'browser, and cloud']} /></span>
             <span className="mcp-h1-p"><Lines lines={['The complete MCP', 'runtime for', 'coding, decisions,', 'browser, and cloud']} /></span>
           </h1>
-          <p className="a2-kick show mcp-cap">Hanzo MCP · 260+ tools · 117 cloud services</p>
-          <p className="a2-lede mcp-lede">Give any model a filesystem, shell, semantic AST code index, Kai sub-10ms decisions, Playwright &amp; Chrome DevTools browser control, issue tracking, persistent memory, and 1,538 typed Hanzo Cloud operations over stdio or streamable HTTP.</p>
+          <p className="a2-kick show mcp-cap">Hanzo MCP · 260+ tools · 125 cloud services</p>
+          <p className="a2-lede mcp-lede">Give any model a filesystem, shell, semantic AST code index, Kai sub-10ms decisions, Playwright &amp; Chrome DevTools browser control, issue tracking, persistent memory, and 1,700+ typed Hanzo Cloud operations over stdio or streamable HTTP.</p>
           <div className="a2-acts">
             <Cta to={ALL} id="mcp.hero" thumb>Browse 260+ tools</Cta>
             <Cta to={DOCS} kind="quiet">Read the docs</Cta>
@@ -152,11 +152,11 @@ function Figures() {
     <section ref={ref} className={'a2-sec mcp-figs' + (seen ? ' seen' : '')}>
       <div className="a2-wrap">
         {/* Hanzo's line whole, for readers; the rolling digits below are its picture */}
-        <p className="x-sr">38 unified action tools + 1,538 Cloud operations + 260+ specialized servers</p>
+        <p className="x-sr">38 unified action tools + 1,700+ Cloud operations + 260+ specialized servers</p>
         <p className="mcp-sum" aria-hidden="true">
           <span className="mcp-f"><Fig v="38" /> <span>unified action tools</span></span>
           <span className="mcp-plus" aria-hidden="true">+</span>
-          <span className="mcp-f"><Fig v="1,538" d={0.12} /> <span>Cloud operations</span></span>
+          <span className="mcp-f"><Fig v="1,700+" d={0.12} /> <span>Cloud operations</span></span>
           <span className="mcp-plus" aria-hidden="true">+</span>
           <span className="mcp-f"><Fig v="260+" d={0.24} /> <span>specialized servers</span></span>
         </p>
@@ -183,14 +183,14 @@ function Before() {
 /* The runtime in three parts: three plain sheets, one after another (no longer pinned; nothing sticks while you scroll). */
 const PARTS = [
   ['Full-stack agent capabilities, ready out of the box', 'Core runtime (fs, exec, code, git, fetch, workspace, ui), semantic code intelligence (code_search, code_context, code_ask, code_index), Kai decision & safety guardrails (kai_decide, kai_command_guard, kai_injection_screen), browser CDP, issue tracker, and persistent memory.'],
-  ['117 Hanzo Cloud services, 1,538 typed operations', 'Through the unified hanzo router and /docs/mcp-tools catalog, agents provision sandboxes, deploy containers across 34 regions, query vector indexes, rotate KMS secrets, verify IAM policies, and inspect billing usage under one bearer key.'],
+  ['125 Hanzo Cloud services, 1,700+ typed operations', 'Through the unified hanzo router and /docs/mcp-tools catalog, agents provision sandboxes, deploy containers across 34 regions, query vector indexes, rotate KMS secrets, verify IAM policies, and inspect billing usage under one bearer key.'],
   ['Scoped permissions & Kai safety screening', 'Every shell command and external input can pass through kai_command_guard and kai_injection_screen in single-digit milliseconds. Enable or drop tool groups per environment with --enable-tools and --disable-tools.'],
 ];
 const CORE = ['fs', 'exec', 'code', 'git', 'fetch', 'workspace', 'ui', 'code_search', 'code_context', 'code_ask', 'code_index', 'kai_decide', 'kai_command_guard', 'kai_injection_screen', 'browser', 'cdp', 'tracker', 'memory'];
 
 function PartArt({ i }) {
   if (i === 0) return <div className="mcp-art a0">{CORE.map((t, k) => <span key={t} className="x-mono" style={{ '--d': k * 0.35 + 's' }}>{t}</span>)}</div>;
-  if (i === 1) return <div className="mcp-art a1">{Array.from({ length: 117 }).map((_, k) => <i key={k} style={{ animationDelay: ((k * 53) % 117) * 0.04 + 's' }} />)}</div>;
+  if (i === 1) return <div className="mcp-art a1">{Array.from({ length: 125 }).map((_, k) => <i key={k} style={{ animationDelay: ((k * 53) % 125) * 0.04 + 's' }} />)}</div>;
   return (
     <div className="mcp-art a2">
       <div className="mcp-gate x-mono"><span>kai_command_guard</span><span>kai_injection_screen</span></div>
@@ -256,7 +256,7 @@ const DOMAINS = [
   ['kai_decide, kai_command_guard, kai_injection_screen', '13 purpose-built Kai decision, scoring, routing, log triage, recovery, and context compaction tools running in 6.4ms at a fraction of LLM token cost.', ['kai_decide', 'kai_command_guard', 'kai_injection_screen']],
   ['browser, cdp, git & fetch', 'Full Playwright and Chrome DevTools Protocol automation (navigate, click, screenshot, console, network), complete git workflows, and streaming HTTP fetch.', ['navigate', 'click', 'screenshot', 'console', 'network', 'git', 'fetch']],
   ['tracker, memory, think, plan & tasks', 'tracker_boards, tracker_issues, tracker_create, and tracker_update sync directly with engineering boards, while memory, think, and plan persist architecture context across sessions.', ['tracker_boards', 'tracker_issues', 'tracker_create', 'tracker_update', 'memory', 'think', 'plan', 'tasks']],
-  ['hanzo (117 Cloud services · 1,538 ops)', 'Direct typed access to Deploy, Sandbox, IAM, KMS, KV, S3, Vector, Search, Crawl, Workflow, Commerce, and Billing — inspectable at docs.hanzo.ai/docs/mcp-tools.', ['Deploy', 'Sandbox', 'IAM', 'KMS', 'KV', 'S3', 'Vector', 'Search', 'Crawl', 'Workflow', 'Commerce', 'Billing']],
+  ['hanzo (125 Cloud services · 1,700+ ops)', 'Direct typed access to Deploy, Sandbox, IAM, KMS, KV, S3, Vector, Search, Crawl, Workflow, Commerce, and Billing — inspectable at docs.hanzo.ai/docs/mcp-tools.', ['Deploy', 'Sandbox', 'IAM', 'KMS', 'KV', 'S3', 'Vector', 'Search', 'Crawl', 'Workflow', 'Commerce', 'Billing']],
 ];
 
 /* A rail the mouse can drag and fling; touch and trackpads scroll it natively. */
