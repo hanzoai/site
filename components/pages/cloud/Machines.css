@@ -489,3 +489,5 @@ html:not(.light) .mc .mc-hero, html:not(.light) .mc .mc-zsheet, html:not(.light)
 html:not(.light) .mc .mc-con-ask, html:not(.light) .mc .mc-art.a3 b:first-child, html:not(.light) .mc .mc-map[data-at='1'] .mc-map-accts span { color: var(--primary-foreground); }
 @media (hover: hover) { html:not(.light) .mc .mc-ch .pc-dots button:hover { background-color: var(--border); } }
 html:not(.light) .mc .mc-art.a1 i { background: var(--muted-foreground); }
+/* live's hero halftone (components/pages/HeroDither, dark only) fills the hero under its content */
+html:not(.light) .mc .mc-hero { position: relative; }

@@ -22,6 +22,7 @@ import { useLive } from './Frame';
 import ShipPrompt from '../../v2/ShipPrompt';
 import LivePause, { usePause } from '../../v2/LivePause';
 import MachinesZoom from './MachinesZoom';
+import HeroDither from '../HeroDither';
 import { Glitch, Snap, Curl, Dissolve } from './MachinesEnter';
 import '../../v2/v2scale.css';
 import './Machines.css';
@@ -374,6 +375,7 @@ export default function Machines() {
   return (
     <main className="v2 mc">
       <Glitch as="section" className="mc-hero v2-dark" data-room="dark">
+        <HeroDither />
         <div className="v2-wrap mc-hero-t">
           <h1 className="v2-display mc-h1 mc-gl-t" data-text="Hanzo Machines" data-morph-target="">Hanzo Machines</h1>
           <p className="v2-kick mc-cap">High-Performance Computing</p>
