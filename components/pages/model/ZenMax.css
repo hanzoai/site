@@ -296,6 +296,14 @@ html:not(.light) .zx-panel { box-shadow: inset 0 0 0 1px var(--border); } /* the
 }
 @media (prefers-reduced-motion: reduce) and (max-width: 899px) { .zx-stage-pin { height: auto; min-height: 0; } }
 
-/* Hanzo's halftone dot field behind the hero in dark only, as live hanzo.ai's dark heroes; the film card covers it
-   while it fills the screen, then the dots show around the settled card */
-html:not(.light) .zx-stage-pin::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 17%, transparent) 1.7px, transparent 2.2px) 0 0 / 10px 10px; -webkit-mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); mask-composite: intersect; }
+/* Hanzo's dark hero texture, as measured from live hanzo.ai dark (lead's recipe, 8 Nov): 7px dot grid at ~36% foreground,
+   densest at the left/right edges and toward the bottom, plus live's top glow. Dark only, so bright is untouched. */
+html:not(.light) .zx-stage-pin { isolation: isolate; }
+html:not(.light) .zx-stage-pin::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .zx-stage-pin::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }

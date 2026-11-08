@@ -330,6 +330,14 @@ html:not(.js) .zc-hold { display: none; }
 }
 @keyframes zc-line { 0% { transform: scaleX(0); opacity: 1; } 16% { transform: scaleX(1); opacity: 1; } 22%, 100% { transform: scaleX(1); opacity: 0; } }
 
-/* Hanzo's halftone dot field around the black hero frame in dark only, as live hanzo.ai's dark heroes */
-html:not(.light) .zc-stage { position: relative; }
-html:not(.light) .zc-stage::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 17%, transparent) 1.7px, transparent 2.2px) 0 0 / 10px 10px; -webkit-mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); mask-composite: intersect; }
+/* Hanzo's dark hero texture, as measured from live hanzo.ai dark (lead's recipe, 8 Nov): 7px dot grid at ~36% foreground,
+   densest at the left/right edges and toward the bottom, plus live's top glow. Dark only, so bright is untouched. */
+html:not(.light) .zc-stage { position: relative; isolation: isolate; }
+html:not(.light) .zc-stage::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .zc-stage::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }

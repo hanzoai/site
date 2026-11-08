@@ -203,9 +203,21 @@ html:not(.light) .lv:has(> .lv-stage[data-hero='zen']) :is(.lv-lines, .lv-h, .lv
 html:not(.light) .lv:has(> .lv-stage[data-hero='zen']) :is(.lv-lines .lv-ln + .lv-ln, .lv-crumb, .lv-side, .lv-ch-rail button:not([aria-current])):not(.lv-room *) { color: var(--text-tertiary); }
 html:not(.light) .lv:has(> .lv-stage[data-hero='zen']) :is(.lv-lede, .lv-p, .lv-ch-b, .lv-stats .x-stat-n):not(.lv-room *) { color: var(--muted-foreground); }
 html:not(.light) .lv:has(> .lv-stage[data-hero='zen']) .lv-ch-rail::before { background: var(--border); }
-/* Hanzo's halftone dot field behind the hero in dark, as live hanzo.ai's dark heroes (dense at the sides, thinning to the
-   centre and top); the film covers it until it settles into the arch */
-html:not(.light) .lv-stage[data-hero='zen'] .lv-pin::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 17%, transparent) 1.7px, transparent 2.2px) 0 0 / 10px 10px; -webkit-mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); mask-composite: intersect; }
 /* the closing band stays black in both modes; its solid ask is Hanzo's light primary pill there in dark (the shared
    .x-band .x-btn.solid uses --x-fill, which turns dark) */
 html:not(.light) .ze-band .x-btn.solid { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+/* the console is black in both modes: its picked tab stays Hanzo's light primary pill in dark (the shared Model.css
+   chip turns dark there and would hide the label) */
+html:not(.light) .ze-console .mb-chip:is([aria-pressed='true'], [aria-checked='true'], [aria-selected='true']) { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+
+/* Hanzo's dark hero texture, as measured from live hanzo.ai dark (lead's recipe, 8 Nov): 7px dot grid at ~36% foreground,
+   densest at the left/right edges and toward the bottom, plus live's top glow. Dark only, so bright is untouched. */
+html:not(.light) .lv-stage[data-hero='zen'] .lv-pin { isolation: isolate; }
+html:not(.light) .lv-stage[data-hero='zen'] .lv-pin::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .lv-stage[data-hero='zen'] .lv-pin::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
