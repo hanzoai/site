@@ -1,6 +1,13 @@
 /* HSM v2. Greys only (Hanzo's deck). One dark room: the exploded chapters. */
 .hs { --acc: #0a0a0a; --glow: #525252; --btn-solid-hover: #262626; }
+/* dark (docs/DARK-MODE.md): the shared .v2 greys on this page point at Hanzo's tokens, the page sits on Hanzo's
+   background, and the light sections' module is drawn as the dark room draws it, in Hanzo's surfaces */
+html:not(.light) .v2.hs { --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--muted-foreground); --line: var(--border); --card: var(--muted); --acc: var(--foreground); --glow: var(--muted-foreground); --btn-solid-hover: var(--primary-hover); background: var(--bg); }
 .hs .v2-dark, .hs [data-room='dark'] { --acc: #f5f5f5; --glow: #e5e5e5; }
+html:not(.light) .hs-hero .hm, html:not(.light) .hs-pick .hm { --plate: var(--muted); --edge: var(--border-strong); --ink2: var(--foreground); }
+html:not(.light) .hs-hero .hm-handle, html:not(.light) .hs-pick .hm-handle { background: var(--surface-card-quiet); }
+html:not(.light) .hs-hero .hm-module, html:not(.light) .hs-pick .hm-module { background: linear-gradient(135deg, var(--secondary), var(--muted)); }
+html:not(.light) .hs-hero .hm-key, html:not(.light) .hs-pick .hm-key { background: var(--background); border-color: var(--border-control); }
 
 /* the module: five plates in one isometric stack */
 .hm { --s: clamp(200px, 21vw, 300px); --plate: #fff; --edge: rgba(0, 0, 0, .08); --ink2: #0a0a0a; --gk: 1; position: relative; width: 100%; height: 100%; }
@@ -40,7 +47,7 @@
 .hs-hero-obj > div { height: 100%; }
 .hs-sign { position: relative; height: 100%; }
 .hs-sign .hm { --s: clamp(240px, 25vw, 360px); }
-.hs-io { position: absolute; z-index: 40; top: 50%; margin: 0; padding: 12px 16px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06), 0 14px 30px -14px rgba(0, 0, 0, .25); font: 500 14px/1 var(--mono); white-space: nowrap; }
+.hs-io { position: absolute; z-index: 40; top: 50%; margin: 0; padding: 12px 16px; border-radius: 999px; background: var(--x-raised); box-shadow: 0 0 0 1px light-dark(rgba(0, 0, 0, .06), var(--border)), 0 14px 30px -14px rgba(0, 0, 0, .25); font: 500 14px/1 var(--mono); white-space: nowrap; }
 .hs-io.in { left: 6%; transform: translateY(-160%); }
 .hs-io.out { right: 6%; transform: translateY(80%); color: var(--acc); }
 /* the call line, left-aligned after the docked pause; the module name keeps a fixed width so the line never moves */
@@ -57,7 +64,7 @@
 }
 /* the signing pulse: a bead travels from the bytes chip into the module, the key plate answers, and it leaves as the
    signature, once per module (it restarts with each one); it starts within the first second */
-.hs-pulse { position: absolute; left: 0; top: 0; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 999px; background: var(--ink); box-shadow: 0 0 0 4px rgba(10, 10, 10, .12); opacity: 0; pointer-events: none; z-index: 30; }
+.hs-pulse { position: absolute; left: 0; top: 0; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 999px; background: var(--ink); box-shadow: 0 0 0 4px light-dark(rgba(10, 10, 10, .12), var(--border)); opacity: 0; pointer-events: none; z-index: 30; }
 .hs-sign.live .hs-pulse { animation: hs-pulse 2.4s cubic-bezier(.4, 0, .2, 1) .15s both; }
 .hs-sign { container-type: size; }
 @keyframes hs-pulse {
@@ -102,17 +109,17 @@
 .hs-pick-copy { grid-column: 1 / span 5; }
 .hs-pick-t { margin: 0; font-size: 26px; font-weight: 497; line-height: 1.15; letter-spacing: -.02em; text-wrap: balance; }
 .hs-pick-n { margin: 10.5px 0 0; color: var(--soft); }
-.hs-pick-d { margin: 17px 0 0; max-width: 46ch; font-size: 16px; line-height: 1.6; color: #525252; text-wrap: pretty; }
+.hs-pick-d { margin: 17px 0 0; max-width: 46ch; font-size: 16px; line-height: 1.6; color: light-dark(#525252, var(--muted-foreground)); text-wrap: pretty; }
 .hs-pick-vis { grid-column: 6 / -1; position: relative; height: clamp(380px, 36vw, 520px); }
 .hs-pick-vis .hm { transform: translateX(-12%); }
 .hs-vendors { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 27px; max-width: 100%; }
-.hs-vendors button { position: relative; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: none; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); font: 500 14px/1 var(--sans); color: #525252; cursor: pointer; white-space: nowrap; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
+.hs-vendors button { position: relative; min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: none; box-shadow: inset 0 0 0 1px light-dark(rgba(0, 0, 0, .12), var(--border-control)); font: 500 14px/1 var(--sans); color: light-dark(#525252, var(--muted-foreground)); cursor: pointer; white-space: nowrap; transition: color .15s cubic-bezier(0, 0, .2, 1), transform .09s cubic-bezier(.4, 0, .2, 1); }
 .hs-vendors button:active { transform: scale(.98); }
-.hs-vendors button[aria-selected='true'] { color: #fafafa; }
-.hs-vendors button:focus-visible { outline: 2px solid #0a0a0a; outline-offset: 2px; }
-@media (hover: hover) { .hs-vendors button:not([aria-selected='true']):hover { color: #0a0a0a; background: #f5f5f5; } .hs-vendors button[aria-selected='true']:hover .hs-vendor-bg { background: #404040; } }
+.hs-vendors button[aria-selected='true'] { color: light-dark(#fafafa, var(--primary-foreground)); }
+.hs-vendors button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+@media (hover: hover) { .hs-vendors button:not([aria-selected='true']):hover { color: var(--ink); background: light-dark(#f5f5f5, var(--muted)); } .hs-vendors button[aria-selected='true']:hover .hs-vendor-bg { background: light-dark(#404040, var(--primary-hover)); } }
 .hs-vendor-bg { transition: background-color .15s cubic-bezier(0, 0, .2, 1); }
-.hs-vendor-bg { position: absolute; inset: 0; border-radius: 999px; background: #0a0a0a; }
+.hs-vendor-bg { position: absolute; inset: 0; border-radius: 999px; background: var(--ink); }
 .hs-vendor-t { position: relative; }
 .hs-ch .hm { --plate: #171717; --edge: rgba(255, 255, 255, .16); --ink2: #f5f5f5; }
 .hs-ch .hm-handle { background: rgba(255, 255, 255, .05); }
@@ -128,7 +135,7 @@
 .hs .sp-h { margin: 0 0 17px; font-size: 26px; line-height: 1.15; }
 .hs-stack { display: flex; flex-direction: column; gap: 17px; max-width: 1120px; }
 .hs-card { margin: 0; border-radius: 20px; }
-.hs-card-1 { padding: 28px 28px 30px; background: #f5f5f5; }
+.hs-card-1 { padding: 28px 28px 30px; background: light-dark(#f5f5f5, var(--muted)); }
 .hs-card-1 .sp-d { margin: 0; }
 .hs-ship-card { margin: 0; border-radius: 20px; background: #171717; color: #fafafa; overflow: hidden; }
 /* the two cards stand in flow (no sticking, so the prompt card never rides over the words); they rise in on arrival */
@@ -154,7 +161,7 @@
 .hs .gi-tag { margin: 0 0 17px; }
 .hs-meta { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 4px; font: 500 13px/1 var(--mono); color: var(--soft); }
 .hs-names { grid-column: 6 / -1; list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.hs-names li { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: clamp(32px, 4.4vw, 64px); font-weight: 497; line-height: 1.05; letter-spacing: -.03em; color: #d4d4d4; white-space: nowrap; transition: color .4s cubic-bezier(0, 0, .2, 1); }
+.hs-names li { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: clamp(32px, 4.4vw, 64px); font-weight: 497; line-height: 1.05; letter-spacing: -.03em; color: light-dark(#d4d4d4, var(--text-disabled)); white-space: nowrap; transition: color .4s cubic-bezier(0, 0, .2, 1); }
 .hs-names li span { display: inline-block; transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
 .hs-names li[data-on] { color: var(--ink); }
 .hs-names li[data-on] span { transform: translateX(10px); }
@@ -172,8 +179,10 @@
 }
 .hs .x-btn.solid:active { transform: translateY(1px); box-shadow: none; }
 /* paused, the play mark is ink on white, as the pause mark is while playing; hover greys the white a little */
-.hs .lx-pause[aria-pressed='true'] { background: #fff; color: #0a0a0a; }
-@media (hover: hover) { .hs .lx-pause:hover, .hs .lx-pause[aria-pressed='true']:hover { background: #ededed; color: #0a0a0a; } }
+.hs .lx-pause[aria-pressed='true'] { background: var(--x-raised); color: var(--ink); }
+/* the shared pause draws its mark in a fixed #0a0a0a; in dark it takes the page's ink */
+html:not(.light) .hs .lx-pause { color: var(--ink); }
+@media (hover: hover) { .hs .lx-pause:hover, .hs .lx-pause[aria-pressed='true']:hover { background: light-dark(#ededed, var(--secondary)); color: var(--ink); } }
 
 @media (max-width: 900px) {
   .hm { --s: 150px; --gk: .62; }
