@@ -5,6 +5,7 @@ import { EASE, Count, fine, Mark, copyText } from './ui';
 import A2Pause from './v2/A2Pause';
 import C from '../content';
 import SetupMenu from './SetupMenu';
+import { MORE, SceneLog, ShellLines, PhoneCells, Feed } from './home/HeroScenes';
 
 const PROMPT = 'Build maxpower: every AI I use in one place, and faster at coding.';
 const CMD = 'curl -fsSL https://hanzo.sh | sh';
@@ -187,6 +188,19 @@ export default function Hero() {
   const [tab, setTab] = useState('chat');
   const [log, setLog] = useState(0);
   const [k, setK] = useState(1);
+  // after the opening, the rest of Hanzo's day plays: one scene every 6.5 s, the company log every 1.8 s
+  const [sc, setSc] = useState(-1);
+  const [fd, setFd] = useState(0);
+  useEffect(() => {
+    if (calm) return;
+    const t = setInterval(() => { if (live.current && !stop.current) setFd((n) => n + 1); }, 1800);
+    return () => clearInterval(t);
+  }, [calm]);
+  useEffect(() => {
+    if (calm || phase < 4) return;
+    const t = setInterval(() => { if (live.current && !stop.current) setSc((n) => (n + 1) % MORE.length); }, 6500);
+    return () => clearInterval(t);
+  }, [calm, phase >= 4]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // the demo: the prompt types itself, sends, the phone answers, then shows the build and every agent running on Hanzo
   useEffect(() => {
@@ -200,7 +214,7 @@ export default function Hero() {
       (async () => { for (let i = 0; i <= CMD.length && !dead; i++) { setCmd(i); await w(i < 4 ? 90 : 36); } })();
       while (!dead) {
         await held();
-        setPhase(0); setLog(0); setTyped(0);
+        setPhase(0); setLog(0); setTyped(0); setSc(-1);
         if (!user.current) setTab('chat');
         for (let i = 0; i <= PROMPT.length && !dead; i++) { setTyped(i); await w(PROMPT[i] === ' ' ? 55 : 26); }
         await w(500); if (dead) return;
@@ -213,7 +227,7 @@ export default function Hero() {
         for (let j = 1; j <= 4 && !dead; j++) { await w(430); setLog(j); }
         await w(500); if (dead) return;
         setPhase(4);
-        await w(9000);
+        await w(9000 + MORE.length * 6500);
       }
     })();
     return () => { dead = true; };
@@ -286,6 +300,7 @@ export default function Hero() {
               <motion.a variants={rise} href="https://hanzo.ai/signup" className="x-auth-b solid" whileTap={{ scale: 0.97 }}>Continue with email</motion.a>
             </div>
             <motion.p variants={rise} className="x-terms">By continuing, you agree to Hanzo&apos;s <a href="https://hanzo.ai/terms">Terms</a> and <a href="https://hanzo.ai/privacy">Privacy Policy</a>.</motion.p>
+            <motion.p variants={rise} className="xh-go"><a href="/pay/confirm/card?plan=go&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat" data-cta="home.go">Go is $8/month</a></motion.p>
           </motion.div>
         </motion.div>
 
@@ -310,11 +325,13 @@ export default function Hero() {
                     <div className="x-side-i">Weekly report</div>
                     <Account />
                   </aside>
-                  <div className="x-chat">
+                  <div className={'x-chat' + (sc >= 0 ? ' xs-on' : '')}>
                     <div className="x-chat-log">
                       <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
+                      <Bubble on={phase >= 2}>Done. maxpower connects your agents, shares one key, and runs them side by side.</Bubble>
                       <AppCard on={phase >= 2} />
                     </div>
+                    <SceneLog at={sc} />
                     <div className="x-input">
                       <span className="x-plus">+</span>
                       <span className="x-input-t">
@@ -330,8 +347,9 @@ export default function Hero() {
               {/* the CLI */}
               <motion.div className="x-term" initial={{ opacity: 0, z: -120, y: 70 }} animate={{ opacity: 1, z: 70, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.35 }}>
                 <div className="x-term-bar"><i /><i /><i /><span>install</span></div>
-                <div className="x-term-body x-mono">
-                  <span className="x-dim">$ </span><span ref={cmdEl} className="xh-cmd" data-cmd={CMD} /><Caret />
+                <div className={'x-term-body x-mono' + (sc >= 0 && MORE[sc].shell ? ' xs-on' : '')}>
+                  <span className="xs-cmd"><span className="x-dim">$ </span><span ref={cmdEl} className="xh-cmd" data-cmd={CMD} /><Caret /></span>
+                  <ShellLines at={sc} />
                 </div>
                 <div className="x-term-f">
                   <button type="button" className="x-term-copy xh-copy" onClick={copy} data-cta="home.install_copy" data-on={copied || undefined}>{copied ? 'Copied' : 'Copy'}</button>
@@ -357,7 +375,8 @@ export default function Hero() {
                       <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
                       <AppCard on={phase >= 2} />
                     </div>
-                    <div className="x-pane right" id="phone-dev" role="tabpanel" data-on={tab === 'dev'} inert={tab !== 'dev'}>
+                    <div className={'x-pane right' + (sc >= 0 && (MORE[sc].phone || MORE[sc].place === 'studio') ? ' xs-on' : '')} id="phone-dev" role="tabpanel" data-on={tab === 'dev'} inert={tab !== 'dev'}>
+                      <PhoneCells at={sc} />
                       <Bubble me>Show me the build</Bubble>
                       <div className="x-log x-mono">
                         {LOG.map((l, i) => (
@@ -372,6 +391,7 @@ export default function Hero() {
               </motion.div>
             </motion.div>
           </div>
+          <Feed i={fd} />
           <SetupMenu up initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 1.1 }} />
         </motion.div>
       </div>
