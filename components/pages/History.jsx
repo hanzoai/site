@@ -72,7 +72,7 @@ function Hero() {
         <div className="xhi-hero-l">
           <Lines as="h1" id="xhi-h1" className="v2s-display xhi-h1" now delay={0.05} stagger={0.06} lines={['Sovereign', 'intelligence', 'since 2014.']} />
           <motion.div className="xhi-hero-side" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.42 }}>{/* after the h1's last line has landed, so the h1 is the first thing seen (JS off: the noscript rule shows it) */}
-            <p className="v2s-lede">From open-source commerce and early AI head-up displays with SKULLY in 2014, through Techstars ’17 and over $1B in venture-backed client revenue, to 1,600+ repositories and sovereign intelligence today.</p>
+            <p className="v2s-lede">From open-source commerce and early AI head-up displays with SKULLY in 2014, through Techstars ’17 and over $1B in venture-backed client revenue, to 1700+ repositories and sovereign intelligence today.</p>
             <div className="v2s-acts">
               <Cta to="/history#timeline" kind="link" id="history.hero">Explore Our History</Cta>
               <TL to="/about">About Hanzo</TL>

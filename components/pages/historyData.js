@@ -36,5 +36,5 @@ export const ERAS = [
   ['2014 – 2016', 'Hardware AI & Open Commerce', 'SKULLY AR-1 head-up display sets crowdfunding speed records; open-source commerce powers global launches.', 0],
   ['2017 – 2019', 'Techstars ’17 & Applied AI', 'Graduated Techstars Kansas City ’17, scaling venture-backed consumer, media, and infrastructure partners.', 3],
   ['2020 – 2023', 'Public Markets & Cloud Scale', 'Supported Damon Motors, Bellabeat, Triller, Cover, and Casperlabs across hypergrowth and public exits.', 6],
-  ['2024 – 2026', 'Sovereign AI Cloud & Research', '1,600+ open repositories, Zen models, Kai calibrated decision intelligence, Enso router, and Hanzo Engine.', 10],
+  ['2024 – 2026', 'Sovereign AI Cloud & Research', '1700+ open repositories, Zen models, Kai calibrated decision intelligence, Enso router, and Hanzo Engine.', 10],
 ];

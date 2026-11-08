@@ -166,7 +166,7 @@ function Gets() {
 }
 
 const WAYS = [
-  ['oss', 'Open Source Contributor Grants', '2,137+ repositories · 122 organizations', 'We always welcome and accept open-source contributors across our repositories on GitHub and git.hanzo.ai. Ship pull requests, maintain SDKs or MCP servers, or build open-source tools powered by Hanzo to receive recurring API, Cloud, and Dev credit grants.', 'Apply as OSS Contributor', ['Explore Repositories', '/open-source']],
+  ['oss', 'Open Source Contributor Grants', '1700+ repositories · 38 organizations', 'We always welcome and accept open-source contributors across our repositories on GitHub and git.hanzo.ai. Ship pull requests, maintain SDKs or MCP servers, or build open-source tools powered by Hanzo to receive recurring API, Cloud, and Dev credit grants.', 'Apply as OSS Contributor', ['Explore Repositories', '/open-source']],
   ['academic', 'Academic & PhD Research Grants', 'PhD students · University labs · Independent researchers', 'Investigating foundation models, RLHF/post-training, ML compilers, post-quantum cryptography, or agentic systems? Approved academic researchers receive free API & compute credits and full access to Hanzo Team for their research.', 'Apply for Research Credits', ['Research Access Questionnaire', '/beta/research']],
   ['internship', 'Academic & PhD Research Internships', 'Remote / SF · Year-round cohorts', 'Looking to intern with our research and systems teams during your PhD or graduate studies? Work directly on Zen, Kai, Enso, Hanzo Engine, and Hanzo Dev — with free compute credits, Hanzo Team access, and co-authored publications.', 'Apply for Internship', ['View Internship Role', '/careers/academic-research-intern']],
 ];
@@ -345,7 +345,7 @@ export default function Grants() {
       <Apply track={track} setTrack={setTrack} />
       {/* a quiet end in the page's own words: the scale behind the grants */}
       <section className="xgr-proof" aria-label="Open Source Contributor Grants">
-        <div className="xp-wrap xgr-proof-in"><p><span className="xgr-proof-big">2,137+</span><span className="x-mono">repositories · 122 organizations</span></p><A to="/open-source" className="xgr-link">Explore Repositories</A></div>
+        <div className="xp-wrap xgr-proof-in"><p><span className="xgr-proof-big">1700+</span><span className="x-mono">repositories · 38 organizations</span></p><A to="/open-source" className="xgr-link">Explore Repositories</A></div>
       </section>
     </main>
   );
