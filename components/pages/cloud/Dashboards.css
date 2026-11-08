@@ -2,22 +2,22 @@
    ink #0a0a0a, greys #525252 / #737373, whites and silvers; the one graphite room is the close. The marker that used to
    be yellow is silver #e5e5e5 (fills and marks only; text stays ink). Sizes 12 13 14 16 17 21 26 44 52; weights 220 /
    400 / 497 / 606. Outline or fill, never both; no shadows. Entrance and pinned states apply only under .js. */
-.db { --db-m: #e5e5e5; --db-f: #f5f5f5; }
+.db { --db-m: light-dark(#e5e5e5, var(--secondary)); --db-f: light-dark(#f5f5f5, var(--muted)); }
 
 /* ---------- charts (shared by the hero, the board and the monitor) ---------- */
 .db-ch { position: relative; width: 100%; height: 100%; min-height: 0; }
 .db-ch-line svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.db-ch .g { stroke: #ededed; stroke-width: 1; }
+.db-ch .g { stroke: light-dark(#ededed, var(--secondary)); stroke-width: 1; }
 .db-ch .area { fill: var(--db-f); }
 .db-ch .ln { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 1; }
 .db-ch .zone { fill: var(--db-f); }
 .db-ch .th { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 6 6; }
-.db-ch .pt { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: #fff; border: 2px solid var(--ink); transition: background-color .15s var(--e-out), transform .3s var(--e-move); }
+.db-ch .pt { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--x-raised); border: 2px solid var(--ink); transition: background-color .15s var(--e-out), transform .3s var(--e-move); }
 /* over the line is told by shape: the point fills and grows */
 .db-ch .pt.hot { background: var(--ink); transform: scale(1.3); }
 .db-ch-bars { display: flex; align-items: flex-end; gap: clamp(6px, .9vw, 12px); }
 .db-ch-bars span { position: relative; flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
-.db-ch-bars i { display: block; height: calc(var(--db-h) * 100%); border-radius: 8px 8px 4px 4px; background: #d4d4d4; transform-origin: 50% 100%; }
+.db-ch-bars i { display: block; height: calc(var(--db-h) * 100%); border-radius: 8px 8px 4px 4px; background: light-dark(#d4d4d4, var(--secondary-hover)); transform-origin: 50% 100%; }
 .db-ch-bars.score i { background: var(--ink); }
 .db-ch-bars.score span:nth-child(4) i { background: repeating-linear-gradient(135deg, var(--ink) 0 2px, transparent 2px 7px); }
 .db-ch-bars em { margin-top: 8px; text-align: center; font: 497 13px/1 var(--mono); font-style: normal; color: var(--faint); }
@@ -29,17 +29,17 @@
 
 /* ---------- hero: the saved query and its widget ---------- */
 .db-hero { width: 100%; aspect-ratio: 16 / 7; display: flex; flex-direction: column; }
-.db-hero-bar { display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 8px clamp(24px, 4vw, 64px); border-bottom: 1px solid var(--line); background: #fafafa; }
-.db-hero-bar > i { width: 10px; height: 10px; border-radius: 50%; background: #e5e5e5; }
+.db-hero-bar { display: flex; align-items: center; gap: 8px; min-height: 60px; padding: 8px clamp(24px, 4vw, 64px); border-bottom: 1px solid var(--line); background: var(--x-sunk); }
+.db-hero-bar > i { width: 10px; height: 10px; border-radius: 50%; background: light-dark(#e5e5e5, var(--secondary)); }
 .db-hero-t { margin-left: 12px; font: 497 16px/1 var(--sans); color: var(--ink); }
-.db-tabs { margin-left: auto; display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: #ededed; }
-.db-tabs button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: #525252; font: 497 14px/1 var(--mono); cursor: pointer; transition: background-color .15s var(--e-out), color .15s var(--e-out), transform .15s var(--e-out); }
+.db-tabs { margin-left: auto; display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: light-dark(#ededed, var(--secondary)); }
+.db-tabs button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: light-dark(#525252, var(--muted-foreground)); font: 497 14px/1 var(--mono); cursor: pointer; transition: background-color .15s var(--e-out), color .15s var(--e-out), transform .15s var(--e-out); }
 @media (hover: hover) { .db-tabs button:hover { color: var(--ink); } }
 .db-tabs button:active { transform: scale(.97); transition-duration: 90ms; }
-.db-tabs button[aria-selected='true'] { background: #fff; color: var(--ink); }
+.db-tabs button[aria-selected='true'] { background: var(--x-raised); color: var(--ink); }
 .db-hero-b { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); }
-.db-q { display: flex; flex-direction: column; gap: 17px; padding: clamp(27px, 3.4vw, 44px) clamp(24px, 3vw, 44px) clamp(27px, 3.4vw, 44px) clamp(24px, 4vw, 64px); border-right: 1px solid var(--line); background: #fafafa; }
-.db-q pre { margin: 0; font: 497 17px/1.8 var(--mono); color: #525252; white-space: pre; }
+.db-q { display: flex; flex-direction: column; gap: 17px; padding: clamp(27px, 3.4vw, 44px) clamp(24px, 3vw, 44px) clamp(27px, 3.4vw, 44px) clamp(24px, 4vw, 64px); border-right: 1px solid var(--line); background: var(--x-sunk); }
+.db-q pre { margin: 0; font: 497 17px/1.8 var(--mono); color: light-dark(#525252, var(--muted-foreground)); white-space: pre; }
 .db-l { display: block; width: max-content; max-width: 100%; }
 /* the query types itself: each line wipes in by character steps */
 .js .db-l { animation: db-type .4s steps(16, end) both; animation-delay: calc(.2s + var(--db-i) * .3s); }
@@ -50,7 +50,7 @@
 .db-w { display: flex; flex-direction: column; gap: 17px; padding: clamp(27px, 3.4vw, 44px) clamp(27px, 4.4vw, 72px) clamp(24px, 3vw, 44px) clamp(27px, 4vw, 64px); min-width: 0; }
 .db-w-h { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 17px; color: var(--soft); }
 .db-w-h b { color: var(--ink); font-weight: 497; }
-.db-w-h span, .db-ph span { margin-left: auto; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--line); font: 497 13px/1 var(--mono); color: #525252; white-space: nowrap; }
+.db-w-h span, .db-ph span { margin-left: auto; padding: 6px 10px; border-radius: 999px; border: 1px solid var(--line); font: 497 13px/1 var(--mono); color: light-dark(#525252, var(--muted-foreground)); white-space: nowrap; }
 .db-w-h span.on, .db-ph span.on { background: var(--db-m); border-color: transparent; color: var(--ink); }
 .db-w-c { flex: 1; }
 
@@ -69,8 +69,8 @@
 .db-d { margin: 0; font-size: 16px; line-height: 1.6; color: var(--soft); max-width: 40ch; text-wrap: pretty; }
 .db-rail { display: none; }
 .db-board { grid-column: 5 / -1; position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(0, 1fr)); gap: 12px; height: min(72svh, 680px); }
-.db-slot { border-radius: 16px; border: 1.5px dashed rgba(0, 0, 0, .1); }
-.db-panel { position: relative; display: flex; flex-direction: column; gap: 12px; min-width: 0; min-height: 0; padding: clamp(14px, 1.4vw, 20px); border-radius: 16px; background: #fff; border: 1px solid var(--line); outline: 2px solid transparent; outline-offset: -1px; transform-origin: 50% 50%; transition: outline-color .3s var(--e-out); }
+.db-slot { border-radius: 16px; border: 1.5px dashed light-dark(rgba(0, 0, 0, .1), var(--border)); }
+.db-panel { position: relative; display: flex; flex-direction: column; gap: 12px; min-width: 0; min-height: 0; padding: clamp(14px, 1.4vw, 20px); border-radius: 16px; background: var(--x-raised); border: 1px solid var(--line); outline: 2px solid transparent; outline-offset: -1px; transform-origin: 50% 50%; transition: outline-color .3s var(--e-out); }
 .db-panel[data-on] { outline-color: var(--ink); z-index: 2; }
 .db-ph { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--soft); min-width: 0; }
 .db-ph b { color: var(--ink); font-weight: 497; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -82,11 +82,11 @@
 .db-store li:nth-child(3) i { background: transparent; border: 2px solid var(--ink); }
 .db-tbl { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 .db-tbl-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.db-tbl-chips span { padding: 6px 10px; border-radius: 999px; background: var(--db-f); font: 497 13px/1 var(--mono); color: #525252; }
-.db-tbl-chips span:first-child { background: var(--ink); color: #fff; }
+.db-tbl-chips span { padding: 6px 10px; border-radius: 999px; background: var(--db-f); font: 497 13px/1 var(--mono); color: light-dark(#525252, var(--muted-foreground)); }
+.db-tbl-chips span:first-child { background: var(--ink); color: var(--x-on-ink); }
 .db-tbl p { margin: 0; display: grid; grid-template-columns: 2fr 1fr 1.4fr 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
-.db-tbl p:first-of-type i { background: #d4d4d4; }
-.db-tbl i { display: block; height: 8px; border-radius: 4px; background: #ededed; }
+.db-tbl p:first-of-type i { background: light-dark(#d4d4d4, var(--secondary-hover)); }
+.db-tbl i { display: block; height: 8px; border-radius: 4px; background: light-dark(#ededed, var(--secondary)); }
 .db-perm { list-style: none; margin: 0; padding: 0; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
 .db-perm li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 2px; border-bottom: 1px solid var(--line); font: 497 14px/1 var(--mono); color: var(--ink); }
 .db-perm li:last-child { border-bottom: 0; }
@@ -120,36 +120,36 @@
 .db-watch-g { align-items: center; row-gap: 44px; }
 .db-watch-t { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 17px; }
 .db-watch-t .kn-body { max-width: 46ch; }
-.db-kind { display: inline-flex; align-self: flex-start; gap: 2px; margin-top: 10px; padding: 4px; border-radius: 999px; background: #ededed; }
-.db-kind button { min-height: 44px; padding: 0 21px; border: 0; border-radius: 999px; background: transparent; color: #525252; font: 497 16px/1 var(--mono); cursor: pointer; transition: background-color .15s var(--e-out), color .15s var(--e-out), transform .15s var(--e-out); }
+.db-kind { display: inline-flex; align-self: flex-start; gap: 2px; margin-top: 10px; padding: 4px; border-radius: 999px; background: light-dark(#ededed, var(--secondary)); }
+.db-kind button { min-height: 44px; padding: 0 21px; border: 0; border-radius: 999px; background: transparent; color: light-dark(#525252, var(--muted-foreground)); font: 497 16px/1 var(--mono); cursor: pointer; transition: background-color .15s var(--e-out), color .15s var(--e-out), transform .15s var(--e-out); }
 @media (hover: hover) { .db-kind button:hover { color: var(--ink); } }
 .db-kind button:active { transform: scale(.97); transition-duration: 90ms; }
-.db-kind button[aria-checked='true'] { background: #fff; color: var(--ink); }
+.db-kind button[aria-checked='true'] { background: var(--x-raised); color: var(--ink); }
 .db-watch-o { grid-column: 7 / -1; display: flex; flex-direction: column; }
 .db-watch-top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: start; padding: clamp(21px, 2.6vw, 32px); border-bottom: 1px solid var(--line); }
-.db-watch-top pre { margin: 0; font: 497 14px/1.7 var(--mono); color: #525252; }
+.db-watch-top pre { margin: 0; font: 497 14px/1.7 var(--mono); color: light-dark(#525252, var(--muted-foreground)); }
 .db-watch-top pre em { display: inline-block; font-style: normal; padding: 0 8px; border-radius: 6px; background: var(--db-m); color: var(--ink); animation: db-type .3s steps(8, end) both; }
 .db-watch-top pre b { color: var(--ink); font-weight: 606; }
 .db-plot { position: relative; height: clamp(240px, 24vw, 340px); margin: clamp(21px, 2.6vw, 32px); touch-action: pan-y; }
 .db-plot.mon { cursor: ns-resize; }
 /* the alert line's knob, on the line at the chart's edge (the real control is the slider below) */
-.db-handle { position: absolute; right: -10px; width: 24px; height: 24px; margin-top: -12px; border-radius: 50%; background: #fff; border: 2px solid var(--ink); pointer-events: none; display: grid; place-items: center; }
+.db-handle { position: absolute; right: -10px; width: 24px; height: 24px; margin-top: -12px; border-radius: 50%; background: var(--x-raised); border: 2px solid var(--ink); pointer-events: none; display: grid; place-items: center; }
 .db-handle i { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
 .db-watch-foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 12px clamp(21px, 2.6vw, 32px); border-top: 1px solid var(--line); }
-.db-th { display: flex; align-items: center; gap: 14px; min-height: 44px; font: 497 14px/1 var(--mono); color: #525252; }
+.db-th { display: flex; align-items: center; gap: 14px; min-height: 44px; font: 497 14px/1 var(--mono); color: light-dark(#525252, var(--muted-foreground)); }
 .db-th.off { color: var(--faint); }
 /* the slider, drawn on the deck (no browser-default control) */
 .db-th input { -webkit-appearance: none; appearance: none; width: clamp(140px, 16vw, 220px); height: 44px; margin: 0; background: transparent; cursor: pointer; }
 .db-th input:disabled { cursor: not-allowed; }
-.db-th input::-webkit-slider-runnable-track { height: 2px; border-radius: 1px; background: #d4d4d4; }
-.db-th input::-moz-range-track { height: 2px; border-radius: 1px; background: #d4d4d4; }
+.db-th input::-webkit-slider-runnable-track { height: 2px; border-radius: 1px; background: light-dark(#d4d4d4, var(--secondary-hover)); }
+.db-th input::-moz-range-track { height: 2px; border-radius: 1px; background: light-dark(#d4d4d4, var(--secondary-hover)); }
 .db-th input::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -9px; border-radius: 50%; background: var(--ink); border: 0; transition: transform .15s var(--e-out); }
 .db-th input::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--ink); border: 0; }
 .db-th input:active::-webkit-slider-thumb { transform: scale(.97); }
-.db-th input:disabled::-webkit-slider-thumb { background: #d4d4d4; }
-.db-th input:disabled::-moz-range-thumb { background: #d4d4d4; }
+.db-th input:disabled::-webkit-slider-thumb { background: light-dark(#d4d4d4, var(--secondary-hover)); }
+.db-th input:disabled::-moz-range-thumb { background: light-dark(#d4d4d4, var(--secondary-hover)); }
 .db-th input:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 2px; border-radius: 8px; }
-.db-hot { margin: 0; display: inline-flex; align-items: center; gap: 8px; font: 497 14px/1 var(--mono); color: #525252; }
+.db-hot { margin: 0; display: inline-flex; align-items: center; gap: 8px; font: 497 14px/1 var(--mono); color: light-dark(#525252, var(--muted-foreground)); }
 .db-hot i { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--ink); transition: background-color .15s var(--e-out); }
 .db-hot i.on { background: var(--ink); }
 
@@ -166,11 +166,11 @@
 .db-figs-d { font-size: 16px; color: var(--soft); }
 
 /* ---------- start from a trace (quiet room #f5f5f5: text #525252 or darker) ---------- */
-.db-start { background: #f5f5f5; --faint: #525252; --quiet: #525252; }
+.db-start { background: light-dark(#f5f5f5, var(--muted)); --faint: light-dark(#525252, var(--muted-foreground)); --quiet: light-dark(#525252, var(--muted-foreground)); }
 .db-start-g { align-items: center; row-gap: 44px; }
 .db-start-t { grid-column: 1 / span 5; display: flex; flex-direction: column; gap: 27px; }
 .db-start-o { grid-column: 7 / -1; display: flex; flex-direction: column; gap: 12px; }
-.db-note { margin: 0; font-size: 13px; color: #525252; }
+.db-note { margin: 0; font-size: 13px; color: light-dark(#525252, var(--muted-foreground)); }
 
 /* ---------- close (graphite room) ---------- */
 .db-rel { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
@@ -250,12 +250,12 @@
 @keyframes db-gather { from { opacity: 0; transform: translate(var(--db-gx), var(--db-gy)) rotate(var(--db-gr)) scale(.8); } 30% { opacity: 1; } to { opacity: 1; transform: none; } }
 /* 5 cursor-lens (MqEntrances' Lens; its look here, on the light console) */
 .db .mq-lens-box { position: relative; min-width: 0; }
-.db .mq-lens { position: absolute; left: 0; top: 0; width: 176px; height: 176px; margin: -88px 0 0 -88px; border-radius: 50%; overflow: hidden; pointer-events: none; background: #fff; transform: translate(var(--x, 0px), var(--y, 0px)); opacity: 0; transition: opacity .3s cubic-bezier(0, 0, .2, 1); z-index: 2; box-shadow: 0 0 0 1px var(--ink); }
+.db .mq-lens { position: absolute; left: 0; top: 0; width: 176px; height: 176px; margin: -88px 0 0 -88px; border-radius: 50%; overflow: hidden; pointer-events: none; background: var(--x-raised); transform: translate(var(--x, 0px), var(--y, 0px)); opacity: 0; transition: opacity .3s cubic-bezier(0, 0, .2, 1); z-index: 2; box-shadow: 0 0 0 1px var(--ink); }
 .db .mq-lens[data-on='1'] { opacity: 1; }
 .db .mq-lens-copy { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: translate(calc(88px - var(--x, 0px) * 1.6), calc(88px - var(--y, 0px) * 1.6)) scale(1.6); }
 
 /* ---------- phones: one sticky board, the parts scroll under it ---------- */
-.db-mob-board { position: sticky; top: 60px; z-index: 2; height: 44svh; gap: 6px; padding: 10px 0; background: #fff; }
+.db-mob-board { position: sticky; top: 60px; z-index: 2; height: 44svh; gap: 6px; padding: 10px 0; background: var(--bg); }
 .db-mob-p { padding: 8px; gap: 6px; border-radius: 12px; overflow: hidden; transition: opacity .4s var(--e-in), transform .5s var(--e-in), outline-color .3s var(--e-out); }
 .js .db-mob-p:not([data-in]) { opacity: 0; transform: translateY(16px) scale(.92); }
 .db-mob-p .db-ph span, .db-mob-p .db-tbl-chips, .db-mob-p .db-ch-bars em { display: none; }
@@ -279,4 +279,25 @@
   .db-mob-p { opacity: 1 !important; transform: none !important; transition: none; }
   .db-l, .db-ch .ln, .db-ch-bars i, .db-watch-top pre em { animation: none !important; }
   .db-say-a, .db-say-a[data-on], .db-li-p, .db-figs b i, .db-panel, .db-ch .pt { transition: none !important; }
+}
+
+/* ---------- dark mode (8 Nov, docs/DARK-MODE.md): the Keynote deck pins its tokens light on .kn, so this page points
+   them at Hanzo's dark tokens; every light value above is unchanged ---------- */
+html:not(.light) .db { --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); --body: var(--muted-foreground); --quiet: var(--text-tertiary); --hair: var(--border); background: var(--background); }
+/* the shared example console (ExampleConsole.css is drawn light only): its dark, page-locally */
+html:not(.light) .db .exc { border-color: var(--border); background: var(--card); color: var(--foreground); }
+html:not(.light) .db :is(.exc-bar, .exc-side, .exc-cap p, .exc-foot) { border-color: var(--border); }
+html:not(.light) .db .exc-bar > i { background: var(--secondary); }
+html:not(.light) .db :is(.exc-title, .exc-nav, .exc-st, .exc-cap p) { color: var(--muted-foreground); }
+html:not(.light) .db :is(.exc-nav[aria-current], .exc-name, .exc-foot b, .exc-open) { color: var(--foreground); }
+html:not(.light) .db .exc-nav[aria-current]::before, html:not(.light) .db .exc-dot { background: var(--foreground); }
+html:not(.light) .db .exc-dot.b { background: transparent; border-color: var(--foreground); border-right-color: transparent; }
+html:not(.light) .db .exc-rows li[aria-selected='true'] { background: var(--muted); }
+html:not(.light) .db .exc-foot { color: var(--text-tertiary); }
+html:not(.light) .db .exc-open { border-color: var(--border); }
+@media (hover: hover) {
+  html:not(.light) .db .exc-title:hover, html:not(.light) .db .exc-nav:hover { color: var(--foreground); }
+  html:not(.light) .db .exc-nav:hover, html:not(.light) .db .exc-rows li[aria-selected='true']:hover { background: var(--muted); }
+  html:not(.light) .db .exc-rows li:hover { background: var(--surface-card-quiet); }
+  html:not(.light) .db .exc-open:hover { background: var(--primary); color: var(--primary-foreground); }
 }
