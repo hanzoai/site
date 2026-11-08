@@ -3,8 +3,8 @@
 // them: the same api.hanzo.ai endpoints (lib/liveSources.mjs), worked out the same way (figures.js). Until the read
 // lands, and whenever it fails, the build's snapshot stands (content/live, refreshed by scripts/live.mjs before every
 // build), so the first paint and a failed read show the same figures.
-// api.hanzo.ai answers browsers only on https://hanzo.ai (its CORS allow-origin), so elsewhere (a preview, localhost)
-// the page keeps the snapshot rather than log a refused request. localStorage 'hz-live' = '1' forces the read for testing.
+// The three endpoints answer any origin (access-control-allow-origin: *), so the read runs wherever the page is served:
+// hanzo.ai, a preview or localhost.
 import { useEffect, useState } from 'react';
 import { SNAPSHOT, figuresOf } from './figures';
 import { readResearch, readModels } from '../../lib/liveSources.mjs';
@@ -15,13 +15,7 @@ const get = async (url) => {
   if (!r.ok) throw new Error(`${r.status} from ${url}`);
   return r.json();
 };
-const allowed = () => {
-  try { if (localStorage.getItem('hz-live') === '1') return true; } catch {}
-  return location.origin === 'https://hanzo.ai';
-};
-const read = () => (once ??= allowed()
-  ? Promise.all([readResearch(get), readModels(get)]).then(([R, M]) => figuresOf(R, M))
-  : Promise.reject(new Error('api.hanzo.ai answers hanzo.ai only')));
+const read = () => (once ??= Promise.all([readResearch(get), readModels(get)]).then(([R, M]) => figuresOf(R, M)));
 
 export default function useFigures() {
   const [f, setF] = useState(SNAPSHOT);
