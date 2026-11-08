@@ -409,3 +409,6 @@
 /* close the white gap between "Paste and ship / Get Design" and the capabilities */
 .dz-start { padding-bottom: clamp(32px, 3vw, 44px); }
 .dz-caps { padding-top: clamp(56px, 5vw, 72px); }
+
+/* dark: the shared Band's solid ask reads as Hanzo's primary (the shared rule paints it black on #171717) */
+html:not(.light) .dz .x-band .x-btn.solid { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
