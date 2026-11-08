@@ -438,6 +438,11 @@ button.xcf-note.on { background: var(--k-ink); border-color: var(--k-ink); color
   .xro-head .xro-x { grid-column: 3; grid-row: 1 / 3; }
   .xro-l { font-size: 19px; }
   .xro-body, .xro-boot { grid-template-columns: 1fr; padding: 17px; }
+  /* the opened row's address stays one line (it never splits mid-word); a long path trails off */
+  .xro-bar .xcf-host { min-width: 0; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; overflow-wrap: normal; }
+  .xro-bar .xcf-host > span { display: inline; }
+  /* the Google Cloud room: its words sit inside the black card, not on its edge */
+  .xcf-gc-g { padding-inline: 20px; }
   .xro-bar { padding: 10px 16px; }
   .xro-name { font-size: 32px; }
   .xro-tl { font-size: 14px; }

@@ -308,8 +308,10 @@ function Finder({ pairs, here, e }) {
   }, [q, pairs, here]);
   const SHOWN = 6; // with no query: this page's pair and five more; every row stays in the HTML, the rest hidden
   useEffect(() => {
-    if (calm || !seen || q || held || lit >= Math.min(SHOWN, list.length) - 1) return;
-    const id = setTimeout(() => setLit((i) => i + 1), 800);
+    if (calm || !seen || q || held) return;
+    // the light walks the pairs while the room is in view, rests a breath on the last, then starts again from the top
+    const end = lit >= Math.min(SHOWN, list.length) - 1;
+    const id = setTimeout(() => setLit((i) => (end ? 0 : i + 1)), end ? 2400 : 1100);
     return () => clearTimeout(id);
   }, [calm, seen, q, held, list.length, lit]);
   if (!pairs.length) return null;
