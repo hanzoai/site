@@ -14,6 +14,7 @@ import Cheaper from '../Cheaper';
 import Pareto from '../Pareto';
 import Open from '../Open';
 import Pricing from '../home/Pricing';
+import { Figures } from '../home/useFigures';
 import { A } from '../kit';
 import C from '../../content';
 import './Home.css';
@@ -41,8 +42,9 @@ function Spine() {
   );
 }
 
-export default function Home() {
+export default function Home({ figures }) {
   return (
+    <Figures.Provider value={figures}>
     <main>
       <A to="/beta" className="x-ann">
         <span>Apply for Beta Access or Start Free</span>
@@ -60,5 +62,6 @@ export default function Home() {
       <Marquee items={C.trusted} label="Trusted by" reverse />
       <Spine />
     </main>
+    </Figures.Provider>
   );
 }
