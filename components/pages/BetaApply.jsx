@@ -214,7 +214,7 @@ function Apply({ program }) {
   useEffect(() => {
     const on = (e) => {
       if (gate || e.defaultPrevented) return;
-      const typing = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
+      const inField = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
       if (e.key === 'Escape') { e.preventDefault(); back(); return; }
       if (e.key === 'Enter') {
         if (ask?.kind === 'long' && e.shiftKey) return; // a new line
@@ -224,7 +224,7 @@ function Apply({ program }) {
         if (has || (last && enough)) next();
         return;
       }
-      if (ask?.options && !typing && e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      if (ask?.options && !inField && e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
         const i = KEYS.indexOf(e.key.toUpperCase());
         if (i >= 0 && i < ask.options.length) { e.preventDefault(); pick(ask, ask.options[i]); }
       }
