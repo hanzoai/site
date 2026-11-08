@@ -397,7 +397,13 @@ function Caps() {
 
 const PLACES = ['Hanzo Cloud', 'a laptop', 'a box', 'a cluster'];
 const SIDE = [['Base', '/base'], ['Datastore', '/datastore'], ['Object Storage', '/s3'], ['Memory', '/cloud/memory']];
-const PROJ = [['gateway', 'Ready'], ['payments-api', 'Ready'], ['checkout-web', 'Building'], ['docs-site', 'Ready']];
+// hanzo.ai's example project, each service with its own note (live /base, 8 Nov), word for word
+const PROJ = [
+  ['gateway', 'Ready', 'Every request enters here, so the limiter does too.'],
+  ['payments-api', 'Ready', 'The service the session above is changing.'],
+  ['checkout-web', 'Building', 'A build is running from the last commit on main.'],
+  ['docs-site', 'Ready', 'Static, published by the same pipeline as the rest.'],
+];
 
 /* Run the binary's object: the same Base in four places. Pick (or hover) a place and its row answers the same records
    path, with the collection you named carried down; the example project's apps read it. */
@@ -406,6 +412,7 @@ function Deploy({ coll }) {
   const [on, setOn] = useState(0);
   const [hand, setHand] = useState(false);
   const [built, setBuilt] = useState(false);
+  const [pj, setPj] = useState('payments-api'); // the service whose note shows under the list; point at or tap another
   // idle: while seen and untouched, the request moves to the next place every 2.8 s; a touch hands it to the visitor
   useEffect(() => {
     if (!live || hand) return;
@@ -450,10 +457,18 @@ function Deploy({ coll }) {
       <ul className="bs-dep-proj" aria-label="Example project">
         {PROJ.map(([n, st]) => {
           const s = n === 'checkout-web' && built ? 'Ready' : st;
-          return <li key={n}><i className={s === 'Building' ? 'b' : ''} aria-hidden="true" /><span>{n}</span><em>{s}</em></li>;
+          return (
+            <li key={n} className={pj === n ? 'on' : undefined}>
+              <button type="button" aria-pressed={pj === n} aria-describedby="bs-dep-note" onClick={() => setPj(n)} onPointerEnter={(e) => e.pointerType === 'mouse' && setPj(n)} onFocus={() => setPj(n)}>
+                <i className={s === 'Building' ? 'b' : ''} aria-hidden="true" /><span>{n}</span><em>{s}</em>
+              </button>
+            </li>
+          );
         })}
       </ul>
-      <p className="bs-dep-cap">The service the session above is changing.</p>
+      <div className="bs-dep-cap" id="bs-dep-note" aria-live="polite">
+        {PROJ.map(([n, , note]) => <p key={n} hidden={pj !== n}>{note}</p>)}
+      </div>
       <div className="bs-dep-foot">
         <span>api.hanzo.ai<b>/v1/base</b></span>
         <A to="https://hanzo.team/" className="bs-dep-open">Open in the console ↗</A>
