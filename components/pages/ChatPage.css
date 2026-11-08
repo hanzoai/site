@@ -464,3 +464,62 @@
 
 /* live writes each answer as two paragraphs */
 .cht-text + .cht-text { margin-top: 8px; }
+
+/* ---------- dark (docs/DARK-MODE.md): the page, the window, its rail and the tool cards follow Hanzo's dark tokens.
+   The six small scenes stay dark windows in both modes (their insides untouched), as do the Enso card and the Band.
+   Light is untouched: every rule below is scoped to html:not(.light). ---------- */
+html:not(.light) .cht { --ink: var(--foreground); --mute: var(--muted-foreground); --raise: var(--muted); --hair: var(--border); }
+html:not(.light) .cht .v2a-display, html:not(.light) .cht .v2a-head { color: var(--foreground); }
+html:not(.light) .cht .v2a-lede { color: var(--muted-foreground); }
+html:not(.light) .cht .v2a-line.soft { color: var(--text-tertiary); }
+html:not(.light) .cht .v2a-demo-ctl:not(.dark) { background: var(--x-raised); color: var(--foreground); }
+html:not(.light) .cht .x-arrow { color: var(--ink); text-decoration-color: var(--white-30); }
+html:not(.light) .cht .x-band .x-arrow { color: #fafafa; text-decoration-color: rgba(255, 255, 255, .4); }
+html:not(.light) .cht-lede { color: var(--text-secondary); }
+/* the window */
+html:not(.light) .cht-win { background: var(--x-raised); border-color: var(--border); }
+html:not(.light) .cht-bar { background: var(--x-sunk); }
+html:not(.light) .cht-dots3 i { background: var(--border-strong); }
+html:not(.light) .cht-side-t, html:not(.light) .cht-find, html:not(.light) .cht-recents button, html:not(.light) .cht-lanes li, html:not(.light) .cht-peek { color: var(--text-secondary); }
+html:not(.light) .cht-side-t[aria-expanded='true'], html:not(.light) .cht-recents button.on { background: var(--secondary); color: var(--ink); }
+html:not(.light) .cht-side { background: var(--x-sunk); }
+html:not(.light) .cht-new { background: var(--x-raised); }
+html:not(.light) .cht-find-in { border-color: var(--border-control); background: var(--x-raised); }
+@media (min-width: 901px) {
+  html:not(.light) .cht-side-t:hover, html:not(.light) .cht-find:hover, html:not(.light) .cht-recents button:hover, html:not(.light) .cht-ctl:hover { background: var(--secondary); color: var(--ink); }
+  html:not(.light) .cht-new:hover { box-shadow: 0 2px 6px rgba(0, 0, 0, .08), 0 0 0 1px var(--border-strong); }
+}
+html:not(.light) .cht-q { color: var(--x-on-ink); }
+html:not(.light) .cht-listen:not(.dark) { background: var(--x-raised); color: var(--text-secondary); }
+html:not(.light) .cht-listen.on:not(.dark) { color: var(--ink); }
+@media (min-width: 901px) { html:not(.light) .cht-listen:not(.dark):hover { color: var(--ink); border-color: var(--border-strong); } }
+html:not(.light) .cht-composer { background: var(--x-raised); border-color: var(--border-control); }
+html:not(.light) .cht-composer:focus-within { border-color: var(--ink); box-shadow: 0 0 0 4px var(--glass), 0 12px 30px -18px rgba(0, 0, 0, .3); }
+html:not(.light) .cht-send { color: var(--x-on-ink); }
+@media (min-width: 901px) { html:not(.light) .cht-send:hover { background: var(--primary-hover); } }
+html:not(.light) .cht-send.busy::after { border-color: var(--border-control); border-top-color: var(--x-on-ink); }
+/* the router rail */
+html:not(.light) .cht-rail { background: var(--x-sunk); }
+html:not(.light) .cht-hub { background: var(--x-raised); }
+html:not(.light) .cht-lanes::before, html:not(.light) .cht-lanes li::before { background: var(--border); }
+html:not(.light) .cht-lanes li.lit::before { background: var(--ink); }
+html:not(.light) .cht-lanes li.peek:not(.lit) { background: var(--glass); color: var(--ink); }
+html:not(.light) .cht-lanes li.scan { color: var(--ink); }
+html:not(.light) .cht-lane-bg { background: var(--x-raised); box-shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 0 0 1px var(--border-control); }
+html:not(.light) .cht-lanes li.lit .cht-lane-bg { background: var(--ink); }
+html:not(.light) .cht-lanes li.lit { color: var(--x-on-ink); }
+html:not(.light) .cht-lanes li.lit .cht-tag { color: var(--neutral-600); }
+html:not(.light) .cht-lanes li.lit .cht-live { background: var(--x-on-ink); box-shadow: 0 0 0 3px var(--border-control); }
+html:not(.light) .cht-peek a, html:not(.light) .cht-who-go { text-decoration-color: var(--white-22); }
+/* who answers */
+html:not(.light) .cht-row { background: var(--x-raised); }
+html:not(.light) .cht-roster li.on .cht-row { background: var(--secondary); }
+html:not(.light) .cht-roster li.on .cht-row-t, html:not(.light) .cht-who-d { color: var(--text-secondary); }
+@media (min-width: 901px) { html:not(.light) .cht-roster li:not(.on) .cht-row:hover { border-color: var(--border-strong); } }
+@media (max-width: 900px) { html:not(.light) .cht-recents button { background: var(--x-raised); } html:not(.light) .cht-recents button.on { background: var(--secondary); } }
+/* the six tools: Hanzo's dark cards (a hairline, as on hanzo.ai/chat), each scene's window recessed into its card */
+html:not(.light) .cht-tool { background: var(--muted); box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .cht-tool-art { background: var(--background); box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .cht-tool-i { background: var(--secondary); }
+html:not(.light) .cht-tool-d { color: var(--muted-foreground); }
+@media (hover: hover) { html:not(.light) .cht-tool:hover { background: var(--secondary); } }
