@@ -644,7 +644,9 @@ function Halftone() {
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
       g.clearRect(0, 0, r.width, r.height);
       const small = r.width < 600;
-      g.fillStyle = small ? 'rgba(10, 10, 10, 0.2)' : 'rgba(10, 10, 10, 0.28)';
+      // the dots are the page's ink (.xpr-dots { color: var(--ink) }): dark dots on white, light dots on Hanzo's dark
+      const m = getComputedStyle(c).color.match(/[\d.]+/g) || [10, 10, 10];
+      g.fillStyle = `rgba(${m[0]}, ${m[1]}, ${m[2]}, ${small ? 0.2 : 0.28})`;
       const step = r.width < 600 ? 7 : 8, cx = r.width * 0.5, cy = r.height * 0.34;
       for (let y = step / 2; y < r.height; y += step) {
         for (let x = step / 2; x < r.width; x += step) {
@@ -661,7 +663,10 @@ function Halftone() {
     draw();
     const ro = new ResizeObserver(draw);
     ro.observe(c);
-    return () => ro.disconnect();
+    // redraw when the theme changes (Hanzo's appearance sets light / dark on <html>)
+    const mo = new MutationObserver(draw);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => { ro.disconnect(); mo.disconnect(); };
   }, []);
   return <canvas ref={ref} className="xpr-dots" aria-hidden="true" />;
 }
