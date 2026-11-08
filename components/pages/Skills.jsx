@@ -196,7 +196,7 @@ const CROSS = ['Cross-referenced, not duplicated', ['Skills link to the skills n
    the highlight is drawn over the words with the CSS Custom Highlight API instead of wrapping them in elements.
    It sweeps in left to right once the line is in view; browsers without the API show the words plain. */
 // the build's CSS parser does not know ::highlight() yet, so its three rules are added at runtime, once
-const HL_CSS = '::highlight(xsk-hl){background-color:#e4e4e7;color:#0a0a0a}::highlight(xsk-hl-d){background-color:#404040;color:#fafafa}::highlight(xsk-code){background-color:#f5f5f5;color:#0a0a0a}';
+const HL_CSS = '::highlight(xsk-hl){background-color:light-dark(#e4e4e7, var(--border-strong));color:light-dark(#0a0a0a, var(--primary))}::highlight(xsk-hl-d){background-color:#404040;color:#fafafa}::highlight(xsk-code){background-color:light-dark(#f5f5f5, var(--secondary));color:light-dark(#0a0a0a, var(--foreground))}';
 const reg = (name) => { if (typeof CSS === 'undefined' || !CSS.highlights || typeof Highlight === 'undefined') return null; if (!document.getElementById('xsk-hl-css')) { const st = document.createElement('style'); st.id = 'xsk-hl-css'; st.textContent = HL_CSS; document.head.appendChild(st); } let h = CSS.highlights.get(name); if (!h) { h = new Highlight(); CSS.highlights.set(name, h); } return h; };
 function useHl(ref, marks, name, sweep = true) {
   const seen = useInView(ref, { once: true, amount: 0.5, margin: '0px 0px -15% 0px' });
