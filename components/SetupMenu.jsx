@@ -81,7 +81,7 @@ export default function SetupMenu({ up = false, inline = false, ...rest }) {
           <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m10.5 10.5 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
           <input ref={inp} type="text" placeholder="Filter agents..." aria-label="Filter agents" value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" spellCheck={false} />
         </label>
-        <div className="x-menu-in">
+        <div className="x-menu-in" data-lenis-prevent>
           {SETUP.map((row, i) => {
             const [n, , url, d] = row;
             const href = setupHref(row);
