@@ -445,7 +445,6 @@
 
 /* 8 Nov (James: match hanzo.ai/chat): the six tools as Hanzo lays them out, one heading over a three-by-two grid of
    cards; each card keeps its small scene in a dark window above its words */
-.cht-tools { padding-block: clamp(96px, 10vw, 160px); }
 .cht-tools-h { text-align: center; margin: 0 auto clamp(36px, 4vw, 56px); max-width: 24ch; text-wrap: balance; }
 .cht-tools-g { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .cht-tool { display: flex; flex-direction: column; border-radius: 24px; background: #f5f5f5; overflow: hidden; outline: none; transition: transform .45s var(--emph), background-color .3s var(--emph); }
@@ -525,3 +524,110 @@ html:not(.light) .cht-tool-d { color: var(--muted-foreground); }
 @media (hover: hover) { html:not(.light) .cht-tool:hover { background: var(--secondary); } }
 /* the lit lane carries its own ink fill in dark (same colour as the sliding lane pill behind it) */
 html:not(.light) .cht-lanes li.lit { background: var(--ink); }
+
+/* ---------- 8 Nov, Zack's pages: the home page's bar (Frame.css: .zf, .zf-sec, .zf-head, .zf-room, .zf-lift) ----------
+   Every section reads in one frame at 1470 x 801; on a phone the heading and the first card show together.
+   Hero: halftone lit from the bottom left, a soft light behind the window, and the prompt as the way in.
+   Tools: the page's one dark room, a bento of the six scenes (two wide, four square) that opens like a curtain.
+   Who answers: the Enso card sized to the frame, lifted. Close: "Ask anything" as a real prompt over the three plans. */
+.zf .cht-hero { --hx: 0%; --hy: 100%; --lx: 74%; --ly: 45%; padding-block: clamp(20px, 3.5svh, 44px) clamp(56px, 9svh, 104px); overflow: hidden; }
+.cht-hero .cht-acts { margin-top: 18px; gap: 4px 26px; }
+.cht-prompt { display: flex; align-items: center; gap: 10px; max-width: 520px; margin-top: 30px; padding: 7px 7px 7px 9px; border-radius: 999px; background: var(--x-raised); border: 1px solid var(--line); box-shadow: var(--zf-shadow); transition: border-color .2s, box-shadow .35s var(--emph); }
+.cht-prompt:focus-within { border-color: var(--ink); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ink) 8%, transparent), var(--zf-shadow-hi); }
+.cht-prompt-o { flex: none; width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: #000; }
+.cht-prompt-o img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.cht-prompt input { flex: 1; min-width: 0; height: 44px; padding: 0 2px; border: 0; background: transparent; font: 400 16px/1 var(--sans); color: var(--ink); outline: none; }
+.cht-prompt input::placeholder { color: var(--soft); opacity: 1; }
+.cht-prompt .x-btn { flex: none; }
+.cht-prompt.busy .x-btn { transform: scale(.98); }
+.cht-prompt.big { max-width: 660px; margin: clamp(22px, 3.4svh, 34px) auto 0; padding: 8px 8px 8px 12px; }
+.cht-prompt.big .cht-prompt-o { width: 38px; height: 38px; }
+.cht-prompt.big input { height: 52px; font-size: 18px; }
+
+/* the dark room: six scenes as a bento, sized to the frame */
+.zf .cht-do { padding-block: clamp(56px, 8.5svh, 104px); }
+html .zf .cht-do-head h2 { max-width: 22ch; text-align: left; }
+html .zf .cht-do .cht-tools-g { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: calc((var(--fr) - 196px) / 2); gap: 12px; }
+html .zf .cht-do .cht-tool { position: relative; display: flex; flex-direction: column; min-width: 0; border-radius: 22px; background: #141416; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 40px 80px -50px #000; --dx: 100%; --dy: 0%; }
+html .zf .cht-do .cht-tool::before { opacity: .45; transition: opacity .5s var(--emph); }
+html .zf .cht-do .cht-tool.wide { grid-column: span 2; display: grid; grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr); --dx: 0%; --dy: 100%; }
+html .zf .cht-do .cht-tool-art { flex: 1; min-height: 0; aspect-ratio: auto; margin: 8px 8px 0; border-radius: 16px; background: #0b0b0c; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06); }
+html .zf .cht-do .cht-tool.wide .cht-tool-art { order: 2; margin: 8px; }
+html .zf .cht-do .cht-tool-scale { left: calc((100% - 560px * var(--k, .5)) / 2); top: calc((100% - 400px * var(--k, .5)) / 2); }
+html .zf .cht-do .cht-tool-b { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 6px 10px; padding: 14px 18px 16px; }
+html .zf .cht-do .cht-tool.wide .cht-tool-b { align-self: end; padding: 24px 6px 22px 24px; }
+html .zf .cht-do .cht-tool-i { width: 28px; height: 28px; border-radius: 8px; background: rgba(255, 255, 255, .09); color: #f5f5f7; }
+html .zf .cht-do .cht-tool-t { margin: 0; font-size: 16px; font-weight: 500; color: #f5f5f7; }
+html .zf .cht-do .cht-tool.wide .cht-tool-t { font-size: clamp(18px, 1.5vw, 22px); letter-spacing: -.02em; }
+html .zf .cht-do .cht-tool-d { grid-column: 1 / -1; margin: 0; font-size: 13.5px; line-height: 1.45; color: #a1a1a6; }
+html .zf .cht-do .cht-tool.wide .cht-tool-d { font-size: 15px; }
+@media (hover: hover) {
+  html .zf .cht-do .cht-tool:hover { background: #19191c; transform: translateY(-3px); }
+  html .zf .cht-do .cht-tool:hover::before { opacity: 1; }
+}
+html .zf .cht-do .x-arrow { color: #f5f5f7; text-decoration-color: rgba(255, 255, 255, .4); }
+
+/* who answers: the card sized to the frame, lifted; the heading carries the page's hairline */
+.zf .cht-who-sec { --hx: 100%; --hy: 100%; --lx: 22%; --ly: 50%; padding-block: clamp(56px, 8.5svh, 104px); }
+html .zf .cht-who-sec .cht-pic { width: min(100%, calc((var(--fr) - 20px) * .8)); box-shadow: 0 40px 80px -52px rgba(0, 0, 0, .55) !important; }
+html.dark .zf .cht-who-sec .cht-pic { box-shadow: 0 0 0 1px var(--border), 0 40px 80px -50px rgba(0, 0, 0, .9) !important; }
+.zf .cht-who-head { margin-bottom: clamp(22px, 3.2svh, 32px); }
+html .zf .cht-who-head h2 { max-width: 17ch; font-size: clamp(1.9rem, 2.9vw, 2.9rem); }
+
+/* the close: a lit stage, the prompt, the three plans (Pro inked and lifted) */
+.zf .cht-close { padding-block: clamp(64px, 10svh, 120px); overflow: hidden; }
+.cht-close::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, var(--zf-dot) 1px, transparent 1.5px) 0 0 / 12px 12px;
+  -webkit-mask-image: radial-gradient(55% 55% at 50% 22%, #000, transparent 72%); mask-image: radial-gradient(55% 55% at 50% 22%, #000, transparent 72%); }
+.cht-close::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(46% 50% at 50% 30%, color-mix(in srgb, var(--ink) 7%, transparent), transparent 70%); }
+html .zf .cht-close h2 { color: var(--ink); font-size: clamp(2.6rem, 5.4vw, 5rem); }
+.cht-plans { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 980px; margin: clamp(28px, 4.6svh, 48px) auto 0; padding: 0; text-align: left; }
+html .zf .cht-plan { display: flex; flex-direction: column; gap: 10px; padding: 20px 22px; border-radius: 22px; }
+.cht-plan-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.cht-plan-h b { font-size: 20px; font-weight: 600; letter-spacing: -.02em; color: var(--ink); }
+.cht-plan-p { font-size: 12.5px; color: var(--soft); white-space: nowrap; }
+.cht-plan-p strong { margin-right: 6px; font-size: 26px; font-weight: 600; letter-spacing: -.03em; color: var(--ink); }
+html .zf .cht-plan p { flex: 1; margin: 0; font-size: 14px; line-height: 1.5; color: var(--soft); }
+.cht-plan .x-btn { align-self: stretch; height: 40px; }
+html .zf .cht-plan.rec { background: var(--ink); border-color: transparent; transform: translateY(-8px); box-shadow: var(--zf-shadow-hi); }
+.cht-plan.rec .cht-plan-h b, .cht-plan.rec .cht-plan-p strong { color: var(--x-on-ink); }
+html .zf .cht-plan.rec .cht-plan-p, html .zf .cht-plan.rec p { color: color-mix(in srgb, var(--x-on-ink) 72%, var(--ink)); }
+html .zf .cht-plan.rec .x-btn.solid { background: var(--x-on-ink); border-color: var(--x-on-ink); color: var(--ink); }
+.cht-close-l { display: flex; justify-content: center; margin-top: clamp(16px, 2.6svh, 26px); }
+
+@media (max-width: 1100px) {
+  html .zf .cht-do .cht-tools-g { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 300px; }
+}
+@media (max-width: 900px) {
+  .zf .cht-hero { padding-block: 28px 64px; }
+  .cht-prompt { margin-top: 24px; }
+  html .zf .cht-who-head h2 { font-size: 2rem; }
+  html .zf .cht-who-sec .cht-pic { width: 100%; }
+}
+@media (max-width: 640px) {
+  /* the six scenes become a rail you swipe, the next card peeking in */
+  html .zf .cht-do .cht-tools-g { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 84%; grid-auto-rows: auto; margin-inline: -16px; padding: 4px 16px 18px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; scrollbar-width: none; animation: none; }
+  html .zf .cht-do .cht-tools-g::-webkit-scrollbar { display: none; }
+  html .zf .cht-do .cht-tool, html .zf .cht-do .cht-tool.wide { grid-column: auto; display: flex; flex-direction: column; scroll-snap-align: start; }
+  html .zf .cht-do .cht-tool-art, html .zf .cht-do .cht-tool.wide .cht-tool-art { flex: none; order: 0; aspect-ratio: 7 / 5; margin: 8px 8px 0; }
+  html .zf .cht-do .cht-tool.wide .cht-tool-b { align-self: auto; padding: 14px 18px 16px; }
+  .cht-prompt { padding: 6px 6px 6px 8px; }
+  .cht-prompt-o { display: none; }
+  .cht-prompt input { padding-left: 10px; }
+  .cht-prompt .x-btn { height: 44px; padding: 0 16px; font-size: 14.5px; }
+  .cht-prompt.big { flex-wrap: wrap; border-radius: 26px; }
+  .cht-prompt.big input { flex-basis: 100%; height: 48px; font-size: 17px; }
+  .cht-prompt.big .x-btn { width: 100%; }
+  .cht-prompt.big > div, .cht-prompt.big > span:not(.cht-prompt-o) { flex: 1 1 100%; }
+  .cht-plans { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  html .zf .cht-plan.rec { transform: none; order: -1; }
+}
+/* the room's heading on one line beside its link, so the scenes get the height */
+@media (min-width: 1101px) {
+  html .zf .cht-do-head { grid-template-columns: minmax(0, 1fr) auto; }
+  html .zf .cht-do-head h2 { max-width: none; font-size: clamp(2rem, 3.1vw, 2.9rem); }
+  html .zf .cht-do .cht-tools-g { grid-auto-rows: calc((var(--fr) - 128px) / 2); }
+  html .zf .cht-do .cht-tool:not(.wide) .cht-tool-b { padding: 10px 16px 14px; gap: 4px 9px; }
+  html .zf .cht-do .cht-tool:not(.wide) .cht-tool-art { margin: 6px 6px 0; }
+  html .zf .cht-do .cht-tool:not(.wide) .cht-tool-i { width: 24px; height: 24px; border-radius: 7px; }
+  html .zf .cht-do .cht-tool:not(.wide) .cht-tool-d { font-size: 13px; }
+}

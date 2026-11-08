@@ -31,11 +31,13 @@ function Letters({ text, from = 0 }) {
 
 export default function Zen() {
   return (
-    <section className="v2s-sec xab-zen" id="zen" aria-labelledby="xab-zen-h" data-enter="letter-cascade">
+    <section className="v2s-sec zf-sec xab-zen" id="zen" aria-labelledby="xab-zen-h" data-enter="letter-cascade">
       <div className="v2s-wrap">
-        <div className="v2s-head side xab-zen-head">
-          <h2 id="xab-zen-h" className="v2s-display xab-zen-h"><Letters text="The Zen of Hanzo" /></h2>
-          <p className="v2s-cap">Operating Principles</p>
+        <div className="zf-head xab-zen-head">
+          <div className="xab-hl">
+            <p className="v2s-cap">Operating Principles</p>
+            <h2 id="xab-zen-h" className="xab-zen-h"><Letters text="The Zen of Hanzo" /></h2>
+          </div>
           <div className="xab-zen-l">
             <p className="v2s-lede">The principles the company argues from when a decision is close.</p>
             <Link2 to="/philosophy">Explore the full Zen manifesto</Link2>

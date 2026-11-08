@@ -520,3 +520,130 @@ html:not(.light) .xdv [data-room='dark'] :is(.v2a-head, .v2a-title, .v2a-display
 html:not(.light) .xdv-fence-ask { color: #0a0a0a; } /* the approval tick: Hanzo's primary, a light fill under dark ink */
 html:not(.light) .xdv-cmp-bar i { color: #0a0a0a; } /* the divider knob: white in both, on the black terminal */
 html:not(.light) .xdv .x-band .x-btn.solid { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); } /* the band's one solid ask stays light on black (the shared rule reads a fill token that turns dark) */
+
+/* ---------- 8 Nov frame pass (Zack's pages, to the approved home page's bar; Frame.css holds the shared layer) ----------
+   Every section reads in one frame at 1470 x 801 once centred, and on a phone its heading shows with its first card or
+   row. Rhythm: a lit hero, the race as the dark room (curtain and beam), a thrown rail under a split heading, install on
+   one lifted plate, the five sheets as a sticky stack (each holds under the header while the next slides over it), the
+   repository tilting up out of the page, questions beside their heading, then a lit close carrying the one priced ask. */
+.xdv.zf { --fr: min(680px, calc(100svh - 128px)); }
+.xdv .xdv-kick { margin: 0 0 14px; }
+.xdv .zf-head h2 { max-width: 16ch; }
+
+/* 1. hero: lit from the right, the terminal lifted on a halftone */
+.xdv .xdv-hero.zf-sec { --hx: 100%; --hy: 10%; --lx: 70%; --ly: 40%; padding-block: clamp(36px, 5svh, 64px) clamp(56px, 8svh, 96px); }
+.xdv .xdv-h1 { font-size: clamp(2.6rem, 4.4vw, 4.2rem); line-height: .98; letter-spacing: -.045em; }
+.xdv .xdv-term { box-shadow: var(--zf-shadow-hi); }
+.xdv .xdv-term-body { height: clamp(250px, calc(100svh - 560px), 300px); }
+.xdv .xdv-acts { gap: 10px 22px; }
+.xdv .xdv-acts .xdv-priced { order: -1; }
+
+/* 2. the race: the dark room, two columns in one frame (the figure and its verdict left, the clocks racing right) */
+.xdv .xdv-race.zf-room { background: radial-gradient(90% 60% at 50% 0%, #202024, #121214 55%, #0c0c0d); padding-block: clamp(56px, 9svh, 100px); }
+.xdv .xdv-rx { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: auto 1fr; column-gap: clamp(32px, 4.5vw, 72px); row-gap: 24px; align-items: start; }
+.xdv .xdv-rx-l { grid-column: 1; grid-row: 1; }
+.xdv .xdv-rx-r { grid-column: 2; grid-row: 1 / span 2; }
+.xdv .xdv-rx-w { grid-column: 1; grid-row: 2; }
+.xdv .xdv-race-h { display: block; }
+.xdv .xdv-big { display: block; font-size: clamp(5rem, 8.4vw, 8rem); line-height: .9; letter-spacing: -.05em; }
+.xdv .xdv-race-t { display: block; padding: 10px 0 0; font-size: clamp(1.3rem, 1.6vw, 1.6rem); max-width: 20ch; }
+.xdv .xdv-race-l { margin-top: 12px; font-size: 14.5px; max-width: 44ch; }
+.xdv .xdv-verdict { margin: 16px 0 0; font-size: 1.05rem; line-height: 1.35; max-width: 34ch; }
+.xdv .xdv-ways ul { margin-bottom: 10px; }
+.xdv .xdv-ways li { padding: 11px 0; gap: 4px 14px; }
+.xdv .xdv-ways li > b { font-size: 21px; }
+.xdv .xdv-way { font-size: 14.5px; }
+.xdv .xdv-ci { margin-top: 4px; }
+.xdv .xdv-split { grid-template-columns: 1fr; gap: 10px; }
+.xdv .xdv-side { padding: 18px 22px 16px; border-radius: 22px; background: rgba(255, 255, 255, .045); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07), 0 30px 60px -40px #000; }
+.xdv .xdv-side.win { background: rgba(255, 255, 255, .075); }
+.xdv .xdv-clock { margin-top: 8px; font-size: clamp(2.6rem, 3.6vw, 3.4rem); }
+.xdv .xdv-lab { margin-top: 4px; font-size: 13px; }
+.xdv .xdv-cells { margin: 14px 0 12px; }
+.xdv .xdv-cells span { height: 20px; border-radius: 5px; }
+.xdv .xdv-calls { padding-top: 10px; font-size: 13px; }
+.xdv .xdv-calls b { font-size: 18px; }
+.xdv .xdv-run { margin-top: 8px; font-size: 11px; }
+.xdv .xdv-race-act { justify-content: flex-start; margin-top: 14px; }
+
+/* 3. places: the split heading, the rail a size down so heading and cards share the frame */
+.xdv .xdv-places.zf-sec { --hx: 0%; --hy: 100%; --lx: 85%; --ly: 10%; }
+.xdv .xdv-pl-head.zf-head { margin-bottom: clamp(22px, 3.2svh, 34px); }
+.xdv .xdv-pl-hr .v2a-body { margin: 0; }
+.xdv .xdv-pl-ctl { align-items: center; margin-top: 16px; }
+.xdv .xdv-pl-more { margin: 0 0 0 14px; }
+.xdv .xdv-pl-card { width: clamp(300px, 27vw, 396px); }
+.xdv .xdv-pl-art { aspect-ratio: 16 / 10; box-shadow: var(--zf-shadow); }
+.xdv .xdv-pl-txt { padding-top: 16px; }
+.xdv .xdv-pl-txt p { margin-top: 10px; font-size: 14.5px; }
+.xdv .xdv-sc { padding: 22px 26px; }
+
+/* 4. install: one lifted plate holding the three ways and the sign-in */
+.xdv .xdv-setup.zf-sec { --hx: 100%; --hy: 0%; --lx: 15%; }
+.xdv .xdv-in-head.zf-head { margin-bottom: clamp(22px, 3.2svh, 34px); }
+.xdv .xdv-in-body.zf-lift { padding: clamp(22px, 2.6vw, 36px); row-gap: 24px; --dx: 100%; --dy: 100%; }
+
+/* 5. how it works: the sheets stack (each sticks under the header; the next one slides over it) */
+.xdv .xdv-how.zf-sec { --hx: 0%; --hy: 0%; --lx: 50%; --ly: 0%; padding-block: clamp(48px, 7svh, 88px); background: transparent; }
+.xdv .xdv-stack { gap: clamp(20px, 3svh, 32px); }
+.xdv .xdv-sheet.zf-lift { border-radius: 28px; }
+.xdv .xdv-sheet-in { min-height: min(560px, calc(100svh - 180px)); padding: clamp(26px, 3.2vw, 48px); }
+.xdv .xdv-sheet .v2a-head { font-size: clamp(1.7rem, 2.4vw, 2.3rem); line-height: 1.04; letter-spacing: -.035em; }
+.xdv .xdv-ledger { margin-bottom: 16px; }
+.xdv .xdv-ledger li { height: 34px; }
+.xdv .xdv-pr li { padding-block: 12px; }
+@media (min-width: 900px) {
+  .xdv .xdv-sheet { position: sticky; top: calc(84px + var(--k) * 12px); transform-origin: 50% 0; }
+  .xdv .xdv-sheet + .xdv-sheet { margin-top: 0; }
+}
+
+/* 6. source: the repository tilts up out of the page under its split heading; questions beside their heading */
+.xdv .xdv-oss.zf-sec { --hx: 100%; --hy: 100%; --lx: 0%; --ly: 30%; padding-top: clamp(56px, 8.5svh, 104px); }
+.xdv .xdv-oss-top.zf-head { margin-bottom: 0; }
+.xdv .xdv-oss-links { margin-top: 6px; }
+.xdv .xdv-repo { margin-top: clamp(22px, 3.2svh, 34px); padding: 26px 30px; border-radius: 26px; background: #0a0a0a; box-shadow: var(--zf-shadow-hi); }
+.xdv .xdv-repo-tree b { font-size: 13.5px; }
+.xdv .xdv-qa-sec.zf-sec { --hx: 0%; --hy: 50%; --lx: 100%; --ly: 0%; }
+.xdv .xdv-qa { margin-top: 0; }
+.xdv .xdv-qa-l.zf-head { position: static; margin: 0; }
+.xdv .xdv-qa-l.zf-head h2 { max-width: 9ch; }
+
+/* 7. paste and ship: one lifted strip */
+.xdv .xdv-paste { padding: 0 0 clamp(24px, 4svh, 48px); }
+.xdv .xdv-paste-in.zf-lift { padding: clamp(22px, 2.6vw, 36px); --dx: 0%; --dy: 100%; }
+.xdv .xdv-paste-l .v2a-head { font-size: clamp(1.3rem, 1.7vw, 1.65rem); line-height: 1.2; letter-spacing: -.025em; }
+
+/* 8. the close: lit from above, the one priced ask */
+.xdv .xdv-close.zf-sec { --hx: 50%; --hy: 0%; --lx: 50%; --ly: 0%; }
+.xdv .xdv-close h2 { color: var(--ink); }
+.xdv .xdv-close h2 > span { display: inline-block; }
+.xdv .xdv-close-n { display: flex; justify-content: center; flex-wrap: wrap; gap: 0 26px; margin-top: 14px; }
+.xdv .xdv-close .xdv-priced { min-width: 260px; box-shadow: var(--zf-shadow); }
+
+/* dark: the lifted plates sit on Hanzo's raised surface; the close's solid ask is Hanzo's primary */
+html:not(.light) .xdv .xdv-sheet.zf-lift { background: var(--x-raised); }
+html:not(.light) .xdv .xdv-close .x-btn.solid, html:not(.light) .xdv .xdv-acts .x-btn.solid { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+
+/* phones: one column; the room's heading shows with the first clock; no sticky stack */
+@media (max-width: 899px) {
+  .xdv .xdv-rx { grid-template-columns: 1fr; grid-template-rows: none; row-gap: 20px; }
+  .xdv .xdv-rx-l, .xdv .xdv-rx-r, .xdv .xdv-rx-w { grid-column: 1; grid-row: auto; }
+  .xdv .xdv-big { font-size: 4.6rem; }
+  .xdv .xdv-race-l { font-size: 14px; }
+  .xdv .xdv-verdict { margin-top: 12px; }
+  .xdv .xdv-pl-more { flex-basis: 100%; margin: 0; }
+  .xdv .xdv-pl-ctl { display: flex; }
+  .xdv .xdv-pl-ctl button { display: none; }
+  .xdv .xdv-pl-card { width: 82vw; }
+  .xdv .xdv-sheet-in { min-height: 0; }
+  .xdv .xdv-qa-l.zf-head { margin-bottom: 18px; }
+  .xdv .xdv-repo { padding: 20px; }
+}
+@media (max-width: 640px) {
+  .xdv .xdv-h1 { font-size: 2.6rem; }
+  .xdv .xdv-close h2 { font-size: 2.4rem; }
+  .xdv .xdv-close .xdv-priced { min-width: 0; width: 100%; }
+}
+/* the split headings' halves drop their old 13-column placements (the heading grid is Frame.css's two columns) */
+.xdv .zf-head > * { grid-column: auto; grid-row: auto; }
+@media (max-width: 899px) { .xdv .zf-head > * { grid-column: 1; } }

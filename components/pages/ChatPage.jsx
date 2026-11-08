@@ -13,25 +13,31 @@
         Chapter 01 is the routing moment (a question, Enso, the one model that answers), not the model list.
      3. Proof: the card of whoever answers. Point at a name and the card swaps; open the card and it lifts into
         that model's page. The model list is said once in full here (names), once live in the hero rail.
-     4. Close: the kit's Band.
+     4. Close: "Ask anything" as a real prompt (type, press Enter, land in Hanzo Chat), and the three personal plans
+        with their own checkouts (Go, Pro) beside it.
+   8 Nov (Zack's pages, the home page's bar): every section reads in one frame; Hanzo's halftone lit from one corner;
+   the six tools become the page's one dark room (a bento that opens like a curtain); a prompt to try it in the hero
+   and the close; working upgrade links (Go and Pro checkouts, the plan ids live hanzo.ai uses). Frame.css is shared.
    Every "Open Hanzo Chat" press shows its hand-off state (aria-busy, ~320 ms) before it leaves.
    Demo words: /chat's own recents and copy, and Hanzo's own black holes and aurora exchange and Dev session from
    hanzo.ai's home (content/live/index.json). Greys only: colour arrives through Hanzo's model artwork. */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
-import { A, Img, Cta, Band } from '../kit';
+import { A, Img, Cta } from '../kit';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
 import { useDemo } from '../v2/AppDemo';
 import { MODELS } from '../../lib/models';
-import '../v2/AppLines.css'; // the shared v2a type and wrap (it came in with AppLines before the grid replaced the chapters)
+import '../v2/AppLines.css';
+import './Frame.css'; // the shared v2a type and wrap (it came in with AppLines before the grid replaced the chapters)
 import './ChatPage.css';
 import { PLANS, checkout } from '../../lib/plans';
 
 const OPEN = '/login?next=%2Fchat';
 const DOCS = 'https://docs.hanzo.ai/docs/chat';
 const GO = checkout(PLANS.go.id);
+const PRO = checkout(PLANS.pro.id);
 const RECENTS = ['Black holes and auroras', 'Email to the landlord', 'Investor update, shorter', 'Three days in Kyoto', 'Code that works, somehow', 'Support reply, API keys', 'Attention, simply', 'Sourdough starter', 'Three emails before lunch', 'Standup, for the absent', 'A fair refund', 'The fundraising deck', 'Interview notes', 'A toast for the team'];
 // Hanzo's own exchange (hanzo.ai home, content/live/index.json)
 const DEMO = [
@@ -63,12 +69,28 @@ const ENSO = MODELS[0];
 const ZEN = MODELS.find((m) => m.slug === 'zen');
 const pic = (slug) => `/models/${slug}.webp`;
 
-/* The one ask: the kit's Cta. The page holds each press for ~320 ms in its busy state before it leaves (Hand-off). */
-const Open = ({ slot = 'hero' }) => (
-  <Magnetic strength={0.18}><Cta to={OPEN} id={'chat.' + slot} thumb size="lg">Open Hanzo Chat</Cta></Magnetic>
-);
+/* The one ask is the kit's Cta inside the prompt. The page holds each press for ~320 ms in its busy state before it leaves (Hand-off). */
 const Docs = () => <Cta to={DOCS} kind="link" id="chat.docs">Read the docs</Cta>;
 const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'chat.go-' + slot}>{`Go is $${PLANS.go.price}/month, every model`}</Cta>;
+
+/* The prompt: the page's way in. Type, press Enter (or the button) and it hands off to Hanzo Chat, as the window's own
+   composer does; nothing is sent from this page. The button is the page's one solid ask, "Open Hanzo Chat". */
+function Prompt({ slot, big }) {
+  const [busy, setBusy] = useState(false);
+  const go = (e) => {
+    e.preventDefault();
+    if (busy) return;
+    setBusy(true);
+    setTimeout(() => { window.location.href = href(OPEN); }, 280);
+  };
+  return (
+    <form className={'cht-prompt' + (big ? ' big' : '') + (busy ? ' busy' : '')} onSubmit={go}>
+      <span className="cht-prompt-o" aria-hidden="true"><Img src={pic('enso')} alt="" w={30} h={30} priority={slot === 'hero'} /></span>
+      <input type="text" placeholder="Ask anything" aria-label="Ask anything" maxLength={2000} enterKeyHint="go" autoComplete="off" />
+      <Magnetic strength={0.12}><Cta to={OPEN} id={'chat.' + slot} thumb size={big ? 'lg' : 'md'}>Open Hanzo Chat</Cta></Magnetic>
+    </form>
+  );
+}
 
 /* Hand-off (MASTER 2: a cross-origin hand-off shows a pressed state, aria-busy, 200 to 400 ms). Any plain press on a
    link to Hanzo Chat inside the page is held, shown busy, then followed. New-tab presses go straight through. */
@@ -279,7 +301,7 @@ function Window() {
 function Hero() {
   const lines = ['Ask anything.', 'Enso picks the model.'];
   return (
-    <section className="cht-hero" aria-labelledby="cht-h1" data-morph-target data-ask-name="Hanzo Chat">
+    <section className="cht-hero zf-sec" aria-labelledby="cht-h1" data-morph-target data-ask-name="Hanzo Chat">
       <div className="v2a-wrap cht-hero-in">
         <div className="cht-copy">
           <h1 className="v2a-lines v2a-display cht-h1" id="cht-h1">
@@ -288,8 +310,8 @@ function Hero() {
             ))}
           </h1>
           <p className="v2a-lede cht-lede cht-up" style={{ '--d': '.3s' }}>Hanzo Chat searches the web, runs code, reads your files and makes images, in one conversation.</p>
-          <div className="cht-acts cht-up" style={{ '--d': '.4s' }}>
-            <Open slot="hero" />
+          <div className="cht-up" style={{ '--d': '.4s' }}><Prompt slot="hero" /></div>
+          <div className="cht-acts cht-up" style={{ '--d': '.5s' }}>
             <Plan slot="hero" />
             <Docs />
           </div>
@@ -436,12 +458,12 @@ function Tool({ t, d, k, i }) {
   useEffect(() => {
     const el = art.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => el.style.setProperty('--k', String(el.clientWidth / 560)));
+    const ro = new ResizeObserver(() => el.style.setProperty('--k', String(Math.min(el.clientWidth / 560, el.clientHeight / 400))));
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
   return (
-    <li className="cht-tool" ref={ref} style={{ '--i': i }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') again(); }} onFocus={again} tabIndex={-1}>
+    <li className={'cht-tool zf-dots' + (i === 0 || i === 5 ? ' wide' : '')} ref={ref} style={{ '--i': i }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') again(); }} onFocus={again} tabIndex={-1}>
       <div ref={art} className="v2a-ch-art cht-tool-art" data-play={play ? '' : undefined} aria-hidden="true">
         <div className="cht-tool-scale" key={play}><Art k={k} /></div>
       </div>
@@ -456,10 +478,13 @@ function Tool({ t, d, k, i }) {
 
 function Tools() {
   return (
-    <section className="v2a-sec cht-tools" aria-labelledby="cht-tools-h">
+    <section className="zf-room cht-do" aria-labelledby="cht-tools-h">
       <div className="v2a-wrap">
-        <h2 className="v2a-head cht-tools-h" id="cht-tools-h">A chat that does the work, not just the talking</h2>
-        <ul className="cht-tools-g">
+        <div className="zf-head cht-do-head">
+          <h2 className="cht-tools-h" id="cht-tools-h">A chat that does the work, not just the talking</h2>
+          <p><Cta to={OPEN} kind="link" id="chat.tools">Open Hanzo Chat</Cta></p>
+        </div>
+        <ul className="cht-tools-g zf-tilt">
           {TOOLS.map(([t, d, k], i) => <Tool key={k} t={t} d={d} k={k} i={i} />)}
         </ul>
       </div>
@@ -476,16 +501,16 @@ function Answers() {
   const m = MODELS.find((x) => x.slug === k) || ENSO;
   const go = (e) => { if (opener && frame.current) opener.open(e, { el: frame.current, src: pic(m.slug), href: '/' + m.slug, key: m.slug }); };
   return (
-    <section className="v2a-sec cht-who-sec" aria-labelledby="cht-who-h">
+    <section className="v2a-sec cht-who-sec zf-sec" aria-labelledby="cht-who-h">
       <div className="v2a-wrap v2a-grid cht-who-grid">
-        <div className="cht-who-l">
+        <div className="cht-who-l zf-rise">
           <A to={'/' + m.slug} className="cht-pic" ref={frame} data-card={m.slug} onClick={go}>
             {MODELS.map((x) => <Img key={x.slug} src={pic(x.slug)} alt="" w={1200} h={1500} className={x.slug === k ? 'on' : ''} />)}
             <span className="cht-pic-cap"><b>{m.name}</b><span className="x-mono">{m.tags.join(' · ')}</span><i aria-hidden="true">→</i></span>
           </A>
         </div>
         <div className="cht-who-r">
-          <h2 className="v2a-head cht-who-h" id="cht-who-h">{ENSO.desc}</h2>
+          <div className="zf-head zf-solo cht-who-head"><h2 className="cht-who-h" id="cht-who-h">{ENSO.desc}</h2></div>
           <ul className="cht-roster" onPointerLeave={(e) => { if (e.pointerType === 'mouse') setK('enso'); }}>
             {MODELS.map((x) => (
               <li key={x.slug} className={x.slug === k ? 'on' : ''}>
@@ -507,9 +532,33 @@ function Answers() {
   );
 }
 
-/* 4. The close: the kit's Band, in Hanzo's words, with the one ask. */
+/* 4. The close: "Ask anything" as a real prompt, then the three personal plans in Hanzo's words (hanzo.ai/pricing), each
+   with its own way in: Free opens an account, Go and Pro go straight to their checkouts (the plan ids hanzo.ai uses).
+   Pro stands lifted and inked, the one recommended. */
+const PLANS3 = [
+  { k: 'free', name: PLANS.free.name, d: 'Chat and build with Hanzo, free.', price: 'Free', unit: 'No card needed', to: '/signup' },
+  { k: 'go', name: PLANS.go.name, d: 'Your everyday AI development toolkit, with access to every model and more included usage.', price: '$' + PLANS.go.price, unit: 'USD/month', to: GO },
+  { k: 'pro', name: PLANS.pro.name, d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', price: '$' + PLANS.pro.price, unit: 'USD/month', to: PRO },
+];
 function Close() {
-  return <Band title="Ask anything" action="Open Hanzo Chat" to={OPEN} note={<><Plan slot="close" /><Docs /></>} />;
+  return (
+    <section className="cht-close zf-close" aria-labelledby="cht-close-h">
+      <div className="v2a-wrap">
+        <h2 id="cht-close-h">Ask anything</h2>
+        <div className="cht-close-p"><Prompt slot="close" big /></div>
+        <ul className="cht-plans">
+          {PLANS3.map((p) => (
+            <li key={p.k} className={'cht-plan zf-lift' + (p.k === 'pro' ? ' rec' : '')}>
+              <div className="cht-plan-h"><b>{p.name}</b><span className="cht-plan-p"><strong>{p.price}</strong>{p.unit}</span></div>
+              <p>{p.d}</p>
+              <Cta to={p.to} kind={p.k === 'pro' ? 'solid' : 'ghost'} size="sm" id={'chat.plan-' + p.k}>Try Hanzo</Cta>
+            </li>
+          ))}
+        </ul>
+        <div className="cht-close-l"><Docs /></div>
+      </div>
+    </section>
+  );
 }
 
 /* one solid fill per viewport: while the Band's own solid "Open Hanzo Chat" is on screen the header's ask goes quiet
@@ -517,7 +566,7 @@ function Close() {
 function useQuietAtBand() {
   useEffect(() => {
     const H = document.documentElement;
-    const band = document.querySelector('main.cht .x-band');
+    const band = document.querySelector('main.cht .cht-close');
     if (!band) return;
     let on = false, mine = false, t = 0;
     const apply = () => { if (on) { H.dataset.ask = 'quiet'; mine = true; } else if (mine) { delete H.dataset.ask; mine = false; } };
@@ -533,7 +582,7 @@ export default function ChatPage() {
   const handoff = useHandoff();
   useQuietAtBand();
   return (
-    <main className="cht" onClickCapture={handoff}>
+    <main className="cht zf" onClickCapture={handoff}>
       <Hero />
       <Tools />
       <Answers />
