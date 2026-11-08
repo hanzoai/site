@@ -133,7 +133,7 @@ function Deploy({ k, setK }) {
           </div>
           {PLAN.map(([t, x], i) => (
             <div key={t} className="zx-step" data-on={at === i + 1 || undefined} onPointerEnter={peek(i + 1)} onClick={() => pick(i + 1)}>
-              <Slot as="h3" className="zx-step-t" text={t} at={8 + i * 6} />
+              <Slot as="h3" className="zx-step-t" text={t + '.'} at={8 + i * 6} />
               <p className="zx-body">{x}</p>
             </div>
           ))}
