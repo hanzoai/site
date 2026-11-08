@@ -706,3 +706,67 @@
   /* the maker's contour field stays right of the guest key's words */
   .xmf-maker .xmf-art { -webkit-mask-image: radial-gradient(ellipse 60% 55% at 80% 40%, #000 25%, transparent 75%); mask-image: radial-gradient(ellipse 60% 55% at 80% 40%, #000 25%, transparent 75%); }
 }
+
+/* ======================= dark (docs/DARK-MODE.md, 8 Nov): live hanzo.ai's own dark, mapped by role =======================
+   Hanzo's selector (html:not(.light)) and Hanzo's tokens only, so bright mode is untouched and no dark colour is ours.
+   The page's local tokens give way to the page's (Hanzo's) in dark: --muted here was a caption grey, so it takes
+   Hanzo's tertiary text. Hanzo's black model cards (SPEC), the films, the guest terminal and the quick start room stay
+   black in both modes. */
+html:not(.light) .xmf { --ink: inherit; --soft: inherit; --faint: inherit; --line: inherit; --card: inherit; --muted: var(--text-tertiary); --acc: var(--foreground); }
+/* the first screen carries Hanzo's hero glow */
+html:not(.light) .xmf-launch { background-image: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
+/* the contour fields draw in the page's ink */
+html:not(.light) .xmf-sigil, html:not(.light) .xmf-obj-sigil, html:not(.light) .xmf-end-sigil { color: var(--foreground); }
+/* the hero object, its model ID card and the bill: Hanzo's card surfaces and hairline */
+html:not(.light) .xmf-obj:not(.film) { background: var(--x-fill); box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .xmf-obj-id { background: var(--x-raised); box-shadow: 0 0 0 1px var(--border); }
+html:not(.light) .xmf-bill-r { background: var(--x-raised); }
+html:not(.light) .xmf-local { background: var(--bg); }
+/* the field */
+html:not(.light) .xmf-plot { background: var(--x-fill); }
+html:not(.light) .xmf-gx, html:not(.light) .xmf-gy { background: var(--glass); }
+html:not(.light) .xmf-sweep i { background: linear-gradient(90deg, transparent, var(--glass) 50%, transparent); }
+html:not(.light) .xmf-dot b { background: var(--foreground); }
+html:not(.light) .xmf-dot.me b { background: var(--foreground); box-shadow: 0 0 0 4px var(--x-fill), 0 0 0 5.5px var(--foreground); }
+html:not(.light) .xmf-dot.me::after { border-color: var(--foreground); }
+html:not(.light) .xmf-tip { background: var(--secondary); color: var(--secondary-foreground); box-shadow: 0 0 0 1px var(--border); }
+html:not(.light) .xmf-tip span { color: var(--muted-foreground); }
+html:not(.light) .xmf-me-l { background: var(--foreground); color: var(--primary-foreground); }
+/* the bill's bars and sliders */
+html:not(.light) .xmf-bar, html:not(.light) .xmf-bctx { background: var(--secondary); }
+html:not(.light) .xmf-bar i, html:not(.light) .xmf-brow.me .xmf-bar i { background: var(--foreground); }
+html:not(.light) .xmf-brow:not(.me) .xmf-bar i { background: var(--border-selected); }
+html:not(.light) .xmf-bctx i { background: var(--border-strong); }
+html:not(.light) .xmf-vol input::-webkit-slider-runnable-track { background: linear-gradient(var(--foreground), var(--foreground)) 0 / var(--f, 30%) 100% no-repeat, var(--secondary); }
+html:not(.light) .xmf-vol input::-moz-range-track { background: var(--secondary); }
+html:not(.light) .xmf-vol input::-moz-range-progress { background: var(--foreground); }
+html:not(.light) .xmf-vol input::-webkit-slider-thumb { background: var(--x-raised); box-shadow: 0 0 0 1.5px var(--foreground), 0 6px 14px -4px rgba(0, 0, 0, .35); }
+html:not(.light) .xmf-vol input::-moz-range-thumb { background: var(--x-raised); box-shadow: 0 0 0 1.5px var(--foreground), 0 6px 14px -4px rgba(0, 0, 0, .35); }
+html:not(.light) .xmf-vol input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 2px var(--foreground), 0 0 0 5px var(--bg), 0 0 0 7px var(--foreground); }
+/* the drawn rates and Kai's reach */
+html:not(.light) .xmf-rb-r i { background: var(--secondary); }
+html:not(.light) .xmf-rb-r i::after { background-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--background) 55%, transparent), transparent); }
+html:not(.light) .xmf-reach { background: var(--x-fill); }
+html:not(.light) .xmf-reach-bar:not(.cells) { background: var(--popover); }
+html:not(.light) .xmf-reach-bar i.all, html:not(.light) .xmf-reach-bar.cells i { background: var(--border-strong); }
+html:not(.light) .xmf-reach-bar.cells i.tr { background: var(--foreground); }
+/* controls: Hanzo's secondary (card surface, control edge); a selected pill is the primary (light fill, dark text) */
+html:not(.light) .xmf .x-copy { background: var(--x-raised); border-color: var(--border-control); color: var(--foreground); }
+html:not(.light) .xmf .x-copy:hover, html:not(.light) .xmf .v2-mpause:hover { background-color: var(--secondary); }
+@media (hover: hover) { html:not(.light) .xmf .x-copy:hover, html:not(.light) .xmf-more-spec:hover { border-color: var(--ring); } }
+html:not(.light) .xmf-quick .x-copy, html:not(.light) .xmf-term .x-copy { background: transparent; border-color: rgba(255, 255, 255, .2); color: rgba(255, 255, 255, .78); }
+html:not(.light) .xmf-quick .x-copy:hover, html:not(.light) .xmf-term .x-copy:hover { background-color: rgba(255, 255, 255, .08); color: #fafafa; }
+html:not(.light) .xmf-more-spec { background: var(--x-raised); }
+html:not(.light) .xmf-fam a:hover { background: var(--secondary); }
+html:not(.light) .xmf-fam-here { color: var(--primary-foreground); }
+html:not(.light) .xmf-fam-here i { color: var(--primary-foreground) !important; }
+html:not(.light) .xmf-pick button:not([aria-pressed='true']):hover { background: var(--x-fill); }
+/* rows: the hover fill, the light band, the pills */
+html:not(.light) .xmf-also-a:hover, html:not(.light) .xmf-prov .sc-card.xmf-row:hover { background: var(--x-fill); }
+@media (max-width: 899px) { html:not(.light) .xmf-prov .sc-card.xmf-row:active { background: var(--x-fill); } }
+html:not(.light) .xmf-also::before { background: linear-gradient(transparent, var(--glass) 50%, transparent) 0 -240px / 100% 240px no-repeat; }
+html:not(.light) .xmf-prov .xmf-grid::before { background: linear-gradient(transparent, var(--glass) 50%, transparent) 0 -360px / 100% 360px no-repeat; }
+html:not(.light) .xmf-row .sc-pill { border-color: var(--border-control); }
+html:not(.light) .xmf :focus-visible { outline-color: var(--foreground); }
+html:not(.light) .xmf-quick :focus-visible { outline-color: #fafafa; }
+@media (prefers-reduced-motion: reduce) { html:not(.light) .xmf-rb-r i::after, html:not(.light) .xmf-also::before, html:not(.light) .xmf-prov .xmf-grid::before { background: none; } }
