@@ -244,7 +244,14 @@
 /* dark (docs/DARK-MODE.md): the shared l2 frame takes Hanzo's dark on this page; light-dark() keeps bright exactly as it was */
 .wd2.l2-page { background: var(--bg); --hair: light-dark(rgba(0, 0, 0, .1), var(--border)); --muted: light-dark(#525252, var(--muted-foreground)); --soft: light-dark(#525252, var(--muted-foreground)); }
 html:not(.light) .wd2 .l2-pause:not(.dk) { background: var(--surface-overlay); }
-/* dark only: Hanzo's halftone dot field behind the hero, as live hanzo.ai draws it (8px grid in --foreground at 17%,
-   dense at the side edges, thinning toward the top and centre); isolation keeps it under the hero content */
+/* dark only: Hanzo's hero texture as measured on live hanzo.ai dark (7px dot grid, dots ~36% foreground, densest at the
+   side edges and toward the bottom, plus live's top glow); the pinned stage keeps its own sticky position */
 html:not(.light) .wd2 .l2-stage > .l2-stage-pin { isolation: isolate; }
-html:not(.light) .wd2 .l2-stage > .l2-stage-pin::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 17%, transparent) 2.4px, transparent 2.9px) 0 0 / 8px 8px; -webkit-mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); -webkit-mask-composite: source-in; mask-image: linear-gradient(90deg, #000, transparent 30%, transparent 66%, #000), linear-gradient(180deg, rgba(0, 0, 0, .3), #000); mask-composite: intersect; }
+html:not(.light) .wd2 .l2-stage > .l2-stage-pin::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb, var(--foreground) 36%, transparent) 1.5px, transparent 2.1px) 0 0 / 7px 7px;
+  -webkit-mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, #000, rgba(0, 0, 0, .15) 32%, rgba(0, 0, 0, .15) 64%, #000), linear-gradient(180deg, rgba(0, 0, 0, .25), #000 85%);
+  mask-composite: intersect; }
+html:not(.light) .wd2 .l2-stage > .l2-stage-pin::after { content: ''; position: absolute; inset: 0 0 auto; height: 640px; z-index: -1; pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%, color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
