@@ -38,8 +38,22 @@ const TILES = Array.from({ length: 42 }, (_, i) => i);
 /* pixel-resolve blocks, each with a fixed scattered delay (same on server and client) */
 const blocks = (n, span) => Array.from({ length: n }, (_, i) => <span key={i} style={{ '--d': Math.round(((i * 7) % n) * (span / n)) + 'ms' }} />);
 
+/* the sigil reads its ink once when drawn: a theme flip (the html class) draws it again in the new ink */
+function useTheme() {
+  const [t, setT] = useState(0);
+  useEffect(() => {
+    const html = document.documentElement;
+    let light = html.classList.contains('light');
+    const mo = new MutationObserver(() => { const l = html.classList.contains('light'); if (l !== light) { light = l; setT((n) => n + 1); } });
+    mo.observe(html, { attributes: true, attributeFilter: ['class'] });
+    return () => mo.disconnect();
+  }, []);
+  return t;
+}
+
 function Hero() {
   const [paused, setPaused] = useState(false);
+  const theme = useTheme();
   return (
     <section className="xgr-hero" data-enter="grid-wave" aria-labelledby="xgr-h1">
       <div className="xp-wrap xp-grid">
@@ -55,7 +69,7 @@ function Hero() {
         </div>
         <div className="xgr-art xgr-rise late">
           <svg className="xgr-static" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">{[40, 72, 104, 136, 168, 200, 232].map((r) => <ellipse key={r} cx="230" cy="210" rx={r * 1.15} ry={r * 0.85} fill="none" stroke="currentColor" strokeOpacity=".22" />)}</svg>
-          <Sigil key={paused ? 'still' : 'live'} seed="grants" data={[2137, 122, 4]} className="xgr-sigil" still={paused} />
+          <Sigil key={(paused ? 'still' : 'live') + theme} seed="grants" data={[2137, 122, 4]} className="xgr-sigil" still={paused} />
           <div className="xgr-grid" aria-hidden="true">{TILES.map((i) => <span key={i} />)}</div>
           <span className="xgr-art-k x-mono">Grants &amp; Research</span>
           <button type="button" className="xgr-pause" aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={() => setPaused((v) => !v)}>

@@ -11,11 +11,11 @@
 .xgr-copy { grid-column: 1 / span 7; align-self: center; }
 .xgr-lede { margin-top: 36px; }
 .xgr-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; margin-top: 40px; }
-.xgr-art { grid-column: 8 / span 5; position: relative; min-height: 560px; border-radius: 24px; background: var(--hz-50); border: 1px solid var(--line); overflow: hidden; color: var(--hz-950); }
+.xgr-art { grid-column: 8 / span 5; position: relative; min-height: 560px; border-radius: 24px; background: var(--x-fill); border: 1px solid var(--line); overflow: hidden; color: light-dark(#0a0a0b, var(--foreground)); }
 .xgr-sigil { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.xgr-art-k { position: absolute; left: 24px; top: 22px; font-size: 12px; font-weight: 606; letter-spacing: .14em; text-transform: uppercase; color: var(--hz-500); }
-.xgr-pause { position: absolute; left: 20px; bottom: 20px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--hz-950); cursor: pointer; transition: background .15s, transform 90ms; }
-@media (hover: hover) { .xgr-pause:hover { background: var(--hz-50); } }
+.xgr-art-k { position: absolute; left: 24px; top: 22px; font-size: 12px; font-weight: 606; letter-spacing: .14em; text-transform: uppercase; color: light-dark(#6e6e73, var(--muted-foreground)); }
+.xgr-pause { position: absolute; left: 20px; bottom: 20px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--x-raised); color: light-dark(#0a0a0b, var(--foreground)); cursor: pointer; transition: background .15s, transform 90ms; }
+@media (hover: hover) { .xgr-pause:hover { background: var(--x-fill); } }
 .xgr-pause:active { transform: scale(.97); }
 .xgr-pause:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
@@ -25,12 +25,12 @@
 .xgr-line i { position: absolute; inset: 0; background: var(--xp-accent); transform-origin: 0 50%; }
 .xgr-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
 .xgr-steps li { position: relative; display: grid; gap: 14px; align-content: start; padding-top: 40px; }
-.xgr-dot { position: absolute; top: -8px; left: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--hz-white); border: 2px solid var(--xp-accent); transition: background-color .3s cubic-bezier(0, 0, .2, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
+.xgr-dot { position: absolute; top: -8px; left: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 2px solid var(--xp-accent); transition: background-color .3s cubic-bezier(0, 0, .2, 1), transform .3s cubic-bezier(.16, 1, .3, 1); }
 .xgr-steps li.on .xgr-dot { background: var(--xp-accent); transform: scale(1.15); }
 .xgr-steps li .xp-title, .xgr-steps li .xp-body { transition: color .3s cubic-bezier(0, 0, .2, 1); }
-.xgr-steps li:not(.on) .xp-title { color: #737373; }
+.xgr-steps li:not(.on) .xp-title { color: light-dark(#737373, var(--text-tertiary)); }
 @media (hover: hover) { .xgr-steps li:hover .xgr-dot { background: var(--xp-accent); } }
-.xgr-n { font-size: 14px; color: var(--hz-500); }
+.xgr-n { font-size: 14px; color: light-dark(#6e6e73, var(--muted-foreground)); }
 .xgr-steps .xp-title { font-size: 21px; }
 .xgr-steps .xp-body { max-width: 30ch; }
 
@@ -42,10 +42,10 @@
 .xgr-gets-g li:last-child { border-bottom: 0; }
 /* each row answers the pointer: a quiet fill behind it and its tick drawn again */
 .xgr-gets-g li { position: relative; isolation: isolate; }
-.xgr-gets-g li::before { content: ''; position: absolute; inset: 0 -16px; z-index: -1; border-radius: 12px; background: #f5f5f5; opacity: 0; transition: opacity .15s cubic-bezier(0, 0, .2, 1); }
+.xgr-gets-g li::before { content: ''; position: absolute; inset: 0 -16px; z-index: -1; border-radius: 12px; background: light-dark(#f5f5f5, var(--muted)); opacity: 0; transition: opacity .15s cubic-bezier(0, 0, .2, 1); }
 @media (hover: hover) { .xgr-gets-g li:hover::before { opacity: 1; } .xgr-gets-g li:hover .x-tick path { animation: xgr-redraw .5s cubic-bezier(.16, 1, .3, 1); } }
 @keyframes xgr-redraw { from { stroke-dashoffset: 24; stroke-dasharray: 24; } to { stroke-dashoffset: 0; stroke-dasharray: 24; } }
-.xgr-gets-n { grid-row: span 2; color: var(--hz-950); padding-top: 2px; }
+.xgr-gets-n { grid-row: span 2; color: light-dark(#0a0a0b, var(--foreground)); padding-top: 2px; }
 .xgr-gets-n .x-tick { stroke: currentColor; }
 .xgr-gets-g .xp-title { font-size: 21px; }
 
@@ -54,16 +54,16 @@
 .xgr-ways-head .xp-head { grid-column: 1 / span 7; }
 .xgr-ways-head .xp-lede { grid-column: 9 / span 4; }
 .xgr-stack { list-style: none; margin: clamp(64px, 7vw, 112px) 0 0; padding: 0; display: grid; gap: 40px; }
-.xgr-sheet { position: relative; min-height: min(64svh, 600px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 32px; align-items: stretch; padding: clamp(32px, 4.5vw, 72px); border-radius: 24px; overflow: hidden; background: #f5f5f5; color: var(--ink); }
+.xgr-sheet { position: relative; min-height: min(64svh, 600px); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: 32px; align-items: stretch; padding: clamp(32px, 4.5vw, 72px); border-radius: 24px; overflow: hidden; background: light-dark(#f5f5f5, var(--muted)); color: var(--ink); }
 /* the sheets' asks are outlines only: the header's ask stays the one solid */
-.xgr-way-a .xp-ghost { background: transparent !important; border: 1px solid rgba(0, 0, 0, .14) !important; color: inherit !important; }
+.xgr-way-a .xp-ghost { background: transparent !important; border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-control)) !important; color: inherit !important; }
 .xgr-sheet.s1 .xgr-way-a .xp-ghost { border-color: rgba(255, 255, 255, .3) !important; color: #fafafa !important; }
 /* JS off: the ledger ticks and the steps in their final state */
 html:not(.js) .xgr-sheetlist .x-tick :is(circle, path) { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; }
-html:not(.js) .xgr-steps li .xp-title { color: #0a0a0a; }
+html:not(.js) .xgr-steps li .xp-title { color: var(--ink); }
 html:not(.js) .xgr-steps li .xgr-dot { background: var(--xp-accent); }
 .xgr-sheet.s1 { background: #171717; color: #fafafa; border: 1px solid rgba(255, 255, 255, .1); }
-.xgr-sheet.s2 { background: var(--hz-white); }
+.xgr-sheet.s2 { background: light-dark(#fff, var(--muted)); }
 .xgr-sheet-n { align-self: start; font-size: 64px; line-height: 1; color: var(--hz-400); }
 .xgr-sheet.s1 .xgr-sheet-n { color: var(--hz-600); }
 .xgr-sheet-b { display: grid; gap: 24px; justify-items: start; align-self: end; }
@@ -73,25 +73,25 @@ html:not(.js) .xgr-steps li .xgr-dot { background: var(--xp-accent); }
 .xgr-fact-big { font: 497 32px/1.1 var(--sans); letter-spacing: -.025em; max-width: 14ch; }
 .xgr-fact-big.num { display: grid; gap: 6px; }
 .xgr-count { display: inline-block; font: 220 64px/1 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
-.xgr-fact-big small { font: 500 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #525252; }
+.xgr-fact-big small { font: 500 12px/1.3 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: light-dark(#525252, var(--muted-foreground)); }
 .xgr-sheet.s1 .xgr-fact-big small { color: #a3a3a3; }
 .xgr-fact-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.xgr-fact-chips em { font: 500 13px/1 var(--mono); font-style: normal; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .14); color: #525252; }
+.xgr-fact-chips em { font: 500 13px/1 var(--mono); font-style: normal; padding: 8px 12px; border-radius: 999px; border: 1px solid light-dark(rgba(0, 0, 0, .14), var(--border-control)); color: light-dark(#525252, var(--muted-foreground)); }
 .xgr-sheet.s1 .xgr-fact-chips em { border-color: rgba(255, 255, 255, .2); color: rgba(255, 255, 255, .78); }
 /* the quiet asks answer: border to the room's ink, arrow moves */
 .xgr-way-a .xp-ghost::after { content: '→'; margin-left: 8px; display: inline-block; transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
-@media (hover: hover) { .xgr-way-a .xp-ghost:hover { border-color: #0a0a0a !important; } .xgr-sheet.s1 .xgr-way-a .xp-ghost:hover { border-color: #fafafa !important; } .xgr-way-a .xp-ghost:hover::after { transform: translateX(4px); } }
+@media (hover: hover) { .xgr-way-a .xp-ghost:hover { border-color: var(--ink) !important; } .xgr-sheet.s1 .xgr-way-a .xp-ghost:hover { border-color: #fafafa !important; } .xgr-way-a .xp-ghost:hover::after { transform: translateX(4px); } }
 /* JS off: a still contour stands in for the drifting field */
-.xgr-static { position: absolute; inset: 0; width: 100%; height: 100%; color: #0a0a0a; }
+.xgr-static { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--ink); }
 html.js .xgr-static { display: none; }
 /* the submit row: the ask and the Privacy Policy beside it */
 .xgr-send-row { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 8px; }
 .xgr-send-row .xgr-send { margin-top: 0; }
-.xgr-priv { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; color: #525252; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
-@media (hover: hover) { .xgr-priv:hover { color: #0a0a0a; } }
+.xgr-priv { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; color: light-dark(#525252, var(--muted-foreground)); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+@media (hover: hover) { .xgr-priv:hover { color: var(--ink); } }
 .xgr-mail a { display: inline-block; padding: 12px 0; margin: -12px 0; }
 /* round 4: facts below the title's size, the ledger flat on the page, tighter rooms, the filing card grows as you type */
-.xgr-fact-big:not(.num) { font: 500 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #525252; }
+.xgr-fact-big:not(.num) { font: 500 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: light-dark(#525252, var(--muted-foreground)); }
 .xgr-sheet.s1 .xgr-fact-big:not(.num) { color: #a3a3a3; }
 .xgr-gets-g.xp-obj { border: 0; padding-left: 0; padding-right: 0; background: transparent; }
 .xgr-how { padding-top: clamp(56px, 6vw, 88px) !important; }
@@ -104,21 +104,21 @@ html.js .xgr-static { display: none; }
 @media (prefers-reduced-motion: reduce) { .xgr-rise { animation: none; } }
 .xgr-how { padding-bottom: clamp(40px, 5vw, 72px) !important; }
 .xgr-ways { padding-top: clamp(72px, 8vw, 116px) !important; }
-.xgr-sheetlist { padding: 8px 28px !important; border-radius: 24px; background: #f5f5f5 !important; }
+.xgr-sheetlist { padding: 8px 28px !important; border-radius: 24px; background: light-dark(#f5f5f5, var(--muted)) !important; }
 .xgr-sheetlist li { grid-template-columns: 40px 1fr 24px; }
-.xgr-sheetlist li .xgr-gets-n { font-size: 12px; color: #737373; padding-top: 4px; }
+.xgr-sheetlist li .xgr-gets-n { font-size: 12px; color: light-dark(#737373, var(--text-tertiary)); padding-top: 4px; }
 .xgr-sheetlist li .xp-title, .xgr-sheetlist li .xp-body { transition: color .4s cubic-bezier(0, 0, .2, 1); }
-.xgr-sheetlist li:not(.on) .xp-title { color: #525252; }
+.xgr-sheetlist li:not(.on) .xp-title { color: light-dark(#525252, var(--muted-foreground)); }
 .xgr-sheetlist li .xgr-gets-t { opacity: 0; transition: opacity .3s cubic-bezier(0, 0, .2, 1); }
 .xgr-sheetlist li.on .xgr-gets-t { opacity: 1; }
-html:not(.js) .xgr-sheetlist li .xp-title { color: #0a0a0a; }
+html:not(.js) .xgr-sheetlist li .xp-title { color: var(--ink); }
 html:not(.js) .xgr-sheetlist li .xgr-gets-t { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
-  .xgr-sheetlist li .xp-title { color: #0a0a0a !important; }
+  .xgr-sheetlist li .xp-title { color: var(--ink) !important; }
   .xgr-sheetlist li .xgr-gets-t { opacity: 1; }
   .xgr-line i { transform: none !important; }
   .xgr-sheet { transform: none !important; }
-  .xgr-steps li .xp-title { color: #0a0a0a !important; }
+  .xgr-steps li .xp-title { color: var(--ink) !important; }
   .xgr-steps li .xgr-dot { background: var(--xp-accent); }
 }
 @media (max-width: 899px) {
@@ -126,15 +126,15 @@ html:not(.js) .xgr-sheetlist li .xgr-gets-t { opacity: 1; }
   .xgr-sheetlist li { grid-template-columns: 28px 1fr 22px; gap: 6px 12px; }
 }
 .xgr-apply { padding-bottom: clamp(56px, 6vw, 88px) !important; }
-.xgr-proof-big { display: block; font: 220 64px/1 var(--sans); letter-spacing: -.04em; color: #0a0a0a; font-variant-numeric: tabular-nums; }
-.xgr-sheetlist li .xgr-gets-t { grid-column: 3; grid-row: 1; color: #0a0a0a; }
+.xgr-proof-big { display: block; font: 220 64px/1 var(--sans); letter-spacing: -.04em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.xgr-sheetlist li .xgr-gets-t { grid-column: 3; grid-row: 1; color: var(--ink); }
 .xgr-sheetlist li::before { inset: 0 -12px; }
-@media (hover: hover) { .xgr-sheetlist li:hover::before { background: #ededed; } }
+@media (hover: hover) { .xgr-sheetlist li:hover::before { background: light-dark(#ededed, var(--secondary)); } }
 .xgr-sheet-o { justify-content: flex-start; }
 .xgr-err a { display: inline-block; padding: 12px 0; margin: -12px 0; }
 .xgr-proof { padding: 0 0 clamp(72px, 8vw, 116px); }
-.xgr-proof-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding-top: 28px; border-top: 1px solid rgba(0, 0, 0, .1); }
-.xgr-proof-in .x-mono { margin: 0; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: #525252; }
+.xgr-proof-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding-top: 28px; border-top: 1px solid var(--x-e10); }
+.xgr-proof-in .x-mono { margin: 0; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: light-dark(#525252, var(--muted-foreground)); }
 .xgr-way-m { margin: 0; font-size: 14px; color: var(--soft); }
 .xgr-sheet.s1 .xgr-way-m { color: #a3a3a3; }
 .xgr-way-t { color: inherit !important; max-width: 18ch; font-size: 32px !important; letter-spacing: -.025em; }
@@ -147,7 +147,7 @@ html:not(.js) .xgr-sheetlist li .xgr-gets-t { opacity: 1; }
 /* the application */
 .xgr-apply-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px clamp(40px, 6vw, 112px); align-items: start; }
 .xgr-apply-l { display: grid; gap: 28px; position: sticky; top: 110px; }
-.xgr-file { padding: 24px; border-radius: 20px; background: var(--hz-50); border: 1px solid var(--line); }
+.xgr-file { padding: 24px; border-radius: 20px; background: var(--x-fill); border: 1px solid var(--line); }
 .xgr-file dl { margin: 0; display: grid; gap: 0; }
 .xgr-file dl > div { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 7px 0; border-top: 1px dashed var(--line); opacity: .55; transition: opacity .3s var(--xp-ease); }
 .xgr-file dl > div.on { opacity: 1; }
@@ -165,18 +165,18 @@ html:not(.js) .xgr-sheetlist li .xgr-gets-t { opacity: 1; }
 @media (hover: hover) { .xgr-tracks button:hover { color: var(--ink); } }
 .xgr-tracks button:active { transform: scale(.97); }
 .xgr-tracks button > span:not(.xgr-track-bg) { position: relative; }
-.xgr-tracks .xgr-track-bg { position: absolute; inset: 0; border-radius: 12px; background: var(--hz-white); border: 1px solid #0a0a0a; }
+.xgr-tracks .xgr-track-bg { position: absolute; inset: 0; border-radius: 12px; background: var(--x-knob); border: 1px solid light-dark(#0a0a0a, var(--border-selected)); }
 .xgr-f { display: grid; gap: 10px; }
 .xgr-f label { font: 497 15px/1.3 var(--sans); color: var(--ink); }
 .xgr-f .x-input2 { width: 100%; box-sizing: border-box; height: 56px; border-radius: 12px; }
 .xgr-f textarea.x-input2 { height: auto; min-height: 128px; }
 .xgr-f .x-field-msg:empty { display: none; }
-.xgr-err { margin: 0; padding: 12px 16px; border-radius: 12px; border: 1px dashed #0a0a0a; font-size: 15px; color: #0a0a0a; }
+.xgr-err { margin: 0; padding: 12px 16px; border-radius: 12px; border: 1px dashed var(--ink); font-size: 15px; color: var(--ink); }
 .xgr-err::before { content: "×"; margin-right: 8px; font-weight: 606; }
 .xgr-err a { color: inherit; }
 .xgr-send { justify-self: start; margin-top: 8px; }
 .xgr-ok { display: grid; justify-items: center; gap: 12px; padding: clamp(28px, 4vw, 48px); border-radius: 24px; background: var(--card); text-align: center; outline: none; }
-.xgr-ok-i { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: var(--hz-950); color: #fff; font-size: 24px; }
+.xgr-ok-i { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 50%; background: light-dark(#0a0a0b, var(--primary)); color: var(--x-on-ink); font-size: 24px; }
 .xgr-ok h3 { margin: 0; font: 497 26px/1.1 var(--sans); letter-spacing: -.025em; }
 .xgr-ok p { margin: 0; max-width: 46ch; font-size: 15.5px; line-height: 1.55; color: var(--soft); }
 
@@ -210,10 +210,10 @@ html:not(.js) .xgr-sheetlist li .xgr-gets-t { opacity: 1; }
 
 /* the ledger's head stays beside the list and counts the rows as they light (no empty column beside the list) */
 .xgr-gets-l { position: sticky; top: 120px; align-self: start; }
-.xgr-gets-fig { display: flex; align-items: flex-end; gap: 12px; margin: 24px 0 0; color: #0a0a0a; }
+.xgr-gets-fig { display: flex; align-items: flex-end; gap: 12px; margin: 24px 0 0; color: var(--ink); }
 .xgr-gets-roll { display: inline-grid; overflow: hidden; height: 1.02em; font: 220 64px/1 var(--sans); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
 .xgr-gets-roll > span { grid-area: 1 / 1; display: block; }
-.xgr-gets-fig small { padding-bottom: 8px; font-size: 13px; letter-spacing: .1em; color: #525252; }
+.xgr-gets-fig small { padding-bottom: 8px; font-size: 13px; letter-spacing: .1em; color: light-dark(#525252, var(--muted-foreground)); }
 html:not(.js) .xgr-gets-fig { display: none; }
 @media (max-width: 900px) {
   .xgr-gets-l { position: static; }
@@ -225,3 +225,6 @@ html:not(.js) .xgr-gets-fig { display: none; }
   .xgr-apply-l .xgr-file { order: 2; }
   .xgr-apply-l .xgr-mail { margin-top: 0; }
 }
+
+/* dark (docs/DARK-MODE.md): the sheets and the ledger sit as Hanzo's dark cards, a hairline round each, as live's do */
+html:not(.light) .xgr-sheet:not(.s1), html:not(.light) .xgr-sheetlist { box-shadow: inset 0 0 0 1px var(--border); }
