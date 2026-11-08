@@ -1,6 +1,6 @@
 # hanzo.ai — the redesign
 
-Every page of hanzo.ai, redesigned on Hanzo's own stack: **Next.js 15 (static export) · React 19 · Motion 12**, with
+Every page of hanzo.ai, redesigned on Hanzo's own stack: **Next.js 16 (static export) · React 19 · Motion 12**, with
 light and dark mode from Hanzo's own **`@hanzo/appearance`** and **`@hanzo/design`**.
 
 - **897 pages**: every URL in hanzo.ai's sitemap, plus the home page.
@@ -10,7 +10,8 @@ light and dark mode from Hanzo's own **`@hanzo/appearance`** and **`@hanzo/desig
 
 ## Run it
 
-Node 20 or newer.
+Node 20 or newer. Next.js is 16.4.5 (upgraded from 15.5.4 with the official codemod on 8 Nov; Turbopack is the default
+bundler, Cache Components stays off because the site is a static export, React stays on 19.2.8).
 
 ```bash
 npm ci
@@ -133,7 +134,8 @@ Enterprise and Volume to `/pricing` (`components/home/Pricing.jsx` lines 103–1
 | `node scripts/copycheck.mjs /pricing /about …` | **Compare our copy with live hanzo.ai.** Opens live hanzo.ai and our dev server (`npm run dev`, or `HZ_BASE=…`) in headless Chrome. Lists every line of live text missing from ours in `shots/copycheck/<page>.txt`. "missing 0" means every word is there. Needs Chrome (`CHROME=/path/to/chrome` on Linux). |
 | `node scripts/live.mjs` | Refresh the figure snapshots in `content/live/_*.json` (runs before every build). `--pages /x /y` re-reads those pages' live text. |
 | `npm run capture` / `npm run extract` | Re-capture pages from hanzo.ai into `content/`, and re-read the home's header, footer and logos. |
-| `node scripts/darkcheck.mjs`, `lightcheck.mjs` | Check a page in dark against live, and that light is unchanged. |
+| `HZ_BASE=http://localhost:4180 node scripts/darkcheck.mjs` | Dark-mode readability: opens every page in `scripts/copycheck-pages.txt` in dark, and flags visible text under 3:1 contrast against its background. Done means 0 pages. `CHROME=/path/to/chrome` on Linux (run as root it also needs `--no-sandbox`). |
+| `HZ_OLD=… node scripts/lightcheck.mjs /page` | Light mode unchanged: compares every element's computed colours with an older build. |
 | `node --test scripts/*.test.mjs components/**/*.test.mjs` | Unit tests. Tests that open a browser need `CHROME=…`. |
 | `python3 scripts/taste.py <files>` | Flags colours outside Hanzo's palette. |
 
