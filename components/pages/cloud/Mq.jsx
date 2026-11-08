@@ -1,5 +1,5 @@
 'use client';
-/* MQ, Cloud 3 launch page (docs/MASTER.md, the only brief).
+/* MQ, Cloud 3 launch page (docs/build-notes/MASTER.md, the only brief).
    Persona: Developer. Goal: try Hanzo MQ (read the source, then deploy it).
    CTA: "GitHub" → https://github.com/hanzoai (data-cta mq.hero, mq.close; data-thumb "GitHub", so the site's sticky ask
    carries the same words). Metric: github_click (MASTER §1 names a GitHub click as a metric; this page's live ask is

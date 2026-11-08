@@ -1,6 +1,6 @@
 'use client';
 /* AskBar (components/v2, owned by the Wave 2 "Proof" chat). Retired as a bar: the shared system now mounts one ask bar
-   on every page at every width (components/Ask.jsx, docs/review/SYSTEM.md §5), and two would show at once. AskBar
+   on every page at every width (components/Ask.jsx, docs/build-notes/review/SYSTEM.md §5), and two would show at once. AskBar
    stays so pages that use it keep working; it now only hands the shared bar what it reads:
    - data-ask-name: the page's own name in the bar;
    - data-thumb + data-href: the page's ask, used only when the page has no data-thumb of its own (the shared bar takes

@@ -1,5 +1,5 @@
 'use client';
-/* FamGrow (Families A kit): scale has rhythm (docs/MASTER.md, James 7 Nov). A figure or heading rests at its live
+/* FamGrow (Families A kit): scale has rhythm (docs/build-notes/MASTER.md, James 7 Nov). A figure or heading rests at its live
    hanzo.ai size (figures 64px, headings 26px) and grows past it only while it is the moment: as it crosses the middle
    of the screen it swells (transform only, so nothing around it moves), then settles back as you scroll on. Use it on
    the one big thing of a screen, never on everything; leave room around it. Reduced motion keeps it at rest.

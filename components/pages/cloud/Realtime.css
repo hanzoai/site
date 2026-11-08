@@ -1,4 +1,4 @@
-/* Realtime (Cloud 3), on the deck (docs/MASTER.md §3). Grey only: a record that just changed, a rule that cannot
+/* Realtime (Cloud 3), on the deck (docs/build-notes/MASTER.md §3). Grey only: a record that just changed, a rule that cannot
    read, a spent grant read by fill, weight, dash and a shape, never by hue. Surfaces are a flat fill or a 1px hairline,
    never both; nothing here casts a shadow. Type rests at the kit's sizes; this file only sets the objects and the
    one-at-a-time presentation (detail opens; with JS off every word reads in order). */

@@ -1,5 +1,5 @@
 'use client';
-/* Realtime, Cloud 3 launch page (docs/MASTER.md, the only brief).
+/* Realtime, Cloud 3 launch page (docs/build-notes/MASTER.md, the only brief).
    Persona: Developer. Goal: get an API key and open a first stream.
    CTA: "Start Building" → https://platform.hanzo.ai/api-keys (data-cta realtime.hero, realtime.close; data-thumb
    "Start Building", so the site's sticky ask carries the same words). Metric: api_key_created.

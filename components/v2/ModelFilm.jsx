@@ -1,7 +1,7 @@
 'use client';
 /* ModelFilm (components/v2, owned by the Models chat). The kit's Film rules (poster first, nothing downloads until the
    clip nears the screen, plays only on screen with the tab visible, never under reduced motion or Data Saver), plus
-   what the model pages need and the kit Film cannot do yet (request filed in docs/coverage/models.md):
+   what the model pages need and the kit Film cannot do yet (request filed in docs/build-notes/coverage/models.md):
    - `play`: the page decides which film is live (the lit tile, the active chapter, a hovered card);
    - a budget of two playing films on the whole page (PLAN-COMPONENTS 2.10, "max 2 playing"): a third waits its turn;
    - one page-wide pause for everything that moves by itself (WCAG 2.2.2): <FilmPause /> toggles every ModelFilm, and

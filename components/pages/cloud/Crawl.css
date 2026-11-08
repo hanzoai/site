@@ -1,4 +1,4 @@
-/* Crawl: see Crawl.jsx. Built on components/v2/Keynote*. Deck values only (docs/MASTER.md section 3): no accent,
+/* Crawl: see Crawl.jsx. Built on components/v2/Keynote*. Deck values only (docs/build-notes/MASTER.md section 3): no accent,
    surfaces are an outline or a fill (never both), no shadows, radii 6/8/12/16/24/999, sizes from the deck scale.
    Hover lives inside @media (hover: hover); presses scale to .97 in 90 ms. Hidden-until-active states are scoped to
    html.js, so with JS off every word stands. */

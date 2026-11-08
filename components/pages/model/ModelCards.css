@@ -1,4 +1,4 @@
-/* Hanzo's black model cards (mc-), measured from live hanzo.ai: docs/refs/hanzo-model-cards/SPEC.md */
+/* Hanzo's black model cards (mc-), measured from live hanzo.ai: docs/build-notes/refs/hanzo-model-cards/SPEC.md */
 .mc { background: var(--x-raised); }
 .mc-wrap { width: min(100% - 48px, 1201px); margin-inline: auto; }
 .mc-h { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; line-height: 1.2; color: var(--ink); text-wrap: balance; }

@@ -1,12 +1,12 @@
 'use client';
 /* SpecCard (components/v2, owned by the Models chat). Hanzo's model card exactly as live hanzo.ai draws it
-   (docs/refs/hanzo-model-cards/SPEC.md): #000, 20px radius, no shadow or border; the title 22px/500/-0.44px with its
+   (docs/build-notes/refs/hanzo-model-cards/SPEC.md): #000, 20px radius, no shadow or border; the title 22px/500/-0.44px with its
    "→" at the top left, inset 21px; the description 13px/18px at 80% white under it; Zen Mono 10px capital pills at the
    foot; the model's film (if it has one) over its poster, never dimmed; a pointer-follow tilt of up to about 3° that
    settles flat on leave (.3s cubic-bezier(.2,.8,.2,1)), no scale, no lift; press .98. SPEC: "Same design wherever the
    model cards appear": the /models catalogue, the maker shelves and the related cards on every model page use this.
    (components/pages/model/ModelCards.jsx draws the fixed nine-card grid on the flagship pages with the same values;
-   one source for both is a request in docs/coverage/models.md.)
+   one source for both is a request in docs/build-notes/coverage/models.md.)
    Usage:
      <SpecCard to="/models/hanzo/enso" title="Enso" desc="…" tags={['text']} meta={<code>enso</code>} />
      <SpecCard to="/koma" slug="koma" play={hovered} title="Koma" desc="…" tags={['Video']} card="koma" onOpen={open} />

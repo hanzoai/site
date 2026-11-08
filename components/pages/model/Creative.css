@@ -34,7 +34,7 @@
 .cr-tab[aria-selected='true'] { color: #fff; }
 .cr-tab-ink { position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: var(--ac-ink); }
 .cr-map-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
-/* each tile is Hanzo's black model card (docs/refs/hanzo-model-cards/SPEC.md): #000, 20px radius, title and arrow top
+/* each tile is Hanzo's black model card (docs/build-notes/refs/hanzo-model-cards/SPEC.md): #000, 20px radius, title and arrow top
    left at 21px, the line under it, the tag pill at the foot, the film over its poster on hover; unused fields dim the
    picture, never the card */
 .cr-mc { position: relative; display: block; height: 220px; overflow: hidden; border-radius: 20px; background: #000; color: #fff; text-decoration: none; isolation: isolate; transition: transform .3s cubic-bezier(.2, .8, .2, 1); }

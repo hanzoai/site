@@ -3,7 +3,7 @@
 // Persona: Developer choosing a model (and the buyer comparing labs). Goal: find the model, open its page. CTA: "Get API key" (platform.hanzo.ai/api-keys). Metric: api_key_created.
 // Signature: a card opens into its page. The first screen is Hanzo's model grid exactly as live hanzo.ai draws it (SPEC.md); every card lifts into its model's page (the WebGL opener), every catalogue card's name flies into its sheet (morph).
 // Beyond: every model reachable. One collapsed "Every model" list links all of Hanzo's model and maker pages from here, findable with Ctrl-F, so no page of the 544 is an orphan.
-/* Models, v2 (docs/VISION.md archetype C, docs/JAMES.md, docs/PLAN-COMPONENTS.md 5.4 and 2.15), one idea per screen:
+/* Models, v2 (docs/build-notes/_archive/VISION.md archetype C, docs/build-notes/DONE.md, docs/build-notes/PLAN-COMPONENTS.md 5.4 and 2.15), one idea per screen:
    1 Hanzo's model grid exactly (SPEC.md): Enso's film plays; the light follows the pointer, or walks the cards as
      the grid scrolls past (no timer).
    2 Three families, the one dark room: the words pin, the film changes under a clip wipe.
@@ -81,7 +81,7 @@ const Lines = ({ lines, delay = 0, as: T = 'span' }) => lines.map((t, i) => (
   <T key={t} className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: delay + i * 0.06 }}>{t}</motion.span></T>
 ));
 
-/* ---------- 1. the hero: Hanzo's model grid, exactly as live hanzo.ai draws it (docs/refs/hanzo-model-cards/SPEC.md) ----
+/* ---------- 1. the hero: Hanzo's model grid, exactly as live hanzo.ai draws it (docs/build-notes/refs/hanzo-model-cards/SPEC.md) ----
    Enso tall in column 1 over both rows, Kai Zen Iro Koma over Oto Koe Uta Mori; #000 cards, 20px radii, the measured
    tilt. Enso's film plays while it is on screen; the card under the pointer or focus plays too (two films at most).
    A click lifts the card into its page. */

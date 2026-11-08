@@ -1,5 +1,5 @@
 /* The Business group's grammar (owned by the Business 1 chat; usage notes live in components/v2/Biz*.jsx).
-   A page puts .bz on its <main>. Values are Hanzo's brand deck (docs/MASTER.md §3.1), held here as --bz-* tokens until
+   A page puts .bz on its <main>. Values are Hanzo's brand deck (docs/build-notes/MASTER.md §3.1), held here as --bz-* tokens until
    the shared tokens.css lands:
    - Colour: the deck's neutral ramp only (0 hues); highlight with ink, inverted chips, weight and contrast.
    - Type: Zen; weights Air 220 (largest figures), Regular 400, Book 497 (every heading), Medium 606 (UI emphasis).

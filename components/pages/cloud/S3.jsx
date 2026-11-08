@@ -1,5 +1,5 @@
 'use client';
-/* Object Storage, Cloud 3 launch page, round 3 to docs/MASTER.md (the only brief).
+/* Object Storage, Cloud 3 launch page, round 3 to docs/build-notes/MASTER.md (the only brief).
    V2: 8/10 Title first on the 8/5 split with the lede and ask beside it, then the object on one flat quiet stage: it breaks into fourteen shards that fly to fourteen volume servers, survives four going dark and reads back from the ten left (phones: shards top-right, readout on its own row, nothing shifts); then the peel: the binary's four roles lift apart into floating layers in 3D beside the four facts, and close again; one black room where "4 can be lost, and it still reads" is the one big figure beside three small ones, then the agent prompt; entrances (s3/S3Enter.jsx): text-mask-film, iris, shutter, cursor-lens, grid-wave; deck greys, flat surfaces, no springs.
 // Signature: peel — one binary lifts apart into its four floating roles in 3D (HTTP gateway, filer, master, volume servers), walks KMS keys, ten data and four parity shards (four dark, still reads) and one binary protocol on those layers, then closes back into one binary
 // Beyond: lose four yourself — in the hero, tap any volume servers dark, up to the four Hanzo says can be lost, and watch the object keep reading

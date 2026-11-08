@@ -144,7 +144,7 @@ function Tokens({ tok, setTok, setMine, pauseBtn }) {
 
 /* Stage: the hero settles 10px as the first screen scrolls away. Page-local, not the shared Settle: it renders the
    same style on the server and on the first client render, and reads reduced motion only after mount (the shared one
-   reads it during render, which breaks hydration under reduced motion; requested in docs/requests/ui.md). */
+   reads it during render, which breaks hydration under reduced motion; requested in docs/build-notes/requests/ui.md). */
 function Stage({ children, from = 1, lift = 10 }) {
   const [m, setM] = useState({ h: 800, calm: false });
   useEffect(() => {

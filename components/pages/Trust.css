@@ -4,7 +4,7 @@
 .xtr :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 /* the header's ask carries this page's 44-character ask after the hero: let it size to its words on this page only
-   (the shared rule caps it at 240px with an ellipsis; the fix for every page is filed in docs/requests/trust.md) */
+   (the shared rule caps it at 240px with an ellipsis; the fix for every page is filed in docs/build-notes/requests/trust.md) */
 @media (min-width: 1400px) { html:has(main.xtr) header[data-slot=masthead] a[data-x-ask] { max-width: none; white-space: nowrap; } }
 /* phones: the header's "Try Hanzo" is an outline here, so the page's own ask (hero, then the shared phone ask bar) is
    the one solid on screen (desktop gets the same from Ask.jsx's quiet state; the Playground.css pattern) */

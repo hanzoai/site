@@ -320,7 +320,7 @@ function Sandbox({ on }) {
         <div className="bt-win-body">
           <div className="bt-br">
             <span className="bt-url x-mono">hanzo.ai/pricing</span>
-            <p className="bt-br-h">Included in plans from $15</p>
+            <p className="bt-br-h">{`Included in plans from $${PLAN.pro.price}`}</p>
             <p className="bt-br-p bt-type">Agents can top up in USDC or USDT over the API.</p>
             <span className="bt-file x-mono">pricing.png</span>
             <span className="bt-cur" />
@@ -732,7 +732,7 @@ function Pricing() {
     <section className="av-sec bt-price" id="pricing">
       <div className="av-wrap av-grid" data-enter="grow-from-point">
         <div className="bt-price-l">
-          <h2 className="av-head">Included in plans from $15</h2>
+          <h2 className="av-head">{`Included in plans from $${PLAN.pro.price}`}</h2>
           <p className="av-body">Each plan below includes resident cloud bots. Or run Hanzo Bot free on your own machine.</p>
           <div className="bt-need" style={{ '--f': (n - 1) / 9 }}>
             <label htmlFor="bt-n">How many resident bots do you need?</label>

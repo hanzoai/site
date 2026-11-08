@@ -1,4 +1,4 @@
-/* The scale (docs/MASTER.md section 3: resting h1 52px, section headings 26px, figures 64px, 48px buttons, 1152px
+/* The scale (docs/build-notes/MASTER.md section 3: resting h1 52px, section headings 26px, figures 64px, 48px buttons, 1152px
    container, golden spacing, flat objects) for the Programs pages, owned by the Wave 2 Programs chat.
    Usage: import '../v2/ProgramScale.css' in a page and put class "xp" on its <main>. Every class is prefixed xp- so it
    never collides with another chat's v2 styles. 0 UI hues (JAMES.md 7): --xp-accent is the room's ink, re-resolved in

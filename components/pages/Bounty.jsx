@@ -114,7 +114,7 @@ function useOneSolidOnPhone() {
 /* Desktop: once the hero's ask has gone by, the header's button says "Every open bounty" down to the footer. The shell
    writes it once and caches that it did; when the header's text is put back under it (a header re-render), the shell
    does not notice and "Try Hanzo" returns mid-page. This re-asserts the page's ask, only while the hero's ask is above
-   the header, and leaves everything else to the shell (docs/requests/bounty.md). */
+   the header, and leaves everything else to the shell (docs/build-notes/requests/bounty.md). */
 function useHoldHeaderAsk() {
   useEffect(() => {
     const mq = matchMedia('(min-width: 701px)');

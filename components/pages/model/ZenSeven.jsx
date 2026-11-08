@@ -1,5 +1,5 @@
 'use client';
-/* Zen 7 (/zen/7): the next generation, not yet published. A teaser in three calm screens (docs/MASTER.md).
+/* Zen 7 (/zen/7): the next generation, not yet published. A teaser in three calm screens (docs/build-notes/MASTER.md).
    The giant 7 is this page's one big thing, as the moment: Zen 7's own living field shows only through the numeral (the
    weights are there, not yet out). It sweeps in from the bottom right of the first screen and settles beside the title
    as you scroll (scale and position only). The title rests at 52px.

@@ -692,7 +692,7 @@ function End() {
    phones only, the same move: the header's button is an outline while either "Read the docs" is on screen, and once
    they are gone by it becomes the solid "Read the docs". The phone's bottom bar is then not needed (data-ask="off"),
    so one solid shows at a time. Desktop is left to the shared Ask; everything is put back on leaving. Filed in
-   docs/requests/jin.md. */
+   docs/build-notes/requests/jin.md. */
 function usePhoneAsk() {
   useEffect(() => {
     const mq = matchMedia('(max-width: 700px)');

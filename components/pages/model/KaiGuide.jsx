@@ -297,7 +297,7 @@ function CallIt() {
   const box = useRef(null);
   // the kit CodeBlock marks itself a dark room; here it sits on a white tile, so it is marked light before the header
   // starts watching for dark rooms (layout effects run first), else the header turns dark over light code
-  // (docs/requests/kai-guide.md asks for a room prop on CodeBlock)
+  // (docs/build-notes/requests/kai-guide.md asks for a room prop on CodeBlock)
   useLayoutEffect(() => { box.current?.querySelectorAll('.x-codeblock[data-room]').forEach((el) => el.setAttribute('data-room', 'light')); }, []);
   useEffect(() => {
     const read = () => {

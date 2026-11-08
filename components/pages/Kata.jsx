@@ -389,7 +389,7 @@ function Questions() {
   );
 }
 
-/* The kit Band's button carries no data-cta yet (requested in docs/requests/kata.md). Until it does, the page marks
+/* The kit Band's button carries no data-cta yet (requested in docs/build-notes/requests/kata.md). Until it does, the page marks
    it kata.band and sends the same cta_click a kit Cta sends, so the closing ask is measured and the header's ask turns
    to an outline while the Band's solid ask is on screen (usePhoneAsk reads data-cta): one solid fill at a time. */
 function useBandAsk(id) {

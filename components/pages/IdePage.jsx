@@ -16,7 +16,7 @@
    chapters whose picture changes (memory, call graph, sandbox); the one dark room holds the memory tiers.
    Beyond: "Tell it something" - write one thing about your project, file it as what happened, what is true or how
    things are done here, and watch it sit in that memory, fading when unused and coming back at full strength when
-   you recall it. Nothing is saved or sent. Greys only (docs/JAMES.md). Every word is Hanzo's, and the editor's text is
+   you recall it. Nothing is saved or sent. Greys only (docs/build-notes/DONE.md). Every word is Hanzo's, and the editor's text is
    Hanzo's own start script from this page. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';

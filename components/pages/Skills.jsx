@@ -18,7 +18,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy } from '../ui';
 import { A } from '../kit';
-import Lines from './skills/Lines'; // page-local A2Lines without the reduced-motion hydration mismatch (docs/requests/skills.md)
+import Lines from './skills/Lines'; // page-local A2Lines without the reduced-motion hydration mismatch (docs/build-notes/requests/skills.md)
 import A2Paste from '../v2/A2Paste';
 import { T, EMPH } from '../v2/A2Motion';
 import '../v2/A2.css';

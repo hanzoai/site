@@ -536,7 +536,7 @@ function Watch() {
   );
 }
 
-/* The close, page-local: the kit Band's word reveal blurs (MASTER part 9 bans it; requested in docs/requests/operative.md),
+/* The close, page-local: the kit Band's word reveal blurs (MASTER part 9 bans it; requested in docs/build-notes/requests/operative.md),
    so the headline rises out of its line mask instead, and the ask carries its data-cta. */
 function Close() {
   return (

@@ -1,5 +1,5 @@
 'use client';
-/* Node, Cloud 3 launch page, round 3 to docs/MASTER.md (the only brief).
+/* Node, Cloud 3 launch page, round 3 to docs/build-notes/MASTER.md (the only brief).
    V2: 8/10 Round 5 (review 7/10): one machine from hero to chapter six. The hero machine is now one flat surface with one
    big changing readout (the level of the work being served, cut in by line mask on each job), a five-bar ladder, and
    the hardware and Lux as one quiet line each (7 labels, the lit bar the one ink block); it no longer pops at hydration

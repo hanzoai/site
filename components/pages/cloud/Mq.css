@@ -1,4 +1,4 @@
-/* MQ (Cloud 3), on the deck (docs/MASTER.md §3). Grey only: a job's state reads by fill, weight, dash and a shape,
+/* MQ (Cloud 3), on the deck (docs/build-notes/MASTER.md §3). Grey only: a job's state reads by fill, weight, dash and a shape,
    never by hue. Surfaces are a flat fill or a 1px hairline, never both; nothing here casts a shadow. Type rests at the
    kit's sizes (h1 52, headings 26, the one figure 64); this file only sets the objects. */
 .mq { --fill: #f2f2f2; --rule: rgba(0, 0, 0, .16); }

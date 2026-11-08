@@ -7,7 +7,7 @@
    over 200svh, each cutting in at 112px Air over a drawing of its own number as data (18 marks, the Zen5 contexts on a
    2M ruler, one cent of a dollar, the Zen5 sizes, 7 capsules), which grows in and then idles; on phone a 64px lead
    figure (with its 18 marks) over a 2-column grid at 32px; the Zen5 shelf of model cards on the SPEC grid (385px
-   repeat(4,192px), rows 220px, the leader spanning both rows) built to docs/refs/hanzo-model-cards/SPEC.md, carrying
+   repeat(4,192px), rows 220px, the leader spanning both rows) built to docs/build-notes/refs/hanzo-model-cards/SPEC.md, carrying
    Hanzo's own Zen media (the leader plays zen.webm over zen.webp, the others hold the still, each framed on its own
    part; every Zen5 page opens on that film, so the Morph lands on the picture you clicked; hover draws the model's size
    bars to scale; on phone the leader sits on top and the others are a snap rail with a 16% peek); the per-token sheet (row hover fills #f5f5f5 and lights its bars); a calm close over a drifting context
@@ -265,7 +265,7 @@ function Figures() {
   );
 }
 
-/* the model card of docs/refs/hanzo-model-cards/SPEC.md: black, 20px, art behind, title top left, tag pill bottom left,
+/* the model card of docs/build-notes/refs/hanzo-model-cards/SPEC.md: black, 20px, art behind, title top left, tag pill bottom left,
    a pointer tilt up to 3 degrees that settles flat on leave (fine pointers, never under reduced motion) */
 const tilt = (e) => {
   if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;

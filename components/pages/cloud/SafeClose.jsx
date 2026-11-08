@@ -1,6 +1,6 @@
 'use client';
 /* SafeClose: v2/KeynoteClose (and its KeynoteRoom) with one change, so the pages that use it hydrate cleanly under
-   reduced motion (docs/requests/reduced-motion-hydration.md). KeynoteRoom reads motion's useReducedMotion() while
+   reduced motion (docs/build-notes/requests/reduced-motion-hydration.md). KeynoteRoom reads motion's useReducedMotion() while
    rendering (null on the server, true on the first client render), so the room's clip-path differs and React logs a
    hydration error. This copy reads the kit's useCalm() instead. Same props, same markup, same CSS as KeynoteClose,
    plus enter: a data-enter name for arrive.js on the block. Copy rule (8 Nov): "api /v1/…" and the repo name are each

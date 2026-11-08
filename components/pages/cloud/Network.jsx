@@ -1,5 +1,5 @@
 'use client';
-/* Network, Cloud 3 launch page, round 3 to docs/MASTER.md (the only brief), answering the 7/10 review.
+/* Network, Cloud 3 launch page, round 3 to docs/build-notes/MASTER.md (the only brief), answering the 7/10 review.
    V2: 8/10 After its run the hero keeps a quiet bead walking the resting route and the replay control is outlined, not solid; chapter four's tags never sit on a ring. The chapters' intro shows unlinked peers being discovered and each pinned chapter keeps an ink bead running its own links (no still chapter). The fabric is the page: title, lede and ask on the left five columns, the live peer map on the right eight, its peers wearing Hanzo's own renders of the models they have loaded; a request walks to whoever has the model, once, and rests on the placement; the same fabric is the pinned chapters' object and each fact changes it (topology draws in, links thicken by the work, attested peers fill, the route and placement play, a machine joins, the work settles into one root); one black room for the two ends and the agent prompt; deck greys, flat surfaces, no springs.
    Persona: Developer who needs compute (buys it on the fabric, then calls it with a key).
    Goal: buy compute on hanzo.network.

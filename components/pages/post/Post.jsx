@@ -324,7 +324,7 @@ const Chevron = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidde
 
 /* The closing band, page-local (the kit Band reveals with blur, against MASTER part 9): the same .x-band look and words;
    on arrival an underline sweeps under each word in turn (entrance 5, underline-sweep), then the post's own ask as a
-   kit Cta (magnetic, as the Band's was) and the other closing links. Request to the kit owner: docs/requests/blog-family.md. */
+   kit Cta (magnetic, as the Band's was) and the other closing links. Request to the kit owner: docs/build-notes/requests/blog-family.md. */
 function Close({ cta }) {
   const words = cta.label.split(' ');
   return (

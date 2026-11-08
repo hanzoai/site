@@ -1,4 +1,4 @@
-/* /compare/<page> (prefix xvs-), on Hanzo's deck (docs/MASTER.md §3): monochrome, Zen 497 headings, sizes from
+/* /compare/<page> (prefix xvs-), on Hanzo's deck (docs/build-notes/MASTER.md §3): monochrome, Zen 497 headings, sizes from
    12 13 14 16 17 21 26 32 44 52 64; container 1152 on 13 columns split 5/8; section air clamp(72px, 11vw, 188px);
    radii 24 tiles, 6 chips, full buttons. One big thing per screen: the race, then the ledger, then the quote. */
 .xvs {

@@ -1,4 +1,4 @@
-/* Keynote: type, space and colour for Hanzo launch pages, on Hanzo's brand deck (docs/MASTER.md section 3).
+/* Keynote: type, space and colour for Hanzo launch pages, on Hanzo's brand deck (docs/build-notes/MASTER.md section 3).
    Owned by the Cloud 1 chat. Imported by every components/v2/Keynote*.jsx, so a page that uses one piece has them all.
    How to use: put className="kn" on the page's <main>. No hues: only the deck's neutral ramp (taste.py checks it).
    Inside .kn the site's --soft, --faint and --line resolve to deck values that pass 4.5:1 on white.

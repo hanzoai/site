@@ -2,7 +2,7 @@
    (220 for the largest figures), radii 24 tiles · 20 art · 6 chips · full buttons, container 1152, 13 columns split 5/8,
    section padding clamp(72px, 11vw, 188px), motion 90/150/300/400/500 ms on ease-emphasis, no springs.
    Colour: the repo has no deck tokens.css (app/system.css carries #6e6e73-style values that are off the deck), so every
-   deck value this page uses is named once here and the rules below read only these names (docs/requests/kai-guide.md). */
+   deck value this page uses is named once here and the rules below read only these names (docs/build-notes/requests/kai-guide.md). */
 .kg {
   /* light room */
   --paper: #fff; --quiet-room: #f5f5f5; --tile: #f2f2f2; --muted-tile: #ededed; --brand-tone: #e4e4e7; --track: #d4d4d4;

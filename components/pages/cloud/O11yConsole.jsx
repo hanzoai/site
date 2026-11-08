@@ -1,7 +1,7 @@
 'use client';
 /* /o11y's example console: a page-local copy of components/v2/LaunchConsole.jsx (same markup, classes and CSS) with
    one change: all four projects carry the line hanzo.ai's console gives them (payments-api and docs-site included),
-   every line kept in the DOM and only the chosen one shown. Requested for the shared one in docs/requests/o11y.md. */
+   every line kept in the DOM and only the chosen one shown. Requested for the shared one in docs/build-notes/requests/o11y.md. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A } from '../../kit';

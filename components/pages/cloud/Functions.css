@@ -1,4 +1,4 @@
-/* Functions: see Functions.jsx. Built on components/v2/Keynote*. Deck values only (docs/MASTER.md section 3): no
+/* Functions: see Functions.jsx. Built on components/v2/Keynote*. Deck values only (docs/build-notes/MASTER.md section 3): no
    accent (the old indigo, then grey accent, is ink and hollow-against-filled now), surfaces are an outline or a fill
    (never both), no shadows, radii 6/8/12/16/24/999, sizes from the deck scale, no overshoot curves. Hover lives inside
    @media (hover: hover); presses scale to .97 in 90 ms. Hidden-until-written states are scoped to html.js, so with JS

@@ -68,7 +68,7 @@ const Open = ({ slot = 'hero' }) => (
   <Magnetic strength={0.18}><Cta to={OPEN} id={'chat.' + slot} thumb size="lg">Open Hanzo Chat</Cta></Magnetic>
 );
 const Docs = () => <Cta to={DOCS} kind="link" id="chat.docs">Read the docs</Cta>;
-const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'chat.go-' + slot}>Go is $8/month, every model</Cta>;
+const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'chat.go-' + slot}>{`Go is $${PLANS.go.price}/month, every model`}</Cta>;
 
 /* Hand-off (MASTER 2: a cross-origin hand-off shows a pressed state, aria-busy, 200 to 400 ms). Any plain press on a
    link to Hanzo Chat inside the page is held, shown busy, then followed. New-tab presses go straight through. */

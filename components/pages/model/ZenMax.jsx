@@ -1,5 +1,5 @@
 'use client';
-/* Zen 6 Max (/zen/zen6-max): a model launch read one idea per screen (docs/MASTER.md), moving its own way
+/* Zen 6 Max (/zen/zen6-max): a model launch read one idea per screen (docs/build-notes/MASTER.md), moving its own way
    (docs/MOTION-MAP.md). No pinned scenes: five quick sections, each arriving differently.
    1 The first screen: the name cut in on load, Hanzo's lede, "Talk to sales", the crumb, beside the playing Zen film,
      whose card arrives tipped back in 3D and then tilts toward the pointer (pause on its corner).

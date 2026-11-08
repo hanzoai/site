@@ -21,7 +21,7 @@
    time with a scrubbed progress rail (scroll; an accordion on phones) + "Find a control" typing one example itself
    once on arrival, then answers appearing as you type (time, state; sheets rise) + the black room's entry (scroll).
    Lines and Room are this page's hydration-safe builds of v2/MaskLines and v2/SceneWipe: those read the reduced-motion
-   preference during render, so the server and client HTML differed (docs/requests/trust.md). Same motion, same values.
+   preference during render, so the server and client HTML differed (docs/build-notes/requests/trust.md). Same motion, same values.
    Scale has rhythm (ProofRhythm): h1 52, headings 26, figures 64; one big thing per screen (the cabinet, the papers, the
    statement, the live count, the stance stage, the closing line at 84).
    Conflict noted on the card: MASTER §3.1 keeps centred heads for the closing section, but the hero is a centred
@@ -31,7 +31,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionTemplate, useMotionValueEvent } from 'motion/react';
 import { A, More } from '../kit';
-import DetailSheet from '../v2/x-pascal/DetailSheet'; // the coherent <dialog> build: main's v2/DetailSheet.jsx is the older div build against dialog-only CSS (docs/requests/trust.md)
+import DetailSheet from '../v2/x-pascal/DetailSheet'; // the coherent <dialog> build: main's v2/DetailSheet.jsx is the older div build against dialog-only CSS (docs/build-notes/requests/trust.md)
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Trust.css';

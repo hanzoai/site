@@ -18,7 +18,7 @@
    light up in the stack, each with the phrase that matched and a click into its sheet. Built only from Hanzo's words.
    V2: 8/10 the camera through the stack with words and plates in step (the camera crosses groups only around the switch, the words crossfade), a directory that reads 01-07, shorter planes, and five section entrances (inertia-drag, count-roll, spiral-in, underline-sweep, explode-gather).
    Colour: none. Deck greys, ink and white only. One dark room (the map) and the closing Band.
-   Every word and link is Hanzo's (parity 330/330, 129/129). Coverage: docs/coverage/platform.md. */
+   Every word and link is Hanzo's (parity 330/330, 129/129). Coverage: docs/build-notes/coverage/platform.md. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Mark, Copy } from '../ui';

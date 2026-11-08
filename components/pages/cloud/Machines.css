@@ -1,5 +1,5 @@
 /* Machines v2. One dark room: the hero. Greys only: the card LED is a grey light.
-   Page tokens: the deck's neutral ramp (docs/original/brand-deck.html). tokens.css is not on main yet, so the values
+   Page tokens: the deck's neutral ramp (docs/build-notes/original/brand-deck.html). tokens.css is not on main yet, so the values
    live here once, as custom properties, and every rule below reads them. */
 .mc {
   --mc-k: #000; --mc-ink: #0a0a0a; --mc-k1: #0f0f0f; --mc-k2: #171717; --mc-k3: #262626; --mc-k4: #404040;

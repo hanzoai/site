@@ -1,7 +1,7 @@
 /* Zen catalog (zc-). Deck values only (MASTER 3.1): monochrome, sizes 12/13/14/16/17/21/26/44/52/64/112, weights
    400/497/606 (220 for the largest figures), radii 24 tiles · 20 art cards · 6 chips · full buttons, container 1152,
    13 columns split 5/8, section padding clamp(72px, 11vw, 188px), motion 90/150/300/400/500 ms on ease-emphasis.
-   The Zen5 cards copy docs/refs/hanzo-model-cards/SPEC.md. */
+   The Zen5 cards copy docs/build-notes/refs/hanzo-model-cards/SPEC.md. */
 .zc {
   --mute: light-dark(#525252, var(--muted-foreground)); --quiet: light-dark(#737373, var(--text-tertiary)); --line: var(--x-e10); --tint: light-dark(#f2f2f2, var(--muted)); --track: light-dark(#d4d4d4, var(--secondary)); /* --ink is the page's (#0a0a0a in light, Hanzo's foreground in dark) */
   --graphite: #171717; --on-black: #fafafa; --on-black-2: rgba(255, 255, 255, .78); --on-black-3: rgba(255, 255, 255, .55);

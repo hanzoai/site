@@ -34,7 +34,7 @@ const STEPS = [
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 /* Phones: Hanzo's header carries this page's ask in the same words, as it does on desktop (components/Ask.jsx does it
-   above 700px; see docs/requests/referral.md). */
+   above 700px; see docs/build-notes/requests/referral.md). */
 function usePhoneHeaderAsk() {
   useEffect(() => {
     const mq = matchMedia('(max-width: 700px)');

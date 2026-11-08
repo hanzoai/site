@@ -269,7 +269,7 @@
 
 /* greys only: the shared code pane's highlight */
 .in-code .cf-mark { background: var(--g3); color: var(--w1); }
-/* the shared code pane and dark room, brought onto the deck ramp here (request: docs/requests/insights.md) */
+/* the shared code pane and dark room, brought onto the deck ramp here (request: docs/build-notes/requests/insights.md) */
 .in .v2-dark { color: var(--w1); }
 .in .x-codeblock { background: var(--ink); color: var(--w1); }
 .in .x-codeblock pre, .in .x-codeblock code { color: var(--w1); }

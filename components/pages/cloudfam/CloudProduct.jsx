@@ -25,7 +25,7 @@
    figure 64px; headings 26px; the close says the name at 52px. Never a hue: greys, ink and white only.
    Motion mix: time (typing, the session playing, the feature cycle), pointer (sidebar previews, rows that open, related
    rows), state (the lit row glides by layoutId), scroll (the stage settles, the name settles, opposite-drift),
-   arrival (the name's line mask, the five entrances). Coverage: docs/coverage/cloud.md. */
+   arrival (the name's line mask, the five entrances). Coverage: docs/build-notes/coverage/cloud.md. */
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../../ui';

@@ -1,5 +1,5 @@
 'use client';
-/* The motion and control primitives every page uses. HOW TO USE (docs/review/SYSTEM.md has the full list):
+/* The motion and control primitives every page uses. HOW TO USE (docs/build-notes/review/SYSTEM.md has the full list):
    - Headlines: <Lines as="h1" lines={['Smarter, Faster,', 'Pick all three.']} /> is the line-mask reveal (each line
      rises out of its own mask, 1.1 s, once; the words are in the server HTML). <Words> is the older word-by-word blur.
    - Arrival: <Rise> (max two fade-ups per page). Figures: <Count to={3.02} decimals={2} suffix="x" />.

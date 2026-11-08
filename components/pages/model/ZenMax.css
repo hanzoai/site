@@ -1,5 +1,5 @@
 /* Zen 6 Max (zx-): the film Stage, the promises, the rack chapters, the B300/B200 sheet, the close.
-   Hanzo's deck only (docs/MASTER.md 3.1): neutrals, sizes 12–112 from the scale, 1152 container, 13-column 8/5 splits,
+   Hanzo's deck only (docs/build-notes/MASTER.md 3.1): neutrals, sizes 12–112 from the scale, 1152 container, 13-column 8/5 splits,
    radii 6/12/24 and 20 for art, deck durations and curves. The deck values live here as page tokens until tokens.css lands. */
 .zx {
   --zx-ink: var(--ink); --zx-muted: light-dark(#525252, var(--muted-foreground)); --zx-quiet: light-dark(#737373, var(--text-tertiary)); --zx-room: light-dark(#f5f5f5, var(--muted)); --zx-line: var(--x-e10);

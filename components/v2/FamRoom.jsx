@@ -1,5 +1,5 @@
 'use client';
-/* FamRoom (Families A kit): a dark room (graphite #171717 or black), as docs/MASTER.md sets it: it enters as a rounded
+/* FamRoom (Families A kit): a dark room (graphite #171717 or black), as docs/build-notes/MASTER.md sets it: it enters as a rounded
    card inside the gutters and opens to full width as it is reached (clip-path only, scrubbed by scroll, so nothing
    reflows). At most 2 dark rooms per page, never back to back. Reduced motion shows it open.
    How to use it:

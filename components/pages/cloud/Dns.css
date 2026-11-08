@@ -1,4 +1,4 @@
-/* DNS (v2): see Dns.jsx. Built on components/v2/Keynote*, on Hanzo's deck (docs/MASTER.md section 3): ink #0a0a0a,
+/* DNS (v2): see Dns.jsx. Built on components/v2/Keynote*, on Hanzo's deck (docs/build-notes/MASTER.md section 3): ink #0a0a0a,
    greys #525252 / #737373, whites and silvers; on black #fafafa, white 78% / 55% / 30%, #a3a3a3; graphite #171717 is the
    one room. Sizes 12 13 14 16 17 21 26 32 52; weights 220 / 400 / 497 / 606. Outline or fill, never both; no shadows.
    Status is a shape or a word (a "+", a filled node, the ink plan), never a colour. States hide only under .js. */

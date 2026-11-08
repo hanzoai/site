@@ -1,4 +1,4 @@
-/* Analytics (v2): see Analytics.jsx. Built on components/v2/Keynote*, on Hanzo's deck (docs/MASTER.md section 3):
+/* Analytics (v2): see Analytics.jsx. Built on components/v2/Keynote*, on Hanzo's deck (docs/build-notes/MASTER.md section 3):
    ink #0a0a0a, greys #525252 / #737373, whites and silvers, graphite #171717 for the one dark room. Sizes from the deck
    (12 13 14 16 17 21 26 32 44 52 64), weights 220 / 400 / 497 / 606. Surfaces are an outline or a fill, never both,
    and nothing here takes a shadow. Entrance states hide only under .js, so with JS off every word stands. */

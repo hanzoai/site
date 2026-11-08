@@ -1,5 +1,5 @@
 /* ---------- search v2 (se2-): ink, greys and white only ---------- */
-/* page-scoped deck tokens (docs/original/brand-deck.html): every grey below reads from these */
+/* page-scoped deck tokens (docs/build-notes/original/brand-deck.html): every grey below reads from these */
 .se2, .se2-note { --se-paper: light-dark(#ffffff, var(--surface-1)); --se-stage: light-dark(#fbfbfb, var(--surface-card-quiet)); --se-room: light-dark(#f5f5f5, var(--surface-2)); --se-card: light-dark(#f2f2f2, var(--surface-2)); --se-tile: light-dark(#ededed, var(--surface-3)); --se-track: light-dark(#d4d4d4, var(--surface-3)); --se-on: #fafafa; --se-graphite: #171717; --se-on-dim: #a3a3a3; --se-mid: light-dark(#404040, var(--text-secondary)); --se-body: light-dark(#525252, var(--muted-foreground)); }
 .se2 .l2-stage-obj > * { width: min(100%, 1040px); }
 

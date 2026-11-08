@@ -1,5 +1,5 @@
 /* Zen 7 (z7-): the 7 that rises and settles, the lineage line, the research room (the page's one black room).
-   Hanzo's deck only (docs/MASTER.md 3.1): neutrals, sizes from the scale (the 7 is the one big thing), 1152 container,
+   Hanzo's deck only (docs/build-notes/MASTER.md 3.1): neutrals, sizes from the scale (the 7 is the one big thing), 1152 container,
    13-column 5/8 split, radii 6/24, deck durations and curves. Deck values are page tokens until tokens.css lands. */
 .z7 {
   --z7-ink: var(--ink); --z7-muted: light-dark(#525252, var(--muted-foreground)); --z7-quiet: light-dark(#737373, var(--text-tertiary)); --z7-room: light-dark(#f5f5f5, var(--muted)); --z7-line: var(--x-e10);

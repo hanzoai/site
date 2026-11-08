@@ -30,7 +30,7 @@ import { A, More, Cta, Tabs, Faq, DataTable, Band, Img } from '../kit';
 import Odometer from '../v2/Odometer';
 import NoJs from '../NoJs';
 import './Pricing.css';
-import { PLANS, checkout, teamCheckout } from '../../lib/plans';
+import { PLANS, SEATS, checkout, teamCheckout } from '../../lib/plans';
 
 const PAY = (p) => checkout(p);
 const HELP = '/buying-specialist';
@@ -127,7 +127,7 @@ function CompareSheet({ lit }) {
 }
 
 /* ---------- the plans as states of one panel ---------- */
-const SEAT = { Standard: [20, 25], Premium: [100, 125] };
+const SEAT = { Standard: [SEATS.standard.monthAnnual, SEATS.standard.month], Premium: [SEATS.premium.monthAnnual, SEATS.premium.month] };
 const TEAM_INC = ["Add premium seats to raise the team's shared usage", 'One shared workspace: chat, meetings, calendar and contacts', 'Single sign-on, roles and an audit log', 'One bill for the whole team', 'Automations, with daily runs included'];
 const ENT_INC = ['Audit logs', 'SCIM provisioning through Hanzo IAM'];
 const PAYG_INC = ['Frontier & open-source models via unified API', 'OpenAI-compatible /v1/chat/completions endpoint', 'Intelligent semantic auto-routing & fallback', 'Prompt caching discounts up to 90%', 'Sandboxed code execution, web search & tools', 'Real-time spend limits, webhooks & usage alerts'];
@@ -148,7 +148,7 @@ function planOf(id, s = DEF) {
     const k = s.bill === 'Annual' ? 0 : 1;
     return { name: 'Team', seats: true, d: 'For teams of 2 to 100: every model and usage for each member, one workspace, one bill.', fig: '$' + (s.std * SEAT.Standard[k] + s.prem * SEAT.Premium[k]).toLocaleString('en-US'), cta: [BUY, HELP, 'pricing.team'], note: ['Standard & Premium seats · From 2 members', 'Organizations can mix Standard and Premium seats · Cancel anytime'], items: TEAM_INC };
   }
-  if (id === 'ent') return { name: 'Enterprise', d: 'For large businesses operating at scale', word: 'Seat price + usage at API rates', sub: 'US$20/seat/month, billed annually, 20 seat minimum. Usage cost scales with model and task.', cta: ['Get Enterprise plan', '/enterprise/start', 'pricing.enterprise'], alt: [BUY, HELP], head: 'All Team plan features, plus:', items: ENT_INC };
+  if (id === 'ent') return { name: 'Enterprise', d: 'For large businesses operating at scale', word: 'Seat price + usage at API rates', sub: `US$${SEATS.enterprise.monthAnnual}/seat/month, billed annually, ${SEATS.enterprise.min} seat minimum. Usage cost scales with model and task.`, cta: ['Get Enterprise plan', '/enterprise/start', 'pricing.enterprise'], alt: [BUY, HELP], head: 'All Team plan features, plus:', items: ENT_INC };
   if (id === 'payg') return { name: 'Pay as you go', d: 'Direct metered access to all frontier models, coding agents, and tools with zero commitments.', word: 'Metered per token & second', cta: ['Get API Key', '/dev', 'pricing.api.key'], note: 'Instant access · No minimum spend', items: PAYG_INC };
   return { name: 'Volume & Dedicated', d: 'For organizations with high-throughput inference, custom routing, or dedicated VPC deployments.', word: 'Custom rates', sub: ['Volume discounts from $5k/mo', 'Dedicated GPU clusters & custom routing SLAs'], cta: ['Contact API Sales', '/contact-sales', 'pricing.api.sales'], note: 'Dedicated VPC & 24/7 Slack support available', head: 'Everything in Pay as you go, plus:', items: VOL_INC };
 }
@@ -225,14 +225,14 @@ function Seats({ s, set }) {
         <b>Standard seat</b>
         <span>All Hanzo features, plus more usage than Pro</span>
         <p className="xpr-seat-p" aria-live="polite"><Odometer value={'$' + SEAT.Standard[k]} /></p>
-        <small>Per seat / month if billed annually. $25 if billed monthly.</small>
+        <small>{`Per seat / month if billed annually. $${SEATS.standard.month} if billed monthly.`}</small>
         <Stepper label="Standard seat" n={s.std} set={setS} min={Math.max(0, 2 - s.prem)} max={100 - s.prem} />
       </div>
       <div>
         <b>Premium seat</b>
         <span>5x more usage than standard seats</span>
         <p className="xpr-seat-p" aria-live="polite"><Odometer value={'$' + SEAT.Premium[k]} /></p>
-        <small>Per seat / month if billed annually. $125 if billed monthly.</small>
+        <small>{`Per seat / month if billed annually. $${SEATS.premium.month} if billed monthly.`}</small>
         <Stepper label="Premium seat" n={s.prem} set={setP} min={Math.max(0, 2 - s.std)} max={100 - s.std} />
       </div>
     </div>
@@ -276,7 +276,7 @@ function SeatPrices({ bill }) {
   const k = bill === 'Annual' ? 0 : 1;
   return (
     <div className="xpr-seats xpr-c-seats">
-      {[['Standard seat', 'All Hanzo features, plus more usage than Pro', 'Standard', '$25'], ['Premium seat', '5x more usage than standard seats', 'Premium', '$125']].map(([n, d, key, mo]) => (
+      {[['Standard seat', 'All Hanzo features, plus more usage than Pro', 'Standard', '$' + SEATS.standard.month], ['Premium seat', '5x more usage than standard seats', 'Premium', '$' + SEATS.premium.month]].map(([n, d, key, mo]) => (
         <div key={key}>
           <b>{n}</b>
           <span>{d}</span>

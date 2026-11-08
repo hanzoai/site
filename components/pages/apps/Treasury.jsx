@@ -51,7 +51,7 @@ const fmt = (v) => v.toLocaleString('en-US');
 
 /* The Stage, page-local: the same settle as v2/Settle (the hero arrives a touch large and low, then settles as the first
    screen scrolls away), except reduced motion is read after mount, so the server and the first client render match in
-   every motion mode. (v2/Settle reads it during render; requested in docs/requests/treasury.md.) */
+   every motion mode. (v2/Settle reads it during render; requested in docs/build-notes/requests/treasury.md.) */
 function Stage({ children, from = 1.015, lift = 12 }) {
   const ref = useRef(null);
   const [m, setM] = useState({ h: 800, phone: false, calm: false });

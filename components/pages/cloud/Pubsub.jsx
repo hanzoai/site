@@ -1,5 +1,5 @@
 'use client';
-/* PubSub, Cloud 3 launch page (docs/MASTER.md, the only brief).
+/* PubSub, Cloud 3 launch page (docs/build-notes/MASTER.md, the only brief).
    Persona: Developer. Goal: try Hanzo PubSub (read the source, then deploy it).
    CTA: "GitHub" → https://github.com/hanzoai/pubsub (data-cta pubsub.hero, pubsub.close; data-thumb "GitHub", so the
    site's sticky ask carries the same words). Metric: github_click (MASTER §1 names a GitHub click as a metric; the live

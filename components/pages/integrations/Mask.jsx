@@ -1,6 +1,6 @@
 'use client';
 /* Page-local copy of components/v2/MaskLines for /integrations: reduced motion is read after hydration (the shared one
-   mismatches the server HTML under reduced motion; see docs/requests/integrations.md). */
+   mismatches the server HTML under reduced motion; see docs/build-notes/requests/integrations.md). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import '../../v2/ProofScale.css';

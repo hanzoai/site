@@ -473,7 +473,7 @@ const PROOF = [
   ['250,000', 'email signups', 'Bellabeat', 'Preorders', '/customers#bellabeat', '/logos/customers/bellabeat.svg'],
 ];
 
-// The logo files are not in public/ yet (requested in docs/requests/enterprise.md), so nothing hot-links or 404s:
+// The logo files are not in public/ yet (requested in docs/build-notes/requests/enterprise.md), so nothing hot-links or 404s:
 // a cloud is its name set in type, and a customer row carries its name. Once the files are vendored, set LOGOS true.
 const LOGOS = true;
 function CloudMark({ name, src }) {

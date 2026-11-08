@@ -1,4 +1,4 @@
-/* v2 type, space and grid (docs/MASTER.md section 3: Hanzo's scale has rhythm). Owner: Cloud 2 chat.
+/* v2 type, space and grid (docs/build-notes/MASTER.md section 3: Hanzo's scale has rhythm). Owner: Cloud 2 chat.
    Usage: import '../../v2/v2scale.css' once in a page, then use the classes. Set --acc on the page's <main> for its one
    accent. Resting sizes follow live hanzo.ai: h1 52 (40 on phones), statements 44/32, section headings 26, H3 21/17, lede 20, body 16,
    captions 12 mono caps (never above an h1 or h2). Figures rest at 64 and only the page's moment grows past it.

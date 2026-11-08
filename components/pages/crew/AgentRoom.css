@@ -1,4 +1,4 @@
-/* /agents/<page> (prefix xag-), on Hanzo's deck (docs/MASTER.md §3): monochrome, Zen 497 headings, sizes from
+/* /agents/<page> (prefix xag-), on Hanzo's deck (docs/build-notes/MASTER.md §3): monochrome, Zen 497 headings, sizes from
    12 13 14 16 17 21 26 32 44 52 64; container 1152, 13 columns split 5/8; section air clamp(72px, 11vw, 188px);
    radii 24 tiles, 20 art, 6 chips, full buttons; only floating things cast a shadow. One big thing per screen. */
 .xag {
