@@ -1,0 +1,122 @@
+/* The models journey (components/models/Journey.jsx) and the grid it falls back to. Monochrome: graphite and silver
+   on Hanzo's dark, inverted on light. Every colour reads Hanzo's tokens (--bg, --ink, --soft, --faint, --line), which
+   follow @hanzo/appearance's light and dark. */
+
+/* which one shows before the page has chosen: the grid without JS, on phones and with reduced motion; the journey's
+   full-height place everywhere else, so nothing below it moves when it arrives */
+.x-mj-shell { display: none; }
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  html.js .x-models:not([data-mode]) .x-mj-shell { display: block; }
+  html.js .x-models:not([data-mode]) .x-mgrid { display: none; }
+}
+
+.x-models[data-mode=journey] { padding-bottom: clamp(64px, 7vw, 112px); }
+.x-models[data-mode=journey] .x-head { margin-bottom: 0; }
+.x-models[data-mode=journey] .x-row-links { margin-top: 8px; }
+
+.x-mj, .x-mj-shell { --mj-gap: 80vh; /* --mj-n, the number of models, is set by Journey.jsx; the shell before it uses the default */ position: relative; height: calc(100vh + (var(--mj-n, 9) - 1) * var(--mj-gap)); margin-top: clamp(8px, 2vw, 24px); }
+.x-mj-stage {
+  --mj-glow: rgba(255, 255, 255, .085); --mj-dot: rgba(229, 229, 229, .16); --mj-hair: rgba(255, 255, 255, .28);
+  position: sticky; top: 0; height: 100vh; overflow: hidden; color: var(--ink); isolation: isolate;
+  background: var(--bg);
+}
+html.light .x-mj-stage { --mj-glow: rgba(10, 10, 10, .06); --mj-dot: rgba(10, 10, 10, .09); --mj-hair: rgba(10, 10, 10, .3); }
+
+/* Hanzo's halftone, heavier at the edges, and a soft horizon glow behind the solids */
+.x-mj-dots {
+  position: absolute; inset: 0; z-index: -2; pointer-events: none;
+  background-image: radial-gradient(circle at center, var(--mj-dot) 1.15px, transparent 1.7px); background-size: 10px 10px;
+  -webkit-mask-image: radial-gradient(75% 70% at 66% 52%, transparent 30%, #000 100%); mask-image: radial-gradient(75% 70% at 66% 52%, transparent 30%, #000 100%);
+}
+.x-mj-glow {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(60% 26% at 64% 70%, var(--mj-glow), transparent 70%),
+    radial-gradient(34% 34% at 68% 50%, var(--mj-glow), transparent 75%),
+    linear-gradient(180deg, var(--bg) 0%, transparent 16%, transparent 84%, var(--bg) 100%);
+}
+.x-mj-gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; opacity: 0; transition: opacity 1.2s var(--ease); }
+.x-mj[data-ready] .x-mj-gl { opacity: 1; }
+.x-mj-hit { position: absolute; left: 60%; top: 30%; width: 1px; height: 1px; pointer-events: none; border-radius: 50%; }
+
+/* before three.js arrives: the model's own artwork waits where its solid will appear */
+.x-mj-poster {
+  position: absolute; left: 68%; top: 50%; width: min(42vh, 30vw); aspect-ratio: 4 / 5; object-fit: cover; transform: translate(-50%, -50%);
+  border-radius: 50%; -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent); mask-image: radial-gradient(closest-side, #000 55%, transparent);
+  opacity: .9; pointer-events: none; transition: opacity .9s var(--ease); animation: x-mj-in .9s var(--ease) both;
+}
+html.light .x-mj-poster { filter: invert(1); opacity: .75; }
+.x-mj[data-ready] .x-mj-poster { opacity: 0; }
+
+/* labels: the model's own tags, tied to the solid with hairlines */
+.x-mj-wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.x-mj-wires line { stroke: var(--mj-hair); stroke-width: 1; animation: x-mj-fade .8s .35s var(--ease) both; }
+.x-mj:not([data-ready]) .x-mj-wires, .x-mj:not([data-ready]) .x-mj-labels { display: none; }
+.x-mj-labels { position: absolute; inset: 0; pointer-events: none; }
+.x-mj-label {
+  position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; will-change: transform;
+  font: 500 10.5px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--soft);
+  padding: 7px 10px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--bg) 70%, transparent);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  animation: x-mj-fade .7s calc(.45s + var(--k) * .08s) var(--ease) both;
+}
+.x-mj-label i { width: 5px; height: 5px; border-radius: 50%; background: var(--ink); opacity: .7; }
+
+/* the left panel: kicker, name, line, all real text and links */
+.x-mj-panel { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; }
+.x-mj-list { list-style: none; margin: 0; padding: 0; display: grid; width: min(46%, 560px); }
+.x-mj-list > li { grid-area: 1 / 1; min-width: 0; }
+.x-mj-link { display: flex; flex-direction: column; gap: 18px; color: var(--ink); text-decoration: none; pointer-events: none; border-radius: 12px; }
+.x-mj-list > li.on .x-mj-link { pointer-events: auto; }
+.x-mj-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 10px; }
+.x-mj-link > span { transition: opacity .55s var(--ease), transform .8s var(--ease), filter .6s var(--ease); }
+.x-mj-list > li:not(.on) .x-mj-link > span { opacity: 0; transform: translateY(34px); filter: blur(6px); transition-duration: .35s, .5s, .35s; }
+.x-mj-list > li.past .x-mj-link > span { transform: translateY(-34px); }
+.x-mj-list > li.on .x-mj-kick { transition-delay: .05s; }
+.x-mj-list > li.on .x-mj-name { transition-delay: .1s; }
+.x-mj-list > li.on .x-mj-desc { transition-delay: .2s; }
+.x-mj-kick { display: flex; align-items: center; gap: 12px; font: 500 11.5px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--faint); }
+.x-mj-num { color: var(--ink); }
+.x-mj-num + span::before { content: ''; display: inline-block; width: 28px; height: 1px; margin-right: 12px; vertical-align: middle; background: currentColor; opacity: .6; }
+.x-mj-name { display: flex; align-items: flex-start; gap: .12em; font-size: clamp(4.25rem, 8.6vw, 8.75rem); font-weight: 560; letter-spacing: -.055em; line-height: .9; }
+.x-mj-name svg { width: .34em; height: .34em; margin-top: .08em; flex: none; transition: transform .5s var(--ease); }
+.x-mj-link:hover .x-mj-name svg, .x-mj-link:focus-visible .x-mj-name svg { transform: translate(.06em, -.06em); }
+.x-mj-desc { font-size: clamp(1.0625rem, 1.35vw, 1.3rem); line-height: 1.45; color: var(--soft); max-width: 30ch; text-wrap: pretty; }
+
+/* round the edge: the section's own lede running down the side, ticks, the counter and the gesture hint */
+.x-mj-side {
+  position: absolute; left: 26px; top: 50%; margin: 0; writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg);
+  white-space: nowrap; font: 500 10.5px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--faint); display: none;
+}
+@media (min-width: 1360px) { .x-mj-side { display: block; } }
+.x-mj-ticks { position: absolute; right: 64px; top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.x-mj-ticks button { all: unset; position: relative; display: flex; align-items: center; justify-content: flex-end; width: 34px; height: 22px; cursor: pointer; color: var(--ink); }
+.x-mj-ticks button::after { content: ''; width: 12px; height: 1.5px; border-radius: 1px; background: currentColor; opacity: .3; transform-origin: 100% 50%; transition: transform .45s var(--ease), opacity .45s var(--ease); }
+.x-mj-ticks button.on::after { opacity: 1; transform: scaleX(2); }
+.x-mj-ticks button:hover::after { opacity: .7; }
+.x-mj-ticks span { position: absolute; right: 40px; top: 50%; transform: translate(6px, -50%); font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--soft); opacity: 0; transition: opacity .25s var(--ease), transform .3s var(--ease); white-space: nowrap; }
+.x-mj-ticks button:hover span, .x-mj-ticks button.on span { opacity: 1; transform: translate(0, -50%); }
+.x-mj-count { position: absolute; right: 64px; bottom: 36px; display: flex; align-items: baseline; gap: 10px; font: 500 13px/1 var(--mono); letter-spacing: .1em; color: var(--faint); font-feature-settings: 'tnum'; }
+.x-mj-count b { font-weight: 500; font-size: 28px; letter-spacing: -.02em; color: var(--ink); }
+.x-mj-hint { position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; color: var(--faint); }
+.x-mj-hint svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.x-mj-hint i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: .6; }
+.x-mj-wheel { animation: x-mj-wheel 1.8s var(--ease) infinite; }
+@media (max-width: 1100px) { .x-mj-ticks, .x-mj-count { right: 28px; } }
+
+@keyframes x-mj-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes x-mj-in { from { opacity: 0; transform: translate(-50%, -46%) scale(.94); } }
+@keyframes x-mj-wheel { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(3px); opacity: 0; } 100% { opacity: 0; } }
+
+/* the grid (phones, reduced motion, no WebGL), restyled to sit with the journey: hairline silver edges and the
+   halftone behind the section */
+.x-models[data-mode=grid] { background-image: radial-gradient(circle at center, var(--x-e10) 1px, transparent 1.6px); background-size: 10px 10px; }
+.x-models[data-mode=grid] .x-mtilt { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12), 0 30px 60px -40px rgba(0, 0, 0, .5); transition: box-shadow .4s var(--ease); }
+.x-models[data-mode=grid] .x-mbtn:hover .x-mtilt { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .32), 0 30px 60px -40px rgba(0, 0, 0, .5); }
+.x-models[data-mode=grid] .x-mkick { color: #d1d1d6; letter-spacing: .16em; }
+.x-models[data-mode=grid] .x-mname { letter-spacing: -.03em; }
+
+/* the page's own section index steps aside while the journey's ticks are on screen */
+html.x-mj-pinned .xh-spine { opacity: 0; pointer-events: none; }
+.x-models[data-mode=grid] .x-mbtn { transition: transform .2s var(--ease); }
+.x-models[data-mode=grid] .x-mbtn:active { transform: scale(.985); }
