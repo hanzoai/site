@@ -16,19 +16,52 @@ const bill = (r, i, o) => (r ? r.in * i + r.out * o : null);
 const dollars = (v) => (v == null ? '—' : v === 0 ? '$0' : '$' + (v >= 100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(2)));
 
 /* api.hanzo.ai's catalogue, asked once a page (the public GET hanzo.ai's own model pages read) */
-let CAT = null;
+let CAT = null, RAW = null;
+const raw = () => (RAW ||= fetch('https://api.hanzo.ai/v1/models').then((r) => r.json()).then((j) => j.data || []).catch(() => { RAW = null; return []; }));
 export function useCatalog(need) {
   const [map, setMap] = useState(null);
   useEffect(() => {
     if (!need) return;
     let gone = false;
-    CAT ||= fetch('https://api.hanzo.ai/v1/models').then((r) => r.json()).then((j) => Object.fromEntries((j.data || [])
+    CAT ||= raw().then((data) => Object.fromEntries(data
       .filter((x) => x.pricing && x.pricing.input_per_million != null)
       .map((x) => [x.id, { in: +x.pricing.input_per_million, out: +x.pricing.output_per_million }]))).catch(() => { CAT = null; return {}; });
     CAT.then((m) => { if (!gone) setMap(m); });
     return () => { gone = true; };
   }, [need]);
   return map;
+}
+
+/* A maker's shelf as hanzo.ai lists it today. hanzo.ai renders its maker pages from api.hanzo.ai/v1/models on its
+   server, so a model added after this site's capture is on hanzo.ai and not in our HTML. The browser reads the same
+   public GET and the shelf follows it (same cards, same order: the gateway's); the captured shelf is the first paint and
+   what stays when the gateway does not answer. The lab of an id is its prefix, as hanzo.ai files it ("~" marks a
+   "latest" alias; ByteDance's Seed and Meta's Llama ids carry their own prefixes). Hanzo's own models are curated by
+   hanzo.ai, not listed by prefix, so /models/hanzo keeps its captured shelf. */
+const LAB = { 'bytedance-seed': 'bytedance', 'meta-llama': 'meta' };
+const ctxOf = (n) => (!n ? null : n >= 1e6 ? Math.round(n / 1e6) + 'M' : Math.round(n / 1e3) + 'K');
+export function useShelf(slug, cards) {
+  const [list, setList] = useState(null);
+  useEffect(() => {
+    if (slug === 'hanzo') return;
+    let gone = false;
+    raw().then((data) => {
+      const own = new Map(cards.map((c) => [c.href, c]));
+      const next = data.filter((x) => x.id.includes('/')).map((x) => {
+        const [lab, rest] = x.id.replace(/^~/, '').split(/\/(.*)/s);
+        return (LAB[lab] || lab) === slug ? { x, href: '/models/' + slug + '/' + rest } : null;
+      }).filter(Boolean).map(({ x, href }) => {
+        const c = own.get(href) || {};
+        const t = x.context_window || null;
+        return { ...c, href, id: x.id, name: x.name || c.name || href.split('/').pop(), ctx: ctxOf(t) || c.ctx || null, tokens: t || c.tokens || null,
+          desc: x.description || c.desc || '', tags: (x.outputs && x.outputs.length ? x.outputs : c.tags) || [] };
+      });
+      // a gateway answer that shares nothing with the captured shelf is not this maker's list: keep the capture
+      if (!gone && next.length && (!cards.length || next.some((c) => own.has(c.href)))) setList(next);
+    });
+    return () => { gone = true; };
+  }, [slug, cards]);
+  return list || cards;
 }
 // api.hanzo.ai's rate, once read, wins (it is what hanzo.ai itself prints); the captured rate and the snapshot are the first paint
 export const rateFrom = (cat, id, own) => (cat && (cat[id] || cat[id.replace(/^hanzo\//, '')])) || own || SNAP[id] || SNAP[id.replace(/^hanzo\//, '')] || null;

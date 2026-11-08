@@ -1344,8 +1344,8 @@
 "description": "Access 1 sesame models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/stealth": {
-"title": "Models — Hanzo AI",
-"description": "Explore frontier models and open-weight architectures. Access Enso, Zen, and 500+ partner models through one unified OpenAI-compatible API."
+"title": "stealth Models via Hanzo AI — 1 models",
+"description": "Access 1 stealth models via Hanzo's OpenAI-compatible API. Single API key, unified billing, and global low-latency routing."
 },
 "/models/stepfun": {
 "title": "StepFun Models via Hanzo AI — 3 models",

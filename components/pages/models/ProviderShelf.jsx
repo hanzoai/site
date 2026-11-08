@@ -16,7 +16,7 @@ import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
 import { FilmPause, usePaused } from '../../v2/ModelFilm';
 import SpecCard from '../../v2/SpecCard';
-import { Field, CopyStatus, useCatalog, rateFrom, money } from './parts';
+import { Field, CopyStatus, useCatalog, useShelf, rateFrom, money } from './parts';
 import './models.css';
 
 const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
@@ -25,18 +25,23 @@ const SORTS = [['shelf', 'As listed'], ['ctx', 'Context window'], ['rate', 'Outp
 
 export default function ProviderShelf({ doc }) {
   const cat = useCatalog(true);
-  const cards = doc.cards.map((c, i) => ({ ...c, n: i, rate: rateFrom(cat, c.id, c.rate) }));
+  // the shelf as hanzo.ai lists it now (api.hanzo.ai/v1/models), the captured one until the gateway answers
+  const list = useShelf(doc.slug, doc.cards);
+  const cards = list.map((c, i) => ({ ...c, n: i, rate: rateFrom(cat, c.id, c.rate) }));
   const [sort, setSort] = useState('shelf');
   const [mod, setMod] = useState('all');
-  const mods = useMemo(() => [...new Set(doc.cards.flatMap((c) => c.tags))], [doc.cards]);
+  const mods = useMemo(() => [...new Set(list.flatMap((c) => c.tags))], [list]);
   const shown = cards.filter((c) => mod === 'all' || c.tags.includes(mod)).sort((a, b) => {
     if (sort === 'ctx') return (b.tokens || 0) - (a.tokens || 0) || a.n - b.n;
     if (sort === 'rate') return (a.rate ? a.rate.out : Infinity) - (b.rate ? b.rate.out : Infinity) || a.n - b.n;
     return a.n - b.n;
   });
   const hidden = new Set(cards.filter((c) => !shown.includes(c)).map((c) => c.href));
-  const n = parseInt(doc.count, 10);
+  // Hanzo's count and lede follow its list ("{n} models available"; "Access all {n} {name} models…", "model" for one)
+  const n0 = parseInt(doc.count, 10);
+  const n = list === doc.cards || !Number.isFinite(n0) ? n0 : list.length;
   const word = doc.count.replace(/^\d+\s*/, '');
+  const lede = n === n0 ? doc.lede : doc.lede.replace(/^Access all \d+ (.+?) models? through /, (m, who) => `Access all ${n} ${who} ${n === 1 ? 'model' : 'models'} through `);
   const tokens = cards.map((c) => c.tokens).filter(Boolean);
   const outs = cards.map((c) => c.rate && c.rate.out).filter((v) => v != null);
   const plotted = cards.filter((c) => c.tokens && c.rate).length;
@@ -58,7 +63,7 @@ export default function ProviderShelf({ doc }) {
               <h1 id="xmf-h1" className={'xmf-name ' + (doc.h1.length <= 24 ? 'm' : 'l')} data-morph-target>
                 <span className="x-line"><motion.span className="x-line-in" initial={{ y: '108%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.08 }}>{doc.h1}</motion.span></span>
               </h1>
-              {doc.lede && <motion.p className="xmf-lede" {...up(0.3)}>{doc.lede}</motion.p>}
+              {lede && <motion.p className="xmf-lede" {...up(0.3)}>{lede}</motion.p>}
               <motion.div className="xmf-acts" {...up(0.42)}>
                 {doc.actions.map((a, i) => <Cta key={a.label} to={a.href} kind={i ? 'link' : 'solid'} id={i ? 'maker.hero.2' : 'maker.hero'} thumb={!i}>{a.label}</Cta>)}
               </motion.div>
