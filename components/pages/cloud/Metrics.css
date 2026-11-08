@@ -423,3 +423,78 @@ html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] {
   .mt-tab-spike .mt-fall li { height: 22px; grid-template-columns: 128px 1fr; }
 }
 @media (max-width: 899px) { .mt-tab-spike { border-radius: 0 0 15px 15px; } }
+
+/* ---------- dark mode, on Hanzo's tokens. The launch kit's page tokens turn over on this page; the black room (the
+   prompt and Metrics' own console) is black in both modes and keeps its values. Fills below read our --x-* tokens,
+   because --muted here is the kit's body grey, not Hanzo's fill. ---------- */
+html:not(.light) .lx.mt {
+  --ink: var(--foreground); --acc: var(--foreground); --acc-soft: var(--x-fill); --muted: var(--muted-foreground); --soft: var(--muted-foreground);
+  --faint: var(--text-tertiary); --silver: var(--border-strong); --card: var(--x-fill); --line: var(--border); --bg: var(--background);
+}
+@media (hover: hover) { html:not(.light):has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { background-color: var(--glass); } }
+html:not(.light) .mt-tool, html:not(.light) .mt-stage { background: var(--x-fill); }
+html:not(.light) .mt-host, html:not(.light) .mt-legend, html:not(.light) .mt-split button { color: var(--soft); }
+html:not(.light) .mt-split { background: var(--background); }
+html:not(.light) .mt-split::before { background: var(--x-knob); }
+html:not(.light) .mt-split button[aria-pressed='true'] { color: var(--ink); }
+html:not(.light) .mt-legend .s0 { color: var(--ink); }
+html:not(.light) .mt-legend i { border-top-color: var(--ink); }
+html:not(.light) .mt-legend .s1 i { border-top-color: var(--soft); }
+html:not(.light) .mt-legend .s2 i { border-top-color: var(--faint); }
+html:not(.light) .mt-legend li.hl { color: var(--ink); }
+html:not(.light) .mt-field { color: var(--ink); }
+html:not(.light) .mt-field .mt-plot .grid { stroke: var(--edge); }
+html:not(.light) .mt-field .s0 { stroke: var(--ink); }
+html:not(.light) .mt-field .s1 { stroke: var(--soft); }
+html:not(.light) .mt-field .s2 { stroke: var(--faint); }
+html:not(.light) .mt-cur { border-left-color: var(--ink); }
+html:not(.light) .mt-flag, html:not(.light) .mt-chip { background: var(--ink); color: var(--x-on-ink); }
+html:not(.light) .mt-x { background: var(--border-focus); }
+html:not(.light) .mt-x i { background: var(--bg); box-shadow: 0 0 0 2.5px var(--ink); }
+html:not(.light) .mt-traces { border-color: var(--border); }
+html:not(.light) .mt-stage .mt-tk, html:not(.light) .mt-stage .mt-fall li, html:not(.light) .mt-tab .mt-fall li { color: var(--soft); }
+html:not(.light) .mt-stage .mt-tk b, html:not(.light) .mt-traces.on .mt-fall li, html:not(.light) .mt-tab-spike .mt-fall li { color: var(--ink); }
+html:not(.light) .mt-stage .mt-sb, html:not(.light) .mt-tab .mt-sb { background: var(--secondary); }
+html:not(.light) .mt-stage .mt-sb b, html:not(.light) .mt-tab .mt-sb b { background: var(--faint); }
+html:not(.light) .mt-stage .mt-fall li:nth-child(2) b, html:not(.light) .mt-stage .mt-fall li:nth-child(4) b,
+html:not(.light) .mt-tab .mt-fall li:nth-child(2) b, html:not(.light) .mt-tab .mt-fall li:nth-child(4) b { background: var(--ink); }
+html:not(.light) .mt-traces.rest .mt-sb b { background: var(--border-strong); }
+html:not(.light) .mt-traces.rest .mt-fall li { color: var(--faint); }
+html:not(.light) .mt-ch-rail button[data-at='past'] { color: var(--faint); }
+html:not(.light) .mt-ch-rail i { background: var(--border-strong); }
+html:not(.light) .mt-ch-rail button[data-at='past'] i::after { background: var(--faint); }
+html:not(.light) .mt-tab { background: var(--x-raised); box-shadow: inset 0 0 0 1px var(--border); }
+html:not(.light) .mt-tab-bar, html:not(.light) .mt-tab-q, html:not(.light) .mt-row + .mt-row, html:not(.light) .mt-lab-r div { border-color: var(--border); }
+html:not(.light) .mt-tab .mt-dots i, html:not(.light) .mt-pills i { background: var(--secondary); }
+html:not(.light) .mt-row, html:not(.light) .mt-row.head { color: var(--faint); }
+html:not(.light) .mt-row.hot { color: var(--ink); }
+html:not(.light) .mt-row.spike { background: var(--x-fill); }
+html:not(.light) .k-metric { background: var(--ink); }
+html:not(.light) .k-trace { border-color: var(--ink); }
+html:not(.light) .k-log { background: var(--soft); }
+html:not(.light) .c-value b { background: var(--border-strong); }
+html:not(.light) .mt-row.hot .c-value b { background: var(--ink); }
+html:not(.light) .mt-lab-c button { border-color: var(--border-control); background: var(--x-raised); color: var(--soft); }
+html:not(.light) .mt-lab-c button[aria-pressed='true'] { background: var(--x-raised); color: var(--ink); border-color: var(--ink); }
+html:not(.light) .mt-lab-r dt { color: var(--soft); }
+/* 02: the query bar stays the one black object, edged so it reads on the dark table */
+html:not(.light) .mt-tab[data-step='1'] .mt-tab-q { box-shadow: inset 0 0 0 1px var(--border-strong); }
+html:not(.light) .mt-tab[data-step='4'][data-beat='2'] .mt-tab-q { background: var(--x-fill); box-shadow: inset 0 0 0 1.5px var(--ink); }
+html:not(.light) .mt-tab-spike { background: var(--x-raised); border-top-color: var(--border); }
+html:not(.light) .mt-tab-spike path { stroke: var(--ink); }
+@media (hover: hover) {
+  html:not(.light) .mt-split button:not([aria-pressed='true']):hover { color: var(--ink); background: var(--glass-strong); }
+  html:not(.light) .mt-split button[aria-pressed='true']:hover { color: var(--ink); }
+  html:not(.light) .mt-lab-c button[aria-pressed='true']:hover { background: var(--x-fill); }
+  html:not(.light) .mt-close .lx-close-repo:hover { background: var(--x-fill); }
+}
+@media (max-width: 899px) {
+  html:not(.light) .mt-ch:not([data-pin]) .mt-ch-obj { background: var(--bg); box-shadow: 0 -60px 0 var(--bg); }
+}
+/* the close's art tile reads Hanzo's --muted fill, which on a launch-kit page is the kit's body grey: it takes the fill token */
+html:not(.light) .mt-close .lx-close-art { background: var(--x-fill); }
+/* the shared pause control draws its icon in #0a0a0a on its own fill; in the tool card it takes the ink */
+html:not(.light) .mt-pause:not([aria-pressed='true']) { color: var(--ink); }
+/* the close's Sigil and repo underline are drawn in fixed black by the shared close; on this page they take the ink */
+html:not(.light) .mt-close .lx-close-sigil { color: var(--ink); }
+html:not(.light) .mt-close .lx-close-repo { text-decoration-color: var(--border-selected); }

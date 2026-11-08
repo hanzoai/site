@@ -387,7 +387,7 @@ const POINTS = [
 const SIDE = [['Metrics', '/metrics'], ['Logs', '/cloud/logs'], ['Dashboards', '/dashboards'], ['O11y', '/o11y'], ['AI Metrics', '/cloud/ai-metrics'], ['Billing', '/billing'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions']];
 const ICONS = ['M2 12l4-4 3 3 5-6', 'M5 2.5h6M3.5 6h9M2 9.5h12v4H2z', 'M2.5 3h11v4h-11zM2.5 9h11v4h-11z', 'M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM1.5 8h13', 'M8 2 2.5 5v6L8 14l5.5-3V5zM2.5 5 8 8l5.5-3M8 8v6', 'M3 3h3v3H3zM10 10h3v3h-3zM6 4.5h3.5v5.5', 'M8 2v4M8 6 4 10M8 6l4 4M4 10v4M12 10v4', 'M8 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM2.5 14c.8-2.6 3-4 5.5-4s4.7 1.4 5.5 4'];
 const CAP = 'The service the session above is changing.';
-const SERVICES = [['gateway', CAP], ['payments-api'], ['checkout-web', 'A build is running from the last commit on main.'], ['docs-site']];
+const SERVICES = [['gateway', CAP], ['payments-api'], ['checkout-web', 'A build is running from the last commit on main.'], ['docs-site', 'Static, published by the same pipeline as the rest.']];
 const LAND = 72; // where a sent query lands on the line (index)
 const RT0 = md(TS + 9, W);
 
