@@ -556,3 +556,5 @@ html:not(.js) .cr-now { display: none !important; }
 /* ---------- dark mode (8 Nov, docs/DARK-MODE.md): the Keynote deck pins its tokens light on .kn, so this page points
    them at Hanzo's dark tokens; every light value above is unchanged ---------- */
 html:not(.light) .cr { --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border); --body: var(--muted-foreground); --quiet: var(--text-tertiary); --hair: var(--border); background: var(--background); }
+/* dark: the wireframe's heading bar in Hanzo's muted grey (a mark, not a white slab) */
+html:not(.light) .cr .cr-wf-h { background: var(--muted-foreground); }
