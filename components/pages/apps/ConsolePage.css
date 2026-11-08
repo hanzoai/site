@@ -525,3 +525,18 @@
 .cs-fact-peek > span { display: block; }
 .cs-facts > :first-child .cs-fact-peek { max-height: 13.6em; }
 .cs-facts > :first-child .cs-fact-peek { -webkit-mask-image: linear-gradient(#000 86%, transparent); mask-image: linear-gradient(#000 86%, transparent); }
+
+/* ---------- dark mode (8 Nov, docs/DARK-MODE.md): only under html:not(.light), so bright mode keeps every computed colour.
+   The Business grammar's own tokens take Hanzo's dark values on this page; the dark shell and canvas are black in both. */
+html:not(.light) .cs { --bz-ink: #e5e5e5; --bz-muted: #a3a3a3; --bz-quiet: #858585; --bz-line: rgba(255, 255, 255, .1); --bz-paper: #0d0d0d; --bz-room: #171717; --bz-card: #171717; --bz-tile: #262626; --bz-track: #404040; --card: #171717; background: var(--bg); color: var(--ink); }
+html:not(.light) .cs-find-obj, html:not(.light) .cs-find-x { background: #0f0f0f; }
+html:not(.light) .cs-find-res li.hi .cs-find-i { background: var(--ink); color: #0a0a0a; }
+html:not(.light) .cs-find-obj:focus-within { border-color: rgba(255, 255, 255, .3); }
+@media (hover: hover) { html:not(.light) .cs-find-x:hover, html:not(.light) a.cs-chip:hover { border-color: rgba(255, 255, 255, .3); } }
+html:not(.light) .cs .cf-paste-t, html:not(.light) .cs .bz-title { color: var(--ink); }
+html:not(.light) .cs .cf-paste-k { color: var(--faint); }
+html:not(.light) .cs-end-org { background: #171717; }
+html:not(.light) .cs-end-org ul { background: #0f0f0f; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1); }
+html:not(.light) .cs-end-org li b { color: var(--ink); }
+html:not(.light) .cs-end-org .cs-ava { background: var(--ink); color: #0a0a0a; }
+html:not(.light) .cs-end-pill { background: #262626; box-shadow: inset 0 0 0 1px var(--ink); }
