@@ -2,6 +2,7 @@
 
 Verdict: 6/10
 Ready: 8 Nov, copycheck missing 0 of 49 (live hanzo.ai) on /legal/acceptable-use, and missing 0 on all 11 members (biometric-voice 18, consumer-health 12, cookies 21, cybersecurity 29, dpa 73, privacy 193, research-api 45, research-contribution 24, subprocessors 33, terms 98). Every sub-heading ("1.1 Illegal activity", "3.1 Data you provide", "Benchmark Arena and provenance registry" …) is now one leaf beside its copy link; rule 4: the cover no longer turns on a timer or zooms on scroll, the title holds its size, phones go title, dates, lede, Contents (the word shown, as live), stage padding trimmed. taste/unique OK; 0 console errors, no overlap at 1470x801 and 375x812 (checker hits are `.x-sr` numbers and the closed phone Contents).
+Dark: 8 Nov, matches live hanzo.ai in dark side by side (docs/gallery/legal-family/dark-*.jpg); darkcheck OK, lightcheck OK, copycheck 0. Checked /legal/acceptable-use, /privacy, /subprocessors and /terms (tables desktop and phone row cards) in both modes.
 First complaint: "It's 29 screens of the same giant grey number and a paragraph, and the contents list on the left stops at 16, so I lose where I am. Then on the subprocessor page the table is cut off and my scroll gets stuck in it."
 
 Walked 7 Nov. Page file at `d46d037` plus the owner's uncommitted edits made during the walk (14:32 UTC: `data-ask="off"`, Hanzo-only numbers on the cover, a 13px floor for code). The files are `components/pages/LegalDoc.jsx` and `LegalRoom.css`, on the kit `FamLines`, `FamStage`, `FamNext` and `DocNodes`.
