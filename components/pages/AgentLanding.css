@@ -1,0 +1,88 @@
+/* /agent (prefix xal-). Repo tokens only (--ink --soft --faint --line --card --bg --x-raised, --room-* in the dark room). */
+.xal { color: var(--ink); }
+.xal h1, .xal h2, .xal h3 { font-weight: 560; letter-spacing: -.035em; margin: 0; text-wrap: balance; }
+.xal-hero { padding: clamp(108px, 15svh, 168px) 0 clamp(48px, 7vw, 104px); }
+.xal-grid { display: grid; gap: clamp(36px, 5vw, 80px); grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); align-items: center; }
+.xal-copy .x-kick { margin: 0 0 22px; }
+.xal h1 { font-size: clamp(2.5rem, 4.8vw, 4.5rem); line-height: 1.03; letter-spacing: -.042em; max-width: 14ch; }
+.xal-lede { margin: 24px 0 0; max-width: 40ch; font-size: clamp(1.0625rem, 1.4vw, 1.3rem); line-height: 1.5; color: var(--soft); text-wrap: pretty; }
+.xal-lede span { color: var(--faint); }
+.xal-acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.xal-note { margin: 28px 0 0; max-width: 52ch; font-size: 14px; line-height: 1.55; color: var(--faint); }
+.xal-through { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 22px; }
+.xal-through .x-kick { margin: 0 6px 0 0; }
+.xal-chip { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--x-raised); font: 500 12.5px/1 var(--sans); color: var(--ink); text-decoration: none; }
+a.xal-chip { transition: border-color .2s; } @media (hover: hover) { a.xal-chip:hover { border-color: var(--ink); } }
+.xal-chip span { color: var(--faint); }
+
+/* the console */
+.xal-con { margin: 0; min-width: 0; }
+.xal-win { border: 1px solid var(--line); border-radius: 20px; background: var(--x-raised); overflow: hidden; box-shadow: 0 40px 80px -48px rgba(0, 0, 0, .35); }
+.xal-bar { display: flex; align-items: center; gap: 14px; height: 40px; padding: 0 14px; border-bottom: 1px solid var(--line); background: var(--x-sunk); font: 500 12.5px/1 var(--sans); color: var(--soft); }
+.xal-dots { display: inline-flex; gap: 6px; } .xal-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+.xal-body { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); min-height: 300px; }
+.xal-body nav { display: flex; flex-direction: column; gap: 2px; padding: 10px; border-right: 1px solid var(--line); background: var(--x-sunk); }
+.xal-body nav a { display: block; padding: 9px 12px; border-radius: 10px; font-size: 14px; color: var(--soft); text-decoration: none; transition: background-color .2s, color .2s; }
+.xal-body nav a em { font-style: normal; }
+.xal-body nav a[aria-current] { background: var(--ink); color: var(--x-on-ink); }
+@media (hover: hover) { .xal-body nav a:not([aria-current]):hover { background: var(--x-fill); color: var(--ink); } }
+.xal-turns { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 18px; list-style: none; }
+.xal-turns li { display: flex; }
+.xal-turns li.you { justify-content: flex-end; }
+.xal-turns button { max-width: 92%; padding: 12px 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--x-fill); color: var(--ink); font: 400 14.5px/1.5 var(--sans); text-align: left; cursor: pointer; opacity: .42; transition: opacity .5s, background-color .3s, border-color .3s; }
+.xal-turns .you button { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
+.xal-turns button[data-past] { opacity: .8; }
+.xal-turns button[data-on] { opacity: 1; border-color: var(--ink); }
+.xal-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--soft); }
+.xal-open { color: var(--ink); font-weight: 560; text-decoration: none; white-space: nowrap; }
+.xal-con figcaption { margin: 14px 4px 0; font: 400 12.5px/1.5 var(--mono); color: var(--faint); text-align: center; }
+
+.xal-sec { padding: clamp(48px, 7vw, 104px) 0; border-top: 1px solid var(--line); }
+.xal-head { margin-bottom: clamp(32px, 4vw, 56px); }
+.xal-head .x-kick { margin-bottom: 18px; }
+.xal-head h2 { font-size: clamp(2rem, 3.8vw, 3.5rem); line-height: 1.05; max-width: 22ch; }
+.xal-hl { margin: 18px 0 0; max-width: 58ch; font-size: clamp(1.0625rem, 1.3vw, 1.25rem); line-height: 1.5; color: var(--soft); text-wrap: pretty; }
+.xal-paste { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
+.xal-paste .xal-head { margin: 0; }
+.xal-paste .xal-hl { margin-top: 0; font-size: clamp(1.25rem, 1.9vw, 1.75rem); line-height: 1.35; color: var(--ink); }
+
+.xal-steps, .xal-caps { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.xal-steps li, .xal-caps li { padding: 28px; border: 1px solid var(--line); border-radius: 20px; background: var(--x-raised); }
+.xal-n { display: block; margin-bottom: 40px; font-size: 13px; letter-spacing: .1em; color: var(--faint); }
+.xal-steps h3, .xal-caps h3 { font-size: clamp(1.2rem, 1.6vw, 1.5rem); line-height: 1.2; letter-spacing: -.02em; }
+.xal-steps p, .xal-caps p { margin: 12px 0 0; font-size: 15.5px; line-height: 1.55; color: var(--soft); }
+.xal-sdk .xal-head { margin-bottom: clamp(24px, 3vw, 40px); }
+.xal-sdk .xal-acts { margin-top: 28px; }
+
+.xal-close { padding: clamp(80px, 11vw, 160px) 0; background: var(--room-bg); color: var(--room-ink); text-align: center; border-top: 1px solid var(--line); }
+.xal-close h2 { margin: 0 auto; max-width: 18ch; font-size: clamp(2.4rem, 5.4vw, 4.75rem); line-height: 1; letter-spacing: -.045em; color: var(--room-ink); }
+.xal-close p { margin: 22px auto 0; max-width: 54ch; font-size: clamp(1.0625rem, 1.4vw, 1.3rem); line-height: 1.5; color: var(--room-soft); }
+.xal-close .xal-acts { justify-content: center; margin-top: 36px; }
+.xal-close .x-btn:not(.solid) { background: transparent; color: var(--room-ink); border-color: var(--room-line-strong); }
+
+.xal-crew { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(116px, 100%), 1fr)); gap: 28px 20px; margin: 0; padding: 0; list-style: none; }
+.xal-crew a { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; text-decoration: none; color: var(--ink); }
+.xal-disc { display: block; width: 64px; height: 64px; border-radius: 50%; overflow: hidden; border: 1px solid var(--line); background: var(--card); transition: transform .25s var(--ease), border-color .25s; }
+.xal-disc img { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (hover: hover) { .xal-crew a:hover .xal-disc { transform: translateY(-2px); border-color: var(--ink); } }
+.xal-crew a:focus-visible .xal-disc { transform: translateY(-2px); border-color: var(--ink); }
+.xal-who { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.xal-who span:first-child { font-weight: 560; font-size: 15px; }
+.xal-who span + span { font-size: 12.5px; line-height: 1.35; color: var(--faint); }
+.xal-more { margin: clamp(32px, 4vw, 56px) 0 0; }
+
+.xal-get { padding-bottom: clamp(72px, 10vw, 144px); }
+.xal-gets { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+
+@media (max-width: 980px) {
+  .xal-grid, .xal-paste { grid-template-columns: minmax(0, 1fr); }
+  .xal-steps, .xal-caps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .xal-steps, .xal-caps { grid-template-columns: minmax(0, 1fr); }
+  .xal-body { grid-template-columns: minmax(0, 1fr); }
+  .xal-body nav { flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--line); }
+  .xal-acts .x-btn { flex: 1 1 100%; }
+  .xal-turns button { max-width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .xal-turns button, .xal-disc { transition: none; } }

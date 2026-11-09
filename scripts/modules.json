@@ -5,6 +5,7 @@
  "sdk": "https://github.com/hanzo-go/sdk",
  "sendgrid": "https://github.com/hanzo-go/sendgrid",
  "age": "https://github.com/hanzoai/age",
+ "agent": "https://github.com/hanzoai/agent",
  "base-ha": "https://github.com/hanzoai/base-ha",
  "builder": "https://github.com/hanzoai/builder",
  "cd": "https://github.com/hanzoai/cd",
