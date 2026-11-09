@@ -110,8 +110,6 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-or { display: flex; align-items: center; gap: 12px; color: var(--faint); font: 400 12.5px/1 var(--sans); }
 .x-or::before, .x-or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 .x-or.small { margin: 2px 0; }
-.x-terms { margin: 6px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--faint); }
-.x-terms a { color: var(--soft); }
 
 .x-hero-stage { --sw: 720; --sh: 590px; position: relative; width: 100%; transform-origin: 50% 0; }
 .x-fit { position: absolute; left: 0; top: 0; width: 720px; height: 590px; transform-origin: 0 0; perspective: 1700px; }

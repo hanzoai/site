@@ -6,7 +6,6 @@ import A2Pause from './v2/A2Pause';
 import C from '../content';
 import SetupMenu from './SetupMenu';
 import { MORE, SceneLog, ShellLines, PhoneCells, Feed, Chips } from './home/HeroScenes';
-import { PLANS, checkoutAbs } from '../lib/plans';
 import { press } from '../lib/press';
 import { capture, track } from '../lib/track';
 
@@ -315,9 +314,6 @@ export default function Hero() {
             <div className="x-auth-mag">
               <motion.a variants={rise} href="https://hanzo.app/signup" className="x-auth-b solid" whileTap={{ scale: 0.97 }}>Continue with email</motion.a>
             </div>
-            <motion.a variants={rise} href={checkoutAbs(PLANS.go.id)} className="x-arrow x-hero-price" data-cta="home.hero-go">{`Free to start · Go is $${PLANS.go.price}/month, every model`}</motion.a>
-            <motion.p variants={rise} className="x-terms">By continuing, you agree to Hanzo&apos;s <a href="https://hanzo.ai/terms">Terms</a> and <a href="https://hanzo.ai/privacy">Privacy Policy</a>.</motion.p>
-            <motion.p variants={rise} className="xh-go"><a href={checkoutAbs(PLANS.go.id)} data-cta="home.go">{`Go is $${PLANS.go.price}/month`}</a></motion.p>
           </motion.div>
         </motion.div>
 

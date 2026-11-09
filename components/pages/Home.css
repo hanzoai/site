@@ -115,9 +115,6 @@ html:not(.js) .x-hero [style*='opacity'], html:not(.js) .x-hero .x-line-in { opa
 .xs-ev.a .xs-ev-act { display: inline-flex; flex: none; padding: 2px 8px; border-radius: 999px; background: var(--ink); color: var(--x-on-ink); font-size: 10px; }
 .xs-ev-act .xs-act-b { display: none; }
 @media (max-width: 900px) { .xs-feed { display: none; } }
-.xh-go { margin: 6px 0 0; font-size: 13px; text-align: center; }
-.xh-go a { color: var(--soft); text-decoration: underline; text-underline-offset: 3px; }
-@media (hover: hover) { .xh-go a:hover { color: var(--ink); } }
 @media (prefers-reduced-motion: reduce) { .xs-log > .xs-scene.on, .xs-shell > .xs-sh.on, .xs-phone > .xs-ph.on, .xs-feed > .xs-ev.on { animation: none; } }
 
 /* 8 Nov: hanzo.ai's newer hero labels — the app's sidebar toggle, the chips maxpower earns, scene notes in the log */
