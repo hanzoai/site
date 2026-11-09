@@ -1,0 +1,45 @@
+/* /products (prefix xpi-). Repo tokens only: --ink --soft --faint --line --card --bg --x-raised; light and dark follow them. */
+.xpi { color: var(--ink); }
+.xpi-hero { padding: clamp(112px, 16svh, 176px) 0 clamp(48px, 7vw, 96px); }
+.xpi-grid { display: grid; gap: clamp(40px, 6vw, 88px); grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; }
+.xpi-copy .x-kick { margin: 0 0 22px; }
+.xpi h1 { margin: 0; font-size: clamp(3rem, 6.4vw, 5.75rem); font-weight: 560; letter-spacing: -.045em; line-height: 1; }
+.xpi-lede { margin: 24px 0 0; max-width: 28ch; font-size: clamp(1.125rem, 1.6vw, 1.5rem); line-height: 1.4; color: var(--soft); text-wrap: balance; }
+.xpi-acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+
+/* the stack: a window of Hanzo OS, layers as rows, the Record as the dashed rail beside them */
+.xpi-win { margin: 0; border: 1px solid var(--line); border-radius: 20px; background: var(--x-raised); overflow: hidden; box-shadow: 0 40px 80px -48px rgba(0, 0, 0, .35); }
+.xpi-bar { display: flex; align-items: center; gap: 14px; height: 40px; padding: 0 14px; border-bottom: 1px solid var(--line); background: var(--x-sunk); font: 500 12.5px/1 var(--sans); color: var(--soft); }
+.xpi-dots { display: inline-flex; gap: 6px; } .xpi-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+.xpi-stack { display: grid; gap: 8px; padding: 12px; }
+.xpi-stack ol { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.xpi-row { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 16px; align-items: baseline; height: 100%; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; color: var(--soft); font-size: 14px; line-height: 1.5; text-decoration: none; transition: border-color .2s, background-color .2s, transform 90ms; }
+.xpi-row b { color: var(--ink); font-weight: 560; font-size: 15px; }
+.xpi-row.rail { border-style: dashed; }
+@media (hover: hover) { .xpi-row:hover { border-color: var(--ink); background: var(--x-sunk); } }
+.xpi-row:active { transform: scale(.99); }
+.xpi-row:focus-visible, .xpi a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+@media (min-width: 768px) {
+  .xpi-stack { grid-template-columns: minmax(0, 1fr) 12rem; }
+  .xpi-stack > .rail { grid-column: 2; grid-row: 1; grid-template-columns: 1fr; align-content: start; }
+}
+
+.xpi-sec { padding: clamp(40px, 6vw, 88px) 0; border-top: 1px solid var(--line); }
+.xpi-head h2 { margin: 0; font-size: clamp(2rem, 3.6vw, 3.25rem); font-weight: 560; letter-spacing: -.035em; line-height: 1.05; max-width: 20ch; text-wrap: balance; }
+.xpi-head p { margin: 18px 0 0; max-width: 56ch; font-size: clamp(1.0625rem, 1.3vw, 1.25rem); line-height: 1.5; color: var(--soft); text-wrap: pretty; }
+.xpi-by { margin-top: clamp(32px, 4vw, 56px); }
+.xpi-by .x-kick { margin-bottom: 20px; }
+.xpi-logos { display: flex; flex-wrap: wrap; align-items: center; gap: 28px clamp(28px, 4vw, 56px); margin: 0; padding: 0; list-style: none; }
+.xpi-logos a { display: inline-flex; align-items: center; opacity: .72; transition: opacity .2s; }
+@media (hover: hover) { .xpi-logos a:hover { opacity: 1; } }
+.xpi-logos img { display: block; width: auto; max-width: 200px; }
+html:not(.light) .xpi-logos img { filter: grayscale(1) brightness(0) invert(1); }
+.xpi-work { display: flex; flex-wrap: wrap; gap: 14px 40px; margin-top: clamp(28px, 4vw, 44px); }
+.xpi-more { font: 500 15px/1.4 var(--sans); color: var(--ink); text-decoration: none; white-space: nowrap; }
+@media (hover: hover) { .xpi-more:hover { text-decoration: underline; text-underline-offset: 4px; } }
+.xpi-end { padding-bottom: clamp(72px, 10vw, 144px); }
+.xpi-end .xpi-acts { margin-top: 0; }
+
+@media (max-width: 900px) { .xpi-grid { grid-template-columns: minmax(0, 1fr); } .xpi-lede { max-width: 34ch; } }
+@media (max-width: 520px) { .xpi-row { grid-template-columns: 1fr; gap: 4px; } .xpi-win { border-radius: 16px; } .xpi-acts .x-btn { flex: 1 1 100%; } }
+@media (prefers-reduced-motion: reduce) { .xpi-row { transition: none; } }
