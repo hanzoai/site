@@ -1,0 +1,70 @@
+/* /reviews (prefix xrv-). Hanzo's own tokens only (--ink --soft --faint --line --card --bg --x-raised --x-e12 --x-e15
+   --x-on-ink), so light and dark both read; the one hue is the online green of the stars and the checks. */
+.xrv { --on: var(--state-online); overflow-x: clip; color: var(--ink); }
+.xrv-hero { padding: clamp(88px, 10vw, 128px) 0 clamp(40px, 5vw, 64px); }
+.xrv-top { display: flex; justify-content: center; margin: 0; }
+.xrv-top .x-badge svg { color: var(--soft); }
+.xrv-h1 { margin: 26px auto 0; max-width: 20ch; text-align: center; font: 560 clamp(2.4rem, 5.6vw, 4rem)/1.06 var(--sans); letter-spacing: -.04em; color: var(--ink); text-wrap: balance; }
+.xrv-lede { margin: 20px auto 0; max-width: 52ch; text-align: center; font-size: clamp(1.0625rem, 1.4vw, 1.25rem); line-height: 1.5; color: var(--soft); text-wrap: balance; }
+.xrv-acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
+.xrv-acts .x-btn svg { flex: none; }
+
+.xrv-body { padding-bottom: clamp(40px, 5vw, 72px); }
+.xrv-sum { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 28px; padding: 22px 24px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); }
+.xrv-sum-in { display: flex; flex: 1; flex-wrap: wrap; align-items: center; gap: 20px 28px; min-width: 0; }
+.xrv-score p { display: flex; align-items: baseline; gap: 8px; margin: 0 0 4px; }
+.xrv-big { font: 700 2.6rem/1 var(--sans); letter-spacing: -.03em; color: var(--ink); }
+.xrv-of { font-size: 1rem; color: var(--soft); }
+.xrv-proof { flex: 1; min-width: min(100%, 260px); }
+.xrv-verified { display: flex; align-items: center; gap: 8px; margin: 0; font: 600 1rem/1.4 var(--sans); color: var(--ink); }
+.xrv-verified svg { color: var(--on); flex: none; }
+.xrv-sub { margin: 4px 0 0; font-size: .9rem; line-height: 1.5; color: var(--soft); }
+
+.xrv-stars { display: inline-flex; gap: 3px; color: var(--faint); vertical-align: middle; }
+.xrv-stars svg.on, .xrv-rate svg.on { color: var(--on); }
+
+.xrv-form { display: flex; flex-direction: column; gap: 20px; margin-bottom: 28px; padding: 24px; border: 1px solid var(--x-e15); border-radius: 20px; background: var(--card); scroll-margin-top: 96px; }
+.xrv-form-h { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.xrv-form-h h2 { margin: 0; font: 600 1.25rem/1.3 var(--sans); letter-spacing: -.01em; color: var(--ink); }
+.xrv-form-h p { margin: 2px 0 0; font-size: .9rem; color: var(--soft); }
+.xrv-rate { display: inline-flex; align-items: center; gap: 4px; font-size: .9rem; color: var(--soft); }
+.xrv-rate span { margin-right: 4px; }
+.xrv-rate button { display: grid; place-items: center; padding: 4px; border: 0; border-radius: 8px; background: none; color: var(--soft); cursor: pointer; }
+.xrv-rate button:focus-visible, .xrv-pill:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.xrv-three { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 768px) { .xrv-three { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.xrv-product { display: flex; flex-direction: column; gap: 8px; }
+.xrv-label { font-size: 13px; font-weight: 500; color: var(--soft); }
+.xrv-form-f { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; }
+.xrv .x-input2 { background: var(--bg); border-color: var(--x-e12); color: var(--ink); }
+.xrv .x-field > label { color: var(--soft); }
+
+.xrv-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.xrv-pills.filter { margin-bottom: 20px; }
+.xrv-pill { height: 36px; padding: 0 14px; border: 1px solid var(--x-e15); border-radius: 999px; background: var(--x-raised); color: var(--ink); font: 500 14px/1 var(--sans); cursor: pointer; transition: background-color .2s, border-color .2s, color .2s; }
+.xrv-pill[aria-pressed='true'] { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
+@media (hover: hover) { .xrv-pill[aria-pressed='false']:hover { border-color: var(--ink); } }
+
+.xrv-grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); margin: 0; padding: 0; list-style: none; }
+@media (min-width: 768px) { .xrv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.xrv-card { display: flex; flex-direction: column; justify-content: space-between; gap: 20px; min-width: 0; padding: 24px; border: 1px solid var(--line); border-radius: 20px; background: var(--card); }
+.xrv-card-main { display: flex; flex-direction: column; gap: 14px; }
+.xrv-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.xrv-tag { padding: 2px 10px; border: 1px solid var(--line); border-radius: 999px; font: 400 12px/1.6 var(--mono); color: var(--soft); white-space: nowrap; }
+.xrv-card h3 { margin: 0; font: 600 1.125rem/1.4 var(--sans); letter-spacing: -.01em; color: var(--ink); text-wrap: balance; }
+.xrv-quote { margin: 0; font-size: .95rem; line-height: 1.65; color: var(--soft); overflow-wrap: anywhere; }
+.xrv-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+.xrv-who { display: flex; align-items: center; gap: 8px; margin: 0; }
+.xrv-name { font: 600 .9rem/1.4 var(--sans); color: var(--ink); }
+.xrv-ver { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; color: var(--soft); }
+.xrv-ver svg { color: var(--on); }
+.xrv-role { margin: 2px 0 0; font-size: 12px; line-height: 1.5; color: var(--soft); }
+.xrv-date { flex: none; font: 400 12px/1.4 var(--mono); color: var(--soft); }
+
+.xrv-end { padding: 8px 0 clamp(72px, 9vw, 128px); }
+.xrv-end .x-wrap { display: flex; justify-content: center; }
+
+/* the thanks, or what is missing: fixed, said once, gone after six seconds */
+.xrv-toast { position: fixed; left: 50%; bottom: 24px; translate: -50% 0; z-index: 60; max-width: calc(100vw - 32px); margin: 0; padding: 12px 18px; border-radius: 14px; background: var(--ink); color: var(--x-on-ink); font: 500 14px/1.4 var(--sans); box-shadow: 0 12px 32px -12px rgba(0, 0, 0, .4); }
+.xrv-toast.bad { outline: 2px solid var(--state-error); }
+.xrv .x-field-msg:empty { display: none; }
