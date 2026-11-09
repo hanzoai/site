@@ -112,6 +112,7 @@ for (const slug of ['free', 'go', 'pro-2x', 'dev-5x', 'max-10x', 'ultra', 'team'
 assert.ok(Object.values(pr.plans).some((p) => p.category === 'agency'), 'agency plans');
 const oss = JSON.parse(read('_oss.json'));
 assert.ok([oss.estate.commits, oss.estate.merges, oss.estate.orgs, oss.calendar.week].every((n) => int(n) && n > 0), 'open-source figures');
+assert.ok(oss.estate.mergeMonths.length > 0 && oss.estate.mergeMonths.every(int), 'merges a month');
 assert.ok(oss.calendar.days.length >= 365 && oss.groups.hanzo.top.length >= 12, 'calendar and repository cards');
 const rs = JSON.parse(read('_research.json'));
 for (const k of ['repair', 'latency', 'gpqa']) assert.ok(Array.isArray(rs[k]) && rs[k].length > 0, 'research ' + k);

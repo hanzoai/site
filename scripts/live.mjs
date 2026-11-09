@@ -110,7 +110,7 @@ async function figures() {
       days.push([d, all.reduce((a, g) => a + (g.daily?.[d] ?? 0), 0), all.reduce((a, g) => a + (g.active?.[d] ?? 0), 0)]);
     }
     need(days.length >= 365 && days.every(([, c, r]) => int(c) && int(r)), 'calendar days');
-    need([e.commits, e.merges, e.orgs, e.public].every(int) && Array.isArray(e.monthly) && e.window?.to, 'estate');
+    need([e.commits, e.merges, e.orgs, e.public].every(int) && Array.isArray(e.monthly) && Array.isArray(e.mergeMonths) && e.mergeMonths.every(int) && e.window?.to, 'estate');
     const groups = Object.fromEntries(Object.entries(sum.groups).map(([k, g]) => {
       need([g.stars, g.forks, g.repos].every(int), 'group ' + k);
       return [k, { name: g.name, repos: g.repos, public: g.public, stars: g.stars, forks: g.forks, top: g.top.map((r) => ({ repo: r.repo, description: r.description ?? '', language: r.language ?? '', stars: r.stars, forks: r.forks, commits: r.commits, months: r.months, contributors: r.contributors, faces: r.faces ?? [], pushed: r.pushed, forge: r.forge ?? 'https://github.com/' + r.repo, site: r.site ?? null })) }];
@@ -118,7 +118,7 @@ async function figures() {
     need((groups.hanzo?.top || []).length > 0, 'repository cards');
     const s = shape({ sum, act });
     fs.writeFileSync(path.join(ROOT, 'components/pages/openSource/snapshot.js'), `/* /open-source figures: api.hanzo.ai/v1/git/activity and GitHub (read ${s.read}). Written by scripts/live.mjs; do not edit by hand. */\nconst S = ${JSON.stringify(s)};\nexport default S;\n`);
-    return { source: sum.source + ' and https://api.github.com/orgs', github: gh.fetched_at, fetched_at, read: sum.read, estate: { window: e.window, months: e.months, orgs: e.orgs, repos: e.repos, public: e.public, commits: e.commits, merges: e.merges, monthly: e.monthly }, calendar: { from: act.from, to: act.to, days, week: days.slice(-7).reduce((a, x) => a + x[1], 0) }, forge: sum.forge, groups };
+    return { source: sum.source + ' and https://api.github.com/orgs', github: gh.fetched_at, fetched_at, read: sum.read, estate: { window: e.window, months: e.months, orgs: e.orgs, repos: e.repos, public: e.public, commits: e.commits, merges: e.merges, monthly: e.monthly, mergeMonths: e.mergeMonths }, calendar: { from: act.from, to: act.to, days, week: days.slice(-7).reduce((a, x) => a + x[1], 0) }, forge: sum.forge, groups };
   };
 
   // the coding race, Kai's speed and Enso's cost, and the per-million prices and model names: the same sources hanzo.ai's
