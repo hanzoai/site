@@ -694,4 +694,4 @@ html.dark .x-band { background: radial-gradient(80% 70% at 50% 100%, #1b1b1e, #0
   .x-badge::after, .x-phone-dl::after, .xm-tabs button::after, .x-term-f a::after { content: ''; position: absolute; inset: -12px -6px; }
   footer a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; }
 }
-@media (max-width: 380px) { .x-setup-i:nth-child(n + 5) { display: none; } } /* the setup row and its 46px chevron fit a 360px screen */
+@media (max-width: 380px) { .x-setup-i:nth-child(n + 4) { display: none; } } /* the setup row and its 46px chevron stay inside a 360px screen's panel */
