@@ -19,6 +19,7 @@ import Ask from '../components/Ask';
 import Sound from '../components/Sound';
 import { ARRIVE } from '../components/arrival';
 import Appearance from '../components/Appearance';
+import Telemetry from '../components/Telemetry';
 
 export const metadata = {
   metadataBase: new URL('https://hanzo.ai'),
@@ -66,6 +67,7 @@ export default function RootLayout({ children }) {
         <Smooth>
           <OpenerProvider>
             <Appearance />
+            <Telemetry />
             <Progress />
             <Morph />
             <Phone />
