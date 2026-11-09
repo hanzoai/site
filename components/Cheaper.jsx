@@ -34,7 +34,7 @@ function EnsoCard() {
   const vol = useSpring(raw, { stiffness: 120, damping: 22 });
   const q = nice(1000 * 10 ** exp);
   return (
-    <div className="x-cost">
+    <div className="x-cost x-shine">
       <p className="x-race-k">Enso vs frontier LLMs · GPQA Diamond</p>
       <p className="x-cost-big">{`up to ${GPQA.big}× less`}</p>
       <p className="x-race-cap">per 1,000 questions, at higher accuracy</p>
@@ -62,7 +62,7 @@ function KaiCard() {
   const [dim, setDim] = useState(null);
   const max = PRICES.max;
   return (
-    <div className="x-cost">
+    <div className="x-cost x-shine">
       <p className="x-race-k">Kai vs frontier LLMs</p>
       <p className="x-cost-big">{`up to ${PRICES.big}× less`}</p>
       <p className="x-race-cap">than frontier LLMs, per input token</p>

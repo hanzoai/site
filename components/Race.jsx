@@ -39,7 +39,7 @@ function RaceCard({ kicker, big, decimals, cap, note, title, lanes, extra, link 
     return () => c.stop();
   }, [seen, runs]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <Rise className="x-race" ref={ref}>
+    <Rise className="x-race x-shine" ref={ref}>
       <div className="x-race-top">
         <span className="x-race-k">{kicker}</span>
         <motion.button type="button" className="x-replay" aria-label="Replay the race" onClick={() => setRuns((r) => r + 1)} whileTap={{ rotate: -360, scale: 0.9 }} transition={{ duration: 0.6, ease: EASE }}>

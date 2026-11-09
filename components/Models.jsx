@@ -38,7 +38,7 @@ function Card({ m, i }) {
         whileTap={{ scale: 0.985 }}
         aria-label={`${m.name}: ${m.desc}`}
       >
-        <motion.span className="x-mtilt" style={{ rotateX: rx, rotateY: ry }}>
+        <motion.span className="x-mtilt x-shine" style={{ rotateX: rx, rotateY: ry }}>
           <span className="x-mmedia">
             <img src={media(m.slug, 'webp')} alt="" />
             <video ref={vid} src={media(m.slug, 'webm')} muted loop playsInline preload="metadata" aria-hidden="true" onPlaying={(e) => e.currentTarget.classList.add('on')} />

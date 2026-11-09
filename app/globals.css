@@ -394,7 +394,7 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-plans { display: grid; gap: 16px; margin-top: 36px; align-items: start; }
 .x-plans.n3 { grid-template-columns: repeat(3, 1fr); }
 .x-plans.n2 { grid-template-columns: repeat(2, 1fr); max-width: 860px; margin-inline: auto; }
-.x-plan { display: flex; flex-direction: column; gap: 12px; padding: 28px; border-radius: 28px; background: var(--x-raised); border: 1px solid var(--line); box-shadow: 0 30px 60px -50px rgba(0, 0, 0, .3); }
+.x-plan { position: relative; display: flex; flex-direction: column; gap: 12px; padding: 28px; border-radius: 28px; background: var(--x-raised); border: 1px solid var(--line); box-shadow: 0 30px 60px -50px rgba(0, 0, 0, .3); }
 .x-plan.strong { border-color: rgba(0, 0, 0, .2); box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .3); }
 .x-plan h3 { margin: 0; font-size: 22px; font-weight: 560; letter-spacing: -.02em; }
 .x-plan .x-seg { align-self: flex-start; }
@@ -672,3 +672,14 @@ html.dark main > section.x-sec { background-image: radial-gradient(70% 45% at 50
 html.dark main > section.x-sec:nth-of-type(even):not([data-room='dark']) { background-color: #141417; }
 html.dark .x-faster { background: radial-gradient(90% 60% at 50% 0%, #202024, #121214 55%, #0c0c0d); }
 html.dark .x-band { background: radial-gradient(80% 70% at 50% 100%, #1b1b1e, #0f0f10 70%); }
+
+/* ---------- one shine for every card ----------
+   A soft band crosses the card's surface every few seconds: the app's own sweep (105deg, 30/50/70, 5 s, 1.4 s in), the
+   same in light and dark. A transform and an opacity on a layer of its own, so it runs on the compositor and costs the page
+   nothing per frame; it rests while its section is off screen and is gone under reduced motion. The host is positioned. */
+.x-shine { isolation: isolate; overflow: clip; }
+.x-shine::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit; background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, .55) 50%, transparent 70%); opacity: .32; transform: translate3d(-120%, 0, 0); will-change: transform; animation: x-shine 5s ease-in-out 1.4s infinite; }
+.x-shine:nth-child(even)::after { animation-delay: 3.9s; }
+@keyframes x-shine { 0% { transform: translate3d(-120%, 0, 0); } 30%, 100% { transform: translate3d(120%, 0, 0); } }
+[data-off] .x-shine::after { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .x-shine::after { display: none; } }

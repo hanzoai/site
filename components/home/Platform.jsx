@@ -88,7 +88,7 @@ function Win({ i, d, W, narrow, calm, from, layoutId, scenes, play, onPick }) {
     : { type: 'spring', stiffness: 160, damping: 25, mass: 1, layout: { type: 'spring', stiffness: 190, damping: 26, mass: 1 } };
   return (
     <motion.article
-      className={'xp-win' + (on ? ' on' : '')}
+      className={'xp-win x-shine' + (on ? ' on' : '')}
       layoutId={layoutId}
       initial={from || false}
       animate={to}

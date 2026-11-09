@@ -107,7 +107,7 @@ function Calendar() {
 function Tile({ t, i }) {
   const [label, n, sub, href, bars] = t;
   return (
-    <motion.a href={href} className="x-tile" whileTap={{ scale: 0.98 }}>
+    <motion.a href={href} className="x-tile x-shine" whileTap={{ scale: 0.98 }}>
       <span className="x-tile-k">{label}</span>
       <Count className="x-tile-n" to={n} duration={2} delay={i * 0.06} />
       <span className="x-tile-s">{sub}</span>
@@ -147,7 +147,7 @@ function Rail() {
 
 function Way({ w }) {
   return (
-    <motion.a href={w[3]} className="x-way" whileHover={{ y: -4 }} whileTap={{ scale: 0.985 }}>
+    <motion.a href={w[3]} className="x-way x-shine" whileHover={{ y: -4 }} whileTap={{ scale: 0.985 }}>
       <b><span>{w[0]}</span></b>
       <span>{w[1]}</span>
       <em><span>{w[2]} →</span></em>
