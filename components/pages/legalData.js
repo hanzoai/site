@@ -3,7 +3,7 @@ import { load, find, findAll, textOf, slot, tag, slugify, metaOf, isN } from './
 import fs from 'node:fs';
 import path from 'node:path';
 
-export const SLUGS = ['acceptable-use', 'biometric-voice', 'consumer-health', 'cookies', 'cybersecurity', 'dpa', 'privacy', 'research-api', 'research-contribution', 'subprocessors', 'terms'];
+export const SLUGS = ['acceptable-use', 'biometric-voice', 'consumer-health', 'cookies', 'cybersecurity', 'data-deletion', 'dpa', 'privacy', 'research-api', 'research-contribution', 'subprocessors', 'terms'];
 export const nameOf = (slug) => metaOf('/legal/' + slug).title.replace(/\s+—\s+Hanzo$/, '');
 
 export function legalDoc(slug) {

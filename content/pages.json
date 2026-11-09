@@ -1023,6 +1023,10 @@
 "title": "Cybersecurity Policy — Hanzo",
 "description": "How we protect your data — who can reach it, how it is encrypted, and what happens if something goes wrong."
 },
+"/legal/data-deletion": {
+"title": "Data Deletion — Hanzo",
+"description": "How to delete your Hanzo account and data, disconnect a connected account, and have a public post removed from Hanzo pages."
+},
 "/legal/dpa": {
 "title": "Data Processing Addendum — Hanzo",
 "description": "Processor terms, SCCs, subprocessor governance, and security measures for business customers whose data Hanzo processes on their behalf."
