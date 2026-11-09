@@ -11,10 +11,11 @@
    more to apply."); Skip only while the rest can still reach that; choosing a single answer moves on after 260 ms;
    letter keys pick, Enter continues, Esc goes back; Exit at the first question; progress = (step + 1, or + 0.5 while
    the question is unanswered) / questions; once enough are answered, "Open App" is offered before the last question.
-   Submission never leaves this browser: hanzo.ai would POST the answers to api.hanzo.ai (/v1/form/public/
-   hanzo.<program>-apply/responses), which this rebuild never calls (scripts/forms.mjs blocks every non-GET request
-   the same way). The answers are kept in this browser and the visitor gets hanzo.ai's own next step for a signed-out
-   visitor: "Log in or create an account to save your application.", Create free account, Sign in, Edit answers.
+   Submission sends what hanzo.ai sends a signed-out visitor: the answers, as a response to the program's own form
+   (POST api.hanzo.ai/v1/form/public/hanzo.<program>-apply/responses; BetaApply.send.js). The lead and the beta record
+   hanzo.ai files are a signed-in applicant's, so they are not filed from here. A copy is also kept in this browser, and
+   the visitor gets hanzo.ai's own next step for a signed-out visitor: "Log in or create an account to save your
+   application.", Create free account, Sign in, Edit answers.
    Motion: the question cuts into its line and the answers slide forward or back with the step (state change); the
    film plays on the pass (idle); lines land on the pass and the film shrinks for them (layout); option and key
    presses answer at once. Reduced motion: no slides, the film holds its poster. */
@@ -29,6 +30,7 @@ import { PLANS, checkoutAbs } from '../../lib/plans';
 import { mirror, uuidv7, visit } from '@hanzo/event';
 import { press } from '../../lib/press';
 import { track } from '../../lib/track';
+import { filing, said } from './BetaApply.send';
 
 /* hanzo.ai's own definitions, word for word */
 const SPEND = ['$0–$20', '$21–$100', '$101–$200', '$201–$1,000', '$1,001+'];
@@ -75,7 +77,6 @@ const PROGRAMS = {
 const KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const STORE = 'hz-beta-apply'; // this browser only: { program, step, got, filed }
 const EASE = [0.16, 1, 0.3, 1];
-const said = (v) => (Array.isArray(v) ? v.join(', ') : (v ?? '').trim());
 const answered = (a, v) => (a.kind === 'many' ? Array.isArray(v) && v.length > 0 : said(v) !== '');
 const read = () => { try { return JSON.parse(localStorage.getItem(STORE) || 'null'); } catch { return null; } };
 const keep = (v) => { try { localStorage.setItem(STORE, JSON.stringify(v)); } catch { /* private window: the form still works */ } };
@@ -216,7 +217,9 @@ function Apply({ program }) {
     if (!enough || busy) return;
     setBusy(true);
     track('beta_step_completed', { program, step: step + 1, total_steps: n, question_id: ask?.id, answer: ask ? said(got[ask.id]) : '' });
-    // hanzo.ai sends the answers to api.hanzo.ai here; this rebuild sends nothing and keeps them in this browser
+    // the answers go to the program's form on api.hanzo.ai, as hanzo.ai sends them; a honeypot filled by a script sends nothing
+    const sent = trap ? null : filing(program, asks, got);
+    if (sent) fetch(sent.url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sent.body) }).catch(() => {});
     setTimeout(() => {
       setFiled(true);
       setBusy(false);
