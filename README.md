@@ -259,7 +259,7 @@ hanzo.ai's sitemap, plus the home page) and adds 9 sign-up and checkout pages. F
 
 - **Stack:** Next.js 16.4.5, upgraded from 15.5.4 with the official codemod. Turbopack is the bundler, and Cache
   Components stay off. React 19.2.8 and Motion 12.23.24.
-- **A static export:** `output: 'export'` with `trailingSlash: true`. There is no server to run.
+- **A static export:** `output: 'export'`, no trailing slash (hanzo.ai's own form). There is no server to run.
 - **Less JavaScript on every page.** Hanzo's header and footer HTML render on the server, so the 375 KB `content.js` no
   longer ships in every page's JavaScript.
 - **Heavy code loads only when needed:**
@@ -343,7 +343,7 @@ videos, `/images/…`, `/memoji/…`) is fetched from hanzo.ai, so pages look co
 ## Deploy
 
 `pnpm build` writes the whole site as static files to `out/` (`output: 'export'` in `next.config.mjs`,
-`trailingSlash: true`, so `/pricing` is `out/pricing/index.html`). Serve `out/` from any static host or CDN
+no trailing slash, so `/pricing` is `out/pricing.html`). Serve `out/` from any static host or CDN
 (Cloudflare Pages, Vercel, Netlify, S3 + CloudFront, nginx). There is no server to run. Do the steps in
 [Before it goes live](#before-it-goes-live-on-hanzoai) first: merge `public/` media and route the app paths.
 

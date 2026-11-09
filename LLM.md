@@ -4,7 +4,7 @@ Every signed-out page of hanzo.ai: research, models, open source, products, pric
 (Apache-2.0); anyone may send a pull request. The app — chat, sign-in, sign-up, checkout and every room — is
 hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
 
-- Stack: Next.js 16 static export (`output: 'export'`, `trailingSlash: true`), React 19, Motion 12, JSX.
+- Stack: Next.js 16 static export (`output: 'export'`; URLs have no trailing slash, as on hanzo.ai: `/pricing` is `out/pricing.html`, canonical, og:url and the sitemap say `https://hanzo.ai/pricing`), React 19, Motion 12, JSX.
   Light/dark from `@hanzo/appearance` + `@hanzo/design` tokens (docs/DARK-MODE.md).
 - Node 22.18+, pnpm via corepack (`packageManager`). `pnpm dev` (:4180), `pnpm build` (out/), `pnpm preview` (:4181),
   `pnpm test` (node --test).
