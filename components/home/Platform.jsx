@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, animate, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
+import { motion, animate, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
 import { EASE, Head, mod } from '../ui';
 import { A } from '../kit';
 import C from '../../content';
@@ -115,8 +115,8 @@ function Win({ i, d, W, narrow, calm, from, layoutId, scenes, play, onPick }) {
   );
 }
 
-/* one dock item: a tile that grows as the pointer nears (macOS), its name, the autoplay line, a live preview on hover */
-export function DockItem({ i, on, mx, fine, calm, narrow, fly, progress, playing, peek, setPeek, onPick, onKey, scenes }) {
+/* one dock item: a tile that grows as the pointer nears (macOS), its name on hover, and the autoplay line */
+export function DockItem({ i, on, mx, fine, calm, narrow, fly, progress, playing, onPick, onKey }) {
   const p = P[i];
   const ref = useRef(null);
   const dist = useTransform(mx, (x) => {
@@ -146,8 +146,6 @@ export function DockItem({ i, on, mx, fine, calm, narrow, fly, progress, playing
         className="xp-tab"
         onClick={() => onPick(i)}
         onKeyDown={onKey}
-        onPointerEnter={(e) => { if (e.pointerType === 'mouse' && !narrow) setPeek(i); }}
-        onPointerLeave={() => setPeek((c) => (c === i ? null : c))}
       >
         <motion.span className="xp-tile" style={{ width: size, height: size }}>
           {fly && <motion.span key={fly} layoutId={fly} className="xp-ghost" aria-hidden="true" />}
@@ -158,21 +156,6 @@ export function DockItem({ i, on, mx, fine, calm, narrow, fly, progress, playing
           {on && playing && <motion.i style={{ scaleX: line }} />}
         </span>
       </button>
-      <AnimatePresence>
-        {peek === i && !on && (
-          <motion.div
-            className="xp-peek"
-            aria-hidden="true"
-            initial={{ opacity: 0, y: 8, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 4, scale: 0.98, transition: { duration: 0.12 } }}
-            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-          >
-            <div className="xp-peek-vis"><div className="xp-peek-scale"><Vis p={p} scenes={scenes} play /></div></div>
-            <div className="xp-peek-f"><b>{p.name}</b><span>{p.addr}</span></div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
@@ -212,7 +195,6 @@ function Stage({ pending, shell }) {
   const [fine, setFine] = useState(false);
   const [held, setHeld] = useState(false);
   const [hidden, setHidden] = useState(false);
-  const [peek, setPeek] = useState(null);
   const [glow, setGlow] = useState({});
   const [theme, setTheme] = useState('');
   const inside = useRef({ pointer: false, focus: false, t: 0 });
@@ -390,8 +372,7 @@ function Stage({ pending, shell }) {
               i={i} on={i === active} mx={mx} fine={fine} calm={calm} narrow={narrow}
               fly={i !== active ? `xp-fly-${i}-${nav.gen}` : null}
               progress={progress} playing={playing}
-              peek={fine && !narrow ? peek : null} setPeek={setPeek}
-              onPick={(k) => go(k, 'dock')} onKey={onKey} scenes={scenes[i]}
+              onPick={(k) => go(k, 'dock')} onKey={onKey}
             />
           ))}
         </div>

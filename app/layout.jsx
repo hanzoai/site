@@ -10,7 +10,7 @@ import { bootScript } from '@hanzo/appearance/state';
 import '@hanzo/design/tokens/colors.css'; // Hanzo's colour ramps: dark by default, .light for light (hanzo.css carries the same)
 import './globals.css';
 import './system.css';
-import { Smooth, Progress, Header, Footer } from '../components/Chrome';
+import { Smooth, Header, Footer } from '../components/Chrome';
 import { HeaderHTML, FooterHTML } from '../components/Shell';
 import { OpenerProvider } from '../components/Opener';
 import Morph from '../components/Morph';
@@ -70,7 +70,6 @@ export default function RootLayout({ children }) {
             <Appearance />
             <Telemetry />
             <OneTap />
-            <Progress />
             <Morph />
             <Phone />
             <Ask />

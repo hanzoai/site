@@ -70,9 +70,9 @@ export function Smooth({ children }) {
   return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }
 
-/* The scroll bar at the top: CSS draws it from the page's own scroll (.x-progress in app/globals.css). */
+/* The scroll bar at the top: retired (the owner asked for the white scroll progress bar in the header to be hidden). */
 export function Progress() {
-  return <div className="x-progress" aria-hidden="true" />;
+  return null;
 }
 
 // the server-rendered shell (components/Shell.jsx), read lazily so children's effects can use it on mount

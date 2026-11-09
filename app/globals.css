@@ -49,9 +49,7 @@ header[data-x-dark='true'] { --foreground: #f5f5f7; --background: #0a0a0a; --col
 header[data-slot='masthead'] { transition: background-color .45s var(--ease), color .45s var(--ease); }
 /* sections out of view hold still: their animations pause until they are back on screen */
 [data-off] * { animation-play-state: paused !important; }
-.x-progress { position: fixed; inset: 0 0 auto 0; height: 2px; background: var(--ink); transform-origin: 0 50%; z-index: 1000; pointer-events: none; }
-@supports (animation-timeline: scroll()) { .x-progress { animation: x-progress linear both; animation-timeline: scroll(root); } @keyframes x-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } } }
-@supports not (animation-timeline: scroll()) { .x-progress { display: none; } }
+.x-progress { display: none; }
 
 /* headings: one idea, lots of air */
 .x-head { margin-bottom: clamp(40px, 5vw, 72px); }

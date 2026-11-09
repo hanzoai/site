@@ -32,18 +32,14 @@ export default function Journey({ products: P, title, lede, onFail }) {
   const api = useRef(null), activeRef = useRef(0);
   const [active, setActive] = useState(0);
   const [ready, setReady] = useState(false);
-  const [scenes, setScenes] = useState([]);
-  const [peek, setPeek] = useState(null);
   const [fine, setFine] = useState(false);
   const mx = useMotionValue(Infinity);
   const progress = useMotionValue(0);
 
   useEffect(() => {
-    let live = true;
-    import('../scenes.json').then((m) => { if (live) setScenes(m.default); });
     const mq = matchMedia('(hover: hover) and (pointer: fine)');
     const f = () => setFine(mq.matches); f(); mq.addEventListener('change', f);
-    return () => { live = false; mq.removeEventListener('change', f); };
+    return () => mq.removeEventListener('change', f);
   }, []);
 
   // scroll -> where the camera should be: a dwell at each product, a glide between them
@@ -206,7 +202,6 @@ export default function Journey({ products: P, title, lede, onFail }) {
             </ol>
           </div>
 
-          <div className="xpj-count" aria-hidden="true"><b>{pad(active + 1)}</b><span>/</span>{pad(N)}</div>
           <div className="xpj-hint" aria-hidden="true">
             <svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="5" /><path className="xpj-wheel" d="M12 7v3" /></svg>
             <i />
@@ -228,8 +223,7 @@ export default function Journey({ products: P, title, lede, onFail }) {
                   key={x.name}
                   i={i} on={i === active} mx={mx} fine={fine} calm={false} narrow={false} fly={null}
                   progress={progress} playing={false}
-                  peek={fine ? peek : null} setPeek={setPeek}
-                  onPick={(k) => goTo(k)} onKey={onKey} scenes={scenes[i]}
+                  onPick={(k) => goTo(k)} onKey={onKey}
                 />
               ))}
             </div>

@@ -151,6 +151,7 @@ await expects('home: the hero is drawn', 'home_viewed', {});
 await expects('home: the plans are listed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === 'free,go,pro-3x' && v.every((i) => i.item_category === 'individual' && typeof i.price === 'number') });
 await expects('home: a link in the hero', 'cta_clicked', { page: '/', section: 'hero', cta: 'home.hero-go', target: /^https:\/\/hanzo\.app\/pay\/confirm\/card\?plan=go/ }, () => tap('.x-hero-price'));
 await expects('home: a link to checkout is also the funnel moment', 'checkout_started', { link_url: /hanzo\.app\/pay/, page_path: '/', cta: 'home.hero-go' });
+await silent('home: the on-this-page index is not a call', 'cta_clicked', () => tap('.xh-spine a'));
 await expects('hero demo: the sidebar', 'hero_demo', { control: 'sidebar' }, () => tap('.xs-sidet'));
 await expects('hero demo: the account menu', 'hero_demo', { control: 'account' }, () => tap('.x-acct-b'));
 await expects('hero terminal: Copy', 'home_copied', { block: 'hero', command: 'curl -fsSL https://hanzo.sh | sh' }, () => tap('.x-term-copy'));

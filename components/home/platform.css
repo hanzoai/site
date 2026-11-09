@@ -23,12 +23,12 @@ html:not(.light) .xp-glow { background: radial-gradient(closest-side, color-mix(
 .xp-shade { position: absolute; inset: 0; background: var(--x-raised); pointer-events: none; }
 .xp-win:not(.on) .xp-shade { pointer-events: auto; } /* the window under it is inert; this takes the click that brings it to centre */
 
-/* the dock */
-.xp-nav { display: flex; align-items: flex-end; justify-content: center; gap: 14px; margin-top: 26px; }
-.xp-nav .x-round { margin-bottom: 22px; flex: none; }
-.xp-dock { position: relative; display: flex; align-items: flex-end; gap: 6px; padding: 8px 12px 4px; border-radius: 26px; background: color-mix(in oklab, var(--card) 82%, transparent); border: 1px solid var(--line); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); box-shadow: 0 18px 40px -28px rgba(0, 0, 0, .35); }
-.xp-item { position: relative; display: flex; }
-.xp-tab { position: relative; display: flex; flex-direction: column; align-items: center; gap: 5px; border: 0; background: none; padding: 0 3px; margin: 0; color: var(--soft); cursor: pointer; font: 500 11.5px/1 var(--sans); border-radius: 14px; -webkit-tap-highlight-color: transparent; }
+/* the dock: a fixed-height macOS shelf; magnified tiles rise out of the top without stretching the dock itself, and labels show only on hover */
+.xp-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 26px; }
+.xp-nav .x-round { flex: none; }
+.xp-dock { position: relative; display: flex; align-items: flex-end; height: 66px; box-sizing: border-box; gap: 8px; padding: 9px 12px 5px; border-radius: 22px; background: color-mix(in oklab, var(--card) 82%, transparent); border: 1px solid var(--line); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); box-shadow: 0 18px 40px -28px rgba(0, 0, 0, .35); }
+.xp-item { position: relative; display: flex; align-items: flex-end; }
+.xp-tab { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; background: none; padding: 0 2px; margin: 0; color: var(--soft); cursor: pointer; font: 500 11.5px/1 var(--sans); border-radius: 14px; -webkit-tap-highlight-color: transparent; }
 .xp-tab:focus-visible { outline: 2px solid var(--focus, var(--ink)); outline-offset: 3px; }
 .xp-tile { position: relative; width: 46px; height: 46px; border-radius: 28%; display: grid; place-items: center; background: var(--x-raised); border: 1px solid var(--line); color: var(--ink); box-shadow: 0 6px 14px -8px rgba(0, 0, 0, .3); transition: background .35s var(--ease), color .35s var(--ease), border-color .35s; }
 .xp-tile svg { width: 46%; height: 46%; }
@@ -36,19 +36,12 @@ html:not(.light) .xp-glow { background: radial-gradient(closest-side, color-mix(
 .xp-tab[aria-selected='true'] { color: var(--ink); }
 .xp-tab[aria-selected='true'] .xp-tile { background: var(--ink); color: var(--x-on-ink); border-color: var(--ink); }
 @media (hover: hover) { .xp-tab:hover { color: var(--ink); } .xp-tab:hover .xp-tile { border-color: var(--x-e15); } }
-.xp-name { white-space: nowrap; letter-spacing: -.005em; }
-.xp-line { display: block; width: 26px; height: 2px; border-radius: 2px; overflow: hidden; background: transparent; }
+.xp-name { position: absolute; bottom: calc(100% + 10px); left: 50%; translate: -50% 4px; padding: 6px 10px; border-radius: 8px; background: var(--ink); color: var(--x-on-ink); font: 500 12px/1 var(--sans); white-space: nowrap; letter-spacing: -.005em; opacity: 0; pointer-events: none; transition: opacity .2s, translate .3s var(--ease); z-index: 5; }
+@media (hover: hover) { .xp-tab:hover .xp-name { opacity: 1; translate: -50% 0; } }
+.xp-tab:focus-visible .xp-name { opacity: 1; translate: -50% 0; }
+.xp-line { display: block; width: 20px; height: 2px; border-radius: 2px; overflow: hidden; background: transparent; }
 .xp-tab[aria-selected='true'] .xp-line { background: var(--x-e12); }
 .xp-line i { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
-
-/* hover preview: the product's own screen, live, in miniature */
-.xp-peek { position: absolute; left: 50%; bottom: calc(100% + 12px); width: 216px; margin-left: -108px; border-radius: 16px; overflow: hidden; background: var(--card); border: 1px solid var(--line); box-shadow: 0 28px 60px -24px rgba(0, 0, 0, .45); pointer-events: none; z-index: 5; transform-origin: 50% 100%; }
-.xp-peek-vis { position: relative; height: 136px; overflow: hidden; background: var(--x-raised); border-bottom: 1px solid var(--line); }
-.xp-peek-scale { position: absolute; left: 0; top: 0; width: 540px; height: 340px; display: flex; transform: scale(.4); transform-origin: 0 0; }
-.xp-peek-scale .xp-vis { border: 0; }
-.xp-peek-f { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 9px 12px; }
-.xp-peek-f b { font-size: 13px; font-weight: 560; color: var(--ink); }
-.xp-peek-f span { font: 400 11px/1.2 var(--mono); color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 @media (max-width: 699px) {
   .xp-stage { height: 520px; }
@@ -58,11 +51,12 @@ html:not(.light) .xp-glow { background: radial-gradient(closest-side, color-mix(
   .xp-nav { justify-content: flex-start; margin-top: 18px; }
   .xp-nav .x-round { display: none; }
   /* the dock becomes a row of pills that scrolls inside itself */
-  .xp-dock { max-width: 100%; overflow-x: auto; scrollbar-width: none; gap: 2px; padding: 4px; border-radius: 999px; align-items: center; scroll-padding-inline: 8px; }
+  .xp-dock { height: auto; max-width: 100%; overflow-x: auto; scrollbar-width: none; gap: 2px; padding: 4px; border-radius: 999px; align-items: center; scroll-padding-inline: 8px; }
   .xp-dock::-webkit-scrollbar { display: none; }
   .xp-tab { flex-direction: row; gap: 7px; height: 36px; padding: 0 13px 0 9px; border-radius: 999px; font-size: 13.5px; }
   .xp-tab:focus-visible { outline-offset: -2px; }
   .xp-tile { width: 22px; height: 22px; border-radius: 7px; box-shadow: none; }
+  .xp-name { position: static; translate: none; padding: 0; background: none; color: inherit; font: inherit; opacity: 1; }
   .xp-tab[aria-selected='true'] { background: var(--x-knob); box-shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 0 0 1px var(--line); }
   .xp-line { position: absolute; left: 14px; right: 14px; bottom: 3px; width: auto; height: 2px; }
   .xp-tab[aria-selected='true'] .xp-line { background: transparent; }
