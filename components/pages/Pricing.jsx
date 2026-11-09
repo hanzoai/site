@@ -32,6 +32,8 @@ import NoJs from '../NoJs';
 import './Frame.css';
 import './Pricing.css';
 import { PLANS, SEATS, checkout, teamCheckout } from '../../lib/plans';
+import { asked, chose, LIST, picked, RUNG, termed, viewed } from '../../lib/funnel';
+import { press } from '../../lib/press';
 
 const PAY = (p) => checkout(p);
 const HELP = '/buying-specialist';
@@ -154,6 +156,24 @@ function planOf(id, s = DEF) {
   return { name: 'Volume & Dedicated', d: 'For organizations with high-throughput inference, custom routing, or dedicated VPC deployments.', word: 'Custom rates', sub: ['Volume discounts from $5k/mo', 'Dedicated GPU clusters & custom routing SLAs'], cta: ['Contact API Sales', '/contact-sales', 'pricing.api.sales'], note: 'Dedicated VPC & 24/7 Slack support available', head: 'Everything in Pay as you go, plus:', items: VOL_INC };
 }
 const lines = (v) => [].concat(v || []);
+
+/* what each card sells, as the app's funnel names it: the catalog slug, the tab it stands on and how it is taken
+   (by card, for nothing, or by a conversation with our team) */
+const TAB = { free: 'individual', go: 'individual', pro: 'individual', team: 'team', ent: 'team', payg: 'api', vol: 'api' };
+function sold(id, s) {
+  const every = s.bill === 'Annual' ? 'year' : 'month';
+  const rung = Math.max(0, PRO.findIndex((q) => q.x === s.x));
+  const row = {
+    free: { slug: 'free', how: 'free', cta: 'Try Hanzo' },
+    go: { slug: PLANS.go.id, how: 'card', cta: 'Get ' + PLANS.go.name },
+    pro: { slug: RUNG[rung], how: 'card', cta: 'Get ' + PRO[rung].name },
+    team: { slug: 'team', how: 'card', cta: 'Get Team', every },
+    ent: { slug: 'enterprise', how: 'sales', cta: 'Get Enterprise plan', every },
+    payg: { slug: 'api-payg', how: 'free', cta: 'Get API Key' },
+    vol: { slug: 'api-enterprise', how: 'sales', cta: 'Contact API Sales' },
+  }[id];
+  return { ...row, tab: TAB[id] };
+}
 
 /* ---------- the motion of the panel (MASTER 3.1: in-out for things that move and stay, emphasis for arrivals) ---------- */
 const EM = [0.4, 0, 0.2, 1];
@@ -298,8 +318,8 @@ function Card({ id, s, set, hand, i }) {
       {id === 'pro' && <span className="xpr-recd">Recommended</span>}
       <div className="xpr-c-top">
         <h2 className="xpr-c-name" id={'xpr-c-' + id}>{p.ladder ? <Swap k={p.name} roll>{p.name}</Swap> : p.name}</h2>
-        {p.ladder && <Seg opts={PRO.map((q) => q.x)} val={s.x} set={(v) => { hand(); set.x(v); }} id="xpr-mult" label="Usage multiple" />}
-        {id === 'team' && <div className="xpr-bill"><Seg opts={['Annual', 'Monthly']} val={s.bill} set={set.bill} id="xpr-bill" label="Billing period" /><span className="xpr-save">−20%</span></div>}
+        {p.ladder && <Seg opts={PRO.map((q) => q.x)} val={s.x} set={(v) => { hand(); set.x(v); if (v !== s.x) picked(RUNG[PRO.findIndex((q) => q.x === v)], 'individual'); }} id="xpr-mult" label="Usage multiple" />}
+        {id === 'team' && <div className="xpr-bill"><Seg opts={['Annual', 'Monthly']} val={s.bill} set={(v) => { set.bill(v); if (v !== s.bill) termed('team', v === 'Annual', 'team'); }} id="xpr-bill" label="Billing period" /><span className="xpr-save">−20%</span></div>}
       </div>
       <p className="xpr-c-d">{p.ladder ? <Swap k={p.d}>{p.d}</Swap> : p.d}</p>
       <div className="xpr-c-price">
@@ -307,8 +327,8 @@ function Card({ id, s, set, hand, i }) {
         {sub.map((t) => <span key={t} className="xpr-c-sub">{t}</span>)}
       </div>
       <div className="xpr-c-acts">
-        <Cta to={p.cta[1]} size="lg" kind={p.rec ? 'solid' : 'outline'} id={p.cta[2]} className="xpr-cta" thumb={p.rec}>{p.cta[0]}</Cta>
-        {p.alt && <Cta to={p.alt[1]} size="lg" kind="outline" id="pricing.help" className="xpr-cta">{p.alt[0]}</Cta>}
+        <Cta to={p.cta[1]} size="lg" kind={p.rec ? 'solid' : 'outline'} id={p.cta[2]} className="xpr-cta" thumb={p.rec} data-ga="">{p.cta[0]}</Cta>
+        {p.alt && <Cta to={p.alt[1]} size="lg" kind="outline" id="pricing.help" className="xpr-cta" data-ga="">{p.alt[0]}</Cta>}
         {!p.alt && lines(p.note).map((n) => <p key={n} className="xpr-note">{n}</p>)}
       </div>
       {id === 'team' ? <SeatPrices bill={s.bill} /> : <div className="xpr-c-gap" />}
@@ -759,7 +779,18 @@ export default function Pricing() {
   const [bill, setBill] = useState(DEF.bill);
   const [std, setStd] = useState(DEF.std);
   const [prem, setPrem] = useState(DEF.prem);
+  // the tab named by the address is read after the first paint: a tab is counted as seen once it is the one on screen
+  const [placed, setPlaced] = useState(false);
   const s = { x, bill, std, prem };
+  // A press on a plan's way in. Some go to pages of this site, whose press the page transition takes over, so it is read
+  // where the transition reads it (lib/press.js); a link marked data-ga leaves the funnel's own link moment to this.
+  const now = useRef(s);
+  now.current = s;
+  useEffect(() => press('.xpr-card .xpr-cta', (a) => {
+    const id = a.closest('.xpr-card').dataset.id;
+    if (a.dataset.cta === 'pricing.help') asked(sold(id, now.current).slug, TAB[id], a.textContent.trim());
+    else chose(sold(id, now.current));
+  }), []);
   const set = { x: setX, bill: setBill, std: setStd, prem: setPrem };
   // a hand on a card (pointer or focus) marks the visitor's own choice; the Pro rung never moves by itself, so the
   // prices on the page are always the ones you read
@@ -773,9 +804,16 @@ export default function Pricing() {
       if (t >= 0) setTab(t);
     };
     read();
+    setPlaced(true);
     addEventListener('hashchange', read);
     return () => removeEventListener('hashchange', read);
   }, []);
+  // one view per tab a reader looks at, with the prices it shows
+  useEffect(() => {
+    if (!placed) return;
+    const name = ['individual', 'team', 'api'][tab];
+    viewed(name, LIST[name]);
+  }, [placed, tab]);
   const pick = (i) => { setTab(i); try { history.replaceState(null, '', '#' + TABS[i].toLowerCase()); } catch { /* the tab still changes */ } };
   return (
     <main ref={root} className="xpr zf">
