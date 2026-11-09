@@ -6,8 +6,9 @@ import { SETUP, SETUP_FOOT, SETUP_PROMPT, setupHref } from '../lib/setup';
 import { press } from '../lib/press';
 import { track } from '../lib/track';
 
+const SHOWN = 6; // icons on the button; the rest of the list is the count beside them
 const ICON = Object.fromEntries(C.agents.map((a) => [a.name, a.icon]));
-const ALIAS = { Gemini: 'Gemini CLI', Grok: 'Grok Build', 'Grok Bot': 'Grok Build', 'Claude Duet': 'Claude Code' };
+const ALIAS = { Gemini: 'Gemini CLI', Grok: 'Grok Build', 'Claude Duet': 'Claude' };
 const docs = (p) => 'https://docs.hanzo.ai/docs/' + p;
 const web = (h) => /^https?:/.test(h);
 const copy = async () => { try { await navigator.clipboard.writeText(SETUP_PROMPT); return true; } catch { return false; } };
@@ -76,9 +77,9 @@ export default function SetupMenu({ up = false, inline = false, where, ...rest }
         <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 3.2V3a.8.8 0 0 0-.8-.8H3a.8.8 0 0 0-.8.8v6.7c0 .44.36.8.8.8h.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
         <span>{ok ? 'Copied' : 'Copy setup prompt'}</span>
         <span className="x-setup-ics">
-          {C.agents.slice(1, 7).map((a) => <span key={a.name} className="x-setup-i" role="img" aria-label={a.name} title={a.name} dangerouslySetInnerHTML={{ __html: a.icon }} />)}
+          {C.agents.slice(1, 1 + SHOWN).map((a) => <span key={a.name} className="x-setup-i" role="img" aria-label={a.name} title={a.name} dangerouslySetInnerHTML={{ __html: a.icon }} />)}
         </span>
-        <b>+26</b>
+        <b>+{SETUP.length - SHOWN}</b>
       </a>
       <button
         ref={btn}
