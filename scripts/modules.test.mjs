@@ -8,6 +8,8 @@ import path from 'node:path';
 
 const OUT = path.resolve(import.meta.dirname, '..', 'out');
 const MODULES = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, 'modules.json'), 'utf8'));
+// the Sites plane serves <route>/index.html, then <route>.html (next.config.mjs writes the second)
+const page = (name) => [`${name}/index.html`, `${name}.html`].map((f) => path.join(OUT, f)).find((f) => fs.existsSync(f));
 const meta = (html, name) => [...html.matchAll(new RegExp(`<meta name="${name}" content="([^"]*)"`, 'g'))].map((m) => m[1]);
 
 test('out/ has been built', () => {
@@ -16,7 +18,9 @@ test('out/ has been built', () => {
 
 for (const [name, repo] of Object.entries(MODULES)) {
   test(`hanzo.ai/${name} carries its go-import tag`, () => {
-    const html = fs.readFileSync(path.join(OUT, name, 'index.html'), 'utf8');
+    const file = page(name);
+    assert.ok(file, `no page at /${name} in out/`);
+    const html = fs.readFileSync(file, 'utf8');
     const path_ = `hanzo.ai/${name}`;
     assert.deepEqual(meta(html, 'go-import'), [`${path_} git ${repo}`]);
     assert.deepEqual(meta(html, 'go-source'), [`${path_} ${repo} ${repo}/tree/main{/dir} ${repo}/blob/main{/dir}/{file}#L{line}`]);
