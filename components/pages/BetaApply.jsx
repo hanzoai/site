@@ -2,7 +2,7 @@
 /* /beta/apply (Beta access) and /beta/research (Research access): Hanzo's application, one question at a time.
    Persona: a builder (Beta access) or a researcher (Research access) who wants Hanzo's releases before they ship.
    Goal: answer enough to apply. CTA: Continue, then "Submit application" (data-cta beta.<program>.next / .submit).
-   Metric: beta_submitted (sent as an hz-event, the name hanzo.ai uses).
+   Metric: beta_submitted (sent through lib/track.js, the name hanzo.ai uses).
    Signature: the pass fills in. The pass you chose on /beta stands beside the questions with its own film (Enso for
    Beta access, Zen for Research access); every answer lands on it as a line, the film giving up room as the lines
    gather, and a tap on a line takes you back to that question.
@@ -26,6 +26,9 @@ import '../v2/ProgramScale.css';
 import './BetaApply.css';
 import './Frame.css';
 import { PLANS, checkoutAbs } from '../../lib/plans';
+import { mirror, uuidv7, visit } from '@hanzo/event';
+import { press } from '../../lib/press';
+import { track } from '../../lib/track';
 
 /* hanzo.ai's own definitions, word for word */
 const SPEND = ['$0–$20', '$21–$100', '$101–$200', '$201–$1,000', '$1,001+'];
@@ -65,7 +68,6 @@ const said = (v) => (Array.isArray(v) ? v.join(', ') : (v ?? '').trim());
 const answered = (a, v) => (a.kind === 'many' ? Array.isArray(v) && v.length > 0 : said(v) !== '');
 const read = () => { try { return JSON.parse(localStorage.getItem(STORE) || 'null'); } catch { return null; } };
 const keep = (v) => { try { localStorage.setItem(STORE, JSON.stringify(v)); } catch { /* private window: the form still works */ } };
-const event = (name, detail) => dispatchEvent(new CustomEvent('hz-event', { detail: { name, ...detail, path: location.pathname } }));
 
 const ArrowR = ({ s = 15 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const ArrowL = () => <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -154,16 +156,26 @@ function Apply({ program }) {
   // resume this browser's application to the same programme (a filed one opens at its first question, as on hanzo.ai)
   useEffect(() => {
     const d = read();
-    if (d && d.program === program && d.got && typeof d.got === 'object') {
+    const mine = d && d.program === program && d.got && typeof d.got === 'object';
+    if (mine) {
       setGot(d.got);
       setFiled(!!d.filed);
       setStep(d.filed ? 0 : Math.min(Math.max(0, d.step | 0), n - 1));
     }
+    track('beta_viewed', { initial_program: program, resumed: Boolean(mine && !d.filed) });
     setReady(true);
   }, [program, n]);
   useEffect(() => { if (ready) keep({ program, step, got, filed }); }, [ready, program, step, got, filed]);
 
   const ask = gate ? null : asks[step];
+  // Open App is a page of this site: its press is read where the page transition reads it
+  const here = useRef({});
+  here.current = { step };
+  useEffect(() => press('.xba-app', () => track('beta_continue_with_plan', { program, step: here.current.step + 1, total_steps: n })), [program, n]);
+  // one view per question a reader reaches (a repaint of the same one is not a new view)
+  useEffect(() => {
+    if (ready && ask) track('beta_step_viewed', { program, step: step + 1, total_steps: n, question_id: ask.id });
+  }, [ready, ask?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const last = step === n - 1;
   const has = !!ask && answered(ask, got[ask.id]);
   const need = Math.ceil(n / 3);
@@ -192,11 +204,16 @@ function Apply({ program }) {
   const submit = () => {
     if (!enough || busy) return;
     setBusy(true);
+    track('beta_step_completed', { program, step: step + 1, total_steps: n, question_id: ask?.id, answer: ask ? said(got[ask.id]) : '' });
     // hanzo.ai sends the answers to api.hanzo.ai here; this rebuild sends nothing and keeps them in this browser
     setTimeout(() => {
       setFiled(true);
       setBusy(false);
-      if (!trap) event('beta_submitted', { program });
+      if (!trap) {
+        track('beta_submitted', { program });
+        // no lead is filed from here, so the ad tags hear the application under an id of its own
+        mirror('beta_applied', { program, offer: 'none' }, uuidv7(), visit().tags);
+      }
       setDir(1);
       moved.current = true;
       setGate(true);
@@ -204,6 +221,7 @@ function Apply({ program }) {
   };
   const next = () => (last ? submit() : to(step + 1));
   const pick = (a, o) => {
+    track('beta_option_picked', { program, question_id: a.id, option: o });
     if (a.kind === 'one') {
       set(a.id, o);
       clearTimeout(timer.current);
@@ -265,8 +283,8 @@ function Apply({ program }) {
               <h1 ref={gateH} tabIndex={-1} className="xba-q">Log in or create an account to save your application.</h1>
               <p className="xba-gate-p">A Pro plan is not required — you can continue free. Log in or create a free account to save your application and see your place in line.</p>
               <div className="xba-gate-a">
-                <Cta to={`/signup?next=${encodeURIComponent('/beta')}`} id={`beta.${program}.signup`}>Create free account<ArrowR s={16} /></Cta>
-                <Cta to={`/login?next=${encodeURIComponent('/beta')}`} kind="quiet" id={`beta.${program}.login`}>Sign in</Cta>
+                <Cta to={`/signup?next=${encodeURIComponent('/beta')}`} id={`beta.${program}.signup`} onClick={() => track('beta_gate_signup_clicked', { program })}>Create free account<ArrowR s={16} /></Cta>
+                <Cta to={`/login?next=${encodeURIComponent('/beta')}`} kind="quiet" id={`beta.${program}.login`} onClick={() => track('beta_gate_login_clicked', { program })}>Sign in</Cta>
                 <button type="button" className="xba-quiet" onClick={edit}>Edit answers</button>
               </div>
               <Paid program={program} where="on-phone" />

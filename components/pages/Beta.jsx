@@ -23,6 +23,8 @@ import { A, Cta, Film, Img } from '../kit';
 import { NoJs } from '../v2/LineReveal';
 import { PLANS, checkoutAbs } from '../../lib/plans';
 import { useEnter, stamp } from './beta/enter';
+import { press } from '../../lib/press';
+import { track } from '../../lib/track';
 import '../v2/ProgramScale.css';
 import './Beta.css';
 import './beta/enter.css';
@@ -34,6 +36,9 @@ const PASSES = [
   ['b', 'Research access', 'Research models and checkpoints to evaluate before release.', '/beta/research', 'zen'],
   ['c', 'Design partner', 'Build it with the team. Chosen from applications.', '/beta/design', null],
 ];
+// the program each pass opens, as the app's analytics name it
+const PROGRAM = { a: 'beta', b: 'research', c: 'partner' };
+const chosen = (i) => track('beta_track_selected', { program: PROGRAM[PASSES[i][0]], program_name: PASSES[i][1], from_key: false });
 const PRODUCTS = [['Dev', '/dev'], ['Studio', '/studio'], ['Kai', '/kai', 'kai'], ['Enso', '/enso', 'enso'], ['Zen', '/zen', 'zen']];
 const TILES = [PRODUCTS[2], PRODUCTS[3], PRODUCTS[4], PRODUCTS[0], PRODUCTS[1]]; // the films first, so one plays on a phone's first screen
 
@@ -182,10 +187,13 @@ function Passes({ paused }) {
   const [marked, setMarked] = useState({});
   const opener = useRef(null);
   const busy = useRef(false);
+  // a pass's Apply is a page of this site: its press is read where the page transition reads it
+  useEffect(() => press('.xbt-pass .xbt-stub', (a) => chosen(PASSES.findIndex(([, , , to]) => a.getAttribute('href').startsWith(to)))), []);
   const show = (i, el) => {
     if (busy.current) return;
     busy.current = true;
     opener.current = el;
+    chosen(i);
     const card = el.closest('.xbt-pass');
     setMarked((m) => ({ ...m, [PASSES[i][0]]: (m[PASSES[i][0]] || 0) + 1 }));
     stamp(card, () => { busy.current = false; setOpen(i); });
@@ -270,9 +278,9 @@ function Foot() {
     <section ref={ref} className="zf-room xbt-foot" data-room="dark" data-ask-hide aria-label="Feedback, Book a call">
       <div className="xbt-foot-film" aria-hidden="true"><Film key={seen ? 'on' : 'off'} src="/models/kai.webm" poster="/models/kai.webp" w={1200} h={1500} loop={false} /></div>
       <div className="xp-wrap xbt-foot-in">
-        <A to="/login?next=%2Fbeta" className="xbt-big">Feedback<span aria-hidden="true">→</span></A>
+        <A to="/login?next=%2Fbeta" className="xbt-big" onClick={() => track('beta_feedback_opened', { from: 'home', program: 'none' })}>Feedback<span aria-hidden="true">→</span></A>
         <A to="/pricing" className="xbt-big sm" data-cta="beta.go-paid">Skip the wait, go paid<span aria-hidden="true">→</span></A>
-        <a className="xbt-big sm" href="https://cal.com/hanzo" target="_blank" rel="noopener noreferrer">Book a call<span aria-hidden="true">↗</span></a>
+        <a className="xbt-big sm" href="https://cal.com/hanzo" target="_blank" rel="noopener noreferrer" onClick={() => track('beta_call_booked', { from: 'landing' })}>Book a call<span aria-hidden="true">↗</span></a>
       </div>
     </section>
   );
@@ -282,6 +290,7 @@ export default function Beta() {
   const [paused, setPaused] = useState(false);
   const root = useRef(null);
   useEnter(root);
+  useEffect(() => { track('beta_viewed', { initial_program: 'none', resumed: false }); }, []);
   return (
     <main className="xp xbt zf" ref={root}>
       <NoJs />
