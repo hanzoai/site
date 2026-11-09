@@ -683,3 +683,15 @@ html.dark .x-band { background: radial-gradient(80% 70% at 50% 100%, #1b1b1e, #0
 @keyframes x-shine { 0% { transform: translate3d(-120%, 0, 0); } 30%, 100% { transform: translate3d(120%, 0, 0); } }
 [data-off] .x-shine::after { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .x-shine::after { display: none; } }
+
+/* ---------- touch: every control is at least 44 x 44 (the pill, the tab and the link keep their look and take the space around them) ---------- */
+@media (pointer: coarse) {
+  .x-btn.sm, .x-setup-main, .x-setup-chev, .x-skip { min-height: 46px; }
+  .x-setup-chev { width: 46px; }
+  .x-seg button { min-width: 44px; }
+  .x-arrow, .x-tab, .xpr-use, .xmo-use, .xmo-row-n { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
+  .x-badge, .x-phone-dl, .xm-tabs button, .x-term-f a { position: relative; }
+  .x-badge::after, .x-phone-dl::after, .xm-tabs button::after, .x-term-f a::after { content: ''; position: absolute; inset: -12px -6px; }
+  footer a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; }
+}
+@media (max-width: 380px) { .x-setup-i:nth-child(n + 5) { display: none; } } /* the setup row and its 46px chevron fit a 360px screen */

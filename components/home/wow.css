@@ -188,8 +188,9 @@ html.dark main:has(> .x-ann) .x-pareto .x-plot, html.dark main:has(> .x-ann) .x-
   main:has(> .x-ann) .x-models .x-mcard.big { height: 300px; }
   main:has(> .x-ann) .x-models .x-mcard:not(.big) { height: 200px; }
   main:has(> .x-ann) .x-platform .xp-stage { height: 430px; }
-  main:has(> .x-ann) .x-agents .x-dock { grid-template-columns: repeat(9, minmax(0, 1fr)); }
-  main:has(> .x-ann) .x-agents .x-ico { width: 34px; height: 34px; }
+  main:has(> .x-ann) .x-agents .x-dock { grid-template-columns: repeat(7, minmax(0, 1fr)); justify-items: center; }
+  main:has(> .x-ann) .x-agents .x-ico { width: 44px; height: 44px; }
+  main:has(> .x-ann) .x-agents .x-ico svg, main:has(> .x-ann) .x-agents .x-ico img { width: 22px; height: 22px; }
   main:has(> .x-ann) .x-oss .x-tiles { grid-template-columns: 1fr 1fr; }
   main:has(> .x-ann) .x-pricing > .x-wrap { grid-template-columns: 1fr; padding: 22px 14px 16px; }
   main:has(> .x-ann) .x-pricing > .x-wrap > .x-center { grid-column: 1; grid-row: auto; justify-content: flex-start; margin-top: 12px; }
