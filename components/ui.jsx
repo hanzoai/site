@@ -221,7 +221,7 @@ export async function copyText(text) {
 }
 
 /* Copy to clipboard; the icon turns into a drawn tick, only when the copy really happened. */
-export function Copy({ text, label = 'Copy', className = '' }) {
+export function Copy({ text, label = 'Copy', className = '', onCopy }) {
   const [ok, setOk] = useState(false);
   const t = useRef(0);
   return (
@@ -232,6 +232,7 @@ export function Copy({ text, label = 'Copy', className = '' }) {
       aria-label={ok ? 'Copied' : label}
       onClick={async () => {
         if (!(await copyText(text))) return; // a failed copy never says "Copied"
+        onCopy?.();
         setOk(true);
         clearTimeout(t.current);
         t.current = setTimeout(() => setOk(false), 1600);

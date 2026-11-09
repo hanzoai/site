@@ -3,6 +3,8 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import C from '../content';
 import { SETUP, SETUP_FOOT, SETUP_PROMPT, setupHref } from '../lib/setup';
+import { press } from '../lib/press';
+import { track } from '../lib/track';
 
 const ICON = Object.fromEntries(C.agents.map((a) => [a.name, a.icon]));
 const ALIAS = { Gemini: 'Gemini CLI', Grok: 'Grok Build', 'Grok Bot': 'Grok Build', 'Claude Duet': 'Claude Code' };
@@ -11,8 +13,10 @@ const web = (h) => /^https?:/.test(h);
 const copy = async () => { try { await navigator.clipboard.writeText(SETUP_PROMPT); return true; } catch { return false; } };
 
 /* "Copy setup prompt": the button copies the prompt, the chevron opens every agent it can be handed to.
-   All rows are in the page from the start (closed, they are inert); opening staggers them in. */
-export default function SetupMenu({ up = false, inline = false, ...rest }) {
+   All rows are in the page from the start (closed, they are inert); opening staggers them in.
+   `where` names the band that counts its three moves (the copy half, the chevron, a link in the menu), as the app's
+   Hanzo.Start does; the hero's menu has none and says nothing. */
+export default function SetupMenu({ up = false, inline = false, where, ...rest }) {
   const id = useId();
   const [open, setOpen] = useState(false);
   const [ok, setOk] = useState(false);
@@ -30,6 +34,19 @@ export default function SetupMenu({ up = false, inline = false, ...rest }) {
     document.addEventListener('pointerdown', away);
     return () => document.removeEventListener('pointerdown', away);
   }, [open]);
+
+  // the three moves, read off the menu's own markup, as the app reads them (components/home/Install.tsx `Setup`)
+  useEffect(() => {
+    if (!where || !root.current) return;
+    return press(root.current, (_, e) => {
+      const at = e.target;
+      const link = at.closest('.x-menu a');
+      if (link) return track('setup_agent_chosen', { agent: (link.textContent ?? '').trim().slice(0, 40), target: link.getAttribute('href') ?? '' });
+      if (at.closest('.x-setup-main')) return track('setup_prompt_copied', { where });
+      const chev = at.closest('[aria-haspopup]');
+      if (chev) track('agent_menu_toggled', { open: chev.getAttribute('aria-expanded') !== 'true' });
+    });
+  }, [where]);
 
   const flash = () => { setOk(true); clearTimeout(t.current); t.current = setTimeout(() => setOk(false), 1800); };
   const items = () => [...menu.current.querySelectorAll('input, a')].filter((el) => !el.closest('[hidden]'));

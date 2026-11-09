@@ -20,6 +20,7 @@ import { media, bySlug } from '../../lib/models';
 import { ROWS, OTHERS } from './models/rates';
 import { BOARD } from './benchmarksData';
 import { CopyStatus } from './models/parts';
+import { track } from '../../lib/track';
 import './ModelsPage.css';
 
 /* Kai's suites won against Jev, counted from Hanzo's research runs (the rows /benchmarks reads, api.hanzo.ai/v1/research/runs),
@@ -440,6 +441,14 @@ function Catalogue({ makers }) {
   const [fam, setFam] = useState('all');
   const [lens, setLens] = useState('all');
   const [q, setQ] = useState('');
+  // A search is what was typed once the typing stops: search_performed, the Search a model audience is built from.
+  // Not every keystroke (app components/models/Catalog.tsx).
+  useEffect(() => {
+    const s = q.trim();
+    if (s.length < 2) return;
+    const timer = setTimeout(() => track('search_performed', { search_string: s, from: 'models' }), 1200);
+    return () => clearTimeout(timer);
+  }, [q]);
   const list = useRef(null);
   const sig = `${fam}|${lens}|${q.trim()}`;
   const first = useRef(sig);

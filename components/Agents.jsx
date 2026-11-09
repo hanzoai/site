@@ -5,6 +5,7 @@ import { EASE, Head, Arrow, Copy, Mark, fine } from './ui';
 import C from '../content';
 import { SCRIPT } from '../lib/script';
 import SetupMenu from './SetupMenu';
+import { capture, track } from '../lib/track';
 
 /* Every agent Hanzo works with, as a field that swells toward the pointer, like a dock. */
 function Ico({ a, mx, my, i }) {
@@ -26,12 +27,12 @@ function Ico({ a, mx, my, i }) {
   );
 }
 
-function Cmd({ bin, rest, copy }) {
+function Cmd({ bin, rest, copy, onCopy }) {
   return (
     <div className="x-cmd x-mono">
       <span className="x-dim">$</span>
       <span className="x-cmd-t"><b>{bin}</b> <span>{rest}</span></span>
-      <Copy text={copy} />
+      <Copy text={copy} onCopy={onCopy} />
     </div>
   );
 }
@@ -62,7 +63,7 @@ function Accel() {
       <div className="x-cmd x-mono">
         <span className="x-dim">$</span>
         <span className="x-cmd-t"><b>hanzo</b> <span>{flag.slice(0, n)}</span><span className="x-sr" aria-hidden="true">{ACCEL.filter((_, i) => i !== at).map(([, f]) => f).join(' ')}</span></span>
-        <Copy text={'hanzo ' + flag} />
+        <Copy text={'hanzo ' + flag} onCopy={() => capture('home_copied', { block: 'tour', command: 'hanzo ' + flag })} />
       </div>
     </div>
   );
@@ -118,7 +119,7 @@ function Steps() {
         <i className="x-steps-line" aria-hidden="true"><motion.b style={{ scaleY: fill }} /></i>
         {STEPS.map(([t, e], i) => (
           <li key={t}>
-            <button type="button" aria-pressed={on === i} onClick={() => { setMine(true); setOn(i); }}>
+            <button type="button" aria-pressed={on === i} onClick={() => { setMine(true); setOn(i); track('agent_step_opened', { step: i + 1 }); }}>
               {on === i && <motion.span layoutId="step-bg" className="x-step-bg" transition={{ type: 'spring', stiffness: 420, damping: 36 }} />}
               <span className={'x-step-n' + (i <= on ? ' done' : '')}>{i + 1}</span>
               <span className="x-step-t"><b>{t}</b><span className="x-mono">{e}</span></span>
@@ -129,7 +130,7 @@ function Steps() {
       <div className="x-script x-mono" aria-live="polite">
         <span className="x-dim">step {on + 1}/4 ›</span> <span ref={typed} /><span className="x-caret" aria-hidden="true" />
       </div>
-      <button type="button" className="x-code-t" aria-expanded={code} aria-controls="agent-script" onClick={() => { setMine(true); setCode((c) => !c); }}>
+      <button type="button" className="x-code-t" aria-expanded={code} aria-controls="agent-script" onClick={() => { setMine(true); setCode((c) => !c); if (!code) track('agent_script_shown', { step: on + 1 }); }}>
         <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5.5 4 2 8l3.5 4M10.5 4 14 8l-3.5 4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
         <span className="x-code-lbl">
           <span aria-hidden={code} data-on={!code}>{`Show step ${on + 1} of the script`}</span>
@@ -145,8 +146,8 @@ function Steps() {
         </div>
       </div>
       <div className="x-panel-f">
-        <Copy text={SCRIPT[on]} label="Copy this step" />
-        <Copy text={SCRIPT.join('\n\n')} label="Copy the whole script" />
+        <Copy text={SCRIPT[on]} label="Copy this step" onCopy={() => track('agent_step_copied', { step: on + 1 })} />
+        <Copy text={SCRIPT.join('\n\n')} label="Copy the whole script" onCopy={() => track('agent_script_copied', { from: 'landing' })} />
       </div>
       <div className="x-panel-links">
         <a className="x-btn sm solid" href="/agents#headless">Start as an agent</a>
@@ -160,11 +161,12 @@ export default function Agents() {
   const mx = useMotionValue(Infinity);
   const my = useMotionValue(Infinity);
   return (
-    <section className="x-sec x-agents" id="compatible" aria-labelledby="compatible-h">
+    <section className="x-sec x-agents" id="compatible" data-hz-view="compatible" aria-labelledby="compatible-h">
       <div className="x-wrap">
         <Head title="Works with every agent, bot and CLI tool." lede="Claude Code, Codex, Cursor and the rest, every model behind one key. Or let your agent sign itself up." />
         <ul
           className="x-dock"
+          data-hz-view="works-with"
           onPointerMove={(e) => { if (fine(e)) { mx.set(e.clientX); my.set(e.clientY); } }}
           onPointerLeave={() => { mx.set(Infinity); my.set(Infinity); }}
         >
@@ -174,12 +176,12 @@ export default function Agents() {
           <div className="x-panel">
             <div className="x-panel-h"><Mark size={14} /> <b>Hanzo.Start</b></div>
             <p className="x-panel-k">Install the Hanzo CLI</p>
-            <Cmd bin="curl" rest="-fsSL https://hanzo.sh | sh" copy="curl -fsSL https://hanzo.sh | sh" />
+            <Cmd bin="curl" rest="-fsSL https://hanzo.sh | sh" copy="curl -fsSL https://hanzo.sh | sh" onCopy={() => capture('home_copied', { block: 'install' })} />
             <div className="x-or small"><span>or</span></div>
-            <Cmd bin="npm" rest="i -g hanzo" copy="npm i -g hanzo" />
+            <Cmd bin="npm" rest="i -g hanzo" copy="npm i -g hanzo" onCopy={() => capture('home_copied', { block: 'install', command: 'npm i -g hanzo' })} />
             <Accel />
             <p className="x-panel-k">Set up Codex, Cursor and more</p>
-            <SetupMenu inline />
+            <SetupMenu inline where="compatible" />
           </div>
           <div className="x-panel-wrap"><Steps /></div>
         </div>

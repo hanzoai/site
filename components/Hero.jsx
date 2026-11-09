@@ -7,6 +7,8 @@ import C from '../content';
 import SetupMenu from './SetupMenu';
 import { MORE, SceneLog, ShellLines, PhoneCells, Feed, Chips } from './home/HeroScenes';
 import { PLANS, checkoutAbs } from '../lib/plans';
+import { press } from '../lib/press';
+import { capture, track } from '../lib/track';
 
 const PROMPT = 'Build maxpower: every AI I use in one place, and faster at coding.';
 const CMD = 'curl -fsSL https://hanzo.sh | sh';
@@ -158,7 +160,7 @@ function Account() {
   }, [open]);
   return (
     <div className="x-acct" ref={box} onKeyDown={(e) => { if (e.key === 'Escape' && open) { setOpen(false); btn.current.focus(); } }}>
-      <button ref={btn} type="button" className="x-acct-b" aria-label="Account" aria-haspopup="true" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+      <button ref={btn} type="button" className="x-acct-b" aria-label="Account" aria-haspopup="true" aria-expanded={open} onClick={() => { track('hero_demo', { control: 'account' }); setOpen((o) => !o); }}>
         <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="5.6" r="2.7" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M2.8 13.6c.7-2.4 2.7-3.7 5.2-3.7s4.5 1.3 5.2 3.7" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
       </button>
       <div className="x-acct-m" data-open={open} inert={!open}>
@@ -186,7 +188,11 @@ export default function Hero() {
   // the terminal's Copy copies exactly the command it shows, and says so
   const [copied, setCopied] = useState(false);
   const copyT = useRef(0);
-  const copy = async () => { if (!(await copyText(CMD))) return; setCopied(true); clearTimeout(copyT.current); copyT.current = setTimeout(() => setCopied(false), 1600); };
+  const copy = async () => { if (!(await copyText(CMD))) return; capture('home_copied', { block: 'hero', command: CMD }); setCopied(true); clearTimeout(copyT.current); copyT.current = setTimeout(() => setCopied(false), 1600); };
+
+  // the landing is counted once, when the hero is first drawn; a press on Download App is read where the page transition reads it
+  useEffect(() => { capture('home_viewed'); }, []);
+  useEffect(() => press('.x-phone-dl', () => track('hero_demo', { control: 'phone-download' })), []);
 
   const [typed, setTypedState] = useState(0);
   const promptEl = useRef(null);
@@ -278,7 +284,7 @@ export default function Hero() {
   );
 
   return (
-    <section className="x-hero" ref={host} data-off={paused ? '' : undefined} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }} aria-labelledby="home-title">
+    <section className="x-hero" data-slot="hero" ref={host} data-off={paused ? '' : undefined} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }} aria-labelledby="home-title">
       <Dots host={host} />
       <div className="x-wrap x-hero-grid">
         <motion.div className="x-hero-copy" style={{ y: copyY, opacity: copyO }}>
@@ -323,7 +329,7 @@ export default function Hero() {
               <motion.div className={'x-win' + (side ? '' : ' xs-noside')} initial={{ opacity: 0, z: -260, y: 40 }} animate={{ opacity: 1, z: 0, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.15 }}>
                 <div className="x-win-bar">
                   <i /><i /><i />
-                  <button type="button" className="xs-sidet" aria-expanded={side} aria-label={side ? 'Close sidebar' : 'Open sidebar'} onClick={() => setSide((v) => !v)}>
+                  <button type="button" className="xs-sidet" aria-expanded={side} aria-label={side ? 'Close sidebar' : 'Open sidebar'} onClick={() => { track('hero_demo', { control: 'sidebar' }); setSide((v) => !v); }}>
                     <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="1.8" y="2.8" width="12.4" height="10.4" rx="2.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M6 3v10" stroke="currentColor" strokeWidth="1.4" /></svg>
                     <span className="xs-tip"><span hidden={!side}>Close sidebar</span><span hidden={side}>Open sidebar</span></span>
                   </button>
@@ -380,7 +386,7 @@ export default function Hero() {
                   <div className="x-status"><b>9:41</b><span className="x-island" /><span>●●●</span></div>
                   <div className="x-tabs" role="tablist" aria-label="Phone app">
                     {['chat', 'dev'].map((t) => (
-                      <button key={t} type="button" role="tab" aria-selected={tab === t} aria-controls={'phone-' + t} onClick={() => { user.current = true; setTab(t); }}>
+                      <button key={t} type="button" role="tab" aria-selected={tab === t} aria-controls={'phone-' + t} onClick={() => { user.current = true; track('hero_demo', { control: 'phone-' + t }); setTab(t); }}>
                         {tab === t && <span className="x-tab-bg" />}
                         <span>{t === 'chat' ? 'Chat' : 'Dev'}</span>
                       </button>

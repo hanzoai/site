@@ -12,6 +12,7 @@ import { motion, AnimatePresence, useDragControls } from 'motion/react';
 import { acceptAll, asks, consentPolicy, consentSheet, CONSENT_EVENT, declined, notice, noticed, POLICY_EVENT, readConsent, rejectAll, saveConsent } from '@hanzo/event';
 import { LOGIN, LANGS, SEARCH, COOKIES } from '../lib/header';
 import { play } from '../lib/sound';
+import { track } from '../lib/track';
 
 const EASE = [0.16, 1, 0.3, 1];
 const UP = { API: 1, CLI: 1, DNS: 1, HSM: 1, IAM: 1, IDE: 1, KMS: 1, MCP: 1, MQ: 1, UI: 1, GUI: 1, S3: 1, ZAP: 1, IDV: 1, SDKS: 'SDKs', O11Y: 'O11y' };
@@ -76,6 +77,7 @@ function Palette({ onClose }) {
   const ask = async (question) => {
     const qq = question.trim().slice(0, 2000);
     if (!qq) return;
+    track('search_performed', { search_string: question.trim(), from: 'palette' });
     ctl.current?.abort();
     const c = (ctl.current = new AbortController());
     const timer = setTimeout(() => c.abort(), 25000);

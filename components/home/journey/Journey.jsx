@@ -180,7 +180,7 @@ export default function Journey({ products: P, title, lede, onFail }) {
 
   const p = P[active];
   return (
-    <section className="x-sec x-platform xpj-sec" id="products" aria-labelledby="products-h" data-mode="journey">
+    <section className="x-sec x-platform xpj-sec" id="products" data-hz-view="products" aria-labelledby="products-h" data-mode="journey">
       <div className="x-wrap"><Head title={title} lede={lede} /></div>
       <div className="xpj" ref={track} style={{ '--xpj-n': N }} data-ready={ready ? '' : undefined}>
         <div className="xpj-stage" ref={stage}>

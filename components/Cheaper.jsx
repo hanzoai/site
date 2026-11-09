@@ -86,7 +86,7 @@ function KaiCard() {
 
 export default function Cheaper() {
   return (
-    <section className="x-sec x-cheaper" id="cheaper" aria-labelledby="cheaper-h">
+    <section className="x-sec x-cheaper" id="cheaper" data-hz-view="cheaper" aria-labelledby="cheaper-h">
       <div className="x-wrap">
         <Head title="The same intelligence. A smaller bill." lede="Enso routes each answer to the right model. Kai answers a decision directly." />
         <div className="x-races"><EnsoCard /><KaiCard /></div>

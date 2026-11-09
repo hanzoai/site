@@ -125,7 +125,7 @@ export function Footer() {
 const wrap = (min, max, v) => { const r = max - min; return ((((v - min) % r) + r) % r) + min; };
 
 /* An endless strip of logos. It drifts on its own, quickens and turns with the speed and direction of the scroll, and rests under the pointer. */
-export function Marquee({ items, label, reverse = false }) {
+export function Marquee({ items, label, reverse = false, view }) {
   const base = useMotionValue(0);
   const { scrollY } = useScroll();
   const v = useSpring(useVelocity(scrollY), { damping: 50, stiffness: 400 });
@@ -156,7 +156,7 @@ export function Marquee({ items, label, reverse = false }) {
     );
   });
   return (
-    <section className="x-marquee" aria-label={label} ref={box}>
+    <section className="x-marquee" aria-label={label} data-hz-view={view} ref={box}>
       <p className="x-kicker">{label}</p>
       {/* always rendered (server and client agree); hidden by CSS under reduced motion, where the strip never moves */}
       <button type="button" className="x-mq-pause" aria-pressed={held} aria-label={held ? 'Play' : 'Pause'} onClick={() => setHeld((h) => !h)}>

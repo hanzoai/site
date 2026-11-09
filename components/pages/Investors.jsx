@@ -172,7 +172,7 @@ function Pinned({ id, label, dark, scenes, className = '', head }) {
     window.__lenis ? window.__lenis.scrollTo(y, { immediate: true, force: true }) : scrollTo(0, y);
   };
   return (
-    <section ref={ref} id={id} className={'xin-pin ' + className} style={{ '--n': n }} aria-label={label} data-room={dark ? 'dark' : undefined}>
+    <section ref={ref} id={id} className={'xin-pin ' + className} style={{ '--n': n }} aria-label={label} data-room={dark ? 'dark' : undefined} data-hz-view={id === 'research' ? id : undefined}>
       {head}
       <div className="xin-pin-st">
         <div className="vc-grid xin-pin-g">
@@ -399,7 +399,7 @@ function Public() {
 const BUILT = [['damon-motorcycles.svg', 'Damon Motorcycles', '/customers/damon-motorcycles'], ['kanoa.png', 'KANOA', '/customers/kanoa'], ['skully.png', 'SKULLY', '/customers#skully'], ['bellabeat.svg', 'Bellabeat', '/customers#bellabeat'], ['stoned.svg', 'STONED Audio', '/customers#stoned'], ['unikoin-gold.svg', 'Unikrn', '/customers#unikoin-gold'], ['arca.png', 'Arca', '/customers#arca'], ['casper-blockchain.svg', 'Casper Labs', '/customers#casper-blockchain'], ['trillerfest.png', 'Triller', '/customers#trillerfest'], ['cover-build.svg', 'Cover Build', '/customers#cover-build'], ['myle-tap.png', 'Myle Tap', '/customers#myle-tap'], ['keek-social.svg', 'Personas Social', '/customers#keek-social']];
 function Built() {
   return (
-    <section className="xin-built" aria-labelledby="xin-built-h">
+    <section className="xin-built" data-hz-view="trusted" aria-labelledby="xin-built-h">
       <div className="vc-grid"><h2 id="xin-built-h" className="vc-title xin-built-k">Products Hanzo built and launched</h2></div>
       <div className="vc-grid">
         <ul className="xin-wall">

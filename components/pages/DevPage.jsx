@@ -264,7 +264,7 @@ function Race() {
   return (
     // the dark room (Frame.css .zf-room): it opens like a curtain as you arrive, a beam sweeps down; the figure and its
     // verdict stand on the left, the two clocks race one above the other on the right, all in one frame
-    <section className="xdv-race zf-room" data-room="dark" ref={ref} aria-labelledby="xdv-race">
+    <section className="xdv-race zf-room" data-room="dark" data-hz-view="race" ref={ref} aria-labelledby="xdv-race">
       <div className="v2a-wrap xdv-rx">
         <div className="xdv-rx-l">
           <h2 className="xdv-race-h" id="xdv-race"><span className="xdv-big v2a-fig">3.02×</span> <span className="xdv-race-t">faster on the same coding tasks.</span></h2>

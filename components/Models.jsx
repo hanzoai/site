@@ -58,7 +58,7 @@ function Card({ m, i }) {
 
 export default function Models() {
   return (
-    <section className="x-sec x-models" id="models" aria-labelledby="models-h">
+    <section className="x-sec x-models" id="models" data-hz-view="models" aria-labelledby="models-h">
       <div className="x-wrap">
         <Head title="Frontier AI for everything you build." lede="Language, routing, decisions and creative models." />
         <ul className="x-mgrid">{MODELS.map((x, i) => <Card key={x.slug} m={x} i={i} />)}</ul>

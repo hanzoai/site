@@ -313,6 +313,7 @@ function Stage({ pending, shell }) {
     <section
       className="x-sec x-platform"
       id="products"
+      data-hz-view="products"
       ref={sec}
       aria-labelledby="products-h"
       onPointerEnter={() => hold('pointer', true)}

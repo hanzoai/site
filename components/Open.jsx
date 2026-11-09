@@ -160,7 +160,7 @@ function Way({ w }) {
 export default function Open() {
   return (
     <>
-    <section className="x-sec x-oss" id="open-source" aria-labelledby="open-source-h">
+    <section className="x-sec x-oss" id="open-source" data-hz-view="open-source" aria-labelledby="open-source-h">
       <div className="x-wrap">
         <Head title="We ship every day. Fork anything. Build your own." lede="Every layer of the stack is open, hackable and modifiable — recursively self-upgrading AI from the ground up. Fork, remix, and build the apps only you can imagine." />
         <div className="x-tiles">{TILES.map((t, i) => <Tile key={i} t={t} i={i} />)}</div>
