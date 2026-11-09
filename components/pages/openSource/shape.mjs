@@ -1,5 +1,7 @@
 // The figures /open-source shows, as the page draws them: `sum` and `act` are lib/oss.mjs's combine(), the estate and
 // GitHub as hanzo-inc/app's scripts/sync-oss.ts writes them. scripts/live.mjs calls shape() and writes snapshot.js.
+import { cuts, shade } from '../../../lib/heat.mjs';
+
 const n = (x) => Number(x).toLocaleString('en-US');
 const plural = (v, one, many) => `${n(v)} ${v === 1 ? one : many}`;
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -12,8 +14,8 @@ const day = (iso) => { const d = new Date(iso.length === 10 ? iso + 'T00:00:00Z'
 export function heat(daily, from, to) {
   const days = [];
   for (let t = Date.parse(from + 'T00:00:00Z'), end = Date.parse(to + 'T00:00:00Z'); t <= end; t += 864e5) days.push(daily[new Date(t).toISOString().slice(0, 10)] || 0);
-  const nz = days.filter((v) => v > 0).sort((a, b) => a - b), q = [0.25, 0.5, 0.75].map((p) => nz[Math.floor(nz.length * p)] ?? 0);
-  return '.'.repeat(new Date(from + 'T00:00:00Z').getUTCDay()) + days.map((v) => (v === 0 ? '0' : v <= q[0] ? '1' : v <= q[1] ? '2' : v <= q[2] ? '3' : '4')).join('');
+  const cut = cuts(days);
+  return '.'.repeat(new Date(from + 'T00:00:00Z').getUTCDay()) + days.map((v) => shade(v, cut)).join('');
 }
 
 export function shape({ sum, act }) {

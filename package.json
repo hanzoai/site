@@ -9,7 +9,7 @@
     "preview": "node scripts/serve.mjs 4181",
     "capture": "python3 scripts/capture.py",
     "extract": "python3 scripts/extract.py",
-    "test": "node --test scripts/plans.test.mjs scripts/oss.test.mjs components/pages/BuyingSpecialist.test.mjs components/pages/Calculator.test.mjs components/pages/Reviews.test.mjs components/pages/BetaApply.send.test.mjs components/pages/Careers.apply.test.mjs components/pages/ContactSales.send.test.mjs",
+    "test": "node --test scripts/plans.test.mjs scripts/oss.test.mjs scripts/heat.test.mjs components/pages/BuyingSpecialist.test.mjs components/pages/Calculator.test.mjs components/pages/Reviews.test.mjs components/pages/BetaApply.send.test.mjs components/pages/Careers.apply.test.mjs components/pages/ContactSales.send.test.mjs",
     "events": "node scripts/events.mjs"
   },
   "dependencies": {

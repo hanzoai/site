@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { DAYS, FROM, TO, FIRST_WEEKDAY } from '../lib/commits';
+import { DAYS, FROM, TO, FIRST_WEEKDAY, level } from '../lib/commits';
 import O from '../content/live/_oss.json';
 import repoCard from './home/repoCard';
 import { EASE, Head, Arrow, Count } from './ui';
@@ -28,8 +28,6 @@ const WAYS = [
 /* Hanzo's commit calendar, rebuilt from its own numbers. Point at any day (or move with the arrow keys) for Hanzo's
    readout; the days around it swell like a lens. While nobody is pointing, a light sweeps the year week by week. */
 const LEAD = FIRST_WEEKDAY; // Hanzo's grid opens with blank days so the weeks line up (Sunday first)
-const LV = (() => { const s = DAYS.map((x) => x.c).sort((a, b) => a - b); return [0.2, 0.4, 0.6, 0.8].map((q) => s[Math.floor(q * (s.length - 1))]); })();
-const level = (c) => LV.filter((t) => c > t).length;
 const MONTHS = (() => { const out = []; DAYS.forEach((x, i) => { if (x.d === 1 || i === 0) out.push([x.label.slice(0, 3), Math.floor((i + LEAD) / 7)]); }); return out; })();
 
 function Calendar() {

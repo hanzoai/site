@@ -6,6 +6,7 @@
      and the stronger hairlines. Light values are exactly the colours these rules hard-coded before. */
   --x-raised: #fff; --x-on-ink: #fff; --x-sunk: #fafafa; --x-knob: #fff; --x-fill: #f5f5f7;
   --x-e10: rgba(0, 0, 0, .1); --x-e12: rgba(0, 0, 0, .12); --x-e15: rgba(0, 0, 0, .15);
+  --x-heat: #0a0a0a; --x-cell: #e8e8ec;
   --ease: cubic-bezier(.16, 1, .3, 1); --wrap: 1200px; --r: 24px;
   --sans: Zen, 'Zen Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; --mono: 'Zen Mono', 'Zen Mono Fallback', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
@@ -20,6 +21,7 @@ html:not(.light) {
      --popover because --card on <html> is ours (the muted fill) and would shadow Hanzo's card colour here. */
   --x-raised: var(--popover); --x-on-ink: var(--primary-foreground); --x-sunk: var(--surface-card-quiet); --x-knob: var(--secondary);
   --x-fill: var(--muted); --x-e10: var(--border); --x-e12: var(--border-control); --x-e15: var(--border-control);
+  --x-heat: #fff; --x-cell: var(--secondary); /* the open-source band's heat: white, on Hanzo's empty cell */
 }
 html { background: var(--bg); -webkit-text-size-adjust: 100%; }
 /* Footer wordmark in dark: live draws it in --foreground at opacity .18 (dark grey). components/Chrome.jsx raises the
@@ -522,7 +524,10 @@ a.x-mbtn { color: inherit; text-decoration: none; }
 .x-cal-grid2 i.blank { visibility: hidden; }
 .x-cal-grid2 i.hot { box-shadow: 0 0 0 1.5px var(--bg), 0 0 0 3px var(--ink); z-index: 1; position: relative; }
 .x-cal-grid2 i.sw { filter: brightness(1.25); }
-.l0 { background: light-dark(#e8e8ec, var(--secondary)); } .l1 { background: #c3c3c9; } .l2 { background: #8e8e93; } .l3 { background: #48484a; } .l4 { background: #0a0a0a; }
+/* The band's heat, one scale for the calendar and its legend: from the empty cell to the ink at full strength, the ink
+   being black in light and white in dark. Each shade is a share of that ink over the empty cell, as /open-source's. */
+.l0 { background: var(--x-cell); } .l1 { background: color-mix(in srgb, var(--x-heat) 30%, var(--x-cell)); } .l2 { background: color-mix(in srgb, var(--x-heat) 55%, var(--x-cell)); }
+.l3 { background: color-mix(in srgb, var(--x-heat) 78%, var(--x-cell)); } .l4 { background: var(--x-heat); }
 .x-cal-key i { width: 10px; height: 10px; border-radius: 2px; opacity: 1 !important; }
 .x-cal-tip { position: absolute; z-index: 3; translate: -50% calc(-100% - 10px); padding: 7px 10px; border-radius: 10px; background: var(--ink); color: var(--x-on-ink); font: 400 12px/1.3 var(--sans); white-space: nowrap; pointer-events: none; box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .4); }
 .x-cal-tip b { font-weight: 600; margin-right: 4px; }

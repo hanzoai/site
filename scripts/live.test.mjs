@@ -41,6 +41,7 @@ fs.copyFileSync(path.join(ROOT, 'scripts', 'live.mjs'), path.join(tmp, 'scripts'
 fs.mkdirSync(path.join(tmp, 'lib'));
 fs.copyFileSync(path.join(ROOT, 'lib', 'liveSources.mjs'), path.join(tmp, 'lib', 'liveSources.mjs')); // the sources live.mjs shares with the home page
 fs.copyFileSync(path.join(ROOT, 'lib', 'oss.mjs'), path.join(tmp, 'lib', 'oss.mjs'));
+fs.copyFileSync(path.join(ROOT, 'lib', 'heat.mjs'), path.join(tmp, 'lib', 'heat.mjs'));
 fs.mkdirSync(path.join(tmp, 'components', 'pages', 'openSource'), { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'components', 'pages', 'openSource', 'shape.mjs'), path.join(tmp, 'components', 'pages', 'openSource', 'shape.mjs'));
 for (const f of FILES) fs.writeFileSync(path.join(tmp, 'content', 'live', f), before[f]);
