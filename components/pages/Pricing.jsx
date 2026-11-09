@@ -32,6 +32,7 @@ import NoJs from '../NoJs';
 import './Frame.css';
 import './Pricing.css';
 import { PLANS, SEATS, checkout, teamCheckout } from '../../lib/plans';
+import { QA } from './Pricing.faq';
 import { asked, chose, LIST, picked, RUNG, termed, viewed } from '../../lib/funnel';
 import { press } from '../../lib/press';
 
@@ -319,7 +320,7 @@ function Card({ id, s, set, hand, i }) {
       <div className="xpr-c-top">
         <h2 className="xpr-c-name" id={'xpr-c-' + id}>{p.ladder ? <Swap k={p.name} roll>{p.name}</Swap> : p.name}</h2>
         {p.ladder && <Seg opts={PRO.map((q) => q.x)} val={s.x} set={(v) => { hand(); set.x(v); if (v !== s.x) picked(RUNG[PRO.findIndex((q) => q.x === v)], 'individual'); }} id="xpr-mult" label="Usage multiple" />}
-        {id === 'team' && <div className="xpr-bill"><Seg opts={['Annual', 'Monthly']} val={s.bill} set={(v) => { set.bill(v); if (v !== s.bill) termed('team', v === 'Annual', 'team'); }} id="xpr-bill" label="Billing period" /><span className="xpr-save">−20%</span></div>}
+        {id === 'team' && <div className="xpr-bill"><Seg opts={['Annual', 'Monthly']} val={s.bill} set={(v) => { set.bill(v); if (v !== s.bill) termed('team', v === 'Annual', 'team'); }} id="xpr-bill" label="Billing period" /><span className="xpr-save">−{SEATS.saving}%</span></div>}
       </div>
       <p className="xpr-c-d">{p.ladder ? <Swap k={p.d}>{p.d}</Swap> : p.d}</p>
       <div className="xpr-c-price">
@@ -396,7 +397,7 @@ function Index() {
             return (
               <article key={p.name} className="xpr-all-p">
                 <h3>{p.name}</h3>
-                {p.seats && <p className="xpr-sub">Annual · Monthly <span className="xpr-save">−20%</span></p>}
+                {p.seats && <p className="xpr-sub">Annual · Monthly <span className="xpr-save">−{SEATS.saving}%</span></p>}
                 <p className="xpr-d">{p.d}</p>
                 <p className="xpr-all-f">{p.fig ? p.fig + ' USD/month' : p.word}</p>
                 {lines(p.sub).map((t) => <p key={t} className="xpr-sub">{t}</p>)}
@@ -695,35 +696,6 @@ function Enso() {
     </section>
   );
 }
-
-/* ---------- questions ---------- */
-const QA = [
-  ['What is free?', 'Running your own private AI on your own machine, and the open Zen weights, free forever. Enso Auto on the Free plan, on a daily pool. Everything open source is yours to download and run.'],
-  ['What does a plan cost?', 'Exactly the price on its card, by the month or, where a year is sold, by the year. Free costs nothing. Team is priced per member, from 2 members. Paid plans include usage on every model; top up prepaid credit anytime for more. Enterprise is priced with our team.'],
-  ["What happens when I reach my plan's included usage?", "Keep using any model with prepaid credit, which you can add anytime. Your plan's usage renews every billing period."],
-  ['What is a bill made of?', 'Four components, and every charge is one of them: model inference, the computer an agent runs on, web tools, and media generation. Each appears on your spend breakdown under its own name, so a month adds up to four lines you can check rather than one you have to trust.'],
-  ['Which charges are quoted before they run?', "Model calls and compute. Both can be bounded from above before they happen, so an agent that would breach its budget is refused rather than discovered on an invoice. Web calls and media renders cannot be — a provider's charge and a render's cost are only known afterwards — so those are billed at what they actually cost, and a render runs only while the agent's per-task cap has room for it."],
-  ['How are tokens billed?', 'Per token, in five tiers that never overlap: input, cached reads, cache writes, output and reasoning, at the tariff for the completion window the request asked for. Amounts are carried as integer micro-dollars, so nothing rounds in our favor.'],
-  ['What is a completion window?', 'How soon you need the answer, chosen per request, and the biggest lever you have on what a call costs — the same model at a different window is a different price. Ask for it immediately and you pay the interactive tariff; ask for it soon, or eventually, and you pay less. Pay the interactive rate only when a person is actually waiting.'],
-  ['What does a computer cost when nothing is running on it?', 'Nothing. vCPU and memory meter by the second while the machine runs, on what it was given. Creating one is free, a paused one has no vCPU, no memory and no storage, and its boot disk is inside the allowance — so an agent waiting between turns meters nothing at all.'],
-  ['Are MCP, the SDK and the CLI metered?', 'No. The interfaces are free; only the work they ask for is metered. Connecting an editor, a terminal or an agent framework costs nothing by itself.'],
-  ['How are web tools billed?', 'Per call, priced from what the provider charged us, so a web call is booked after it runs rather than quoted before it. A fetch your own domain policy refuses never leaves the process, so it costs nothing.'],
-  ['How is media generation billed?', "Once per finished job, at what the job actually cost. A render cannot be priced before it runs, so it runs only while the agent's per-task cap has room for it. A job that fails is not billed."],
-  ['Are failed calls billed?', 'No. A call or a job that fails is not billed, and any amount it set aside from a budget is returned. A request your own policy refuses is stopped before it is sent and costs nothing.'],
-  ['Do you mark up model prices?', 'The rate shown beside a model is the price on your bill: the rates on this page are read from the same place the meter reads them. Our own costs are measured against vendor invoices rather than published rate cards, which overstate real cost substantially.'],
-  ['Is streaming billed differently?', 'No. The same tokens at the same tariff, streamed or not.'],
-  ['How do budgets work?', 'Every agent carries one: a cap per period and a cap per task. A call that can be quoted is quoted before it runs, and if it would breach the cap it is refused rather than discovered on an invoice. The agent is told in-band, so it can wrap up rather than crash, and a session paused at its cap resumes when the cap is raised. The exact fields and the order of the checks are in the docs.'],
-  ['What are the rate limits?', 'The free pool is counted per day. Paid accounts get high limits; Enterprise can arrange dedicated ones.'],
-  ['Can I separate environments?', 'Yes. Keys belong to an organization and can be scoped to a project or a service account, so development, staging and production carry their own keys and their own spend.'],
-  ['How do I migrate from OpenAI or Anthropic?', 'Point your client at api.hanzo.ai/v1 with a Hanzo key. The chat, embeddings and tool-calling surfaces are compatible, and the same models answer at the same endpoint alongside every other lab’s. Tools work natively, and over MCP through the @hanzo/mcp server, which Claude Code, Cursor, Codex and Zed run from one npx line.'],
-  ['What payment methods do you accept?', 'All major cards, and crypto on pay-as-you-go. Enterprise customers can arrange invoicing and PO terms. Payments are processed by our payment provider; we never store your card.'],
-  ['Is there a minimum spend or a lock-in?', 'No minimum. A plan renews for the term you bought, a month or a year. Cancel any time; what you already paid for stays yours until the period ends.'],
-  ['Do you offer annual billing?', 'Yes, for teams. Choose Annual on the Enterprise card to pay for a whole year at once, which saves 92% against paying monthly.'],
-  ['Do you train on my data?', 'No. Your content is yours. We use industry-standard encryption in transit and at rest, and you can request deletion at any time.'],
-  ['Do you support SSO?', 'Enterprise accounts sign in through their own identity provider over OIDC or SAML, with SCIM provisioning and org-scoped roles.'],
-  ['Where do I check uptime and incidents?', 'status.hanzo.ai, which every dashboard links to.'],
-  ['Do you offer pricing for education or nonprofits?', 'Yes, for both. Contact sales with your institution or nonprofit credentials and we will sort out the right rate.'],
-];
 
 /* ---------- the header's halftone (as live hanzo.ai sets one behind its pricing header; James likes the texture): a dot
    field drawn once per size on a canvas, dots growing toward the edges and the far side, clear around the title. Ink

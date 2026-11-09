@@ -2,6 +2,7 @@
 // Entrances, in order: squash-land, ripple, venetian-type, grow-from-point, stretch-scroll (components/pages/agents-index)
 import AgentsPage from '../../components/pages/AgentsPage';
 import JsonLd from '../../components/JsonLd';
+import { QA } from '../../components/pages/AgentsPage.faq';
 
 export const metadata = {
   title: 'Hanzo for agents: free to start, pay as you go — Hanzo AI',
@@ -9,5 +10,5 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <><JsonLd route="/agents" /><AgentsPage /></>;
+  return <><JsonLd route="/agents" faq={QA} /><AgentsPage /></>;
 }

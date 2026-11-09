@@ -2,6 +2,7 @@
 // Beyond: the compare sheet: every personal plan's own lines side by side with what each inherits, opened out of the panel
 import Pricing from '../../components/pages/Pricing';
 import JsonLd from '../../components/JsonLd';
+import { QA } from '../../components/pages/Pricing.faq';
 
 export const metadata = {
   title: 'Pricing — start free, every model on one bill — Hanzo AI',
@@ -9,5 +10,5 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <><JsonLd route="/pricing" /><Pricing /></>;
+  return <><JsonLd route="/pricing" faq={QA} /><Pricing /></>;
 }

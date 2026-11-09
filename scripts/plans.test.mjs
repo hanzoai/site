@@ -3,9 +3,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import LIVE from '../content/live/_pricing.json' with { type: 'json' };
-import { FLOOR, PARTNERS, PLANS, SEATS, charge, checkout, planItem, usd } from '../lib/plans.js';
+import MODELS from '../content/live/_models.json' with { type: 'json' };
+import { FLOOR, OFFERS, PARTNERS, PLANS, SEATS, charge, checkout, planItem, usd } from '../lib/plans.js';
+import { QA as PRICING } from '../components/pages/Pricing.faq.js';
+import { QA as AGENTS, KAI } from '../components/pages/AgentsPage.faq.js';
 
 const rows = Object.values(LIVE.plans);
+const answer = (qa, q) => qa.find(([name]) => name === q)?.[1];
+const jsonld = (route) => JSON.parse(fs.readFileSync(new URL(`../content/jsonld/${route}.json`, import.meta.url), 'utf8'));
 // the code of a page without its comments: a figure in a comment is a note, one in a string is what a visitor reads
 const code = (file) => fs.readFileSync(new URL(`../components/pages/${file}`, import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
 
@@ -38,14 +43,24 @@ test('a plan is named on the analytics tags by its catalog slug and what the ter
   assert.equal(planItem('api-payg', 'month', 'api').item_name, 'Pay as you go');
 });
 
-test('a page that sells a plan types no price', () => {
+test('a page that sells a plan types no price and no saving', () => {
   const rate = /\$\s?\d[\d,]*(?:\.\d+)?\s*(?:\/\s*(?:mo|month|seat|member|year|yr)\b|(?:a|per)\s+(?:month|year|seat|member)\b)/i;
   const saving = /−\s?\d+%|sav\w*\s+\d+%|\d+%\s+discount/i;
-  for (const file of ['Bot.jsx', 'Enterprise.jsx']) {
+  for (const file of ['Pricing.jsx', 'Pricing.faq.js', 'Bot.jsx', 'Enterprise.jsx', 'AgentsPage.jsx', 'AgentsPage.faq.js']) {
     const text = code(file);
     assert.ok(!rate.test(text), `${file} types a recurring price: it comes from lib/plans.js`);
     assert.ok(!saving.test(text), `${file} types a saving: it comes from SEATS.saving`);
   }
+});
+
+test('only Team has a monthly or yearly choice: the annual answer states its saving, and Enterprise is sold by the year', () => {
+  const team = LIVE.plans.team;
+  assert.equal(SEATS.saving, Math.round((1 - team.priceAnnual / team.price) * 100));
+  assert.equal(LIVE.plans.enterprise.interval, 'year');
+  const a = answer(PRICING, 'Do you offer annual billing?');
+  assert.match(a, new RegExp(`Annual on the Team card .* saves ${SEATS.saving}% against paying monthly`));
+  assert.match(a, /Enterprise is sold by the year/);
+  assert.doesNotMatch(a, /92/);
 });
 
 test('the bot floor is the cheapest plan with a bot', () => {
@@ -60,4 +75,31 @@ test('the partners are the white-label and agency plans', () => {
   assert.deepEqual(PARTNERS.agency.names, agency.map((p) => p.name));
   assert.equal(PARTNERS.agency.from, Math.min(...agency.map((p) => p.price)));
   assert.equal(usd(4999), '$4,999');
+});
+
+test('the agents cost answer names the price list\'s Kai rate and the cheapest plan for a person', () => {
+  const kai = MODELS.models.find((m) => m.id === 'kai').pricing.input_per_million;
+  assert.equal(KAI, '$' + kai);
+  const a = answer(AGENTS, 'What does it cost after that?');
+  assert.ok(a.includes(`Kai is ${KAI} per million input tokens`), a);
+  assert.ok(a.includes(`start at ${usd(FLOOR.paid)} a month`), a);
+});
+
+test('the plan offers are the plan list\'s, and Enterprise is a year\'s price spread over twelve months', () => {
+  const [month, year] = OFFERS.Enterprise.priceSpecification;
+  assert.equal(month.price, LIVE.plans.enterprise.priceAnnual);
+  assert.equal(year.price, LIVE.plans.enterprise.priceAnnual * 12);
+  assert.equal(OFFERS.Team.priceSpecification[1].price, charge('team', 'year'));
+  for (const p of rows.filter((x) => x.category === 'personal')) assert.equal(OFFERS[p.name].price, p.price, p.name);
+});
+
+test('the structured data holds no price and no answer of its own: the plan list and the page state them', () => {
+  const [, offers, faq] = jsonld('pricing');
+  assert.equal(offers['@type'], 'OfferCatalog');
+  for (const o of offers.itemListElement) {
+    assert.ok(OFFERS[o.name], `${o.name} is a plan`);
+    assert.ok(!('price' in o) && !('priceSpecification' in o), `${o.name} has a typed price`);
+  }
+  for (const route of ['pricing', 'agents']) assert.ok(!jsonld(route).some((d) => d.mainEntity), `${route} types its FAQ`);
+  assert.equal(faq['@type'], 'FAQPage');
 });
