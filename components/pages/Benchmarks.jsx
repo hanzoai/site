@@ -1,7 +1,7 @@
 'use client';
 // Persona: a developer or technical buyer weighing models on accuracy, cost and speed (arrives from the header's Research menu, /models or a model page)
 // Goal: see Hanzo's measured results, check how each number was taken, and start building
-// CTA: Start on Hanzo Cloud -> https://cloud.hanzo.ai (hero with the thumb bar, and the closing room)
+// CTA: Start on Hanzo Cloud -> https://platform.hanzo.ai (hero with the thumb bar, and the closing room)
 // Metric: cta_click (data-cta="benchmarks.hero", "benchmarks.close")
 // Signature: race (Live race). Right under the h1, lanes race in real time at Hanzo's real ratios, and the visitor picks what races: Zen 6's three builds prefilling or decoding the same tokens at their measured rates (the fastest takes one second), D-LSA against full attention at a chosen context length (8K to 10M, its measured speed-up), or the five agent CodeRace scenarios at their latencies' ratios. Each lane counts live and reads Hanzo's own figure at the finish.
 // Frames (8 Nov, the home page's bar): every section reads in one 1470x801 frame and opens to the rest (tabs, folds, sheets, each benchmark's own page); every result has Hanzo's buying action beside it (Start on Hanzo Cloud, View Models & Pricing, the Go plan).
@@ -151,7 +151,7 @@ const In = ({ children }) => <div className="xbm-in">{children}</div>;
 function Buy({ id, go, className = '' }) {
   return (
     <div className={'xbm-buy ' + className}>
-      <Cta to="https://cloud.hanzo.ai" id={'benchmarks.' + id} size="sm">Start on Hanzo Cloud</Cta>
+      <Cta to="https://platform.hanzo.ai" id={'benchmarks.' + id} size="sm">Start on Hanzo Cloud</Cta>
       {go
         ? <Cta to={checkout(PLANS.go.id)} kind="link" id={'benchmarks.' + id + '.go'}>{`Use every model here, Go is $${PLANS.go.price}/month`}</Cta>
         : <Cta to="/pricing" kind="link" id={'benchmarks.' + id + '.pricing'}>View Models &amp; Pricing</Cta>}
@@ -292,7 +292,7 @@ function Hero() {
               <p className="xbm-lede">Zen 6 prefills ~3,665 tokens a second and decodes ~70 on NVIDIA Grace-Blackwell, measured Nov 4, 2026.</p>
               <p className="xbm-pill"><i aria-hidden="true" />Hanzo AI · Benchmarks · Last measured Oct 16, 2026</p>
               <div className="xbm-acts">
-                <Cta to="https://cloud.hanzo.ai" id="benchmarks.hero" thumb data-href="https://cloud.hanzo.ai">Start on Hanzo Cloud</Cta>
+                <Cta to="https://platform.hanzo.ai" id="benchmarks.hero" thumb data-href="https://platform.hanzo.ai">Start on Hanzo Cloud</Cta>
                 <a href="#enso" className="xbm-go">The results<Chev /></a>
                 <a href="#all" className="xbm-go">Every benchmark<Chev /></a>
               </div>
@@ -1657,7 +1657,7 @@ function Close() {
       <div className="pf-wrap xbm-close-g">
         <h2 id="xbm-close-h" className="pf-display">Build on Hanzo Cloud</h2>
         <div className="xbm-close-a">
-          <Cta to="https://cloud.hanzo.ai" id="benchmarks.close">Start on Hanzo Cloud</Cta>
+          <Cta to="https://platform.hanzo.ai" id="benchmarks.close">Start on Hanzo Cloud</Cta>
           <p className="xbm-close-n"><span>Hanzo AI Cloud ·</span> <A to="/pricing">View Models &amp; Pricing</A></p>
         </div>
       </div>

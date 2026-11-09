@@ -327,7 +327,7 @@ function Close() {
         <div className="xph-close-acts">
           <A to="/science" className="pf-btn solid" data-cta="philosophy.close">Explore Hanzo Science</A>
           <More to="https://papers.hanzo.ai">Read the research</More>
-          <More to="https://cloud.hanzo.ai">Build with Hanzo</More>
+          <More to="https://platform.hanzo.ai">Build with Hanzo</More>
         </div>
       </div></div>
     </SceneWipe>
