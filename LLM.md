@@ -54,6 +54,21 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   window (rail: Chat, Dev, Design, Studio, Tabs, Library, Scheduled tasks, Customize, More; the lit place's sidebar),
   the terminal is `hanzo dev` (`▶`, `• Explored`, `• Added`, `• Edited`, `• Ran`, `└`), the phone is hanzo/mobile (Chat,
   Tasks, Voice, Settings). Add nothing a product does not have: no roster, no notifications, no pause button.
+- The logo strips (`Marquee`, `components/Chrome.jsx`) are CSS: a transform loop on `.x-mq-track`, paused under the pointer, on
+  focus and off screen, none under reduced motion, no pause button. A `C.backed` item carries `w`, `h` and `hang` (px): the
+  wordmark's size and how far it falls below its text (a smile, a descender, a mark), so `.x-logo[data-base]` sits every
+  one on a single baseline. Measure a new logo, never eyeball it; crop a padded asset's viewBox to its ink.
+- An agent icon in `C.agents` has no `id` in its markup: the same string is drawn in the dock, the setup row and every
+  menu row, and the first copy lives in a closed menu where nothing renders, so a `<mask>` or gradient by id goes blank
+  (Grok Build did). Flat marks are inline paths; a gradient mark is a file (`public/<name>-icon.svg`). Colour is the
+  brand's own (Claude orange, DeepSeek blue, Amp red, Codex, Antigravity, Gemini, Muse, OpenHands); the rest are in ink.
+  A tile's tooltip (`data-name`) and its accessible name are the same words.
+- Every card on the home page that shines wears `.x-shine` (`app/globals.css`): one sweep, one keyframes, transform and
+  opacity only. Scroll-linked effects are CSS (`animation-timeline: view()` or `scroll()`), never a scroll listener or
+  `useScroll`; animate `transform` and `opacity`, not `background-position` or `clip-path`, which repaint every frame.
+  The home sections carry no rule above their headings and no hairline between rooms.
+- Controls are at least 44 x 44 on a touch screen (`@media (pointer: coarse)` in `app/globals.css`): a pill, tab or link
+  that must stay small borrows the space with an invisible `::after`.
 - A press on a link to a page of this site is taken over by `components/Morph.jsx` at the top of the capture phase and
   stopped: an `onClick` on the link never runs. A moment that belongs to such a link is read with `press()`
   (`lib/press.js`); a button or an outside link can use `onClick`. A link marked `data-ga` sends its own moment, so
