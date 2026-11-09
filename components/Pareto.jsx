@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { EASE, Head, Arrow, Rise } from './ui';
 import useFigures from './home/useFigures';
+import { lab } from './lab';
 
 // placed exactly where Hanzo's own chart places them (log cost across, accuracy up).
 // [name as Hanzo writes it, label on the chart, GPQA Diamond %, $ per 1,000 questions as Hanzo prints it, kind, reported by, date, source]
@@ -33,6 +34,9 @@ const KEY = "GPQA Diamond accuracy against what 1,000 questions cost, on a log s
 // readable and touchable at true size (a composition, not a shrunk desktop)
 const DESK = { VW: 1152, VH: 470, L: 60, R: 1120, T: 24, B: 412, ph: false };
 const PHONE = { VW: 640, VH: 660, L: 64, R: 604, T: 40, B: 540, ph: true };
+// the discs and the marks inside them, in the CSS px hanzo-inc/app's chart draws them at (components/enso/Chart `geom`),
+// by the width the drawing is shown at: a phone's, a card's, a wide card's. Enso's stays the largest.
+const DISC = (w) => (w < 600 ? { r: 8, ours: 10, mark: 11, h: 12 } : w < 1000 ? { r: 9, ours: 11, mark: 12, h: 13 } : { r: 11, ours: 13, mark: 15, h: 15 });
 const geo = (g) => ({
   ...g,
   lx: (c) => g.L + ((Math.log10(c) - Math.log10(0.8)) / (Math.log10(60) - Math.log10(0.8))) * (g.R - g.L),
@@ -55,6 +59,18 @@ export default function Pareto() {
   }, []);
   const g = useMemo(() => geo(ph ? PHONE : DESK), [ph]);
   const { VW, VH, L, R, T, B, lx, ly } = g;
+  // user units to a CSS px, read off the drawing as it is shown, so a disc and its mark are the same size at every width
+  const [k, setK] = useState(null);
+  useEffect(() => {
+    const svg = box.current.querySelector('svg');
+    const read = () => { const m = svg.getScreenCTM(); if (m && m.a > 0) setK(1 / m.a); };
+    read();
+    const ro = new ResizeObserver(read);
+    ro.observe(svg);
+    return () => ro.disconnect();
+  }, [ph]);
+  const u = k ?? (ph ? 1.9 : 1.4);
+  const px = DISC(VW / u);
   // the budget is kept in dollars, so it holds its place when the drawing changes
   const [budget, setBudget] = useState(4);
   const cap = lx(budget);
@@ -66,9 +82,9 @@ export default function Pareto() {
   const hide = (e) => { if (e && e.pointerType === 'touch') return; clearTimeout(gone.current); gone.current = setTimeout(() => setHot(null), 180); };
   useEffect(() => () => clearTimeout(gone.current), []);
   // rounded so the server and the browser draw identical numbers
-  const pts = useMemo(() => D.map(([full, n, a, cs, k, who, date, src]) => {
+  const pts = useMemo(() => D.map(([full, n, a, cs, kind, who, date, src]) => {
     const c = parseFloat(cs);
-    return { full, n, a, c, e: k === 'e', r: k === 'r', src, say: say(full, a.toFixed(1), cs, k, who, date, src), x: Math.round(lx(c) * 100) / 100, y: Math.round(ly(a) * 100) / 100 };
+    return { full, n, a, c, e: kind === 'e', r: kind === 'r', src, mark: lab(full, kind === 'e'), say: say(full, a.toFixed(1), cs, kind, who, date, src), x: Math.round(lx(c) * 100) / 100, y: Math.round(ly(a) * 100) / 100 };
   }).sort((p, q) => p.c - q.c), [D, lx, ly]);
   const front = useMemo(() => { let best = -1; return pts.filter((p) => (p.a > best ? ((best = p.a), true) : false)); }, [pts]);
   const path = front.map((p, i) => (i ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ');
@@ -81,7 +97,7 @@ export default function Pareto() {
   const onMove = (e) => { if (dragging) setCap(toX(e.clientX)); };
   const onKey = (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); setCap((c) => Math.max(L + 4, Math.min(R, c + (e.key === 'ArrowRight' ? 12 : -12)))); } };
   const c = budget;
-  const r0 = ph ? 9 : 5, r1 = ph ? 12 : 7, hw = ph ? 48 : 14, flip = VW * 0.8;
+  const hw = ph ? 48 : 14, flip = VW * 0.8;
 
   return (
     <section className="x-sec x-pareto" id="pareto" data-hz-view="pareto" aria-labelledby="pareto-h">
@@ -93,7 +109,7 @@ export default function Pareto() {
             <b>{pick ? `${pick.full} · ${pick.a.toFixed(1)}%` : '—'}</b>
           </div>
           <div className="x-plot-svg">
-          <svg viewBox={`0 0 ${VW} ${VH}`} role="group" aria-label={KEY} onPointerMove={onMove} onPointerUp={() => setDragging(false)}>
+          <svg viewBox={`0 0 ${VW} ${VH}`} role="group" aria-label={KEY} style={{ '--u': u }} onPointerMove={onMove} onPointerUp={() => setDragging(false)}>
             {[75, 80, 85, 90, 95, 100].map((a) => (
               <g key={a}><line x1={L} x2={R} y1={ly(a)} y2={ly(a)} className="ax" /><text x={L - 12} y={ly(a) + (ph ? 8 : 4)} textAnchor="end" className="tick">{a}</text></g>
             ))}
@@ -107,14 +123,20 @@ export default function Pareto() {
                 <line x1={hot.x} x2={hot.x} y1={hot.y} y2={B} /><line x1={L} x2={hot.x} y1={hot.y} y2={hot.y} />
               </g>
             )}
-            {pts.map((p, i) => {
+            {/* Enso's tiers are drawn last, on top, as the app draws them; the cards still enter in cost order */}
+            {[...pts].sort((p, q) => p.e - q.e).map((p) => {
+              const i = pts.indexOf(p);
               const lit = (hot ? hot.n === p.n : true) && p.x <= cap;
               const best = pick && pick.n === p.n;
+              const rad = u * (p.e ? px.ours : px.r), m = p.mark, ms = u * (p.e ? px.h : px.mark);
               const body = (
                 <>
-                  {p.e && <circle cx={p.x} cy={p.y} r={r1 * 2.1} className="halo" />}
-                  <circle cx={p.x} cy={p.y} r={p.e ? r1 : r0} />
-                  <text x={p.x + (p.x > flip ? -(r1 + 6) : r1 + 6)} y={p.y + (ph ? 8 : 4)} textAnchor={p.x > flip ? 'end' : 'start'}>{p.n} {p.a.toFixed(1)}%</text>
+                  {p.e && <circle cx={p.x} cy={p.y} r={rad * 2.1} className="halo" />}
+                  <circle cx={p.x} cy={p.y} r={rad} />
+                  {m && (m.src
+                    ? <image className="mk" href={m.src} x={p.x - ms / 2} y={p.y - ms / 2} width={ms} height={ms} aria-hidden="true" />
+                    : <svg className="mk" x={p.x - ms / 2} y={p.y - ms / 2} width={ms} height={ms} viewBox={m.box} fill="currentColor" fillRule={m.rule} aria-hidden="true" focusable="false" dangerouslySetInnerHTML={{ __html: m.inner }} />)}
+                  <text x={p.x + (p.x > flip ? -(rad + 6) : rad + 6)} y={p.y + (ph ? 8 : 4)} textAnchor={p.x > flip ? 'end' : 'start'}>{p.n} {p.a.toFixed(1)}%</text>
                 </>
               );
               return (

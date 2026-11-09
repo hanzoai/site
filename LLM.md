@@ -67,6 +67,10 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   (Grok Build did). Flat marks are inline paths; a gradient mark is a file (`public/<name>-mark.svg`). Colour is the
   brand's own (Claude orange, DeepSeek blue, Amp red, Codex, Antigravity, Gemini, Muse, OpenHands); the rest are in ink.
   A tile's tooltip (`data-name`) and its accessible name are the same words.
+- The Pareto plot's points wear their lab's mark (`lab()` in `components/lab.js`) at hanzo-inc/app's sizes in CSS px (`DISC` in
+  `components/Pareto.jsx`, read off the drawing as it is shown, so a disc is the same at every width). A lab with a dock tile
+  wears that tile's drawing, so a brand has one mark on the page; Enso's tiers wear Hanzo's H on ink; Z.ai, with no tile, wears
+  hanzoai/icons' mark; any other lab wears none. A new lab is a dock tile and a pattern in `OF`; `components/lab.test.mjs` holds it.
 - The home's "Hanzo MCP" picker (`components/McpPicker.jsx`, in `#compatible`) draws `lib/mcp.js`, which holds what each
   client takes as that client's own docs say: the file or command for the hosted endpoint with a key (`Authorization:
   Bearer sk-...`, server `hanzo-cloud`) and for the local server (`npx -y hanzo mcp`, server `hanzo`, which uses `hanzo
