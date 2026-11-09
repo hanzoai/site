@@ -93,5 +93,3 @@ html.light .xpj-poster.dk, html:not(.light) .xpj-poster.lt { display: none; }
 @keyframes xpj-in { from { opacity: 0; transform: translate(-50%, -46%) perspective(1200px) rotateY(-12deg) scale(.96); } }
 @keyframes xpj-wheel { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(3px); opacity: 0; } 100% { opacity: 0; } }
 
-/* the page's own section index steps aside while the journey is on screen */
-html.xpj-pinned .xh-spine { opacity: 0; pointer-events: none; }

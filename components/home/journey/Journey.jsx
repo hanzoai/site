@@ -83,7 +83,7 @@ export default function Journey({ products: P, title, lede, onFail }) {
 
   // run the scene only while it is on screen; a window that narrows (or turns on reduced motion) gets the stage
   useEffect(() => {
-    let alive = true, scene = null, io = null, pin = null, ro = null, mo = null, onVis = null;
+    let alive = true, scene = null, io = null, ro = null, mo = null, onVis = null;
     const theme = () => (document.documentElement.classList.contains('light') ? 'light' : 'dark');
     const ink = () => getComputedStyle(stage.current).color;
     if (!webgl()) { onFail?.('stage'); return; }
@@ -114,9 +114,6 @@ export default function Journey({ products: P, title, lede, onFail }) {
       let onScreen = false;
       io = new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; onScreen && !document.hidden ? scene.start() : scene.stop(); });
       io.observe(track.current);
-      // while the journey holds the screen, its own counter and dock stand in for the page's section index
-      pin = new IntersectionObserver(([e]) => document.documentElement.classList.toggle('xpj-pinned', e.isIntersecting), { rootMargin: '-50% 0px -50% 0px' });
-      pin.observe(track.current);
       onVis = () => (document.hidden || !onScreen ? scene.stop() : scene.start());
       document.addEventListener('visibilitychange', onVis);
       mo = new MutationObserver(() => scene.setTheme(theme(), ink()));
@@ -128,7 +125,7 @@ export default function Journey({ products: P, title, lede, onFail }) {
     return () => {
       alive = false;
       mq.removeEventListener('change', narrow);
-      io?.disconnect(); pin?.disconnect(); document.documentElement.classList.remove('xpj-pinned'); ro?.disconnect(); mo?.disconnect();
+      io?.disconnect(); ro?.disconnect(); mo?.disconnect();
       onVis && document.removeEventListener('visibilitychange', onVis);
       api.current = null;
       scene?.dispose();
