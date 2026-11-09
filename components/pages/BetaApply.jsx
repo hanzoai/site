@@ -1,5 +1,5 @@
 'use client';
-/* /beta/apply (Beta access) and /beta/research (Research access): Hanzo's application, one question at a time.
+/* /beta/apply (Beta access), /beta/research (Research access) and /beta/design (Design partner): Hanzo's application, one question at a time.
    Persona: a builder (Beta access) or a researcher (Research access) who wants Hanzo's releases before they ship.
    Goal: answer enough to apply. CTA: Continue, then "Submit application" (data-cta beta.<program>.next / .submit).
    Metric: beta_submitted (sent through lib/track.js, the name hanzo.ai uses).
@@ -60,6 +60,17 @@ const PROGRAMS = {
       { id: 'links', q: 'Anything we should read?', kind: 'line' },
     ],
   },
+  partner: {
+    name: 'Design partner', gets: 'Build it with the team. Chosen from applications.', film: null,
+    asks: [
+      { id: 'building', q: 'What are you building with Hanzo?', kind: 'line' },
+      { id: 'size', q: 'How big is your team?', kind: 'one', options: ['1-49', '50-249', '250-999', '1000-4999', '5000+'] },
+      { id: 'when', q: 'When do you want it in production?', kind: 'one', options: ['This month', 'This quarter', 'This year', 'Still exploring'] },
+      { id: 'budget', q: 'What is your monthly AI and compute budget?', kind: 'one', options: SPEND },
+      { id: 'need', q: 'What do you need from us?', kind: 'many', options: ['A say in the roadmap', 'Custom or fine-tuned models', 'A private deployment', 'Dedicated engineering support', 'Launching together'] },
+      { id: 'blurb', q: 'Tell us about what you’re working on and how we can collaborate', kind: 'long' },
+    ],
+  },
 };
 const KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const STORE = 'hz-beta-apply'; // this browser only: { program, step, got, filed }
@@ -109,7 +120,7 @@ function Pass({ p, program, asks, got, at, go, open }) {
   return (
     <aside className="xba-pass" data-room="dark" aria-label={p.name}>
       <motion.div layout="position" className="xba-pass-m" transition={{ duration: 0.45, ease: EASE }}>
-        <Film src={`/models/${p.film}.webm`} poster={`/models/${p.film}.webp`} w={1200} h={1500} className={'xba-film ' + p.film} />
+        {p.film && <Film src={`/models/${p.film}.webm`} poster={`/models/${p.film}.webp`} w={1200} h={1500} className={'xba-film ' + p.film} />}
       </motion.div>
       <motion.div layout="position" className="xba-pass-b" transition={{ duration: 0.45, ease: EASE }}>
         <p className="xba-pass-t">{p.name}</p>
@@ -293,7 +304,7 @@ function Apply({ program }) {
             <>
               <div className="xba-top">
                 <div className="xba-top-r">
-                  <span className="xba-top-n x-mono"><Img src={`/models/${p.film}.webp`} w={1200} h={1500} alt="" className={'xba-thumb ' + p.film} />{p.name}</span>
+                  <span className="xba-top-n x-mono">{p.film && <Img src={`/models/${p.film}.webp`} w={1200} h={1500} alt="" className={'xba-thumb ' + p.film} />}{p.name}</span>
                   <span className="xba-top-p x-mono">{pct}%</span>
                 </div>
                 <Bars done={done} total={n} />
@@ -352,3 +363,4 @@ function Apply({ program }) {
 
 export function BetaAccess() { return <Apply program="beta" />; }
 export function ResearchAccess() { return <Apply program="research" />; }
+export function DesignPartner() { return <Apply program="partner" />; }
