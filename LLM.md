@@ -22,6 +22,8 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
 | The app's origin | `lib/app.js` (`APP = https://hanzo.app`) |
 | Plan prices, checkout links | `lib/plans.js`, from `content/live/_pricing.json` (`GET /v1/billing/plans`); nothing typed |
 | Pages still drawn from captured HTML | `components/Ported` over `content/pages/*.html` |
+| Telemetry | `components/Telemetry.jsx` (the one client, pageviews, observe, tags); `lib/track.js`: `track` (stream + browser tags) and `capture` (stream only) |
+| The app's page events | named as hanzo-inc/app names them, same param keys: `lib/funnel.js` (the plan funnel), `lib/press.js` (links), `data-hz-view` bands for `$view`; asserted in a browser by `scripts/events.mjs` (`pnpm build`, then `pnpm events`) |
 
 ## Rules
 
@@ -29,6 +31,15 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   monthly only; a year is offered only where the catalog sells one (Team, Team Premium, Enterprise).
 - No sign-in, sign-up, card or code is collected here. Those are hanzo.app's.
 - Copy is Hanzo's: change wording only on purpose.
+- A press on a link to a page of this site is taken over by `components/Morph.jsx` at the top of the capture phase and
+  stopped: an `onClick` on the link never runs. A moment that belongs to such a link is read with `press()`
+  (`lib/press.js`); a button or an outside link can use `onClick`. A link marked `data-ga` sends its own moment, so
+  the funnel's link moment (`checkout_started`, `sales_contacted`) leaves it alone.
+- An event hanzo-inc/app fires on a page that stays in the app (sign-in, onboarding, pay, the member dashboards) is
+  not fired here. Not fired for want of an element: `hero_demo` controls the redesign dropped (sidebar places, send,
+  preview, composer, replay chips, agent toggles), `chat_started` (no composer), `page_copied_markdown` (no Help
+  corner), `newsletter_confirmed` (no `/newsletter/confirm`), `video_shown`/`video_rated` (no video on `/beta`),
+  `beta_closed`, `beta_feedback_sent`.
 
 ## Ship
 
