@@ -216,7 +216,7 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 @keyframes x-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 /* ---------- agents ---------- */
-.x-dock { list-style: none; margin: 0 0 56px; padding: 18px 0; display: grid; grid-template-columns: repeat(13, 1fr); gap: 22px 10px; justify-items: center; }
+.x-dock { list-style: none; margin: 0 0 56px; padding: 18px 0; display: grid; grid-template-columns: repeat(16, 1fr); gap: 22px 10px; justify-items: center; }
 .x-ico { position: relative; width: 52px; height: 52px; border-radius: 15px; background: var(--x-raised); border: 1px solid var(--line); box-shadow: 0 6px 16px -8px rgba(0, 0, 0, .18); display: grid; place-items: center; color: var(--ink); text-decoration: none; }
 .x-ico span { display: grid; place-items: center; }
 .x-ico svg, .x-ico img { width: 26px; height: 26px; object-fit: contain; }
