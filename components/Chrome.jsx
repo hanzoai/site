@@ -10,9 +10,9 @@
      under reduced motion and rests under the pointer or focus). An item with { w, h, hang } is a wordmark drawn at w x h px
      and sat on the strip's one baseline: hang is how far the logo falls below its text (a smile, a descender, a mark).
    - After every in-site navigation, focus moves to the new page's <main> h1 (tabindex -1, no ring, no scroll). */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
-import { motion, MotionConfig, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from 'motion/react';
+import { MotionConfig } from 'motion/react';
 import { animate, scroll } from 'motion';
 import Nav from './Nav';
 import HeaderTools from './HeaderTools';
@@ -67,10 +67,9 @@ export function Smooth({ children }) {
   return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }
 
+/* The scroll bar at the top: CSS draws it from the page's own scroll (.x-progress in app/globals.css). */
 export function Progress() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 220, damping: 32, restDelta: 0.001 });
-  return <motion.div className="x-progress" style={{ scaleX }} aria-hidden="true" />;
+  return <div className="x-progress" aria-hidden="true" />;
 }
 
 // the server-rendered shell (components/Shell.jsx), read lazily so children's effects can use it on mount
@@ -123,29 +122,9 @@ export function Footer() {
   return null;
 }
 
-const wrap = (min, max, v) => { const r = max - min; return ((((v - min) % r) + r) % r) + min; };
-
-/* An endless strip of logos. It drifts on its own, quickens and turns with the speed and direction of the scroll, and rests under the pointer. */
+/* An endless strip of logos. CSS drifts it (a transform on the compositor, nothing runs per frame in script); it rests under
+   the pointer and on focus, turns the other way with `reverse`, and stands still under reduced motion and off screen. */
 export function Marquee({ items, label, reverse = false, view }) {
-  const base = useMotionValue(0);
-  const { scrollY } = useScroll();
-  const v = useSpring(useVelocity(scrollY), { damping: 50, stiffness: 400 });
-  const factor = useTransform(v, [-1500, 0, 1500], [-3, 0, 3], { clamp: false });
-  const dir = useRef(reverse ? -1 : 1);
-  const [rest, setRest] = useState(false);
-  const box = useRef(null);
-  const seen = useInView(box);
-  const calm = useReducedMotion(); // reduced motion: the strip stands still (WCAG 2.2.2)
-  const x = useTransform(base, (b) => `${wrap(-50, 0, b)}%`);
-  useAnimationFrame((_, delta) => {
-    if (rest || !seen || calm) return;
-    let by = dir.current * -1.6 * (delta / 1000);
-    const f = factor.get();
-    if (f < 0) dir.current = reverse ? 1 : -1;
-    else if (f > 0) dir.current = reverse ? -1 : 1;
-    by += by * Math.abs(f);
-    base.set(base.get() + by);
-  });
   // each half holds the list twice so one half is always wider than the screen
   const row = (k) => items.map((l) => {
     const hidden = k > 0;
@@ -156,12 +135,12 @@ export function Marquee({ items, label, reverse = false, view }) {
     );
   });
   return (
-    <section className="x-marquee" aria-label={label} data-hz-view={view} ref={box}>
+    <section className="x-marquee" aria-label={label} data-hz-view={view}>
       <p className="x-kicker">{label}</p>
-      <div className="x-mq-view" onPointerEnter={() => setRest(true)} onPointerLeave={() => setRest(false)} onFocus={() => setRest(true)} onBlur={() => setRest(false)}>
-        <motion.div className="x-mq-track" style={{ x }}>
+      <div className="x-mq-view">
+        <div className={'x-mq-track' + (reverse ? ' rev' : '')}>
           {row(0)}{row(1)}{row(2)}{row(3)}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
