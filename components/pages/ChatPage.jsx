@@ -35,6 +35,8 @@ import './ChatPage.css';
 import { PLANS, checkout } from '../../lib/plans';
 
 const OPEN = '/login?next=%2Fchat';
+/* where the prompt goes: Hanzo Chat opens on what was typed (hanzo.app/chat?q=), after sign-in */
+const openWith = (q) => (q ? '/login?next=' + encodeURIComponent('/chat?q=' + encodeURIComponent(q)) : OPEN);
 const DOCS = 'https://docs.hanzo.ai/docs/chat';
 const GO = checkout(PLANS.go.id);
 const PRO = checkout(PLANS.pro.id);
@@ -73,15 +75,16 @@ const pic = (slug) => `/models/${slug}.webp`;
 const Docs = () => <Cta to={DOCS} kind="link" id="chat.docs">Read the docs</Cta>;
 const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'chat.go-' + slot}>{`Go is $${PLANS.go.price}/month, every model`}</Cta>;
 
-/* The prompt: the page's way in. Type, press Enter (or the button) and it hands off to Hanzo Chat, as the window's own
-   composer does; nothing is sent from this page. The button is the page's one solid ask, "Open Hanzo Chat". */
+/* The prompt: the page's way in. Type, press Enter (or the button) and it hands off to Hanzo Chat with what you typed, as
+   the window's own composer does; the chat itself runs on hanzo.app, so nothing is sent from this page. The button is the page's one solid ask, "Open Hanzo Chat". */
 function Prompt({ slot, big }) {
   const [busy, setBusy] = useState(false);
   const go = (e) => {
     e.preventDefault();
     if (busy) return;
+    const to = href(openWith(e.currentTarget.querySelector('input').value.trim()));
     setBusy(true);
-    setTimeout(() => { window.location.href = href(OPEN); }, 280);
+    setTimeout(() => { window.location.href = to; }, 280);
   };
   return (
     <form className={'cht-prompt' + (big ? ' big' : '') + (busy ? ' busy' : '')} onSubmit={go}>
@@ -234,8 +237,9 @@ function Window() {
   const send = (e) => {
     e.preventDefault();
     if (busy) return;
+    const to = href(openWith((input.current?.value || '').trim()));
     setBusy(true);
-    setTimeout(() => { window.location.href = href(OPEN); }, 280);
+    setTimeout(() => { window.location.href = to; }, 280);
   };
   const open = (i) => {
     demo.stop(); setSel(i); setThink(-1);
