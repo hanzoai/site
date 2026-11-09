@@ -63,9 +63,16 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   (Grok Build did). Flat marks are inline paths; a gradient mark is a file (`public/<name>-mark.svg`). Colour is the
   brand's own (Claude orange, DeepSeek blue, Amp red, Codex, Antigravity, Gemini, Muse, OpenHands); the rest are in ink.
   A tile's tooltip (`data-name`) and its accessible name are the same words.
-- Every card on the home page that shines wears `.x-shine` (`app/globals.css`): one sweep, one keyframes, transform and
-  opacity only. Scroll-linked effects are CSS (`animation-timeline: view()` or `scroll()`), never a scroll listener or
-  `useScroll`; animate `transform` and `opacity`, not `background-position` or `clip-path`, which repaint every frame.
+- A card has a clean surface (no stripes, scan lines or dot grids) and one effect, the app's own: it leans toward a mouse
+  and a glossy light follows it, and on a phone the device's tilt does the same; at rest nothing moves and no animation
+  runs, and reduced motion has neither. Mark it `data-tilt=""` and write nothing else: `lib/tilt.js` (started once, in
+  `Smooth`) is the one listener, writing `--rx --ry --lx --ly --lit` on the card; the lean is hanzo.css's `[data-tilt]` and
+  the light is `[data-tilt]::after` in `app/globals.css`, a fixed layer moved by transform. The lean is a `transform`, so the
+  card must be a plain element (Motion rewrites a motion element's transform): the plan cards and the platform window's
+  frame are Motion's, and take the light (the window's face leans). Hover and press on such a card use `translate` and `scale`.
+  The four headline figures of the speed and price cards share `--figure` (`.x-races`).
+- Scroll-linked effects are CSS (`animation-timeline: view()` or `scroll()`), never a scroll listener or `useScroll`; animate
+  `transform` and `opacity`, not `background-position` or `clip-path`, which repaint every frame.
   The home sections carry no rule above their headings and no hairline between rooms.
 - Controls are at least 44 x 44 on a touch screen (`@media (pointer: coarse)` in `app/globals.css`): a pill, tab or link
   that must stay small borrows the space with an invisible `::after`.

@@ -300,10 +300,10 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-cost .x-race-note { color: var(--soft); }
 .x-vol { display: flex; flex-direction: column; gap: 12px; margin: 26px 0 14px; }
 .x-vol span { font-size: 11.5px; color: var(--faint); }
-.x-vol input { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 4px; background: rgba(0, 0, 0, .1); outline-offset: 6px; cursor: pointer; }
-.x-vol input::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--x-raised); border: 1px solid rgba(0, 0, 0, .15); box-shadow: 0 2px 8px rgba(0, 0, 0, .18); transition: transform .2s var(--ease); }
+.x-vol input { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 4px; background: color-mix(in srgb, var(--ink) 16%, transparent); outline-offset: 6px; cursor: pointer; }
+.x-vol input::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); border: 3px solid var(--card); box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 30%, transparent); transition: transform .2s var(--ease); }
 .x-vol input:active::-webkit-slider-thumb { transform: scale(1.15); }
-.x-vol input::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--x-raised); border: 1px solid rgba(0, 0, 0, .15); }
+.x-vol input::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--ink); border: 3px solid var(--card); box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 30%, transparent); }
 .x-cost .x-lane-track { background: rgba(0, 0, 0, .07); }
 .x-cost .x-lane-track b { background: #b9b9be; width: auto; }
 .x-cost .x-lane.hi .x-lane-track b { background: var(--ink); }
@@ -646,24 +646,11 @@ a.x-mbtn { color: inherit; text-decoration: none; }
 .x-lane-track { height: 4px; }
 .x-race-end { padding-top: 16px; }
 .x-facts { margin-top: 14px; padding-top: 12px; gap: 8px; }
-.x-cost-big { margin-top: 10px; font-size: clamp(2.2rem, 3.6vw, 3.3rem); }
 .x-vol { margin: 16px 0 10px; }
-/* Hanzo Dev vs Claude Code: a speed track - fine horizontal lanes streaking out of a light at the top left, the winning bar glowing */
-.x-races > .x-race:first-child { border-color: rgba(255, 255, 255, .1); background: #0b0b0d; }
-.x-races > .x-race:first-child::before { background: radial-gradient(85% 55% at 0% 0%, rgba(255, 255, 255, .16), transparent 62%), repeating-linear-gradient(0deg, rgba(255, 255, 255, .08) 0 1px, transparent 1px 10px); -webkit-mask-image: linear-gradient(100deg, #000 10%, transparent 72%); mask-image: linear-gradient(100deg, #000 10%, transparent 72%); }
-.x-races > .x-race:first-child .x-lane.hi .x-lane-track b { box-shadow: 0 0 16px rgba(245, 245, 247, .6); }
-/* Kai vs an LLM call: Hanzo's halftone - a dot field glowing from the top right, bars as thin light lines */
-.x-races > .x-race:nth-child(2) { border-color: rgba(255, 255, 255, .07); background: radial-gradient(70% 60% at 100% 0%, #18181b, #0b0b0d 70%); }
-.x-races > .x-race:nth-child(2)::before { background: radial-gradient(circle, rgba(255, 255, 255, .36) 1px, transparent 1.6px) 0 0 / 11px 11px; -webkit-mask-image: radial-gradient(75% 70% at 100% 0%, #000, transparent 72%); mask-image: radial-gradient(75% 70% at 100% 0%, #000, transparent 72%); }
+.x-races > .x-race { border-color: rgba(255, 255, 255, .09); background: #0b0b0d; }
+.x-races > .x-race .x-lane.hi .x-lane-track b { box-shadow: 0 0 12px rgba(245, 245, 247, .6); }
 .x-races > .x-race:nth-child(2) .x-lane-track { height: 2px; }
-.x-races > .x-race:nth-child(2) .x-lane.hi .x-lane-track b { box-shadow: 0 0 10px rgba(245, 245, 247, .7); }
-/* Enso (cheaper): stacked price bands rising from the bottom, like layers of cost falling away */
-.x-races > .x-cost:first-child::before { background: repeating-linear-gradient(180deg, transparent 0 22px, color-mix(in srgb, var(--ink) 9%, transparent) 22px 23px); -webkit-mask-image: linear-gradient(0deg, #000, transparent 55%); mask-image: linear-gradient(0deg, #000, transparent 55%); }
-.x-races > .x-cost:first-child { background: linear-gradient(180deg, var(--card), color-mix(in srgb, var(--card) 88%, var(--ink))); }
-/* Kai (cheaper): a fine diagonal hatch from the top right and a soft lit corner */
-.x-races > .x-cost:nth-child(2)::before { background: radial-gradient(60% 50% at 100% 0%, color-mix(in srgb, var(--ink) 12%, transparent), transparent 70%), repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 9%, transparent) 0 1px, transparent 1px 12px); -webkit-mask-image: radial-gradient(90% 80% at 100% 0%, #000, transparent 75%); mask-image: radial-gradient(90% 80% at 100% 0%, #000, transparent 75%); }
-.x-races > .x-cost:hover, .x-races > .x-race:hover { box-shadow: 0 24px 60px -30px rgba(0, 0, 0, .55); }
-@media (prefers-reduced-motion: reduce) { .x-race:hover, .x-cost:hover { translate: none; } }
+.x-races > .x-cost { background: var(--card); }
 
 /* ---------- James 8 Nov: home in dark has light and rhythm, not one long black scroll (dark mode only; light unchanged) ---------- */
 html.dark main > section.x-sec { background-image: radial-gradient(70% 45% at 50% 0%, rgba(255, 255, 255, .07), transparent 70%); }
