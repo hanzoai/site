@@ -37,11 +37,19 @@ html:not(.light) .xp-glow { background: radial-gradient(closest-side, color-mix(
 .xp-tab[aria-selected='true'] .xp-tile { background: var(--ink); color: var(--x-on-ink); border-color: var(--ink); }
 @media (hover: hover) { .xp-tab:hover { color: var(--ink); } .xp-tab:hover .xp-tile { border-color: var(--x-e15); } }
 .xp-name { position: absolute; bottom: calc(100% + 10px); left: 50%; translate: -50% 4px; padding: 6px 10px; border-radius: 8px; background: var(--ink); color: var(--x-on-ink); font: 500 12px/1 var(--sans); white-space: nowrap; letter-spacing: -.005em; opacity: 0; pointer-events: none; transition: opacity .2s, translate .3s var(--ease); z-index: 5; }
-@media (hover: hover) { .xp-tab:hover .xp-name { opacity: 1; translate: -50% 0; } }
 .xp-tab:focus-visible .xp-name { opacity: 1; translate: -50% 0; }
 .xp-line { display: block; width: 20px; height: 2px; border-radius: 2px; overflow: hidden; background: transparent; }
 .xp-tab[aria-selected='true'] .xp-line { background: var(--x-e12); }
 .xp-line i { display: block; height: 100%; background: var(--ink); transform-origin: 0 50%; }
+
+/* hover preview: the product's full high-fidelity live window + text above the magnified dock tile */
+.xp-peek { position: absolute; left: 50%; bottom: calc(100% + 26px); width: 324px; margin-left: -162px; border-radius: 18px; overflow: hidden; background: var(--card); border: 1px solid var(--line); box-shadow: 0 32px 70px -24px rgba(0, 0, 0, .55), 0 0 0 1px rgba(255, 255, 255, .06); pointer-events: none; z-index: 20; transform-origin: 50% 100%; }
+.xp-peek-vis { position: relative; height: 204px; overflow: hidden; background: var(--x-raised); border-bottom: 1px solid var(--line); }
+.xp-peek-scale { position: absolute; left: 0; top: 0; width: 540px; height: 340px; display: flex; transform: scale(.6); transform-origin: 0 0; }
+.xp-peek-scale .xp-vis { border: 0; }
+.xp-peek-f { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 11px 14px; background: var(--card); }
+.xp-peek-f b { font: 560 14.5px/1.2 var(--sans); letter-spacing: -.015em; color: var(--ink); }
+.xp-peek-f span { font: 400 12px/1.2 var(--mono); color: var(--faint); }
 
 @media (max-width: 699px) {
   .xp-stage { height: 520px; }

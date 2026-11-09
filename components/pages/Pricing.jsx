@@ -74,7 +74,7 @@ const PRO = [
   { x: '3x', name: PLANS.pro.name, price: PLANS.pro.price, to: PAY(PLANS.pro.id), head: 'Everything in Go, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['3x more usage than Go', '3x higher limits than Go', 'Hanzo Bot: 1 bot of your own'] },
   { x: '5x', name: PLANS.dev.name, price: PLANS.dev.price, to: PAY(PLANS.dev.id), head: 'Everything in Pro, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['5x more usage than Go', '5x higher limits than Go', 'Hanzo Bot: 2 bots of your own'] },
   { x: '15x', name: PLANS.max.name, price: PLANS.max.price, to: PAY(PLANS.max.id), head: 'Everything in Dev, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['15x more usage than Go', '15x higher limits than Go', 'Hanzo Bot: 5 bots of your own'] },
-  { x: '25x', name: PLANS.ultra.name, price: PLANS.ultra.price, to: PAY(PLANS.ultra.id), head: 'Everything in Max, plus:', d: 'For the biggest workloads. Usage beyond what is included is paid from your prepaid balance at list price', f: ['25x more usage than Go', '25x higher limits than Go', 'Usage beyond what is included is paid from your prepaid balance at list price', 'Hanzo Bot: 10 bots of your own'] },
+  { x: '∞', name: PLANS.ultra.name, price: PLANS.ultra.price, to: PAY(PLANS.ultra.id), head: 'Everything in Max, plus:', d: 'For the biggest workloads. Usage beyond what is included is paid from your prepaid balance at list price', f: ['∞ usage across every model', '∞ rate limits & priority queue', 'Usage beyond what is included is paid from your prepaid balance at list price', 'Hanzo Bot: 10 bots of your own'] },
 ];
 
 /* the compare sheet: every personal plan's own lines; a line holds from the plan that adds it upward */
@@ -84,8 +84,8 @@ const COLS = [
   ...PRO.map((p) => ({ name: p.name, price: '$' + p.price, to: p.to })),
 ];
 const ROWS = [
-  ['Usage', [null, 'Usage included on every model', '3x more usage than Go', '5x more usage than Go', '15x more usage than Go', '25x more usage than Go']],
-  ['Limits', [null, null, '3x higher limits than Go', '5x higher limits than Go', '15x higher limits than Go', '25x higher limits than Go']],
+  ['Usage', [null, 'Usage included on every model', '3x more usage than Go', '5x more usage than Go', '15x more usage than Go', '∞ usage across every model']],
+  ['Limits', [null, null, '3x higher limits than Go', '5x higher limits than Go', '15x higher limits than Go', '∞ rate limits & priority queue']],
   ['Hanzo Bot', [null, null, 'Hanzo Bot: 1 bot of your own', 'Hanzo Bot: 2 bots of your own', 'Hanzo Bot: 5 bots of your own', 'Hanzo Bot: 10 bots of your own']],
   ...FREE.map((t) => [t, 0]),
   ...GO.filter((t) => t !== 'Usage included on every model').map((t) => [t, 1]),
@@ -133,7 +133,14 @@ function CompareSheet({ lit }) {
 /* ---------- the plans as states of one panel ---------- */
 const SEAT = { Standard: [SEATS.standard.monthAnnual, SEATS.standard.month], Premium: [SEATS.premium.monthAnnual, SEATS.premium.month] };
 const TEAM_INC = ["Add premium seats to raise the team's shared usage", 'One shared workspace: chat, meetings, calendar and contacts', 'Single sign-on, roles and an audit log', 'One bill for the whole team', 'Automations, with daily runs included'];
-const ENT_INC = ['Audit logs', 'SCIM provisioning through Hanzo IAM'];
+const ENT_INC = [
+  'SSO (SAML 2.0 & OIDC) and SCIM provisioning through Hanzo IAM',
+  'Audit logs, role-based access control and organization policies',
+  'Zero data retention, custom privacy controls and HIPAA / BAA',
+  'Dedicated VPC, on-prem or air-gapped cluster deployment',
+  'Custom rate limits, priority routing and 99.99% uptime SLA',
+  'Dedicated solution architect and 24/7 engineering Slack support',
+];
 const PAYG_INC = ['Frontier & open-source models via unified API', 'OpenAI-compatible /v1/chat/completions endpoint', 'Intelligent semantic auto-routing & fallback', 'Prompt caching discounts up to 90%', 'Sandboxed code execution, web search & tools', 'Real-time spend limits, webhooks & usage alerts'];
 const VOL_INC = ['Committed-use volume discounts starting at $5k/mo', 'Dedicated GPU clusters (H100, B200) in your cloud or VPC', 'Custom rate limits exceeding 100k+ RPM', 'Zero data retention & HIPAA / BAA compliance', '24/7 dedicated engineering Slack & priority routing'];
 const SETS = [['free', 'go', 'pro'], ['team', 'ent'], ['payg', 'vol']];
@@ -152,7 +159,7 @@ function planOf(id, s = DEF) {
     const k = s.bill === 'Annual' ? 0 : 1;
     return { name: 'Team', seats: true, d: 'For teams of 2 to 100: every model and usage for each member, one workspace, one bill.', fig: '$' + (s.std * SEAT.Standard[k] + s.prem * SEAT.Premium[k]).toLocaleString('en-US'), cta: [BUY, HELP, 'pricing.team'], note: ['Standard & Premium seats · From 2 members', 'Organizations can mix Standard and Premium seats · Cancel anytime'], items: TEAM_INC };
   }
-  if (id === 'ent') return { name: 'Enterprise', d: 'For large businesses operating at scale', word: 'Seat price + usage at API rates', sub: `US$${SEATS.enterprise.monthAnnual}/seat/month, billed annually, ${SEATS.enterprise.min} seat minimum. Usage cost scales with model and task.`, cta: ['Get Enterprise plan', '/enterprise/start', 'pricing.enterprise'], alt: [BUY, HELP], head: 'All Team plan features, plus:', items: ENT_INC };
+  if (id === 'ent') return { name: 'Enterprise', d: 'For large businesses operating at scale', word: 'Seat price + usage at API rates', sub: `US$${SEATS.enterprise.monthAnnual}/seat/month, billed annually, ${SEATS.enterprise.min} seat minimum. Usage cost scales with model and task.`, cta: ['Get Enterprise plan', '/contact-sales', 'pricing.enterprise'], alt: [BUY, HELP], head: 'All Team plan features, plus:', items: ENT_INC };
   if (id === 'payg') return { name: 'Pay as you go', d: 'Direct metered access to all frontier models, coding agents, and tools with zero commitments.', word: 'Metered per token & second', cta: ['Get API Key', '/dev', 'pricing.api.key'], note: 'Instant access · No minimum spend', items: PAYG_INC };
   return { name: 'Volume & Dedicated', d: 'For organizations with high-throughput inference, custom routing, or dedicated VPC deployments.', word: 'Custom rates', sub: ['Volume discounts from $5k/mo', 'Dedicated GPU clusters & custom routing SLAs'], cta: ['Contact API Sales', '/contact-sales', 'pricing.api.sales'], note: 'Dedicated VPC & 24/7 Slack support available', head: 'Everything in Pay as you go, plus:', items: VOL_INC };
 }

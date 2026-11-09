@@ -33,8 +33,16 @@ export default function Journey({ products: P, title, lede, onFail }) {
   const [active, setActive] = useState(0);
   const [ready, setReady] = useState(false);
   const [fine, setFine] = useState(false);
+  const [peek, setPeek] = useState(null);
+  const [scenes, setScenes] = useState([]);
   const mx = useMotionValue(Infinity);
   const progress = useMotionValue(0);
+
+  useEffect(() => {
+    let live = true;
+    import('../scenes.json').then((m) => { if (live) setScenes(m.default); });
+    return () => { live = false; };
+  }, []);
 
   useEffect(() => {
     const mq = matchMedia('(hover: hover) and (pointer: fine)');
@@ -54,16 +62,19 @@ export default function Journey({ products: P, title, lede, onFail }) {
 
   const show = useCallback((i) => { if (i !== activeRef.current) { activeRef.current = i; setActive(i); } }, []);
 
-  // bring product i into view (the dock, arrow keys, a click on a far slab)
+  // bring product i into view (the dock switches directly; a click on a far slab glides there)
   const goTo = useCallback((i, immediate) => {
     const el = track.current;
     if (!el) return;
     show(i);
+    if (immediate) api.current?.jump(i);
     const r = el.getBoundingClientRect(), total = r.height - innerHeight;
     const y = scrollY + r.top + (i / (N - 1)) * total + 1;
-    if (Math.abs(y - scrollY) < 2) return;
-    if (window.__lenis) window.__lenis.scrollTo(y, immediate ? { immediate: true, force: true } : { duration: 1.2 });
-    else scrollTo({ top: y, behavior: immediate ? 'instant' : 'smooth' });
+    if (Math.abs(y - scrollY) >= 2) {
+      if (window.__lenis) window.__lenis.scrollTo(y, immediate ? { immediate: true, force: true } : { duration: 1.2 });
+      else scrollTo({ top: y, behavior: immediate ? 'instant' : 'smooth' });
+    }
+    if (immediate) api.current?.jump(i);
   }, [N, show]);
 
   // a click on the slab in front opens the product, the same link as its address
@@ -167,7 +178,7 @@ export default function Journey({ products: P, title, lede, onFail }) {
     else if (e.key === 'End') i = N - 1;
     if (i === null) return;
     e.preventDefault();
-    goTo(i);
+    goTo(i, true);
     document.getElementById(`xp-tab-${i}`)?.focus();
   };
 
@@ -216,14 +227,14 @@ export default function Journey({ products: P, title, lede, onFail }) {
               role="tablist"
               aria-label="Choose a product"
               onPointerMove={(e) => { if (e.pointerType === 'mouse') mx.set(e.clientX); }}
-              onPointerLeave={() => mx.set(Infinity)}
+              onPointerLeave={() => { mx.set(Infinity); setPeek(null); }}
             >
               {P.map((x, i) => (
                 <DockItem
                   key={x.name}
                   i={i} on={i === active} mx={mx} fine={fine} calm={false} narrow={false} fly={null}
-                  progress={progress} playing={false}
-                  onPick={(k) => goTo(k)} onKey={onKey}
+                  progress={progress} playing={false} peek={peek} setPeek={setPeek}
+                  onPick={(k) => { setPeek(null); goTo(k, true); }} onKey={onKey} scenes={scenes[i]}
                 />
               ))}
             </div>

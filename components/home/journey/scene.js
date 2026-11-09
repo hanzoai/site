@@ -289,7 +289,7 @@ export function createScene(canvas, { items, art, theme, onReady }) {
 
   return {
     start, stop, resize, setTheme, pick, drag,
-    jump(v) { t = v; },
+    jump(v) { t = v; vel = 0; },
     bind(fns) { getTarget = fns.getTarget || getTarget; onFrame = fns.onFrame || null; },
     dispose() {
       stop();

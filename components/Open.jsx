@@ -20,10 +20,16 @@ const TILES = [
 ];
 const CARDS = O.groups.hanzo.top.slice(0, 12).map(repoCard);
 const WAYS = [
-  ['Read the docs', 'Complete SDK documentation, client libraries, API references, guides, and architectural blueprints.', 'Read the docs', 'https://docs.hanzo.ai/docs/sdks/app'],
-  ['Build your own apps', 'Create native desktop, web, and CLI experiences using the Hanzo platform and starter templates.', 'Build your own apps', 'https://docs.hanzo.ai/docs/dev/web'],
-  ['Mod Hanzo', 'Every layer of the stack is open, hackable, and modifiable. Fork repositories and build your own stack.', 'Fork on GitHub', 'https://github.com/hanzoai'],
+  ['Read the docs', 'Complete SDK documentation, client libraries, API references, guides, and architectural blueprints.', 'Read the docs', 'https://docs.hanzo.ai/docs/sdks/app', 'book'],
+  ['Build your own apps', 'Create native desktop, web, and CLI experiences using the Hanzo platform and starter templates.', 'Build your own apps', 'https://docs.hanzo.ai/docs/dev/web', 'app'],
+  ['Mod Hanzo', 'Every layer of the stack is open, hackable, and modifiable. Fork repositories and build your own stack.', 'Fork on GitHub', 'https://github.com/hanzoai', 'fork'],
 ];
+
+const WAY_ICON = {
+  book: <><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></>,
+  app: <><rect x="3" y="3" width="18" height="18" rx="3" /><path d="M3 9h18" /><path d="m10 13-2 2 2 2" /><path d="m14 13 2 2-2 2" /></>,
+  fork: <><circle cx="12" cy="18" r="3" /><circle cx="6" cy="6" r="3" /><circle cx="18" cy="6" r="3" /><path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9" /><path d="M12 12v3" /></>,
+};
 
 /* Hanzo's commit calendar, rebuilt from its own numbers. Point at any day (or move with the arrow keys) for Hanzo's
    readout; the days around it swell like a lens. While nobody is pointing, a light sweeps the year week by week. */
@@ -148,6 +154,7 @@ function Rail() {
 function Way({ w }) {
   return (
     <a href={w[3]} className="x-way" data-tilt="">
+      <i className="x-way-i" aria-hidden="true"><svg viewBox="0 0 24 24">{WAY_ICON[w[4]]}</svg></i>
       <b><span>{w[0]}</span></b>
       <span>{w[1]}</span>
       <em><span>{w[2]} →</span></em>

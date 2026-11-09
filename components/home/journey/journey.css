@@ -11,10 +11,12 @@
 }
 
 .xpj, .xpj-shell { --xpj-gap: 80vh; /* --xpj-n, the number of products, is set by Journey.jsx; the shell uses the default */
-  position: relative; height: calc(100vh + (var(--xpj-n, 9) - 1) * var(--xpj-gap)); margin-top: clamp(8px, 2vw, 24px); }
+  position: relative; height: calc(100vh + (var(--xpj-n, 9) - 1) * var(--xpj-gap)); margin-top: 0; }
 /* the stage pins, so the section must not clip (globals.css gives .x-platform overflow: hidden for the carousel) */
 .x-platform.xpj-sec { overflow: visible; }
-main > .x-platform.xpj-sec { padding-bottom: 0; }
+main > .x-platform.xpj-sec { padding-top: clamp(56px, 7svh, 80px); padding-bottom: 0; }
+main > .x-platform.xpj-sec .x-head:not(.center) { align-items: center; margin-bottom: clamp(56px, 7svh, 80px); }
+main > .x-platform.xpj-sec .x-head p { margin: 0; }
 .xpj-stage {
   --xpj-glow: rgba(255, 255, 255, .085); --xpj-dot: rgba(229, 229, 229, .16); --xpj-hair: rgba(255, 255, 255, .28);
   position: sticky; top: 0; height: 100vh; overflow: hidden; color: var(--ink); isolation: isolate; background: var(--bg);
