@@ -30,6 +30,7 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
 | Pages still drawn from captured HTML | `components/Ported` over `content/pages/*.html` |
 | Go modules (`go get hanzo.ai/<module>`) | `lib/modules.js`: `OWNED` modules have a page of their own (`app/[...mod]`, `components/pages/Module.jsx`), `SHARED` ones are product pages whose metadata carries `other: goImport(name)`. `scripts/modules.json` is hanzo-inc/app's list (name to repository); `scripts/modules.test.mjs` checks every tag in `out/` and runs after `pnpm build` (postbuild) |
 | Pages hanzo.ai serves without listing | `lib/unlisted.json`: in `routes.json` (links stay in the site), left out of the sitemap |
+| The home hero's demo | `components/Hero.jsx` (the loop), `components/home/Devices.jsx` + `demo.css` (the devices), `hero-scenes.json` (the day it plays) |
 | Telemetry | `components/Telemetry.jsx` (the one client, pageviews, observe, tags); `lib/track.js`: `track` (stream + browser tags) and `capture` (stream only) |
 | The app's page events | named as hanzo-inc/app names them, same param keys: `lib/funnel.js` (the plan funnel), `lib/press.js` (links), `data-hz-view` bands for `$view`; asserted in a browser by `scripts/events.mjs` (`pnpm build`, then `pnpm events`) |
 
@@ -45,6 +46,10 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   intercepted (route + fulfill), never against production.
 - No sign-in, sign-up, card or code is collected here. Those are hanzo.app's.
 - Copy is Hanzo's: change wording only on purpose.
+- The hero demo draws each device as its product draws itself, in the product's own words: the desktop is @hanzo/app's
+  window (rail: Chat, Dev, Design, Studio, Tabs, Library, Scheduled tasks, Customize, More; the lit place's sidebar),
+  the terminal is `hanzo dev` (`▶`, `• Explored`, `• Added`, `• Edited`, `• Ran`, `└`), the phone is hanzo/mobile (Chat,
+  Tasks, Voice, Settings). Add nothing a product does not have: no roster, no notifications, no pause button.
 - A press on a link to a page of this site is taken over by `components/Morph.jsx` at the top of the capture phase and
   stopped: an `onClick` on the link never runs. A moment that belongs to such a link is read with `press()`
   (`lib/press.js`); a button or an outside link can use `onClick`. A link marked `data-ga` sends its own moment, so

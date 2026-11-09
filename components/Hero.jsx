@@ -1,18 +1,15 @@
 'use client';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
-import { EASE, Count, fine, Mark, copyText } from './ui';
-import C from '../content';
+import { EASE, Count, fine, copyText } from './ui';
 import SetupMenu from './SetupMenu';
-import { MORE, SceneLog, ShellLines, PhoneCells } from './home/HeroScenes';
+import { Desk, MORE, Phone, Term, screenAt } from './home/Devices';
 import { press } from '../lib/press';
 import { capture, track } from '../lib/track';
+import './home/demo.css';
 
 const PROMPT = 'Build maxpower: every AI I use in one place, and faster at coding.';
 const CMD = 'curl -fsSL https://hanzo.sh | sh';
-const ROSTER = [['Hanzo Dev', 'Zen6', 139], ['Claude Code', 'Zen6', 142], ['Codex', 'Opus 4.8', 96], ['Gemini CLI', 'Opus 4.8', 68], ['Antigravity', 'GPT-5.6', 171], ['ChatGPT', 'Fable 5', 120], ['Cursor', 'Fable 5', 116], ['Claude Duet', 'Zen6 Max', 105], ['Claude', 'Zen6 Max', 142], ['Claude Cowork', 'Zen6', 118], ['DeepSeek', 'Opus 4.8', 121], ['Gemini', 'Opus 4.8', 112], ['Grok', 'GPT-5.6', 150], ['Grok Bot', 'GPT-5.6', 113], ['Grok Build', 'Fable 5', 99], ['Kimi', 'Zen6 Max', 118], ['Kimi K3', 'Zen6 Max', 123], ['Hermes Agent', 'Zen6', 88], ['Hanzo Design', 'Zen6', 104], ['Hanzo Bot', 'Opus 4.8', 92], ['AI Agents CLI', 'GPT-5.6', 102], ['MCP Server', 'GPT-5.6', 57], ['Muse', 'Fable 5', 71], ['OpenClaw', 'Fable 5', 110], ['nanoclaw', 'Zen6 Max', 86], ['Perplexity Computer', 'Zen6', 74], ['Manus', 'Zen6', 101], ['Paperclip', 'Opus 4.8', 89], ['OpenAI SDK', 'Opus 4.8', 94], ['Cue', 'GPT-5.6', 76], ['Qwen', 'Fable 5', 138], ['Universal SDKs', 'Fable 5', 152]];
-const ICON = Object.fromEntries(C.agents.map((a) => [a.name, a.icon]));
-const LOG = ['Wrote app/agents.tsx', 'Wrote lib/keys.ts', 'Ran pnpm test', '└ pass'];
 
 /* The halftone field behind the hero: dense at the edges like Hanzo's, and it swells into a lens under the pointer. */
 function Dots({ host }) {
@@ -78,98 +75,6 @@ function Dots({ host }) {
   return <canvas ref={ref} className="x-dots" aria-hidden="true" />;
 }
 
-function Caret() { return <span className="x-caret" aria-hidden="true" />; }
-
-// Every demo part is in the page from the first paint (search engines, screen readers); the demo only reveals them.
-function Bubble({ children, me, on = true }) {
-  return (
-    <motion.div className={'x-bub' + (me ? ' me' : '')} initial={false} animate={on ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.96 }} aria-hidden={on ? undefined : true} transition={{ type: 'spring', stiffness: 380, damping: 30 }}>
-      {children}
-    </motion.div>
-  );
-}
-
-// hanzo.ai's two app cards: the desktop chat's now reads "App · desktop and mobile" with Preview (8 Nov); the phone's
-// still reads "Mobile + Duo app" with Open
-function AppCard({ on = true, phone = false }) {
-  return (
-    <motion.div className="x-appcard" initial={false} animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} aria-hidden={on ? undefined : true} transition={{ duration: 0.6, ease: EASE }}>
-      <span className="x-appicon"><Mark size={13} /></span>
-      <span><b>maxpower</b><small><span>{phone ? 'Mobile + Duo app' : 'App · desktop and mobile'}</span></small></span>
-      <span className="x-open">{phone ? 'Open' : 'Preview'}</span>
-    </motion.div>
-  );
-}
-
-function Roster({ on }) {
-  const shown = useRef(on);
-  shown.current = on;
-  // the list steps up one agent at a time, then rests: alive, without repainting the phone every frame
-  const [step, setStep] = useState(0);
-  useEffect(() => {
-    // row 32 looks exactly like row 0, so the jump back to 0 is invisible
-    const t = setInterval(() => { if (shown.current) setStep((s) => (s >= ROSTER.length ? 0 : s + 1)); }, 2200);
-    return () => clearInterval(t);
-  }, []);
-  // like Hanzo's demo, every agent's speed moves and the bill ticks: written straight to the text, no re-render
-  const box = useRef(null);
-  useEffect(() => {
-    let cost = 0;
-    const t = setInterval(() => {
-      if (!shown.current || !box.current) return;
-      box.current.querySelectorAll('[data-tps]').forEach((el) => { if (Math.random() < 0.45) { const b = +el.dataset.tps; el.textContent = Math.max(1, Math.round(b * (0.82 + Math.random() * 0.36))) + '/s'; } });
-      cost += 0.0001 + Math.random() * 0.0004;
-      const c = box.current.querySelector('[data-cost]');
-      if (c) c.textContent = '$' + cost.toFixed(4);
-    }, 700);
-    return () => clearInterval(t);
-  }, []);
-  const rows = (k) => ROSTER.map(([n, m, s]) => (
-    <div className="x-ros" key={k + n} aria-hidden={k ? true : undefined}>
-      <span className="x-ros-i" dangerouslySetInnerHTML={{ __html: ICON[n] || `<b>${n[0]}</b>` }} />
-      <span className="x-ros-n"><span>{n}</span><small>{m}</small></span>
-      <span className="x-ros-s" data-tps={s}>{s}/s</span>
-      <i className="x-ros-bar"><b style={{ width: (s / 171) * 100 + '%' }} /></i>
-    </div>
-  ));
-  return (
-    <motion.div className="x-roster" ref={box} initial={false} animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }} aria-hidden={on ? undefined : true} transition={{ duration: 0.7, ease: EASE }}>
-      <div className="x-ros-h"><b>maxpower</b><span>All on</span></div>
-      <div className="x-ros-view">
-        <motion.div animate={{ y: (-step * (100 / (ROSTER.length * 2))) + '%' }} transition={step === 0 ? { duration: 0 } : { type: 'spring', stiffness: 170, damping: 24 }}>
-          {rows(0)}{rows(1)}
-        </motion.div>
-      </div>
-      <div className="x-ros-f"><span className="x-mono" data-cost="">$0.0000</span><span className="x-demo">demo</span></div>
-    </motion.div>
-  );
-}
-
-/* The desktop app's account menu: a real button; the menu is always in the page and opens with a spring. */
-function Account() {
-  const [open, setOpen] = useState(false);
-  const box = useRef(null);
-  const btn = useRef(null);
-  useEffect(() => {
-    if (!open) return;
-    const away = (e) => { if (!box.current.contains(e.target)) setOpen(false); };
-    document.addEventListener('pointerdown', away);
-    return () => document.removeEventListener('pointerdown', away);
-  }, [open]);
-  return (
-    <div className="x-acct" ref={box} onKeyDown={(e) => { if (e.key === 'Escape' && open) { setOpen(false); btn.current.focus(); } }}>
-      <button ref={btn} type="button" className="x-acct-b" aria-label="Account" aria-haspopup="true" aria-expanded={open} onClick={() => { track('hero_demo', { control: 'account' }); setOpen((o) => !o); }}>
-        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="5.6" r="2.7" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M2.8 13.6c.7-2.4 2.7-3.7 5.2-3.7s4.5 1.3 5.2 3.7" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
-      </button>
-      <div className="x-acct-m" data-open={open} inert={!open}>
-        <div className="x-acct-who"><b>Developer</b><span>dev@hanzo.ai</span></div>
-        <a href="https://hanzo.ai/beta" onClick={() => setOpen(false)}>Beta Dashboard</a>
-        <button type="button" onClick={() => { setOpen(false); btn.current.focus(); }}>Settings</button>
-        <a className="x-acct-open" href="https://hanzo.ai/beta" onClick={() => setOpen(false)}>Open /beta →</a>
-      </div>
-    </div>
-  );
-}
 
 export default function Hero() {
   const host = useRef(null);
@@ -178,7 +83,6 @@ export default function Hero() {
   const inView = useInView(host, { amount: 0.2 });
   const live = useRef(true);
   live.current = inView;
-  const user = useRef(false);
   // the terminal's Copy copies exactly the command it shows, and says so
   const [copied, setCopied] = useState(false);
   const copyT = useRef(0);
@@ -192,52 +96,49 @@ export default function Hero() {
   const promptEl = useRef(null);
   const cmdEl = useRef(null);
   const setTyped = (i) => { if (promptEl.current) promptEl.current.textContent = PROMPT.slice(0, i); if (i === 0 || i === PROMPT.length) setTypedState(i); };
-  const setCmd = (i) => { if (cmdEl.current) cmdEl.current.textContent = CMD.slice(0, i); };
+  const [cmdDone, setCmdDone] = useState(false);
+  const setCmd = (i) => { if (cmdEl.current) cmdEl.current.textContent = CMD.slice(0, i); if (i === CMD.length) setCmdDone(true); };
   const [phase, setPhase] = useState(0);
-  const [tab, setTab] = useState('chat');
-  const [log, setLog] = useState(0);
-  const [k, setK] = useState(1);
-  // after the opening, the rest of Hanzo's day plays: one scene every 6.5 s, the company log every 1.8 s
+  // after the opening, the rest of Hanzo's day plays: one scene every 6.5 s
   const [sc, setSc] = useState(-1);
   const [side, setSide] = useState(true);
+  // the phone shows the screen the day is on until the visitor picks one
+  const [pick, setPick] = useState(null);
   useEffect(() => {
     if (calm || phase < 4) return;
     const t = setInterval(() => { if (live.current) setSc((n) => (n + 1) % MORE.length); }, 6500);
     return () => clearInterval(t);
   }, [calm, phase >= 4]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // the demo: the prompt types itself, sends, the phone answers, then shows the build and every agent running on Hanzo
+  // the demo: the prompt types itself, sends, the app answers, then the day's scenes play
   useEffect(() => {
-    if (calm) { setTyped(PROMPT.length); setCmd(CMD.length); setPhase(4); setLog(4); return; }
+    if (calm) { setTyped(PROMPT.length); setCmd(CMD.length); setPhase(4); return; }
     let dead = false;
     const nap = (ms) => new Promise((r) => setTimeout(r, ms));
-    const w = nap;
     const held = async () => { while (!dead && !live.current) await nap(400); };
     (async () => {
-      await w(1100);
-      (async () => { for (let i = 0; i <= CMD.length && !dead; i++) { setCmd(i); await w(i < 4 ? 90 : 36); } })();
+      await nap(1100);
+      (async () => { for (let i = 0; i <= CMD.length && !dead; i++) { setCmd(i); await nap(i < 4 ? 90 : 36); } })();
       while (!dead) {
         await held();
-        setPhase(0); setLog(0); setTyped(0); setSc(-1);
-        if (!user.current) setTab('chat');
-        for (let i = 0; i <= PROMPT.length && !dead; i++) { setTyped(i); await w(PROMPT[i] === ' ' ? 55 : 26); }
-        await w(500); if (dead) return;
+        setPhase(0); setTyped(0); setSc(-1);
+        for (let i = 0; i <= PROMPT.length && !dead; i++) { setTyped(i); await nap(PROMPT[i] === ' ' ? 55 : 26); }
+        await nap(500); if (dead) return;
         setPhase(1);
-        await w(900); if (dead) return;
+        await nap(900); if (dead) return;
         setPhase(2);
-        await w(2000); if (dead) return;
-        if (!user.current) setTab('dev');
+        await nap(2000); if (dead) return;
         setPhase(3);
-        for (let j = 1; j <= 4 && !dead; j++) { await w(430); setLog(j); }
-        await w(500); if (dead) return;
+        await nap(1900); if (dead) return;
         setPhase(4);
-        await w(9000 + MORE.length * 6500);
+        await nap(9000 + MORE.length * 6500);
       }
     })();
     return () => { dead = true; };
   }, [calm]);
 
   // the stage is drawn at a fixed size and scaled to fit its column
+  const [k, setK] = useState(1);
   useLayoutEffect(() => {
     const el = fit.current;
     const ro = new ResizeObserver(() => {
@@ -309,91 +210,9 @@ export default function Hero() {
         <motion.div className="x-hero-stage" ref={fit} style={{ y: stageY, scale: stageS, height: `calc(var(--sh) * ${k})` }}>
           <div className="x-fit" style={{ transform: `scale(${k})` }}>
             <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
-              {/* the desktop app */}
-              <motion.div className={'x-win' + (side ? '' : ' xs-noside')} initial={{ opacity: 0, z: -260, y: 40 }} animate={{ opacity: 1, z: 0, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.15 }}>
-                <div className="x-win-bar">
-                  <i /><i /><i />
-                  <button type="button" className="xs-sidet" aria-expanded={side} aria-label={side ? 'Close sidebar' : 'Open sidebar'} onClick={() => { track('hero_demo', { control: 'sidebar' }); setSide((v) => !v); }}>
-                    <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="1.8" y="2.8" width="12.4" height="10.4" rx="2.2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M6 3v10" stroke="currentColor" strokeWidth="1.4" /></svg>
-                    <span className="xs-tip"><span hidden={!side}>Close sidebar</span><span hidden={side}>Open sidebar</span></span>
-                  </button>
-                  <a className="x-url" href="/chat">hanzo.ai/chat <span>›</span></a>
-                  <a className="x-openapp" href="/chat">Open App ›</a>
-                </div>
-                <div className="x-win-body">
-                  <aside className="x-side">
-                    <div className="x-side-h"><b>Hanzo AI</b><span>⌕</span></div>
-                    <div className="x-side-new">+ New chat</div>
-                    <small>Recents</small>
-                    <div className="x-side-i on">maxpower</div>
-                    <div className="x-side-i">Launch plan</div>
-                    <div className="x-side-i">Weekly report</div>
-                    <Account />
-                  </aside>
-                  <div className={'x-chat' + (sc >= 0 ? ' xs-on' : '')}>
-                    <div className="x-chat-log">
-                      <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
-                      <Bubble on={phase >= 2}>Done. maxpower connects your agents, shares one key, and runs them side by side.</Bubble>
-                      <AppCard on={phase >= 2} />
-                    </div>
-                    <SceneLog at={sc} />
-                    <div className="x-input">
-                      <span className="x-plus">+</span>
-                      <span className="x-input-t">
-                        <em hidden={phase < 1}>Ask Hanzo</em>
-                        <span hidden={phase >= 1}><span ref={promptEl} /><Caret /></span>
-                      </span>
-                      <motion.span className="x-send" animate={{ scale: typed === PROMPT.length && phase === 0 ? [1, 1.18, 1] : 1 }} transition={{ duration: 0.4 }}>↑</motion.span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* the CLI */}
-              <motion.div className="x-term" initial={{ opacity: 0, z: -120, y: 70 }} animate={{ opacity: 1, z: 70, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.35 }}>
-                <div className="x-term-bar"><i /><i /><i /><span>install</span></div>
-                <div className={'x-term-body x-mono' + (sc >= 0 && MORE[sc].shell ? ' xs-on' : '')}>
-                  <span className="xs-cmd"><span className="x-dim">$ </span><span ref={cmdEl} className="xh-cmd" data-cmd={CMD} /><Caret /></span>
-                  <ShellLines at={sc} />
-                </div>
-                <div className="x-term-f">
-                  <button type="button" className="x-term-copy xh-copy" onClick={copy} data-cta="home.install_copy" data-on={copied || undefined}>{copied ? 'Copied' : 'Copy'}</button>
-                  <span className="xh-sr" role="status">{copied ? 'Copied' : ''}</span>
-                  <a href="https://docs.hanzo.ai/docs/cli">Install CLI ↗</a>
-                </div>
-              </motion.div>
-
-              {/* the phone */}
-              <motion.div className="x-phone" initial={{ opacity: 0, z: -80, x: 80 }} animate={{ opacity: 1, z: 130, x: 0 }} transition={{ duration: 1.4, ease: EASE, delay: 0.5 }}>
-                <div className="x-phone-scr">
-                  <div className="x-status"><b>9:41</b><span className="x-island" /><span>●●●</span></div>
-                  <div className="x-tabs" role="tablist" aria-label="Phone app">
-                    {['chat', 'dev'].map((t) => (
-                      <button key={t} type="button" role="tab" aria-selected={tab === t} aria-controls={'phone-' + t} onClick={() => { user.current = true; track('hero_demo', { control: 'phone-' + t }); setTab(t); }}>
-                        {tab === t && <span className="x-tab-bg" />}
-                        <span>{t === 'chat' ? 'Chat' : 'Dev'}</span>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="x-phone-body">
-                    <div className="x-pane" id="phone-chat" role="tabpanel" data-on={tab === 'chat'} inert={tab !== 'chat'}>
-                      <Bubble me on={phase >= 1}>{PROMPT}</Bubble>
-                      <AppCard on={phase >= 2} phone />
-                    </div>
-                    <div className={'x-pane right' + (sc >= 0 && (MORE[sc].phone || MORE[sc].place === 'studio') ? ' xs-on' : '')} id="phone-dev" role="tabpanel" data-on={tab === 'dev'} inert={tab !== 'dev'}>
-                      <PhoneCells at={sc} />
-                      <Bubble me>Show me the build</Bubble>
-                      <div className="x-log x-mono">
-                        {LOG.map((l, i) => (
-                          <motion.div key={l} initial={false} animate={i < log ? { opacity: 1, x: 0 } : { opacity: 0, x: -6 }} transition={{ duration: 0.35, ease: EASE }} className={i === 3 ? 'ok' : ''}>{i < 3 ? '• ' : ''}{l}</motion.div>
-                        ))}
-                      </div>
-                      <Roster on={phase >= 4} />
-                    </div>
-                  </div>
-                  <a className="x-phone-dl" href="/download">Download App</a>
-                </div>
-              </motion.div>
+              <Desk sc={sc} phase={phase} side={side} onSide={() => setSide((v) => !v)} promptEl={promptEl} full={typed === PROMPT.length} />
+              <Term sc={sc} cmdEl={cmdEl} done={cmdDone} copy={copy} copied={copied} cmd={CMD} />
+              <Phone sc={sc} phase={phase} tab={pick ?? screenAt(sc, phase)} onTab={setPick} />
             </motion.div>
           </div>
           <SetupMenu up initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 1.1 }} />
