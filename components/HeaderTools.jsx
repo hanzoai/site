@@ -9,6 +9,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
+import { acceptAll, asks, consentPolicy, consentSheet, CONSENT_EVENT, declined, notice, noticed, POLICY_EVENT, readConsent, rejectAll, saveConsent } from '@hanzo/event';
 import { LOGIN, LANGS, SEARCH, COOKIES } from '../lib/header';
 import { play } from '../lib/sound';
 
@@ -182,67 +183,98 @@ const trap = (e) => {
   else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
 };
 
-/* Hanzo's cookie notice. "Reject all" sits beside "Accept all" at equal weight; a browser that sends Global Privacy
-   Control is answered with "reject" and never asked. The preferences reopen from any link to #choices (Hanzo's
-   footer "Privacy choices") or from dispatchEvent(new Event('hz-consent-open')). */
+/* Hanzo's cookie choices, under the rule cloud serves this visitor (the app's @hanzo/ui Consent, on @hanzo/event's
+   consent store `hz_consent`, which startTags reads before any third party loads). Our own first-party stream runs for
+   everyone; these choices govern Google Analytics, the Meta pixels and ad personalization.
+   - eu: opt-in. The bar asks until a choice; its × is "essential only", so refusing is one press, as accepting is.
+   - us_privacy: opt-out. No bar; the footer's "Your Privacy Choices" (#choices) opens the sheet, and a switch turned
+     off saves at once. "Sell, Share, or Use Your Data" is the sale and sharing opt-out.
+   - global: a one-line notice with a × that records it as seen; the sheet stays one press away.
+   - Global Privacy Control or Do Not Track is an answer already: every switch stays off and nobody is asked.
+   Until cloud answers nothing is drawn: this tab's last answer is used at once, and with none by 1.5s the eu rule. */
+const WAIT = 1500;
+const served = () => { const p = consentPolicy(); return p.region ? p.mode : undefined; };
+const pickOf = (c) => ({ performance: !!c.analytics, marketing: !!c.marketing, sale: !!c.ads });
+const choiceOf = (p) => ({ analytics: !!p.performance, marketing: !!p.marketing, ads: !!p.sale });
+
 function Consent() {
-  const [state, setState] = useState(null); // null: undecided, else the saved choice
+  const [mode, setMode] = useState(); // the rule in force, undefined until served
+  const [shown, setShown] = useState(false); // the eu bar or the global notice
   const [prefs, setPrefs] = useState(false);
+  const [locked, setLocked] = useState(false); // the browser refused
   const [pick, setPick] = useState({ performance: false, marketing: false, sale: false });
+  const rule = useRef();
   const back = useRef(null);
   const box = useRef(null);
-  const save = (choice) => {
-    const v = { necessary: true, performance: false, marketing: false, sale: false, ...choice, at: Date.now() };
-    try { localStorage.setItem('hz-consent', JSON.stringify(v)); } catch {}
-    document.cookie = 'hz-consent=' + encodeURIComponent(JSON.stringify(v)) + ';path=/;max-age=31536000;samesite=lax';
-    window.dispatchEvent(new CustomEvent('hz-consent', { detail: v })); // analytics and ads read this before loading
-    setState(v); setPrefs(false);
+  const front = (m = rule.current) => (m === 'eu' ? asks() : m === 'global' ? !noticed() && !declined() : false);
+  const open = () => {
+    back.current = document.activeElement;
+    setLocked(declined());
+    setPick(pickOf(readConsent()));
+    setPrefs(true);
+    consentSheet(true);
   };
+  const close = () => { setPrefs(false); consentSheet(false); setShown(front()); };
+  const all = () => { acceptAll(); close(); };
+  const none = () => { rejectAll(); close(); };
+  const keep = (p = pick) => { saveConsent(choiceOf(p)); close(); };
+  // Under an opt-out rule a switch saves as it moves.
+  const flip = (k) => setPick((p) => {
+    const next = { ...p, [k]: !p[k] };
+    if (rule.current !== 'eu') saveConsent(choiceOf(next));
+    return next;
+  });
   useEffect(() => {
-    let v = null;
-    try { v = JSON.parse(localStorage.getItem('hz-consent') || 'null'); } catch {}
-    if (!v && navigator.globalPrivacyControl) { save({ gpc: true }); return; }
-    setState(v || false);
-    if (v) setPick({ performance: !!v.performance, marketing: !!v.marketing, sale: !!v.sale });
+    const decide = (m) => { rule.current = m; setMode(m); setShown(front(m)); setLocked(declined()); };
+    const known = served();
+    if (known) decide(known);
+    const wait = known ? undefined : setTimeout(() => rule.current ?? decide('eu'), WAIT);
+    const policy = () => decide(consentPolicy().mode);
+    const sync = () => { setShown(front()); setLocked(declined()); };
+    addEventListener(POLICY_EVENT, policy);
+    addEventListener(CONSENT_EVENT, sync);
+    return () => { clearTimeout(wait); removeEventListener(POLICY_EVENT, policy); removeEventListener(CONSENT_EVENT, sync); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
-    const open = () => { back.current = document.activeElement; setPrefs(true); };
     const click = (e) => { const a = e.target.closest?.('a[href$="#choices"]'); if (a) { e.preventDefault(); open(); } };
     addEventListener('hz-consent-open', open);
     document.addEventListener('click', click, true);
     return () => { removeEventListener('hz-consent-open', open); document.removeEventListener('click', click, true); };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!prefs) return;
     const t = setTimeout(() => box.current?.querySelector('.x-prefs-x')?.focus(), 40);
-    const esc = (e) => { if (e.key === 'Escape') setPrefs(false); };
+    const esc = (e) => { if (e.key === 'Escape') close(); };
     addEventListener('keydown', esc);
     return () => { clearTimeout(t); removeEventListener('keydown', esc); back.current?.focus?.(); };
   }, [prefs]);
-  if (state === null || (state && !prefs)) return null;
+  if (!mode || (!shown && !prefs)) return null;
+  const strict = mode === 'eu';
   return (
     <AnimatePresence>
       {!prefs ? (
         <motion.div key="note" className="x-cookie" role="region" aria-label="Cookies" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.6, ease: EASE, delay: 1.2 }}>
-          <p>{COOKIES.notice}</p>
+          <p>{strict ? COOKIES.notice : COOKIES.global}</p>
           <div>
-            <button type="button" className="x-btn sm x-cookie-more" onClick={() => { back.current = document.activeElement; setPrefs(true); }}>Manage preferences</button>
-            <button type="button" className="x-btn sm" onClick={() => save({})}>Reject all</button>
-            <button type="button" className="x-btn sm" onClick={() => save({ performance: true, marketing: true, sale: true })}>Accept all</button>
+            <button type="button" className="x-btn sm x-cookie-more" onClick={open}>Manage preferences</button>
+            {strict && <button type="button" className="x-btn sm" onClick={none}>Reject all</button>}
+            {strict && <button type="button" className="x-btn sm" onClick={all}>Accept all</button>}
+            <button type="button" className="x-btn sm" aria-label={strict ? 'Close and use essential cookies only' : 'Close'} onClick={strict ? none : () => { notice(); setShown(false); }}>✕</button>
           </div>
         </motion.div>
       ) : (
-        <motion.div key="prefs" className="x-pal-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => e.target === e.currentTarget && setPrefs(false)}>
-          <motion.div ref={box} className="x-prefs" role="dialog" aria-modal="true" aria-label={COOKIES.title} onKeyDown={trap} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }}>
-            <button type="button" className="x-prefs-x" aria-label="Close" onClick={() => setPrefs(false)}>✕</button>
-            <h2>{COOKIES.title}</h2>
+        <motion.div key="prefs" className="x-pal-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(e) => e.target === e.currentTarget && close()}>
+          <motion.div ref={box} className="x-prefs" role="dialog" aria-modal="true" aria-label={strict ? COOKIES.title : COOKIES.choices} onKeyDown={trap} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }}>
+            <button type="button" className="x-prefs-x" aria-label="Close" onClick={close}>✕</button>
+            <h2>{strict ? COOKIES.title : COOKIES.choices}</h2>
+            {locked && <p>{COOKIES.refused}</p>}
             <p>{COOKIES.body} Learn more in our <a href="https://hanzo.ai/cookies">Cookie Policy</a>, <a href="https://hanzo.ai/privacy">Privacy Policy</a>, and <a href="https://hanzo.ai/terms">Terms of Service</a>.</p>
             <ul>
               {COOKIES.kinds.map(([k, l]) => (
                 <li key={k}>
                   <span>{l}</span>
                   {k === 'necessary' ? <em>Always Active</em> : (
-                    <button type="button" role="switch" aria-checked={pick[k]} aria-label={l} className={'x-switch' + (pick[k] ? ' on' : '')} onClick={() => setPick((p) => ({ ...p, [k]: !p[k] }))}>
+                    <button type="button" role="switch" aria-checked={!locked && pick[k]} aria-label={l} disabled={locked} className={'x-switch' + (!locked && pick[k] ? ' on' : '')} onClick={() => flip(k)}>
                       <motion.i layout transition={{ type: 'spring', stiffness: 600, damping: 35 }} />
                     </button>
                   )}
@@ -250,9 +282,9 @@ function Consent() {
               ))}
             </ul>
             <div className="x-prefs-acts">
-              <button type="button" className="x-btn" onClick={() => save({})}>Reject all</button>
-              <button type="button" className="x-btn" onClick={() => save({ performance: true, marketing: true, sale: true })}>Accept all</button>
-              <button type="button" className="x-btn solid" onClick={() => save(pick)}>Save preferences</button>
+              <button type="button" className="x-btn" onClick={none}>Reject all</button>
+              {!locked && <button type="button" className="x-btn" onClick={all}>Accept all</button>}
+              <button type="button" className="x-btn solid" onClick={() => keep()}>Save preferences</button>
             </div>
           </motion.div>
         </motion.div>

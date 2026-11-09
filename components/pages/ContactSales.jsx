@@ -24,6 +24,7 @@
    sentences; the "01 / 05" counter; "cal.com ↗"; the numeral chips; the blinking fake caret; native title tooltips on
    the logos; raw <img>; the raw .x-btn submit; data-ask-hide on the rail; arrow keys that chose and advanced. */
 import { useEffect, useRef, useState } from 'react';
+import { readConsent } from '@hanzo/event';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { A, More, Band, Img } from '../kit';
 import Sigil from '../Sigil';
@@ -158,7 +159,7 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
     if (v.website) { setState('sent'); return; } // the honeypot was filled: a bot, quietly accepted
     setState('sending');
     let consent = '';
-    try { consent = localStorage.getItem('hz-consent') || ''; } catch {}
+    try { consent = JSON.stringify(readConsent()); } catch {}
     const params = new URLSearchParams(location.search);
     const tags = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].filter((k) => params.get(k)).map((k) => k + '=' + params.get(k)).join('&');
     // the note: your own words, then each inclusion you added, in Hanzo's sentence, one per line (same `need` field)
