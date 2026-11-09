@@ -57,10 +57,10 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
 - The logo strips (`Marquee`, `components/Chrome.jsx`) are CSS: a transform loop on `.x-mq-track`, paused under the pointer, on
   focus and off screen, none under reduced motion, no pause button. A `C.backed` item carries `w`, `h` and `hang` (px): the
   wordmark's size and how far it falls below its text (a smile, a descender, a mark), so `.x-logo[data-base]` sits every
-  one on a single baseline. Measure a new logo, never eyeball it; crop a padded asset's viewBox to its ink.
+  one on a single baseline. Measure a new logo, never eyeball it; crop a padded asset's viewBox to its ink in a file of its own (`techstars-mark.svg`): the CDN keeps a changed file under its old name for a day.
 - An agent icon in `C.agents` has no `id` in its markup: the same string is drawn in the dock, the setup row and every
   menu row, and the first copy lives in a closed menu where nothing renders, so a `<mask>` or gradient by id goes blank
-  (Grok Build did). Flat marks are inline paths; a gradient mark is a file (`public/<name>-icon.svg`). Colour is the
+  (Grok Build did). Flat marks are inline paths; a gradient mark is a file (`public/<name>-mark.svg`). Colour is the
   brand's own (Claude orange, DeepSeek blue, Amp red, Codex, Antigravity, Gemini, Muse, OpenHands); the rest are in ink.
   A tile's tooltip (`data-name`) and its accessible name are the same words.
 - Every card on the home page that shines wears `.x-shine` (`app/globals.css`): one sweep, one keyframes, transform and
