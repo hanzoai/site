@@ -4,13 +4,13 @@
    Goal: read the reviews that match their product; write their own.
    CTA: "Write a review" opens the form; "Join Beta & Fan Club (50% Off)" goes to /beta.
    Copy: every line is hanzo.ai's own, word for word (Reviews.data.js holds the reviews).
-   The form collects nothing here: hanzo.ai posts a review to api.hanzo.ai (/v1/marketing/leads and
-   /v1/form/public/hanzo.review-submit/responses); this site never calls either (scripts/forms.mjs blocks every non-GET
-   request the same way), as /beta/apply keeps its answers. A review a visitor writes is kept in this browser
-   (localStorage, the key hanzo.ai uses) and shown first, with hanzo.ai's own thanks. */
+   The form sends what hanzo.ai sends: the review as a sales lead (POST /v1/marketing/leads) and as a response to the
+   hanzo.review-submit form (POST /v1/form/public/hanzo.review-submit/responses), both on api.hanzo.ai. The thanks says
+   what happened: it appears only once Hanzo has taken the review, which is also kept in this browser (localStorage, the
+   key hanzo.ai uses) and shown first; a review Hanzo did not take stays in the form with the reason. */
 import { useEffect, useRef, useState } from 'react';
 import { Cta, Field } from '../kit';
-import { CATEGORIES, PRODUCTS, STORAGE_KEY, entry, kept, visible } from './Reviews.data';
+import { API, CATEGORIES, PRODUCTS, STORAGE_KEY, entry, kept, lead, response, visible } from './Reviews.data';
 import './Reviews.css';
 
 const Icon = ({ d, size = 16, fill, ...rest }) => (
@@ -41,6 +41,7 @@ export default function Reviews() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', role: '', company: '', product: 'Hanzo Dev', rating: 5, title: '', body: '' });
   const [said, setSaid] = useState(null); // the thanks, or what is missing: { ok, text }
+  const [sending, setSending] = useState(false);
   const box = useRef(null);
   const field = (k) => ({ value: form[k], onChange: (e) => setForm((f) => ({ ...f, [k]: e.target.value })) });
 
@@ -59,16 +60,23 @@ export default function Reviews() {
     box.current?.querySelector('input')?.focus({ preventScroll: true });
   }, [open]);
 
-  const submit = (e) => {
+  const post = (path, body) => fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.ok, () => false);
+  const submit = async (e) => {
     e.preventDefault();
+    if (sending) return;
     const made = entry(form);
     if (!made) { setSaid({ ok: false, text: 'Please fill in your name, headline, and review.' }); return; }
+    setSending(true);
+    // the lead and the form response go together, as on hanzo.ai; a review counts as sent when Hanzo took either
+    const [filed, recorded] = await Promise.all([post('/v1/marketing/leads', lead(made)), post('/v1/form/public/hanzo.review-submit/responses', response(made))]);
+    setSending(false);
+    if (!filed && !recorded) { setSaid({ ok: false, text: 'Your review did not reach Hanzo. Please try again.' }); return; }
     const next = [made, ...mine];
     setMine(next);
     try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
     setForm((f) => ({ ...f, name: '', role: '', company: '', title: '', body: '' }));
     setOpen(false);
-    setSaid({ ok: true, text: 'Thank you! Your review has been published on Hanzo Reviews.' });
+    setSaid({ ok: true, text: 'Thank you! Your review reached Hanzo. It shows first in this browser.' });
   };
 
   return (
@@ -136,7 +144,7 @@ export default function Reviews() {
 
               <div className="xrv-form-f">
                 <button type="button" className="x-btn" onClick={() => setOpen(false)}>Cancel</button>
-                <button type="submit" className="x-btn solid">Publish Review</button>
+                <button type="submit" className="x-btn solid" disabled={sending}>{sending ? 'Publishing…' : 'Publish Review'}</button>
               </div>
             </form>
           )}

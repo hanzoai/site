@@ -2,7 +2,7 @@
 // hanzo.ai makes it, and a category shows what it says.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CATEGORIES, PRODUCTS, REVIEWS, entry, kept, visible } from './Reviews.data.js';
+import { API, CATEGORIES, PRODUCTS, REVIEWS, entry, kept, lead, response, visible } from './Reviews.data.js';
 
 const answers = { name: ' Ada Lovelace ', role: '', company: '  ', product: 'Hanzo Cloud', rating: 4, title: ' Fast ', body: ' It works. ' };
 
@@ -34,4 +34,18 @@ test('what localStorage holds comes back only if it is a list', () => {
   assert.deepEqual(kept('{not json'), []);
   assert.deepEqual(kept('{"a":1}'), []);
   assert.deepEqual(kept(JSON.stringify([entry(answers, 7)])), [entry(answers, 7)]);
+});
+
+test('a review is sent as hanzo.ai sends it: a lead and a form response, on the gateway', () => {
+  const e = entry(answers, 7);
+  assert.equal(API, 'https://api.hanzo.ai');
+  assert.deepEqual(lead(e), { program: 'hanzo_review', name: 'Ada Lovelace', role: 'Builder', company: 'Community', product: 'Hanzo Cloud', rating: 4, title: 'Fast', review: 'It works.', source: 'hanzo.reviews' });
+  assert.deepEqual(response(e, 7), {
+    token: 'rv_7',
+    answers: [
+      { field: 'name', text: 'Ada Lovelace' }, { field: 'role', text: 'Builder' }, { field: 'company', text: 'Community' }, { field: 'product', text: 'Hanzo Cloud' },
+      { field: 'rating', number: 4 }, { field: 'title', text: 'Fast' }, { field: 'review', text: 'It works.' },
+    ],
+    hidden: { source: 'hanzo.reviews' },
+  });
 });

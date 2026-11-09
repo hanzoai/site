@@ -118,6 +118,37 @@ export const REVIEWS = [
   },
 ];
 
+/** Where hanzo.ai sends a review: the gateway, never another host. */
+export const API = 'https://api.hanzo.ai';
+
+/** The sales lead hanzo.ai files for a review (POST /v1/marketing/leads, hanzo-inc/app reviews/page.tsx). */
+export const lead = (e) => ({
+  program: 'hanzo_review',
+  name: e.author,
+  role: e.role,
+  company: e.company,
+  product: e.product,
+  rating: e.rating,
+  title: e.title,
+  review: e.body,
+  source: 'hanzo.reviews',
+});
+
+/** The same review as a response to the hanzo.review-submit form (POST /v1/form/public/hanzo.review-submit/responses). */
+export const response = (e, now = Date.now()) => ({
+  token: `rv_${now}`,
+  answers: [
+    { field: 'name', text: e.author },
+    { field: 'role', text: e.role },
+    { field: 'company', text: e.company },
+    { field: 'product', text: e.product },
+    { field: 'rating', number: e.rating },
+    { field: 'title', text: e.title },
+    { field: 'review', text: e.body },
+  ],
+  hidden: { source: 'hanzo.reviews' },
+});
+
 /** The reviews a visitor kept in this browser, read from what localStorage holds; anything that is not a list is nothing. */
 export function kept(raw) {
   try {
