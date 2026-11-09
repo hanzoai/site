@@ -3,8 +3,8 @@
    below is this page's own (no shared chapter rail, console or prompt styles). */
 
 /* one solid fill per screen (PLAN 0.9): the header's "Try Hanzo" stays outlined on this page, the page's ask is solid */
-html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.app/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
-@media (hover: hover) { html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.app/signup']:hover { background-color: rgba(0, 0, 0, .05); box-shadow: inset 0 0 0 1px var(--ink); } }
+html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+@media (hover: hover) { html:has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { background-color: rgba(0, 0, 0, .05); box-shadow: inset 0 0 0 1px var(--ink); } }
 
 /* hero: title, lede and ask left (8), the query toolbar right (5); then one flat tile: chart (8) | traces (5) */
 .mt-hero { padding: clamp(32px, 4vw, 56px) 0 clamp(32px, 3vw, 48px); }
@@ -431,7 +431,7 @@ html:not(.light) .lx.mt {
   --ink: var(--foreground); --acc: var(--foreground); --acc-soft: var(--x-fill); --muted: var(--muted-foreground); --soft: var(--muted-foreground);
   --faint: var(--text-tertiary); --silver: var(--border-strong); --card: var(--x-fill); --line: var(--border); --bg: var(--background);
 }
-@media (hover: hover) { html:not(.light):has(main.mt) header[data-slot=masthead] a[href='https://hanzo.app/signup']:hover { background-color: var(--glass); } }
+@media (hover: hover) { html:not(.light):has(main.mt) header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { background-color: var(--glass); } }
 html:not(.light) .mt-tool, html:not(.light) .mt-stage { background: var(--x-fill); }
 html:not(.light) .mt-host, html:not(.light) .mt-legend, html:not(.light) .mt-split button { color: var(--soft); }
 html:not(.light) .mt-split { background: var(--background); }

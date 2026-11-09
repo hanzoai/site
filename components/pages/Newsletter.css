@@ -106,8 +106,8 @@ html:not(.js) .xnl-q:not(.on) { display: none; }
 /* phones: the header keeps the site's "Try Hanzo" (the ask swap is desktop-only), so there it is always the outline and
    the page's own "Subscribe" is the only solid ask (shared fix requested in docs/build-notes/requests/newsletter.md) */
 @media (max-width: 899px) {
-  html:has(main.xnl) header[data-slot=masthead] a[href='https://hanzo.app/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
-  html:has(main.xnl) header[data-slot=masthead] a[href='https://hanzo.app/signup']:active { transform: scale(.97); }
+  html:has(main.xnl) header[data-slot=masthead] a[href='https://hanzo.ai/signup'] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
+  html:has(main.xnl) header[data-slot=masthead] a[href='https://hanzo.ai/signup']:active { transform: scale(.97); }
 }
 
 /* ---------- dark mode (docs/DARK-MODE.md): live hanzo.ai's dark, by role, in Hanzo's own tokens ----------

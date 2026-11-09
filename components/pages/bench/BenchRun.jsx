@@ -667,7 +667,7 @@ const isPager = (b) => (linkOf(b) && /^(Previous|Next)/.test(clean(textOf(b.n)))
 /* the page's one ask, in Hanzo's words: a paper page's own "Start on Hanzo Cloud", else the header's "Try Hanzo" */
 export function askOf(tail) {
   const first = tail.find((b) => linkOf(b) && !isPager(b));
-  return first ? { label: clean(textOf(first.n)), href: first.n.a.href } : { label: 'Try Hanzo', href: 'https://hanzo.app/signup' };
+  return first ? { label: clean(textOf(first.n)), href: first.n.a.href } : { label: 'Try Hanzo', href: 'https://hanzo.ai/signup' };
 }
 function Tail({ tail, near, peek }) {
   const pager = tail.filter(isPager);

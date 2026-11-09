@@ -156,7 +156,7 @@
 
 /* One solid at a time from the first paint (the /affiliate move): the header's ask is outlined on this route until
    the page's hook says none of its own solid asks is on screen (html[data-xbs-solid]). */
-html:has(main.xbs):not([data-xbs-solid]) header[data-slot=masthead] a[href="https://hanzo.app/signup"],
+html:has(main.xbs):not([data-xbs-solid]) header[data-slot=masthead] a[href="https://hanzo.ai/signup"],
 html:has(main.xbs):not([data-xbs-solid]) header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
 
 /* the phone bar under the thumb */

@@ -8,9 +8,9 @@
 .xlr-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 6px; }
 
 /* one solid per screen: while the hero's ask is on screen, the header's ask is an outline (as /playground does) */
-html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[href='https://hanzo.app/signup'],
+html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[href='https://hanzo.ai/signup'],
 html:has(main.xlr[data-ask-on]) header[data-slot=masthead] a[data-x-ask] { background-color: transparent; color: var(--foreground); box-shadow: inset 0 0 0 1px var(--border, rgba(0, 0, 0, .14)); }
-@media (hover: hover) { html:has(main.xlr[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.app/signup'], a[data-x-ask]):hover { background-color: rgba(0, 0, 0, .05); box-shadow: inset 0 0 0 1px var(--ink); } }
+@media (hover: hover) { html:has(main.xlr[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]):hover { background-color: rgba(0, 0, 0, .05); box-shadow: inset 0 0 0 1px var(--ink); } }
 
 /* hero: the title, then the map */
 .xlr-hero { padding: clamp(48px, 7vw, 112px) 0 clamp(56px, 6vw, 88px); }
@@ -339,5 +339,5 @@ html:not(.light) .xlr-pause:not([data-room=dark] *) { background: var(--secondar
 @media (hover: hover) { html:not(.light) .xlr-pause:not([data-room=dark] *):hover { background: var(--foreground); color: var(--primary-foreground); } }
 html:not(.light) .xlr-say-t > span > span { color: var(--secondary); }
 html:not(.light) .xlr-say-t > span > span.on { color: var(--ink); }
-@media (hover: hover) { html:not(.light):has(main.xlr[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.app/signup'], a[data-x-ask]):hover { background-color: var(--glass); } }
+@media (hover: hover) { html:not(.light):has(main.xlr[data-ask-on]) header[data-slot=masthead] :is(a[href='https://hanzo.ai/signup'], a[data-x-ask]):hover { background-color: var(--glass); } }
 html:not(.light) :is(.xlr-panels, .xlr-card) { box-shadow: inset 0 0 0 1px var(--border); }

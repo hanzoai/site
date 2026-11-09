@@ -1,7 +1,7 @@
 'use client';
 // Persona: an engineer or CTO weighing running the open-source stack themselves against buying Hanzo (arrives from /compare's "Buy it, or run it", pricing or search)
 // Goal: see what running it yourself costs, line by line, and what that bill leaves out
-// CTA: Try Hanzo -> https://hanzo.app/signup (hero, the shared ask bar via data-thumb, close) · data-cta="comparison.hero" / "comparison.close"
+// CTA: Try Hanzo -> https://hanzo.ai/signup (hero, the shared ask bar via data-thumb, close) · data-cta="comparison.hero" / "comparison.close"
 // Metric: signup_start, read as cta_click on comparison.hero
 // Signature: a receipt that feeds out of a slot under the hero — a tall slip prints the open-source stacks line by line and shows its whole total; every line is a switch, so strike a stack out or put it back and the bill re-adds itself.
 // Beyond: "The same image, more than once" — the receipt notices when your selection runs one image in several stacks (postgres:16-alpine sits under four of them) and adds up what those copies reserve, from the same compose figures, beside Hanzo's own line on upgrades.
@@ -51,7 +51,7 @@ const ALL = STACKS.reduce((a, s) => a + s.c, 0); // 22,557 cents
 const usd = (c) => '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '/mo';
 const n = (v) => String(+v.toFixed(2));
 const MAX = Math.max(...STACKS.map((s) => s.c));
-const ASK = { label: 'Try Hanzo', to: 'https://hanzo.app/signup', cta: 'comparison.hero' };
+const ASK = { label: 'Try Hanzo', to: 'https://hanzo.ai/signup', cta: 'comparison.hero' };
 // JS off: the slip stands fed out and printed, every block in place
 const NOJS = '<style>.xcm-in,.xcm-slip,.xcm-lines li,.xcm-twice{opacity:1!important;transform:none!important}.xcm-stackbar b{transform:none!important}</style>';
 

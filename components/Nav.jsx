@@ -276,7 +276,7 @@ export default function Nav({ headerRef }) {
               <div className="x-sheet-login">
                 {LOGIN.map((l) => <a key={l.label} href={l.href} onClick={close}><b>{l.label}</b><span>{l.sub}</span></a>)}
               </div>
-              <a href="https://hanzo.app/signup" className="x-btn solid lg x-sheet-ask" onClick={close}>Try Hanzo</a>
+              <a href="https://hanzo.ai/signup" className="x-btn solid lg x-sheet-ask" onClick={close}>Try Hanzo</a>
             </motion.div>
           </motion.nav>
         )}

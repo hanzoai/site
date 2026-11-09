@@ -701,7 +701,7 @@ function usePhoneAsk() {
     const start = () => {
       off();
       const main = document.querySelector('main');
-      const btn = document.querySelector('header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href="https://hanzo.app/signup"]');
+      const btn = document.querySelector('header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href="https://hanzo.ai/signup"]');
       if (!mq.matches || !main || !btn) { main?.removeAttribute('data-ask'); return; }
       main.setAttribute('data-ask', 'off');
       if (!btn.dataset.xAsk) { btn.dataset.xAsk = btn.textContent; btn.dataset.xHref = btn.getAttribute('href'); }

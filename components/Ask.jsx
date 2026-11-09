@@ -99,7 +99,7 @@ export default function Ask() {
   // desktop: the header's ask slot carries the page's own ask after the hero
   useEffect(() => {
     const H = document.documentElement;
-    const btn = document.querySelector('header[data-slot=masthead] a[href="https://hanzo.app/signup"], header[data-slot=masthead] a[data-x-ask]');
+    const btn = document.querySelector('header[data-slot=masthead] a[href="https://hanzo.ai/signup"], header[data-slot=masthead] a[data-x-ask]');
     if (!btn) return;
     if (!btn.dataset.xAsk) { btn.dataset.xAsk = btn.textContent; btn.dataset.xHref = btn.getAttribute('href'); }
     const restore = () => { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); btn.removeAttribute('data-cta'); delete H.dataset.ask; };

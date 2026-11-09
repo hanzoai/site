@@ -52,7 +52,7 @@ function usePhoneHeaderAsk() {
       const own = document.querySelector('main [data-cta="referral.hero"]');
       const ends = [...document.querySelectorAll('main [data-cta="referral.close"], main [data-cta="referral.flow"]')];
       if (!mq.matches || !own) return;
-      btn = document.querySelector('header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href="https://hanzo.app/signup"]');
+      btn = document.querySelector('header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href="https://hanzo.ai/signup"]');
       if (!btn) return;
       text = btn.dataset.xAsk || btn.textContent; link = btn.dataset.xHref || btn.getAttribute('href');
       const label = own.getAttribute('data-thumb'), href = own.getAttribute('href');
