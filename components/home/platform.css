@@ -10,7 +10,7 @@ html:not(.light) .xp-glow { background: radial-gradient(closest-side, color-mix(
 
 .xp-win { position: absolute; left: 50%; top: 10px; width: var(--cw); margin-left: calc(var(--cw) / -2); height: 520px; border-radius: 28px; background: var(--card); border: 1px solid var(--line); overflow: hidden; pointer-events: auto; box-shadow: 0 50px 90px -50px rgba(0, 0, 0, .35); will-change: transform, opacity; backface-visibility: hidden; cursor: pointer; }
 .xp-win.on { cursor: auto; box-shadow: 0 60px 110px -50px rgba(0, 0, 0, .42), 0 0 0 1px color-mix(in oklab, var(--xp-glow) 14%, transparent); }
-.xp-win-in { display: flex; flex-direction: column; height: 100%; }
+.xp-win-in { position: relative; display: flex; flex-direction: column; height: 100%; }
 .xp-win:not(.on) * { animation-play-state: paused !important; }
 .xp-vis { flex: 1; min-height: 0; display: flex; overflow: hidden; background: var(--x-raised); border-bottom: 1px solid var(--line); }
 .xp-vis > div { flex: 1; min-height: 0 !important; }

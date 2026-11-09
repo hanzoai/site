@@ -180,7 +180,7 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-mgrid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1.65fr repeat(4, 1fr); grid-template-rows: repeat(2, minmax(250px, 1fr)); gap: 14px; perspective: 1400px; }
 .x-mcard { min-width: 0; }
 .x-mcard.big { grid-row: span 2; }
-.x-mbtn { all: unset; box-sizing: border-box; display: block; width: 100%; height: 100%; cursor: pointer; position: relative; perspective: 900px; border-radius: 24px; }
+.x-mbtn { all: unset; box-sizing: border-box; display: block; width: 100%; height: 100%; cursor: pointer; position: relative; border-radius: 24px; }
 .x-mbtn:focus-visible { outline: 2px solid var(--focus, #0a0a0b); outline-offset: 3px; }
 .x-mtilt { position: absolute; inset: 0; line-height: 1.4; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; border-radius: 24px; overflow: hidden; background: #000; color: #f5f5f7; }
 .x-mmedia { position: absolute; inset: 0; overflow: hidden; background: #000; }
@@ -188,8 +188,6 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-mmedia video { opacity: 0; transition: opacity .6s var(--ease); }
 .x-mmedia video.on { opacity: 1; }
 .x-mmedia::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, .55), transparent 45%, transparent 60%, rgba(0, 0, 0, .55)); }
-.x-mglow { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s var(--ease); border-radius: inherit; }
-.x-mbtn:hover .x-mglow, .x-tile:hover .x-mglow, .x-way:hover .x-mglow { opacity: 1; }
 .x-mtext { position: relative; display: flex; flex-direction: column; gap: 6px; }
 .x-mkick { display: block; font: 500 11px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: #b5b5ba; margin-bottom: 8px; }
 .x-mname { display: flex; align-items: center; gap: 6px; line-height: 1.05; font-size: 22px; font-weight: 560; letter-spacing: -.02em; }
@@ -469,8 +467,8 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-gl { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 960; pointer-events: none; opacity: 0; }
 .x-gl.on { opacity: 1; }
 .x-veil { position: fixed; inset: 0; z-index: 950; background: var(--bg); opacity: 0; pointer-events: none; }
-.x-mbtn .x-mtext, .x-mbtn .x-mtags, .x-mbtn .x-mglow { transition: opacity .3s var(--ease); }
-.x-mbtn[data-opening] .x-mtext, .x-mbtn[data-opening] .x-mtags, .x-mbtn[data-opening] .x-mglow { opacity: 0; }
+.x-mbtn .x-mtext, .x-mbtn .x-mtags { transition: opacity .3s var(--ease); }
+.x-mbtn[data-opening] .x-mtext, .x-mbtn[data-opening] .x-mtags { opacity: 0; }
 [data-lifted] { visibility: hidden; }
 a.x-mbtn { color: inherit; text-decoration: none; }
 
@@ -635,11 +633,11 @@ a.x-mbtn { color: inherit; text-decoration: none; }
   header button[aria-controls="menu-company"]::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
 }
 
-/* ---------- James 8 Nov: race + cost cards smaller and more immersive, each with its own look; copy unchanged ---------- */
-.x-race, .x-cost { position: relative; overflow: hidden; isolation: isolate; padding: clamp(18px, 2vw, 26px); border-radius: 22px; transition: border-color .4s var(--ease), translate .5s var(--ease), box-shadow .5s var(--ease); }
-.x-race:hover, .x-cost:hover { translate: 0 -3px; }
-.x-race::before, .x-cost::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; transition: opacity .6s var(--ease); }
-.x-race-big { margin-top: 12px; font-size: clamp(2.75rem, 4.4vw, 4.1rem); }
+/* ---------- the speed and price cards: clean surfaces. No texture; what moves is the lean and the gloss of [data-tilt] ----------
+   One size for the four headline figures (--figure), so 3.02x, 9.6x and the two "up to" lines read as one family. */
+.x-races { --figure: clamp(2.25rem, 4.2vw, 4rem); }
+.x-race, .x-cost { position: relative; overflow: hidden; isolation: isolate; padding: clamp(18px, 2vw, 26px); border-radius: 22px; transition: transform .3s cubic-bezier(.2, .8, .2, 1), border-color .4s var(--ease); }
+.x-race-big, .x-cost-big { margin-top: 12px; font-size: var(--figure); }
 .x-race-cap { margin-top: 6px; font-size: 15.5px; }
 .x-race-note { margin-top: 8px; font-size: 12.5px; }
 .x-race-title { margin: 16px 0 8px; }
@@ -673,16 +671,20 @@ html.dark main > section.x-sec:nth-of-type(even):not([data-room='dark']) { backg
 html.dark .x-faster { background: radial-gradient(90% 60% at 50% 0%, #202024, #121214 55%, #0c0c0d); }
 html.dark .x-band { background: radial-gradient(80% 70% at 50% 100%, #1b1b1e, #0f0f10 70%); }
 
-/* ---------- one shine for every card ----------
-   A soft band crosses the card's surface every few seconds: the app's own sweep (105deg, 30/50/70, 5 s, 1.4 s in), the
-   same in light and dark. A transform and an opacity on a layer of its own, so it runs on the compositor and costs the page
-   nothing per frame; it rests while its section is off screen and is gone under reduced motion. The host is positioned. */
-.x-shine { isolation: isolate; overflow: clip; }
-.x-shine::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit; background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, .55) 50%, transparent 70%); opacity: .32; transform: translate3d(-120%, 0, 0); will-change: transform; animation: x-shine 5s ease-in-out 1.4s infinite; }
-.x-shine:nth-child(even)::after { animation-delay: 3.9s; }
-@keyframes x-shine { 0% { transform: translate3d(-120%, 0, 0); } 30%, 100% { transform: translate3d(120%, 0, 0); } }
-[data-off] .x-shine::after { animation-play-state: paused; }
-@media (prefers-reduced-motion: reduce) { .x-shine::after { display: none; } }
+/* ---------- the lean and the gloss of a card: [data-tilt], lib/tilt.js ----------
+   hanzo.css carries the app's lean (a perspective transform from --rx and --ry) and its fade (--lit). Here the light is that
+   same radial glow in a fixed layer of its own, moved by transform to --lx and --ly, the pointer's place on the card in px,
+   where the app repaints a gradient at each move: nothing is painted while a card follows the pointer, and at rest nothing runs.
+   The card clips it. Reduced motion has neither (hanzo.css). */
+[data-tilt] { overflow: clip; isolation: isolate; }
+[data-tilt]::after { inset: auto; left: 0; top: 0; width: 600px; height: 600px; margin: -300px 0 0 -300px; border-radius: 0; background: radial-gradient(circle closest-side, color-mix(in oklab, var(--foreground) 9%, transparent), transparent); transform: translate3d(var(--lx, 50%), var(--ly, 0px), 0); }
+[data-tilt][data-lit], [data-tilt][data-lit]::after { will-change: transform; }
+
+/* the cards the lean turns are plain elements, whose hover and press are the properties that do not touch their transform */
+@media (hover: hover) { .x-way:hover { translate: 0 -4px; } }
+.x-way, .x-tile { transition: transform .3s cubic-bezier(.2, .8, .2, 1), translate .3s var(--ease), scale .15s var(--ease); }
+.x-way:active { scale: .985; }
+.x-tile:active { scale: .98; }
 
 /* ---------- touch: every control is at least 44 x 44 (the pill, the tab and the link keep their look and take the space around them) ---------- */
 @media (pointer: coarse) {

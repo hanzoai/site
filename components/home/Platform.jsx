@@ -88,7 +88,7 @@ function Win({ i, d, W, narrow, calm, from, layoutId, scenes, play, onPick }) {
     : { type: 'spring', stiffness: 160, damping: 25, mass: 1, layout: { type: 'spring', stiffness: 190, damping: 26, mass: 1 } };
   return (
     <motion.article
-      className={'xp-win x-shine' + (on ? ' on' : '')}
+      className={'xp-win' + (on ? ' on' : '')}
       layoutId={layoutId}
       initial={from || false}
       animate={to}
@@ -99,7 +99,7 @@ function Win({ i, d, W, narrow, calm, from, layoutId, scenes, play, onPick }) {
         ? { id: 'xp-panel', role: 'tabpanel', 'aria-labelledby': `xp-tab-${i}` }
         : { 'aria-hidden': true })}
     >
-      <div className="xp-win-in" inert={!on}>
+      <div className="xp-win-in" data-tilt="" inert={!on}>
         <Vis p={p} scenes={scenes} play={on && play} />
         <footer className="xp-win-f">
           <div><b>{p.name}</b><A className="xp-addr" to={p.addr.startsWith('hanzo.ai/') ? p.addr.slice(8) : 'https://' + p.addr} aria-label={`Open Hanzo ${p.name} at ${p.addr}`}>{p.addr}</A></div>

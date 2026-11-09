@@ -17,6 +17,7 @@ import { animate, scroll } from 'motion';
 import Nav from './Nav';
 import HeaderTools from './HeaderTools';
 import { onDomChange } from '../lib/domwatch';
+import { lean } from '../lib/tilt';
 
 /* Smooth, weighted scrolling (Lenis) and one motion policy for the whole page. */
 export function Smooth({ children }) {
@@ -32,6 +33,8 @@ export function Smooth({ children }) {
     });
     return () => { dead = true; l?.destroy(); window.__lenis = null; };
   }, []);
+  // every [data-tilt] card leans toward a mouse (or the phone's tilt) and a light follows it: one listener, lib/tilt.js
+  useEffect(() => lean(), []);
   // every section pauses its animations while it is off screen
   useEffect(() => {
     const io = new IntersectionObserver((es) => es.forEach((e) => e.target.toggleAttribute('data-off', !e.isIntersecting)), { rootMargin: '10% 0px' });

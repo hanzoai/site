@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
-import { EASE, Head, Arrow, Count, Rise } from './ui';
+import { EASE, Head, Arrow, Count } from './ui';
 import useFigures from './home/useFigures';
 
 /* One lane of a race at true speed: every bar grows at the same rate, so the faster one simply stops first. */
@@ -39,7 +39,7 @@ function RaceCard({ kicker, big, decimals, cap, note, title, lanes, extra, link 
     return () => c.stop();
   }, [seen, runs]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <Rise className="x-race x-shine" ref={ref}>
+    <div className="x-race" data-tilt="" ref={ref}>
       <div className="x-race-top">
         <span className="x-race-k">{kicker}</span>
         <motion.button type="button" className="x-replay" aria-label="Replay the race" onClick={() => setRuns((r) => r + 1)} whileTap={{ rotate: -360, scale: 0.9 }} transition={{ duration: 0.6, ease: EASE }}>
@@ -55,7 +55,7 @@ function RaceCard({ kicker, big, decimals, cap, note, title, lanes, extra, link 
       </div>
       {extra}
       <motion.div className="x-race-end" animate={{ opacity: end ? 1 : 0.35 }}>{link}</motion.div>
-    </Rise>
+    </div>
   );
 }
 

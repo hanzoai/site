@@ -68,7 +68,7 @@ function Plan({ name, desc, price, unit, sub, cta, href, note, head, items, top,
   return (
     <motion.article
       layout
-      className={'x-plan x-shine' + (solid ? ' strong' : '')} data-free={free || undefined}
+      className={'x-plan' + (solid ? ' strong' : '')} data-free={free || undefined} data-tilt=""
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}

@@ -107,12 +107,12 @@ function Calendar() {
 function Tile({ t, i }) {
   const [label, n, sub, href, bars] = t;
   return (
-    <motion.a href={href} className="x-tile x-shine" whileTap={{ scale: 0.98 }}>
+    <a href={href} className="x-tile" data-tilt="">
       <span className="x-tile-k">{label}</span>
       <Count className="x-tile-n" to={n} duration={2} delay={i * 0.06} />
       <span className="x-tile-s">{sub}</span>
       {bars && <span className="x-tile-spark" dangerouslySetInnerHTML={{ __html: bars }} />}
-    </motion.a>
+    </a>
   );
 }
 
@@ -147,11 +147,11 @@ function Rail() {
 
 function Way({ w }) {
   return (
-    <motion.a href={w[3]} className="x-way x-shine" whileHover={{ y: -4 }} whileTap={{ scale: 0.985 }}>
+    <a href={w[3]} className="x-way" data-tilt="">
       <b><span>{w[0]}</span></b>
       <span>{w[1]}</span>
       <em><span>{w[2]} →</span></em>
-    </motion.a>
+    </a>
   );
 }
 
