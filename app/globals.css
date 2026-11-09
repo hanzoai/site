@@ -591,9 +591,13 @@ a.x-mbtn { color: inherit; text-decoration: none; }
 .x-prefs em { font-style: normal; font-size: 12.5px; color: var(--ink); font-weight: 500; }
 .x-prefs-x { position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--x-raised); cursor: pointer; }
 .x-prefs-acts { display: flex; gap: 8px; justify-content: flex-end; }
-.x-switch { flex: none; position: relative; width: 44px; height: 26px; border-radius: 999px; border: 0; background: #d1d1d6; cursor: pointer; padding: 3px; display: flex; justify-content: flex-start; transition: background .25s; }
-.x-switch.on { background: var(--ink); justify-content: flex-end; }
-.x-switch i { width: 20px; height: 20px; border-radius: 50%; background: var(--x-raised); box-shadow: 0 1px 3px rgba(0, 0, 0, .2); }
+/* The cookie switch, drawn as @hanzo/ui's Switch on hanzo.bot and hanzo.team, in Hanzo's greys only (hanzoai/ui#300).
+   Off: the muted track (#ededed; #171717 in dark) with its hairline and a grey knob (#525252; #a3a3a3). On: ink with the
+   raised knob. The knob is at least 6.7:1 on its track and the two tracks 14:1 apart, in light and in dark. */
+.x-switch { flex: none; position: relative; width: 44px; height: 26px; border-radius: 999px; border: 0; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--x-e10); cursor: pointer; padding: 3px; display: flex; justify-content: flex-start; transition: background .25s; }
+.x-switch.on { background: var(--ink); box-shadow: none; justify-content: flex-end; }
+.x-switch i { width: 20px; height: 20px; border-radius: 50%; background: var(--muted-foreground); box-shadow: 0 1px 3px rgba(0, 0, 0, .2); }
+.x-switch.on i { background: var(--x-raised); }
 @media (max-width: 640px) { .x-cookie { flex-direction: column; align-items: stretch; } .x-pop-langs { grid-template-columns: 1fr; } .x-pal-s { display: none; } }
 /* Ask Hanzo, inline in ⌘K (components/HeaderTools.jsx) */
 .x-pal button.x-pal-ask { border: 0; cursor: pointer; transition: background .2s, color .2s, opacity .2s; }
