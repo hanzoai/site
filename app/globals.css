@@ -29,6 +29,8 @@ html { background: var(--bg); -webkit-text-size-adjust: 100%; }
 html:not(.light) [data-slot=footer-signature] > * { opacity: .18; }
 /* light-dark() and the browser's own controls follow the html class, never the device alone (JS off stays bright) */
 html.light { color-scheme: light; } html:not(.light) { color-scheme: dark; }
+/* Match Google's iframe canvas so WebKit composites its transparent margin. OneTap sets the card theme separately. */
+#credential_picker_container iframe, iframe#credential_picker_iframe { color-scheme: normal; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped, html.x-lock { overflow: hidden; }
@@ -49,9 +51,6 @@ header[data-x-dark='true'] { --foreground: #f5f5f7; --background: #0a0a0a; --col
 header[data-slot='masthead'] { transition: background-color .45s var(--ease), color .45s var(--ease); }
 /* sections out of view hold still: their animations pause until they are back on screen */
 [data-off] * { animation-play-state: paused !important; }
-.x-progress { position: fixed; inset: 0 0 auto 0; height: 2px; background: var(--ink); transform-origin: 0 50%; z-index: 1000; pointer-events: none; }
-@supports (animation-timeline: scroll()) { .x-progress { animation: x-progress linear both; animation-timeline: scroll(root); } @keyframes x-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } } }
-@supports not (animation-timeline: scroll()) { .x-progress { display: none; } }
 
 /* headings: one idea, lots of air */
 .x-head { margin-bottom: clamp(40px, 5vw, 72px); }
@@ -262,8 +261,7 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-code[data-open='true'] .x-code-blk:not([hidden]) .x-code-l { animation: x-code-in .55s var(--ease) both; animation-delay: calc(min(var(--i), 22) * 32ms + 120ms); }
 @keyframes x-code-in { from { opacity: 0; transform: translateX(-10px); } }
 @media (prefers-reduced-motion: reduce) { .x-code, .x-code-lbl > span { transition: none; } .x-code-l { animation: none !important; } }
-.x-panel-f, .x-panel-links { display: flex; flex-wrap: wrap; gap: 8px; }
-.x-panel-links { margin-top: auto; padding-top: 8px; }
+.x-panel-f { display: flex; flex-wrap: wrap; gap: 8px; }
 
 /* ---------- faster: the dark room ---------- */
 .x-faster { background: #000; color: #f5f5f7; --faint: #a1a1a6; } /* the room is black in both themes, so its quiet words are light in both */

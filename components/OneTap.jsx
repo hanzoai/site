@@ -45,6 +45,7 @@ export default function OneTap() {
       const nonce = crypto.randomUUID();
       id.initialize({
         client_id: CLIENT,
+        color_scheme: document.documentElement.classList.contains('light') ? 'light' : 'dark',
         nonce,
         callback: ({ credential }) => hand(credential, nonce),
         auto_select: false,

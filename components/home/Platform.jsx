@@ -121,18 +121,9 @@ export function DockItem({ i, on, mx, fine, calm, narrow, fly, progress, playing
   const ref = useRef(null);
   const dist = useTransform(mx, (x) => {
     const r = ref.current?.getBoundingClientRect();
-    return r && Number.isFinite(x) ? x - (r.left + r.width / 2) : Infinity;
+    return r && Number.isFinite(x) ? Math.abs(x - (r.left + r.width / 2)) : Infinity;
   });
-  const cfg = useRef({});
-  cfg.current.base = narrow ? 22 : 46;
-  cfg.current.big = narrow || calm || !fine ? cfg.current.base : 70;
-  const sizeT = useTransform(dist, (x) => {
-    const { base, big } = cfg.current;
-    const k = Math.max(0, 1 - Math.abs(x) / 150);
-    return base + (big - base) * (0.5 - Math.cos(Math.PI * k) / 2);
-  });
-  const size = useSpring(sizeT, { mass: 0.1, stiffness: 190, damping: 14 });
-  useEffect(() => { size.jump(narrow ? 22 : 46); }, [narrow]); // eslint-disable-line react-hooks/exhaustive-deps
+  const scale = useSpring(useTransform(dist, [0, 60, 100], [1.12, 1.04, 1]), { mass: 0.45, stiffness: 280, damping: 24 });
   const line = useTransform(progress, (v) => (on ? v : 0));
   return (
     <div className="xp-item" ref={ref}>
@@ -149,7 +140,7 @@ export function DockItem({ i, on, mx, fine, calm, narrow, fly, progress, playing
         onPointerEnter={(e) => { if (e.pointerType === 'mouse' && !narrow) setPeek(i); }}
         onPointerLeave={() => setPeek((c) => (c === i ? null : c))}
       >
-        <motion.span className="xp-tile" style={{ width: size, height: size }}>
+        <motion.span className="xp-tile" style={{ scale: fine && !narrow && !calm ? scale : 1, originY: 1 }}>
           {fly && <motion.span key={fly} layoutId={fly} className="xp-ghost" aria-hidden="true" />}
           <Glyph name={p.name} />
         </motion.span>
