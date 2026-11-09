@@ -120,6 +120,9 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-ann svg { flex: none; transition: transform .35s var(--ease); }
 .x-ann:hover svg { transform: translateX(3px); }
 .x-ann:focus-visible { outline: 2px solid var(--focus, #0a0a0b); outline-offset: -3px; }
+/* The beta bar is dark in both themes (hanzo.css [data-slot="beta"]), so its words are white, as on hanzo.ai. */
+.x-ann[data-slot="beta"] { color: #fff; }
+.x-ann[data-slot="beta"]:focus-visible { outline-color: #fff; }
 
 
 .x-setup { position: absolute; left: 50%; bottom: -52px; translate: -50% 0; display: inline-flex; z-index: 5; --mx: -50%; }
