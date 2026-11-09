@@ -664,7 +664,7 @@ function Partners() {
 /* ---------- questions, and the close ---------- */
 const QA = [
   ['How is Enterprise priced?', <>Each contract is priced for your organization: where Hanzo runs and the compute you need. Members are unlimited. <A to="/contact-sales">Talk to sales</A> for a quote.</>],
-  ['Where do the savings figures come from?', 'Every rate is read from our price list and our plan list when the page opens; the volumes, the people and the GPUs are yours. The figure for your own GPUs counts them on all month at an hourly rate and leaves out the Enterprise agreement, which our team prices with you.'],
+  ['What do we get with Enterprise?', 'All of Hanzo for your whole company: models, agents and one shared workspace, running in Hanzo Cloud, your cloud, your own servers or fully offline. Dedicated compute, unlimited members, engineering support around the clock with hands-on onboarding, and an uptime guarantee and a security review written into your contract.'],
   ['Can Hanzo run fully offline?', 'Yes. Hanzo runs air-gapped on your own servers, with models served on machines you control.'],
   ['How is our data used?', <>Your data is used to run your service. Training Hanzo models on it takes your administrator&apos;s choice or a written agreement. <A to="/privacy">Read the Privacy Policy</A>.</>],
   ['Which identity providers work?', 'Your own OpenID Connect provider, for single sign-on. SCIM 2.0 creates, updates and removes accounts as your directory changes.'],
