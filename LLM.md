@@ -28,6 +28,8 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
 | The app's origin | `lib/app.js` (`APP = https://hanzo.app`) |
 | Plan prices, checkout links | `lib/plans.js`, from `content/live/_pricing.json` (`GET /v1/billing/plans`); nothing typed |
 | Pages still drawn from captured HTML | `components/Ported` over `content/pages/*.html` |
+| Go modules (`go get hanzo.ai/<module>`) | `lib/modules.js`: `OWNED` modules have a page of their own (`app/[...mod]`, `components/pages/Module.jsx`), `SHARED` ones are product pages whose metadata carries `other: goImport(name)`. `scripts/modules.json` is hanzo-inc/app's list (name to repository); `scripts/modules.test.mjs` checks every tag in `out/` and runs after `pnpm build` (postbuild) |
+| Pages hanzo.ai serves without listing | `lib/unlisted.json`: in `routes.json` (links stay in the site), left out of the sitemap |
 | Telemetry | `components/Telemetry.jsx` (the one client, pageviews, observe, tags); `lib/track.js`: `track` (stream + browser tags) and `capture` (stream only) |
 | The app's page events | named as hanzo-inc/app names them, same param keys: `lib/funnel.js` (the plan funnel), `lib/press.js` (links), `data-hz-view` bands for `$view`; asserted in a browser by `scripts/events.mjs` (`pnpm build`, then `pnpm events`) |
 
@@ -35,6 +37,8 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
 
 - No price is typed: plans come from `/v1/billing/plans`, model rates from `/v1/pricing/models`. Personal plans are
   monthly only; a year is offered only where the catalog sells one (Team, Team Premium, Enterprise).
+- A short address of a page (`/privacy`, `/terms`, `/aup`, `/cookies`, `/data-deletion`, `/bot/details`) renders the same page
+  as its target and its canonical points there: one document, never a second copy (`components/pages/LegalRoute.jsx`).
 - No sign-in, sign-up, card or code is collected here. Those are hanzo.app's.
 - Copy is Hanzo's: change wording only on purpose.
 - A press on a link to a page of this site is taken over by `components/Morph.jsx` at the top of the capture phase and
