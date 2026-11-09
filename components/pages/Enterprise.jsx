@@ -30,6 +30,8 @@ import { Enter, useEnter, Scramble } from './enterprise/enter';
 import { EASE } from '../ui';
 import { A, More, Cta, Faq, Film, Img, DataTable, Band } from '../kit';
 import Drawer from '../v2/x-cannon/Drawer';
+import { press } from '../../lib/press';
+import { capture } from '../../lib/track';
 import './Enterprise.css';
 
 const Check = ({ size = 18 }) => <svg className="xe-ck" viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="none" strokeWidth="1.5" /><path d="M7.5 12.5l3 3 6-6.5" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -130,8 +132,8 @@ function Hero({ at: chosen, mine }) {
               Models, agents and one shared workspace for everyone in your company, in your cloud, on your servers or fully offline.
             </p>
             <div className="xe-acts">
-              <Cta to="/enterprise/start" size="lg" id="enterprise.hero" thumb>Get Enterprise plan</Cta>
-              <Cta to="https://platform.hanzo.ai" kind="link" id="enterprise.platform">Build on Hanzo Platform</Cta>
+              <Cta to="/enterprise/start" size="lg" id="enterprise.hero" thumb onClick={() => capture('enterprise_cta', { at: 'hero', to: 'start' })}>Get Enterprise plan</Cta>
+              <Cta to="https://platform.hanzo.ai" kind="link" id="enterprise.platform" onClick={() => capture('enterprise_cta', { at: 'hero', to: 'platform' })}>Build on Hanzo Platform</Cta>
             </div>
           </div>
           {/* the trust strip, in the first screen (brief 5.3): Hanzo's three promises and where to verify them */}
@@ -673,7 +675,7 @@ function Questions() {
     <section className="xe-sec xe-qa" aria-labelledby="xe-qa-h">
       <div className="xe-w xe-g">
         <header className="xe-head xe-stick"><h2 id="xe-qa-h" className="xe-h">Questions</h2></header>
-        <div className="xe-qa-list"><Faq items={QA} first={0} multi /></div>
+        <div className="xe-qa-list"><Faq items={QA} first={0} multi onOpen={(q) => capture('faq_opened', { q, page: 'enterprise' })} /></div>
       </div>
     </section>
   );
@@ -684,6 +686,8 @@ function Questions() {
 export default function Enterprise() {
   const [cut, setCut] = useState(false);
   useEffect(() => setCut(true), []);
+  // the closing call to sales is a page of this site: its press is read where the page transition reads it
+  useEffect(() => press('[data-cta="enterprise.talk"]', () => capture('enterprise_cta', { at: 'end' })), []);
   // one place in focus, shared by the hero's walls and the rows that open; a hand choosing a place stops the idle turn
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
@@ -703,7 +707,7 @@ export default function Enterprise() {
         lede="Share a few details about your company. We come back with a plan: where Hanzo runs, what it costs and how you start."
         action="Get Enterprise plan"
         to="/enterprise/start"
-        note={<p className="x-band-note"><A to="/contact-sales">Talk to sales</A> · Or email <a href="mailto:enterprise@hanzo.ai">enterprise@hanzo.ai</a></p>}
+        note={<p className="x-band-note"><A to="/contact-sales" data-cta="enterprise.talk">Talk to sales</A> · Or email <a href="mailto:enterprise@hanzo.ai">enterprise@hanzo.ai</a></p>}
       />
     </main>
   );

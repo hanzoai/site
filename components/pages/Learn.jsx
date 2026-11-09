@@ -20,6 +20,7 @@ import { NoJs } from '../v2/LineReveal';
 import '../v2/ProgramScale.css';
 import './Learn.css';
 import HeroDither from './HeroDither';
+import { capture } from '../../lib/track';
 
 const EASE = [0.16, 1, 0.3, 1];
 const DOCS = 'https://docs.hanzo.ai/docs/';
@@ -496,7 +497,7 @@ function Questions() {
             <span className="xp-count">/ {String(QA.length).padStart(2, '0')}</span>
           </span>
         </div>
-        <div className="xlr-qa-l" onPointerOver={pick} onFocus={pick} onClick={hash}><Faq items={QA} multi first={-1} /></div>
+        <div className="xlr-qa-l" onPointerOver={pick} onFocus={pick} onClick={hash}><Faq items={QA} multi first={-1} onOpen={(q) => capture('faq_opened', { q })} /></div>
       </div>
     </section>
   );

@@ -24,7 +24,8 @@
    sentences; the "01 / 05" counter; "cal.com ↗"; the numeral chips; the blinking fake caret; native title tooltips on
    the logos; raw <img>; the raw .x-btn submit; data-ask-hide on the rail; arrow keys that chose and advanced. */
 import { useEffect, useRef, useState } from 'react';
-import { readConsent } from '@hanzo/event';
+import { mirror, visit } from '@hanzo/event';
+import { track } from '../../lib/track';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { A, More, Band, Img } from '../kit';
 import Sigil from '../Sigil';
@@ -156,19 +157,27 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
     if (state === 'sending') return;
     for (let i = 0; i < STEPS.length; i++) if (wrong(i)) { setAt(i); setBad(i); return; }
     setHold(card.current?.offsetHeight || 0);
-    if (v.website) { setState('sent'); return; } // the honeypot was filled: a bot, quietly accepted
+    // the honeypot was filled: a bot, quietly accepted, and counted
+    if (v.website) { track('sales_trapped', { lead_source: 'contact-sales' }); setState('sent'); return; }
     setState('sending');
-    let consent = '';
-    try { consent = JSON.stringify(readConsent()); } catch {}
+    // the visit as cloud reads it (consent, the ad click, the browser ids, which tags already saw the lead), and the
+    // campaign the visit arrived with
+    const seen = visit();
     const params = new URLSearchParams(location.search);
-    const tags = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].filter((k) => params.get(k)).map((k) => k + '=' + params.get(k)).join('&');
+    const campaign = Object.fromEntries(['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].filter((k) => params.get(k)).map((k) => [k, params.get(k)]));
     // the note: your own words, then each inclusion you added, in Hanzo's sentence, one per line (same `need` field)
     const need = [v.need.trim(), ...adds.map((i) => INCLUDES[i])].filter(Boolean).join('\n');
-    const body = JSON.stringify({ name: v.name.trim(), email: v.email.trim(), company: v.company.trim(), size: v.size, need, source: 'hanzo.ai/contact-sales', visit: { consent, tags, userAgent: navigator.userAgent, url: location.href } });
+    const body = JSON.stringify({ name: v.name.trim(), email: v.email.trim(), company: v.company.trim(), size: v.size, need, source: 'hanzo.ai/contact-sales', visit: seen, ...(Object.keys(campaign).length ? { campaign } : {}) });
     let r = null;
     try { r = await post(body); } catch { try { r = await post(body); } catch { r = null; } } // timeout or network: one retry
-    if (r && r.ok) { setState('sent'); try { sessionStorage.removeItem(DRAFT); } catch {} }
+    let lead;
+    if (r && r.ok) { setState('sent'); try { sessionStorage.removeItem(DRAFT); } catch {} lead = (await r.json().catch(() => null))?.lead; }
     else setState('failed');
+    // the moment: a lead the CRM filed is stated by cloud on our stream, so the ad tags hear it under the lead's id and
+    // our stream is not told twice; one that was not filed still counts
+    const moment = { lead_source: 'contact-sales', company_size: v.size };
+    if (lead) mirror('sales_contacted', { ...moment, lead_id: lead }, lead, seen.tags);
+    else track('sales_contacted', moment);
   };
   const field = (s) => {
     const common = {

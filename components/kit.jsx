@@ -60,7 +60,7 @@ export function SecHead({ kicker, title, lede, center, dark, id }) {
    Closed answers stay in the HTML as hidden="until-found", so search engines read them and the browser's Find in page
    opens the one it finds. Each question has an address (#q-what-does-a-plan-cost) that opens it on arrival. */
 const qslug = (q) => (typeof q === 'string' ? 'q-' + q.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) : undefined);
-export function Faq({ items, dark, multi = false, first = 0 }) {
+export function Faq({ items, dark, multi = false, first = 0, onOpen }) {
   const [open, setOpen] = useState(() => new Set(first >= 0 ? [first] : []));
   const [shut, setShut] = useState(() => new Set(items.map((_, i) => i).filter((i) => i !== first)));
   const bodies = useRef([]);
@@ -68,7 +68,8 @@ export function Faq({ items, dark, multi = false, first = 0 }) {
     setShut((s) => { const n = new Set(s); n.delete(i); return n; });
     setOpen((o) => (multi ? new Set(o).add(i) : new Set([i])));
   }, [multi]);
-  const toggle = (i) => (open.has(i) ? setOpen((o) => { const n = new Set(o); n.delete(i); return n; }) : show(i));
+  // onOpen hears each question as the reader opens it, never as it is closed
+  const toggle = (i) => (open.has(i) ? setOpen((o) => { const n = new Set(o); n.delete(i); return n; }) : (show(i), onOpen?.(items[i][0])));
   // React treats `hidden` as a boolean, so "until-found" is set by hand once the answer has fully closed
   useEffect(() => {
     bodies.current.forEach((el, i) => { if (!el) return; if (shut.has(i) && !open.has(i)) el.setAttribute('hidden', 'until-found'); else el.removeAttribute('hidden'); });
