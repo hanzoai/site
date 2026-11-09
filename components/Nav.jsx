@@ -12,7 +12,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { NAV, MENUS } from '../lib/nav';
 import { LOGIN } from '../lib/header';
 import Sigil from './Sigil';
-import { SoundToggle } from './Sound';
 
 const EASE = [0.16, 1, 0.3, 1];
 const isLocal = (h) => h.startsWith('/');
@@ -245,7 +244,6 @@ export default function Nav({ headerRef }) {
           >
             <div className="x-sheet-top">
               <Link href="/" className="x-sheet-home" onClick={close} aria-label="Hanzo AI home">Hanzo AI</Link>
-              <SoundToggle className="x-sheet-snd" />
               <button type="button" className="x-sheet-s" onClick={search} aria-label="Search Hanzo or ask AI">
                 <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="m13.2 13.2 3.6 3.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
               </button>

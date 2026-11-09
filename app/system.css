@@ -313,13 +313,6 @@ header[data-slot=masthead] a[data-x-ask]:active, header[data-slot=masthead] :is(
 .x-sheet-ask { width: 100%; }
 
 /* ---------- sound toggle (components/Sound.jsx): in Hanzo's header, before the language button ---------- */
-.x-snd-slot { display: inline-flex; align-items: center; }
-.x-snd { width: 34px; height: 34px; border: 0; border-radius: 999px; background: transparent; color: var(--muted-foreground, #6e6e73); display: grid; place-items: center; cursor: pointer; transition: background-color var(--dur-hover), color var(--dur-hover), transform var(--dur-press) var(--ease-out-expo); }
-@media (hover: hover) { .x-snd:hover { background: var(--hover, rgba(0, 0, 0, .05)); color: var(--foreground, #0a0a0b); } }
-.x-snd:active { transform: scale(.92); }
-.x-snd[aria-pressed='false'] { color: var(--faint); }
-@media (max-width: 700px) { .x-snd-slot { display: none; } }
-.x-sheet-snd { width: 44px; height: 44px; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); margin-right: 8px; }
 
 /* ---------- the phone ask (components/Ask.jsx): slim and quiet, phones only, only where it covers nothing ---------- */
 .x-ask { position: fixed; left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: var(--x-z-ask); height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; border-radius: var(--x-radius-pill); background: var(--room-raised); color: var(--room-ink); border: 1px solid var(--room-line); box-shadow: 0 10px 28px -16px rgba(0, 0, 0, .35); font: 500 15px/1 var(--sans); text-decoration: none; -webkit-tap-highlight-color: transparent; }
