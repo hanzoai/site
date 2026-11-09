@@ -1,15 +1,15 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
-import { EASE, Head, Arrow, Copy, Mark, fine } from './ui';
+import { motion, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
+import { Head, Arrow, Copy, Mark, fine } from './ui';
 import C from '../content';
 import { SCRIPT } from '../lib/script';
 import SetupMenu from './SetupMenu';
 import McpPicker from './McpPicker';
 import { capture, track } from '../lib/track';
 
-/* Every agent Hanzo works with, as a field that swells toward the pointer, like a dock. */
-function Ico({ a, mx, my, i }) {
+/* Measure the stationary link so magnifying its glyph never moves the hover target. */
+function Ico({ a, mx, my, calm }) {
   const ref = useRef(null);
   const d = useTransform(() => {
     const x = mx.get(), y = my.get(), el = ref.current;
@@ -17,14 +17,13 @@ function Ico({ a, mx, my, i }) {
     const r = el.getBoundingClientRect();
     return Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2));
   });
-  const scale = useSpring(useTransform(d, [0, 70, 160], [1.65, 1.25, 1]), { stiffness: 320, damping: 22, mass: 0.35 });
-  const lift = useSpring(useTransform(d, [0, 160], [-8, 0]), { stiffness: 320, damping: 22, mass: 0.35 });
+  const scale = useSpring(useTransform(d, [0, 48, 80], [1.12, 1.04, 1]), { stiffness: 280, damping: 24, mass: 0.45 });
   return (
-    <motion.li initial={{ opacity: 0, y: 20, scale: 0.6 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true }} transition={{ type: 'spring', stiffness: 300, damping: 22, delay: 0.02 * i }}>
-      <motion.a ref={ref} href={a.href} className="x-ico" style={{ scale, y: lift }} data-name={a.name} aria-label={a.name}>
-        <span dangerouslySetInnerHTML={{ __html: a.icon }} />
-      </motion.a>
-    </motion.li>
+    <li>
+      <a ref={ref} href={a.href} className="x-ico" data-name={a.name} aria-label={a.name}>
+        <motion.span style={{ scale: calm ? 1 : scale, originY: 1 }} dangerouslySetInnerHTML={{ __html: a.icon }} />
+      </a>
+    </li>
   );
 }
 
@@ -150,15 +149,16 @@ function Steps() {
         <Copy text={SCRIPT[on]} label="Copy this step" onCopy={() => track('agent_step_copied', { step: on + 1 })} />
         <Copy text={SCRIPT.join('\n\n')} label="Copy the whole script" onCopy={() => track('agent_script_copied', { from: 'landing' })} />
       </div>
-      <div className="x-panel-links">
-        <a className="x-btn sm solid" href="/agents#headless">Start as an agent</a>
-        <a className="x-btn sm" href="https://hanzo.ai/llms.txt">Read llms.txt</a>
+      <div hidden>
+        <a href="/agents#headless">Start as an agent</a>
+        <a href="https://hanzo.ai/llms.txt">Read llms.txt</a>
       </div>
     </div>
   );
 }
 
 export default function Agents() {
+  const calm = useReducedMotion();
   const mx = useMotionValue(Infinity);
   const my = useMotionValue(Infinity);
   return (
@@ -168,10 +168,10 @@ export default function Agents() {
         <ul
           className="x-dock"
           data-hz-view="works-with"
-          onPointerMove={(e) => { if (fine(e)) { mx.set(e.clientX); my.set(e.clientY); } }}
+          onPointerMove={(e) => { if (!calm && fine(e)) { mx.set(e.clientX); my.set(e.clientY); } }}
           onPointerLeave={() => { mx.set(Infinity); my.set(Infinity); }}
         >
-          {C.agents.map((a, i) => <Ico key={a.name} a={a} i={i} mx={mx} my={my} />)}
+          {C.agents.map((a) => <Ico key={a.name} a={a} mx={mx} my={my} calm={calm} />)}
         </ul>
         <div className="x-panels">
           <div className="x-panel">

@@ -4,13 +4,13 @@
      that gives it its canonical link, share card (Open Graph, X) and schema.org data.
    - Styles load in this order: Hanzo's hanzo.css, globals.css, system.css (tokens and states), then the page's own CSS,
      so a page rule always wins.
-   - Layers mounted once here: arrival, progress, morph (page transitions), the phone ask, the sound kit, the phone
+   - Layers mounted once here: arrival, morph (page transitions), the phone ask, the sound kit, the phone
      layer. No cursor label: nothing floats over content (MASTER 3.3). */
 import { bootScript } from '@hanzo/appearance/state';
 import '@hanzo/design/tokens/colors.css'; // Hanzo's colour ramps: dark by default, .light for light (hanzo.css carries the same)
 import './globals.css';
 import './system.css';
-import { Smooth, Progress, Header, Footer } from '../components/Chrome';
+import { Smooth, Header, Footer } from '../components/Chrome';
 import { HeaderHTML, FooterHTML } from '../components/Shell';
 import { OpenerProvider } from '../components/Opener';
 import Morph from '../components/Morph';
@@ -70,7 +70,6 @@ export default function RootLayout({ children }) {
             <Appearance />
             <Telemetry />
             <OneTap />
-            <Progress />
             <Morph />
             <Phone />
             <Ask />
