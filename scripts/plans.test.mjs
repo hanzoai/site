@@ -11,8 +11,8 @@ import { QA as AGENTS, KAI } from '../components/pages/AgentsPage.faq.js';
 const rows = Object.values(LIVE.plans);
 const answer = (qa, q) => qa.find(([name]) => name === q)?.[1];
 const jsonld = (route) => JSON.parse(fs.readFileSync(new URL(`../content/jsonld/${route}.json`, import.meta.url), 'utf8'));
-// the code of a page without its comments: a figure in a comment is a note, one in a string is what a visitor reads
-const code = (file) => fs.readFileSync(new URL(`../components/pages/${file}`, import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+// the code of a page or a band (a path under components/) without its comments: a figure in a comment is a note, one in a string is what a visitor reads
+const code = (file) => fs.readFileSync(new URL(`../components/${file}`, import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
 
 test('personal plans are the API rows, billed by the month only', () => {
   for (const k of ['go', 'pro', 'dev', 'max', 'ultra']) {
@@ -46,7 +46,7 @@ test('a plan is named on the analytics tags by its catalog slug and what the ter
 test('a page that sells a plan types no price and no saving', () => {
   const rate = /\$\s?\d[\d,]*(?:\.\d+)?\s*(?:\/\s*(?:mo|month|seat|member|year|yr)\b|(?:a|per)\s+(?:month|year|seat|member)\b)/i;
   const saving = /−\s?\d+%|sav\w*\s+\d+%|\d+%\s+discount/i;
-  for (const file of ['Pricing.jsx', 'Pricing.faq.js', 'Bot.jsx', 'Enterprise.jsx', 'AgentsPage.jsx', 'AgentsPage.faq.js']) {
+  for (const file of ['pages/Pricing.jsx', 'pages/Pricing.faq.js', 'pages/Bot.jsx', 'pages/Enterprise.jsx', 'pages/AgentsPage.jsx', 'pages/AgentsPage.faq.js', 'home/Pricing.jsx']) {
     const text = code(file);
     assert.ok(!rate.test(text), `${file} types a recurring price: it comes from lib/plans.js`);
     assert.ok(!saving.test(text), `${file} types a saving: it comes from SEATS.saving`);

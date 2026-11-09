@@ -154,26 +154,6 @@ main:has(> .x-ann) > .xw-ways .x-way::before { content: ''; position: absolute; 
 main:has(> .x-ann) > .xw-ways .x-way:hover::before { opacity: 1; }
 main:has(> .x-ann) > .xw-ways .x-row-links { margin-top: 20px; }
 
-/* ---------- pricing: the heading and its switch on one line ---------- */
-main:has(> .x-ann) .x-pricing { padding-block: clamp(48px, 7svh, 88px); }
-main:has(> .x-ann) .x-pricing > .x-wrap { display: grid; grid-template-columns: 1fr auto; align-items: center; row-gap: 0; padding: 26px 28px 20px; }
-main:has(> .x-ann) .x-pricing > .x-wrap > * { grid-column: 1 / -1; }
-main:has(> .x-ann) .x-pricing .x-head.center { grid-column: 1; text-align: left; margin: 0; }
-main:has(> .x-ann) .x-pricing .x-head h2 { margin: 0; font-size: 34px; }
-main:has(> .x-ann) .x-pricing > .x-wrap > .x-center { grid-column: 2; grid-row: 1; }
-main:has(> .x-ann) .x-pricing .x-plans { margin-top: 16px; }
-main:has(> .x-ann) .x-pricing .x-plan { padding: 18px 20px; gap: 8px; }
-main:has(> .x-ann) .x-pricing .x-plan-d { font-size: 13.5px; min-height: 0; }
-main:has(> .x-ann) .x-pricing .x-price { margin-top: 2px; }
-main:has(> .x-ann) .x-pricing .x-price b { font-size: 32px; }
-main:has(> .x-ann) .x-pricing .x-plan > .x-btn { height: 38px; margin-top: 0; }
-main:has(> .x-ann) .x-pricing .x-plan-l { margin-top: 2px; padding-top: 10px; }
-main:has(> .x-ann) .x-pricing .x-plan-l ul { gap: 6px; }
-main:has(> .x-ann) .x-pricing .x-plan-l li { font-size: 13px; }
-main:has(> .x-ann) .x-pricing .x-plan-l p { margin-bottom: 6px; font-size: 13px; }
-main:has(> .x-ann) .x-pricing .x-row-links { margin-top: 14px; }
-main:has(> .x-ann) .x-pricing > .x-wrap { box-shadow: 0 50px 100px -70px rgba(0, 0, 0, .4); }
-
 /* ---------- dark mode: light and lifted rooms (Hanzo's tokens; never one long black scroll) ---------- */
 html.dark main:has(> .x-ann) > .x-sec::before { background-image: radial-gradient(circle, color-mix(in srgb, var(--foreground) 22%, transparent) 1px, transparent 1.5px); }
 html.dark main:has(> .x-ann) > .x-sec::after { background: radial-gradient(42% 46% at var(--lx, 18%) var(--ly, 0%), color-mix(in srgb, var(--foreground) 9%, transparent), transparent 70%); }
@@ -183,7 +163,7 @@ html.dark main:has(> .x-ann) > .x-faster::after { background: conic-gradient(fro
 html.dark main:has(> .x-ann) > .xw-ways { background: radial-gradient(70% 80% at 50% 0%, color-mix(in srgb, var(--foreground) 7%, transparent), transparent 70%); }
 html.dark main:has(> .x-ann) > .xw-ways .x-way { background: var(--x-raised); border: 1px solid var(--line); }
 html.dark main:has(> .x-ann) .x-models .x-mbtn { box-shadow: 0 0 0 1px var(--border), 0 30px 60px -38px rgba(0, 0, 0, .9); }
-html.dark main:has(> .x-ann) .x-pareto .x-plot, html.dark main:has(> .x-ann) .x-agents .x-panel, html.dark main:has(> .x-ann) .x-pricing > .x-wrap { box-shadow: 0 0 0 1px var(--border), 0 40px 80px -50px rgba(0, 0, 0, .9); }
+html.dark main:has(> .x-ann) .x-pareto .x-plot, html.dark main:has(> .x-ann) .x-agents .x-panel { box-shadow: 0 0 0 1px var(--border), 0 40px 80px -50px rgba(0, 0, 0, .9); }
 
 /* ---------- smaller screens ---------- */
 @media (max-width: 1100px) {

@@ -14,18 +14,29 @@
 @media (max-width: 1100px), (pointer: coarse) { .xh-spine { display: none; } }
 @media (prefers-reduced-motion: reduce) { .xh-spine, .xh-spine a::after, .xh-spine span { transition: none; } }
 
-/* Pricing as a contained card on the home page, not a full screen (James 7 Nov) */
-.x-pricing { background: none; padding-block: 64px; }
-.x-pricing > .x-wrap { max-width: 1080px; padding: 40px 32px 28px; border-radius: 32px; background: var(--card); border: 1px solid var(--line); }
-.x-pricing .x-head h2 { font-size: 36px; }
-.x-pricing .x-head { margin-bottom: 16px; }
-.x-pricing .x-plans { margin-top: 20px; gap: 12px; }
-.x-pricing .x-plan { padding: 22px; gap: 10px; border-radius: 22px; }
-.x-pricing .x-plan-d { min-height: 0; font-size: 14px; }
-.x-pricing .x-price b { font-size: 36px; }
-.x-pricing .x-plan > .x-btn { height: 40px; }
-.x-pricing .x-plan-l { padding-top: 14px; }
-@media (max-width: 700px) { .x-pricing > .x-wrap { padding: 28px 16px 20px; border-radius: 24px; } }
+/* Pricing on the home page: hanzo.ai's plan cards at full size, each with its mark and a mark for every line */
+.x-pricing .x-plans { align-items: stretch; }
+@media (min-width: 901px) {
+  .x-pricing .x-plans.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .x-pricing .x-plans.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; }
+}
+.x-pricing .x-price b.long { font-size: 26px; line-height: 1.15; white-space: normal; text-wrap: balance; }
+.x-pricing .x-row-links { justify-content: center; }
+.x-plan-h { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; min-height: 44px; }
+.x-plan-h h3 { display: flex; align-items: center; gap: 10px; }
+.x-plan-h h3 svg { flex: none; }
+.x-pricing .x-plan-l summary { margin: 0 0 10px; font-size: 13.5px; font-weight: 500; list-style: none; pointer-events: none; }
+.x-pricing .x-plan-l summary::-webkit-details-marker { display: none; }
+.x-pricing .x-plan-l li { display: flex; gap: 10px; padding-left: 0; }
+.x-pricing .x-plan-l li::before { content: none; }
+.x-pricing .x-plan-l li svg { flex: none; margin-top: 2px; color: var(--ink); }
+@media (max-width: 900px) {
+  .x-pricing .x-plan[data-free] { order: 1; }
+  .x-pricing .x-plan-l summary { position: relative; margin: 0; padding-right: 24px; cursor: pointer; pointer-events: auto; }
+  .x-pricing .x-plan-l summary::after { content: ''; position: absolute; right: 4px; top: 50%; width: 8px; height: 8px; margin-top: -6px; border-right: 1.6px solid var(--ink); border-bottom: 1.6px solid var(--ink); rotate: 45deg; transition: rotate .3s var(--ease); }
+  .x-pricing .x-plan-l[open] summary { margin-bottom: 10px; }
+  .x-pricing .x-plan-l[open] summary::after { rotate: -135deg; margin-top: -2px; }
+}
 
 @media (hover: hover) {
   .x-auth-b.solid:hover { background: light-dark(#262626, var(--primary-hover)); border-color: light-dark(#262626, var(--primary-hover)); }
