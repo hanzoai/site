@@ -71,7 +71,7 @@ We use Hanzo's own system, exactly as live hanzo.ai runs it, and build none of o
 - **`npm run build` refuses stale live figures** when hanzo.ai is unreachable, as in the cloud sandbox. `HZ_LIVE_OFFLINE=1 npm run build` builds from the saved figures on purpose.
 
 ## Left for the page chats (measured 8 Nov)
-- `/` (Home): `.xs-ev` (activity feed), `.xh-pause` and the platform mock in `components/pages/Home.css`.
+- `/` (Home): the platform mock in `components/pages/Home.css`.
 - `/pricing`: the `.xpr-*` panel, tabs and rail.
 - `/chat`: the `.cht-*` window, tools and rows.
 - Every other page: run `darkcheck.mjs` on it.

@@ -2,10 +2,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
 import { EASE, Count, fine, Mark, copyText } from './ui';
-import A2Pause from './v2/A2Pause';
 import C from '../content';
 import SetupMenu from './SetupMenu';
-import { MORE, SceneLog, ShellLines, PhoneCells, Feed, Chips } from './home/HeroScenes';
+import { MORE, SceneLog, ShellLines, PhoneCells } from './home/HeroScenes';
 import { press } from '../lib/press';
 import { capture, track } from '../lib/track';
 
@@ -109,7 +108,7 @@ function Roster({ on }) {
   const [step, setStep] = useState(0);
   useEffect(() => {
     // row 32 looks exactly like row 0, so the jump back to 0 is invisible
-    const t = setInterval(() => { if (shown.current && !document.querySelector('.x-hero[data-off]')) setStep((s) => (s >= ROSTER.length ? 0 : s + 1)); }, 2200);
+    const t = setInterval(() => { if (shown.current) setStep((s) => (s >= ROSTER.length ? 0 : s + 1)); }, 2200);
     return () => clearInterval(t);
   }, []);
   // like Hanzo's demo, every agent's speed moves and the bill ticks: written straight to the text, no re-render
@@ -117,7 +116,7 @@ function Roster({ on }) {
   useEffect(() => {
     let cost = 0;
     const t = setInterval(() => {
-      if (!shown.current || document.querySelector('.x-hero[data-off]') || !box.current) return;
+      if (!shown.current || !box.current) return;
       box.current.querySelectorAll('[data-tps]').forEach((el) => { if (Math.random() < 0.45) { const b = +el.dataset.tps; el.textContent = Math.max(1, Math.round(b * (0.82 + Math.random() * 0.36))) + '/s'; } });
       cost += 0.0001 + Math.random() * 0.0004;
       const c = box.current.querySelector('[data-cost]');
@@ -180,10 +179,6 @@ export default function Hero() {
   const live = useRef(true);
   live.current = inView;
   const user = useRef(false);
-  // the demo can be stopped (WCAG 2.2.2): the loop holds, the roster rests
-  const [paused, setPaused] = useState(false);
-  const stop = useRef(false);
-  stop.current = paused;
   // the terminal's Copy copies exactly the command it shows, and says so
   const [copied, setCopied] = useState(false);
   const copyT = useRef(0);
@@ -205,15 +200,9 @@ export default function Hero() {
   // after the opening, the rest of Hanzo's day plays: one scene every 6.5 s, the company log every 1.8 s
   const [sc, setSc] = useState(-1);
   const [side, setSide] = useState(true);
-  const [fd, setFd] = useState(0);
-  useEffect(() => {
-    if (calm) return;
-    const t = setInterval(() => { if (live.current && !stop.current) setFd((n) => n + 1); }, 1800);
-    return () => clearInterval(t);
-  }, [calm]);
   useEffect(() => {
     if (calm || phase < 4) return;
-    const t = setInterval(() => { if (live.current && !stop.current) setSc((n) => (n + 1) % MORE.length); }, 6500);
+    const t = setInterval(() => { if (live.current) setSc((n) => (n + 1) % MORE.length); }, 6500);
     return () => clearInterval(t);
   }, [calm, phase >= 4]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -222,8 +211,8 @@ export default function Hero() {
     if (calm) { setTyped(PROMPT.length); setCmd(CMD.length); setPhase(4); setLog(4); return; }
     let dead = false;
     const nap = (ms) => new Promise((r) => setTimeout(r, ms));
-    const w = async (ms) => { await nap(ms); while (!dead && stop.current) await nap(300); };
-    const held = async () => { while (!dead && (!live.current || stop.current)) await nap(400); };
+    const w = nap;
+    const held = async () => { while (!dead && !live.current) await nap(400); };
     (async () => {
       await w(1100);
       (async () => { for (let i = 0; i <= CMD.length && !dead; i++) { setCmd(i); await w(i < 4 ? 90 : 36); } })();
@@ -283,7 +272,7 @@ export default function Hero() {
   );
 
   return (
-    <section className="x-hero" data-slot="hero" ref={host} data-off={paused ? '' : undefined} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }} aria-labelledby="home-title">
+    <section className="x-hero" data-slot="hero" ref={host} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }} aria-labelledby="home-title">
       <Dots host={host} />
       <div className="x-wrap x-hero-grid">
         <motion.div className="x-hero-copy" style={{ y: copyY, opacity: copyO }}>
@@ -318,7 +307,6 @@ export default function Hero() {
         </motion.div>
 
         <motion.div className="x-hero-stage" ref={fit} style={{ y: stageY, scale: stageS, height: `calc(var(--sh) * ${k})` }}>
-          <A2Pause paused={paused} onChange={setPaused} label={paused ? 'Play the demo' : 'Pause the demo'} className="xh-pause" />
           <div className="x-fit" style={{ transform: `scale(${k})` }}>
             <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
               {/* the desktop app */}
@@ -348,7 +336,6 @@ export default function Hero() {
                       <Bubble on={phase >= 2}>Done. maxpower connects your agents, shares one key, and runs them side by side.</Bubble>
                       <AppCard on={phase >= 2} />
                     </div>
-                    <Chips at={sc} />
                     <SceneLog at={sc} />
                     <div className="x-input">
                       <span className="x-plus">+</span>
@@ -409,7 +396,6 @@ export default function Hero() {
               </motion.div>
             </motion.div>
           </div>
-          <Feed i={fd} sc={sc} />
           <SetupMenu up initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 1.1 }} />
         </motion.div>
       </div>
