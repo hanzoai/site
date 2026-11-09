@@ -3,6 +3,7 @@
    is reached, and links inside the site navigate without a reload. */
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { has } from '../lib/route';
 
 export default function Ported({ html }) {
   const ref = useRef(null);
@@ -20,7 +21,7 @@ export default function Ported({ html }) {
     blocks.forEach((b) => b.classList.contains('x-rv') && io.observe(b));
     const click = (e) => {
       const a = e.target.closest('a[href^="/"]');
-      if (!a || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey || a.hasAttribute('download')) return;
+      if (!a || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey || a.hasAttribute('download') || !has(a.getAttribute('href'))) return;
       e.preventDefault();
       router.push(a.getAttribute('href'));
     };

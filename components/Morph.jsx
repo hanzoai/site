@@ -15,6 +15,7 @@ import { useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import './Morph.css';
 import { play } from '../lib/sound';
+import { has } from '../lib/route';
 
 const BIG = (r) => r.width >= 160 && r.height >= 90;
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -177,7 +178,8 @@ export default function Morph() {
     const local = (a) => {
       if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download') || a.closest('[data-no-morph],[data-card]')) return null;
       const u = new URL(a.href, location.href);
-      return u.origin === location.origin && !/\.(pdf|xml|txt|md|json|png|jpe?g|webp|svg|zip)$/i.test(u.pathname) ? u : null;
+      // only this site's own pages move in place: hanzo.ai's sign-in pages are the app's, loaded whole
+      return u.origin === location.origin && has(u.pathname) && !/\.(pdf|xml|txt|md|json|png|jpe?g|webp|svg|zip)$/i.test(u.pathname) ? u : null;
     };
     // fetch the next page while the pointer is on its way to the link
     const warm = (e) => { const u = local(e.target.closest?.('a[href]')); if (u && !seen.has(u.pathname)) { seen.add(u.pathname); router.prefetch(u.pathname); } };
