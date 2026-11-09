@@ -16,7 +16,8 @@
    where you are, and the contents on the sheet open any chapter. On a phone the chapters read straight down.
    Beyond: the fit meter, then a three-step application. Mark the requirements you already meet (each tick draws
    itself); every chapter keeps its count, the total waits beside the form, and the form asks for a few fields at a
-   time, checking each step before the next. It writes the email Hanzo's form writes; nothing is sent from here.
+   time, checking each step before the next. It files what Hanzo's form files (components/pages/Careers.apply.js): the
+   resume file up to Hanzo's careers bucket, then one candidate lead, both on api.hanzo.ai.
    Motion (not only scroll): arrival (the title cut in), idle (the contour drifts in the sheet), state (ticks draw,
    meters fill, the form slides step to step, share answers with a tick), pointer (magnetic ask, sibling rail drags
    with inertia), scroll (the chapter wipes).
@@ -44,6 +45,7 @@ import FamGrow from '../v2/FamGrow';
 import { ui } from '../v2/famUi';
 import { useSheetLanding } from './careers/door';
 import { track } from '../../lib/track';
+import { answers, problem, send } from './Careers.apply';
 import '../v2/fam.css';
 import './CareerRole.css';
 
@@ -61,12 +63,14 @@ function Box({ on, soft }) {
   );
 }
 
-/* the application, three steps at a time; it writes the same email the form on hanzo.ai writes */
+/* the application, three steps at a time; it files what the form on hanzo.ai files: the resume, then the lead */
 function Steps({ f, role }) {
   const form = useRef(null);
   const file = useRef(null);
   const [at, setAt] = useState(0);
-  const [msg, setMsg] = useState('');
+  const [state, setState] = useState('idle'); // idle | sending | sent
+  const [err, setErr] = useState('');
+  const [mail, setMail] = useState(''); // the address the application was filed under
   const [live, setLive] = useState(false);
   useEffect(() => setLive(true), []);
   const n = f.fields.length;
@@ -80,19 +84,21 @@ function Steps({ f, role }) {
     setAt(k);
     setTimeout(() => { const el = inStep(k)[0]; el && el.focus({ preventScroll: true }); }, 380);
   };
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
+    if (state === 'sending') return;
     if (at < last) { if (check(at)) go(at + 1); return; }
     for (let k = 0; k <= last; k++) if (inStep(k).some((el) => !el.checkValidity())) { setAt(k); setTimeout(() => check(k), 380); return; }
     const d = new FormData(form.current);
-    const lines = f.fields.map((x, i) => `${x.label}: ${d.get('f' + i) || ''}`);
-    const nm = f.file && file.current && file.current.files[0] && file.current.files[0].name;
-    if (nm) lines.push(`${f.file.label}: ${nm}`);
-    const subject = role.email.href.split('?')[1] || '';
-    // the application is handed to the visitor's mail: that is the moment it is sent from here
-    track('career_application_submitted', { role: role.title, department: role.chips[0], slug: role.slug });
-    location.href = `mailto:${f.note.mail}?${subject}&body=${encodeURIComponent(lines.join('\n'))}`;
-    setMsg(nm || ' ');
+    const a = answers(f.fields.map((x, i) => [x.label.replace(/\s*\*$/, ''), d.get('f' + i) || '']));
+    const upload = file.current && file.current.files[0];
+    const wrong = problem(a, upload);
+    if (wrong) { setErr(wrong); return; }
+    setErr('');
+    setState('sending');
+    const r = await send({ title: role.title, department: role.chips[0], location: role.chips[1], slug: role.slug }, a, upload, d.get('news') === 'on');
+    track('career_application_submitted', { role: role.title, department: role.chips[0], slug: role.slug, ...(r.ok ? {} : { error: r.cause || r.error }) });
+    if (r.ok) { setState('sent'); setMail(a.email.trim()); } else { setState('idle'); setErr(r.error); }
   };
   const field = ([x, i]) => (
     <label key={i} className={'xcj-fld' + (x.type === 'textarea' ? ' wide' : '')}>
@@ -127,9 +133,10 @@ function Steps({ f, role }) {
       <div className="xcj-acts">
         {at > 0 && <button type="button" className="xcj-btn ghost round" aria-label={ui('previous')} onClick={() => go(at - 1)}><Arrow back /></button>}
         {at < last && <button type="button" className="xcj-btn solid round" aria-label={ui('next')} onClick={() => { if (check(at)) go(at + 1); }}><Arrow /></button>}
-        <button type="submit" className="xcj-btn solid" hidden={live && at < last}>{f.submit}</button>
+        <button type="submit" className="xcj-btn solid" hidden={live && at < last} disabled={state === 'sending'}>{state === 'sending' ? 'Submitting Application…' : f.submit}</button>
       </div>
-      <p className="xcj-msg" role="status">{msg && <><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg><span className="x-sr">{ui('email_ready')}</span><span aria-hidden="true">{f.note.mail}{msg.trim() ? ' · ' + msg : ''}</span></>}</p>
+      <p className="xcj-msg" role="status">{state === 'sent' && <><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg><span>Application Received! Thank you for applying for {role.title}. Our team reviews submissions promptly and will contact you at {mail}.</span></>}</p>
+      {err && <p className="xcj-err" role="alert">{err}</p>}
     </form>
   );
 }

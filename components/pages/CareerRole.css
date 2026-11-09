@@ -151,6 +151,7 @@ html.js .xcj-toc li::before, html.js .xcj-toc li:last-child::after { animation: 
 @media (hover: hover) { .xcj-btn.ghost:hover { border-color: light-dark(rgba(0, 0, 0, .4), var(--white-40)); } .xcj-btn.solid:hover { background: light-dark(#262626, var(--primary)); } .xcj-btn svg { transition: transform var(--ui) var(--out); } .xcj-btn.solid:hover svg { transform: translateX(3px); } }
 .xcj-msg { display: flex; align-items: center; gap: 8px; margin: 16px 0 0; min-height: 1.4em; font-size: 15px; color: var(--ink); }
 .xcj-msg:empty { margin: 0; min-height: 0; }
+.xcj-err { margin: 12px 0 0; padding-left: 12px; border-left: 2px solid currentColor; font-size: 15px; color: var(--ink); }
 
 /* the other roles */
 .xcj-next-h { margin: 0 0 32px; }
