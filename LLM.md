@@ -52,8 +52,12 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
 - Copy is Hanzo's: change wording only on purpose.
 - The hero demo draws each device as its product draws itself, in the product's own words: the desktop is @hanzo/app's
   window (rail: Chat, Dev, Design, Studio, Tabs, Library, Scheduled tasks, Customize, More; the lit place's sidebar),
-  the terminal is `hanzo dev` (`▶`, `• Explored`, `• Added`, `• Edited`, `• Ran`, `└`), the phone is hanzo/mobile (Chat,
-  Tasks, Voice, Settings). Add nothing a product does not have: no roster, no notifications, no pause button.
+  the terminal is `hanzo dev` (`▶`, `• Explored`, `• Added`, `• Edited`, `• Ran`, `└`; tabs install, up and dev only),
+  the phone is hanzo.app on a phone, @hanzo/app's mobile layout, which is what people use: the bar's two round glass
+  buttons (menu, New chat), the conversation with the five marks under an answer, the composer pinned above the home
+  indicator ("Type / for skills", +, mic, voice mode, Auto), and "What's up?" when the chat is empty. It has no tab bar.
+  hanzo/mobile is the native app: use it only where it agrees with hanzo.app. Add nothing a product does not have: no
+  roster, no notifications, no pause button.
 - The logo strips (`Marquee`, `components/Chrome.jsx`) are CSS: a transform loop on `.x-mq-track`, paused under the pointer, on
   focus and off screen, none under reduced motion, no pause button. A `C.backed` item carries `w`, `h` and `hang` (px): the
   wordmark's size and how far it falls below its text (a smile, a descender, a mark), so `.x-logo[data-base]` sits every

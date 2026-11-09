@@ -153,8 +153,6 @@ await expects('home: a link in the hero', 'cta_clicked', { page: '/', section: '
 await expects('home: a link to checkout is also the funnel moment', 'checkout_started', { link_url: /hanzo\.app\/pay/, page_path: '/', cta: 'home.hero-go' });
 await expects('hero demo: the sidebar', 'hero_demo', { control: 'sidebar' }, () => tap('.xs-sidet'));
 await expects('hero demo: the account menu', 'hero_demo', { control: 'account' }, () => tap('.x-acct-b'));
-await expects('hero demo: the phone, Tasks', 'hero_demo', { control: 'phone-tasks' }, () => tap('.xm-tabs button', 1));
-await expects('hero demo: the phone, Chat', 'hero_demo', { control: 'phone-chat' }, () => tap('.xm-tabs button', 0));
 await expects('hero terminal: Copy', 'home_copied', { block: 'hero', command: 'curl -fsSL https://hanzo.sh | sh' }, () => tap('.x-term-copy'));
 await silent('hero: the setup prompt says nothing', 'setup_prompt_copied', () => tap('.x-hero .x-setup-main'));
 await silent('hero: its menu says nothing', 'agent_menu_toggled', () => tap('.x-hero .x-setup-chev'));

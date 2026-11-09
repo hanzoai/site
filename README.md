@@ -383,7 +383,7 @@ at 1470×801: its title and its content fit on one screen. Top to bottom:
 
 | Section | Component | Notes |
 |---|---|---|
-| Hero, typing product demo | `components/Hero.jsx`, `home/Devices.jsx` | The scenes' data is in `home/hero-scenes.json`; the three devices are drawn as @hanzo/app, `hanzo dev` and hanzo/mobile draw themselves |
+| Hero, typing product demo | `components/Hero.jsx`, `home/Devices.jsx` | The scenes' data is in `home/hero-scenes.json`; the three devices are drawn as @hanzo/app, `hanzo dev` and hanzo.app on a phone draw themselves |
 | Backed by / Trusted by | `Marquee` (`components/Chrome.jsx`) | Logos in `public/logos/` (white in dark, black in light) |
 | Models: the card grid, Enso to Mori | `components/Models.jsx` | The Enso feature card and eight model cards in one frame (`home/wow.css`); each film plays while on screen, a click opens the model's page |
 | Products: a 3D journey, App to Team | `components/home/Platform.jsx`, `home/journey/Journey.jsx`, `home/journey/scene.js` | Pinned; scrolling moves a camera through the nine products in dock order, each a faceted graphite slab carrying its own screen (`public/home/products/<name>-<theme>.webp`, captured from the stage); drag turns one, click opens it, the dock jumps to one. **three.js (0.186.1) loads only by dynamic import**, in its own chunk, when the section comes near; never in the first load. Phones, reduced motion and no WebGL get the dock and stage |

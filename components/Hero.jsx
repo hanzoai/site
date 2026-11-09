@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
 import { EASE, Count, fine, copyText } from './ui';
 import SetupMenu from './SetupMenu';
-import { Desk, MORE, Phone, Term, screenAt } from './home/Devices';
+import { Desk, MORE, Phone, Term } from './home/Devices';
 import { press } from '../lib/press';
 import { capture, track } from '../lib/track';
 import './home/demo.css';
@@ -102,8 +102,6 @@ export default function Hero() {
   // after the opening, the rest of Hanzo's day plays: one scene every 6.5 s
   const [sc, setSc] = useState(-1);
   const [side, setSide] = useState(true);
-  // the phone shows the screen the day is on until the visitor picks one
-  const [pick, setPick] = useState(null);
   useEffect(() => {
     if (calm || phase < 4) return;
     const t = setInterval(() => { if (live.current) setSc((n) => (n + 1) % MORE.length); }, 6500);
@@ -212,7 +210,7 @@ export default function Hero() {
             <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
               <Desk sc={sc} phase={phase} side={side} onSide={() => setSide((v) => !v)} promptEl={promptEl} full={typed === PROMPT.length} />
               <Term sc={sc} cmdEl={cmdEl} done={cmdDone} copy={copy} copied={copied} cmd={CMD} />
-              <Phone sc={sc} phase={phase} tab={pick ?? screenAt(sc, phase)} onTab={setPick} />
+              <Phone sc={sc} phase={phase} />
             </motion.div>
           </div>
           <SetupMenu up initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 1.1 }} />

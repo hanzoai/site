@@ -6,11 +6,11 @@
      Customize, More, and the account at its foot; beside it the sidebar of the lit place (Chat: New chat, Search,
      Recents. Dev: Work with New run, Projects, Issues, Templates. Studio: Create with New creation, Explore, Library,
      Activity. Tabs: New terminal, New desktop, New browser, New sandbox, Open tabs); the pane is inset in the window.
-   - the terminal: `hanzo dev` as it prints, one tab for each thing the day does (install, up, dev, maxpower): the
-     session's header, `▶` for what is asked, `• Explored`, `• Added`, `• Edited`, `• Ran` with `└` under them.
-   - the phone: the Hanzo mobile app (hanzo/mobile): Chat, Tasks, Voice and Settings along its foot. Chat is its header
-     with the model, the empty state, a reply's code on its own slab, the composer; Tasks is Local runs and Cloud
-     sessions.
+   - the terminal: `hanzo dev` as it prints, one tab for each of install, up and dev, the session's header, `▶` for
+     what is asked, `• Explored`, `• Added`, `• Edited`, `• Ran` with `└` under them.
+   - the phone: hanzo.app on a phone, @hanzo/app's mobile layout (what people use): the bar's round glass buttons, the
+     conversation, the composer pinned above the home indicator. hanzo/mobile, the native app, is used only where it
+     agrees with it.
    The day they play is hanzo.ai's own (hero-scenes.json); a scene lights the place it happens in. Every scene is in the
    page from the first paint (search engines, screen readers); one shows at a time. */
 import { useEffect, useRef, useState } from 'react';
@@ -273,108 +273,58 @@ export function Term({ sc, cmdEl, done, copy, copied, cmd }) {
 
 /* ---------- the phone ---------- */
 
-const MODEL = 'zen5'; // the app's default chat model
-const SCREENS = [['chat', 'Chat', 'message-circle'], ['tasks', 'Tasks', 'list-checks'], ['voice', 'Voice', 'mic'], ['settings', 'Settings', 'settings']];
+// the app's two round glass buttons (@hanzo/app Bar): the drawer's mark, two strokes with the lower one shorter, and New chat's pen
+const Drawer = () => <svg width="15" height="9" viewBox="0 0 19 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M1 1h17M1 10h10.5" /></svg>;
+// what sits under an answer: copy, rate, listen, share, regenerate
+const REPLY = ['copy', 'thumbs-up', 'volume-2', 'share', 'refresh-cw'];
 
-// the screen the day shows on the phone: a build or an image is a task, an ask is a chat
-export const screenAt = (sc, phase) => {
-  for (let i = sc; i >= 0; i--) { if (MORE[i].place === 'studio') return 'tasks'; if (MORE[i].phone) return 'chat'; }
-  return phase >= 3 ? 'tasks' : 'chat';
-};
+// the latest thing the phone was asked up to scene `sc`: an ask with its lines, or a piece made in Studio
+const asked = (s) => s.phone || s.place === 'studio';
 
-const Chip = ({ word }) => <span className="xm-chip"><i data-w={word} />{word}</span>;
-
-function Chat({ sc, phase }) {
-  const now = last(sc, (s) => s.phone);
+/* One turn: what was asked, then the answer in the app's words: prose, a code block for what an agent printed, or the
+   piece Studio made, with the answer's five marks under it. */
+function Turn({ ask, on, answer, children }) {
   return (
-    <>
-      <div className="xm-head"><b>Chat</b><span className="xm-model">{MODEL}<Glyph name="chevron-down" size={9} /></span><Glyph name="ghost" size={12} /></div>
-      <div className="xm-log">
-        <div className="xm-empty" data-on={now < 0 && phase < 1 ? '' : undefined}><b>Hanzo</b><span>{`Ask anything — ${MODEL} answers.`}</span></div>
-        <div className="xm-turn" data-on={now < 0 && phase >= 1 ? '' : undefined}>
-          <div className="xm-me"><span>{OPEN.ask}</span></div>
-          <p className="xm-ai" data-on={phase >= 2 ? '' : undefined}>{OPEN.answer}</p>
-        </div>
-        {MORE.map((s, i) => (s.phone ? (
-          <div key={i} className="xm-turn" data-on={i === now ? '' : undefined} aria-hidden={i === now ? undefined : true}>
-            <div className="xm-me"><span>{s.phone.ask}</span></div>
-            <pre className="xm-slab x-mono">{s.phone.cells.join('\n')}</pre>
-          </div>
-        ) : null))}
+    <div className="xm-turn" data-on={on ? '' : undefined} aria-hidden={on ? undefined : true}>
+      <div className="xm-me"><span>{ask}</span></div>
+      <div className="xm-ai" data-on={answer ? '' : undefined}>
+        {children}
+        <div className="xm-reply" aria-hidden="true">{REPLY.map((g) => <span key={g}><Glyph name={g} size={20} stroke={1.5} /></span>)}</div>
       </div>
-      <div className="xm-comp"><Glyph name="plus" size={12} /><span>Message Hanzo</span><i><Glyph name="arrow-up" size={11} stroke={2.2} /></i></div>
-    </>
-  );
-}
-
-function Tasks({ sc, phase }) {
-  // the build is a cloud session, running and then done; an image is a local run
-  const dev = last(sc, (s) => s.place === 'dev');
-  const img = last(sc, (s) => s.place === 'studio');
-  const title = dev >= 0 ? MORE[dev].run : MORE.find((s) => s.place === 'dev').run;
-  const running = sc < 0 ? phase === 3 : dev === sc;
-  const art = img >= 0 ? MORE[img] : null;
-  return (
-    <div className="xm-tasks">
-      <div className="xm-h1"><b>Tasks</b><Glyph name="image-plus" size={13} /></div>
-      <p className="xm-label">Local runs</p>
-      {art ? (
-        <div className="xm-card">
-          <span className="xm-thumb"><img src={pic(art.made[art.pick ?? 0].src)} alt="" loading="lazy" decoding="async" /></span>
-          <span className="xm-card-t"><b>{art.prompt}</b><small>{img === sc ? 'generating' : 'done'}</small></span>
-        </div>
-      ) : (
-        <div className="xm-note"><b>Nothing is running</b><span>Work this app starts — a chat turn, an image, a voice session — shows here live.</span></div>
-      )}
-      <p className="xm-label">Cloud sessions</p>
-      {sc < 0 && phase < 3 ? (
-        <div className="xm-note"><b>No cloud sessions</b><span>Agents running in the Hanzo cloud land here. None exist for this account right now.</span></div>
-      ) : (
-        <div className="xm-card">
-          <span className="xm-icon"><Glyph name="cloud" size={13} /></span>
-          <span className="xm-card-t"><b>{title}</b><small>just now</small></span>
-          <Chip word={running ? 'running' : 'done'} />
-        </div>
-      )}
     </div>
   );
 }
 
-const Voice = () => (
-  <div className="xm-voice">
-    <div className="xm-h1"><b>Voice</b></div>
-    <p>Nothing said yet. Hold the mic, speak, release to send. Hanzo answers out loud.</p>
-    <span className="xm-mic"><Glyph name="mic" size={22} /></span>
-    <small>Hold to talk</small>
-  </div>
-);
-
-const Settings = () => (
-  <div className="xm-tasks">
-    <div className="xm-h1"><b>Settings</b></div>
-    <p className="xm-label">Account</p>
-    <div className="xm-rows"><p><span>Identity</span><b>Hanzo ID</b></p><p><span>Email</span><b>dev@hanzo.ai</b></p></div>
-    <p className="xm-label">Model</p>
-    <div className="xm-rows"><p><span>Default chat model</span><b>{MODEL}</b></p></div>
-  </div>
-);
-
-export function Phone({ sc, phase, tab, onTab }) {
+/* The phone is hanzo.app on a phone (@hanzo/app's mobile layout, which is what people use): the bar's two round buttons,
+   the conversation, and the composer pinned above the home indicator, drawn at the phone's own 393 points and scaled to
+   the bezel. An empty chat asks "What's up?"; the composer says "Type / for skills", with + for files, agents and skills,
+   the mic and its menu, voice mode, and the effort, Auto, under it. */
+export function Phone({ sc, phase }) {
+  const now = last(sc, asked);
+  const open = now < 0;
   return (
     <motion.div className="x-phone" initial={{ opacity: 0, z: -80, x: 80 }} animate={{ opacity: 1, z: 130, x: 0 }} transition={{ duration: 1.4, ease: EASE, delay: 0.5 }}>
       <div className="x-phone-scr">
-        <div className="x-status"><b>9:41</b><span className="x-island" /><span>●●●</span></div>
-        <div className="xm-body">
-          {[['chat', <Chat key="c" sc={sc} phase={phase} />], ['tasks', <Tasks key="t" sc={sc} phase={phase} />], ['voice', <Voice key="v" />], ['settings', <Settings key="s" />]].map(([id, screen]) => (
-            <div key={id} className="xm-screen" id={'phone-' + id} role="tabpanel" data-on={tab === id} inert={tab !== id}>{screen}</div>
-          ))}
-        </div>
-        <div className="xm-tabs" role="tablist" aria-label="Hanzo app">
-          {SCREENS.map(([id, label, icon]) => (
-            <button key={id} type="button" role="tab" aria-selected={tab === id} aria-controls={'phone-' + id} onClick={() => { track('hero_demo', { control: 'phone-' + id }); onTab(id); }}>
-              <Glyph name={icon} size={15} /><span>{label}</span>
-            </button>
-          ))}
+        <div className="xm-ui">
+          <div className="xm-status"><b>9:41</b><span className="x-island" /><span className="xm-sys"><Glyph name="signal" size={18} stroke={2} /><Glyph name="wifi" size={18} stroke={2} /><Glyph name="battery-full" size={22} stroke={1.75} /></span></div>
+          <div className="xm-bar" aria-hidden="true"><span className="xm-round"><Drawer /></span><span className="xm-round"><Glyph name="square-pen" size={20} stroke={1.6} /></span></div>
+          <div className="xm-main">
+            <h2 className="xm-hi" data-on={open && phase < 1 ? '' : undefined}>What’s up?</h2>
+            <Turn ask={OPEN.ask} on={open && phase >= 1} answer={phase >= 2}><p>{OPEN.answer}</p></Turn>
+            {MORE.map((s, i) => (asked(s) ? (
+              <Turn key={i} ask={s.phone ? s.phone.ask : s.prompt} on={i === now} answer>
+                {s.phone ? <pre className="xm-code x-mono">{s.phone.cells.join('\n')}</pre> : <img className="xm-art" src={pic(s.made[s.pick ?? 0].src)} alt="" loading="lazy" decoding="async" />}
+              </Turn>
+            ) : null))}
+          </div>
+          <div className="xm-shell">
+            <div className="xm-comp">
+              <p>Type / for skills</p>
+              <div><i><Glyph name="plus" size={22} stroke={1.5} /></i><span /><i><Glyph name="mic" size={20} stroke={1.6} /></i><i className="sm"><Glyph name="chevron-down" size={14} stroke={2} /></i><i><Glyph name="audio-lines" size={22} stroke={1.6} /></i></div>
+            </div>
+            <span className="xm-effort">Auto</span>
+          </div>
+          <i className="xm-home" />
         </div>
       </div>
       <a className="x-phone-dl" href="/download">Download App</a>
