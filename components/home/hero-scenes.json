@@ -222,7 +222,7 @@
 ],
 "ship": true,
 "shell": {
-"tab": "maxpower",
+"tab": "up",
 "lines": [
 [
 300,
@@ -406,7 +406,7 @@
 ],
 "ship": true,
 "shell": {
-"tab": "maxpower",
+"tab": "up",
 "lines": [
 [
 300,
@@ -592,7 +592,7 @@
 ],
 "ship": true,
 "shell": {
-"tab": "maxpower",
+"tab": "up",
 "lines": [
 [
 300,
@@ -800,7 +800,7 @@
 ],
 "ship": true,
 "shell": {
-"tab": "maxpower",
+"tab": "up",
 "lines": [
 [
 300,
@@ -983,7 +983,7 @@
 }
 ],
 "shell": {
-"tab": "maxpower",
+"tab": "dev",
 "lines": [
 [
 300,
@@ -1021,31 +1021,6 @@
 "• Developer Beta: Selected",
 "• Coupon VIBE20 applied",
 "• Ready → hanzo.ai/beta"
-]
-},
-"shell": {
-"tab": "maxpower",
-"lines": [
-[
-300,
-"run",
-"hanzo beta --join"
-],
-[
-700,
-"out",
-"✓ Joined Developer Beta (20% off coupon VIBE20 applied)"
-],
-[
-300,
-"out",
-"  Status: Applications open"
-],
-[
-300,
-"out",
-"  Apply: https://hanzo.ai/beta"
-]
 ]
 }
 }
