@@ -1,0 +1,59 @@
+/* the walkthroughs and the connector explorer (prefix xsd-): repo tokens only; the figures draw in the current ink */
+.xsd-wk, .xsd-cn { margin-top: clamp(28px, 4vw, 48px); padding: clamp(14px, 2vw, 22px); border: 1px solid var(--line); border-radius: 22px; background: var(--card); }
+.xsd-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; margin-bottom: 16px; }
+.xsd-head h3 { display: inline-flex; align-items: center; gap: 10px; margin: 0; font-size: 16px; font-weight: 560; letter-spacing: -.01em; }
+.xsd-head svg { flex: none; }
+.xsd-wk .x-tablist { max-width: 100%; }
+
+.xsd-play { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 14px; }
+.xsd-screen, .xsd-side { min-width: 0; border: 1px solid var(--line); border-radius: 16px; background: var(--bg); overflow: hidden; }
+.xsd-screen { display: flex; flex-direction: column; justify-content: space-between; }
+.xsd-screen header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.xsd-screen header [data-b] { font-size: 14.5px; font-weight: 560; }
+.xsd-screen header span { font-size: 12px; color: var(--faint); }
+.xsd-fig { height: 190px; padding: 14px; background: var(--card); color: var(--ink); }
+.xsd-fig svg { display: block; width: 100%; height: 100%; }
+.xsd-ctl { display: grid; gap: 10px; padding: 14px; border-top: 1px solid var(--line); }
+.xsd-chaps { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
+.xsd-chaps button { display: grid; gap: 6px; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; color: var(--faint); min-width: 0; }
+.xsd-chaps i { display: block; height: 4px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.xsd-chaps u { display: block; height: 100%; background: var(--ink); transition: width .35s linear; }
+.xsd-chaps span { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xsd-chaps button[data-on] { color: var(--ink); }
+.xsd-chaps button[data-on] span { font-weight: 700; }
+.xsd-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.xsd-btns { display: flex; align-items: center; gap: 8px; }
+.xsd-play-b, .xsd-ic { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 30px; border-radius: 8px; border: 1px solid var(--line); font: 500 12px/1 var(--sans); cursor: pointer; transition: background-color .2s, transform 90ms; }
+.xsd-play-b { padding: 0 12px; background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); font-weight: 600; }
+.xsd-ic { min-width: 30px; padding: 0 8px; background: var(--x-fill); color: var(--ink); }
+.xsd-play-b:active, .xsd-ic:active { transform: scale(.96); }
+.xsd-time { font-size: 12px; color: var(--faint); }
+.xsd-time [hidden] { display: none; }
+
+.xsd-side { display: flex; flex-direction: column; gap: 12px; padding: 16px; justify-content: space-between; }
+.xsd-sum { margin: 0; font-size: 14px; line-height: 1.55; color: var(--soft); }
+.xsd-list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.xsd-list button { display: grid; gap: 2px; width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); text-align: left; cursor: pointer; transition: border-color .2s, background-color .2s; }
+.xsd-list button[data-on] { border-color: var(--ink); background: var(--card); }
+.xsd-list [data-b] { font-size: 14px; font-weight: 560; }
+.xsd-list span { font-size: 12.5px; line-height: 1.5; color: var(--soft); }
+.xsd-code { padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+.xsd-code [hidden] { display: none; }
+.xsd-code-h { display: flex; align-items: center; gap: 6px; margin: 0 0 8px; font-size: 12px; font-weight: 600; }
+.xsd-code pre { margin: 0; overflow-x: auto; font: 400 12px/1.6 var(--mono); color: var(--ink); white-space: pre; }
+.xsd-code pre:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+.xsd-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.xsd-tabs .x-btn { height: 30px; padding: 0 12px; font-size: 12.5px; }
+.xsd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.xsd-grid li { display: grid; gap: 6px; align-content: start; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); }
+.xsd-grid li[hidden] { display: none; }
+.xsd-grid li > div { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 8px; }
+.xsd-grid [data-b] { font-size: 14px; font-weight: 560; }
+.xsd-meta { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--faint); }
+.xsd-kind { padding: 1px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--x-fill); font: 500 11.5px/1.6 var(--sans); color: var(--soft); }
+.xsd-grid p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--soft); }
+
+@media (max-width: 900px) { .xsd-play { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 520px) { .xsd-chaps span { white-space: normal; } .xsd-fig { height: 170px; } }
+@media (prefers-reduced-motion: reduce) { .xsd-chaps u, .xsd-play-b, .xsd-ic, .xsd-list button { transition: none; } }
