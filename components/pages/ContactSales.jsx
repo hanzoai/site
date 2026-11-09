@@ -25,6 +25,7 @@
    the logos; raw <img>; the raw .x-btn submit; data-ask-hide on the rail; arrow keys that chose and advanced. */
 import { useEffect, useRef, useState } from 'react';
 import { mirror, visit } from '@hanzo/event';
+import { API as SEND_API, arrived, lead as leadBody, response } from './ContactSales.send';
 import { track } from '../../lib/track';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { A, More, Band, Img } from '../kit';
@@ -38,7 +39,7 @@ import './ContactSales.css';
 
 const EASE = [0.16, 1, 0.3, 1]; // deck ease-emphasis; no springs (MASTER 3.1)
 const T = { duration: 0.3, ease: EASE };
-const API = 'https://api.hanzo.ai/v1/marketing/leads';
+const API = SEND_API + '/v1/marketing/leads';
 const DRAFT = 'hz-contact-sales-draft';
 const SIZES = [['1-49', '1–49 people'], ['50-249', '50–249 people'], ['250-999', '250–999 people'], ['1000-4999', '1,000–4,999 people'], ['5000+', '5,000+ people']];
 const STEPS = [
@@ -163,16 +164,20 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
     // the visit as cloud reads it (consent, the ad click, the browser ids, which tags already saw the lead), and the
     // campaign the visit arrived with
     const seen = visit();
-    const params = new URLSearchParams(location.search);
-    const campaign = Object.fromEntries(['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].filter((k) => params.get(k)).map((k) => [k, params.get(k)]));
+    let kept = null;
+    try { kept = sessionStorage.getItem('checkout.coupon'); } catch { /* no store: the address carries it */ }
+    const from = arrived(location.search, kept);
     // the note: your own words, then each inclusion you added, in Hanzo's sentence, one per line (same `need` field)
     const need = [v.need.trim(), ...adds.map((i) => INCLUDES[i])].filter(Boolean).join('\n');
-    const body = JSON.stringify({ name: v.name.trim(), email: v.email.trim(), company: v.company.trim(), size: v.size, need, source: 'hanzo.ai/contact-sales', visit: seen, ...(Object.keys(campaign).length ? { campaign } : {}) });
+    const answers = { name: v.name, email: v.email, company: v.company, size: v.size, need };
+    const body = JSON.stringify(leadBody(answers, seen, from));
     let r = null;
     try { r = await post(body); } catch { try { r = await post(body); } catch { r = null; } } // timeout or network: one retry
     let lead;
     if (r && r.ok) { setState('sent'); try { sessionStorage.removeItem(DRAFT); } catch {} lead = (await r.json().catch(() => null))?.lead; }
     else setState('failed');
+    // the same answers as a response to the hanzo.contact-sales form, under the lead's id when the CRM filed one
+    fetch(SEND_API + '/v1/form/public/hanzo.contact-sales/responses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(response(answers, from, lead)) }).catch(() => {});
     // the moment: a lead the CRM filed is stated by cloud on our stream, so the ad tags hear it under the lead's id and
     // our stream is not told twice; one that was not filed still counts
     const moment = { lead_source: 'contact-sales', company_size: v.size };
