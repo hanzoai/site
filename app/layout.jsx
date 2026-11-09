@@ -20,6 +20,7 @@ import Sound from '../components/Sound';
 import { ARRIVE } from '../components/arrival';
 import Appearance from '../components/Appearance';
 import Telemetry from '../components/Telemetry';
+import OneTap from '../components/OneTap';
 
 export const metadata = {
   metadataBase: new URL('https://hanzo.ai'),
@@ -68,6 +69,7 @@ export default function RootLayout({ children }) {
           <OpenerProvider>
             <Appearance />
             <Telemetry />
+            <OneTap />
             <Progress />
             <Morph />
             <Phone />
