@@ -39,6 +39,10 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   monthly only; a year is offered only where the catalog sells one (Team, Team Premium, Enterprise).
 - A short address of a page (`/privacy`, `/terms`, `/aup`, `/cookies`, `/data-deletion`, `/bot/details`) renders the same page
   as its target and its canonical points there: one document, never a second copy (`components/pages/LegalRoute.jsx`).
+- Every form sends what hanzo-inc/app sends, to api.hanzo.ai: the same URL, body and refusal sentence, and a thanks only
+  once Hanzo took the answers. A form that keeps its answers in the browser alone is a fake. The bodies are built in
+  `*.send.js` / `*.apply.js` beside the page, each with a node test, and checked end to end in a browser with the API
+  intercepted (route + fulfill), never against production.
 - No sign-in, sign-up, card or code is collected here. Those are hanzo.app's.
 - Copy is Hanzo's: change wording only on purpose.
 - A press on a link to a page of this site is taken over by `components/Morph.jsx` at the top of the capture phase and
