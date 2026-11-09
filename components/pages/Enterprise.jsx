@@ -32,6 +32,7 @@ import { A, More, Cta, Faq, Film, Img, DataTable, Band } from '../kit';
 import Drawer from '../v2/x-cannon/Drawer';
 import { press } from '../../lib/press';
 import { capture } from '../../lib/track';
+import { PARTNERS, usd } from '../../lib/plans';
 import './Enterprise.css';
 
 const Check = ({ size = 18 }) => <svg className="xe-ck" viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="none" strokeWidth="1.5" /><path d="M7.5 12.5l3 3 6-6.5" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -632,15 +633,15 @@ function Partners() {
         </header>
         <div className="xe-offers">
           <A to="/contact-sales" className="xe-offer big">
-            <h3>White-label: resell under your brand</h3>
-            <p className="xe-offer-fig">$999 a month</p>
-            <p>Your own AI agency, under your brand, on your domain.</p>
-            <span className="xe-go">Ask about White-label →</span>
+            <h3>{`${PARTNERS.label.name}: resell under your brand`}</h3>
+            <p className="xe-offer-fig">{`${usd(PARTNERS.label.price)} a month`}</p>
+            <p>{PARTNERS.label.description}</p>
+            <span className="xe-go">{`Ask about ${PARTNERS.label.name} →`}</span>
           </A>
           <A to="https://hanzo.agency" className="xe-offer">
             <h3>Have Hanzo build it</h3>
-            <p className="xe-offer-fig sm">From $4,999 a month</p>
-            <p>Agency, Forward Deployed, Embedded Pod: Hanzo’s agency ships the work with you, from one workstream to an embedded team.</p>
+            <p className="xe-offer-fig sm">{`From ${usd(PARTNERS.agency.from)} a month`}</p>
+            <p>{`${PARTNERS.agency.names.join(', ')}: Hanzo’s agency ships the work with you, from one workstream to an embedded team.`}</p>
             <span className="xe-go">Hanzo Agency →</span>
           </A>
           <A to="/affiliate" className="xe-offer">

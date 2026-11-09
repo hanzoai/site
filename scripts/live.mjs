@@ -91,17 +91,20 @@ async function figures() {
     return { source: 'https://api.github.com/orgs/{org}/repos', fetched_at, orgs: sum('orgs'), repos: sum('repos'), groups };
   };
 
-  // The plan prices on the home page and /pricing, in USD (the API gives cents).
+  // The plan prices on the home page, /pricing, /bot and /enterprise, in USD (the API gives cents): the plans the site
+  // names, and every agency and white-label plan (/enterprise's Partners band lists them as the catalog does).
   const PLANS = 'https://api.hanzo.ai/v1/billing/plans';
-  const SHOWN = ['free', 'go', 'pro-2x', 'dev-5x', 'max-10x', 'ultra', 'team', 'team-premium', 'enterprise'];
+  const SHOWN = ['free', 'go', 'pro-2x', 'dev-5x', 'max-10x', 'ultra', 'team', 'team-premium', 'enterprise', 'enterprise-300'];
   const pricing = async () => {
     const list = await get(PLANS);
+    need(Array.isArray(list), 'plan list');
+    for (const slug of SHOWN) need(list.some((x) => x.slug === slug), 'plan ' + slug);
     const plans = {};
-    for (const slug of SHOWN) {
-      const p = list.find?.((x) => x.slug === slug);
-      need(p && int(p.price) && (p.priceAnnual == null || int(p.priceAnnual)), 'plan ' + slug);
-      plans[slug] = { name: p.name, price: p.price / 100, priceAnnual: p.priceAnnual == null ? null : p.priceAnnual / 100, interval: p.interval, perSeat: !!p.perSeat, minSeats: p.limits?.minSeats ?? null, maxMembers: p.limits?.maxMembers ?? null };
+    for (const p of list.filter((x) => SHOWN.includes(x.slug) || x.category === 'agency' || x.category === 'white-label')) {
+      need(int(p.price) && (p.priceAnnual == null || int(p.priceAnnual)), 'plan ' + p.slug);
+      plans[p.slug] = { name: p.name, category: p.category, description: p.description, price: p.price / 100, priceAnnual: p.priceAnnual == null ? null : p.priceAnnual / 100, interval: p.interval, perSeat: !!p.perSeat, minSeats: p.limits?.minSeats ?? null, maxMembers: p.limits?.maxMembers ?? null, bots: p.limits?.bots ?? 0 };
     }
+    need(plans['white-label'] && Object.values(plans).some((p) => p.category === 'agency'), 'the white-label and agency plans');
     return { source: PLANS, fetched_at, currency: 'usd', plans };
   };
 

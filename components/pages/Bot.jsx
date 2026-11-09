@@ -23,7 +23,7 @@ import { WORKFLOWS, TOOLS } from './Bot.data';
 import { play } from '../../lib/sound';
 import '../v2/AppType.css';
 import './Bot.css';
-import { PLANS as PLAN, checkout } from '../../lib/plans';
+import { PLANS as PLAN, FLOOR, checkout, usd } from '../../lib/plans';
 
 const CREW = [['dev', 'Dev', 'Software'], ['qa', 'Qa', 'Quality'], ['cyber', 'Cyber', 'Security'], ['des', 'Des', 'Designer'], ['mark', 'Mark', 'Marketing'], ['su', 'Su', 'Support'], ['doc', 'Doc', 'Docs'], ['opera', 'Opera', 'Operations'], ['sci', 'Sci', 'Research'], ['data', 'Data', 'Analytics'], ['sal', 'Sal', 'Sales'], ['fin', 'Fin', 'Finance'], ['law', 'Law', 'Legal']];
 
@@ -695,10 +695,10 @@ function Install() {
 /* ---------- pricing: the slider is the hero, more bots and the pricing model beneath ---------- */
 const PERKS = ['Early access to new models and features', 'Train custom models on your data', 'Hanzo Engine to run models on your own hardware', 'Dedicated support'];
 const PLANS = [
-  [PLAN.pro.name, '$' + PLAN.pro.price, 1, ['3x more usage than Go', '3x higher limits than Go'], PLAN.pro.id],
-  [PLAN.dev.name, '$' + PLAN.dev.price, 2, ['5x more usage than Go', '5x higher limits than Go'], PLAN.dev.id],
-  [PLAN.max.name, '$' + PLAN.max.price, 5, ['15x more usage than Go', '15x higher limits than Go'], PLAN.max.id],
-  [PLAN.ultra.name, '$' + PLAN.ultra.price, 10, ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price'], PLAN.ultra.id],
+  [PLAN.pro.name, '$' + PLAN.pro.price, PLAN.pro.bots, ['3x more usage than Go', '3x higher limits than Go'], PLAN.pro.id],
+  [PLAN.dev.name, '$' + PLAN.dev.price, PLAN.dev.bots, ['5x more usage than Go', '5x higher limits than Go'], PLAN.dev.id],
+  [PLAN.max.name, '$' + PLAN.max.price, PLAN.max.bots, ['15x more usage than Go', '15x higher limits than Go'], PLAN.max.id],
+  [PLAN.ultra.name, '$' + PLAN.ultra.price, PLAN.ultra.bots, ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price'], PLAN.ultra.id],
 ];
 const planFor = (n) => PLANS.findIndex((p) => p[2] >= n);
 const FEATS = [
@@ -708,9 +708,9 @@ const FEATS = [
   ['Parallel Schedules & Cron', 'Run background jobs simultaneously across multiple bots without hitting single-bot queues.'],
 ];
 const WHY = [
-  ['Compute Floor', 'Why a $100/mo entry floor?', 'Not a chat window. A resident cloud computer.', 'Standard chat models terminate compute as soon as tokens finish streaming. A resident Hanzo Bot lives in an active cloud sandbox with its own Chromium browser, bash terminal, isolated filesystem, and scheduled cron jobs. The $100/month floor covers continuous cloud sandboxing and dedicated container resources.'],
+  ['Compute Floor', `Why a ${usd(FLOOR.bot)}/mo entry floor?`, 'Not a chat window. A resident cloud computer.', `Standard chat models terminate compute as soon as tokens finish streaming. A resident Hanzo Bot lives in an active cloud sandbox with its own Chromium browser, bash terminal, isolated filesystem, and scheduled cron jobs. The ${usd(FLOOR.bot)}/month floor covers continuous cloud sandboxing and dedicated container resources.`],
   ['Token Economics', 'Routine work at 1/5th the token cost', 'Intelligent routing through Enso & Sol 6.1.', 'Up to 90% of a resident bot’s daily work consists of triaging inboxes, summarizing documents, parsing receipts, and scraping pages. Rather than burning expensive frontier reasoning on routine tasks, Hanzo Bot executes routine loops on Enso & Sol 6.1 at ~1/5th the token price, leaving your monthly AI allowance intact for the tasks that need it.'],
-  ['Frontier Autonomy', 'Zen Ultra for complex reasoning ($800/mo)', 'Extended capacity for non-stop autonomous loops.', 'When your bot needs to perform deep multi-hour research, autonomous software engineering, or multi-step strategic analysis, the Ultra tier ($800/mo) includes Zen Ultra and Astra Ultra frontier models with unlimited capacity, no hourly rate caps, continuous execution as long as you have funds, and an automatic 20% discount on all usage exceeding $800.'],
+  ['Frontier Autonomy', `Zen Ultra for complex reasoning (${usd(PLAN.ultra.price)}/mo)`, 'Extended capacity for non-stop autonomous loops.', `When your bot needs to perform deep multi-hour research, autonomous software engineering, or multi-step strategic analysis, the Ultra tier (${usd(PLAN.ultra.price)}/mo) includes Zen Ultra and Astra Ultra frontier models with unlimited capacity, no hourly rate caps and continuous execution as long as you have funds. Usage beyond what is included is paid from your prepaid balance at list price.`],
   ['Auditable Memory', 'Plain Markdown files you can inspect & edit', 'No black-box fine-tuning or opaque vector locks.', 'Hanzo Bot records what it learns in human-readable Markdown files in its workspace (`MEMORY.md`, `SKILLS.md`). You can open them, audit them, version-control them in Git, or delete them anytime. The bot begins every session from what you leave.'],
 ];
 
@@ -828,7 +828,7 @@ const QA = [
   ['Does it remember what I tell it?', 'It writes what it learns to Markdown files in its workspace and searches them when it needs them. If you want something to stick, ask it to write it down.'],
   ['I use OpenClaw. Can I move over?', 'hanzo-bot migrate openclaw shows what would move and writes nothing. Add --apply to move config, credentials, workspace, sessions, skills and cron jobs. It never changes ~/.openclaw.'],
   ['What does Hanzo Bot cost?', 'Running Hanzo Bot on your own machine is 100% free and open source (MIT licensed). In our cloud, resident bots come with the plans listed under Pricing, each with the number of bots it states — compute is metered per bot-hour beyond the included allowance, with auto-reload to keep going.'],
-  ['Why is there a $15/mo floor for cloud resident bots?', 'Unlike simple chat prompts where compute ends as soon as generation stops, a resident bot has an always-on dedicated cloud environment. It runs an isolated sandbox container, headless browser, terminal, filesystem, and active cron listeners. The $15/mo floor covers dedicated compute and guarantees uptime.'],
+  [`Why is there a ${usd(FLOOR.bot)}/mo floor for cloud resident bots?`, `Unlike simple chat prompts where compute ends as soon as generation stops, a resident bot has an always-on dedicated cloud environment. It runs an isolated sandbox container, headless browser, terminal, filesystem, and active cron listeners. The ${usd(FLOOR.bot)}/mo floor covers dedicated compute and guarantees uptime.`],
   ['How do model token costs work for bots?', 'Routine tasks (sorting inboxes, web scraping, scheduling, receipt parsing) execute on fast, cost-effective Enso and Sol 6.1 models at ~1/5th the token cost of frontier models, preserving 85-90% of your plan allowance. Higher tiers include Zen Ultra and Astra Ultra frontier models for complex multi-step reasoning.'],
 ];
 
