@@ -17,9 +17,6 @@ main:has(> .x-ann) .x-sec .x-head h2 { font-size: clamp(2.1rem, 3.55vw, 3.45rem)
 main:has(> .x-ann) .x-sec .x-head p { margin: 0 0 4px; font-size: clamp(.98rem, 1.12vw, 1.1rem); line-height: 1.5; max-width: 46ch; justify-self: end; }
 main:has(> .x-ann) .x-row-links { margin-top: clamp(14px, 2.4svh, 24px); }
 
-/* the bands below the first screens are not styled, laid out or painted until they near the viewport (and keep the height they last had) */
-main:has(> .x-ann) > :is(.x-agents, .x-faster, .x-cheaper, .x-pareto, .x-oss, .xw-ways, .x-pricing) { content-visibility: auto; contain-intrinsic-size: auto 760px; }
-
 /* ---------- light, halftone and depth: each section has its own lit corner, drifting as you scroll ---------- */
 main:has(> .x-ann) > .x-sec::before { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none;
   background: radial-gradient(circle, color-mix(in srgb, var(--ink) 15%, transparent) 1px, transparent 1.5px) 0 0 / 12px 12px;
