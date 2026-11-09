@@ -20,6 +20,7 @@ import { A, Cta, Field, Tick } from '../kit';
 import Sigil from '../Sigil';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { TRACKS, apply } from './Grants.apply';
+import { track as fire } from '../../lib/track';
 import '../v2/ProgramScale.css';
 import usePhoneAsk from './usePhoneAsk';
 import useEnter from './grants/enter';
@@ -265,8 +266,9 @@ function Apply({ track, setTrack }) {
     try {
       const res = await fetch('https://api.hanzo.ai/v1/marketing/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(r.lead) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      fire('grant_application_submitted', { track, role });
       setDone(true);
-    } catch { setErr('Your application did not reach us. Please try again, or email grants@hanzo.ai.'); } finally { setBusy(false); }
+    } catch (e) { fire('grant_application_submitted', { track, role, error: String(e) }); setErr('Your application did not reach us. Please try again, or email grants@hanzo.ai.'); } finally { setBusy(false); }
   };
   const keys = (e) => {
     const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];

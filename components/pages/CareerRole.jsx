@@ -43,6 +43,7 @@ import FamNext from '../v2/FamNext';
 import FamGrow from '../v2/FamGrow';
 import { ui } from '../v2/famUi';
 import { useSheetLanding } from './careers/door';
+import { track } from '../../lib/track';
 import '../v2/fam.css';
 import './CareerRole.css';
 
@@ -88,6 +89,8 @@ function Steps({ f, role }) {
     const nm = f.file && file.current && file.current.files[0] && file.current.files[0].name;
     if (nm) lines.push(`${f.file.label}: ${nm}`);
     const subject = role.email.href.split('?')[1] || '';
+    // the application is handed to the visitor's mail: that is the moment it is sent from here
+    track('career_application_submitted', { role: role.title, department: role.chips[0], slug: role.slug });
     location.href = `mailto:${f.note.mail}?${subject}&body=${encodeURIComponent(lines.join('\n'))}`;
     setMsg(nm || ' ');
   };

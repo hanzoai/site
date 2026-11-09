@@ -20,6 +20,7 @@ import { SEARCH, ORGS, useBounties, SAY } from './Bounty.github';
 // paint, and swapped for GitHub's live answer the moment it arrives, so a rate-limited or offline visitor still sees them.
 import SNAP from './founder/bounties.json';
 import { claim, SUPPORT } from './Founder.claim';
+import { track } from '../../lib/track';
 import '../v2/ProgramScale.css';
 import usePhoneAsk from './usePhoneAsk';
 import './Founder.css';
@@ -256,6 +257,7 @@ function Claim() {
       const r = await fetch(`${API}/v1/marketing/leads`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(c.lead) });
       fetch(`${API}/v1/form/public/hanzo.founder-apply/responses`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(c.form) }).catch(() => {});
       setSt(r.ok ? 'sent' : 'refused');
+      if (r.ok) track('founder_claimed', { from: 'founder' });
     } catch { setSt('refused'); }
   };
   const bad = (k) => (tried && c.bad[k] ? 'true' : undefined);

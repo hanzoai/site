@@ -18,18 +18,21 @@ import LineReveal, { NoJs } from '../v2/LineReveal';
 import { StretchScroll } from './newsletter/enter';
 import '../v2/ProgramScale.css';
 import './Newsletter.css';
+import { track } from '../../lib/track';
 
 const LINES = ['New models and what they measured, the day they ship', 'What changed in the API, the CLI and Hanzo Dev', 'Engineering notes from the people who built it'];
 const LEDE = 'Releases, benchmarks and engineering notes, once or twice a month.';
 const ok = (e) => e.length <= 320 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 const STEPS = ['ask', 'check', 'sent'];
 
+const SOURCE = 'hanzo.ai/newsletter';
+
 async function subscribe(email) {
   let r;
   try {
     r = await fetch('https://api.hanzo.ai/v1/marketing/subscribe', {
       method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' },
-      body: JSON.stringify({ email, source: 'hanzo.ai/newsletter', locale: 'en-US' }),
+      body: JSON.stringify({ email, source: SOURCE, locale: 'en-US' }),
     });
   } catch { return 0; }
   const j = await r.json().catch(() => null);
@@ -101,9 +104,11 @@ function Ask({ email, setEmail, step, setStep }) {
   };
   const go = async () => {
     setErr(''); setBusy(true);
+    track('newsletter_submitted', { source: SOURCE });
     const s = await subscribe(email.trim());
     setBusy(false);
-    if (s === 200) return setStep('sent');
+    if (s === 200) { track('newsletter_subscribed', { source: SOURCE }); return setStep('sent'); }
+    track('newsletter_refused', { source: SOURCE, status: s });
     setErr(s === 429 ? 'Too many tries from here. Try again in an hour.' : s === 400 ? 'Enter an email address like you@example.com.' : 'We could not reach our mail service. Try again in a minute.');
   };
   const panel = (i) => ({ className: 'xnl-q' + (i === at ? ' on' : ''), style: { '--d': i - at }, inert: i !== at ? true : undefined, 'aria-hidden': i !== at || undefined });
