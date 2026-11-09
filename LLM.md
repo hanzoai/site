@@ -44,6 +44,6 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
 ## Ship
 
 `.github/workflows/cicd.yml` calls hanzoai/ci build.yml with `hanzo.yml`: every push and pull request runs the test
-(install, `pnpm test`, `pnpm build`); a push to main publishes `out/` to the Sites plane slug `hanzo-site`
-(prefix `hanzo/hanzo-site`, KMS org `hanzo`) with the agent files (`agent: hanzo.ai`: Markdown twins, llms.txt,
+(install, `pnpm test`, `pnpm build`); a push to main publishes `out/` to the Sites plane slug `hanzoai-site`
+(prefix `hanzo/hanzoai-site`, KMS org `hanzo`) with the agent files (`agent: hanzo.ai`: Markdown twins, llms.txt,
 robots.txt, sitemap.xml, the API catalog). universe `infra/sites/sites.yaml` serves hanzo.ai from that prefix.

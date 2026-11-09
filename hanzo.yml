@@ -1,6 +1,6 @@
 # Read by hanzoai/ci's build.yml (.github/workflows/cicd.yml). hanzo.ai is a static
 # export with no pod: universe infra/sites/sites.yaml serves it from the Sites
-# plane prefix hanzo/hanzo-site. The test builds out/ (prebuild reads the live
+# plane prefix hanzo/hanzoai-site. The test builds out/ (prebuild reads the live
 # figures and plan prices from api.hanzo.ai and stops on any failure), and a push
 # to main publishes that out/ with the agent files (Markdown twins, llms.txt,
 # robots.txt, sitemap.xml, the API catalog) written beside it.
@@ -14,11 +14,11 @@ test:
       pnpm build
 
 site:
-  slug: hanzo-site
+  slug: hanzoai-site
   dir: out
   on: [main]
   agent: hanzo.ai
 
-# The tenant whose deploy key publishes, which makes the prefix hanzo/hanzo-site.
+# The tenant whose deploy key publishes, which makes the prefix hanzo/hanzoai-site.
 kms:
   org: hanzo
