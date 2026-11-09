@@ -1,19 +1,19 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
-import { DAYS, FROM, TO, FIRST_WEEKDAY, level } from '../lib/commits';
+import { DAYS, FROM, TO, FIRST_WEEKDAY, LAST7, WEEKS, level } from '../lib/commits';
 import O from '../content/live/_oss.json';
 import repoCard from './home/repoCard';
+import spark from './home/spark';
 import { EASE, Head, Arrow, Count } from './ui';
-import C from '../content';
 
 // the figures hanzo.ai's home shows, from the same snapshot (content/live/_oss.json, refreshed by scripts/live.mjs)
 const G = Object.values(O.groups);
 const sum = (k) => G.reduce((a, g) => a + g[k], 0);
 const TILES = [
-  ['Commits', O.estate.commits, 'In the past year', 'https://git.hanzo.ai/explore/repos', 0],
-  ['Merges', O.estate.merges, 'In the past year', 'https://git.hanzo.ai/explore/repos', 1],
-  ['Commits', O.calendar.week, 'In the past 7 days', 'https://git.hanzo.ai/explore/repos'],
+  ['Commits', O.estate.commits, 'In the past year', 'https://git.hanzo.ai/explore/repos', spark(WEEKS, 'Commits a week over the past year', 28)],
+  ['Merges', O.estate.merges, 'In the past year', 'https://git.hanzo.ai/explore/repos', spark(O.estate.mergeMonths, 'Merges a month over the past year', 28)],
+  ['Commits', O.calendar.week, 'In the past 7 days', 'https://git.hanzo.ai/explore/repos', spark(LAST7, 'Commits a day over the past 7 days', 28)],
   [`${O.estate.orgs} organizations`, sum('repos'), 'Original repositories', 'https://github.com/hanzoai'],
   ['GitHub stars', sum('stars'), 'as GitHub counts them', 'https://github.com/hanzoai'],
   ['GitHub forks', sum('forks'), 'as GitHub counts them', 'https://github.com/hanzoai'],
@@ -105,13 +105,13 @@ function Calendar() {
 }
 
 function Tile({ t, i }) {
-  const [label, n, sub, href, spark] = t;
+  const [label, n, sub, href, bars] = t;
   return (
     <motion.a href={href} className="x-tile" whileTap={{ scale: 0.98 }}>
       <span className="x-tile-k">{label}</span>
       <Count className="x-tile-n" to={n} duration={2} delay={i * 0.06} />
       <span className="x-tile-s">{sub}</span>
-      {spark !== undefined && <span className="x-tile-spark" dangerouslySetInnerHTML={{ __html: C.spark[spark] }} />}
+      {bars && <span className="x-tile-spark" dangerouslySetInnerHTML={{ __html: bars }} />}
     </motion.a>
   );
 }

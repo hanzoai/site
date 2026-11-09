@@ -45,6 +45,7 @@ We use Hanzo's own system, exactly as live hanzo.ai runs it, and build none of o
 | Recessed bar (old `#fafafa`) | `var(--x-sunk)` | `#fafafa` | `var(--surface-card-quiet)` |
 | Selected pill in a track | `var(--x-knob)` | `#fff` | `var(--secondary)` |
 | Stronger borders (old black 10, 12, 15%) | `var(--x-e10)`, `var(--x-e12)`, `var(--x-e15)` | black .10, .12, .15 | `var(--border)`, `var(--border-control)` |
+| The open-source band's heat: calendar, legend and bars | `var(--x-heat)` over `var(--x-cell)` (the empty cell) | `#0a0a0a` over `#e8e8ec` | `#fff` over `var(--secondary)` |
 | Rooms (`[data-room]`) | `var(--room-*)` | as before | Hanzo's tokens; `[data-room=light]` follows the page into dark |
 
 - **Write dark rules with Hanzo's selector**, `html:not(.light) .your-thing { … }`, never `html.dark`. That way JS-off renders like live, as dark.

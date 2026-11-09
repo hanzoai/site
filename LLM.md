@@ -16,6 +16,10 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   reuses the cards' contributors and the orgs' descriptions. `GITHUB_TOKEN=$(gh auth token) node scripts/live.mjs`
   refreshes it by hand. A repository public on GitHub but not on the forge (hanzoai/ai, hanzoai/cloud) keeps the year
   it last had, as the app does. `live.mjs` writes `components/pages/openSource/snapshot.js` through `shape.mjs`.
+  The home band draws that snapshot (`components/Open.jsx`). A day's shade is `lib/heat.mjs`, the quartiles of the days that
+  had commits, one function for the home and /open-source (an outlier or a quiet quarter cannot crush the rest); the tiles'
+  and cards' bars are `components/home/spark.js`, @hanzo/ui's Sparkline; the year's bars are weeks counted back from the last
+  day. Every cell and bar is `--x-heat` (ink; white in dark) over `--x-cell` (the empty cell) in `app/globals.css`.
 
 ## Where things are
 
