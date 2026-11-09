@@ -148,7 +148,7 @@ const viewBand = async (name) => {
 };
 await open('/');
 await expects('home: the hero is drawn', 'home_viewed', {});
-await expects('home: the plans are listed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === 'free,go,pro-2x' && v.every((i) => i.item_category === 'individual' && typeof i.price === 'number') });
+await expects('home: the plans are listed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === 'free,go,pro-3x' && v.every((i) => i.item_category === 'individual' && typeof i.price === 'number') });
 await expects('home: a link in the hero', 'cta_clicked', { page: '/', section: 'hero', cta: 'home.hero-go', target: /^https:\/\/hanzo\.app\/pay\/confirm\/card\?plan=go/ }, () => tap('.x-hero-price'));
 await expects('home: a link to checkout is also the funnel moment', 'checkout_started', { link_url: /hanzo\.app\/pay/, page_path: '/', cta: 'home.hero-go' });
 await expects('hero demo: the sidebar', 'hero_demo', { control: 'sidebar' }, () => tap('.xs-sidet'));
@@ -175,7 +175,7 @@ await expects('plans: Go is selected', 'plan_selected', { currency: 'USD', value
 await expects('plans: Go starts the checkout', 'checkout_started', { currency: 'USD', value: 8, interval: 'month', items: (v) => v[0].item_id === 'go' });
 ok('plans: and the link does not also send its own checkout moment', !sent.slice(fromGo).some((e) => e.event === 'checkout_started' && 'link_url' in e.p), '');
 ok('plans: nor a cta_clicked', !sent.slice(fromGo).some((e) => e.event === 'cta_clicked' && e.p.target?.includes('plan=go')), '');
-await expects('plans: Pro', 'plan_clicked', { plan: 'pro-2x', interval: 'month', cta: 'Get Pro', item_list_id: 'individual', items: (v) => v[0].item_id === 'pro-2x' && v[0].price === 15 }, () => tap('.x-pricing .x-plan .x-btn', 2));
+await expects('plans: Pro', 'plan_clicked', { plan: 'pro-3x', interval: 'month', cta: 'Get Pro', item_list_id: 'individual', items: (v) => v[0].item_id === 'pro-3x' && v[0].price === 15 }, () => tap('.x-pricing .x-plan .x-btn', 2));
 await expects('plans: the usage ladder', 'plan_tier_picked', { plan: 'dev-5x', item_list_id: 'individual' }, () => viewBand('5x'));
 await expects('plans: the Team tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'team', items: (v) => v.map((i) => i.item_id).join() === 'team,enterprise' }, () => viewBand('Team'));
 await expects('plans: the Team term', 'plan_term_changed', { plan: 'team', interval: 'month', item_list_id: 'team' }, () => viewBand('Monthly'));
@@ -230,7 +230,7 @@ await seen('/investors/', ['research', 'trusted']);
 /* ---------------------------------------------------------------- pricing */
 if (on('pricing')) {
 await open('/pricing/');
-await expects('pricing: Personal is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === 'free,go,pro-2x' });
+await expects('pricing: Personal is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === 'free,go,pro-3x' });
 await expects('pricing: Free', 'plan_clicked', { plan: 'free', interval: 'month', cta: 'Try Hanzo', item_list_id: 'individual', items: (v) => v[0].price === 0 }, () => tap('.xpr-card[data-id="free"] .xpr-cta'));
 await silent('pricing: Free is not a checkout', 'plan_selected', () => Promise.resolve(), (p) => p.items?.[0]?.item_id === 'free');
 const fromGoCard = sent.length;
@@ -238,8 +238,8 @@ await expects('pricing: Go', 'plan_clicked', { plan: 'go', interval: 'month', ct
 await expects('pricing: Go is selected', 'plan_selected', { currency: 'USD', value: 8, items: (v) => v[0].item_id === 'go' });
 await expects('pricing: Go starts the checkout', 'checkout_started', { currency: 'USD', value: 8, interval: 'month', items: (v) => v[0].item_id === 'go' });
 ok('pricing: and the link does not also send its own checkout moment', !sent.slice(fromGoCard).some((e) => e.event === 'checkout_started' && 'link_url' in e.p), '');
-await expects('pricing: the usage ladder', 'plan_tier_picked', { plan: 'max-10x', item_list_id: 'individual' }, () => page.evaluate(() => [...document.querySelectorAll('.xpr-seg button')].find((b) => b.textContent === '15x').click()));
-await expects('pricing: the Pro card follows the ladder', 'plan_clicked', { plan: 'max-10x', interval: 'month', cta: 'Get Max', item_list_id: 'individual', items: (v) => v[0].item_id === 'max-10x' && v[0].price === 95 }, () => tap('.xpr-card[data-id="pro"] .xpr-cta'));
+await expects('pricing: the usage ladder', 'plan_tier_picked', { plan: 'max-15x', item_list_id: 'individual' }, () => page.evaluate(() => [...document.querySelectorAll('.xpr-seg button')].find((b) => b.textContent === '15x').click()));
+await expects('pricing: the Pro card follows the ladder', 'plan_clicked', { plan: 'max-15x', interval: 'month', cta: 'Get Max', item_list_id: 'individual', items: (v) => v[0].item_id === 'max-15x' && v[0].price === 95 }, () => tap('.xpr-card[data-id="pro"] .xpr-cta'));
 await expects('pricing: the Team tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'team', items: (v) => v.map((i) => i.item_id).join() === 'team,enterprise' }, () => page.evaluate(() => [...document.querySelectorAll('[role="tablist"] [role="tab"]')].find((b) => b.textContent.trim() === 'Team').click()));
 await expects('pricing: Team, by the year', 'plan_clicked', { plan: 'team', interval: 'year', cta: 'Get Team', item_list_id: 'team', items: (v) => v[0].item_id === 'team' && v[0].price === 240 }, () => tap('.xpr-card[data-id="team"] .xpr-cta'));
 await expects('pricing: Team is selected', 'plan_selected', { currency: 'USD', value: 240, items: (v) => v[0].item_id === 'team' });

@@ -16,7 +16,7 @@ export const BRIEF = (name) => [
   `   - Pro ($${PLANS.pro.price}/mo): 3x more usage and higher limits than Go, 1 Hanzo Bot, custom model training, Hanzo Engine.`,
   `   - Dev ($${PLANS.dev.price}/mo): 5x more usage and higher limits than Go, 2 Hanzo Bots.`,
   `   - Max ($${PLANS.max.price}/mo): 15x more usage and higher limits than Go, 5 Hanzo Bots.`,
-  `   - Ultra ($${PLANS.ultra.price}/mo): Highest included usage with continuous usage and no window resets, 10 Hanzo Bots, plus automatic prepaid balance reload for overage.`,
+  `   - Ultra ($${PLANS.ultra.price}/mo): 25x more usage and higher limits than Go, 10 Hanzo Bots, plus automatic prepaid balance reload for overage.`,
   `2. Team Plan (2 to 100 members, self-serve at ${teamCart(10)}):`,
   `   - Standard Seat: $${P.std / 12}/member/mo billed yearly ($${P.std}/yr) or $${P.stdMo}/member/mo billed monthly. Shared workspace (chat, meetings, calendar, contacts), SSO, roles, audit log, one bill, daily automations.`,
   `   - Premium Seat: $${P.prem / 12}/member/mo billed yearly ($${P.prem.toLocaleString('en-US')}/yr) or $${P.premMo}/member/mo billed monthly. 5x more usage than Standard seats. Mix Standard and Premium seats on one team and one bill.`,

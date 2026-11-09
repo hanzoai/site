@@ -698,7 +698,7 @@ const PLANS = [
   [PLAN.pro.name, '$' + PLAN.pro.price, PLAN.pro.bots, ['3x more usage than Go', '3x higher limits than Go'], PLAN.pro.id],
   [PLAN.dev.name, '$' + PLAN.dev.price, PLAN.dev.bots, ['5x more usage than Go', '5x higher limits than Go'], PLAN.dev.id],
   [PLAN.max.name, '$' + PLAN.max.price, PLAN.max.bots, ['15x more usage than Go', '15x higher limits than Go'], PLAN.max.id],
-  [PLAN.ultra.name, '$' + PLAN.ultra.price, PLAN.ultra.bots, ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price'], PLAN.ultra.id],
+  [PLAN.ultra.name, '$' + PLAN.ultra.price, PLAN.ultra.bots, ['25x more usage than Go', '25x higher limits than Go', 'Usage beyond what is included is paid from your prepaid balance at list price'], PLAN.ultra.id],
 ];
 const planFor = (n) => PLANS.findIndex((p) => p[2] >= n);
 const FEATS = [
@@ -710,7 +710,7 @@ const FEATS = [
 const WHY = [
   ['Compute Floor', `Why a ${usd(FLOOR.bot)}/mo entry floor?`, 'Not a chat window. A resident cloud computer.', `Standard chat models terminate compute as soon as tokens finish streaming. A resident Hanzo Bot lives in an active cloud sandbox with its own Chromium browser, bash terminal, isolated filesystem, and scheduled cron jobs. The ${usd(FLOOR.bot)}/month floor covers continuous cloud sandboxing and dedicated container resources.`],
   ['Token Economics', 'Routine work at 1/5th the token cost', 'Intelligent routing through Enso & Sol 6.1.', 'Up to 90% of a resident bot’s daily work consists of triaging inboxes, summarizing documents, parsing receipts, and scraping pages. Rather than burning expensive frontier reasoning on routine tasks, Hanzo Bot executes routine loops on Enso & Sol 6.1 at ~1/5th the token price, leaving your monthly AI allowance intact for the tasks that need it.'],
-  ['Frontier Autonomy', `Zen Ultra for complex reasoning (${usd(PLAN.ultra.price)}/mo)`, 'Extended capacity for non-stop autonomous loops.', `When your bot needs to perform deep multi-hour research, autonomous software engineering, or multi-step strategic analysis, the Ultra tier (${usd(PLAN.ultra.price)}/mo) includes Zen Ultra and Astra Ultra frontier models with unlimited capacity, no hourly rate caps and continuous execution as long as you have funds. Usage beyond what is included is paid from your prepaid balance at list price.`],
+  ['Frontier Autonomy', `Zen Ultra for complex reasoning (${usd(PLAN.ultra.price)}/mo)`, 'Extended capacity for long autonomous loops.', `When your bot needs to perform deep multi-hour research, autonomous software engineering, or multi-step strategic analysis, the Ultra tier (${usd(PLAN.ultra.price)}/mo) includes Zen Ultra and Astra Ultra frontier models with 25x Go's usage and 25x its limits every 5 hours and every day. Usage beyond what is included is paid from your prepaid balance at list price.`],
   ['Auditable Memory', 'Plain Markdown files you can inspect & edit', 'No black-box fine-tuning or opaque vector locks.', 'Hanzo Bot records what it learns in human-readable Markdown files in its workspace (`MEMORY.md`, `SKILLS.md`). You can open them, audit them, version-control them in Git, or delete them anytime. The bot begins every session from what you leave.'],
 ];
 

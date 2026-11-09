@@ -177,7 +177,7 @@ hanzo.ai's sitemap, plus the home page) and adds 9 sign-up and checkout pages. F
 
 - **`/pricing` shows every plan of the chosen tab side by side** (Personal, Team or API), each with its price, billing
   line, button and every feature. On a phone the plans stack.
-- **Pro is marked Recommended** and has its usage switch on its own card: 3x, 5x, 15x or unlimited, at $15, $45, $95
+- **Pro is marked Recommended** and has its usage switch on its own card: 3x, 5x, 15x or 25x, at $15, $45, $95
   or $195. It never moves by itself.
 - **The rest of `/pricing`:**
   - Each paid plan links to its own checkout, as on live.
