@@ -1,6 +1,20 @@
 [
+ "/agent",
  "/aup",
+ "/beta/design",
+ "/bot/details",
+ "/calculator",
  "/cookies",
  "/privacy",
- "/terms"
+ "/products",
+ "/reviews",
+ "/terms",
+ "/university",
+ "/university/agentic-coding",
+ "/university/agentic-marketing",
+ "/university/ai-architect",
+ "/university/ai-practitioner",
+ "/university/portal",
+ "/university/reinforcement-learning",
+ "/university/systems-engineering"
 ]

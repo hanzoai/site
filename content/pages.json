@@ -571,6 +571,10 @@
 "title": "Hanzo S3 — Hanzo AI",
 "description": "Object storage that your existing tools already speak, and you never pay to read your own data back."
 },
+"/science": {
+"title": "Make science agentic. — Hanzo AI",
+"description": "Hanzo Science is the universal research operating system. Design new AI architectures, discover materials, investigate biology, simulate physical systems, and explore the universe."
+},
 "/sdks": {
 "title": "SDKs for every language — Hanzo AI",
 "description": "Official SDKs for TypeScript, Python, Go, Rust, and Swift. Integrate Hanzo AI models, autonomous agents, and cloud APIs with type safety."
@@ -2055,6 +2059,14 @@
 "title": "LFM2.5-24B-A2B — Use via Hanzo AI API",
 "description": "LFM2.5-24B-A2B is a mixture-of-experts reasoning model from Liquid AI with... Call via Hanzo's OpenAI-compatible API. Context: 128K."
 },
+"/models/liquid/lfm-3-1.7b": {
+"title": "LFM3-1.7B — Use via Hanzo AI API",
+"description": "A compact 1.7B-parameter text model with a 256K-token context, post-trained... Call via Hanzo's OpenAI-compatible API. Context: 262K."
+},
+"/models/liquid/lfm-3-1.7b:free": {
+"title": "LFM3-1.7B (free) — Use via Hanzo AI API",
+"description": "A compact 1.7B-parameter text model with a 256K-token context, post-trained... Call via Hanzo's OpenAI-compatible API. Context: 262K."
+},
 "/models/mancer/weaver": {
 "title": "Weaver (alpha) — Use via Hanzo AI API",
 "description": "An attempt to recreate Claude-style verbosity, but don't expect the same le... Call via Hanzo's OpenAI-compatible API. Context: 8K."
@@ -3411,6 +3423,10 @@
 "title": "Hanzo — open source — Hanzo AI",
 "description": "Hanzo business apps. The 9 public repositories of hanzo-io on GitHub, with their stars, forks, languages and last push."
 },
+"/oss/hanzo-java": {
+"title": "hanzo-java — open source — Hanzo AI",
+"description": "The 1 public repositories of hanzo-java on GitHub, with their stars, forks, languages and last push."
+},
 "/oss/hanzo-js": {
 "title": "Hanzo JS — open source — Hanzo AI",
 "description": "JavaScript SDK + libraries for Hanzo Ecosystem. The 8 public repositories of hanzo-js on GitHub, with their stars, forks, languages and last push."
@@ -3578,5 +3594,57 @@
 "/oss/zooai": {
 "title": "ZOO (zooai) — open source — Hanzo AI",
 "description": "Protecting endangered species through regenerative finance. The 40 public repositories of zooai on GitHub, with their stars, forks, languages and last push."
+},
+"/calculator": {
+"title": "True Savings — Hanzo",
+"description": "Calculate your savings by consolidating 100+ SaaS, cloud, and AI vendors onto Hanzo. Interactive TCO and operating-cost model."
+},
+"/university": {
+"title": "Stop prompting. Start engineering. — Hanzo AI",
+"description": "Curriculum and certifications for autonomous AI engineering. Learn multi-agent architecture, secure sandboxing, and reinforcement learning."
+},
+"/university/agentic-coding": {
+"title": "Agentic Coding Systems with Hanzo Dev & Zen 6 — Hanzo AI",
+"description": "The definitive systems curriculum for autonomous software engineering."
+},
+"/university/agentic-marketing": {
+"title": "MKT 102: Agentic Marketing & Autonomous Campaigns (HAME) — Hanzo AI",
+"description": "Engineer programmatic growth machines. Generate multi-channel copy, studio images, voiceovers, and videos with locked brand voice, direct CMS hooks, and closed-loop CRO reinforcement. Earn your HAME credential with 25% compute credit rebate and isolated Hanzo Visor sandboxes."
+},
+"/university/ai-architect": {
+"title": "ARC 105: Production AI Architect Masterclass (HCPAIA) — Hanzo AI",
+"description": "Enterprise AI architecture at scale. Build self-hosted zero-trust clusters, configure post-quantum RNS tunnels, deploy global BFT agent meshes, and govern enterprise billing. Earn your HCPAIA credential with 25% compute credit rebate and isolated Hanzo Visor sandboxes."
+},
+"/university/ai-practitioner": {
+"title": "PRA 104: AI Practitioner & Tool Integration (HCAIP) — Hanzo AI",
+"description": "Master the fundamentals of the unified cloud. Understand model selection across Zen, Enso, and Kai, integrate the 13 unified MCP tools into your editor, and manage cloud spend. Earn your HCAIP credential with 25% compute credit rebate and isolated Hanzo Visor sandboxes."
+},
+"/university/portal": {
+"title": "Stop prompting. Start engineering. — Hanzo AI",
+"description": "Curriculum and certifications for autonomous AI engineering. Learn multi-agent architecture, secure sandboxing, and reinforcement learning."
+},
+"/university/reinforcement-learning": {
+"title": "RL 101: Native Reinforcement Learning & Post-Training (HARLE) — Hanzo AI",
+"description": "Implement native Gymnasium environments on the Hanzo Cloud Fabric. Fine-tune models with Zoo Gym, design multi-objective reward functions, and train learned routing policies. Earn your HARLE credential with 25% compute credit rebate and isolated Hanzo Visor sandboxes."
+},
+"/university/systems-engineering": {
+"title": "SYS 103: Hanzo AI Systems Engineering Foundation (HCAISE) — Hanzo AI",
+"description": "The definitive engineering standard for production AI. Master the 4-surface parity, finite-state Kai decision loops, hybrid retrieval, and strict integer micro-USD budget governance. Earn your HCAISE credential with 25% compute credit rebate and isolated Hanzo Visor sandboxes."
+},
+"/products": {
+"title": "Hanzo OS — Hanzo AI",
+"description": "A human signs a company into existence. After genesis, agents can run it."
+},
+"/reviews": {
+"title": "Hanzo — chat, or build with dev",
+"description": "The whole cloud in one binary. Build with autonomous agents, frontier models, and sovereign infrastructure. Open source."
+},
+"/agent": {
+"title": "Hanzo Agent — create, customize, and run autonomous agents",
+"description": "Create custom AI agents in the browser with their own model, instructions, MCP tools, and budget, or build multi-agent networks in Rust, Python, Go, and TypeScript with hanzoai/agent."
+},
+"/beta/design": {
+"title": "Design partner — Hanzo AI",
+"description": "Build it with the team. Chosen from applications."
 }
 }
