@@ -260,15 +260,6 @@ textarea.x-input2 { height: auto; min-height: 120px; padding: 14px 16px; resize:
 .x-cookie .x-cookie-more { border-color: transparent; background: none; color: var(--soft); }
 @media (max-width: 640px) { .x-cookie div { flex-wrap: wrap; } .x-cookie .x-btn { flex: 1; } .x-cookie .x-cookie-more { flex-basis: 100%; } }
 
-/* ---------- marquee pause (Chrome.jsx Marquee) ---------- */
-.x-marquee { position: relative; }
-.x-mq-pause { position: absolute; right: max(16px, calc((100% - var(--wrap, 1200px)) / 2)); top: 32px; z-index: 2; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--room-raised); color: var(--room-soft); display: grid; place-items: center; cursor: pointer; transition: color var(--dur-hover), transform var(--dur-press) var(--ease-out-expo); }
-@media (hover: hover) { .x-mq-pause:hover { color: var(--room-ink); } }
-.x-mq-pause:active { transform: scale(.92); }
-.x-mq-pause[aria-pressed='true'] { color: var(--room-ink); border-color: var(--room-line-strong); }
-@media (pointer: coarse) { .x-mq-pause::before { content: ''; position: absolute; inset: -6px; } }
-@media (prefers-reduced-motion: reduce) { .x-mq-pause { display: none; } }
-
 /* ---------- Hanzo's footer: the "Privacy choices" toggle icon in ink, not blue (0 UI hues, MASTER 3.1) ---------- */
 footer a[href='#choices'] svg path[fill='#0072CE'] { fill: currentColor; }
 footer a[href='#choices'] svg path:not([fill='#0072CE']) { fill: var(--background, #fff); }

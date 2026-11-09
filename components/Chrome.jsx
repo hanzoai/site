@@ -132,13 +132,12 @@ export function Marquee({ items, label, reverse = false, view }) {
   const factor = useTransform(v, [-1500, 0, 1500], [-3, 0, 3], { clamp: false });
   const dir = useRef(reverse ? -1 : 1);
   const [rest, setRest] = useState(false);
-  const [held, setHeld] = useState(false); // the pause button (WCAG 2.2.2: anything moving over 5 s can be stopped)
   const box = useRef(null);
   const seen = useInView(box);
   const calm = useReducedMotion(); // reduced motion: the strip stands still (WCAG 2.2.2)
   const x = useTransform(base, (b) => `${wrap(-50, 0, b)}%`);
   useAnimationFrame((_, delta) => {
-    if (rest || held || !seen || calm) return;
+    if (rest || !seen || calm) return;
     let by = dir.current * -1.6 * (delta / 1000);
     const f = factor.get();
     if (f < 0) dir.current = reverse ? 1 : -1;
@@ -158,10 +157,6 @@ export function Marquee({ items, label, reverse = false, view }) {
   return (
     <section className="x-marquee" aria-label={label} data-hz-view={view} ref={box}>
       <p className="x-kicker">{label}</p>
-      {/* always rendered (server and client agree); hidden by CSS under reduced motion, where the strip never moves */}
-      <button type="button" className="x-mq-pause" aria-pressed={held} aria-label={held ? 'Play' : 'Pause'} onClick={() => setHeld((h) => !h)}>
-        <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">{held ? <path d="M5 3.5v9l7-4.5z" fill="currentColor" /> : <path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />}</svg>
-      </button>
       <div className="x-mq-view" onPointerEnter={() => setRest(true)} onPointerLeave={() => setRest(false)} onFocus={() => setRest(true)} onBlur={() => setRest(false)}>
         <motion.div className="x-mq-track" style={{ x }}>
           {row(0)}{row(1)}{row(2)}{row(3)}
