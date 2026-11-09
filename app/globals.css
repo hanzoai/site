@@ -243,7 +243,7 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-step-t b { font-size: 14.5px; font-weight: 500; }
 .x-step-t span { font-size: 11.5px; color: var(--faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .x-script { margin-top: 6px; min-height: 48px; display: flex; align-items: center; padding: 0 16px; border-radius: 14px; background: #0b0b0c; color: #e9e9ec; font-size: 12.5px; overflow: hidden; white-space: nowrap; }
-.x-script .x-dim { color: #6e6e73; margin-right: 8px; }
+.x-script .x-dim { color: #8e8e93; margin-right: 8px; }
 .x-code-t { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); font: 500 12.5px/1 var(--mono); cursor: pointer; transition: transform .3s var(--ease), box-shadow .3s var(--ease); }
 .x-code-t:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -12px rgba(0, 0, 0, .3); }
 .x-code-t:active { transform: scale(.97); }
@@ -268,7 +268,7 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-panel-links { margin-top: auto; padding-top: 8px; }
 
 /* ---------- faster: the dark room ---------- */
-.x-faster { background: #000; color: #f5f5f7; }
+.x-faster { background: #000; color: #f5f5f7; --faint: #a1a1a6; } /* the room is black in both themes, so its quiet words are light in both */
 .x-races { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
 .x-race, .x-cost { display: flex; flex-direction: column; padding: clamp(24px, 3vw, 36px); border-radius: 28px; }
 .x-race { background: #0e0e10; border: 1px solid rgba(255, 255, 255, .08); }
@@ -278,7 +278,7 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-race-big { margin: 22px 0 0; font-size: clamp(4rem, 8vw, 7rem); font-weight: 300; letter-spacing: -.055em; line-height: .95; font-feature-settings: 'tnum'; }
 .x-race-cap { margin: 10px 0 0; font-size: 17px; font-weight: 500; }
 .x-race-note { margin: 10px 0 0; font-size: 13.5px; line-height: 1.55; color: var(--faint); max-width: 56ch; }
-.x-race-title { margin: 26px 0 10px; font-size: 11.5px; color: #6e6e73; }
+.x-race-title { margin: 26px 0 10px; font-size: 11.5px; color: var(--faint); }
 .x-lanes { display: flex; flex-direction: column; gap: 14px; }
 .x-lane { transition: opacity .3s var(--ease); }
 .x-lane.dim { opacity: .35; }
