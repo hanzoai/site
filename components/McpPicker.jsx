@@ -51,7 +51,7 @@ function Choice({ label, items, value, onPick, className = '' }) {
 export default function McpPicker() {
   const how = ways();
   const [way, setWay] = useState(how.find((w) => w.id === 'key')?.id ?? how[0].id);
-  const list = clients(how);
+  const list = clients(how).filter((c) => c.id !== 'dev');
   const [pick, setPick] = useState('claude-code');
   const client = list.find((c) => c.id === pick) ?? list[0];
   const mine = entry(client, way);
@@ -60,7 +60,7 @@ export default function McpPicker() {
 
   return (
     <div className="x-panel x-mcp" id="mcp" data-hz-view="mcp-clients">
-      <div className="x-panel-h"><Mark size={14} /> <b>Hanzo MCP</b></div>
+      <div className="x-panel-h"><Mark size={14} /> <b>Hanzo.MCP</b></div>
       <p className="x-mcp-lede">
         Connect your client to <code className="x-mono">{MCP_URL.replace('https://', '')}</code>. Pick how to connect, then your client.
       </p>

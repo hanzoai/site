@@ -7,6 +7,7 @@ import { press } from '../lib/press';
 import { track } from '../lib/track';
 
 const SHOWN = 6; // icons on the button; the rest of the list is the count beside them
+const MENU = SETUP.filter(([n]) => n !== 'Hanzo Dev');
 const ICON = Object.fromEntries(C.agents.map((a) => [a.name, a.icon]));
 const ALIAS = { Gemini: 'Gemini CLI', Grok: 'Grok Build', 'Claude Duet': 'Claude' };
 const docs = (p) => 'https://docs.hanzo.ai/docs/' + p;
@@ -27,7 +28,7 @@ export default function SetupMenu({ up = false, inline = false, where, ...rest }
   const inp = useRef(null);
   const menu = useRef(null);
   const t = useRef(0);
-  const none = q && !SETUP.some(([n]) => n.toLowerCase().includes(q.toLowerCase()));
+  const none = q && !MENU.some(([n]) => n.toLowerCase().includes(q.toLowerCase()));
 
   useEffect(() => {
     if (!open) return;
@@ -79,7 +80,7 @@ export default function SetupMenu({ up = false, inline = false, where, ...rest }
         <span className="x-setup-ics">
           {C.agents.slice(1, 1 + SHOWN).map((a) => <span key={a.name} className="x-setup-i" role="img" aria-label={a.name} title={a.name} dangerouslySetInnerHTML={{ __html: a.icon }} />)}
         </span>
-        <b>+{SETUP.length - SHOWN}</b>
+        <b>+{MENU.length - SHOWN}</b>
       </a>
       <button
         ref={btn}
@@ -100,7 +101,7 @@ export default function SetupMenu({ up = false, inline = false, where, ...rest }
           <input ref={inp} type="text" placeholder="Filter agents..." aria-label="Filter agents" value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" spellCheck={false} />
         </label>
         <div className="x-menu-in" data-lenis-prevent>
-          {SETUP.map((row, i) => {
+          {MENU.map((row, i) => {
             const [n, , url, d] = row;
             const href = setupHref(row);
             const bare = !row[1] && !web(url); // a deep link that cannot carry the prompt: copy it first
@@ -125,7 +126,7 @@ export default function SetupMenu({ up = false, inline = false, where, ...rest }
           {none && <p className="x-menu-none">No agent matches</p>}
           <div className="x-menu-foot">
             {SETUP_FOOT.map(([l, h], i) => (
-              <a key={l} href={h} target="_blank" rel="noopener noreferrer" style={{ '--i': SETUP.length + i }} onClick={() => setOpen(false)}><span>{l}</span><span aria-hidden="true"> ↗</span></a>
+              <a key={l} href={h} target="_blank" rel="noopener noreferrer" style={{ '--i': MENU.length + i }} onClick={() => setOpen(false)}><span>{l}</span><span aria-hidden="true"> ↗</span></a>
             ))}
           </div>
         </div>

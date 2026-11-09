@@ -150,10 +150,6 @@ function Steps() {
         <Copy text={SCRIPT[on]} label="Copy this step" onCopy={() => track('agent_step_copied', { step: on + 1 })} />
         <Copy text={SCRIPT.join('\n\n')} label="Copy the whole script" onCopy={() => track('agent_script_copied', { from: 'landing' })} />
       </div>
-      <div className="x-panel-links">
-        <a className="x-btn sm solid" href="/agents#headless">Start as an agent</a>
-        <a className="x-btn sm" href="https://hanzo.ai/llms.txt">Read llms.txt</a>
-      </div>
     </div>
   );
 }
@@ -171,11 +167,11 @@ export default function Agents() {
           onPointerMove={(e) => { if (fine(e)) { mx.set(e.clientX); my.set(e.clientY); } }}
           onPointerLeave={() => { mx.set(Infinity); my.set(Infinity); }}
         >
-          {C.agents.map((a, i) => <Ico key={a.name} a={a} i={i} mx={mx} my={my} />)}
+          {C.agents.filter((a) => a.name !== 'Hanzo Dev').map((a, i) => <Ico key={a.name} a={a} i={i} mx={mx} my={my} />)}
         </ul>
         <div className="x-panels">
           <div className="x-panel">
-            <div className="x-panel-h"><Mark size={14} /> <b>Hanzo.Start</b></div>
+            <div className="x-panel-h"><Mark size={14} /> <b>Hanzo.CLI</b></div>
             <p className="x-panel-k">Install the Hanzo CLI</p>
             <Cmd bin="curl" rest="-fsSL https://hanzo.sh | sh" copy="curl -fsSL https://hanzo.sh | sh" onCopy={() => capture('home_copied', { block: 'install' })} />
             <div className="x-or small"><span>or</span></div>
