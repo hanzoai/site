@@ -67,6 +67,19 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   (Grok Build did). Flat marks are inline paths; a gradient mark is a file (`public/<name>-mark.svg`). Colour is the
   brand's own (Claude orange, DeepSeek blue, Amp red, Codex, Antigravity, Gemini, Muse, OpenHands); the rest are in ink.
   A tile's tooltip (`data-name`) and its accessible name are the same words.
+- The home's "Hanzo MCP" picker (`components/McpPicker.jsx`, in `#compatible`) draws `lib/mcp.js`, which holds what each
+  client takes as that client's own docs say: the file or command for the hosted endpoint with a key (`Authorization:
+  Bearer sk-...`, server `hanzo-cloud`) and for the local server (`npx -y hanzo mcp`, server `hanzo`, which uses `hanzo
+  login`). Every way names, in `from` and a comment above it, the doc page it was checked against; a client whose docs give
+  no file or command for a way has none and says why in `none`; a client with no way available is not listed (ChatGPT, whose
+  connector takes OAuth only). "Sign in with Hanzo" is written (`signin`) and OFF: `SIGN_IN` in `lib/mcp.js` is the one
+  flag, and `scripts/mcp.test.mjs` holds the file to its shape with the flag either way. Flip it only when OAuth is live,
+  then write the sign-in tab on docs.hanzo.ai (hanzo-docs/docs `guides/coding`, whose LLM.md "MCP clients" says the same
+  words and where each anchor is). Re-check a snippet against its `from` page before editing it: these clients change
+  their config keys (Gemini CLI's `httpUrl` is deprecated for `url` + `type`, Windsurf's file moved to
+  `~/.config/devin/`). The picker's chips use the dock's icons by name (`icon`), so a client has one mark everywhere; the
+  marks for VS Code, OpenClaw and NanoClaw are files (`public/*-mark.*`, new names for the CDN's day-long cache), Claude's,
+  Windsurf's and Warp's are inline paths. The "+N" on the setup prompt is `SETUP.length` less the six icons shown.
 - A card has a clean surface (no stripes, scan lines or dot grids) and one effect, the app's own: it leans toward a mouse
   and a glossy light follows it, and on a phone the device's tilt does the same; at rest nothing moves and no animation
   runs, and reduced motion has neither. Mark it `data-tilt=""` and write nothing else: `lib/tilt.js` (started once, in
