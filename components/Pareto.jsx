@@ -187,6 +187,8 @@ export default function Pareto() {
         <div className="x-row-links">
           <Arrow href="/enso">How Enso routes</Arrow>
           <Arrow href="https://docs.hanzo.ai/docs/guides/cookbook/route">Route your own requests with Enso</Arrow>
+          <Arrow href="/benchmarks#enso">Every board</Arrow>
+          <Arrow href="/research">Published research &amp; specifications</Arrow>
         </div>
       </div>
     </section>
