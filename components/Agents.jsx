@@ -5,6 +5,7 @@ import { EASE, Head, Arrow, Copy, Mark, fine } from './ui';
 import C from '../content';
 import { SCRIPT } from '../lib/script';
 import SetupMenu from './SetupMenu';
+import McpPicker from './McpPicker';
 import { capture, track } from '../lib/track';
 
 /* Every agent Hanzo works with, as a field that swells toward the pointer, like a dock. */
@@ -185,6 +186,7 @@ export default function Agents() {
           </div>
           <div className="x-panel-wrap"><Steps /></div>
         </div>
+        <McpPicker />
         <div className="x-row-links">
           <Arrow href="https://docs.hanzo.ai/docs/guides/coding">Integration guides</Arrow>
           <Arrow href="https://docs.hanzo.ai/docs/guides/migrate/coding-agents">Migrate &amp; conventions map</Arrow>
