@@ -1,0 +1,18 @@
+/* ENG 100's page (/university/agentic-coding), beyond what UniversityCourse.css and UniversityFold.css share. Prefix xuv-. */
+.xuv-lab-grid { display: grid; gap: 32px; align-items: center; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 960px) { .xuv-lab-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.xuv-shot { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: #0a0a0a; color: #f5f5f7; }
+.xuv-shot-h { padding: 12px 18px; border-bottom: 1px solid rgba(255, 255, 255, .12); font: 500 12px/1.4 var(--mono); letter-spacing: .02em; color: rgba(245, 245, 247, .65); }
+.xuv-shot img { display: block; width: 100%; height: auto; object-fit: cover; filter: contrast(1.05); }
+.xuv-shot-f { margin: 0; padding: 12px 18px; border-top: 1px solid rgba(255, 255, 255, .12); font-size: 13px; line-height: 1.5; color: rgba(245, 245, 247, .7); }
+.xuv-spec-row { display: flex; align-items: flex-start; gap: 16px; padding: 20px; }
+.xuv-spec-row .xuv-ico { margin-top: 2px; }
+.xuv-spec-row h3 { font-size: 15.5px; overflow-wrap: anywhere; }
+.xuv-week.big { gap: 20px; }
+.xuv-wk-h { margin: 0; font-size: clamp(1.15rem, 2vw, 1.5rem); line-height: 1.25; font-weight: 600; letter-spacing: -.02em; }
+.xuv-week.big .xuv-checks li { color: var(--ink); opacity: .86; }
+.xuv-read { margin: 0; font-size: 13.5px; font-style: italic; line-height: 1.5; color: var(--soft); }
+.xuv-fig { font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 600; letter-spacing: -.03em; line-height: 1; color: var(--ink); font-feature-settings: 'tnum'; }
+.xuv-policy { margin-top: 16px; display: grid; gap: 12px; background: var(--x-fill); }
+.xuv-policy-h { display: flex; align-items: center; gap: 12px; }
+.xuv-policy p { max-width: 80ch; font-size: 15px; }

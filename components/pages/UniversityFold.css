@@ -1,0 +1,117 @@
+/* Hanzo University: the first screen, the steps card, and the parts every page of the family shares (section, card, chip,
+   grids, the check list, spec cells). Prefix xuv-. Tokens only (--ink --soft --faint --line --card --bg --x-raised --x-fill
+   --x-sunk): both themes read. The steps card is a dark room in both. */
+.xuv-wrap { width: min(100% - 2 * clamp(16px, 4vw, 32px), 1152px); margin-inline: auto; }
+.xuv-wrap.narrow { width: min(100% - 2 * clamp(16px, 4vw, 32px), 960px); }
+.xuv-ico { flex: none; display: inline-block; vertical-align: middle; }
+
+/* ---------- first screen ---------- */
+.xuv-fold { padding: clamp(28px, 4vw, 64px) 0 clamp(40px, 6vw, 88px); }
+.xuv-fold-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; align-items: center; }
+@media (min-width: 1024px) { .xuv-fold-grid.has-side { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(40px, 5vw, 72px); } }
+.xuv-fold-copy { min-width: 0; }
+.xuv-crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 28px; font: 500 13px/1.2 var(--mono); color: var(--faint); }
+.xuv-crumb { display: inline-flex; align-items: center; gap: 8px; }
+.xuv-crumb a { color: var(--soft); text-decoration: none; }
+.xuv-crumb a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.xuv-crumb [aria-current] { color: var(--ink); }
+.xuv-badge { display: inline-flex; align-items: center; gap: 9px; margin: 0; padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--x-raised); font: 500 12px/1.35 var(--mono); letter-spacing: .02em; color: var(--ink); max-width: 100%; }
+.xuv-badge i { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); }
+.xuv-h1 { margin: 22px 0 0; font-size: clamp(2.25rem, 4.4vw, 3.75rem); font-weight: 560; letter-spacing: -.04em; line-height: 1.04; color: var(--ink); text-wrap: balance; }
+.xuv-lede { margin: 20px 0 0; max-width: 58ch; font-size: clamp(1.0625rem, 1.3vw, 1.2rem); line-height: 1.55; color: var(--soft); text-wrap: pretty; }
+.xuv-acts { display: flex; flex-wrap: wrap; gap: 10px 12px; margin-top: 32px; }
+@media (max-width: 560px) { .xuv-acts > * { flex: 1 1 100%; } .xuv-acts .x-btn { white-space: normal; text-align: center; height: auto; min-height: 44px; padding-block: 12px; line-height: 1.25; } }
+
+/* ---------- the steps card ---------- */
+.xuv-steps { position: relative; isolation: isolate; display: flex; min-height: 380px; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: #000; color: #f5f5f7; }
+.xuv-film { z-index: 0; opacity: .9; }
+.xuv-scrim { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .15) 38%, rgba(0, 0, 0, .82) 100%); }
+.xuv-steps-in { position: relative; z-index: 2; flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: 22px; }
+@media (min-width: 768px) { .xuv-steps-in { padding: 28px; } }
+.xuv-steps-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.xuv-steps-name { display: inline-flex; align-items: center; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; background: rgba(0, 0, 0, .55); font: 500 10px/14px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: rgba(245, 245, 247, .85); white-space: nowrap; }
+.xuv-steps-ctl { display: inline-flex; align-items: center; gap: 10px; }
+.xuv-count { font: 500 10px/14px var(--mono); letter-spacing: .08em; color: rgba(245, 245, 247, .65); font-feature-settings: 'tnum'; }
+.xuv-steps .v2-mpause { width: 28px; height: 28px; }
+.xuv-stage { display: grid; align-items: end; padding: 8px 0; }
+.xuv-step { grid-area: 1 / 1; display: grid; gap: 10px; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+.xuv-step[data-on] { opacity: 1; pointer-events: auto; }
+.xuv-step-t { max-width: min(92%, 440px); font-size: clamp(1.4rem, 2.2vw, 1.9rem); line-height: 1.2; font-weight: 500; letter-spacing: -.02em; color: #fff; text-wrap: balance; }
+.xuv-step p { margin: 0; max-width: min(90%, 400px); font-size: 15px; line-height: 1.5; color: rgba(245, 245, 247, .82); }
+.xuv-dots { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.xuv-dots button { display: inline-flex; align-items: center; max-width: 100%; padding: 5px 11px; border: 1px solid rgba(255, 255, 255, .2); border-radius: 999px; background: rgba(0, 0, 0, .65); color: rgba(245, 245, 247, .82); font: 400 10px/14px var(--mono); letter-spacing: .06em; text-transform: uppercase; text-align: left; cursor: pointer; transition: background-color .2s, border-color .2s, color .2s; }
+.xuv-dots button[aria-expanded='true'] { border-color: #fff; background: #fff; color: #0a0a0a; font-weight: 600; }
+@media (hover: hover) { .xuv-dots button:hover { border-color: #fff; } }
+.xuv-dots button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* ---------- sections ---------- */
+.xuv-sec { position: relative; padding: clamp(56px, 8vw, 112px) 0; }
+.xuv-sec.sunk { background: var(--x-sunk); border-block: 1px solid var(--line); }
+.xuv-sec .x-head h2 { font-size: clamp(1.9rem, 3.2vw, 2.75rem); max-width: 24ch; }
+.xuv-sec .x-head p { font-size: clamp(1rem, 1.2vw, 1.125rem); }
+.xuv-sec .x-head { margin-bottom: clamp(28px, 4vw, 48px); }
+.xuv-sec .x-head .x-kick { max-width: none; margin: 0 0 18px; font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.xuv-sec .x-head.center, .xuv-center { text-align: center; }
+
+/* ---------- parts ---------- */
+.xuv { overflow-x: clip; }
+.xuv-sec.tight { padding: clamp(20px, 3vw, 40px) 0; }
+.xuv-acts.center { justify-content: center; }
+.xuv-stack { display: grid; gap: 12px; align-content: start; }
+.xuv-stack.tight { gap: 10px; }
+.xuv-card[hidden] { display: none; }
+.xuv-stack h3 { margin: 4px 0 0; }
+.xuv-wk-sum { font-size: 15px; color: var(--ink); opacity: .86; }
+.xuv-chip { display: inline-flex; align-items: center; padding: 4px 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--x-raised); font: 500 11.5px/1.25 var(--mono); letter-spacing: .02em; color: var(--ink); }
+.xuv-chip.ok { color: var(--ink); background: var(--x-fill); }
+.xuv-card { min-width: 0; padding: clamp(18px, 2.4vw, 28px); border: 1px solid var(--line); border-radius: 20px; background: var(--x-raised); color: var(--ink); }
+.xuv-card.quiet { background: var(--x-fill); }
+.xuv-card h3, .xuv-card h4 { margin: 0; font-size: 17px; line-height: 1.3; font-weight: 600; letter-spacing: -.01em; }
+.xuv-card p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--soft); text-wrap: pretty; }
+.xuv-card .xuv-ico { color: var(--ink); }
+.xuv-grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 720px) { .xuv-grid.c2, .xuv-grid.c3, .xuv-grid.c4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1040px) { .xuv-grid.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .xuv-grid.c4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.xuv-grid.stack { gap: 20px; }
+.xuv-mono { font-family: var(--mono); }
+.xuv-b { font-weight: 600; }
+.xuv-label { font: 500 11.5px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.xuv-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+/* a line with a check before it */
+.xuv-checks { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+.xuv-checks li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.5; color: var(--soft); }
+.xuv-checks .xuv-ico { margin-top: 3px; color: var(--ink); }
+
+/* the little cells of an academic specification */
+.xuv-cells { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; }
+@media (max-width: 420px) { .xuv-cells { grid-template-columns: minmax(0, 1fr); } }
+.xuv-cell { display: grid; gap: 4px; align-content: start; min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--x-sunk); }
+.xuv-cell dt { font: 500 11.5px/1.3 var(--mono); letter-spacing: .04em; color: var(--faint); }
+.xuv-cell dd { margin: 0; font-size: 15px; line-height: 1.35; font-weight: 600; color: var(--ink); }
+.xuv-cell dd.big { font-size: 18px; }
+.xuv-cell .xuv-sm { font-size: 13px; line-height: 1.4; color: var(--soft); }
+.xuv-sub { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--soft); }
+.xuv-sub.b { font-weight: 600; color: var(--ink); font-size: 13px; }
+
+/* tuition and the rebate */
+.xuv-tuition { display: grid; gap: 12px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--x-sunk); }
+.xuv-price { display: flex; align-items: baseline; gap: 6px; font-size: clamp(1.9rem, 3vw, 2.5rem); font-weight: 600; letter-spacing: -.03em; line-height: 1.1; font-feature-settings: 'tnum'; }
+.xuv-price small, .xuv-price .xuv-sm { font-size: 13px; font-weight: 400; color: var(--soft); letter-spacing: 0; }
+.xuv-rebate { display: grid; gap: 8px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--x-fill); }
+.xuv-rebate-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.xuv-rebate-h span { display: inline-flex; align-items: center; gap: 8px; }
+.xuv-link { color: var(--ink); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.xuv-ask { display: grid; gap: 8px; }
+.xuv-ask .x-btn { height: auto; min-height: 52px; padding: 14px 24px; white-space: normal; text-align: center; font-weight: 600; }
+.xuv-note { text-align: center; font-size: 13px; color: var(--soft); }
+.xuv-foot-line { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--soft); }
+
+/* a week of a syllabus, a lab box, a reading list */
+.xuv-lab { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--x-sunk); }
+.xuv-lab p { color: var(--ink); font-weight: 500; }
+.xuv-lab .xuv-ico { margin-top: 2px; }
+
+/* the per-course variants of the portal: the ones not shown stay in the page */
+.xuv-per { display: contents; }
+.xuv-per[hidden] { display: none; }
