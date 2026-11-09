@@ -8,7 +8,7 @@
    Beyond: the quote card you can drag: its seats follow the slider and the annual and monthly rates re-price from
    Hanzo's own seat prices, before you type a word.
    Motion: live quote sheet with rolling prices (signature) + line-masked greeting + the conversation arriving line by line.
-   0 UI hues. The chat is real: POST https://api.hanzo.ai/v1/chat/public (model enso-free) with Hanzo's own
+   0 UI hues. The chat is real: POST https://api.hanzo.ai/v1/chat/public (model enso-auto, as the app sends it) with Hanzo's own
    specialist brief, the transcript filed as Hanzo files it, and Hanzo's own written answers when the endpoint cannot
    be reached. */
 import { useEffect, useRef, useState } from 'react';
@@ -335,7 +335,7 @@ export default function BuyingSpecialist() {
     const w = written(q, name);
     let a = w.content;
     try {
-      const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'enso-free', messages: [{ role: 'system', content: BRIEF(name) }, ...list.map((m) => ({ role: m.role, content: m.content })), { role: 'user', content: q }] }) });
+      const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'enso-auto', messages: [{ role: 'system', content: BRIEF(name) }, ...list.map((m) => ({ role: m.role, content: m.content })), { role: 'user', content: q }] }) });
       const d = await res.json();
       a = d?.choices?.[0]?.message?.content?.trim() || w.content;
     } catch { /* the written answer stands in */ }
