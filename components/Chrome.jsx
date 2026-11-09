@@ -7,7 +7,8 @@
      rendered on the server by components/Shell.jsx, so it costs no JS). Mark a dark section with data-room="dark" and
      the header turns dark over it.
    - Marquee: <Marquee items={[{ name, src, href }]} label="Trusted by" reverse /> an endless logo strip (it stands still
-     under reduced motion and rests under the pointer or focus).
+     under reduced motion and rests under the pointer or focus). An item with { w, h, hang } is a wordmark drawn at w x h px
+     and sat on the strip's one baseline: hang is how far the logo falls below its text (a smile, a descender, a mark).
    - After every in-site navigation, focus moves to the new page's <main> h1 (tabindex -1, no ring, no scroll). */
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -149,8 +150,8 @@ export function Marquee({ items, label, reverse = false, view }) {
   const row = (k) => items.map((l) => {
     const hidden = k > 0;
     return (
-      <a key={k + l.name} href={l.href} className="x-logo" aria-hidden={hidden || undefined} tabIndex={hidden ? -1 : undefined} inert={hidden || undefined} title={l.name}>
-        <img src={l.src} alt={hidden ? '' : l.name} loading="lazy" />
+      <a key={k + l.name} href={l.href} className="x-logo" data-base={l.w ? '' : undefined} aria-hidden={hidden || undefined} tabIndex={hidden ? -1 : undefined} inert={hidden || undefined} title={l.name}>
+        <img src={l.src} alt={hidden ? '' : l.name} loading="lazy" width={l.w} height={l.h} style={l.w ? { marginBottom: -l.hang } : undefined} />
       </a>
     );
   });
