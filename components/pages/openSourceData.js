@@ -1,4 +1,4 @@
-/* /open-source figures as hanzo.ai's build read them (openSource/snapshot.js, written by openSource/read.mjs). */
+/* /open-source figures from the build's read of api.hanzo.ai/v1/git/activity and GitHub (openSource/snapshot.js, written by scripts/live.mjs). */
 import S from './openSource/snapshot';
 
 export const ECO = S.eco;

@@ -1,5 +1,5 @@
 'use client';
-/* The page paints Hanzo's build read (snapshot.js, written by read.mjs), then asks the same source again:
+/* The page paints the build's read (snapshot.js, written by scripts/live.mjs), then asks the same source again:
    GET https://api.hanzo.ai/v1/git/activity. The API admits only the hanzo.ai origin (CORS), so elsewhere (a preview, the
    dev server) the request is not made and the build read stays. What a fresh read replaces is only what the API serves
    with the same meaning as the build: each ecosystem's commits and merges of the year, its latest commits and their read

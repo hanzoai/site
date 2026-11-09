@@ -2,13 +2,14 @@
 // 1. No arguments: refresh every figure the site shows from the same sources hanzo.ai itself reads, over plain HTTPS
 //    (no browser), each into content/live/_<name>.json with `source` and `fetched_at`:
 //      _git.json       api.hanzo.ai/v1/git/activity (the commit calendar)
-//      _oss.json       hanzo.ai's own home bundle: its snapshot of git activity and GitHub (the open-source tiles, the
-//                      calendar's dates and the repository cards), read as text from the page's scripts, never run
+//      _oss.json       the open-source tiles, the calendar and the repository cards: api.hanzo.ai/v1/git/activity (the
+//                      year, the days, the months) and GitHub (stars, forks, languages, contributors), lib/oss.mjs. The
+//                      same read also writes components/pages/openSource/snapshot.js (/open-source).
+//      _github.json    the GitHub half of that read, kept apart: refreshed when GITHUB_TOKEN is set, otherwise the build
+//                      keeps it (a push reuses its contributors, sites and org descriptions, like hanzo-inc/app)
 //      _research.json  api.hanzo.ai/v1/research/runs (coding.repair, decision.latency, enso.gpqa_diamond), summary view
 //      _models.json    api.hanzo.ai/v1/models and /v1/pricing/models (per-million prices and model names)
 //      _pricing.json   api.hanzo.ai/v1/billing/plans (plan prices)
-//      _github.json    GitHub repo counts, only with HZ_LIVE_GITHUB=1 and GITHUB_TOKEN (no page reads it; hanzo.ai's own
-//                      GitHub figures come in _oss.json)
 //    It FAILS LOUDLY: if any source fails, is rate-limited or returns something unexpected, it names that source, keeps
 //    the last good file (never a half-written one) and exits 1, so `npm run build` (prebuild) stops instead of
 //    shipping stale figures. To build from the snapshots on purpose (no network, a known-good run), set
@@ -17,6 +18,8 @@
 // 2. --pages [/path ...]: render hanzo.ai pages in headless Chrome and keep what a visitor sees (content/live/<path>.json
 //    { text, links }, parity.py's reference). A browser job: not on James's laptop unless he asks (docs/build-notes/MASTER.md section 5).
 import { RUNS, MODELS, PRICES, readResearch, readModels } from '../lib/liveSources.mjs';
+import { estate, github, combine } from '../lib/oss.mjs';
+import { shape } from '../components/pages/openSource/shape.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,7 +50,6 @@ async function figures() {
 
   // Commits a day, the year's commits and merges, this week, organizations: what hanzo.ai's own calendar and tiles read.
   const GIT = 'https://api.hanzo.ai/v1/git/activity';
-  let orgs = null;
   const git = async () => {
     const a = await get(GIT);
     need(a.complete === true, 'activity marked incomplete');
@@ -60,35 +62,7 @@ async function figures() {
     need(days.length === 365 || days.length === 366, days.length + ' days');
     const { commits, merges, orgs: o } = a.totals;
     need([commits, merges, o].every(int) && commits > 0 && o > 0, 'totals');
-    orgs = a.orgs.filter((x) => x.github).map((x) => ({ login: x.github.split('/').pop(), group: x.group }));
-    need(orgs.length > 0, 'no GitHub organizations');
     return { source: GIT, fetched_at, read: a.read, window: a.window, commits, merges, orgs: o, week: days.slice(-7).reduce((s, x) => s + x[1], 0), days };
-  };
-
-  // Original public repositories as GitHub counts them: non-fork repos of every org hanzo.ai lists (7 Nov: 2,248 against
-  // Hanzo's 2,247 of 6 Nov). Stars and forks are not read here: no GitHub count reproduces Hanzo's (6,041 and 4,579).
-  const github = async () => {
-    if (!orgs) throw new Error('needs the organization list from ' + GIT + ', which failed');
-    if (!process.env.GITHUB_TOKEN) throw new Error(`needs GITHUB_TOKEN: ${orgs.length} organizations take ${orgs.length}+ requests and GitHub allows 60 an hour without one`);
-    const H = { authorization: 'Bearer ' + process.env.GITHUB_TOKEN, accept: 'application/vnd.github+json' };
-    const groups = {};
-    const one = async ({ login, group }) => {
-      for (let page = 1; ; page++) {
-        let list;
-        try { list = await get(`https://api.github.com/orgs/${encodeURIComponent(login)}/repos?type=public&per_page=100&page=${page}`, H); }
-        catch (e) { if (page === 1 && e.status === 404) return; throw e; } // an org gone from GitHub is not checked, so not counted
-        need(Array.isArray(list), login + ' repos');
-        const g = (groups[group] ??= { orgs: 0, repos: 0 });
-        if (page === 1) g.orgs++;
-        g.repos += list.filter((r) => r.fork === false).length;
-        if (list.length < 100) return;
-      }
-    };
-    const queue = [...orgs];
-    await Promise.all(Array.from({ length: 8 }, async () => { while (queue.length) await one(queue.shift()); }));
-    const sum = (k) => Object.values(groups).reduce((s, g) => s + g[k], 0);
-    need(sum('repos') > 0, 'no repositories');
-    return { source: 'https://api.github.com/orgs/{org}/repos', fetched_at, orgs: sum('orgs'), repos: sum('repos'), groups };
   };
 
   // The plan prices on the home page, /pricing, /bot and /enterprise, in USD (the API gives cents): the plans the site
@@ -108,49 +82,43 @@ async function figures() {
     return { source: PLANS, fetched_at, currency: 'usd', plans };
   };
 
-  // hanzo.ai's home shows its open-source figures from a snapshot built into its own page (its read of
-  // api.hanzo.ai/v1/git/activity and GitHub, with the repository cards); the live API has moved on since, so the same
-  // figures come from that snapshot. The page's scripts are read as text and the snapshot is the JSON literal inside
-  // them; nothing from hanzo.ai is run.
-  const HOME = 'https://hanzo.ai/';
-  const ESC = { n: '\n', t: '\t', r: '\r', b: '\b', f: '\f', v: '\v', 0: '\0' };
-  const unjs = (s) => s.replace(/\\(u[0-9a-fA-F]{4}|x[0-9a-fA-F]{2}|[\s\S])/g, (_, c) => (c.length > 1 ? String.fromCharCode(parseInt(c.slice(1), 16)) : ESC[c] ?? c));
-  const scripts = async () => {
-    const html = await text(HOME);
-    const list = [...new Set(html.match(/\/_next\/static\/chunks\/[\w.-]+\.js/g) || [])].map((c) => new URL(c, HOME).href);
-    need(list.length > 0, 'no scripts on ' + HOME);
-    return list;
-  };
+  // The open-source figures the home and /open-source show (lib/oss.mjs): the estate from the API, which must answer whole,
+  // and GitHub's half from GitHub when there is a token, else from the last read the build holds. A GitHub that does not
+  // answer leaves stars and forks a day older; it never stops a build, the estate not answering does.
   const oss = async () => {
-    let snap = null, cal = null, from = null;
-    for (const url of await scripts()) {
-      const js = await text(url);
-      if (!js.includes('"estate"') || !js.includes('"faces"')) continue;
-      for (const m of js.matchAll(/JSON\.parse\('((?:[^'\\]|\\.)*)'\)/g)) {
-        let d; try { d = JSON.parse(unjs(m[1])); } catch { continue; }
-        if (d && d.estate && d.groups) snap = d;
-        else if (d && d.from && d.to && d.groups) cal = d;
-      }
-      from = url;
-      if (snap) break;
-    }
-    need(snap && cal, "the open-source snapshot in hanzo.ai's scripts");
-    const e = snap.estate;
+    const index = await estate();
+    const file = path.join(OUT, '_github.json');
+    let kept = null;
+    try { kept = JSON.parse(fs.readFileSync(file, 'utf8')); } catch { /* the first read */ }
+    let gh = kept;
+    if (process.env.GITHUB_TOKEN) {
+      try {
+        gh = { ...(await github({ index, token: process.env.GITHUB_TOKEN, kept, thrifty: process.env.GITHUB_EVENT_NAME === 'push' })), fetched_at };
+        fs.writeFileSync(file + '.tmp', JSON.stringify(gh) + '\n');
+        fs.renameSync(file + '.tmp', file);
+        console.log(`_github.json  live  ${n(Object.values(gh.groups).reduce((s, g) => s + g.stars, 0))} stars`);
+      } catch (e) { console.log(`_github.json  kept snapshot from ${kept?.fetched_at}: ${e.message}`); }
+    } else console.log(`_github.json  kept snapshot from ${kept?.fetched_at}: no GITHUB_TOKEN`);
+    need(gh, 'no GitHub read and no GITHUB_TOKEN to make one');
+    const { sum, act } = combine(index, gh);
+    const e = sum.estate;
     // commits a day (every group added up) and repositories active that day, as hanzo.ai's calendar draws them
-    const all = Object.values(cal.groups);
+    const all = Object.values(act.groups);
     const days = [];
-    for (let t = Date.parse(cal.from + 'T00:00:00Z'), end = Date.parse(cal.to + 'T00:00:00Z'); t <= end; t += 864e5) {
+    for (let t = Date.parse(act.from + 'T00:00:00Z'), end = Date.parse(act.to + 'T00:00:00Z'); t <= end; t += 864e5) {
       const d = new Date(t).toISOString().slice(0, 10);
       days.push([d, all.reduce((a, g) => a + (g.daily?.[d] ?? 0), 0), all.reduce((a, g) => a + (g.active?.[d] ?? 0), 0)]);
     }
     need(days.length >= 365 && days.every(([, c, r]) => int(c) && int(r)), 'calendar days');
     need([e.commits, e.merges, e.orgs, e.public].every(int) && Array.isArray(e.monthly) && e.window?.to, 'estate');
-    const groups = Object.fromEntries(Object.entries(snap.groups).map(([k, g]) => {
+    const groups = Object.fromEntries(Object.entries(sum.groups).map(([k, g]) => {
       need([g.stars, g.forks, g.repos].every(int), 'group ' + k);
-      return [k, { name: g.name, repos: g.repos, public: g.public, stars: g.stars, forks: g.forks, top: (g.top || []).map((r) => ({ repo: r.repo, description: r.description ?? '', language: r.language ?? '', stars: r.stars, forks: r.forks, commits: r.commits, months: r.months, contributors: r.contributors, faces: r.faces ?? [], pushed: r.pushed, forge: r.forge, site: r.site ?? null })) }];
+      return [k, { name: g.name, repos: g.repos, public: g.public, stars: g.stars, forks: g.forks, top: g.top.map((r) => ({ repo: r.repo, description: r.description ?? '', language: r.language ?? '', stars: r.stars, forks: r.forks, commits: r.commits, months: r.months, contributors: r.contributors, faces: r.faces ?? [], pushed: r.pushed, forge: r.forge ?? 'https://github.com/' + r.repo, site: r.site ?? null })) }];
     }));
     need((groups.hanzo?.top || []).length > 0, 'repository cards');
-    return { source: HOME + ' (its built-in snapshot of https://api.hanzo.ai/v1/git/activity and GitHub)', script: from, fetched_at, read: snap.read, estate: { window: e.window, months: e.months, orgs: e.orgs, repos: e.repos, public: e.public, commits: e.commits, merges: e.merges, monthly: e.monthly }, calendar: { from: cal.from, to: cal.to, days, week: days.slice(-7).reduce((a, x) => a + x[1], 0) }, forge: snap.forge, groups };
+    const s = shape({ sum, act });
+    fs.writeFileSync(path.join(ROOT, 'components/pages/openSource/snapshot.js'), `/* /open-source figures: api.hanzo.ai/v1/git/activity and GitHub (read ${s.read}). Written by scripts/live.mjs; do not edit by hand. */\nconst S = ${JSON.stringify(s)};\nexport default S;\n`);
+    return { source: sum.source + ' and https://api.github.com/orgs', github: gh.fetched_at, fetched_at, read: sum.read, estate: { window: e.window, months: e.months, orgs: e.orgs, repos: e.repos, public: e.public, commits: e.commits, merges: e.merges, monthly: e.monthly }, calendar: { from: act.from, to: act.to, days, week: days.slice(-7).reduce((a, x) => a + x[1], 0) }, forge: sum.forge, groups };
   };
 
   // the coding race, Kai's speed and Enso's cost, and the per-million prices and model names: the same sources hanzo.ai's
@@ -174,16 +142,11 @@ async function figures() {
   };
   await run('_git.json', git, (d) => `${n(d.commits)} commits · ${n(d.merges)} merges · ${n(d.week)} in 7 days · ${d.orgs} orgs · ${d.days.length} days ${d.window.from}…${d.window.to}`);
   await Promise.all([
-    process.env.HZ_LIVE_GITHUB === '1' ? run('_github.json', github, (d) => `${n(d.repos)} original public repos in ${d.orgs} orgs`) : console.log('_github.json  skipped: no page reads it (HZ_LIVE_GITHUB=1 and a GITHUB_TOKEN refresh it)'),
     run('_pricing.json', pricing, (d) => Object.entries(d.plans).map(([k, p]) => `${k} $${p.price}${p.priceAnnual != null ? '/$' + p.priceAnnual : ''}`).join(' · ')),
     run('_oss.json', oss, (d) => `${n(d.estate.commits)} commits · ${n(d.estate.merges)} merges · ${n(Object.values(d.groups).reduce((s, g) => s + g.stars, 0))} stars · ${d.groups.hanzo.top.length} cards · read ${d.read}`),
     run('_research.json', research, (d) => `${d.repair.length} coding.repair · ${d.latency.length} decision.latency · ${d.gpqa.length} enso.gpqa_diamond runs`),
     run('_models.json', models, (d) => `${d.models.length} models · ${Object.keys(d.names).length} names`),
   ]);
-  // /open-source shows the figures hanzo.ai's own deployed build read (per-org commits this year, contributors, the past
-  // 7 days, latest commits); its reader keeps the last good snapshot on any failure, so this never fails a build either
-  const { spawnSync } = await import('node:child_process');
-  spawnSync(process.execPath, [path.join(ROOT, 'components/pages/openSource/read.mjs')], { stdio: 'inherit' });
   if (failed.length) {
     console.error(`\nLIVE FIGURES FAILED (${failed.length}): the build stops rather than ship stale figures.\n  ${failed.join('\n  ')}\nFix the source, or set HZ_LIVE_OFFLINE=1 to build from the snapshots on purpose.`);
     process.exit(1);

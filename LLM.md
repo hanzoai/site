@@ -10,6 +10,12 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   `pnpm test` (node --test).
 - `pnpm build` runs `scripts/live.mjs` first: figures and plan prices from api.hanzo.ai into `content/live/_*.json`;
   any failed source stops the build. `HZ_LIVE_OFFLINE=1` builds from the snapshots.
+- The open-source figures (home band, `/open-source`) are `lib/oss.mjs`, a port of hanzo-inc/app `scripts/sync-oss.ts`:
+  the estate from `GET /v1/git/activity` every build, and GitHub's half (stars, forks, languages, contributors, cards)
+  into `content/live/_github.json` when `GITHUB_TOKEN` is set (CI passes the runner's `GIT_TOKEN`), else kept; a push
+  reuses the cards' contributors and the orgs' descriptions. `GITHUB_TOKEN=$(gh auth token) node scripts/live.mjs`
+  refreshes it by hand. A repository public on GitHub but not on the forge (hanzoai/ai, hanzoai/cloud) keeps the year
+  it last had, as the app does. `live.mjs` writes `components/pages/openSource/snapshot.js` through `shape.mjs`.
 
 ## Where things are
 
