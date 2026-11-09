@@ -105,7 +105,7 @@ for (const k of ['hanzo', 'lux', 'zoo']) {
   assert.ok(x.languages.length > 0 && x.orgs.length > 0 && x.orgs.every((o) => o.login && int(o.repos)), 'github languages and orgs ' + k);
 }
 const pr = JSON.parse(read('_pricing.json'));
-for (const slug of ['free', 'go', 'pro-2x', 'dev-5x', 'max-10x', 'ultra', 'team', 'team-premium', 'enterprise', 'enterprise-300', 'white-label']) {
+for (const slug of ['free', 'go', 'pro-3x', 'dev-5x', 'max-15x', 'ultra', 'team', 'team-premium', 'enterprise', 'enterprise-300', 'white-label']) {
   const p = pr.plans[slug];
   assert.ok(p && typeof p.name === 'string' && Number.isFinite(p.price) && p.price >= 0 && (p.priceAnnual === null || Number.isFinite(p.priceAnnual)), 'plan ' + slug);
 }

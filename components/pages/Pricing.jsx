@@ -1,6 +1,6 @@
 'use client';
 /* Pricing, v2 (VISION archetype E, Utility: calm, precise and fast, with one delight; PLAN-COMPONENTS 5.2).
-   V2: 8/10 9 Nov redesign for clarity (James: "not clear enough"): every plan of the chosen tab side by side as live sets them (stacked on a phone), each with its name, line, price, billing line, ask and every feature; Pro recommended (the dark ask) with its usage switch on its card, every rung to its own checkout as live (pro-2x, dev-5x, max-10x, ultra; Team to plan=team); Hanzo's halftone behind the header; the compare table under the cards, no drawer; section entrances text-mask-film, grow-from-point, scroll-tilt, vertical-ticker, underline-sweep; greys only
+   V2: 8/10 9 Nov redesign for clarity (James: "not clear enough"): every plan of the chosen tab side by side as live sets them (stacked on a phone), each with its name, line, price, billing line, ask and every feature; Pro recommended (the dark ask) with its usage switch on its card, every rung to its own checkout as live (pro-3x, dev-5x, max-15x, ultra; Team to plan=team); Hanzo's halftone behind the header; the compare table under the cards, no drawer; section entrances text-mask-film, grow-from-point, scroll-tilt, vertical-ticker, underline-sweep; greys only
    Persona: a builder or a team lead choosing a plan. Goal: know the price before you ask. CTA: "Try Hanzo" on the plan
    you pick (data-cta pricing.free / pricing.go / pricing.pro); metric: cta_click on those ids.
    Thesis: know the price before you ask.
@@ -9,7 +9,7 @@
    lifts out as the next rises in, the price odometer rolls between real prices (Go $8 to Pro $15 to a Team total),
    word prices cross over, Hanzo's included lines slide to their new places while lines that differ leave and arrive,
    and the seat mixer or the usage ladder grows in only for the plan that has one. The Pro rail row walks its own
-   ladder (3x, 5x, 15x, unlimited: $15, $45, $95, $195) once until a hand takes over.
+   ladder (3x, 5x, 15x, 25x: $15, $45, $95, $195) once until a hand takes over.
    Open: "Compare plans" grows a sheet out of the panel (synchronized.studio), the plan's column lit.
    Beyond: the compare sheet. Hanzo's own lines for every personal plan side by side, each plan carrying what it inherits
    ("Everything in Go, plus"), so you see what each step up adds; and the seat mixer on Team.
@@ -69,12 +69,12 @@ const List = ({ items }) => <ul className="xpr-list">{items.map((t) => <li key={
 const FREE = ['Chat on the web with Enso Auto', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks'];
 const GO = ['Build apps with Hanzo Dev', 'Connect any MCP server in Hanzo Dev', 'The Hanzo CLI for macOS, Windows and Linux', 'Every model, including Enso Ultra and Kai', 'Usage included on every model', 'Priority inference and priority support', 'Your own agents, working in the background', 'Automations, with daily runs included'];
 const COMMON = ['Early access to new models and features', 'Train custom models on your data', 'Hanzo Engine to run models on your own hardware', 'Dedicated support'];
-// to: every rung has its own checkout on Hanzo's page (live, 9 Nov: pro-2x, dev-5x, max-10x, ultra)
+// to: every rung has its own checkout on Hanzo's page (pro-3x, dev-5x, max-15x, ultra)
 const PRO = [
   { x: '3x', name: PLANS.pro.name, price: PLANS.pro.price, to: PAY(PLANS.pro.id), head: 'Everything in Go, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['3x more usage than Go', '3x higher limits than Go', 'Hanzo Bot: 1 bot of your own'] },
   { x: '5x', name: PLANS.dev.name, price: PLANS.dev.price, to: PAY(PLANS.dev.id), head: 'Everything in Pro, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['5x more usage than Go', '5x higher limits than Go', 'Hanzo Bot: 2 bots of your own'] },
   { x: '15x', name: PLANS.max.name, price: PLANS.max.price, to: PAY(PLANS.max.id), head: 'Everything in Dev, plus:', d: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['15x more usage than Go', '15x higher limits than Go', 'Hanzo Bot: 5 bots of your own'] },
-  { x: '∞', name: PLANS.ultra.name, price: PLANS.ultra.price, to: PAY(PLANS.ultra.id), head: 'Everything in Max, plus:', d: 'For the biggest workloads. Usage beyond what is included is paid from your prepaid balance at list price', f: ['Highest included usage across every model', 'Continuous usage with no window resets', 'Usage beyond what is included is paid from your prepaid balance at list price', 'Hanzo Bot: 10 bots of your own'] },
+  { x: '25x', name: PLANS.ultra.name, price: PLANS.ultra.price, to: PAY(PLANS.ultra.id), head: 'Everything in Max, plus:', d: 'For the biggest workloads. Usage beyond what is included is paid from your prepaid balance at list price', f: ['25x more usage than Go', '25x higher limits than Go', 'Usage beyond what is included is paid from your prepaid balance at list price', 'Hanzo Bot: 10 bots of your own'] },
 ];
 
 /* the compare sheet: every personal plan's own lines; a line holds from the plan that adds it upward */
@@ -84,8 +84,8 @@ const COLS = [
   ...PRO.map((p) => ({ name: p.name, price: '$' + p.price, to: p.to })),
 ];
 const ROWS = [
-  ['Usage', [null, 'Usage included on every model', '3x more usage than Go', '5x more usage than Go', '15x more usage than Go', 'Highest included usage across every model']],
-  ['Limits', [null, null, '3x higher limits than Go', '5x higher limits than Go', '15x higher limits than Go', 'Continuous usage with no window resets']],
+  ['Usage', [null, 'Usage included on every model', '3x more usage than Go', '5x more usage than Go', '15x more usage than Go', '25x more usage than Go']],
+  ['Limits', [null, null, '3x higher limits than Go', '5x higher limits than Go', '15x higher limits than Go', '25x higher limits than Go']],
   ['Hanzo Bot', [null, null, 'Hanzo Bot: 1 bot of your own', 'Hanzo Bot: 2 bots of your own', 'Hanzo Bot: 5 bots of your own', 'Hanzo Bot: 10 bots of your own']],
   ...FREE.map((t) => [t, 0]),
   ...GO.filter((t) => t !== 'Usage included on every model').map((t) => [t, 1]),

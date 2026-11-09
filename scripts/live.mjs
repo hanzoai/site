@@ -68,7 +68,7 @@ async function figures() {
   // The plan prices on the home page, /pricing, /bot and /enterprise, in USD (the API gives cents): the plans the site
   // names, and every agency and white-label plan (/enterprise's Partners band lists them as the catalog does).
   const PLANS = 'https://api.hanzo.ai/v1/billing/plans';
-  const SHOWN = ['free', 'go', 'pro-2x', 'dev-5x', 'max-10x', 'ultra', 'team', 'team-premium', 'enterprise', 'enterprise-300'];
+  const SHOWN = ['free', 'go', 'pro-3x', 'dev-5x', 'max-15x', 'ultra', 'team', 'team-premium', 'enterprise', 'enterprise-300'];
   const pricing = async () => {
     const list = await get(PLANS);
     need(Array.isArray(list), 'plan list');

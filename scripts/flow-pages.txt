@@ -1,4 +1,4 @@
-/pay/confirm/card/?plan=pro-2x&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat&z=
+/pay/confirm/card/?plan=pro-3x&returnUrl=https%3A%2F%2Fhanzo.ai%2Fchat&z=
 /pay/confirm/card/?plan=team&interval=year&quantity=2&z=
 /pay/confirm/card
 /pay/cart/?plan=team&interval=year&quantity=5&z=
@@ -8,6 +8,6 @@
 /login
 /auth/callback/?error=access_denied&z=
 /onboarding
-/onboarding/?plan=pro-2x&z=
+/onboarding/?plan=pro-3x&z=
 /docs/quickstart
 /docs/cli
