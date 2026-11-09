@@ -7,8 +7,9 @@
 // Beyond: a chooser built only from Zen's own facts — runs on my machine, reads video, price — that ends on the model to run, then the family tiles lead to every Zen with its own living sigil
 import Zen from '../../components/pages/model/Zen';
 import JsonLd from '../../components/JsonLd';
+import { goImport } from '../../lib/modules';
 
-export const metadata = { title: "The Zen family — Hanzo AI", description: "Open-weight foundation models for agentic coding. Download weights or run Zen 6 and Zen 6 Flash directly on Hanzo Cloud." };
+export const metadata = { title: "The Zen family — Hanzo AI", description: "Open-weight foundation models for agentic coding. Download weights or run Zen 6 and Zen 6 Flash directly on Hanzo Cloud.", other: goImport('zen') };
 
 export default function Page() {
   return <><JsonLd route="/zen" /><Zen /></>;

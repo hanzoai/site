@@ -1,8 +1,9 @@
 import Functions from '../../components/pages/cloud/Functions';
 import JsonLd from '../../components/JsonLd';
 import INDEX from '../../content/pages.json';
+import { goImport } from '../../lib/modules';
 
-export const metadata = { title: INDEX['/functions'].title, description: INDEX['/functions'].description };
+export const metadata = { title: INDEX['/functions'].title, description: INDEX['/functions'].description, other: goImport('functions') };
 
 export default function Page() {
   return <><JsonLd route="/functions" /><Functions /></>;

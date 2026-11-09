@@ -8,8 +8,9 @@
 import Pubsub from '../../components/pages/cloud/Pubsub';
 import JsonLd from '../../components/JsonLd';
 import INDEX from '../../content/pages.json';
+import { goImport } from '../../lib/modules';
 
-export const metadata = { title: INDEX['/pubsub'].title, description: INDEX['/pubsub'].description };
+export const metadata = { title: INDEX['/pubsub'].title, description: INDEX['/pubsub'].description, other: goImport('pubsub') };
 
 export default function Page() {
   return <><JsonLd route="/pubsub" /><Pubsub /></>;

@@ -5,8 +5,9 @@
 import Metrics from '../../components/pages/cloud/Metrics';
 import JsonLd from '../../components/JsonLd';
 import INDEX from '../../content/pages.json';
+import { goImport } from '../../lib/modules';
 
-export const metadata = { title: INDEX['/metrics'].title, description: INDEX['/metrics'].description };
+export const metadata = { title: INDEX['/metrics'].title, description: INDEX['/metrics'].description, other: goImport('metrics') };
 
 export default function Page() {
   return <><JsonLd route="/metrics" /><Metrics /></>;

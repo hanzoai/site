@@ -6,8 +6,9 @@
 import S3 from '../../components/pages/cloud/S3';
 import JsonLd from '../../components/JsonLd';
 import INDEX from '../../content/pages.json';
+import { goImport } from '../../lib/modules';
 
-export const metadata = { title: INDEX['/s3'].title, description: INDEX['/s3'].description };
+export const metadata = { title: INDEX['/s3'].title, description: INDEX['/s3'].description, other: goImport('s3') };
 
 export default function Page() {
   return <><JsonLd route="/s3" /><S3 /></>;

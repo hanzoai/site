@@ -5,6 +5,7 @@
     "dev": "HZ_DEV=1 next dev -p 4180",
     "prebuild": "node scripts/live.mjs",
     "build": "next build",
+    "postbuild": "node --test scripts/modules.test.mjs",
     "preview": "node scripts/serve.mjs 4181",
     "capture": "python3 scripts/capture.py",
     "extract": "python3 scripts/extract.py",

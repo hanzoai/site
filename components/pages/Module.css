@@ -1,0 +1,12 @@
+.xmo { min-height: 100svh; padding: clamp(96px, 14vh, 160px) 0 96px; }
+.xmo-in { width: min(100% - 48px, 672px); margin-inline: auto; }
+.xmo h1 { margin: 0; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 560; letter-spacing: -.02em; line-height: 1.2; overflow-wrap: anywhere; color: var(--ink); }
+.xmo-lede { margin: 12px 0 32px; font-size: 1.0625rem; line-height: 1.5; color: var(--soft); }
+.xmo-facts { display: grid; gap: 16px; margin: 32px 0 0; }
+.xmo-facts dt { font-size: .9rem; color: var(--soft); }
+.xmo-facts dd { margin: 0 0 0 40px; font-size: .9rem; color: var(--ink); overflow-wrap: anywhere; }
+.xmo-facts a, .xmo p a { text-decoration: underline; text-underline-offset: 3px; }
+.xmo h2 { margin: 48px 0 0; font-size: 1.25rem; font-weight: 560; letter-spacing: -.01em; color: var(--ink); }
+.xmo p { margin: 12px 0 0; font-size: 1.0625rem; line-height: 1.5; color: var(--soft); }
+.xmo-lede + .x-codeblock, .xmo p + .x-codeblock { margin-top: 20px; }
+.xmo code:not(pre code) { font: 400 .9em/1 var(--mono); }
