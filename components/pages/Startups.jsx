@@ -276,7 +276,8 @@ function Apply() {
         }
       }
       setSent(true);
-    } catch (x) { setErr(x instanceof Error && !(x instanceof TypeError) ? x.message : 'Something went wrong. Please try again.'); } // a network failure gets Hanzo's sentence, never the browser's finally { setBusy(false); }
+    } catch (x) { setErr(x instanceof Error && !(x instanceof TypeError) ? x.message : 'Something went wrong. Please try again.'); } // a network failure gets Hanzo's sentence, never the browser's
+    finally { setBusy(false); }
   };
   return (
     <section className="xp-sec xst-apply" id="apply" aria-labelledby="xst-apply-h">
