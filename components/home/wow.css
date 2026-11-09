@@ -87,7 +87,13 @@ main:has(> .x-ann) > .x-faster::after { background: conic-gradient(from 180deg a
 main:has(> .x-ann) .x-faster .x-race { padding: 18px 22px; }
 main:has(> .x-ann) .x-faster .x-race-cap { margin-top: 4px; }
 main:has(> .x-ann) .x-faster .x-race-big { margin-top: 2px; font-size: clamp(2.6rem, 3.9vw, 3.6rem); }
-main:has(> .x-ann) .x-faster .x-race-title { margin: 12px 0 6px; }
+main:has(> .x-ann) .x-faster .x-race-title { margin: auto 0 6px; padding-top: 12px; }
+main:has(> .x-ann) .x-faster .x-races > .x-race:first-child .x-race-big { font-size: clamp(3.4rem, 5.6vw, 5.4rem); }
+main:has(> .x-ann) .x-faster .x-races > .x-race:first-child .x-lanes { gap: 14px; }
+main:has(> .x-ann) .x-faster .x-races > .x-race:first-child .x-lane-h { font-size: 15px; margin-bottom: 8px; }
+main:has(> .x-ann) .x-faster .x-races > .x-race:first-child .x-lane-track { height: 8px; }
+main:has(> .x-ann) .x-faster .x-races > .x-race:first-child .x-facts { margin-top: 22px; padding-top: 18px; gap: 10px; }
+main:has(> .x-ann) .x-faster .x-races > .x-race:first-child .x-facts div { font-size: 14.5px; }
 main:has(> .x-ann) .x-faster .x-lanes { gap: 5px; }
 main:has(> .x-ann) .x-faster .x-lane-h { margin-bottom: 4px; }
 main:has(> .x-ann) .x-faster .x-facts { margin-top: 10px; padding-top: 10px; gap: 6px; }
