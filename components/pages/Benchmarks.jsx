@@ -489,8 +489,8 @@ function Enso() {
           <figcaption className="xbm-obj-h">
             <span className="xbm-obj-t">The frontier, one benchmark at a time</span>
             <span className="xbm-lbl">Benchmark</span>
-            <div className="xbm-seg" role="tablist" aria-label="Benchmark">
-              <button type="button" role="tab" aria-selected="true"><span className="xbm-seg-bg" /><span>GPQA Diamond · 12 runs</span></button>
+            <div className="xbm-seg" role="group" aria-label="Benchmark">
+              <button type="button" aria-pressed="true"><span className="xbm-seg-bg" /><span>GPQA Diamond · 12 runs</span></button>
               <A to={API + '&benchmark=enso.livecodebench'} className="xbm-seg-out">LiveCodeBench · 12 runs ↗</A>
             </div>
           </figcaption>
@@ -893,7 +893,7 @@ function KaiMore() {
       </>,
     },
   ];
-  return <Chapters className="xbm-kaimore" label="Kai" chapters={chapters} list={KAI_VIS} buy={<Buy id="kai-more" />} />;
+  return <Chapters id="kai-more" className="xbm-kaimore" label="Kai" chapters={chapters} list={KAI_VIS} buy={<Buy id="kai-more" />} />;
 }
 
 /* Plain chapters: each one a quick section of its own (copy beside its visual), no pinning and no scroll scrub.

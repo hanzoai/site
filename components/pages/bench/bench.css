@@ -86,6 +86,7 @@
 .xbr-bars li:not(.lit) .xbr-bar.ba { background: #a3a3a3; }
 .xbr-bars li.own .xbr-bar.ba { background: var(--ink); }
 .xbr-bars.chart .xbr-bar { transform: scaleX(var(--xbr-w)); }
+.xbr-bars.chart.racing .xbr-bar { transform: scaleX(var(--xbr-r, 0)); transition: none !important; transition-delay: 0s !important; }
 .xbr-bars.chart li:nth-child(2) .xbr-bar { transition-delay: .04s; } .xbr-bars.chart li:nth-child(3) .xbr-bar { transition-delay: .08s; } .xbr-bars.chart li:nth-child(n+4) .xbr-bar { transition-delay: .12s; }
 .xbr-v { grid-area: va; justify-self: end; font-size: 15px; font-weight: 500; white-space: nowrap; color: var(--ink); }
 .xbr-v.vb { grid-area: vb; max-width: 30ch; white-space: normal; text-align: right; font-weight: 400; font-size: 13px; color: var(--soft); }

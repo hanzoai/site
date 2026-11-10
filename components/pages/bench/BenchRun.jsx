@@ -146,7 +146,7 @@ function lanesOf(box, c, col) {
       const cell = c.rows[i] && c.rows[i].cells[col];
       if (!cell) return;
       const w = Math.max(0.004, sc.w(cell.v));
-      out.push({ i, bar: li.querySelector('.xbr-bar'), w, val: li.querySelector('.xbr-v'), s: cell.s, frac: (p) => (cell.v ? sc.inv(Math.min(p, w)) / cell.v : 1) });
+      out.push({ i, bar: li.querySelector('.xbr-bar'), w, val: li.querySelector('.xbr-v'), s: cell.s, frac: (p) => p });
     });
   } else if (c.kind === 'versus') {
     box.querySelectorAll('.xbr-bars li').forEach((li, i) => {
@@ -155,7 +155,7 @@ function lanesOf(box, c, col) {
       const hi = Math.max(r.a.v, r.b.v) || 1;
       [['a', '.ba', '.va'], ['b', '.bb', '.vb']].forEach(([k, b, v]) => {
         const w = Math.max(0.004, r[k].v / hi);
-        out.push({ i: k === 'a' ? i : -1, bar: li.querySelector('.xbr-bar' + b), w, val: li.querySelector('.xbr-v' + v), s: r[k].s, frac: (p) => Math.min(p, w) / w });
+        out.push({ i: k === 'a' ? i : -1, bar: li.querySelector('.xbr-bar' + b), w, val: li.querySelector('.xbr-v' + v), s: r[k].s, frac: (p) => p });
       });
     });
   } else if (c.kind === 'one') {
@@ -163,7 +163,7 @@ function lanesOf(box, c, col) {
     const n = m ? parseFloat(m[0].replace(/,/g, '')) : 1;
     const unit = Math.pow(10, Math.ceil(Math.log10(n || 1)));
     const w = Math.max(0.004, n / unit);
-    out.push({ i: 0, bar: box.querySelector('.xbr-one-k'), w, val: box.querySelector('.xbr-one-v'), s: c.s, frac: (p) => Math.min(p, w) / w });
+    out.push({ i: 0, bar: box.querySelector('.xbr-one-k'), w, val: box.querySelector('.xbr-one-v'), s: c.s, frac: (p) => p });
     out.push({ i: -1, bar: box.querySelector('.xbr-one-u'), w: 1, frac: () => 1 });
   }
   return out;
@@ -183,21 +183,21 @@ function runRace(box, c, col, own, done) {
     const path = box.querySelector('.xbr-tr-line path');
     // the revisions rise off the axis together along their dates; the line between them takes its shape as they climb
     frame = (p) => {
-      const cur = c.points.map((pt) => Math.min(c.lo + p * span, pt.v));
-      lis.forEach((li, i) => { li.style.bottom = Y(cur[i]) + '%'; setText(li.querySelector('.xbr-tr-val'), counted(c.points[i].val, cur[i] / c.points[i].v)); });
+      const cur = c.points.map((pt) => c.lo + p * (pt.v - c.lo));
+      lis.forEach((li, i) => { li.style.bottom = Y(cur[i]) + '%'; setText(li.querySelector('.xbr-tr-val'), counted(c.points[i].val, p)); });
       if (path) path.setAttribute('d', cur.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(2) + ' ' + (100 - Y(v)).toFixed(2)).join(' '));
       const r = ro(), o = c.points[own];
-      if (r && o) setText(r, counted(o.val, cur[own] / o.v));
+      if (r && o) setText(r, counted(o.val, p));
     };
   } else {
     const lanes = lanesOf(box, c, col);
     frame = (p) => {
       lanes.forEach((l) => {
-        if (l.bar) l.bar.style.setProperty('--xbr-r', Math.min(p, l.w));
-        if (l.val) setText(l.val, counted(l.s, p >= l.w ? 1 : l.frac(p)));
+        if (l.bar) l.bar.style.setProperty('--xbr-r', p * l.w);
+        if (l.val) setText(l.val, counted(l.s, p >= 1 ? 1 : l.frac(p)));
       });
       const r = ro(), o = lanes.find((l) => l.i === own);
-      if (r && o) setText(r, counted(o.s, p >= o.w ? 1 : o.frac(p)));
+      if (r && o) setText(r, counted(o.s, p >= 1 ? 1 : o.frac(p)));
     };
   }
   const end = () => {
@@ -289,6 +289,7 @@ function Turn({ c, walk, slug }) {
     stopRace.current && stopRace.current();
     timers.current.forEach(clearTimeout); timers.current = [];
     walk.stop();
+    if (box.current) box.current.querySelectorAll('.xbr-bar').forEach((b) => b.style.removeProperty('--xbr-r'));
     setChart(true);
     setArmed(true);
     later(() => {
@@ -302,7 +303,7 @@ function Turn({ c, walk, slug }) {
       });
     }, c.kind === 'trend' ? 700 : 260);
   };
-  const halt = () => { if (stopRace.current) stopRace.current(); timers.current.forEach(clearTimeout); timers.current = []; walk.stop(); };
+  const halt = () => { if (stopRace.current) stopRace.current(); timers.current.forEach(clearTimeout); timers.current = []; setArmed(false); walk.stop(); };
   useEffect(() => {
     if (calm) { setChart(true); return; }
     if (!seen || turned.current) return;
@@ -405,7 +406,7 @@ function Turn({ c, walk, slug }) {
     <figure ref={box} id={id} className={'xbr-turn v2f-obj' + (c.kind === 'one' ? ' one' : '')}>
       <figcaption className="xbr-turn-h">
         <span className="v2f-kick">{c.metric || c.title}</span>
-        {c.kind !== 'one' && <div className="xbr-turn-ctl"><Walker walk={walk} n={rowsOf(c)} />{view}</div>}
+        {c.kind !== 'one' && <div className="xbr-turn-ctl"><Walker walk={walk} racing={armed} onStop={halt} onReplay={() => race(col)} />{view}</div>}
       </figcaption>
       <div className="xbr-turn-g">
         {c.kind !== 'one' && <Readout c={c} walk={walk} col={col} />}

@@ -1,6 +1,7 @@
 /* ---------- benchmarks, v2 ---------- */
 .xbm, .xbm-in { --j: #a3a3a3; --acc: #0a0a0a; --soft: #525252; --faint: #737373; --card: #f5f5f5; --line: rgba(0, 0, 0, .1); } /* deck palette only: Hanzo's series is ink, the rest grey */
 .xbm { overflow-x: clip; }
+.xbm [id] { scroll-margin-top: 124px; }
 .xbm-lbl { font: 500 13px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
 .xbm-p { margin: 14px 0 0; max-width: 68ch; font-size: 16px; line-height: 1.6; color: var(--soft); text-wrap: pretty; }
 .xbm-note { margin: 16px 0 0; max-width: 92ch; font-size: 14px; line-height: 1.6; color: var(--faint); text-wrap: pretty; }
@@ -28,7 +29,7 @@
 /* segmented controls and tools */
 .xbm-seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); }
 .xbm-seg button, .xbm-seg-out { position: relative; border: 0; background: none; min-height: 34px; padding: 0 14px; border-radius: 999px; font: 500 14px/34px var(--sans); color: var(--soft); cursor: pointer; white-space: nowrap; text-decoration: none; }
-.xbm-seg button[aria-selected='true'] { color: #fff; }
+.xbm-seg button:is([aria-selected='true'], [aria-pressed='true']) { color: #fff; }
 .xbm-seg button span { position: relative; }
 @media (hover: hover) { .xbm-seg-out:hover { color: var(--ink); } }
 .xbm-seg-bg { position: absolute !important; inset: 0; border-radius: 999px; background: var(--ink); }
@@ -815,7 +816,7 @@ html:not(.light) .xbm .pf-btn.solid { border-color: var(--ink); }
 html:not(.light) .xbm .pf-btn.solid:hover { background: var(--primary-hover); }
 html:not(.light) .xbm-bar { background: var(--secondary); }
 html:not(.light) .xbm-bar.pale b { background: var(--neutral-700); }
-html:not(.light) .xbm-seg button[aria-selected='true'], html:not(.light) .xbm-race-tabs button[aria-selected='true'] { color: var(--x-on-ink); }
+html:not(.light) .xbm-seg button:is([aria-selected='true'], [aria-pressed='true']), html:not(.light) .xbm-race-tabs button[aria-selected='true'] { color: var(--x-on-ink); }
 html:not(.light) .xbm-tools button, html:not(.light) .xbm-jump > button, html:not(.light) .xbm-jump-p, html:not(.light) .xbm-tile, html:not(.light) .xbm-all, html:not(.light) .xbm-ev-tabs button, html:not(.light) .xbm-pp, html:not(.light) .xbm-race-tabs button, html:not(.light) .xbm-run-b, html:not(.light) .xbm-lane, html:not(.light) .xbm-fbtn, html:not(.light) .xbm-fg button, html:not(.light) .xbm-fold { background: var(--x-raised); }
 html:not(.light) .xbm-fg button[aria-pressed='true'] { background: var(--ink); color: var(--x-on-ink); }
 html:not(.light) .xbm-fg button[aria-pressed='true'] span { color: var(--neutral-600); }
@@ -864,7 +865,7 @@ html:not(.light) .xbm-sh-body { color: var(--muted-foreground); }
 html:not(.light) .xbm-sh-panel::before { background: var(--border-strong); }
 .xbm-figs-cta { margin-top: 24px; }
 /* the selected segment/race tab carries its own ink fill in dark (same colour as the sliding pill behind it) */
-html:not(.light) .xbm-seg button[aria-selected='true'], html:not(.light) .xbm-race-tabs button[aria-selected='true'] { background: var(--ink); }
+html:not(.light) .xbm-seg button:is([aria-selected='true'], [aria-pressed='true']), html:not(.light) .xbm-race-tabs button[aria-selected='true'] { background: var(--ink); }
 
 /* ===================================================================================================================
    8 Nov, frames (the approved home page's bar, components/home/wow.css): every section reads in one 1470x801 frame and
