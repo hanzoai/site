@@ -203,7 +203,7 @@ function Hero() {
           <p className="pf-lede xos-lede">We publish what we build, fix the bugs we find upstream instead of patching them in private, and pay the projects we depend on. The commitments below are specific enough to hold us to.</p>
           <div className="xos-acts">
             <A to="https://github.com/hanzoai" className="pf-btn xos-btn-l" data-thumb="View on GitHub" data-cta="open-source.hero">View on GitHub</A>
-            <More to="https://github.com/hanzoai">Star Our Repos</More>
+            <More to="https://docs.hanzo.ai/docs/self-hosting">Self-Host Quickstart</More>
           </div>
         </div>
         <div className="xos-hero-b">
@@ -659,7 +659,7 @@ function Close() {
         <div className="xos-close-acts">
           <A to="https://github.com/hanzoai" className="pf-btn xos-btn-l" data-cta="open-source.band">Start Contributing</A>
         </div>
-        <p className="xos-con-note"><More to="https://discord.gg/XthHQQj">Join Discord</More><More to="/founder">Founder Program</More></p>
+        <p className="xos-con-note"><More to="https://docs.hanzo.ai/docs/self-hosting">Self-Hosting Docs</More><More to="https://discord.gg/XthHQQj">Join Discord</More><More to="/founder">Founder Program</More></p>
       </div>
     </section>
   );

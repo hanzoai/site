@@ -814,11 +814,11 @@ function OpenSec() {
         <div>
           <Lines id="xpl-op-h" className="xpl-h2 xpl-op-h" lines={['Your cloud should', 'not lock you in.']} />
           <p className="xpl-lede xpl-op-l">The platform is open source, and the image we operate is the image you can pull: the same API and console on your cluster, in your network or on a laptop.</p>
-          <div className="xpl-links"><Go to="https://docs.hanzo.ai/docs/quickstart">Quickstart</Go><Go to="/open-source">Open source</Go><Go to="https://github.com/hanzoai/cloud">Source</Go></div>
+          <div className="xpl-links"><Go to="https://docs.hanzo.ai/docs/self-hosting">Self-host guide</Go><Go to="/open-source">Open source</Go><Go to="https://github.com/hanzoai/cloud">Source</Go></div>
         </div>
         <div className="xpl-tty">
-          <Cmd code="curl -fsSL https://hanzo.sh | sh" />
-          <Cmd code="hanzo serve cloud" />
+          <Cmd code="git clone https://github.com/hanzoai/cloud && cd cloud && make dev" />
+          <Cmd code="curl -sS http://127.0.0.1:9090/healthz" />
           <p className="xpl-cap-s">Open</p>
         </div>
       </div>
