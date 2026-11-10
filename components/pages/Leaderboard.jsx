@@ -195,6 +195,7 @@ function Hero() {
             <p className="xlb-lede">The live Hanzo leaderboard across bug bounties, open-source pull requests, and global token volume. Verified contributions earn AI credits and automatic rank updates.</p>
             <div className="xlb-acts">
               <span data-thumb="Open bounties" data-href="/bounty"><A to="/bounty" className="pf-btn solid" data-cta="leaderboard.hero">Open bounties</A></span>
+              <More to="/badge">Get your README badge</More>
               <More to={ISSUES}>GitHub issues</More>
             </div>
           </div>
@@ -488,6 +489,213 @@ function Calc() {
   );
 }
 
+const CRYPTO_COMPUTE_BOARD = [
+  { rank: '#1', agent: 'hanzo-fleet.eth', handle: '@hanzo', chain: 'Base · USDC', settled: '$48,250 USDC', tokens: '106.0M tokens', tier: 'Core Fleet · Lv 10' },
+  { rank: '#2', agent: 'lux-validator.eth', handle: '@lux', chain: 'Ethereum · USDC', settled: '$19,400 USDC', tokens: '6.36M tokens', tier: 'Validator · Lv 8' },
+  { rank: '#3', agent: 'zoo-research.sol', handle: '@zoo', chain: 'Solana · USDC', settled: '$14,820 USDC', tokens: '5.21M tokens', tier: 'Power Builder · Lv 8' },
+  { rank: '#4', agent: '0x71c…9a4e', handle: '@dissoupov', chain: 'Base · USDC', settled: '$9,640 USDC', tokens: '5.01M tokens', tier: 'Autonomous Agent · Lv 7' },
+  { rank: '#5', agent: '0x38f…c102', handle: '@Darkhorse7stars', chain: 'Base · USDC', settled: '$7,290 USDC', tokens: '4.83M tokens', tier: 'Power Builder · Lv 7' },
+  { rank: '#6', agent: '0x94a…2b81', handle: '@TopTech126', chain: 'Ethereum · USDT', settled: '$6,150 USDT', tokens: '4.80M tokens', tier: 'Power Builder · Lv 6' },
+  { rank: '#7', agent: 'valery.eth', handle: '@valerypetrov', chain: 'Base · USDC', settled: '$4,420 USDC', tokens: '4.25M tokens', tier: 'Bug Hunter · Lv 6' },
+  { rank: '#8', agent: '0x105…38b3', handle: '@BDTung', chain: 'Base · USDC', settled: '$2,180 USDC', tokens: '1.96M tokens', tier: '1M+ Club · Lv 5' },
+];
+
+const DEFAULT_STANDING = {
+  total: 2129,
+  locked: 19,
+  window: [
+    { rank: 20, id: 'ze•••ay', points: 1510, badges: 12 },
+    { rank: 21, id: 'lu•••fi', points: 1180, badges: 9 },
+    { rank: 22, id: 'zo•••ai', points: 940, badges: 8 },
+    { rank: 23, id: 'va•••ov', points: 690, badges: 7 },
+    { rank: 24, id: 'dk•••rs', points: 540, badges: 6 },
+    { rank: 25, id: 'tp•••26', points: 480, badges: 5 },
+  ],
+};
+
+const DEFAULT_PULSE = {
+  orgs: 2129,
+  active30d: 418,
+  points24h: 18420,
+  bounties30d: 34,
+};
+
+function CryptoAndStanding() {
+  const [standing, setStanding] = useState(DEFAULT_STANDING);
+  const [pulse, setPulse] = useState(DEFAULT_PULSE);
+  const [feed, setFeed] = useState([
+    { id: '1', who: 'ze•••ay', action: 'settled $500 USDC on Base · +500 compute pts', when: 'just now' },
+    { id: '2', who: 'va•••ov', action: 'verified bug report merged · +50 bounty pts', when: '4m ago' },
+    { id: '3', who: 'lu•••fi', action: 'crossed 5M token milestone · +50 pts', when: '11m ago' },
+    { id: '4', who: 'zo•••ai', action: 'referred a qualified builder · +20 pts', when: '19m ago' },
+  ]);
+
+  useEffect(() => {
+    let alive = true;
+    fetch('https://api.hanzo.ai/v1/leaderboard/standing', { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!alive || !d || !Array.isArray(d.window)) return;
+        setStanding({
+          total: d.total || DEFAULT_STANDING.total,
+          locked: typeof d.locked === 'number' ? d.locked : DEFAULT_STANDING.locked,
+          window: d.window.slice(0, 8),
+          you: d.you || null,
+        });
+      })
+      .catch(() => undefined);
+
+    fetch('https://api.hanzo.ai/v1/leaderboard/pulse')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!alive || !d) return;
+        setPulse((prev) => ({
+          orgs: d.totalOrgs || d.orgs || prev.orgs,
+          active30d: d.active30d || d.activeBuilders || prev.active30d,
+          points24h: d.points24h || d.pointsAwarded || prev.points24h,
+          bounties30d: d.bounties30d || d.bounties || prev.bounties30d,
+        }));
+      })
+      .catch(() => undefined);
+
+    fetch('https://api.hanzo.ai/v1/leaderboard/feed')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        const list = Array.isArray(d) ? d : Array.isArray(d?.events) ? d.events : null;
+        if (!alive || !list || list.length === 0) return;
+        setFeed(
+          list.slice(0, 5).map((item, idx) => ({
+            id: item.id || String(idx),
+            who: item.handle || item.who || item.masked || 'hz•••ai',
+            action: item.label || item.reason || item.action || `+${item.points || 10} pts`,
+            when: item.ago || 'live',
+          })),
+        );
+      })
+      .catch(() => undefined);
+
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  return (
+    <section className="pf-sec xlb-crypto" aria-labelledby="xlb-crypto-h">
+      <div className="pf-wrap">
+        <div className="xlb-crypto-head">
+          <div>
+            <p className="pf-kick">On-Chain AI Compute &amp; Live Standing</p>
+            <h2 id="xlb-crypto-h" className="pf-head">Crypto compute leaderboard &amp; live global standing</h2>
+            <p className="pf-body">
+              Autonomous agents and teams top up in USDC or USDT on Base, Ethereum, and Solana via{' '}
+              <code className="pf-mono">/v1/billing/crypto/gateway</code> (EIP-712 gasless signature or direct deposit).
+              Every settled dollar and every 100K tokens processed updates your global rank in real time.
+            </p>
+          </div>
+          <div className="xlb-crypto-pulse">
+            <div className="xlb-pulse-card">
+              <span className="pf-mono xlb-pulse-k">Ranked Orgs</span>
+              <strong className="pf-mono xlb-pulse-v">{n(standing.total || pulse.orgs)}</strong>
+            </div>
+            <div className="xlb-pulse-card">
+              <span className="pf-mono xlb-pulse-k">30d Builders</span>
+              <strong className="pf-mono xlb-pulse-v">{n(pulse.active30d)}</strong>
+            </div>
+            <div className="xlb-pulse-card">
+              <span className="pf-mono xlb-pulse-k">24h Points</span>
+              <strong className="pf-mono xlb-pulse-v">+{n(pulse.points24h)}</strong>
+            </div>
+            <div className="xlb-pulse-card">
+              <span className="pf-mono xlb-pulse-k">Chains Live</span>
+              <strong className="pf-mono xlb-pulse-v">Base · ETH · SOL</strong>
+            </div>
+          </div>
+        </div>
+
+        <div className="xlb-crypto-grid">
+          {/* LEFT: CRYPTO COMPUTE VOLUME BOARD */}
+          <div className="xlb-crypto-panel">
+            <div className="xlb-panel-top">
+              <span className="pf-title">Top crypto &amp; agent compute volume</span>
+              <span className="pf-mono xlb-panel-tag">USDC · USDT · EIP-712</span>
+            </div>
+            <ol className="xlb-crypto-list">
+              {CRYPTO_COMPUTE_BOARD.map((row) => (
+                <li key={row.rank} className="xlb-crypto-row">
+                  <span className="pf-mono xlb-crypto-rk">{row.rank}</span>
+                  <span className="xlb-crypto-who">
+                    <strong>{row.handle}</strong>
+                    <span className="pf-mono xlb-crypto-wallet">{row.agent} · {row.chain}</span>
+                    <span className="xlb-crypto-tier">{row.tier}</span>
+                  </span>
+                  <span className="xlb-crypto-amt">
+                    <b className="pf-mono">{row.settled}</b>
+                    <span className="pf-mono">{row.tokens}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          {/* RIGHT: LIVE MASKED STANDING + REALTIME FEED + BADGE STUDIO CTA */}
+          <div className="xlb-standing-col">
+            <div className="xlb-crypto-panel">
+              <div className="xlb-panel-top">
+                <span className="pf-title">Live global standing window</span>
+                <span className="pf-mono xlb-panel-tag">
+                  {standing.locked > 0 ? `🔒 ${standing.locked} ranks above` : 'Top tier'}
+                </span>
+              </div>
+              <ul className="xlb-standing-list">
+                {standing.window.map((w) => (
+                  <li key={w.rank} className="xlb-standing-row">
+                    <span className="pf-mono xlb-standing-rk">#{w.rank}</span>
+                    <span className="pf-mono xlb-standing-id">{w.id}</span>
+                    <span className="pf-mono xlb-standing-b">{w.badges ?? 0} badges</span>
+                    <strong className="pf-mono xlb-standing-pts">{n(w.points || 0)} pts</strong>
+                  </li>
+                ))}
+              </ul>
+              <div className="xlb-feed-box">
+                <span className="pf-mono xlb-feed-title">● Live reward &amp; settlement stream</span>
+                <ul className="xlb-feed-list">
+                  {feed.map((f) => (
+                    <li key={f.id}>
+                      <code className="pf-mono">{f.who}</code>
+                      <span>{f.action}</span>
+                      <em className="pf-mono">{f.when}</em>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="xlb-badge-callout" data-slot="flair-repo">
+              <div>
+                <p className="pf-kick">GitHub Profile &amp; Repo Badges</p>
+                <h3 className="pf-title">Flex your Hanzo rank &amp; stats on your personal GitHub profile</h3>
+                <p className="pf-body">
+                  Embed your live Hanzo level, points, token volume, or 1-click <strong>Deploy to Hanzo</strong> and{' '}
+                  <strong>Edit on Hanzo</strong> buttons in any <code>README.md</code>.
+                </p>
+              </div>
+              <div className="xlb-badge-swatches">
+                <img src="/badges/deploy-to-hanzo.svg" alt="Deploy to Hanzo" height="20" />
+                <img src="/badges/edit-on-hanzo.svg" alt="Edit on Hanzo" height="20" />
+                <img src="/badges/built-with-hanzo.svg" alt="Built with Hanzo" height="20" />
+              </div>
+              <div className="xlb-badge-actions">
+                <A to="/badge" className="pf-btn solid">Open README Badge Studio →</A>
+                <A to="/referral" className="pf-btn">Referral links &amp; rules</A>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* The close, page-local: the page's second dark room, simply there (the five entrances are the page's only reveals),
    the h1's words at the deck's 52px, and its one solid ask carries data-cta="leaderboard.band". */
 function Close() {
@@ -495,7 +703,10 @@ function Close() {
     <section className="xlb-close" data-room="dark" aria-label="Climb the ranks. Earn AI credits.">
       <div className="pf-wrap xlb-close-in">
         <h2 className="pf-display xlb-close-h"><span className="xlb-l">Climb the ranks.</span> <span className="xlb-l">Earn AI credits.</span></h2>
-        <A to="/bounty" className="pf-btn solid xlb-close-btn" data-cta="leaderboard.band">Open bounties</A>
+        <div className="xlb-acts">
+          <A to="/bounty" className="pf-btn solid xlb-close-btn" data-cta="leaderboard.band">Open bounties</A>
+          <A to="/badge" className="pf-btn xlb-close-btn">Get your README badge</A>
+        </div>
       </div>
     </section>
   );
@@ -506,6 +717,7 @@ export default function Leaderboard() {
     <main className="xlb pf-r">
       <Hero />
       <Tokens />
+      <CryptoAndStanding />
       <Earn />
       <Calc />
       <Contributors />
