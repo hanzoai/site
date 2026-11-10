@@ -676,7 +676,7 @@ function Questions() {
     <section className="xe-sec xe-qa" aria-labelledby="xe-qa-h">
       <div className="xe-w xe-g">
         <header className="xe-head xe-stick"><h2 id="xe-qa-h" className="xe-h">Questions</h2></header>
-        <div className="xe-qa-list"><Faq items={QA} first={0} multi onOpen={(q) => capture('faq_opened', { q, page: 'enterprise' })} /></div>
+        <div className="xe-qa-list"><Faq items={QA} first={0} onOpen={(q) => capture('faq_opened', { q, page: 'enterprise' })} /></div>
       </div>
     </section>
   );

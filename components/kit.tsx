@@ -56,23 +56,28 @@ export function SecHead({ kicker, title, lede, center, dark, id }) {
   );
 }
 
-/* Questions that open in place. One open at a time (multi to allow several); the first is open (first={-1} for none).
+/* Questions that open in place. Strictly one open at a time; the first is open by default (first={-1} for none).
    Closed answers stay in the HTML as hidden="until-found", so search engines read them and the browser's Find in page
    opens the one it finds. Each question has an address (#q-what-does-a-plan-cost) that opens it on arrival. */
 const qslug = (q) => (typeof q === 'string' ? 'q-' + q.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) : undefined);
-export function Faq({ items, dark, multi = false, first = 0, onOpen }) {
-  const [open, setOpen] = useState(() => new Set(first >= 0 ? [first] : []));
-  const [shut, setShut] = useState(() => new Set(items.map((_, i) => i).filter((i) => i !== first)));
+export function Faq({ items, dark, first = 0, onOpen }) {
+  const initOpen = first >= 0 && first < items.length ? first : -1;
+  const [open, setOpen] = useState(initOpen);
+  const [shut, setShut] = useState(() => new Set(items.map((_, i) => i).filter((i) => i !== initOpen)));
   const bodies = useRef([]);
   const show = useCallback((i) => {
     setShut((s) => { const n = new Set(s); n.delete(i); return n; });
-    setOpen((o) => (multi ? new Set(o).add(i) : new Set([i])));
-  }, [multi]);
+    setOpen(i);
+  }, []);
   // onOpen hears each question as the reader opens it, never as it is closed
-  const toggle = (i) => (open.has(i) ? setOpen((o) => { const n = new Set(o); n.delete(i); return n; }) : (show(i), onOpen?.(items[i][0])));
+  const toggle = (i) => {
+    if (open === i) { setOpen(-1); return; }
+    show(i);
+    onOpen?.(items[i][0]);
+  };
   // React treats `hidden` as a boolean, so "until-found" is set by hand once the answer has fully closed
   useEffect(() => {
-    bodies.current.forEach((el, i) => { if (!el) return; if (shut.has(i) && !open.has(i)) el.setAttribute('hidden', 'until-found'); else el.removeAttribute('hidden'); });
+    bodies.current.forEach((el, i) => { if (!el) return; if (shut.has(i) && open !== i) el.setAttribute('hidden', 'until-found'); else el.removeAttribute('hidden'); });
   }, [shut, open]);
   useEffect(() => {
     const offs = bodies.current.map((el, i) => { if (!el) return null; const f = () => show(i); el.addEventListener('beforematch', f); return () => el.removeEventListener('beforematch', f); });
@@ -84,23 +89,28 @@ export function Faq({ items, dark, multi = false, first = 0, onOpen }) {
   return (
     <ul className={'x-faq' + (dark ? ' dark' : '')}>
       {items.map(([q, a], i) => {
-        const on = open.has(i);
+        const on = open === i;
         return (
-          <Rise as="li" key={typeof q === 'string' ? q : i} delay={Math.min(i, 4) * 0.04} y={16} id={qslug(q)}>
+          <li key={typeof q === 'string' ? q : i} id={qslug(q)}>
             <button type="button" aria-expanded={on} aria-controls={`${qslug(q) || 'q' + i}-a`} onClick={() => toggle(i)}>
               <span>{q}</span>
-              <motion.i animate={{ rotate: on ? 45 : 0 }} transition={{ duration: 0.35, ease: EASE }} aria-hidden="true">+</motion.i>
+              <i className="x-faq-ic" aria-hidden="true">
+                <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                  <path d="M3 8h10" />
+                  <path className="x-faq-v" d="M8 3v10" />
+                </svg>
+              </i>
             </button>
             <motion.div
               className="x-faq-a"
               initial={false}
               animate={on ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
-              transition={{ duration: 0.45, ease: EASE }}
+              transition={{ duration: 0.42, ease: EASE }}
               onAnimationComplete={() => { if (!on) setShut((s) => new Set(s).add(i)); }}
             >
               <div id={`${qslug(q) || 'q' + i}-a`} ref={(el) => { bodies.current[i] = el; }}>{a}</div>
             </motion.div>
-          </Rise>
+          </li>
         );
       })}
     </ul>

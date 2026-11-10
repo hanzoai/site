@@ -823,12 +823,8 @@ export default function Pricing() {
       <section className="xpr-faq zf-sec" aria-labelledby="xpr-faq-h">
         <div className="xpr-w xpr-split">
           <header className="xpr-stick"><h2 id="xpr-faq-h" className="xpr-h">Frequently Asked Questions</h2></header>
-          <div data-enter="vertical-ticker">
-            <Faq items={QA.slice(0, 3)} first={0} multi />
-            <details className="xpr-faq-more">
-              <summary><span>Read more</span><span className="xpr-faq-n" aria-hidden="true">+ {QA.length - 3}</span></summary>
-              <Faq items={QA.slice(3)} first={-1} multi />
-            </details>
+          <div>
+            <Faq items={QA} first={0} />
           </div>
         </div>
       </section>

@@ -614,7 +614,7 @@ function Source() {
           </div>
         </div>
         <Play className="xdv-qa-r">
-          <Faq items={QA} multi />
+          <Faq items={QA} />
           <details className="xdv-read">
             <summary>
               <span><span className="xdv-read-t">The agent, its controller, its source.</span><span>Where to start, what Dev thinks with, and the code.</span></span>

@@ -372,8 +372,8 @@ html:not(.light) .xe .x-band .x-btn.solid { background: var(--primary); border-c
 .xe-qa .xe-stick { grid-column: 1 / span 5; }
 .xe-qa-list { grid-column: 6 / span 8; }
 .xe-qa .x-faq button { font-size: 17px; font-weight: 497; transition: translate .15s var(--eo); }
-.xe-qa .x-faq button i { transition: color .15s var(--eo), rotate .3s var(--ee); }
-@media (hover: hover) { .xe-qa .x-faq button:hover { translate: 4px 0; } .xe-qa .x-faq button:hover i { color: var(--ink); rotate: 90deg; } }
+.xe-qa .x-faq button i { transition: color .15s var(--eo); }
+@media (hover: hover) { .xe-qa .x-faq button:hover { translate: 4px 0; } .xe-qa .x-faq button:hover i { color: var(--ink); } }
 .xe-qa .x-faq button:active { scale: .98; }
 
 /* 44px hit areas for text links on phones and touch screens: the box is 44px tall, and an ::after inset widens the

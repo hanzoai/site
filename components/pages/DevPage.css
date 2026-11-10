@@ -479,11 +479,7 @@
   html.js .xdv-ledger:not([data-play]) li .v { clip-path: inset(0 100% 0 0); }
   html.js .xdv-ledger:not([data-play]) li .k { transform: translateX(-16px); opacity: 0; }
   html.js .xdv-ledger:not([data-play]) .xdv-led-f { clip-path: inset(0 100% 0 0); }
-  /* 12. the questions slide in from the side, one after another; the agent prompt types itself across */
-  .xdv-qa-r .x-faq > * { transition: transform .7s cubic-bezier(.16, 1, .3, 1), opacity .5s; }
-  .xdv-qa-r .x-faq > :nth-child(2) { transition-delay: .07s; } .xdv-qa-r .x-faq > :nth-child(3) { transition-delay: .14s; }
-  .xdv-qa-r .x-faq > :nth-child(4) { transition-delay: .21s; } .xdv-qa-r .x-faq > :nth-child(5) { transition-delay: .28s; }
-  html.js .xdv-qa-r:not([data-play]) .x-faq > * { transform: translateX(56px); opacity: 0; }
+  /* 12. the agent prompt types itself across */
   .xdv-paste-r .x-codeblock-l { transition: clip-path 1.4s steps(48, end) .3s; }
   html.js .xdv-paste-r:not([data-play]) .x-codeblock-l { clip-path: inset(0 100% 0 0); }
 }

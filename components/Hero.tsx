@@ -382,10 +382,17 @@ export default function Hero() {
   const inView = useInView(host, { amount: 0.2 });
   const live = useRef(true);
   live.current = inView;
-  // the terminal's Copy copies exactly the command it shows, and says so
+  // the terminal's Copy copies the active CLI command it shows, and says so
   const [copied, setCopied] = useState(false);
   const copyT = useRef(0);
-  const copy = async () => { if (!(await copyText(CMD))) return; capture('home_copied', { block: 'hero', command: CMD }); setCopied(true); clearTimeout(copyT.current); copyT.current = setTimeout(() => setCopied(false), 1600); };
+  const copy = async (cmdText = CMD) => {
+    const line = typeof cmdText === 'string' && cmdText ? cmdText : CMD;
+    if (!(await copyText(line))) return;
+    capture('home_copied', { block: 'hero', command: line });
+    setCopied(true);
+    clearTimeout(copyT.current);
+    copyT.current = setTimeout(() => setCopied(false), 1600);
+  };
 
   // the landing is counted once, when the hero is first drawn; a press on Download App is read where the page transition reads it
   useEffect(() => { capture('home_viewed'); }, []);
@@ -393,10 +400,7 @@ export default function Hero() {
 
   const [typed, setTypedState] = useState(0);
   const promptEl = useRef(null);
-  const cmdEl = useRef(null);
   const setTyped = (i) => { if (promptEl.current) promptEl.current.textContent = PROMPT.slice(0, i); if (i === 0 || i === PROMPT.length) setTypedState(i); };
-  const [cmdDone, setCmdDone] = useState(false);
-  const setCmd = (i) => { if (cmdEl.current) cmdEl.current.textContent = CMD.slice(0, i); if (i === CMD.length) setCmdDone(true); };
   const [phase, setPhase] = useState(0);
   // after the opening, the rest of Hanzo's day plays: one scene every 6.5 s
   const [sc, setSc] = useState(-1);
@@ -409,7 +413,6 @@ export default function Hero() {
     manualRef.current = true;
     holdUntilRef.current = Date.now() + 12000;
     setTyped(PROMPT.length);
-    setCmd(CMD.length);
     setPhase(4);
     setSc(nextSc);
     setNavPick(navId);
@@ -427,14 +430,13 @@ export default function Hero() {
 
   // the demo: the prompt types itself, sends, the app answers, then the day's scenes play
   useEffect(() => {
-    if (calm) { setTyped(PROMPT.length); setCmd(CMD.length); setPhase(4); return; }
+    if (calm) { setTyped(PROMPT.length); setPhase(4); return; }
     let dead = false;
     const stop = () => dead || manualRef.current;
     const nap = (ms) => new Promise((r) => setTimeout(r, ms));
     const held = async () => { while (!stop() && !live.current) await nap(400); };
     (async () => {
       await nap(1100);
-      (async () => { for (let i = 0; i <= CMD.length && !stop(); i++) { setCmd(i); await nap(i < 4 ? 90 : 36); } })();
       while (!stop()) {
         await held(); if (stop()) return;
         setPhase(0); setTyped(0); setSc(-1);
@@ -530,8 +532,8 @@ export default function Hero() {
           <div className="x-fit" style={{ transform: `scale(${k})` }}>
             <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
               <Desk sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} side={side} onSide={() => setSide((v) => !v)} promptEl={promptEl} full={typed === PROMPT.length} />
-              <Term sc={sc} onSelectScene={selectScene} cmdEl={cmdEl} done={cmdDone} copy={copy} copied={copied} cmd={CMD} />
-              <Phone sc={sc} phase={phase} />
+              <Term onSelectScene={selectScene} calm={calm} inView={inView} copy={copy} copied={copied} />
+              <Phone sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} />
             </motion.div>
           </div>
           <SetupMenu up initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 1.1 }} />

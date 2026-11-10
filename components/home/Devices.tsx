@@ -27,7 +27,137 @@ const step = (s) => (Array.isArray(s) ? s[0].replace('{file}', s[1]) : s);
 // scene 0 is the hero's own opening (the prompt, the answer, the install); the rest follow it
 export const OPEN = SCENES[0];
 export const MORE = SCENES.slice(1);
-const TABS = [...new Set(SCENES.flatMap((s) => (s.shell ? [s.shell.tab] : [])))];
+const TERM_TABS = ['install', 'cli', 'dev', 'mcp', 'up'];
+const TERM_EXAMPLES = {
+  install: [
+    {
+      cmd: 'curl -fsSL https://hanzo.sh | sh',
+      lines: [
+        ['out', '  ✓ hanzo (+ hanzo-node, same build)'],
+        ['out', '  ✓ hanzo-mcp (+ mcp, same build)'],
+        ['out', '  ✓ dev · gen · zt'],
+        ['ok', 'ready → ~/.local/bin'],
+      ],
+    },
+    {
+      cmd: 'npm i -g hanzo',
+      lines: [
+        ['out', '  added 1 package in 1.1s'],
+        ['out', '  ✓ hanzo · hanzo-mcp · dev'],
+        ['ok', 'ready → hanzo auth login'],
+      ],
+    },
+    {
+      cmd: 'brew install hanzoai/tap/hanzo',
+      lines: [
+        ['out', '  ==> Pouring hanzo--arm64.tar.gz'],
+        ['out', '  ✓ /opt/homebrew/bin/hanzo'],
+        ['ok', 'ready → hanzo auth login'],
+      ],
+    },
+  ],
+  cli: [
+    {
+      cmd: 'hanzo auth login',
+      lines: [
+        ['out', '  ✓ Signed in as dev@hanzo.ai'],
+        ['sub', '$ hanzo usage summary'],
+        ['ok', '  today · 1.4M tokens · 0 errors'],
+      ],
+    },
+    {
+      cmd: 'hanzo share 3000 --name maxpower',
+      lines: [
+        ['out', '  ✓ https://maxpower.zt.hanzo.ai → :3000'],
+        ['ok', '  zero-trust fabric · TLS ready'],
+      ],
+    },
+    {
+      cmd: 'hanzo engine serve zen6',
+      lines: [
+        ['out', '  ✓ zen6 at http://127.0.0.1:8080/v1'],
+        ['ok', '  OpenAI-compatible · local GPU'],
+      ],
+    },
+  ],
+  dev: [
+    {
+      cmd: 'hanzo dev',
+      lines: [
+        ['ask', '▶ wire up Run all across every agent'],
+        ['out', '• Explored app/agents.ts, app/page.tsx'],
+        ['out', '• Edited app/page.tsx (+42 -6)'],
+        ['ok', '• Ran pnpm test  └ pass'],
+      ],
+    },
+    {
+      cmd: 'hanzo dev --claude --codex',
+      lines: [
+        ['ask', '▶ add a leaderboard and offline cache'],
+        ['out', '• Added app/board.tsx (+26 -0)'],
+        ['out', '• Edited app/store.ts (+38 -4)'],
+        ['ok', '• Ran pnpm test  └ 18 passed'],
+      ],
+    },
+    {
+      cmd: 'hanzo "tighten rate limits on /v1/chat"',
+      lines: [
+        ['out', '• Explored api/chat.ts, lib/limits.ts'],
+        ['out', '• Edited api/chat.ts (+19 -3)'],
+        ['ok', '• Ran pnpm typecheck  └ ok'],
+      ],
+    },
+  ],
+  mcp: [
+    {
+      cmd: 'npx -y hanzo mcp',
+      lines: [
+        ['out', '  ✓ hanzo-mcp ready on stdio'],
+        ['out', '  13 unified tools · workspace + cloud'],
+        ['ok', '  connected · ~/.hanzo/dev/config.toml'],
+      ],
+    },
+    {
+      cmd: 'claude mcp add hanzo -- npx -y hanzo mcp',
+      lines: [
+        ['out', '  Added stdio MCP server hanzo'],
+        ['ok', '  ✓ Claude Code connected (13 tools)'],
+      ],
+    },
+    {
+      cmd: 'codex mcp add hanzo -- hanzo-mcp',
+      lines: [
+        ['out', '  Added global MCP server hanzo'],
+        ['ok', '  ✓ https://api.hanzo.ai/v1/mcp'],
+      ],
+    },
+  ],
+  up: [
+    {
+      cmd: 'hanzo up',
+      lines: [
+        ['out', '  ✓ k3s is up — https://127.0.0.1:6443'],
+        ['out', '  export KUBECONFIG=~/.kube/hanzo.yaml'],
+        ['ok', '  the cloud → http://127.0.0.1:3690'],
+      ],
+    },
+    {
+      cmd: 'git push && hanzo status',
+      lines: [
+        ['out', '  To git.hanzo.ai/you/maxpower (main)'],
+        ['out', '  applications — 1'],
+        ['ok', '  ✓ Healthy / Synced  1'],
+      ],
+    },
+    {
+      cmd: 'hanzo serve cloud',
+      lines: [
+        ['out', '  ✓ iam · kms · gateway · storage · pubsub'],
+        ['ok', '  listening on http://127.0.0.1:8000'],
+      ],
+    },
+  ],
+};
 
 // the latest scene up to `sc` that has what `has` asks for, or -1
 const last = (sc, has) => { for (let i = sc; i >= 0; i--) if (has(MORE[i])) return i; return -1; };
@@ -48,6 +178,7 @@ const PLACE_SCENES = {
   design: [1, 4, 5, 19, 25],
   studio: [11, 12, 1, 4, 5, 19, 25],
   tabs: TABS_SCENES,
+  beta: [32],
   library: [19, 4, 25],
   scheduled: [30, 14, 24],
   customize: [16, 20, 6],
@@ -314,42 +445,136 @@ function Lines({ lines }) {
   });
 }
 
-export function Term({ sc, onSelectScene, cmdEl, done, copy, copied, cmd }) {
-  const [pickedTab, setPickedTab] = useState(null);
-  useEffect(() => { setPickedTab(null); }, [sc]);
-  // the terminal holds what the last session printed until the next one starts
-  const autoAt = last(sc, (s) => s.shell);
-  const autoTab = autoAt >= 0 ? MORE[autoAt].shell.tab : TABS[0];
-  const tab = pickedTab ?? autoTab;
-  const at = pickedTab
-    ? (pickedTab === 'install' ? -1 : MORE.findIndex((s) => s.shell?.tab === pickedTab))
-    : autoAt;
-  const pickTab = (t) => {
-    track('hero_demo', { control: `term-${t}` });
-    setPickedTab(t);
-    if (t === 'install') onSelectScene?.(-1, 'chat');
-    else {
-      const idx = MORE.findIndex((s) => s.shell?.tab === t);
-      if (idx >= 0) onSelectScene?.(idx, null);
+export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
+  const box = useRef(null);
+  const live = useRef(true);
+  live.current = inView;
+  const hoverRef = useRef(false);
+  const firstRun = useRef(true);
+  const [pinned, setPinned] = useState(false);
+  const [cursor, setCursor] = useState({ tabIdx: 0, exIdx: 0, round: 0, mode: 'auto', rem: 0, seq: 0 });
+  const tab = TERM_TABS[cursor.tabIdx];
+  const list = TERM_EXAMPLES[tab];
+  const ex = list[cursor.exIdx % list.length];
+  const [typedLen, setTypedLen] = useState(() => (calm ? ex.cmd.length : 0));
+  const [shownOut, setShownOut] = useState(() => (calm ? ex.lines.length : 0));
+
+  useEffect(() => {
+    if (!pinned) return;
+    const away = (e) => { if (box.current && !box.current.contains(e.target)) setPinned(false); };
+    document.addEventListener('pointerdown', away);
+    return () => document.removeEventListener('pointerdown', away);
+  }, [pinned]);
+
+  useEffect(() => {
+    if (calm) {
+      setTypedLen(ex.cmd.length);
+      setShownOut(ex.lines.length);
+      return;
     }
+    let dead = false;
+    const nap = (ms) => new Promise((r) => setTimeout(r, ms));
+    setTypedLen(0);
+    setShownOut(0);
+    (async () => {
+      const opening = firstRun.current && cursor.tabIdx === 0 && cursor.exIdx === 0;
+      firstRun.current = false;
+      await nap(opening ? 550 : 180);
+      for (let i = 1; i <= ex.cmd.length; i++) {
+        if (dead) return;
+        setTypedLen(i);
+        await nap(ex.cmd[i - 1] === ' ' ? 38 : 22);
+      }
+      await nap(240);
+      for (let j = 1; j <= ex.lines.length; j++) {
+        if (dead) return;
+        setShownOut(j);
+        await nap(165);
+      }
+      await nap(opening ? 4500 : 2200);
+      while (!dead && (!live.current || hoverRef.current)) await nap(250);
+      if (dead) return;
+      setCursor((prev) => {
+        if (prev.mode === 'tab' && prev.rem > 0) {
+          const curList = TERM_EXAMPLES[TERM_TABS[prev.tabIdx]];
+          return { ...prev, exIdx: (prev.exIdx + 1) % curList.length, rem: prev.rem - 1, seq: prev.seq + 1 };
+        }
+        const nextTab = (prev.tabIdx + 1) % TERM_TABS.length;
+        const nextRound = nextTab === 0 ? prev.round + 1 : prev.round;
+        const nextList = TERM_EXAMPLES[TERM_TABS[nextTab]];
+        return { tabIdx: nextTab, exIdx: nextRound % nextList.length, round: nextRound, mode: 'auto', rem: 0, seq: prev.seq + 1 };
+      });
+    })();
+    return () => { dead = true; };
+  }, [cursor.seq, calm]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const pickTab = (i) => {
+    const name = TERM_TABS[i];
+    track('hero_demo', { control: `term-${name}` });
+    setPinned(true);
+    setCursor((prev) => {
+      const targetList = TERM_EXAMPLES[name];
+      const nextEx = prev.tabIdx === i ? (prev.exIdx + 1) % targetList.length : 0;
+      return { ...prev, tabIdx: i, exIdx: nextEx, mode: 'tab', rem: targetList.length - 1, seq: prev.seq + 1 };
+    });
+    if (name === 'install') onSelectScene?.(-1, 'chat');
+    else if (name === 'dev') onSelectScene?.(DEV_SCENES[0] ?? 0, 'dev');
+    else if (name === 'mcp' || name === 'cli') onSelectScene?.(TABS_SCENES[0] ?? 2, 'tabs');
+    else if (name === 'up') onSelectScene?.(3, 'dev');
   };
+
+  const typing = !calm && typedLen < ex.cmd.length;
+
   return (
-    <motion.div className="x-term" initial={{ opacity: 0, z: -120, y: 70 }} animate={{ opacity: 1, z: 70, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.35 }}>
+    <motion.div
+      ref={box}
+      className="x-term"
+      data-active={pinned || copied || undefined}
+      onPointerEnter={() => { hoverRef.current = true; }}
+      onPointerLeave={() => { hoverRef.current = false; }}
+      onClick={() => setPinned(true)}
+      initial={{ opacity: 0, z: -120, y: 70 }}
+      animate={{ opacity: 1, z: 70, y: 0 }}
+      transition={{ duration: 1.3, ease: EASE, delay: 0.35 }}
+    >
       <div className="x-term-bar" role="tablist" aria-label="Terminal">
         <i /><i /><i />
-        {TABS.map((t) => <button key={t} type="button" role="tab" aria-selected={t === tab} className="xt-tab" onClick={() => pickTab(t)}>{t}</button>)}
+        {TERM_TABS.map((t, i) => (
+          <button
+            key={t}
+            type="button"
+            role="tab"
+            aria-selected={i === cursor.tabIdx}
+            className="xt-tab"
+            onClick={(e) => { e.stopPropagation(); pickTab(i); }}
+          >
+            {t}
+          </button>
+        ))}
+        <span className="xt-dots" aria-hidden="true">
+          {list.map((_, idx) => <b key={idx} data-on={(cursor.exIdx % list.length) === idx || undefined} />)}
+        </span>
       </div>
       <div className="x-term-body x-mono">
-        <div className={'xs-sh xt-open' + (at < 0 ? ' on' : '')} aria-hidden={at < 0 ? undefined : true}>
-          <p className="run"><span><span className="x-dim">$ </span><span ref={cmdEl} className="xh-cmd" data-cmd={cmd} />{!done && <span className="x-caret" aria-hidden="true" />}</span></p>
-          <div className="xt-out" data-on={done || undefined}><Lines lines={OPEN.shell.lines.slice(1)} /></div>
+        <div key={`${tab}-${cursor.exIdx}-${cursor.seq}`} className="xs-sh on">
+          <p className="run">
+            <span>
+              <span className="x-dim">$ </span>
+              <span className="xh-cmd" data-cmd={ex.cmd}>{calm ? ex.cmd : ex.cmd.slice(0, typedLen)}</span>
+              {typing && <span className="x-caret" aria-hidden="true" />}
+            </span>
+          </p>
+          <div className="xt-out" data-on={shownOut > 0 || undefined}>
+            {ex.lines.slice(0, shownOut).map(([kind, text], idx) => (
+              <p key={idx} className={kind}><span>{text}</span></p>
+            ))}
+          </div>
         </div>
-        {MORE.map((s, i) => (s.shell ? <div key={i} className={'xs-sh' + (i === at ? ' on' : '')} aria-hidden={i === at ? undefined : true}><Lines lines={s.shell.lines} /></div> : null))}
       </div>
       <div className="x-term-f">
-        <button type="button" className="x-term-copy xh-copy" onClick={copy} data-cta="home.install_copy" data-on={copied || undefined}>{copied ? 'Copied' : 'Copy'}</button>
+        <button type="button" className="x-term-copy xh-copy" onClick={(e) => { e.stopPropagation(); setPinned(true); copy(ex.cmd); }} data-cta="home.install_copy" data-on={copied || undefined}>{copied ? 'Copied' : 'Copy'}</button>
         <span className="xh-sr" role="status">{copied ? 'Copied' : ''}</span>
-        <a href="https://docs.hanzo.ai/docs/cli">Install CLI ↗</a>
+        <a href="https://docs.hanzo.ai/docs/cli" onClick={(e) => e.stopPropagation()}>Install CLI ↗</a>
       </div>
     </motion.div>
   );
@@ -359,6 +584,27 @@ export function Term({ sc, onSelectScene, cmdEl, done, copy, copied, cmd }) {
 
 // the app's two round glass buttons (@hanzo/app Bar): the drawer's mark, two strokes with the lower one shorter, and New chat's pen
 const Drawer = () => <svg width="11" height="7" viewBox="0 0 19 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M1 1h17M1 10h10.5" /></svg>;
+const Flask = () => (
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2" />
+    <path d="M8.5 2h7" />
+    <path d="M7 16h10" />
+  </svg>
+);
+const PHONE_PLACES = [
+  ['chat', 'Chat', 'message-square'],
+  ['dev', 'Dev', 'code-xml'],
+  ['design', 'Design', 'wand-sparkles'],
+  ['studio', 'Studio', 'clapperboard'],
+  ['tabs', 'Tabs', 'square-terminal'],
+  ['beta', 'Beta', 'flask'],
+];
+const OPEN_TRACE = [
+  '• Connected 9 coding & frontier agents',
+  '• Shared 1 unified Hanzo API key',
+  '• Synced desktop, CLI & Duo live view',
+  '  └ ready in 1.8s',
+];
 const AGENT_ICON = Object.fromEntries((C.agents || []).map((a) => [a.name, a.icon]));
 const DUO_AGENTS = [
   ['Hanzo Dev', 'Hanzo Dev', 164],
@@ -373,14 +619,66 @@ const DUO_AGENTS = [
 ];
 const DUO_ROUTES = ['Zen6', 'Opus 4.8', 'GPT-5.6', 'Fable 5', 'Zen6 Max'];
 
-// the latest thing the phone was asked up to scene `sc`: an ask with its lines, or a piece made in Studio
-const asked = (s) => s.phone || s.place === 'studio';
+function PhoneBar({ at, onPick, onNew }) {
+  const [open, setOpen] = useState(false);
+  const box = useRef(null);
+  const btn = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const away = (e) => { if (box.current && !box.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('pointerdown', away);
+    return () => document.removeEventListener('pointerdown', away);
+  }, [open]);
+  const shut = () => { setOpen(false); btn.current?.focus(); };
+  const newIcon = at === 'dev' ? 'code-xml' : at === 'tabs' ? 'square-terminal' : at === 'design' ? 'wand-sparkles' : at === 'studio' ? 'clapperboard' : 'square-pen';
+  return (
+    <div className="xm-bar-glass" ref={box} onKeyDown={(e) => { if (e.key === 'Escape' && open) shut(); }}>
+      <button
+        ref={btn}
+        type="button"
+        className="xm-round"
+        aria-label="Menu"
+        aria-haspopup="true"
+        aria-expanded={open}
+        onClick={() => { track('hero_demo', { control: 'phone-menu' }); setOpen((o) => !o); }}
+      >
+        <Drawer />
+      </button>
+      <button
+        type="button"
+        className="xm-round"
+        aria-label="New chat"
+        onClick={() => { track('hero_demo', { control: 'phone-new' }); setOpen(false); onNew(); }}
+      >
+        <Glyph name={newIcon} size={11} stroke={1.9} />
+      </button>
+      <div className="xm-menu" data-open={open} inert={!open}>
+        {PHONE_PLACES.map(([id, label, icon]) => (
+          <button
+            key={id}
+            type="button"
+            className="xm-menu-b"
+            data-on={id === at || undefined}
+            onClick={() => {
+              track('hero_demo', { control: `phone-${id}` });
+              setOpen(false);
+              onPick(id);
+            }}
+          >
+            {icon === 'flask' ? <Flask /> : <Glyph name={icon} size={11} stroke={1.9} />}
+            <span>{label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /* One turn on the mobile / Duo left screen: what was asked, then the answer or agent output. */
 function Turn({ ask, on, answer, children }) {
   return (
     <div className="xm-turn" data-on={on ? '' : undefined} aria-hidden={on ? undefined : true}>
-      <div className="xm-me"><span>{ask}</span></div>
+      {ask && <div className="xm-me"><span>{ask}</span></div>}
       <div className="xm-ai" data-on={answer ? '' : undefined}>
         {children}
       </div>
@@ -419,10 +717,9 @@ function PhoneComposer({ id }) {
 
 /* The phone is hanzo.app on an iPhone Duo / Fold (9:16 closed on its right half, turning open on its center hinge via
    3D rotateY(-180deg) into the 9:8 Duo split-screen with hanzo.app on the left half and live maxpower on the right half). */
-export function Phone({ sc, phase }) {
-  const now = last(sc, asked);
-  const open = now < 0;
+export function Phone({ sc, navPick, onSelectScene, phase }) {
   const [foldPick, setFoldPick] = useState(null);
+  const [pickedArt, setPickedArt] = useState(0);
   const [off, setOff] = useState(() => new Set());
   const [tick, setTick] = useState(0);
   const [pump, setPump] = useState(false);
@@ -432,10 +729,21 @@ export function Phone({ sc, phase }) {
     return () => clearInterval(t);
   }, []);
 
+  useEffect(() => { setPickedArt(0); }, [sc]);
+
   const cur = sc >= 0 ? MORE[sc] : null;
+  const rawPlace = sc < 0 ? 'chat' : cur?.place || 'chat';
+  const mobilePlace = navPick && PLACE_SCENES[navPick] ? navPick : rawPlace;
   const autoDuo = sc < 0 ? phase >= 3 : Boolean(cur && (cur.phone || cur.ship || cur.ships || cur.place === 'tabs'));
   const duo = foldPick ?? autoDuo;
   const flip = () => { track('hero_demo', { control: 'phone-duo' }); setFoldPick((v) => !(v ?? autoDuo)); };
+
+  const pickMobilePlace = (id, advance = false) => {
+    setFoldPick(duo);
+    const list = PLACE_SCENES[id] || [-1];
+    const nextSc = (advance || mobilePlace === id) ? list[(list.indexOf(sc) + 1) % list.length] : list[0];
+    onSelectScene?.(nextSc, id === 'beta' ? 'chat' : id);
+  };
 
   const shipped = new Set();
   for (let i = 0; i <= sc && i < MORE.length; i++) if (MORE[i]?.ships) shipped.add(MORE[i].ships);
@@ -454,33 +762,103 @@ export function Phone({ sc, phase }) {
   const flowing = DUO_AGENTS.length - off.size;
   const spent = ((tick + 4) * Math.max(1, flowing) * 0.0001).toFixed(4);
 
+  const duoCard = (isInner) => (
+    <div className="xm-duo-card">
+      <span className="xm-duo-card-i"><Mark size={11} /></span>
+      <span className="xm-duo-card-t"><b>maxpower</b><small>Mobile + Duo app</small></span>
+      <button type="button" className="xm-duo-open" data-folded={!isInner || undefined} onClick={flip}>
+        {isInner ? (<><Glyph name="check" size={10} stroke={2.6} /><span>Fold</span></>) : 'Open'}
+      </button>
+    </div>
+  );
+
+  const renderSceneTurn = (s, i, isInner) => {
+    const isOn = i === sc;
+    const askText = s.phone?.ask || s.ask || s.prompt || s.run || s.title;
+    if (s.place === 'beta') {
+      const cells = isInner
+        ? [...(s.phone?.cells || []), '• Early access to Zen6 & Enso', '• Cloud sandboxes + mobile Duo']
+        : (s.phone?.cells || []).slice(0, 3);
+      return (
+        <Turn key={i} ask={s.title || askText} on={isOn} answer>
+          {s.answer && <p>{s.answer}</p>}
+          <pre className="xm-code x-mono">{cells.join('\n')}</pre>
+          <a className="xm-beta-link" href="/beta">hanzo.ai/beta →</a>
+          {isInner && duoCard(true)}
+        </Turn>
+      );
+    }
+    if (s.made) {
+      const artIdx = pickedArt < s.made.length ? pickedArt : (s.pick ?? 0);
+      return (
+        <Turn key={i} ask={s.prompt} on={isOn} answer>
+          {isInner ? (
+            <>
+              <div className="xm-made-grid">
+                {s.made.slice(0, 3).map((m, idx) => (
+                  <button key={idx} type="button" className={idx === artIdx ? 'on' : ''} aria-label={`Variation ${idx + 1}`} onClick={() => setPickedArt(idx)}>
+                    <img src={pic(m.src)} alt="" loading="lazy" decoding="async" />
+                  </button>
+                ))}
+              </div>
+              <p className="xm-meta">{s.status || `${mobilePlace === 'design' ? 'Design' : 'Studio'} · 3 variations ready`}</p>
+            </>
+          ) : (
+            <img className="xm-art" src={pic(s.made[artIdx].src)} alt="" loading="lazy" decoding="async" />
+          )}
+          {isInner && duoCard(true)}
+        </Turn>
+      );
+    }
+    if (s.panes) {
+      const panes = isInner ? s.panes.slice(0, 2) : s.panes.slice(0, 1);
+      const lines = panes.flatMap((p) => [
+        `$ ${p.run}`,
+        `▶ ${p.ask}`,
+        ...p.lines.slice(0, isInner ? 3 : 2),
+      ]);
+      return (
+        <Turn key={i} ask={s.phone?.ask || s.panes[0]?.ask} on={isOn} answer>
+          <pre className="xm-code x-mono">{lines.join('\n')}</pre>
+          {isInner && duoCard(true)}
+        </Turn>
+      );
+    }
+    if (s.steps || s.phone) {
+      const stepLines = (s.steps || []).map((x) => `✓ ${step(x)}`);
+      const cellLines = s.phone?.cells || [];
+      const merged = isInner
+        ? [...stepLines, ...cellLines.filter((c) => !stepLines.some((st) => c.includes(st.slice(2))))]
+        : (cellLines.length ? cellLines : stepLines).slice(0, 3);
+      return (
+        <Turn key={i} ask={askText} on={isOn} answer>
+          {s.answer && <p>{s.answer}</p>}
+          <pre className="xm-code x-mono">{merged.join('\n')}</pre>
+          {isInner && duoCard(true)}
+        </Turn>
+      );
+    }
+    const extraLines = isInner && s.shell?.lines
+      ? s.shell.lines.slice(0, 4).map(([, kind, txt]) => (kind === 'run' ? `$ ${txt}` : kind === 'ask' ? `▶ ${txt}` : txt))
+      : null;
+    return (
+      <Turn key={i} ask={askText} on={isOn} answer>
+        {s.answer && <p>{s.answer}</p>}
+        {extraLines && <pre className="xm-code x-mono">{extraLines.join('\n')}</pre>}
+        {duoCard(isInner)}
+      </Turn>
+    );
+  };
+
   const renderTurns = (isInner) => (
     <>
-      <h2 className="xm-hi" data-on={!isInner && open && phase < 1 ? '' : undefined}>What’s up?</h2>
-      <Turn ask={OPEN.ask} on={open && (isInner || phase >= 1)} answer={isInner || phase >= 2}>
+      <h2 className="xm-hi" data-on={!isInner && sc < 0 && phase < 1 ? '' : undefined}>What’s up?</h2>
+      <Turn ask={OPEN.ask} on={sc < 0 && (isInner || phase >= 1)} answer={isInner || phase >= 2}>
         <p>{OPEN.answer}</p>
-        <div className="xm-duo-card">
-          <span className="xm-duo-card-i"><Mark size={11} /></span>
-          <span className="xm-duo-card-t"><b>maxpower</b><small>Mobile + Duo app</small></span>
-          <button type="button" className="xm-duo-open" data-folded={!isInner || undefined} onClick={flip}>
-            {isInner ? (<><Glyph name="check" size={10} stroke={2.6} /><span>Fold</span></>) : 'Open'}
-          </button>
-        </div>
+        {isInner && <pre className="xm-code x-mono">{OPEN_TRACE.join('\n')}</pre>}
+        {duoCard(isInner)}
       </Turn>
-      {MORE.map((s, i) => (asked(s) ? (
-        <Turn key={i} ask={s.phone ? s.phone.ask : s.prompt} on={i === now} answer>
-          {s.phone ? <pre className="xm-code x-mono">{s.phone.cells.join('\n')}</pre> : <img className="xm-art" src={pic(s.made[s.pick ?? 0].src)} alt="" loading="lazy" decoding="async" />}
-          {isInner && (
-            <div className="xm-duo-card">
-              <span className="xm-duo-card-i"><Mark size={11} /></span>
-              <span className="xm-duo-card-t"><b>maxpower</b><small>Mobile + Duo app</small></span>
-              <button type="button" className="xm-duo-open" onClick={flip}>
-                <Glyph name="check" size={10} stroke={2.6} /><span>Fold</span>
-              </button>
-            </div>
-          )}
-        </Turn>
-      ) : null))}
+      {MORE.map((s, i) => renderSceneTurn(s, i, isInner))}
     </>
   );
 
@@ -571,10 +949,7 @@ export function Phone({ sc, phase }) {
                   <Glyph name="battery-full" size={12} stroke={1.9} />
                 </span>
               </div>
-              <div className="xm-bar-glass" aria-hidden="true">
-                <span className="xm-round"><Drawer /></span>
-                <span className="xm-round"><Glyph name="square-pen" size={11} stroke={1.9} /></span>
-              </div>
+              <PhoneBar at={mobilePlace} onPick={(id) => pickMobilePlace(id, false)} onNew={() => pickMobilePlace(mobilePlace, true)} />
               <div className="xm-main">{renderTurns(false)}</div>
               <div className="xm-foot">{!duo ? <PhoneComposer id="xm-ask-cover" /> : <div className="xm-pill-comp" aria-hidden="true"><span>Ask anything</span><span className="xm-pill-send"><Glyph name="arrow-up" size={10} stroke={2.4} /></span></div>}</div>
               <i className="xm-home" aria-hidden="true" />
@@ -584,10 +959,7 @@ export function Phone({ sc, phase }) {
           <div className="xm-face-back" aria-hidden={duo ? undefined : true}>
             <div className="xm-scr-l">
               <div className="xm-status-l" aria-hidden="true"><b>9:41</b></div>
-              <div className="xm-bar-glass" aria-hidden="true">
-                <span className="xm-round"><Drawer /></span>
-                <span className="xm-round"><Glyph name="square-pen" size={11} stroke={1.9} /></span>
-              </div>
+              <PhoneBar at={mobilePlace} onPick={(id) => pickMobilePlace(id, false)} onNew={() => pickMobilePlace(mobilePlace, true)} />
               <div className="xm-main">{renderTurns(true)}</div>
               <div className="xm-foot">{duo ? <PhoneComposer id="xm-ask-duo" /> : <div className="xm-pill-comp" aria-hidden="true"><span>Ask anything</span><span className="xm-pill-send"><Glyph name="arrow-up" size={10} stroke={2.4} /></span></div>}</div>
               <i className="xm-home-l" aria-hidden="true" />

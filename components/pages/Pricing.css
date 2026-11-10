@@ -320,7 +320,6 @@ html:not(.js) .xpr-bills > li { display: grid !important; }
   @keyframes xpr-tilt { 0% { opacity: 0; transform: perspective(900px) rotateX(55deg) translateY(16px); } 30% { opacity: 1; } 100% { opacity: 1; transform: none; } }
 
   /* 4. vertical-ticker: each question rides up through its own row, like a departure board, one after another */
-  .js [data-enter='vertical-ticker']:not([data-in]) .x-faq > li > button { opacity: 0; }
   .js [data-enter='vertical-ticker'][data-in]:not([data-done]) .x-faq > li > button { animation: xpr-tick .55s cubic-bezier(.3, .7, .2, 1) both; }
   .js [data-enter='vertical-ticker'][data-in] .x-faq > li:nth-child(2) > button { animation-delay: .09s; }
   .js [data-enter='vertical-ticker'][data-in] .x-faq > li:nth-child(3) > button { animation-delay: .18s; }

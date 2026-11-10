@@ -402,7 +402,7 @@ function Questions() {
         <div className="xgn-qa-l">
           <Lines as="h2" id="xgn-qa-h" className="av-head" lines={['Questions & Answers']} />
         </div>
-        <div className="xgn-qs"><Faq items={QA} multi /></div>
+        <div className="xgn-qs"><Faq items={QA} /></div>
       </div>
     </section>
   );
