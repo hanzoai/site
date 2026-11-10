@@ -113,3 +113,7 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
 (install, `pnpm test`, `pnpm build`); a push to main publishes `out/` to the Sites plane slug `hanzoai-site`
 (prefix `hanzo/hanzoai-site`, KMS org `hanzo`) with the agent files (`agent: hanzo.ai`: Markdown twins, llms.txt,
 robots.txt, sitemap.xml, the API catalog). universe `infra/sites/sites.yaml` serves hanzo.ai from that prefix.
+`pnpm build` ends with `scripts/skill.mjs`, which writes `/skill.md` (the `public/skill.md` frame plus a `## Families`
+section read from api.hanzo.ai/v1/openapi.json, categories kept in `content/live/_families.json`) and the same file as
+`/.well-known/agent-skills/hanzo-cloud-api/SKILL.md` with the Agent Skills index beside it. It stops the build when the
+document does not answer; `HZ_LIVE_OFFLINE=1` builds from the snapshot.
