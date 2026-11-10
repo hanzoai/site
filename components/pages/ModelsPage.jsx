@@ -40,7 +40,9 @@ const Lk = ({ to, children, className = '', ...r }) => {
 /* Opens a flagship's own page with the lifted-picture transition; its close button flies back to this card. */
 function useOpen() {
   const opener = useOpener();
-  return (e, el, slug) => opener.open(e, { el, src: media(slug, 'webp'), href: '/' + slug, key: slug });
+  const open = (e, el, slug) => opener.open(e, { el, src: media(slug, 'webp'), href: '/' + slug, key: slug });
+  open.prefetch = (slug) => opener?.prefetch?.('/' + slug);
+  return open;
 }
 
 /* A model's film in its box: the poster at once, the clip only while asked and on screen (two at most on the page). */
@@ -82,10 +84,10 @@ function GridCard({ m, i, play, lit, open, setLit }) {
         data-cursor=""
         aria-label={`${m.name}: ${m.desc}${price ? ` ${price} per million tokens.` : ''}`}
         onClick={(e) => open(e, e.currentTarget, m.slug)}
-        onPointerEnter={(e) => { if (e.pointerType === 'mouse' && !big) setLit(i); }}
+        onPointerEnter={(e) => { open.prefetch?.(m.slug); if (e.pointerType === 'mouse' && !big) setLit(i); }}
         onPointerMove={tilt.onPointerMove}
         onPointerLeave={() => { tilt.onPointerLeave(); setLit(0); }}
-        onFocus={() => { if (!big) setLit(i); }}
+        onFocus={() => { open.prefetch?.(m.slug); if (!big) setLit(i); }}
         onBlur={() => setLit(0)}
       >
         <Film slug={m.slug} play={play} />

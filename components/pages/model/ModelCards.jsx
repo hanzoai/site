@@ -37,10 +37,10 @@ function Card({ m, big, here, live, setLive }) {
         data-card={m.slug}
         data-cursor=""
         aria-current={here ? 'page' : undefined}
-        onPointerEnter={() => setLive(m.slug)}
+        onPointerEnter={() => { setLive(m.slug); opener?.prefetch?.('/' + m.slug); }}
         onPointerMove={tilt}
         onPointerLeave={flat}
-        onFocus={() => setLive(m.slug)}
+        onFocus={() => { setLive(m.slug); opener?.prefetch?.('/' + m.slug); }}
         onBlur={flat}
         onClick={(e) => {
           if (here) { e.preventDefault(); scrollToY(0); return; }

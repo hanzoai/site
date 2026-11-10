@@ -90,8 +90,12 @@ const lerp = (a, b, k) => a + (b - a) * k;
 const mix = (A, B, k) => ({ x: lerp(A.x, B.x, k), y: lerp(A.y, B.y, k), w: lerp(A.w, B.w, k), h: lerp(A.h, B.h, k) });
 const rectOf = (el) => { const b = el.getBoundingClientRect(); return { x: b.left, y: b.top, w: b.width, h: b.height }; };
 const heroRect = () => ({ x: 0, y: HERO_TOP, w: innerWidth, h: innerHeight - HERO_TOP });
-const load = (src) => new Promise((ok, no) => { const i = new Image(); i.onload = () => (i.decode ? i.decode().then(() => ok(i), () => ok(i)) : ok(i)); i.onerror = no; i.src = src; });
-const waitFor = (fn, ms = 1500) => new Promise((ok) => { const t0 = performance.now(); const f = () => { const v = fn(); if (v || performance.now() - t0 > ms) ok(v); else requestAnimationFrame(f); }; f(); });
+const load = (src, el) => {
+  const existing = el?.querySelector?.('img');
+  if (existing && existing.complete && existing.naturalWidth > 0) return Promise.resolve(existing);
+  return new Promise((ok, no) => { const i = new Image(); i.onload = () => (i.decode ? i.decode().then(() => ok(i), () => ok(i)) : ok(i)); i.onerror = no; i.src = src; });
+};
+const waitFor = (fn, ms = 900) => new Promise((ok) => { const t0 = performance.now(); const f = () => { const v = fn(); if (v || performance.now() - t0 > ms) ok(v); else requestAnimationFrame(f); }; f(); });
 const EASE = [0.76, 0, 0.24, 1];
 
 export function OpenerProvider({ children }) {
@@ -103,6 +107,7 @@ export function OpenerProvider({ children }) {
 
   useEffect(() => { gl.current = makeGL(canvas.current); }, []);
   const off = () => matchMedia('(prefers-reduced-motion: reduce)').matches || !gl.current;
+  const prefetch = useCallback((href) => { try { router.prefetch(href); } catch {} }, [router]);
 
   const fly = useCallback((from, to, dur) => new Promise((ok) => {
     const t0 = performance.now();
@@ -125,20 +130,25 @@ export function OpenerProvider({ children }) {
       router.prefetch(href);
       sessionStorage.setItem('hz:ret:' + key, JSON.stringify({ y: scrollY, from: location.pathname })); // close returns to the page and card it opened from
       el.setAttribute('data-opening', '');
-      const img = await load(src);
+      const img = await load(src, el);
       gl.current.image(img);
       const from = rectOf(el);
       gl.current.draw(from, 0, 0, 1, 1);
       canvas.current.classList.add('on');
       el.setAttribute('data-lifted', '');
-      veil.current.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 700, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
+      veil.current.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
       window.__lenis?.stop();
-      await fly(from, heroRect(), 1.15);
       router.push(href, { scroll: false });
-      await waitFor(() => document.querySelector(`[data-hero="${key}"][data-ready]`), 2500);
+      await Promise.all([
+        fly(from, heroRect(), 0.65),
+        (async () => {
+          await waitFor(() => document.querySelector(`[data-hero="${key}"][data-ready]`), 900);
+          window.__lenis ? window.__lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo(0, 0);
+        })(),
+      ]);
       window.__lenis?.start();
       window.__lenis ? window.__lenis.scrollTo(0, { immediate: true }) : scrollTo(0, 0);
-      const fade = { duration: 380, easing: 'ease-out', fill: 'forwards' };
+      const fade = { duration: 220, easing: 'ease-out', fill: 'forwards' };
       canvas.current.animate([{ opacity: 1 }, { opacity: 0 }], fade).finished.then(() => { canvas.current.classList.remove('on'); canvas.current.getAnimations().forEach((a) => a.cancel()); gl.current.clear(); });
       veil.current.animate([{ opacity: 1 }, { opacity: 0 }], fade);
     } catch {
@@ -159,7 +169,8 @@ export function OpenerProvider({ children }) {
     if (busy.current) return;
     busy.current = true;
     try {
-      const img = await load(src);
+      const heroEl = document.querySelector(`[data-hero="${key}"]`);
+      const img = await load(src, heroEl);
       gl.current.image(img);
       const top = scrollY;
       const from = { ...heroRect(), y: HERO_TOP - top };
@@ -168,14 +179,14 @@ export function OpenerProvider({ children }) {
       veil.current.animate([{ opacity: 1 }, { opacity: 1 }], { duration: 1, fill: 'forwards' });
       window.__hzHold = true;
       router.push(home, { scroll: false });
-      const card = await waitFor(() => location.pathname.replace(/\/$/, '') === home.replace(/\/$/, '') && document.querySelector(`[data-card="${key}"]`), 2500);
+      const card = await waitFor(() => location.pathname.replace(/\/$/, '') === home.replace(/\/$/, '') && document.querySelector(`[data-card="${key}"]`), 1500);
       await new Promise((r) => setTimeout(r, 30)); // let the new page's effects settle before placing the scroll
       window.__lenis ? window.__lenis.scrollTo(ret.y, { immediate: true, force: true }) : scrollTo(0, ret.y);
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       if (!card) throw new Error('no card');
       card.setAttribute('data-lifted', '');
-      veil.current.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 900, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
-      await fly(from, rectOf(card), 1.05);
+      veil.current.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 650, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
+      await fly(from, rectOf(card), 0.7);
       card.removeAttribute('data-lifted');
       canvas.current.classList.remove('on');
       gl.current.clear();
@@ -189,7 +200,7 @@ export function OpenerProvider({ children }) {
   }, [router, fly]);
 
   return (
-    <Ctx.Provider value={{ open, close }}>
+    <Ctx.Provider value={{ open, close, prefetch }}>
       {children}
       <div ref={veil} className="x-veil" aria-hidden="true" />
       <canvas ref={canvas} className="x-gl" aria-hidden="true" />

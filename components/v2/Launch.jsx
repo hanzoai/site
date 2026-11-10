@@ -133,7 +133,9 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
   useEffect(() => {
     const img = stage.current.querySelector('.lv-film img');
     const done = () => setReady(true);
-    if (img.complete) img.decode().then(done, done); else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
+    if (img.complete && img.naturalWidth > 0) done();
+    else if (img.complete) img.decode().then(done, done);
+    else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
     const ro = new ResizeObserver(([e]) => { const r = e.contentRect; setSize({ W: r.width, H: r.height, wide: r.width > 900 }); });
     ro.observe(pin.current);
     return () => ro.disconnect();

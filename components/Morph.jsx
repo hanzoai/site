@@ -175,14 +175,14 @@ export default function Morph() {
     };
 
     const seen = new Set();
-    const local = (a) => {
-      if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download') || a.closest('[data-no-morph],[data-card]')) return null;
+    const local = (a, allowCard = false) => {
+      if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download') || a.closest(allowCard ? '[data-no-morph]' : '[data-no-morph],[data-card],.x-mclose')) return null;
       const u = new URL(a.href, location.href);
       // only this site's own pages move in place: hanzo.ai's sign-in pages are the app's, loaded whole
       return u.origin === location.origin && has(u.pathname) && !/\.(pdf|xml|txt|md|json|png|jpe?g|webp|svg|zip)$/i.test(u.pathname) ? u : null;
     };
     // fetch the next page while the pointer is on its way to the link
-    const warm = (e) => { const u = local(e.target.closest?.('a[href]')); if (u && !seen.has(u.pathname)) { seen.add(u.pathname); router.prefetch(u.pathname); } };
+    const warm = (e) => { const u = local(e.target.closest?.('a[href]'), true); if (u && !seen.has(u.pathname)) { seen.add(u.pathname); router.prefetch(u.pathname); } };
     const click = (e) => {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const a = e.target.closest?.('a[href]');

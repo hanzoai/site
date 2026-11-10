@@ -447,7 +447,9 @@ function Feature() {
   useEffect(() => {
     const img = box.current.querySelector('img');
     const done = () => setReady(true);
-    if (img.complete) img.decode().then(done, done); else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
+    if (img.complete && img.naturalWidth > 0) done();
+    else if (img.complete) img.decode().then(done, done);
+    else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
   }, []);
   return (
     <div className="eo-feat" ref={box}>
