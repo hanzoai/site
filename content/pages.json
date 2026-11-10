@@ -39,6 +39,10 @@
 "title": "The apps a workflow can reach — Hanzo AI",
 "description": "Every connector you can drop onto a Hanzo Auto canvas: read from it, write to it, or let a change in it start a run."
 },
+"/badge": {
+"title": "Show it off — Hanzo AI",
+"description": "README.md badges for your GitHub repository and personal profile: Deploy to Hanzo, Edit on Hanzo, Built with Hanzo, live profile stats, and global leaderboard rank."
+},
 "/base": {
 "title": "The backend in one file — Hanzo AI",
 "description": "Complete backend in one embedded binary: SQL database, auth, file storage, realtime streams, and server logic with zero devops overhead."

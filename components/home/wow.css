@@ -209,11 +209,11 @@ main:has(> .x-ann) .x-oss .x-tile-n { font-size: clamp(1.2rem, 1.55vw, 1.45rem);
   main:has(> .x-ann) .x-pareto .x-head p { margin-top: 12px; }
 }
 
-/* the announcement's arrow, drawn in CSS (the same path as before) */
-.x-ann::after { content: ''; flex: none; width: 14px; height: 14px; background: currentColor; transition: transform .35s var(--ease);
+/* the announcement's arrow, drawn in CSS when not using [data-slot="beta"] (whose ::after is the sword blade glint) */
+.x-ann:not([data-slot="beta"])::after { content: ''; flex: none; width: 14px; height: 14px; background: currentColor; transition: transform .35s var(--ease);
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8h9M8.5 4.5 12 8l-3.5 3.5' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8h9M8.5 4.5 12 8l-3.5 3.5' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat; }
-@media (hover: hover) { .x-ann:hover::after { transform: translateX(3px); } }
-@media (prefers-reduced-motion: reduce) { .x-ann::after { transition: none; } }
+@media (hover: hover) { .x-ann:not([data-slot="beta"]):hover::after { transform: translateX(3px); } }
+@media (prefers-reduced-motion: reduce) { .x-ann:not([data-slot="beta"])::after { transition: none; } }
 .xw-ways { padding-inline: max(24px, calc((100% - var(--wrap)) / 2)); }
 @media (max-width: 640px) { .xw-ways { padding-inline: 16px; } }

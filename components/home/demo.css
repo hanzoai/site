@@ -170,17 +170,11 @@
 .xm-home { position: absolute; left: 50%; bottom: 6px; width: 80px; height: 3.5px; margin-left: -40px; border-radius: 3px; background: var(--ink); opacity: .82; pointer-events: none; z-index: 3; }
 
 /* ---------- the foldable Duo right half: live maxpower app + clickable seam ---------- */
-.xm-hinge { position: absolute; left: 3px; top: 24px; bottom: 24px; width: 24px; translate: -50% 0; border: 0; padding: 0; background: none; display: grid; place-items: center; cursor: e-resize; z-index: 10; pointer-events: auto; transition: left .68s cubic-bezier(.22, 1, .36, 1); }
+.xm-hinge { position: absolute; left: 3px; top: 24px; bottom: 24px; width: 22px; translate: -50% 0; border: 0; padding: 0; background: none; display: block; cursor: e-resize; z-index: 10; pointer-events: auto; transition: left .68s cubic-bezier(.22, 1, .36, 1); }
 .xm-hinge::after { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: linear-gradient(180deg, transparent, var(--line) 18%, var(--line) 82%, transparent); opacity: 0; transition: opacity .3s var(--ease); pointer-events: none; }
 .x-phone.duo .xm-hinge { left: 50%; top: 14px; bottom: 14px; cursor: w-resize; }
 .x-phone.duo .xm-hinge::after { opacity: 1; }
-.xm-hinge-pill { width: 3.5px; height: 42px; border-radius: 999px; background: rgba(255, 255, 255, .28); box-shadow: 0 0 0 1px rgba(0, 0, 0, .35); transition: transform .2s var(--ease), background-color .2s var(--ease); pointer-events: none; z-index: 1; }
-.x-phone.duo .xm-hinge-pill { width: 4px; height: 44px; background: light-dark(rgba(0, 0, 0, .22), rgba(255, 255, 255, .26)); box-shadow: none; }
-@media (hover: hover) { .xm-hinge:hover .xm-hinge-pill { background: var(--ink); transform: scaleY(1.14) scaleX(1.18); } }
-.xm-hinge-tip { position: absolute; top: 50%; left: calc(50% + 10px); translate: 0 -50%; padding: 3px 7px; border-radius: 6px; background: var(--ink); color: var(--x-on-ink); font: 500 9.5px/1.2 var(--sans); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .18s var(--ease), translate .18s var(--ease); z-index: 2; box-shadow: 0 6px 16px rgba(0, 0, 0, .3); }
-.xm-hinge:hover .xm-hinge-tip, .xm-hinge:focus-visible .xm-hinge-tip { opacity: 1; translate: 2px -50%; }
 .xm-hinge:focus-visible { outline: none; }
-.xm-hinge:focus-visible .xm-hinge-pill { outline: 2px solid var(--ink); outline-offset: 2px; }
 .xm-pane-r { position: absolute; left: 182px; top: 0; width: 182px; height: 354px; padding: 7px 7px 16px 5px; display: flex; flex-direction: column; opacity: 0; transform: translateX(10px); pointer-events: none; transition: opacity .42s var(--ease), transform .58s cubic-bezier(.22, 1, .36, 1); }
 .x-phone.duo .xm-pane-r { opacity: 1; transform: none; pointer-events: auto; }
 .xm-duo-sys { flex: none; display: flex; justify-content: flex-end; align-items: center; gap: 4px; height: 18px; padding: 0 10px 4px; color: var(--ink); }

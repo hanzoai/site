@@ -24,11 +24,10 @@ import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
 import SceneWipe from './proof/SceneWipe';
 import NoJs from '../NoJs';
-import LivePause, { usePause } from '../v2/LivePause';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import '../v2/DetailSheet.css';
-import { GROUPS, PATTERNS } from './philosophy/patterns';
+import { GROUPS, PATTERNS, CHAPTERS, PATH, word, hebrew, chapterOf, hebrewLocale } from './philosophy/patterns';
 import './Philosophy.css';
 import { useEnter } from './philosophy/enter';
 import './philosophy/enter.css';
@@ -39,14 +38,15 @@ const groupOf = (p) => GROUPS[p[2] - 1];
 const hexOf = (ls) => PATTERNS.findIndex((p) => p[1].every((v, k) => v === ls[k]));
 const APPS = ['AI research', 'Scientific experimentation', 'Organizational improvement'];
 const TABS = ['All', ...GROUPS.map((g) => g[1])];
+const HE_TABS = ['הכל', ...CHAPTERS.map((c) => c.hebrew)];
 
 /* Six lines, bottom to top. A whole line is one stroke; an open line parts in the middle (each half scales, transform only).
-   hot: lines marked as changing (a dot beside them). press(i): the lines become buttons that change themselves. */
-function Hexa({ ls, size = 80, drawn = 6, hot = [], press, className = '' }) {
+   press(i): the lines become buttons that change themselves. */
+function Hexa({ ls, size = 80, drawn = 6, press, className = '' }) {
   return (
     <span className={'xph-hx ' + className} style={{ '--w': size + 'px' }} aria-hidden={press ? undefined : true} role={press ? 'group' : undefined} aria-label={press ? 'The hexagram, line by line' : undefined}>
       {ls.map((y, i) => {
-        const cls = 'xph-hl ' + (y ? 'yang' : 'yin') + (i < drawn ? '' : ' off') + (hot.includes(i) ? ' hot' : '');
+        const cls = 'xph-hl ' + (y ? 'yang' : 'yin') + (i < drawn ? '' : ' off');
         return press
           ? <button key={i} type="button" className={cls} onClick={() => press(i)} aria-label={`Line ${i + 1}, ${y ? 'whole' : 'open'}: change it`}><i /><i /></button>
           : <span key={i} className={cls}><i /><i /></span>;
@@ -56,47 +56,52 @@ function Hexa({ ls, size = 80, drawn = 6, hot = [], press, className = '' }) {
 }
 
 /* ---------- hero: one hexagram walking the sixty-four; press a line to change it ---------- */
-function Hero() {
+function Hero({ he }) {
   const [i, setI] = useState(0);
-  const [hot, setHot] = useState([]);
   const [held, setHeld] = useState(0); // the time of the visitor's last change: the walk waits for them
   const [steps, setSteps] = useState(0);
-  const [paused, pause] = usePause();
   const calm = useReducedMotion();
   const ref = useRef(null);
   const live = useInView(ref, { amount: 0.3 });
   useEffect(() => {
-    if (calm || !live || paused) return;
+    if (calm || !live) return;
     const t = setTimeout(() => {
       if (Date.now() - held < 7000) { setHeld((h) => h - 1); return; }
       setI((v) => {
-        const n = (v + 1) % 64, a = PATTERNS[v][1], b = PATTERNS[n][1];
-        setHot(a.map((x, k) => (x !== b[k] ? k : -1)).filter((k) => k >= 0));
-        return n;
+        if (he) {
+          const curN = PATTERNS[v][0];
+          const pathIdx = PATH.indexOf(curN);
+          const nextN = PATH[(pathIdx + 1) % 64];
+          return nextN - 1;
+        }
+        return (v + 1) % 64;
       });
       setSteps((s) => s + 1);
-    }, steps ? 1800 : 900); // the first change comes within a second of arriving; then one every 1.8 s (lines move for 0.8 s of it)
+    }, steps ? 1800 : 900);
     return () => clearTimeout(t);
-  }, [i, calm, live, held, steps, paused]);
+  }, [i, calm, live, held, steps, he]);
+  useEffect(() => {
+    if (he) setI(PATH[0] - 1);
+  }, [he]);
   const press = (k) => {
     const ls = PATTERNS[i][1].map((x, j) => (j === k ? 1 - x : x));
     setI(hexOf(ls));
-    setHot([k]);
     setHeld(Date.now());
   };
   const p = PATTERNS[i];
+  const ch = he ? chapterOf(p[0]) : undefined;
+  const w = he ? word(p[0]) : undefined;
   return (
     <section className="xph-hero" ref={ref} aria-labelledby="xph-h1">
       <div className="pf-wrap xph-hero-g">
         <div className="xph-stage">
-          <LivePause paused={paused} onToggle={pause} className="xph-pause" />
           <div className="xph-flank l" aria-live={Date.now() - held < 7000 ? 'polite' : 'off'}>
-            <span className="pf-mono xph-oracle-n">{pad(p[0])} / 64</span>
-            <b>{p[3]}</b>
+            <span className="pf-mono xph-oracle-n">{pad(p[0])} / 64{ch ? ` · ${ch.group}` : ''}</span>
+            <b dir={he ? 'rtl' : undefined}>{he ? hebrew(p[0]) : p[3]}</b>
           </div>
-          <Hexa ls={p[1]} size={340} hot={hot} press={press} className="xph-oracle-hx" />
+          <Hexa ls={p[1]} size={220} press={press} className="xph-oracle-hx" />
           <div className="xph-flank r">
-            <span>{p[4]} · {p[5]}</span>
+            <span>{he ? (w ? `${w.word} · ${w.meaning} (${p[3]})` : `${p[4]} · ${p[5]}`) : `${p[4]} · ${p[5]}`}</span>
           </div>
         </div>
         {/* the h1 cuts in on CSS from first paint, so arrival never waits for hydration (same mask and easing as MaskLines) */}
@@ -133,16 +138,22 @@ function Intro() {
 }
 
 /* ---------- one pattern, read three ways (the explorer's panel and the sheet) ---------- */
-function Detail({ p, as: H = 'h3', size = 120 }) {
+function Detail({ p, as: H = 'h3', size = 80, he = false }) {
   const g = groupOf(p);
+  const ch = chapterOf(p[0]);
+  const w = word(p[0]);
   return (
     <article className="xph-det">
       <div className="xph-det-h">
         <Hexa ls={p[1]} size={size} />
         <div>
-          <p className="xph-det-tri">{pad(p[0])} · {g[0]} {g[1]}</p>
-          <H className="xph-det-t">{title(p)}</H>
-          <p className="xph-det-s">{p[5]}</p>
+          <p className={'xph-det-tri' + (he ? ' is-he' : '')}>
+            {he ? <><bdi>{ch.hebrew}</bdi> · <bdi>{ch.group}</bdi>{w ? <> · <bdi>{w.word}</bdi></> : null}</> : g[1]}
+          </p>
+          <H className="xph-det-t"><bdi>{he ? hebrew(p[0]) : title(p)}</bdi></H>
+          <p className="xph-det-s">
+            {he ? (w ? <><bdi>{w.word}</bdi> · &ldquo;{w.meaning}&rdquo; · {w.gloss} ({title(p)})</> : `${title(p)} · ${p[5]}`) : p[5]}
+          </p>
         </div>
       </div>
       <p className="xph-det-sum">{p[6]}</p>
@@ -154,7 +165,8 @@ function Detail({ p, as: H = 'h3', size = 120 }) {
 }
 
 /* ---------- explore the patterns: filter by category, pick a number, read its applications ---------- */
-function Explorer({ tab, setTab, at, setAt }) {
+function Explorer({ tab, setTab, at, setAt, he, toggleHe }) {
+  const tabs = he ? HE_TABS : TABS;
   // on a phone the panel sits under the index: a pick brings it into view
   const pick = (i) => {
     setAt(i);
@@ -163,42 +175,69 @@ function Explorer({ tab, setTab, at, setAt }) {
   const keys = (e) => {
     const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
     if (!k) return;
-    const n = (tab + k + TABS.length) % TABS.length;
+    const n = (tab + k + tabs.length) % tabs.length;
     setTab(n);
     document.getElementById('xph-tab-' + n)?.focus();
   };
+  const rows = he
+    ? CHAPTERS.map((c) => ({
+        key: c.hebrew,
+        sub: c.group,
+        patterns: c.members.map((n) => PATTERNS[n - 1]),
+      }))
+    : GROUPS.map((g) => ({
+        key: g[0],
+        sub: '',
+        patterns: PATTERNS.slice(g[2] - 1, g[3]),
+      }));
   return (
     <section className="pf-sec xph-pat" id="explore" aria-label="Explore the patterns">
       <div className="pf-wrap">
-        <p className="pf-body xph-note">These are modern Hanzo interpretations inspired by the I Ching, not claims about the text’s historical or scientific meaning. The eight categories are Hanzo’s own editorial grouping of the hexagrams in King Wen order.</p>
+        <p className="pf-body xph-note">
+          {he
+            ? 'In the Ana BeKoach order (סדר אנא בכח), the 64 patterns walk the 42-word prayer across the seven Sefirot (Chesed to Malchut — six letter-aligned words and two companions per gate) and an eighth gate of Continuation.'
+            : 'These are modern Hanzo interpretations inspired by the I Ching, not claims about the text’s historical or scientific meaning. The eight categories are Hanzo’s own editorial grouping of the hexagrams in King Wen order.'}
+        </p>
         <div className="xph-bar">
-          <div className="xph-views xph-tabs" role="tablist" aria-label="Categories" onKeyDown={keys}>
-            {TABS.map((t, n) => (
+          <div className="xph-views xph-tabs" role="tablist" aria-label={he ? 'אנא בכח' : 'Categories'} onKeyDown={keys}>
+            {tabs.map((t, n) => (
               <button key={t} type="button" role="tab" id={'xph-tab-' + n} aria-selected={tab === n} tabIndex={tab === n ? 0 : -1} aria-controls="xph-ex xph-cats" onClick={() => setTab(n)}>
                 {tab === n && <motion.span layoutId="xph-view-pill" className="xph-view-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
-                <span>{t}</span>
+                <span dir={he && n > 0 ? 'rtl' : undefined}>{t}</span>
               </button>
             ))}
+          </div>
+          <div className="xph-order-switch" role="group" aria-label="Reading order">
+            <button type="button" className={'xph-order-btn' + (!he ? ' on' : '')} aria-pressed={!he} onClick={() => toggleHe(false)}>
+              King Wen
+            </button>
+            <button type="button" className={'xph-order-btn' + (he ? ' on' : '')} aria-pressed={he} onClick={() => toggleHe(true)} dir="rtl" lang="he">
+              אנא בכח
+            </button>
           </div>
         </div>
         <div className="xph-fold" data-enter="fold">
         <div className="xph-ex" id="xph-ex" role="tabpanel" aria-labelledby={'xph-tab-' + tab}>
-          <div className="xph-idx" role="group" aria-label="The 64 patterns">
-            {GROUPS.map((g, r) => (
-              <div key={g[0]} className={'xph-idx-r' + (tab && tab !== r + 1 ? ' dim' : '')}>
-                <span className="pf-mono xph-idx-k">{g[0]}</span>
-                {PATTERNS.slice(g[2] - 1, g[3]).map((p) => (
-                  <button key={p[0]} type="button" className={'xph-idx-c' + (at === p[0] - 1 ? ' on' : '')} aria-pressed={at === p[0] - 1} aria-label={pad(p[0]) + ' ' + title(p)} onClick={() => pick(p[0] - 1)}>
-                    <Hexa ls={p[1]} size={18} />
-                    <span className="pf-mono">{pad(p[0])}</span>
-                  </button>
-                ))}
+          <div className={'xph-idx' + (he ? ' is-he' : '')} role="group" aria-label="The 64 patterns">
+            {rows.map((row, r) => (
+              <div key={row.key} className={'xph-idx-r' + (tab && tab !== r + 1 ? ' dim' : '')}>
+                <span className="pf-mono xph-idx-k" dir={he ? 'rtl' : undefined} title={row.sub || undefined}>{row.key}</span>
+                {row.patterns.map((p) => {
+                  const w = he ? word(p[0]) : undefined;
+                  return (
+                    <button key={p[0]} type="button" className={'xph-idx-c' + (at === p[0] - 1 ? ' on' : '')} aria-pressed={at === p[0] - 1} aria-label={pad(p[0]) + ' ' + (he ? hebrew(p[0]) : title(p))} onClick={() => pick(p[0] - 1)}>
+                      <Hexa ls={p[1]} size={22} />
+                      {w ? <b className="xph-idx-w" dir="rtl">{w.word}</b> : null}
+                      <span className="pf-mono">{pad(p[0])}</span>
+                    </button>
+                  );
+                })}
               </div>
             ))}
           </div>
           {/* every pattern is in the page; the chosen one shows */}
           <div className="xph-ex-d" id="xph-ex-d" aria-live="polite" data-enter="invert">
-            {PATTERNS.map((p, i) => <div key={p[0]} className="xph-ex-one" hidden={i !== at}><Detail p={p} /></div>)}
+            {PATTERNS.map((p, i) => <div key={p[0]} className="xph-ex-one" hidden={i !== at}><Detail p={p} he={he} /></div>)}
           </div>
         </div>
         </div>
@@ -209,7 +248,7 @@ function Explorer({ tab, setTab, at, setAt }) {
 
 /* One sheet for all sixty-four (the kit's DetailSheet look), opened by a row's "See applications"; the arrows or ← → step
    to its neighbours in King Wen order. A native <dialog> (showModal: fixed, backdrop, focus trapped, Esc closes). */
-function PatternSheet({ sel, setSel }) {
+function PatternSheet({ sel, setSel, he }) {
   const open = sel !== null;
   const [shown, setShown] = useState(false);
   const dlg = useRef(null);
@@ -252,41 +291,61 @@ function PatternSheet({ sel, setSel }) {
             <button ref={close} type="button" className="pf-sheet-x" onClick={() => setSel(null)} aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></button>
           </div>
         </div>
-        <div className="pf-sheet-body">{open && <Detail p={p} as="h2" size={92} />}</div>
+        <div className="pf-sheet-body">{open && <Detail p={p} as="h2" size={84} he={he} />}</div>
       </div>
     </dialog>
   );
 }
 
-/* ---------- the eight categories, in King Wen order: quiet ledgers whose every pattern opens in the sheet ---------- */
-function Categories({ tab, open }) {
+/* ---------- the eight categories, in King Wen or Ana BeKoach order: quiet ledgers whose every pattern opens in the sheet ---------- */
+function Categories({ tab, open, he }) {
+  const sections = he
+    ? CHAPTERS.map((c) => ({
+        key: c.hebrew,
+        title: `${c.hebrew} — ${c.name}`,
+        range: `${c.group} · ${c.theme}`,
+        desc: c.lede,
+        patterns: c.members.map((n) => PATTERNS[n - 1]),
+      }))
+    : GROUPS.map((g) => ({
+        key: g[0],
+        title: g[1],
+        range: `${pad(g[2])}–${pad(g[3])} · ${g[4]}`,
+        desc: g[5],
+        patterns: PATTERNS.slice(g[2] - 1, g[3]),
+      }));
   return (
     <section className="pf-sec xph-cats" aria-label="The eight categories">
       <div className="pf-wrap">
         <div id="xph-cats" aria-labelledby={'xph-tab-' + tab}>
-          {GROUPS.map((g, r) => (
-            <section key={g[0]} className="xph-grp" aria-labelledby={'xph-g-' + g[0]} hidden={!!tab && tab !== r + 1}>
+          {sections.map((s, r) => (
+            <section key={s.key} className="xph-grp" aria-labelledby={'xph-g-' + r} hidden={!!tab && tab !== r + 1}>
               <div className="xph-grp-h">
-                <h2 id={'xph-g-' + g[0]} className="pf-title">{g[0]} — {g[1]}</h2>
-                <p className="pf-mono xph-grp-r">{pad(g[2])}–{pad(g[3])} · {g[4]}</p>
-                <p className="pf-body xph-grp-l">{g[5]}</p>
+                <h2 id={'xph-g-' + r} className="pf-title">{s.title}</h2>
+                <p className="pf-mono xph-grp-r">{s.range}</p>
+                <p className="pf-body xph-grp-l">{s.desc}</p>
               </div>
               <ol className="xph-rows" data-enter="carousel">
-                {PATTERNS.slice(g[2] - 1, g[3]).map((p) => (
-                  <li key={p[0]} className="xph-row">
-                    <span className="pf-mono xph-row-n">{pad(p[0])}</span>
-                    <Hexa ls={p[1]} size={28} />
-                    <div className="xph-row-t">
-                      <h3>{title(p)}</h3>
-                      <p className="xph-row-p">{p[5]}</p>
-                      <p className="xph-row-s">{p[6]}</p>
-                    </div>
-                    <button type="button" className="xph-row-b" onClick={() => open(p[0] - 1)} aria-haspopup="dialog" aria-label={'See applications: ' + title(p)}>
-                      <span>See applications</span>
-                      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                    </button>
-                  </li>
-                ))}
+                {s.patterns.map((p) => {
+                  const w = he ? word(p[0]) : undefined;
+                  return (
+                    <li key={p[0]} className="xph-row">
+                      <span className="pf-mono xph-row-n">{pad(p[0])}</span>
+                      <Hexa ls={p[1]} size={28} />
+                      <div className="xph-row-t">
+                        <h3><bdi>{he ? hebrew(p[0]) : title(p)}</bdi></h3>
+                        <p className={'xph-row-p' + (he ? ' is-he' : '')}>
+                          {he ? (w ? <><bdi>{w.word}</bdi> · &ldquo;{w.meaning}&rdquo; · {w.gloss} · {title(p)}</> : `${title(p)} · ${p[5]}`) : p[5]}
+                        </p>
+                        <p className="xph-row-s">{p[6]}</p>
+                      </div>
+                      <button type="button" className="xph-row-b" onClick={() => open(p[0] - 1)} aria-haspopup="dialog" aria-label={'See applications: ' + title(p)}>
+                        <span>See applications</span>
+                        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      </button>
+                    </li>
+                  );
+                })}
               </ol>
             </section>
           ))}
@@ -336,19 +395,62 @@ function Close() {
 
 export default function Philosophy() {
   const [tab, setTab] = useState(0); // 0 = All, 1-8 = a category
-  const [at, setAt] = useState(0); // the pattern in the explorer
-  const [sel, setSel] = useState(null); // the pattern in the sheet
-  const pickTab = (n) => { setTab(n); if (n && PATTERNS[at][2] !== n) setAt(GROUPS[n - 1][2] - 1); };
+  const [at, setAt] = useState(0); // the pattern index (0..63) in the explorer
+  const [sel, setSel] = useState(null); // the pattern index in the sheet
+  const [he, setHe] = useState(false);
+
+  useEffect(() => {
+    const sync = (e) => {
+      const code = e?.detail || document.documentElement.dataset.lang || localStorage.getItem('hz-lang') || '';
+      const q = new URLSearchParams(location.search).get('lang') || '';
+      const isHe = hebrewLocale(q || code) || location.hash === '#ana-bekoach';
+      setHe((prev) => {
+        if (isHe && !prev) setAt(PATH[0] - 1);
+        else if (!isHe && prev) setAt(0);
+        return isHe;
+      });
+    };
+    sync();
+    window.addEventListener('hz-lang-change', sync);
+    window.addEventListener('hashchange', sync);
+    return () => {
+      window.removeEventListener('hz-lang-change', sync);
+      window.removeEventListener('hashchange', sync);
+    };
+  }, []);
+
+  const toggleHe = (next) => {
+    setHe(next);
+    setTab(0);
+    setAt(next ? PATH[0] - 1 : 0);
+    try {
+      const lang = next ? 'he' : 'en-US';
+      localStorage.setItem('hz-lang', lang);
+      document.documentElement.dataset.lang = lang;
+      window.dispatchEvent(new CustomEvent('hz-lang-change', { detail: lang }));
+    } catch {}
+  };
+
+  const pickTab = (n) => {
+    setTab(n);
+    if (!n) return;
+    if (he) {
+      const members = CHAPTERS[n - 1].members;
+      if (!members.includes(PATTERNS[at][0])) setAt(members[0] - 1);
+    } else if (PATTERNS[at][2] !== n) {
+      setAt(GROUPS[n - 1][2] - 1);
+    }
+  };
   useEnter('.xph');
   return (
     <main id="main" className="xph pf-r">
       {/* JavaScript off: every category is laid out, every pattern's applications are in the explorer one under another */}
       <NoJs css=".xph-ex-d [hidden],.xph-grp[hidden]{display:block!important}.xph-ex-one+.xph-ex-one{margin-top:56px}.xph-idx-r.dim{opacity:1!important}.xph-ex-d{position:static!important;max-height:none!important}" />
-      <Hero />
+      <Hero he={he} />
       <Intro />
-      <Explorer tab={tab} setTab={pickTab} at={at} setAt={setAt} />
-      <Categories tab={tab} open={setSel} />
-      <PatternSheet sel={sel} setSel={setSel} />
+      <Explorer tab={tab} setTab={pickTab} at={at} setAt={setAt} he={he} toggleHe={toggleHe} />
+      <Categories tab={tab} open={setSel} he={he} />
+      <PatternSheet sel={sel} setSel={setSel} he={he} />
       <Close />
     </main>
   );

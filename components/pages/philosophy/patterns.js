@@ -71,3 +71,117 @@ export const PATTERNS = [
   [63, [1, 0, 1, 0, 1, 0], 8, "After Completion", "Operational Maturity", "Release Steward", "Preserve reliability through validation, monitoring, maintenance, and disciplined change.", "Monitor deployed models, keep evaluations running, and plan the next update.", "Maintain instruments, records, and procedures after the study ends.", "Keep launched systems healthy with owners, alerts, and a change process."],
   [64, [0, 1, 0, 1, 0, 1], 8, "Before Completion", "Continuous Becoming", "Lifelong Explorer", "Recognize that every answer creates new questions and every achievement opens new possibilities.", "Treat each result as the start of the next question, and record what to test next.", "End each study by stating the open questions it raised.", "Review what you learned, then choose the next problem."]
 ];
+
+/* Ana B'Koach Path on the sixty-four patterns: what /philosophy reads in Hebrew (he).
+   Seven verses of six words (whose initial letters form the 42-letter Name), each paired with two companion patterns
+   at the third and sixth positions (42 + 14 = 56), followed by the eighth chapter, Continuation (8 patterns),
+   covering all 64 patterns once in the Ana BeKoach Path order. */
+export const STANZAS = [
+  { rank: 1, numeral: "I", sefirah: "חסד", name: "Chesed", group: "אבגיתץ", theme: "Request, strength, greatness, liberation.", lede: "The first five perspectives move from asking for help through strength and action to liberation. The sixth is the constraint being overcome.", companions: [3, 23] },
+  { rank: 2, numeral: "II", sefirah: "גבורה", name: "Gevurah", group: "קרעשטן", theme: "Reception, collective expression, elevation, purification, reverence.", lede: "This verse balances openness with discipline. Receiving evidence and working together come with correction, humility, and respect for uncertainty.", companions: [22, 16] },
+  { rank: 3, numeral: "III", sefirah: "תפארת", name: "Tiferet", group: "נגדיכש", theme: "Approach, strength, seeking unity, careful protection.", lede: "Pursue understanding, exercise disciplined capability, demand evidence, integrate knowledge, protect important details, and safeguard valuable work.", companions: [31, 52] },
+  { rank: 4, numeral: "IV", sefirah: "נצח", name: "Netzach", group: "בטרצתג", theme: "Blessing, purification, compassion, justice, constancy, reward.", lede: "Ethical, sustainable progress. An achievement is not enough because it looks impressive: the method should be sound, the conclusions defensible, and the benefit lasting.", companions: [5, 35] },
+  { rank: 5, numeral: "V", sefirah: "הוד", name: "Hod", group: "חקבטנע", theme: "Resilience, holiness, abundance, goodness, guidance, community.", lede: "Responsible stewardship of knowledge, resources, and research communities. The Cauldron, a ritual vessel of transformation, answers the word for holy.", companions: [48, 59] },
+  { rank: 6, numeral: "VI", sefirah: "יסוד", name: "Yesod", group: "יגלפזק", theme: "Uniqueness, elevation, turning toward others, remembrance, sacred principles.", lede: "The researcher explores independently and stays connected to others, preserves accumulated knowledge, welcomes new possibilities, and works within meaningful principles.", companions: [17, 54] },
+  { rank: 7, numeral: "VII", sefirah: "מלכות", name: "Malkhut", group: "שקוצית", theme: "A cry for help, reception, listening, understanding, hidden knowledge.", lede: "The prayer ends by calling on the Knower of Mysteries. Hanzo’s reading ends with Before Completion: the unknowns that remain to be investigated.", companions: [38, 43] }
+];
+
+export const WORDS = [
+  { verse: 1, place: 1, word: "אנא", meaning: "We beg you", n: 4, hebrew: "אומץ לשאול", gloss: "Courage to ask" },
+  { verse: 1, place: 2, word: "בכח", meaning: "with the strength", n: 34, hebrew: "בקרת עוצמה", gloss: "Strength with restraint" },
+  { verse: 1, place: 3, word: "גדולת", meaning: "of the greatness", n: 14, hebrew: "גדולה באחריות", gloss: "Responsible greatness" },
+  { verse: 1, place: 4, word: "ימינך", meaning: "of your right hand", n: 1, hebrew: "יוזמה יוצרת", gloss: "Creative agency" },
+  { verse: 1, place: 5, word: "תתיר", meaning: "release", n: 40, hebrew: "תיקון חסמים", gloss: "Removing obstacles" },
+  { verse: 1, place: 6, word: "צרורה", meaning: "the bound", n: 39, hebrew: "צוואר בקבוק", gloss: "Recognizing what binds" },
+
+  { verse: 2, place: 1, word: "קבל", meaning: "accept", n: 2, hebrew: "קבלת ראיות", gloss: "Receive the evidence" },
+  { verse: 2, place: 2, word: "רנת", meaning: "the song of", n: 58, hebrew: "רינה משותפת", gloss: "Shared expression" },
+  { verse: 2, place: 3, word: "עמך", meaning: "your people", n: 8, hebrew: "עבודת צוות", gloss: "Collective cohesion" },
+  { verse: 2, place: 4, word: "שגבנו", meaning: "raise us", n: 46, hebrew: "שגשוג מתמשך", gloss: "Continued elevation" },
+  { verse: 2, place: 5, word: "טהרנו", meaning: "purify us", n: 18, hebrew: "טיוב השיטה", gloss: "Purify and repair methods" },
+  { verse: 2, place: 6, word: "נורא", meaning: "awesome one", n: 10, hebrew: "נקיטת זהירות", gloss: "Reverent caution" },
+
+  { verse: 3, place: 1, word: "נא", meaning: "please", n: 19, hebrew: "נכונות להתקרב", gloss: "Willingness to approach" },
+  { verse: 3, place: 2, word: "גבור", meaning: "mighty one", n: 26, hebrew: "גבורה ממושמעת", gloss: "Disciplined strength" },
+  { verse: 3, place: 3, word: "דורשי", meaning: "those who seek", n: 21, hebrew: "דרישת הוכחות", gloss: "Rigorous inquiry" },
+  { verse: 3, place: 4, word: "יחודך", meaning: "your oneness", n: 11, hebrew: "ייחוד כוחות", gloss: "Unity and alignment" },
+  { verse: 3, place: 5, word: "כבבת", meaning: "like the pupil of an eye", n: 62, hebrew: "כיוונון עדין", gloss: "Careful precision" },
+  { verse: 3, place: 6, word: "שמרם", meaning: "guard them", n: 36, hebrew: "שמירה על היקר", gloss: "Protect what matters" },
+
+  { verse: 4, place: 1, word: "ברכם", meaning: "bless them", n: 42, hebrew: "ברכה וצמיחה", gloss: "Blessing and growth" },
+  { verse: 4, place: 2, word: "טהרם", meaning: "purify them", n: 25, hebrew: "טוהר המחקר", gloss: "Integrity of investigation" },
+  { verse: 4, place: 3, word: "רחמי", meaning: "the mercy of", n: 15, hebrew: "רחמים וענווה", gloss: "Compassion and humility" },
+  { verse: 4, place: 4, word: "צדקתך", meaning: "your righteousness", n: 61, hebrew: "צדק ואמת", gloss: "Justice and truth" },
+  { verse: 4, place: 5, word: "תמיד", meaning: "always", n: 32, hebrew: "תוקף לאורך זמן", gloss: "Enduring validity" },
+  { verse: 4, place: 6, word: "גמלם", meaning: "grant them", n: 63, hebrew: "גמול המאמץ", gloss: "Fulfillment of effort" },
+
+  { verse: 5, place: 1, word: "חסין", meaning: "powerful one", n: 29, hebrew: "חוסן מול אי־ודאות", gloss: "Resilience in uncertainty" },
+  { verse: 5, place: 2, word: "קדוש", meaning: "holy one", n: 50, hebrew: "קדושת התהליך", gloss: "Reverence for transformation" },
+  { verse: 5, place: 3, word: "ברב", meaning: "in the abundance of", n: 55, hebrew: "בחירה מתוך שפע", gloss: "Discernment amid abundance" },
+  { verse: 5, place: 4, word: "טובך", meaning: "your goodness", n: 27, hebrew: "טיב המקורות", gloss: "Quality of inputs" },
+  { verse: 5, place: 5, word: "נהל", meaning: "guide", n: 7, hebrew: "ניהול מתואם", gloss: "Coordinated guidance" },
+  { verse: 5, place: 6, word: "עדתך", meaning: "your congregation", n: 45, hebrew: "עדת חוקרים", gloss: "Community of inquiry" },
+
+  { verse: 6, place: 1, word: "יחיד", meaning: "unique one", n: 56, hebrew: "ייחודיות הדרך", gloss: "Independent exploration" },
+  { verse: 6, place: 2, word: "גאה", meaning: "exalted", n: 53, hebrew: "גובה השאיפה", gloss: "Aspirational development" },
+  { verse: 6, place: 3, word: "לעמך", meaning: "to your people", n: 37, hebrew: "לכידות הקהילה", gloss: "Community cohesion" },
+  { verse: 6, place: 4, word: "פנה", meaning: "turn", n: 44, hebrew: "פנייה אל החדש", gloss: "Turning toward discovery" },
+  { verse: 6, place: 5, word: "זוכרי", meaning: "who remember", n: 24, hebrew: "זיכרון מחקרי", gloss: "Research memory and return" },
+  { verse: 6, place: 6, word: "קדושתך", meaning: "your holiness", n: 60, hebrew: "קיום עקרונות", gloss: "Upholding principles" },
+
+  { verse: 7, place: 1, word: "שועתנו", meaning: "our cry", n: 51, hebrew: "שמיעת מצוקה", gloss: "Respond to urgent signals" },
+  { verse: 7, place: 2, word: "קבל", meaning: "accept", n: 13, hebrew: "קבלת האחר", gloss: "Receive one another" },
+  { verse: 7, place: 3, word: "ושמע", meaning: "and hear", n: 20, hebrew: "וידוא הקשבה", gloss: "Listen and observe" },
+  { verse: 7, place: 4, word: "צעקתנו", meaning: "our plea", n: 47, hebrew: "צעקה מתוך מצוקה", gloss: "Recognize distress" },
+  { verse: 7, place: 5, word: "יודע", meaning: "knower of", n: 30, hebrew: "ידיעה בהירה", gloss: "Illuminate knowledge" },
+  { verse: 7, place: 6, word: "תעלומות", meaning: "mysteries", n: 64, hebrew: "תעלומות שטרם נפתרו", gloss: "Unresolved mysteries" }
+];
+
+export const REST = [
+  { n: 3, hebrew: "התהוות", gloss: "Emergence" },
+  { n: 5, hebrew: "היערכות", gloss: "Preparation" },
+  { n: 6, hebrew: "בירור מחלוקות", gloss: "Resolving disagreement" },
+  { n: 9, hebrew: "שליטה הדרגתית", gloss: "Incremental control" },
+  { n: 12, hebrew: "הערכה מחדש", gloss: "Reassessment" },
+  { n: 16, hebrew: "הנעה", gloss: "Mobilization" },
+  { n: 17, hebrew: "הסתגלות", gloss: "Adaptation" },
+  { n: 22, hebrew: "ייצוג בהיר", gloss: "Clear representation" },
+  { n: 23, hebrew: "פירוק", gloss: "Decomposition" },
+  { n: 28, hebrew: "עמידות בעומס", gloss: "Load bearing" },
+  { n: 31, hebrew: "השפעה הדדית", gloss: "Reciprocal influence" },
+  { n: 33, hebrew: "נסיגה אסטרטגית", gloss: "Strategic withdrawal" },
+  { n: 35, hebrew: "התקדמות מדודה", gloss: "Measured progress" },
+  { n: 38, hebrew: "ריבוי נקודות מבט", gloss: "Diverse perspectives" },
+  { n: 41, hebrew: "פישוט", gloss: "Simplification" },
+  { n: 43, hebrew: "הכרעה", gloss: "Decision" },
+  { n: 48, hebrew: "תשתית משותפת", gloss: "Shared infrastructure" },
+  { n: 49, hebrew: "שינוי פרדיגמה", gloss: "Paradigm change" },
+  { n: 52, hebrew: "עצירה מכוונת", gloss: "Deliberate pause" },
+  { n: 54, hebrew: "סיכוני שילוב", gloss: "Integration risk" },
+  { n: 57, hebrew: "הרכבה מודולרית", gloss: "Composability" },
+  { n: 59, hebrew: "ביזור", gloss: "Distribution" }
+];
+
+export const CONTINUATION = [6, 12, 28, 33, 41, 9, 57, 49];
+export const RENEWAL = { rank: 8, numeral: "VIII", hebrew: "המשך", name: "Continuation", group: "התחדשות", theme: "After the mysteries, how research begins again.", lede: "When an inquiry completes its cycle, remaining tensions, reassessments, simplifications, and paradigm shifts become the seeds of the next cycle." };
+
+export const CHAPTERS = [
+  ...STANZAS.map((v) => {
+    const w = WORDS.filter((x) => x.verse === v.rank).map((x) => x.n);
+    const [a, b] = v.companions;
+    return { rank: v.rank, numeral: v.numeral, hebrew: v.sefirah, name: v.name, group: v.group, theme: v.theme, lede: v.lede, members: [w[0], w[1], a, w[2], w[3], b, w[4], w[5]] };
+  }),
+  { rank: 8, numeral: RENEWAL.numeral, hebrew: RENEWAL.hebrew, name: RENEWAL.name, group: RENEWAL.group, theme: RENEWAL.theme, lede: RENEWAL.lede, members: CONTINUATION }
+];
+
+export const PATH = CHAPTERS.flatMap((c) => c.members);
+
+const BY_WORD = new Map(WORDS.map((w) => [w.n, w]));
+const BY_HEBREW = new Map([...WORDS, ...REST].map((x) => [x.n, x.hebrew]));
+const BY_CHAPTER = new Map();
+CHAPTERS.forEach((c) => c.members.forEach((n) => BY_CHAPTER.set(n, c)));
+
+export const word = (n) => BY_WORD.get(n);
+export const hebrew = (n) => BY_HEBREW.get(n) || "";
+export const chapterOf = (n) => BY_CHAPTER.get(n) || CHAPTERS[0];
+export const hebrewLocale = (locale) => typeof locale === "string" && (locale === "he" || locale.startsWith("he-"));

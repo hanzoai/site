@@ -568,13 +568,19 @@ export default function HeaderTools({ headerRef }) {
   const router = useRouter();
 
   useEffect(() => {
-    try { const l = localStorage.getItem('hz-lang'); if (l) setLang(l); } catch {}
+    try {
+      const q = new URLSearchParams(location.search).get('lang');
+      const l = q || localStorage.getItem('hz-lang');
+      if (l) setLang(l);
+    } catch {}
   }, []);
   // the content is English, so <html lang="en" dir="ltr"> stays truthful whatever is chosen (PLAN 2.2): the choice is
   // remembered and shown on the button, and read by Hanzo's app when you go there
   useEffect(() => {
     document.documentElement.lang = 'en';
     document.documentElement.dir = 'ltr';
+    document.documentElement.dataset.lang = lang;
+    window.dispatchEvent(new CustomEvent('hz-lang-change', { detail: lang }));
   }, [lang]);
 
   useEffect(() => {

@@ -528,10 +528,7 @@ export function Phone({ sc, phase }) {
         </div>
         <i className="xm-home" />
       </div>
-      <button type="button" className="xm-hinge" data-cue="flip" aria-label={duo ? 'Fold the phone' : 'Unfold the phone'} aria-pressed={duo} title={duo ? 'Fold' : 'Unfold'} onClick={flip}>
-        <span className="xm-hinge-pill" aria-hidden="true" />
-        <span className="xm-hinge-tip" aria-hidden="true">{duo ? 'Fold' : 'Unfold'}</span>
-      </button>
+      <button type="button" className="xm-hinge" data-cue="flip" aria-label={duo ? 'Fold the phone' : 'Unfold the phone'} aria-pressed={duo} onClick={flip} />
       <a className="x-phone-dl" href="/download">Download App</a>
     </motion.div>
   );
