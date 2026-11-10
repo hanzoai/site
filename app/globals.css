@@ -29,10 +29,13 @@ html { background: var(--bg); -webkit-text-size-adjust: 100%; }
 [data-slot="footer-signature"] { display: none !important; }
 footer[data-slot="footer"] { gap: 20px !important; padding-top: 32px !important; padding-bottom: 24px !important; }
 footer[data-slot="footer"] > div._dsp-grid { row-gap: 20px !important; column-gap: 24px !important; }
-footer[data-slot="footer"] nav > a:first-child { padding-bottom: 5px !important; }
-footer[data-slot="footer"] nav > div > a { padding-top: 1.5px !important; padding-bottom: 1.5px !important; line-height: 1.32 !important; }
-footer[data-slot="footer"] [data-slot="footer-socials"] { gap: 24px !important; row-gap: 8px !important; }
-footer[data-slot="footer"] nav[aria-label="Terms & Policies"] { margin-left: auto; gap: 20px !important; }
+footer[data-slot="footer"] > div._dsp-grid > nav > :is(a, span):first-child { padding-bottom: 5px !important; }
+footer[data-slot="footer"] > div._dsp-grid > nav > div > a { padding-top: 1.5px !important; padding-bottom: 1.5px !important; line-height: 1.32 !important; }
+footer[data-slot="footer"] [data-slot="footer-socials"] { display: flex; align-items: center; gap: 24px !important; row-gap: 8px !important; }
+footer[data-slot="footer"] [data-slot="footer-socials"] > a { padding-top: 2px !important; padding-bottom: 2px !important; line-height: 1.35 !important; }
+footer[data-slot="footer"] nav[aria-label="Terms & Policies"] { margin-left: auto; display: flex; align-items: center; gap: 20px !important; }
+footer[data-slot="footer"] nav[aria-label="Terms & Policies"] > a { padding-top: 0 !important; padding-bottom: 0 !important; line-height: 1.35 !important; display: inline-flex; align-items: center; }
+@media (max-width: 640px) { footer[data-slot="footer"] nav[aria-label="Terms & Policies"] { margin-left: 0; } }
 /* light-dark() and the browser's own controls follow the html class, never the device alone (JS off stays bright) */
 html.light { color-scheme: light; } html:not(.light) { color-scheme: dark; }
 html.lenis, html.lenis body { height: auto; }
@@ -733,7 +736,7 @@ html .x-plot[data-tilt][data-lit] { transform: perspective(1200px) rotateX(calc(
   .x-arrow, .x-tab, .xpr-use, .xmo-use, .xmo-row-n, .xmo-lk, .xmo-every-g a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
   .x-badge, .x-phone-dl, .xm-tabs button, .x-term-f a { position: relative; }
   .x-badge::after, .x-phone-dl::after, .xm-tabs button::after, .x-term-f a::after { content: ''; position: absolute; inset: -12px -6px; }
-  footer a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; }
+  footer a { display: inline-flex; align-items: center; justify-content: flex-start; min-height: 36px; }
 }
 @media (max-width: 380px) { .x-setup-i:nth-child(n + 4) { display: none; } } /* the setup row and its 46px chevron stay inside a 360px screen's panel */
 
