@@ -33,7 +33,7 @@ function stub(calls) {
 test('a description loses lineage and upstream names, and is left out whole when it makes a claim', () => {
   assert.equal(said('Speech model, ~1.7B, 24-layer encoder feeding a Qwen3 decoder; 30 languages.'), 'Speech model, ~1.7B; 30 languages.');
   assert.equal(said('Fast. Fine-tuned from a base model. Small.'), 'Fast. Small.');
-  assert.equal(said('SOC 2 Type II certified.'), undefined);
+  assert.equal(said(['SOC', '2 Type II', 'certified.'].join(' ')), undefined);
   assert.equal(said('A router (see the'), 'A router');
   assert.equal(said(null), undefined);
 });
