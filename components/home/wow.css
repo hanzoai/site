@@ -86,9 +86,9 @@ main:has(> .x-ann) .x-agents .x-panel { box-shadow: 0 24px 50px -40px rgba(0, 0,
 main:has(> .x-ann) > .x-faster { --hx: 50%; --hy: 0%; }
 main:has(> .x-ann) > .x-faster::before { background: radial-gradient(circle, rgba(255, 255, 255, .22) 1px, transparent 1.5px) 0 0 / 12px 12px; -webkit-mask-image: radial-gradient(60% 50% at 50% 0%, #000, transparent 75%); mask-image: radial-gradient(60% 50% at 50% 0%, #000, transparent 75%); }
 main:has(> .x-ann) > .x-faster::after { background: conic-gradient(from 180deg at 50% -10%, transparent 160deg, rgba(255, 255, 255, .09) 175deg, rgba(255, 255, 255, .14) 180deg, rgba(255, 255, 255, .09) 185deg, transparent 200deg); }
-main:has(> .x-ann) .x-faster .x-race { padding: 18px 22px; }
-main:has(> .x-ann) .x-faster .x-race-cap { margin-top: 4px; }
-main:has(> .x-ann) .x-faster .x-race-big { margin-top: 2px; }
+main:has(> .x-ann) .x-faster .x-race, main:has(> .x-ann) .x-cheaper .x-cost { padding: clamp(18px, 2vw, 26px); }
+main:has(> .x-ann) .x-faster .x-race-cap, main:has(> .x-ann) .x-cheaper .x-race-cap { margin-top: 6px; }
+main:has(> .x-ann) .x-faster .x-race-big, main:has(> .x-ann) .x-cheaper .x-cost-big { margin-top: 6px; font-weight: 560; letter-spacing: -.045em; line-height: 1; font-feature-settings: 'tnum'; }
 main:has(> .x-ann) .x-faster .x-race-title { margin: auto 0 6px; padding-top: 12px; }
 main:has(> .x-ann) .x-faster .x-races > .x-race:first-child .x-lanes { gap: 14px; }
 main:has(> .x-ann) .x-faster .x-races > .x-race:first-child .x-lane-h { font-size: 15px; margin-bottom: 8px; }

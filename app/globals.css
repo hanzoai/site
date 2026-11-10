@@ -134,7 +134,8 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
 .x-flash { --ink-mix: 100%; --x: -9999px; --lo: color-mix(in oklab, var(--ink) var(--ink-mix), var(--bg)); color: transparent; -webkit-text-fill-color: transparent; background-image: linear-gradient(90deg, var(--lo) calc(var(--x) - 1em), var(--ink) var(--x), var(--lo) calc(var(--x) + 1em)); -webkit-background-clip: text; background-clip: text; cursor: default; }
 .x-line { display: block; overflow: hidden; padding: .04em 0 .1em; }
 .x-line-in { display: block; }
-.x-hero-lede { width: var(--w); max-width: var(--w); margin: 22px 0 0; font-size: max(13.5px, calc(var(--w) / 21.8)); line-height: 1.48; color: var(--soft); text-align: justify; text-align-last: justify; text-wrap: wrap; }
+.x-hero-lede { width: var(--w); max-width: var(--w); margin: 22px 0 0; font-size: max(13.5px, calc(var(--w) / 20.6)); line-height: 1.48; color: var(--soft); text-align: justify; text-align-last: justify; text-wrap: wrap; }
+.x-nowrap { white-space: nowrap; }
 .x-hero-lede b { color: var(--ink); font-weight: 600; font-feature-settings: 'tnum'; }
 .x-num-slot { display: inline-grid; justify-items: end; vertical-align: baseline; }
 .x-num-slot > * { grid-area: 1 / 1; }
