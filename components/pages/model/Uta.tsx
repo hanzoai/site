@@ -1,0 +1,282 @@
+'use client';
+/* Uta: compose beyond imagination. v2 launch page (on Launch, composed page-locally; Hanzo's black and white). The film
+   splits into four stems, faders of different heights, beside the headline.
+   V2: 7/10 motion-map build: film-scrub signature, five page-local entrances, own section order, no pinned chapters.
+   Signature: film-scrub (MOTION-MAP). Scroll scrubs Uta's film frame by frame, forwards and back, while what Uta does
+   follows it; drag across the film to scrub it too (uta/Motion.jsx `Scrub`).
+   Entrances: page-curl (the scrub), iris (the studio), scroll-tilt (Hanzo's model cards), count-roll (where it fits),
+   spiral-in (the closing band).
+   Studio demo (kept): a piano roll that plays. Two bars in D minor at 96 BPM loop by themselves across Uta's four stems
+   (timpani, low strings and tuba, horns and strings, choir and cello); the playhead lights each note as it sounds.
+   Solo a stem, switch the composition preset (each one re-voices the same score), tap the roll to add or remove a
+   melody note, and turn on Sound to hear it, synthesised in the browser. (An illustration, not Uta's output.)
+   Beyond: "Take it to your DAW". Download MIDI writes the roll as you left it, your notes included, into a Standard
+   MIDI File at the same 96 BPM, one channel per stem, so the sketch opens in any music app. Nothing leaves the page. */
+import { useEffect, useRef, useState } from 'react';
+import { useReducedMotion } from 'motion/react';
+import { Film, Img, Cta } from '../../kit';
+import { Studio } from './Studio';
+import { Scene } from './Creative';
+import Launch, { lerp, film, focus, Lines } from '../../v2/Launch';
+import { C } from './creativeData';
+import { Scrub, Iris, Tilt, Fits, Close } from './uta/Motion';
+import { useLoop, fit, audio, tone, burst, hush, arrows } from './live';
+import { midi } from './Uta.midi.ts';
+import './Uta.css';
+
+const ROWS = [74, 72, 70, 69, 67, 65, 64, 62, 57, 53, 50, 45, 38]; // D5 … D2, D minor
+const R = (m) => ROWS.indexOf(m);
+const TRACKS = [['Timpani & Concert Percussion', '88%'], ['Double Bass & Tuba Sub 40Hz', '76%'], ['French Horns & Symphonic Strings', '94%'], ['Chamber Choir & Solo Cello', '82%']];
+const SCORE = [
+  ...[[0, 50], [6, 45], [8, 50], [14, 45], [16, 50], [22, 45], [24, 50], [26, 50], [28, 50], [30, 50]].map(([s, m]) => [0, s, 1, R(m)]),
+  ...[[0, 6, 38], [8, 6, 45], [16, 6, 38], [24, 4, 45], [28, 4, 38]].map(([s, l, m]) => [1, s, l, R(m)]),
+  ...[[0, 62], [0, 65], [8, 62], [8, 67], [16, 57], [16, 64], [24, 57], [24, 65]].map(([s, m]) => [2, s, 8, R(m)]),
+  ...[[0, 4, 69], [4, 4, 74], [8, 2, 72], [10, 2, 70], [12, 4, 69], [16, 4, 67], [20, 2, 69], [22, 2, 70], [24, 6, 69]].map(([s, l, m]) => [3, s, l, R(m)]),
+];
+const PRESETS = [
+  ['Symphonic Orchestral', 'triangle', 0.05, 0.08],
+  ['Cyberpunk Synthwave', 'sawtooth', 0.01, 0.035],
+  ['Film Trailer Braam', 'square', 0.08, 0.03],
+  ['Lo-Fi Ambient Chill', 'sine', 0.03, 0.09],
+];
+const STEPS = 32, STEP = 60 / 96 / 4; // a sixteenth at 96 BPM
+const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+const SHADE = ['#f5f5f7', '#8e8e93', '#5a5a5e', '#ffffff'];
+
+function Roll() {
+  const stage = useRef(null), cv = useRef(null), sec = useRef(null), cs = useRef(null), flow = useRef(null), lights = useRef([]);
+  const S = useRef({ t: 0, step: -1, notes: SCORE.map((n) => [...n]), tc: 90.1 });
+  const [pre, setPre] = useState(0);
+  const [solo, setSolo] = useState(-1);
+  const [sound, setSound] = useState(false);
+  const [play, setPlay] = useState(true);
+  const calm = useReducedMotion();
+  useEffect(() => { if (calm) setPlay(false); }, [calm]); // reduced motion: the roll rests, and says so
+  const live = useRef({});
+  live.current = { pre, solo, sound };
+  useEffect(() => hush, []);
+
+  const voice = (n) => {
+    const { pre: p, sound: on } = live.current;
+    if (!on) return;
+    const ac = audio();
+    if (!ac) return;
+    const [tr, , len, row] = n, m = ROWS[row], dur = len * STEP, P = PRESETS[p];
+    if (tr === 0) { tone(ac, { f: hz(m), type: 'sine', dur: 0.45, gain: 0.35, glide: 0.75 }); burst(ac, { f: 260, type: 'lowpass', dur: 0.12, gain: 0.25 }); return; }
+    tone(ac, { f: hz(p === 2 && tr === 1 ? m - 12 : m), type: tr === 1 && p !== 2 ? 'sine' : P[1], dur: dur * 0.95, gain: tr === 1 ? P[3] * 1.4 : P[3], attack: P[2] });
+  };
+
+  useLoop(stage, (_, dt, still) => {
+    const c = cv.current, s = S.current, { solo: so, pre: p } = live.current;
+    if (!c) return;
+    if (!still && play) { s.t = (s.t + dt) % (STEPS * STEP); s.tc = s.tc + dt > 225 ? 0 : s.tc + dt; }
+    const step = Math.floor(s.t / STEP);
+    if (step !== s.step) {
+      s.step = step;
+      const on = [0, 0, 0, 0];
+      s.notes.forEach((n) => { if (step >= n[1] && step < n[1] + n[2]) on[n[0]] = 1; if (n[1] === step && (so < 0 || so === n[0]) && !still && play) voice(n); });
+      on.forEach((v, i) => { const el = lights.current[i]; if (el) el.dataset.on = v && (so < 0 || so === i) ? '1' : '0'; });
+      if (sec.current) { sec.current.textContent = String(Math.floor(s.tc % 60)).padStart(2, '0'); cs.current.textContent = String(Math.floor((s.tc % 1) * 100)).padStart(2, '0'); }
+    }
+    if (flow.current) flow.current.style.transform = `scaleX(${s.t / (STEPS * STEP)})`;
+    const { w, h, d } = fit(c);
+    const g = c.getContext('2d'), cw = w / STEPS, rh = h / ROWS.length, x0 = (s.t / STEP) * cw;
+    g.fillStyle = '#0a0a0a'; g.fillRect(0, 0, w, h);
+    for (let r = 0; r < ROWS.length; r++) if ([70, 65, 57, 53, 45].includes(ROWS[r])) { g.fillStyle = '#111114'; g.fillRect(0, r * rh, w, rh); }
+    for (let i = 0; i <= STEPS; i++) { g.fillStyle = i % 16 === 0 ? 'rgba(255,255,255,.22)' : i % 4 === 0 ? 'rgba(255,255,255,.1)' : 'rgba(255,255,255,.035)'; g.fillRect(i * cw, 0, d, h); }
+    const rad = [3, 1, 6, 10][p] * d;
+    s.notes.forEach(([tr, st, len, row]) => {
+      const x = st * cw + d, y = row * rh + rh * 0.14, ww = len * cw - 2 * d, hh = rh * 0.72;
+      const hot = step >= st && step < st + len && play;
+      const dim = so >= 0 && so !== tr;
+      g.globalAlpha = dim ? 0.18 : hot ? 1 : tr === 3 ? 0.9 : 0.7;
+      g.fillStyle = hot ? '#ffffff' : SHADE[tr];
+      g.beginPath(); g.roundRect(x, y - (hot ? d : 0), ww, hh + (hot ? 2 * d : 0), Math.min(rad, hh / 2)); g.fill();
+      if (tr === 2 && !hot) { g.strokeStyle = '#8e8e93'; g.lineWidth = d; g.stroke(); }
+    });
+    g.globalAlpha = 1;
+    g.fillStyle = '#f5f5f5'; g.fillRect(x0, 0, 2 * d, h);
+  });
+
+  const save = () => {
+    const url = URL.createObjectURL(new Blob([midi(S.current.notes.map(([tr, st, len, row]) => [tr, st, len, ROWS[row]]), 96)], { type: 'audio/midi' }));
+    const a = Object.assign(document.createElement('a'), { href: url, download: 'uta-sketch.mid' });
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
+
+  const tap = (e) => {
+    const r = cv.current.getBoundingClientRect();
+    const st = Math.floor(((e.clientX - r.left) / r.width) * STEPS), row = Math.floor(((e.clientY - r.top) / r.height) * ROWS.length);
+    const s = S.current, hit = s.notes.findIndex((n) => n[0] === 3 && n[3] === row && st >= n[1] && st < n[1] + n[2]);
+    if (hit >= 0) s.notes.splice(hit, 1); else { const n = [3, Math.min(STEPS - 2, st), 2, row]; s.notes.push(n); const was = live.current.sound; if (was) voice(n); }
+  };
+
+  return (
+    <div className="ut-board" ref={stage}>
+      <div className="ut-pre">
+        <p className="mb-mono">Composition Style Presets</p>
+        <div className="mb-chips" role="radiogroup" aria-label="Composition style" onKeyDown={arrows}>
+          {PRESETS.map(([n], i) => <button key={n} type="button" role="radio" aria-checked={pre === i} className="mb-chip" onClick={() => setPre(i)}>{n}</button>)}
+        </div>
+      </div>
+      <div className="ut-status">
+        <span className="ut-key mb-tnum">96 BPM · D MINOR</span>
+        <span className="mb-mono mb-live ut-live" data-off={play ? undefined : ''} aria-hidden={play ? undefined : 'true'}>STREAMING ACTIVE</span>
+        <span className="ut-tc mb-tnum"><span>01:</span><span ref={sec}>30</span>.<span ref={cs}>10</span> <span className="ut-of">/ 03:45.00</span></span>
+        {/* our own control words are not Hanzo's copy, so these render icon-only with the word as the accessible name */}
+        <button type="button" className="mb-chip ut-ico" aria-label={play ? 'Pause' : 'Play'} onClick={() => setPlay(!play)}>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">{play ? <path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /> : <path d="M5 3.2v9.6L12.8 8z" fill="currentColor" />}</svg>
+        </button>
+        <button type="button" className="mb-chip ut-ico" aria-label="Download MIDI" onClick={save}>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </button>
+        <button type="button" className="mb-chip ut-ico" aria-pressed={sound} aria-label={sound ? 'Sound on' : 'Sound off'} onClick={() => { if (sound) hush(); else audio(); setSound(!sound); }}>
+          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2.5 6h2.5L8.5 3v10L5 10H2.5z" fill="currentColor" />{sound ? <path d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.7a6 6 0 0 1 0 8.6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /> : <path d="m11 6 3.5 4M14.5 6 11 10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />}</svg>
+        </button>
+      </div>
+      <div className="ut-main">
+        <ul className="ut-tracks">
+          {TRACKS.map(([n, v], i) => (
+            <li key={n} ref={(el) => (lights.current[i] = el)} data-on="0">
+              <span className="ut-tn">{n}</span>
+              <span className="ut-lv"><i style={{ transform: `scaleX(${parseInt(v, 10) / 100})` }} /></span>
+              <span className="ut-v mb-tnum">{v}</span>
+              <button type="button" className="ut-solo" aria-label={'Solo ' + n} aria-pressed={solo === i} onClick={() => setSolo(solo === i ? -1 : i)}>SOLO</button>
+            </li>
+          ))}
+        </ul>
+        <div className="ut-roll">
+          <canvas ref={cv} role="img" aria-label="Piano roll in D minor at 96 BPM; tap to add or remove a melody note" onPointerDown={tap} />
+        </div>
+      </div>
+      <div className="ut-flow">
+        <span className="mb-mono">TIMELINE FLOW:</span>
+        <b><span>CHORUS [BAR 17-32]</span></b>
+        <span className="ut-bar"><i ref={flow} /></span>
+      </div>
+      <div className="ut-cue">
+        <figure className="ut-mon">
+          {/* one continuous mover at a time: while the roll plays, the monitor rests on its frame; pause the roll and the film plays */}
+          {play ? <Splash /> : <Film src={film('uta', 'webm')} poster={film('uta', 'webp')} w={1200} h={1500} />}
+          <figcaption><span className="mb-mono mb-live">PLAYING · 4K 60FPS</span><span className="mb-mono">CINEMA SCORE</span><span className="mb-mono">SURROUND 7.1.4</span></figcaption>
+        </figure>
+        <div className="ut-cue-t">
+          <p className="ut-q">SCORE CUE: “Timpani crescendo into full orchestral tutti with soaring legato violins and brass choir.”</p>
+          <p className="mb-mono">Live Philharmonic Hall Recording · Abbey Road Master</p>
+          <p className="ut-eng">Hanzo Uta-1 generates full broadcast multi-stem compositions with synchronized video cue anchors and lossless stem isolation.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Hanzo's own picture on the monitor (its alt, word for word); if hanzo.ai's image can't load, Uta's still stands in
+const SPLASH = 'https://hanzo.ai/images/creative/uta-splash.jpg';
+function Splash() {
+  const [bad, setBad] = useState(false);
+  return <Img src={bad ? film('uta', 'webp') : SPLASH} alt="Uta Live Philharmonic Orchestra and Music Video Trailer" w={1600} h={1000} onError={() => setBad(true)} />;
+}
+
+// the film splits into Uta's four stems: four faders rising left to right from one floor
+const STEMS = (t, W, H, wide) => {
+  const x0 = wide ? W * 0.5 : W * 0.06, x1 = wide ? W * 0.94 : W * 0.94, B = wide ? H * 0.9 : H * 0.47, gap = wide ? 18 : 10;
+  const tops = wide ? [0.5, 0.36, 0.22, 0.08] : [0.33, 0.26, 0.19, 0.13]; // a crescendo, rising with the film's fan of lines
+  const bw = (x1 - x0 - 3 * gap) / 4, M = Math.max(W, H) * 0.5;
+  const pts = [];
+  tops.forEach((f, i) => {
+    const a = x0 + i * (bw + gap), b = a + bw, a0 = (i * W) / 4, b0 = ((i + 1) * W) / 4, T = H * f;
+    pts.push([lerp(a0, a, t), lerp(H + M, B, t)], [lerp(a0, a, t), lerp(-M, T, t)], [lerp(b0, b, t), lerp(-M, T, t)], [lerp(b0, b, t), lerp(H + M, B, t)]);
+  });
+  return `polygon(${pts.map(([x, y]) => `${x.toFixed(1)}px ${y.toFixed(1)}px`).join(',')})`;
+};
+
+// the headline beside the settled film (the family's words, page-local): the page's asks carry no data-thumb, so the
+// shared header keeps one still solid ask; focus entering the actions scrolls the stage to its settled point
+function Head() {
+  const d = C.uta;
+  return (
+    <>
+      <Lines id="cr-h-uta" lines={[d.head]} />
+      <p className="lv-lede">{d.desc}</p>
+      <div className="lv-acts" onFocus={settleTo}>
+        <Cta kind="quiet" to="/research-access?models=uta" id="uta.hero">Request access</Cta>
+        <Cta to="/design" kind="link" id="uta.hero-design">Try it in Design</Cta>
+      </div>
+      <p className="lv-crumb"><span>{d.kind}</span><span>{d.ver}</span></p>
+    </>
+  );
+}
+
+// phone: the stage holds the film full-bleed with the name, lede and ask until the visitor scrolls (or 6 s pass),
+// then settles into the stems, eased; desktop is untouched (its settle follows the scroll already)
+function useHold() {
+  useEffect(() => {
+    const el = document.documentElement;
+    if (innerWidth > 900 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const pin = document.querySelector('.lv-stage[data-hero="uta"] .lv-pin');
+    if (!pin) return;
+    const { width: W, height: H } = pin.getBoundingClientRect();
+    el.style.setProperty('--ut-hold', STEMS(0, W, H, false));
+    el.dataset.utHold = '';
+    const go = () => { delete el.dataset.utHold; removeEventListener('scroll', on); clearTimeout(t); };
+    const on = () => { if (scrollY > 8) go(); };
+    const t = setTimeout(go, 6000);
+    addEventListener('scroll', on, { passive: true });
+    return () => { go(); el.style.removeProperty('--ut-hold'); };
+  }, []);
+}
+
+// keyboard: focus entering the settled headline's links (hidden under the film until the stage settles) scrolls the
+// stage to its settled point, so every Tab stop shows
+const settleTo = () => {
+  const s = document.querySelector('.lv-stage[data-hero="uta"]');
+  if (!s || innerWidth <= 900) return;
+  const end = s.getBoundingClientRect().top + scrollY + s.offsetHeight - innerHeight;
+  if (scrollY < end - 2) scrollTo({ top: end, behavior: 'instant' });
+};
+
+// one still header: the shared header keeps its own solid "Try Hanzo" (no label swap, no width change, no icons moving)
+// from arrival to the closing band; while the band is on screen it goes quiet, so the band's "Request access" is the
+// one solid there. The page opts out of the header hand-off with data-ask="off" on <main> (Ask.jsx's own switch).
+function useStillHeader() {
+  useEffect(() => {
+    const H = document.documentElement, main = document.querySelector('main');
+    const band = document.querySelector('.ut-band');
+    if (main) main.dataset.ask = 'off';
+    if (!band) return;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) H.dataset.ask = 'quiet'; else delete H.dataset.ask; }, { threshold: 0.25 });
+    io.observe(band);
+    return () => { io.disconnect(); delete H.dataset.ask; if (main) delete main.dataset.ask; };
+  }, []);
+}
+
+// The page's own order (not the family's hero → chapters → proof → band): the stage, then the film scrub with what
+// Uta does (the signature), the studio, Hanzo's model cards, where it fits, the closing band.
+export default function Uta() {
+  useHold();
+  useStillHeader();
+  return (
+    <Launch
+      slug="uta"
+      pos="50% 88%"
+      ask={{ label: 'Request access', to: '/research-access?models=uta', id: 'uta.first' }}
+      shape={STEMS}
+      aim={(W, H, wide) => (wide ? focus(0.66, 0.66, W * 0.72, H * 0.55, 1.12, [W * 0.5, H * 0.08, W * 0.94, H * 0.9], [0.5, 0.88]) : focus(0.7, 0.66, W / 2, H * 0.3, 1.3, [W * 0.06, H * 0.06, W * 0.94, H * 0.47], [0.5, 0.88]))(W, H)}
+      headClass="cr-head ut-v2"
+      head={<Head />}
+    >
+      <Scrub />
+      <Scene slug="uta" className="ut-scene">
+        <Iris>
+          <Studio slug="uta" specs={[['Arrangement Span', 'Full Compositions', 'Up to 4 Minutes'], ['Stem Separation', 'Isolated Codebooks', '4 Master Stems'], ['Score Synchronization', 'Frame-Accurate', 'Zero Cue Drift']]}>
+            <Roll />
+          </Studio>
+        </Iris>
+      </Scene>
+      <Tilt />
+      <Fits />
+      <Close />
+    </Launch>
+  );
+}

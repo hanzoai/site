@@ -55,8 +55,8 @@ W = {
 }
 FAM = ['models', 'oss', 'cloud', 'benchmarks', 'integrations', 'solutions', 'blockchain', 'legal', 'careers', 'products', 'blog', 'customers', 'agents', 'compare', 'help', 'zen', 'kai']
 app = os.path.join(ROOT, 'app')
-done = lambda p: os.path.exists(os.path.join(app, p.strip('/'), 'page.jsx'))
-fam_done = lambda f: os.path.exists(os.path.join(app, f, '[slug]', 'page.jsx'))
+done = lambda p: os.path.exists(os.path.join(app, p.strip('/'), 'page.tsx'))
+fam_done = lambda f: os.path.exists(os.path.join(app, f, '[slug]', 'page.tsx'))
 seen, rows = set(), []
 for w, d in W.items():
     for k, sig in d.items():

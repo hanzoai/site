@@ -24,9 +24,15 @@ html:not(.light) {
   --x-heat: #fff; --x-cell: var(--secondary); /* the open-source band's heat: white, on Hanzo's empty cell */
 }
 html { background: var(--bg); -webkit-text-size-adjust: 100%; }
-/* Footer wordmark in dark: live draws it in --foreground at opacity .18 (dark grey). components/Chrome.jsx raises the
-   link's own opacity to 1 as the page ends, so in dark its contents carry live's .18 (light keeps today's look). */
-html:not(.light) [data-slot=footer-signature] > * { opacity: .18; }
+/* Footer alignment across hanzo.ai, platform.hanzo.ai, hanzo.app, hanzo.bot, hanzo.team:
+   tightened list items, 24px social link spacing, right-aligned legal row, and no bottom signature wordmark */
+[data-slot="footer-signature"] { display: none !important; }
+footer[data-slot="footer"] { gap: 20px !important; padding-top: 32px !important; padding-bottom: 24px !important; }
+footer[data-slot="footer"] > div._dsp-grid { row-gap: 20px !important; column-gap: 24px !important; }
+footer[data-slot="footer"] nav > a:first-child { padding-bottom: 5px !important; }
+footer[data-slot="footer"] nav > div > a { padding-top: 1.5px !important; padding-bottom: 1.5px !important; line-height: 1.32 !important; }
+footer[data-slot="footer"] [data-slot="footer-socials"] { gap: 24px !important; row-gap: 8px !important; }
+footer[data-slot="footer"] nav[aria-label="Terms & Policies"] { margin-left: auto; gap: 20px !important; }
 /* light-dark() and the browser's own controls follow the html class, never the device alone (JS off stays bright) */
 html.light { color-scheme: light; } html:not(.light) { color-scheme: dark; }
 html.lenis, html.lenis body { height: auto; }

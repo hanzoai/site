@@ -57,7 +57,7 @@ def main():
     pages = []
     if not APP.exists():
         print("unique: no app/ directory; nothing to check"); return 0
-    for p in sorted(APP.rglob("page.jsx")):
+    for p in sorted(APP.rglob("page.tsx")):
         parts = p.relative_to(APP).parts
         if any(part.startswith("[") and part.endswith("]") for part in parts):
             continue
@@ -105,7 +105,7 @@ def main():
     # Motion variety (MASTER.md part 9, "Motion and interaction"): gates every page file touched since 7 Nov 06:00,
     # so pages being built or polished must comply without older untouched pages blocking anyone.
     import subprocess
-    touched = [str(p) for p in (COMPONENTS / "pages").rglob("*.jsx")
+    touched = [str(p) for p in (COMPONENTS / "pages").rglob("*.tsx")
                if p.stat().st_mtime > 1794031200 and "Signature:" in read(p)[:4000]]
     if touched:
         r = subprocess.run([sys.executable, str(HZ / "scripts" / "variety.py"), *touched], capture_output=True, text=True)
@@ -114,7 +114,7 @@ def main():
             print("unique: motion overdone on the page(s) above - see docs/build-notes/MASTER.md part 9 (Motion and interaction).")
             return 1
     # James's two most repeated complaints (UI hues, a label above the headline), on every page file touched since 7 Nov 06:00
-    styled = [str(p) for p in (COMPONENTS / "pages").rglob("*") if p.suffix in (".jsx", ".css") and p.stat().st_mtime > 1794031200]
+    styled = [str(p) for p in (COMPONENTS / "pages").rglob("*") if p.suffix in (".tsx", ".css") and p.stat().st_mtime > 1794031200]
     if styled:
         r = subprocess.run([sys.executable, str(HZ / "scripts" / "taste.py"), *styled], capture_output=True, text=True)
         if r.returncode:

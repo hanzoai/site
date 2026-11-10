@@ -89,6 +89,6 @@ if __name__ == '__main__':
     if args == ['--all-rebuilt']:  # every page with its own folder in app/, and every member of a family template
         idx = json.load(open(os.path.join(ROOT, 'content', 'pages.json')))
         app = os.path.join(ROOT, 'app')
-        args = [p for p in sorted(idx) if os.path.exists(os.path.join(app, p[1:], 'page.jsx'))
-                or os.path.exists(os.path.join(app, p[1:].split('/')[0], '[slug]', 'page.jsx'))]
+        args = [p for p in sorted(idx) if os.path.exists(os.path.join(app, p[1:], 'page.tsx'))
+                or os.path.exists(os.path.join(app, p[1:].split('/')[0], '[slug]', 'page.tsx'))]
     sys.exit(max([check(p) for p in args] or [0]))

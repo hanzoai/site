@@ -1,16 +1,17 @@
 {
   "name": "hanzo-home",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "HZ_DEV=1 next dev -p 4180",
-    "prebuild": "node scripts/live.mjs",
+    "prebuild": "node scripts/live.ts",
     "build": "next build && mkdir -p out/assets && mv out/_next out/assets/_next",
-    "postbuild": "node --test scripts/modules.test.mjs",
-    "preview": "node scripts/serve.mjs 4181",
+    "postbuild": "node --test scripts/modules.test.ts",
+    "preview": "node scripts/serve.ts 4181",
     "capture": "python3 scripts/capture.py",
     "extract": "python3 scripts/extract.py",
-    "test": "node --test scripts/plans.test.mjs scripts/oss.test.mjs scripts/heat.test.mjs scripts/mcp.test.mjs scripts/investors.test.mjs components/lab.test.mjs components/pages/BuyingSpecialist.test.mjs components/pages/Calculator.test.mjs components/pages/Reviews.test.mjs components/pages/BetaApply.send.test.mjs components/pages/Careers.apply.test.mjs components/pages/ContactSales.send.test.mjs",
-    "events": "node scripts/events.mjs"
+    "test": "node --test scripts/plans.test.ts scripts/oss.test.ts scripts/heat.test.ts scripts/mcp.test.ts scripts/investors.test.ts components/lab.test.ts components/pages/BuyingSpecialist.test.ts components/pages/Calculator.test.ts components/pages/Reviews.test.ts components/pages/BetaApply.send.test.ts components/pages/Careers.apply.test.ts components/pages/ContactSales.send.test.ts",
+    "events": "node scripts/events.ts"
   },
   "dependencies": {
     "@hanzo/appearance": "0.2.14",
@@ -29,7 +30,10 @@
     "node": ">=22.18"
   },
   "devDependencies": {
-    "puppeteer-core": "^23.11.1"
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "puppeteer-core": "^23.11.1",
+    "typescript": "^5.9.3"
   },
   "packageManager": "pnpm@11.24.0",
   "license": "Apache-2.0"
