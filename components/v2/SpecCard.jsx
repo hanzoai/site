@@ -21,7 +21,7 @@ import ModelFilm from './ModelFilm';
 import './SpecCard.css';
 
 /* the measured tilt: about ±3° toward the pointer, flat again on leave; mouse only, never under reduced motion */
-export function useSpecTilt() {
+export function useSpecTilt(big = false) {
   const ref = useRef(null);
   const calm = useReducedMotion();
   const onPointerMove = (e) => {
@@ -29,14 +29,16 @@ export function useSpecTilt() {
     if (calm || e.pointerType !== 'mouse' || !el) return;
     const r = el.getBoundingClientRect();
     const x = ((e.clientX - r.left) / r.width) * 2 - 1, y = ((e.clientY - r.top) / r.height) * 2 - 1;
-    el.style.transform = `perspective(900px) rotateX(${(y * 2.7).toFixed(2)}deg) rotateY(${(-x * 2.7).toFixed(2)}deg)`;
+    const deg = big ? 3.8 : 7.8;
+    const persp = big ? 760 : 480;
+    el.style.transform = `perspective(${persp}px) rotateX(${(y * deg).toFixed(2)}deg) rotateY(${(-x * deg).toFixed(2)}deg)`;
   };
   const onPointerLeave = () => { if (ref.current) ref.current.style.transform = ''; };
   return { ref, onPointerMove, onPointerLeave };
 }
 
 export default function SpecCard({ to, title, desc, tags = [], meta, slug, play = false, big = false, hush = false, kicker, card, onOpen, onHot, className = '', label }) {
-  const tilt = useSpecTilt();
+  const tilt = useSpecTilt(big);
   const hot = (v) => onHot && onHot(v);
   // a model this rebuild has no page for opens Hanzo's live page in a new tab: it says so (↗ and a spoken hint) and
   // makes no Morph promise

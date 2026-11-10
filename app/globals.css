@@ -676,6 +676,14 @@ html.dark .x-band { background: radial-gradient(80% 70% at 50% 100%, #1b1b1e, #0
 :where([data-tilt]) { position: relative; }
 html [data-tilt] { overflow: clip; isolation: isolate; }
 html .x-mtilt[data-tilt] { position: absolute; inset: 0; }
+html .x-mcard.big .x-mtilt[data-tilt] { transform: perspective(760px) rotateX(calc(var(--rx, 0deg) * 1.45)) rotateY(calc(var(--ry, 0deg) * 1.45)); }
+html .x-mcard:not(.big) .x-mtilt[data-tilt] { transform: perspective(460px) rotateX(calc(var(--rx, 0deg) * 2.85)) rotateY(calc(var(--ry, 0deg) * 2.85)); transition: transform .26s cubic-bezier(.2, .8, .2, 1), box-shadow .26s var(--ease); }
+html .x-mcard:not(.big) .x-mtilt[data-tilt][data-lit] { transform: perspective(460px) rotateX(calc(var(--rx, 0deg) * 2.85)) rotateY(calc(var(--ry, 0deg) * 2.85)) translate3d(0, -3px, 8px) scale(1.022); box-shadow: 0 24px 48px -18px rgba(0, 0, 0, .65), 0 0 0 1px rgba(255, 255, 255, .14); }
+html .x-mcard .x-mmedia img, html .x-mcard .x-mmedia video { transition: opacity .6s var(--ease), transform .28s cubic-bezier(.2, .8, .2, 1); will-change: transform; }
+html .x-mcard.big .x-mtilt[data-lit] .x-mmedia img, html .x-mcard.big .x-mtilt[data-lit] .x-mmedia video { transform: scale(1.05) translate3d(calc(var(--nx, 0) * -7px), calc(var(--ny, 0) * -7px), 0); }
+html .x-mcard:not(.big) .x-mtilt[data-lit] .x-mmedia img, html .x-mcard:not(.big) .x-mtilt[data-lit] .x-mmedia video { transform: scale(1.11) translate3d(calc(var(--nx, 0) * -11px), calc(var(--ny, 0) * -11px), 0); }
+html .x-mcard .x-mtext, html .x-mcard .x-mtags { transition: transform .28s cubic-bezier(.2, .8, .2, 1); }
+html .x-mcard:not(.big) .x-mtilt[data-lit] .x-mtext, html .x-mcard:not(.big) .x-mtilt[data-lit] .x-mtags { transform: translate3d(calc(var(--nx, 0) * 4.5px), calc(var(--ny, 0) * 4.5px), 0); }
 html [data-tilt]::after { inset: auto; left: 0; top: 0; z-index: 2; width: 600px; height: 600px; margin: -300px 0 0 -300px; border-radius: 50%; pointer-events: none; background: radial-gradient(circle closest-side, color-mix(in oklab, var(--foreground) 10%, transparent), transparent 70%); transform: translate3d(var(--lx, 50%), var(--ly, 0px), 0); }
 html [data-tilt][data-lit], html [data-tilt][data-lit]::after { will-change: transform; }
 html .x-plot[data-tilt][data-lit] { transform: perspective(1200px) rotateX(calc(var(--rx, 0deg) * .35)) rotateY(calc(var(--ry, 0deg) * .35)) !important; }

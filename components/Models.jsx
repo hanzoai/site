@@ -12,7 +12,7 @@ function Card({ m, i, live, setLive }) {
   const opener = useOpener();
   const [inView, setInView] = useState(false);
   const big = i === 0;
-  const shouldPlay = inView && (big || live === m.slug);
+  const shouldPlay = inView;
 
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -60,7 +60,7 @@ function Card({ m, i, live, setLive }) {
         <span className="x-mtilt" data-tilt="">
           <span className="x-mmedia">
             <img src={media(m.slug, 'webp')} alt="" />
-            <video ref={vid} src={media(m.slug, 'webm')} muted loop playsInline preload={big || live === m.slug ? 'metadata' : 'none'} aria-hidden="true" onPlaying={(e) => e.currentTarget.classList.add('on')} />
+            <video ref={vid} src={media(m.slug, 'webm')} muted loop playsInline preload="metadata" aria-hidden="true" onPlaying={(e) => e.currentTarget.classList.add('on')} />
           </span>
           <span className="x-mtext">
             {m.kicker && <span className="x-mkick">{m.kicker}</span>}

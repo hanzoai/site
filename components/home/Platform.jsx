@@ -133,7 +133,6 @@ export function DockItem({ i, on, mx, fine, calm, narrow, fly, progress, playing
   });
   const size = useSpring(sizeT, { mass: 0.1, stiffness: 190, damping: 14 });
   useEffect(() => { size.jump(narrow ? 22 : 46); }, [narrow]); // eslint-disable-line react-hooks/exhaustive-deps
-  const line = useTransform(progress, (v) => (on ? v : 0));
   return (
     <div className="xp-item" ref={ref}>
       <button
@@ -154,9 +153,6 @@ export function DockItem({ i, on, mx, fine, calm, narrow, fly, progress, playing
           <Glyph name={p.name} />
         </motion.span>
         <span className="xp-name">{p.name}</span>
-        <span className="xp-line" aria-hidden="true">
-          {on && playing && <motion.i style={{ scaleX: line }} />}
-        </span>
       </button>
       <AnimatePresence>
         {peek === i && (

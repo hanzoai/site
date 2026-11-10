@@ -71,8 +71,8 @@ const Lines = ({ lines, delay = 0, as: T = 'span' }) => lines.map((t, i) => (
 const GRID = ['enso', 'kai', 'zen', 'iro', 'koma', 'oto', 'koe', 'uta', 'mori'];
 
 function GridCard({ m, i, play, lit, open, setLit }) {
-  const tilt = useSpecTilt();
   const big = i === 0;
+  const tilt = useSpecTilt(big);
   const price = rateLine(ALL[m.slug]);
   return (
     <li className={'xmo-cell' + (big ? ' big' : '') + (lit ? ' lit' : '')}>
