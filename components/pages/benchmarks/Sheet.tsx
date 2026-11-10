@@ -46,9 +46,11 @@ export default function Sheet({ label, kicker, title, children, ghost = false, w
       clearTimeout(t);
       removeEventListener('keydown', key, true);
       html.style.overflow = prev;
-      if (scrollX !== sx || scrollY !== sy) scrollTo(sx, sy);
       l?.start();
-      btn.current?.focus({ preventScroll: true });
+      if (btn.current?.isConnected) {
+        if (scrollX !== sx || scrollY !== sy) scrollTo(sx, sy);
+        btn.current.focus({ preventScroll: true });
+      }
     };
   }, [open]);
 

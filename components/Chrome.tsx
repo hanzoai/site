@@ -26,12 +26,39 @@ export function Smooth({ children }) {
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(pointer: fine)').matches) return;
     let l = null, dead = false;
+    const onAnchor = (e) => {
+      if (!l || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest?.('a[href]');
+      const raw = a?.getAttribute('href');
+      if (!raw || !/^(#|\/#|\.#)/.test(raw)) return;
+      const hash = raw.slice(raw.indexOf('#'));
+      if (hash === '#' || hash === '#top') {
+        e.preventDefault();
+        l.scrollTo(0);
+        return;
+      }
+      let id = hash.slice(1);
+      try { id = decodeURIComponent(id); } catch {}
+      const el = document.getElementById(id);
+      if (!el) return;
+      e.preventDefault();
+      if (location.hash !== hash) {
+        history.pushState(null, '', hash);
+        dispatchEvent(new HashChangeEvent('hashchange'));
+      }
+      requestAnimationFrame(() => {
+        if (!l) return;
+        const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+        l.scrollTo(el, { offset: -margin });
+      });
+    };
     import('lenis').then(({ default: Lenis }) => {
       if (dead) return;
-      l = new Lenis({ autoRaf: true, lerp: 0.105, wheelMultiplier: 0.9, anchors: true });
+      l = new Lenis({ autoRaf: true, lerp: 0.105, wheelMultiplier: 0.9, anchors: false });
       window.__lenis = l;
+      document.addEventListener('click', onAnchor);
     });
-    return () => { dead = true; l?.destroy(); window.__lenis = null; };
+    return () => { dead = true; document.removeEventListener('click', onAnchor); l?.destroy(); window.__lenis = null; };
   }, []);
   // every [data-tilt] card leans toward a mouse (or the phone's tilt) and a light follows it: one listener, lib/tilt.js
   useEffect(() => lean(), []);

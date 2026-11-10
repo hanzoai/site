@@ -370,19 +370,29 @@ const JUMP = D.PAGES.flatMap(([prod, , list]) => list.map(([t, to]) => ({ t, to,
 
 function Rail() {
   const [at, setAt] = useState('');
+  const [dark, setDark] = useState(false);
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
   const box = useRef(null);
   useEffect(() => {
-    // the mark leaves a section once it has passed (so the rail is dark only while the Zen 6 room is under it)
-    const io = new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? setAt(e.target.id) : setAt((a) => (a === e.target.id ? '' : a)))), { rootMargin: '-40% 0px -55% 0px' });
+    // scroll-spy reads just under the 116px stacked header + rail; dark tracks whether the Zen 6 room physically sits behind the 56px rail
+    const io = new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? setAt(e.target.id) : setAt((a) => (a === e.target.id ? '' : a)))), { rootMargin: '-128px 0px -65% 0px' });
     RAIL.forEach(([id]) => { const el = document.getElementById(id); if (el) io.observe(el); });
+    const zen = document.getElementById('zen');
+    const syncDark = () => {
+      if (!zen) return;
+      const r = zen.getBoundingClientRect();
+      setDark(r.top <= 126 && r.bottom >= 116);
+    };
+    syncDark();
+    window.addEventListener('scroll', syncDark, { passive: true });
+    window.addEventListener('resize', syncDark);
     const key = (e) => {
       if (e.key === '/' && !/input|textarea/i.test(document.activeElement?.tagName || '')) { e.preventDefault(); setOpen(true); }
       if (e.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', key);
-    return () => { io.disconnect(); window.removeEventListener('keydown', key); };
+    return () => { io.disconnect(); window.removeEventListener('scroll', syncDark); window.removeEventListener('resize', syncDark); window.removeEventListener('keydown', key); };
   }, []);
   useEffect(() => {
     if (!open) return;
@@ -393,7 +403,7 @@ function Rail() {
   }, [open]);
   const hits = JUMP.filter((j) => (j.t + ' ' + j.prod).toLowerCase().includes(q.trim().toLowerCase()));
   return (
-    <nav className={'xbm-rail' + (at === 'zen' ? ' dark' : '')} aria-label="Benchmarks by product">
+    <nav className={'xbm-rail' + (dark ? ' dark' : '')} aria-label="Benchmarks by product">
       <div className="pf-wrap xbm-rail-in">
         <ul className="xbm-rail-l">
           {RAIL.map(([id, t]) => (
@@ -1543,7 +1553,15 @@ function Shelf() {
     setOrder(o || 'Newest');
   };
   useEffect(() => { apply(location.search); }, []);
-  const go = (e, to) => { e.preventDefault(); apply(to.split('#')[0]); history.replaceState(null, '', location.pathname + to.split('#')[0] + '#all'); document.getElementById('all')?.scrollIntoView({ behavior: 'smooth' }); };
+  const go = (e, to) => {
+    e.preventDefault();
+    apply(to.split('#')[0]);
+    history.replaceState(null, '', location.pathname + to.split('#')[0] + '#all');
+    const el = document.getElementById('all');
+    if (!el) return;
+    if (window.__lenis) window.__lenis.scrollTo(el, { offset: -(parseFloat(getComputedStyle(el).scrollMarginTop) || 124) });
+    else el.scrollIntoView({ behavior: 'smooth' });
+  };
   const toggle = (k, v) => setF((o) => { const cur = o[k] || []; const nx = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v]; const c = { ...o, [k]: nx }; if (!nx.length) delete c[k]; return c; });
   const rows = useMemo(() => {
     const t = q.trim().toLowerCase();
@@ -1667,21 +1685,23 @@ function Close() {
 
 export default function Benchmarks() {
   return (
-    <main className="xbm pf-r">
+    <main className="xbm pf-r" data-turn>
       <Hero />
       <RaceSec />
-      <Rail />
-      <Zen />
-      <Frontier />
-      <Enso />
-      <Kai />
-      <Board />
-      <KaiMore />
-      <KaiTools />
-      <Harness />
-      <Platform />
-      <Methods />
-      <Shelf />
+      <div className="xbm-body">
+        <Rail />
+        <Zen />
+        <Frontier />
+        <Enso />
+        <Kai />
+        <Board />
+        <KaiMore />
+        <KaiTools />
+        <Harness />
+        <Platform />
+        <Methods />
+        <Shelf />
+      </div>
       <Close />
       {/* the (+) sheets open over the page from here (display: contents: never a section of its own) */}
       <div className="xbm-sheets" />

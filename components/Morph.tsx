@@ -111,9 +111,10 @@ export default function Morph() {
     };
 
     // a card: it grows into the stage now; the page comes in under it; the stage settles into the hero and dissolves
-    const open = (src, from, go, link = src) => {
-      play('whoosh'); // a card opening into its page (JAMES rule 10)
+    const open = (src, from, go, link = src, forced = false) => {
       const stage = stageFor(src, link);
+      if (!forced && !stage.children.length) { turn(from, go); return; }
+      play('whoosh'); // a card opening into its page (JAMES rule 10)
       H.dataset.morph = 'open';
       src.style.viewTransitionName = 'hz-morph';
       const vt = document.startViewTransition(() => {
@@ -192,8 +193,8 @@ export default function Morph() {
       e.stopPropagation();
       const go = () => router.push(u.pathname + u.search + u.hash, { scroll: false });
       const own = a.matches('[data-morph]') ? a : a.querySelector('[data-morph]');
-      const src = own || (BIG(a.getBoundingClientRect()) ? a : null);
-      if (src && document.startViewTransition) open(src, location.pathname, go, a);
+      const src = own || (!a.closest('[data-turn]') && BIG(a.getBoundingClientRect()) ? a : null);
+      if (src && document.startViewTransition) open(src, location.pathname, go, a, !!own);
       else turn(location.pathname, go);
     };
     addEventListener('popstate', pop);
