@@ -13,7 +13,7 @@
    be reached. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useAnimate } from 'motion/react';
-import { EASE, Magnetic } from '../ui';
+import { EASE, Magnetic, Mark } from '../ui';
 import { scrollToEl } from '../../lib/scroll';
 import { A, Cta } from '../kit';
 import LineReveal, { NoJs } from '../v2/LineReveal';
@@ -278,6 +278,7 @@ export default function BuyingSpecialist() {
   const ask = useRef(null);
   const [own, setOwn] = useState(false);
   const end = useRef(null);
+  const logRef = useRef(null);
   const desk = useRef(null);
   const seen = useInView(desk, { amount: 0.2 });
   const calm = useReducedMotion();
@@ -289,18 +290,35 @@ export default function BuyingSpecialist() {
   useEnter(root);
   useQuietHeader();
 
+  const exitChat = () => {
+    setMsgs([]);
+    setBusy(false);
+    setVal('');
+  };
+
   useEffect(() => { const n = new URLSearchParams(location.search).get('name'); if (n && n.trim()) setName(n.trim().slice(0, 40)); }, []);
-  // keep the question just asked in view: the newest message of yours lands at the top, its answer arrives under it
+  // lock page scroll and allow Escape to exit while in the full-screen chat takeover
   useEffect(() => {
     if (!started) return;
-    // wait for the greeting to finish leaving (0.25s), so the target does not move under the scroll
+    window.__lenis?.stop();
+    document.documentElement.classList.add('x-lock');
+    const onKey = (e) => { if (e.key === 'Escape') exitChat(); };
+    addEventListener('keydown', onKey);
+    return () => {
+      removeEventListener('keydown', onKey);
+      window.__lenis?.start();
+      document.documentElement.classList.remove('x-lock');
+    };
+  }, [started]);
+  // keep the conversation scrolled to the latest message inside the takeover log pane
+  useEffect(() => {
+    if (!started) return;
     const t = setTimeout(() => {
-      const mine = document.querySelectorAll('.xbs-log li.me');
-      const el = mine[mine.length - 1];
-      if (el) scrollToEl(el, { offset: -100, immediate: !!calm });
-    }, 320);
+      const el = logRef.current;
+      if (el) el.scrollTo({ top: el.scrollHeight, behavior: calm ? 'auto' : 'smooth' });
+    }, 60);
     return () => clearTimeout(t);
-  }, [msgs.length, started, calm]);
+  }, [msgs.length, busy, started, calm]);
   // the sheet re-prices itself (4, 10, 25, 50 members) until you or the chat set it
   useEffect(() => {
     if (own || !seen) return;
@@ -333,23 +351,42 @@ export default function BuyingSpecialist() {
     setMsgs([...list, { role: 'user', content: q }]);
     setBusy(true);
     const w = written(q, name);
-    let a = w.content;
-    try {
-      const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'enso-auto', messages: [{ role: 'system', content: BRIEF(name) }, ...list.map((m) => ({ role: m.role, content: m.content })), { role: 'user', content: q }] }) });
-      const d = await res.json();
-      a = d?.choices?.[0]?.message?.content?.trim() || w.content;
-    } catch { /* the written answer stands in */ }
-    setMsgs((m) => [...m, { role: 'assistant', content: a, quote: w.quote }]);
-    // the answer's plan moves the one quote card; no second card is printed in the chat
+    // move the live quote card right away when the question names a team size or plan
     if (w.quote) { setOwn(true); setPlan(w.quote.plan === 'Enterprise' ? 'ent' : 'team'); setSeats(w.quote.plan === 'Enterprise' ? w.quote.seats : Math.min(100, w.quote.seats)); stampIt(); }
+    let a = w.content;
+    const isDirect = Boolean(w.quote) || /\b(hi|hello|hey|help|start|standard|premium|difference|seat|compare|vs|plan|pricing|price|cost|team|enterprise)\b/i.test(q);
+    if (isDirect) {
+      await new Promise((r) => setTimeout(r, 280));
+    } else {
+      try {
+        const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'enso-auto', messages: [{ role: 'system', content: BRIEF(name) }, ...list.map((m) => ({ role: m.role, content: m.content })), { role: 'user', content: q }] }), signal: AbortSignal.timeout(3500) });
+        const d = await res.json();
+        a = d?.choices?.[0]?.message?.content?.trim() || w.content;
+      } catch { /* the written answer stands in */ }
+    }
+    setMsgs((m) => (m.length ? [...m, { role: 'assistant', content: a, quote: w.quote }] : m));
     file(q, a, w.quote, list);
     setBusy(false);
   };
 
   return (
-    <main className="xp xbs" ref={root}>
+    <main className={'xp xbs' + (started ? ' xbs-takeover' : '')} ref={root}>
       <NoJs />
       <section className="xbs-desk" ref={desk} aria-labelledby="xbs-h1">
+        {started && (
+          <header className="xbs-top">
+            <div className="xbs-top-brand">
+              <Mark size={16} />
+              <b>AI Buying Specialist</b>
+              <span>Live Quote &amp; Plan Configuration</span>
+            </div>
+            <button type="button" className="xbs-close" onClick={exitChat} aria-label="Exit Buying Specialist chat">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+              </svg>
+            </button>
+          </header>
+        )}
         <div className="xp-wrap xbs-grid">
           <div className="xbs-chat">
             <AnimatePresence initial={false}>
@@ -369,9 +406,9 @@ export default function BuyingSpecialist() {
                 </motion.div>
               )}
             </AnimatePresence>
-            {started && <h1 className="x-sr">{`Hi ${name}, let's find the right plan for your team.`}</h1>}
+            {started && <h1 id="xbs-h1" className="x-sr">{`Hi ${name}, let's find the right plan for your team.`}</h1>}
             {started && (
-              <ol className="xbs-log" aria-live="polite">
+              <ol className="xbs-log" ref={logRef} aria-live="polite">
                 {msgs.map((m, i) => (
                   <motion.li key={i} className={m.role === 'user' ? 'me' : 'ai'} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }}>
                     {m.role === 'user' ? <p>{m.content}</p> : (
@@ -408,19 +445,19 @@ export default function BuyingSpecialist() {
           </motion.div>
         </div>
       </section>
-      <Promises seats={seats} />
-      {/* the closing band, page-local so its headline can split and merge (entrance 5); the kit Band's own reveal is
-          not used here: one reveal per section */}
-      <section className="x-band xbs-band" data-room="dark" data-enter="split-merge">
-        <div className="x-wrap">
-          <h2 className="xbs-band-h"><span className="a">The fastest path in.</span><span className="b" aria-hidden="true">The fastest path in.</span></h2>
-          <div className="xbs-band-rest">
-            <p>You&apos;ll have a quote and a plan by the end of this conversation.</p>
-            <div className="x-band-act"><Magnetic><Cta to={teamUrl(seats)} id="buying-specialist.band">Start Team Plan →</Cta></Magnetic></div>
+      {!started && <Promises seats={seats} />}
+      {!started && (
+        <section className="x-band xbs-band" data-room="dark" data-enter="split-merge">
+          <div className="x-wrap">
+            <h2 className="xbs-band-h"><span className="a">The fastest path in.</span><span className="b" aria-hidden="true">The fastest path in.</span></h2>
+            <div className="xbs-band-rest">
+              <p>You&apos;ll have a quote and a plan by the end of this conversation.</p>
+              <div className="x-band-act"><Magnetic><Cta to={teamUrl(seats)} id="buying-specialist.band">Start Team Plan →</Cta></Magnetic></div>
+            </div>
           </div>
-        </div>
-      </section>
-      <Dock seats={seats} plan={plan} />
+        </section>
+      )}
+      {!started && <Dock seats={seats} plan={plan} />}
     </main>
   );
 }

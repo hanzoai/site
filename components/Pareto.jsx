@@ -103,7 +103,7 @@ export default function Pareto() {
     <section className="x-sec x-pareto" id="pareto" data-hz-view="pareto" aria-labelledby="pareto-h">
       <div className="x-wrap">
         <Head title="A New Pareto Frontier of Intelligence" lede="GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers." />
-        <Rise className="x-plot" ref={box} onPointerDown={(e) => { if (!e.target.closest('.pt, .x-tip')) setHot(null); }}>
+        <Rise className="x-plot" data-tilt="" ref={box} onPointerDown={(e) => { if (!e.target.closest('.pt, .x-tip')) setHot(null); }}>
           <div className="x-plot-read" aria-live="polite">
             <span className="x-mono">Budget · ${c < 10 ? c.toFixed(2) : Math.round(c)} per 1,000 questions</span>
             <b>{pick ? `${pick.full} · ${pick.a.toFixed(1)}%` : '—'}</b>

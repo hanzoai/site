@@ -110,13 +110,14 @@ export default function Nav({ headerRef }) {
       b.setAttribute('aria-haspopup', 'true');
       b.setAttribute('aria-expanded', 'false');
       b.setAttribute('aria-controls', 'x-nav-panel');
-      on(b, 'pointerenter', (e) => {
+      const hoverTarget = name === 'Company' ? (b.parentElement || b) : b;
+      on(hoverTarget, 'pointerenter', (e) => {
         if (e.pointerType !== 'mouse' || innerWidth <= 900) return;
         clearTimeout(rest);
         const cur = openRef.current;
-        rest = setTimeout(() => { if (b.matches(':hover')) { origin = b.getBoundingClientRect(); show(name); } }, cur && cur !== name ? 160 : 70);
+        rest = setTimeout(() => { if (hoverTarget.matches(':hover')) { origin = hoverTarget.getBoundingClientRect(); show(name); } }, cur && cur !== name ? 80 : 60);
       });
-      on(b, 'pointerleave', () => clearTimeout(rest));
+      on(hoverTarget, 'pointerleave', () => clearTimeout(rest));
       on(b, 'keydown', (e) => {
         if (e.key !== 'ArrowDown' || innerWidth <= 900) return;
         e.preventDefault(); origin = b.getBoundingClientRect(); show(name); intoPanel(name);

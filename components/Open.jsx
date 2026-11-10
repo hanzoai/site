@@ -67,7 +67,7 @@ function Calendar() {
   const h = hot !== null ? DAYS[hot] : null;
   const hc = hot !== null ? Math.floor((hot + LEAD) / 7) : 0, hr = hot !== null ? (hot + LEAD) % 7 : 0;
   return (
-    <div className="x-cal">
+    <div className="x-cal" data-tilt="">
       <p className="x-race-k">Commits a day</p>
       <div className="x-cal-months" aria-hidden="true">{MONTHS.map(([m, c]) => <span key={m + c} style={{ gridColumn: c + 1 }}>{m}</span>)}</div>
       <div

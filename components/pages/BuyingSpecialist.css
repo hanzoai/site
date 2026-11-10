@@ -18,10 +18,10 @@
 /* the conversation */
 .xbs-log { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
 .xbs-log li { scroll-margin-top: 96px; }
-.xbs-log li.me { justify-self: end; max-width: 85%; padding: 12px 18px; border-radius: 18px 18px 4px 18px; background: var(--xp-accent); color: #fff; font-size: 17px; line-height: 1.5; }
-.xbs-log li.me p { margin: 0; }
+.xbs-log li.me { justify-self: end; max-width: 85%; padding: 12px 18px; border-radius: 18px 18px 4px 18px; background: var(--ink); color: var(--x-on-ink); font-size: 17px; line-height: 1.5; font-weight: 450; }
+.xbs-log li.me p { margin: 0; color: inherit; }
 .xbs-log li.ai { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; }
-.xbs-av { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--card); border: 1px solid var(--line); font-size: 14px; }
+.xbs-av { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--card); border: 1px solid var(--line); color: var(--ink); font-size: 14px; }
 .xbs-ans { display: grid; gap: 14px; min-width: 0; }
 .xbs-bubble { padding: 16px 20px; border-radius: 4px 18px 18px 18px; background: var(--card); border: 1px solid var(--line); font-size: 16px; line-height: 1.6; color: var(--ink); overflow-wrap: anywhere; }
 .xbs-bubble p, .xbs-bubble ul, .xbs-bubble h4 { margin: 0 0 12px; }
@@ -44,8 +44,8 @@
 .xbs-composer { position: relative; z-index: 5; display: flex; align-items: center; margin-top: auto; padding-top: 28px; }
 .xbs-composer input { width: 100%; height: 56px; padding: 0 60px 0 22px; border-radius: 28px; border: 1px solid rgba(0, 0, 0, .14); background: #fff; font: 400 16px/1 var(--sans); color: var(--ink); outline: none; transition: border-color .15s var(--ease); }
 .xbs-composer input:focus { border-color: var(--xp-accent); }
-.xbs-composer button { position: absolute; right: 6px; bottom: 6px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--xp-accent); color: #fff; display: grid; place-items: center; cursor: pointer; transition: transform .1s, background-color .2s; }
-@media (hover: hover) { .xbs-composer button:hover:not(:disabled) { background: var(--hz-700); } }
+.xbs-composer button { position: absolute; right: 6px; bottom: 6px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--ink); color: var(--x-on-ink); display: grid; place-items: center; cursor: pointer; transition: transform .1s, opacity .2s, background-color .2s; }
+@media (hover: hover) { .xbs-composer button:hover:not(:disabled) { opacity: .86; background: var(--ink); } }
 .xbs-composer button:active:not(:disabled) { transform: scale(.97); }
 .xbs-composer button:disabled, .xbs-composer input:disabled { opacity: .55; }
 .xbs-composer button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -210,3 +210,86 @@ html:not(.light) .xbs-asks button { background: var(--x-raised); border-color: v
 /* dark: the chat composer field was #fff under light typed text; it goes on the raised surface with a control border */
 html:not(.light) .xbs-composer input { background: var(--x-raised); border-color: var(--border-control, var(--border)); color: var(--foreground); }
 html:not(.light) .xbs-composer input:focus { border-color: var(--xp-accent); }
+
+/* ---------- focused full-screen takeover once a conversation starts ---------- */
+html:has(main.xbs.xbs-takeover) [data-x-shell="header"],
+html:has(main.xbs.xbs-takeover) [data-x-shell="footer"] { display: none !important; }
+main.xbs.xbs-takeover .xbs-desk {
+  position: fixed;
+  inset: 0;
+  z-index: 940;
+  padding: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.xbs-top {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 60px;
+  padding: 0 clamp(20px, 4vw, 40px);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+.xbs-top-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 15px;
+}
+.xbs-top-brand b { font-weight: 600; letter-spacing: -.01em; }
+.xbs-top-brand span { color: var(--faint); font-size: 13px; padding-left: 10px; border-left: 1px solid var(--line); }
+.xbs-close {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--x-raised);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, transform .15s;
+}
+@media (hover: hover) { .xbs-close:hover { background: var(--card); border-color: var(--ink); } }
+.xbs-close:active { transform: scale(.95); }
+main.xbs.xbs-takeover .xbs-grid {
+  flex: 1;
+  min-height: 0;
+  height: calc(100dvh - 60px);
+  padding: clamp(20px, 3vw, 36px) 0;
+  align-items: stretch;
+}
+main.xbs.xbs-takeover .xbs-chat {
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+main.xbs.xbs-takeover .xbs-log {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 8px;
+  align-content: start;
+}
+main.xbs.xbs-takeover .xbs-side {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+  overflow-y: auto;
+}
+@media (max-width: 900px) {
+  .xbs-top-brand span { display: none; }
+  main.xbs.xbs-takeover .xbs-desk { overflow-y: auto; }
+  main.xbs.xbs-takeover .xbs-grid { height: auto; flex: none; padding: 20px 0 40px; }
+  main.xbs.xbs-takeover .xbs-chat { height: auto; overflow: visible; }
+  main.xbs.xbs-takeover .xbs-log { max-height: 58dvh; }
+}

@@ -195,13 +195,13 @@ export default function Journey({ products: P, title, lede, onFail }) {
           <canvas ref={canvas} className="xpj-gl" aria-hidden="true" onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={() => { ptr.current = null; }} />
           <span className="xpj-hit" ref={hit} aria-hidden="true" />
           <svg className="xpj-wires" aria-hidden="true"><line ref={wire} key={'wire-' + p.name} /></svg>
-          <span className="xpj-label" ref={label} aria-hidden="true" key={'label-' + p.name}><i />{p.addr}</span>
+          <A className="xpj-label" ref={label} to={addrHref(p)} aria-label={`Open ${p.addr}`} key={'label-' + p.name}><i />{p.addr.toLowerCase()} ↗</A>
 
           <div className="xpj-panel x-wrap" ref={panel}>
             <ol className="xpj-list" id="xp-panel" role="tabpanel" aria-labelledby={`xp-tab-${active}`}>
               {P.map((x, i) => (
                 <li key={x.name} className={i === active ? 'on' : i < active ? 'past' : ''} inert={i !== active}>
-                  <span className="xpj-kick"><span className="xpj-num">{pad(i + 1)}</span><A className="xpj-addr" to={addrHref(x)} aria-label={`Open Hanzo ${x.name} at ${x.addr}`}>{x.addr}</A></span>
+                  <span className="xpj-kick"><A className="xpj-addr" to={addrHref(x)} aria-label={`Open Hanzo ${x.name} at ${x.addr}`}>{x.addr.toLowerCase()} ↗</A></span>
                   <h3 className="xpj-name">{x.name}</h3>
                   <span className="xpj-acts">
                     {x.acts.map((a, k) => (
