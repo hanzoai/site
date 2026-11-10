@@ -189,7 +189,7 @@ function Hero() {
           {H1.map((l, i) => <span key={l} className="xab-h1-ln"><span style={{ '--i': i }}>{l}{i < H1.length - 1 ? ' ' : ''}</span></span>)}
         </h1>
         <div className="xab-hero-side">
-          <p className="v2s-lede">From SKULLY and open-source commerce, through Techstars ’17, to 1700+ open repositories and the sovereign AI cloud today — advancing intelligence, speed, deterministic safety, and equitable cost together.</p>
+          <p className="v2s-lede">From venture building and open-source commerce, through Techstars ’17, to 1700+ open repositories and the sovereign AI cloud today — advancing intelligence, speed, deterministic safety, and equitable cost together.</p>
           <div className="v2s-acts">
             <Cta to="/pricing" id="about.hero" thumb>Get Started</Cta>
             <TL to="/history">Our History</TL>
@@ -387,7 +387,7 @@ function Why() {
 
 /* ---------- 3. the track record: three figures climbing like the frontier ---------- */
 const MILES = [
-  ['2014', 'SKULLY and open-source commerce'],
+  ['2014', 'Venture building and open-source commerce'],
   ['2017', 'Techstars ’17'],
   ['2024', 'Damon Motors and Triller listing on Nasdaq'],
   ['2026', '1700+ open repositories and the sovereign AI cloud'],
@@ -420,7 +420,7 @@ function Record() {
             <p className="v2s-cap">Proven Track Record</p>
             <h2 id="xab-rec-h">Built with founders, scaled to public markets.</h2>
           </div>
-          <p className="xab-rec-l">From SKULLY and open-source commerce through Techstars ’17 to Damon Motors and Triller listing on Nasdaq in 2024, Hanzo has engineered sovereign commerce and AI systems for hundreds of venture-backed companies. Read the complete 2014–2026 archive on our history page, or start building today.</p>
+          <p className="xab-rec-l">From venture building and open-source commerce through Techstars ’17 to Damon Motors and Triller listing on Nasdaq in 2024, Hanzo has engineered sovereign commerce and AI systems for hundreds of venture-backed companies. Read the complete 2014–2026 archive on our history page, or start building today.</p>
         </div>
         <div className="xab-rec-stage zf-lift zf-dots">
         <dl className="xab-figs" ref={figs}>

@@ -7,7 +7,7 @@ import { join } from 'node:path';
 
 export const metadata = {
   title: 'Chasing the Pareto Frontier of AI — Hanzo AI',
-  description: "From SKULLY and open-source commerce, through Techstars '17, to 1,600+ open repositories and the sovereign AI cloud today — advancing AI safety, performance, equitable access, privacy, and ownership.",
+  description: "From venture building and open-source commerce, through Techstars '17, to 1,600+ open repositories and the sovereign AI cloud today — advancing AI safety, performance, equitable access, privacy, and ownership.",
 };
 
 // the founders' portraits are asked for only when the files ship in public/authors; until then each founder is a Sigil
