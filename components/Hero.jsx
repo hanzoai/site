@@ -101,10 +101,28 @@ export default function Hero() {
   const [phase, setPhase] = useState(0);
   // after the opening, the rest of Hanzo's day plays: one scene every 6.5 s
   const [sc, setSc] = useState(-1);
+  const [navPick, setNavPick] = useState(null);
   const [side, setSide] = useState(true);
+  const manualRef = useRef(false);
+  const holdUntilRef = useRef(0);
+
+  const selectScene = (nextSc, navId = null) => {
+    manualRef.current = true;
+    holdUntilRef.current = Date.now() + 12000;
+    setTyped(PROMPT.length);
+    setCmd(CMD.length);
+    setPhase(4);
+    setSc(nextSc);
+    setNavPick(navId);
+  };
+
   useEffect(() => {
     if (calm || phase < 4) return;
-    const t = setInterval(() => { if (live.current) setSc((n) => (n + 1) % MORE.length); }, 6500);
+    const t = setInterval(() => {
+      if (!live.current || Date.now() < holdUntilRef.current) return;
+      setNavPick(null);
+      setSc((n) => (n + 1) % MORE.length);
+    }, 6500);
     return () => clearInterval(t);
   }, [calm, phase >= 4]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -112,22 +130,23 @@ export default function Hero() {
   useEffect(() => {
     if (calm) { setTyped(PROMPT.length); setCmd(CMD.length); setPhase(4); return; }
     let dead = false;
+    const stop = () => dead || manualRef.current;
     const nap = (ms) => new Promise((r) => setTimeout(r, ms));
-    const held = async () => { while (!dead && !live.current) await nap(400); };
+    const held = async () => { while (!stop() && !live.current) await nap(400); };
     (async () => {
       await nap(1100);
-      (async () => { for (let i = 0; i <= CMD.length && !dead; i++) { setCmd(i); await nap(i < 4 ? 90 : 36); } })();
-      while (!dead) {
-        await held();
+      (async () => { for (let i = 0; i <= CMD.length && !stop(); i++) { setCmd(i); await nap(i < 4 ? 90 : 36); } })();
+      while (!stop()) {
+        await held(); if (stop()) return;
         setPhase(0); setTyped(0); setSc(-1);
-        for (let i = 0; i <= PROMPT.length && !dead; i++) { setTyped(i); await nap(PROMPT[i] === ' ' ? 55 : 26); }
-        await nap(500); if (dead) return;
+        for (let i = 0; i <= PROMPT.length && !stop(); i++) { setTyped(i); await nap(PROMPT[i] === ' ' ? 55 : 26); }
+        await nap(500); if (stop()) return;
         setPhase(1);
-        await nap(900); if (dead) return;
+        await nap(900); if (stop()) return;
         setPhase(2);
-        await nap(2000); if (dead) return;
+        await nap(2000); if (stop()) return;
         setPhase(3);
-        await nap(1900); if (dead) return;
+        await nap(1900); if (stop()) return;
         setPhase(4);
         await nap(9000 + MORE.length * 6500);
       }
@@ -208,8 +227,8 @@ export default function Hero() {
         <motion.div className="x-hero-stage" ref={fit} style={{ y: stageY, scale: stageS, height: `calc(var(--sh) * ${k})` }}>
           <div className="x-fit" style={{ transform: `scale(${k})` }}>
             <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
-              <Desk sc={sc} phase={phase} side={side} onSide={() => setSide((v) => !v)} promptEl={promptEl} full={typed === PROMPT.length} />
-              <Term sc={sc} cmdEl={cmdEl} done={cmdDone} copy={copy} copied={copied} cmd={CMD} />
+              <Desk sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} side={side} onSide={() => setSide((v) => !v)} promptEl={promptEl} full={typed === PROMPT.length} />
+              <Term sc={sc} onSelectScene={selectScene} cmdEl={cmdEl} done={cmdDone} copy={copy} copied={copied} cmd={CMD} />
               <Phone sc={sc} phase={phase} />
             </motion.div>
           </div>
