@@ -4,12 +4,12 @@
   "scripts": {
     "dev": "HZ_DEV=1 next dev -p 4180",
     "prebuild": "node scripts/live.mjs",
-    "build": "next build && mkdir -p out/assets && mv out/_next out/assets/_next",
+    "build": "next build && mkdir -p out/assets && mv out/_next out/assets/_next && node scripts/skill.mjs",
     "postbuild": "node --test scripts/modules.test.mjs",
     "preview": "node scripts/serve.mjs 4181",
     "capture": "python3 scripts/capture.py",
     "extract": "python3 scripts/extract.py",
-    "test": "node --test scripts/plans.test.mjs scripts/oss.test.mjs scripts/heat.test.mjs scripts/mcp.test.mjs scripts/investors.test.mjs components/lab.test.mjs components/pages/BuyingSpecialist.test.mjs components/pages/Calculator.test.mjs components/pages/Reviews.test.mjs components/pages/BetaApply.send.test.mjs components/pages/Careers.apply.test.mjs components/pages/ContactSales.send.test.mjs",
+    "test": "node --test scripts/skill.test.mjs scripts/plans.test.mjs scripts/oss.test.mjs scripts/heat.test.mjs scripts/mcp.test.mjs scripts/investors.test.mjs components/lab.test.mjs components/pages/BuyingSpecialist.test.mjs components/pages/Calculator.test.mjs components/pages/Reviews.test.mjs components/pages/BetaApply.send.test.mjs components/pages/Careers.apply.test.mjs components/pages/ContactSales.send.test.mjs",
     "events": "node scripts/events.mjs"
   },
   "dependencies": {

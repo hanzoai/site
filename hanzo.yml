@@ -6,6 +6,7 @@
 # the runner's GitHub token when it has one and kept from content/live/_github.json
 # when it has not), and a push to main publishes that out/ with the agent files
 # (Markdown twins, llms.txt, robots.txt, sitemap.xml, the API catalog) written beside it.
+# The build itself writes /skill.md and /.well-known/agent-skills/ (scripts/skill.mjs).
 test:
   - name: test
     run: |
