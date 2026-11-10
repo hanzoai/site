@@ -7,11 +7,69 @@ const HOME = 'https://hanzo.ai';
 const DEPLOY_URL = 'https://platform.hanzo.ai/deploy';
 const EDIT_URL = 'https://hanzo.app/dev';
 
+const PROFILES = {
+  zeekay: {
+    handle: 'zeekay',
+    name: 'Zach Kelling',
+    role: 'Founding Maintainer · #1 Fleet',
+    rank: '#1 Global',
+    level: 'Lv 10 · Architect',
+    points: '1,510 pts',
+    tokens: '106M tok',
+    badges: '12 badges',
+    readmeRepo: 'zeekay/zeekay',
+    staticFlat: `${HOME}/badges/zeekay.svg`,
+    staticFlatLight: `${HOME}/badges/zeekay-dark.svg`,
+    staticSquare: `${HOME}/badges/zeekay-square.svg`,
+    staticRank: `${HOME}/badges/zeekay-rank.svg`,
+  },
+  zooqueen: {
+    handle: 'zooqueen',
+    name: 'Antje Worring',
+    role: 'CEO @ Hanzo AI · Core Contributor',
+    rank: '#3 Global',
+    level: 'Lv 8 · Core',
+    points: '252 pts',
+    tokens: '5.2M tok',
+    badges: '9 badges',
+    readmeRepo: 'zooqueen/antjeworring.com',
+    staticFlat: `${HOME}/badges/zooqueen.svg`,
+    staticFlatLight: `${HOME}/badges/zooqueen-dark.svg`,
+    staticSquare: `${HOME}/badges/zooqueen-square.svg`,
+    staticRank: `${HOME}/badges/zooqueen-rank.svg`,
+  },
+  valerypetrov: {
+    handle: 'valerypetrov',
+    name: 'zlatan mioslav',
+    role: 'Bug Hunter · Top 10',
+    rank: '#2 Hunter',
+    level: 'Lv 6 · Hunter',
+    points: '192 pts',
+    tokens: '4.3M tok',
+    badges: '7 badges',
+    readmeRepo: 'valerypetrov/valerypetrov',
+    staticFlat: `${HOME}/badges/valerypetrov.svg`,
+    staticFlatLight: `${HOME}/badges/valerypetrov-dark.svg`,
+    staticSquare: `${HOME}/badges/valerypetrov.svg`,
+    staticRank: `${HOME}/badges/valerypetrov.svg`,
+  },
+};
+
 const FIELDS = [
-  { id: 'level', label: 'Level', sample: 'Lv 7 · Architect' },
-  { id: 'points', label: 'Points', sample: '14,820 pts' },
-  { id: 'tokens', label: 'Tokens', sample: '10B+ club' },
-  { id: 'badges', label: 'Badges', sample: '12 unlocked' },
+  { id: 'rank', label: 'Rank' },
+  { id: 'level', label: 'Level' },
+  { id: 'points', label: 'Points' },
+  { id: 'tokens', label: 'Tokens' },
+  { id: 'badges', label: 'Badges' },
+];
+
+const ACCENTS = [
+  { id: 'carbon', label: 'Carbon', bg: '#18181b', fg: '#fafafa' },
+  { id: 'emerald', label: 'Emerald', bg: '#059669', fg: '#ffffff' },
+  { id: 'violet', label: 'Violet', bg: '#7c3aed', fg: '#ffffff' },
+  { id: 'amber', label: 'Amber', bg: '#d97706', fg: '#ffffff' },
+  { id: 'cyan', label: 'Cyan', bg: '#0891b2', fg: '#ffffff' },
+  { id: 'light', label: 'Snow', bg: '#f4f4f5', fg: '#0a0a0a' },
 ];
 
 const KINDS = [
@@ -19,13 +77,13 @@ const KINDS = [
     id: 'profile',
     label: 'Flex your stats',
     tag: 'GitHub Profile',
-    desc: 'Live SVG card or flat badge for your personal github.com/<handle>/<handle> README.md — shows your Hanzo level, points, token volume tier, and earned badges.',
+    desc: 'Standard horizontal GitHub badge or wide stats strip for your personal README.md — shows your Hanzo rank, points, and token volume.',
   },
   {
     id: 'deploy',
     label: 'Deploy to Hanzo',
     tag: 'Repo Action',
-    desc: 'One-click cloud deploy button for any open-source repository README.md. Launches your repo directly on Hanzo Cloud.',
+    desc: 'One-click cloud deploy badge for any open-source repository README.md. Launches your repo directly on Hanzo Cloud.',
   },
   {
     id: 'edit',
@@ -37,13 +95,13 @@ const KINDS = [
     id: 'built',
     label: 'Built with Hanzo',
     tag: 'Repo Badge',
-    desc: 'Clean vector badge for projects powered by Zen, Kai, Enso, Hanzo MCP, or Hanzo Cloud. Automatically carries your referral link.',
+    desc: 'Standard 20px vector badge for projects powered by Zen, Kai, Enso, Hanzo MCP, or Hanzo Cloud.',
   },
   {
     id: 'rank',
     label: 'Leaderboard rank',
     tag: 'GitHub Profile',
-    desc: 'Live global standing and compute rank badge from the Hanzo Leaderboard for your personal GitHub profile README.',
+    desc: 'Compact global standing shield from the Hanzo Leaderboard for your personal GitHub profile README.',
   },
 ];
 
@@ -60,9 +118,9 @@ function cleanRepo(raw) {
   return '';
 }
 
-function buildTargetHref(kind, code, repo) {
+function buildTargetHref(kind, code, repo, handle) {
   const slug = cleanRepo(repo);
-  const ref = (code || '').trim();
+  const ref = (code || handle || '').trim().replace(/^@/, '');
   if (kind === 'deploy' || kind === 'edit') {
     const base = kind === 'deploy' ? DEPLOY_URL : EDIT_URL;
     const q = new URLSearchParams();
@@ -71,29 +129,41 @@ function buildTargetHref(kind, code, repo) {
     const qs = q.toString();
     return qs ? `${base}?${qs}` : base;
   }
-  if (kind === 'rank') {
+  if (kind === 'rank' || kind === 'profile') {
     return ref ? `${HOME}/leaderboard?ref=${encodeURIComponent(ref)}` : `${HOME}/leaderboard`;
   }
   return ref ? `${HOME}/?ref=${encodeURIComponent(ref)}` : HOME;
 }
 
-function buildImageSrc({ kind, theme, style, fields, label, handle, pillDeploy }) {
-  const cleanHandle = (handle || '').trim().replace(/^@/, '') || 'zeekay';
+function buildImageSrc({ kind, theme, style, fields, label, handle, pillDeploy, accent }) {
+  const cleanHandle = (handle || '').trim().replace(/^@/, '').toLowerCase() || 'zeekay';
   if (kind === 'built') {
-    return `${HOME}/badges/built-with-hanzo${theme === 'dark' ? '-dark' : ''}.svg`;
+    return `${HOME}/badges/built-with-hanzo${theme === 'light' ? '-dark' : ''}.svg`;
   }
   if (kind === 'deploy') {
     if (pillDeploy) return `${HOME}/deploy.svg`;
-    return `${HOME}/badges/deploy-to-hanzo${theme === 'dark' ? '-dark' : ''}.svg`;
+    return `${HOME}/badges/deploy-to-hanzo${theme === 'light' ? '-dark' : ''}.svg`;
   }
   if (kind === 'edit') {
-    return `${HOME}/badges/edit-on-hanzo${theme === 'dark' ? '-dark' : ''}.svg`;
+    return `${HOME}/badges/edit-on-hanzo${theme === 'light' ? '-dark' : ''}.svg`;
   }
-  const q = new URLSearchParams({ theme, style });
+
+  // Known featured profiles have pre-rendered zero-latency vector SVGs at /badges/<handle>*.svg
+  const preset = PROFILES[cleanHandle];
+  const isDefaultFields = fields.length === 3 && fields.includes('rank') && fields.includes('points') && fields.includes('tokens') && !label.trim();
+  if (preset && isDefaultFields && style !== 'strip') {
+    if (kind === 'rank') return preset.staticRank;
+    if (style === 'square') return preset.staticSquare;
+    if (theme === 'light' || accent === 'light') return preset.staticFlatLight;
+    return preset.staticFlat;
+  }
+
+  const apiStyle = style === 'strip' ? 'card' : 'flat';
+  const q = new URLSearchParams({ theme, style: apiStyle });
   if (kind === 'profile') {
-    const chosen = FIELDS.map((f) => f.id).filter((id) => fields.includes(id));
-    if (chosen.length > 0 && chosen.length < FIELDS.length) {
-      q.set('fields', chosen.join(','));
+    const apiFields = fields.filter((f) => ['level', 'points', 'tokens', 'badges'].includes(f));
+    if (apiFields.length > 0 && apiFields.length < 4) {
+      q.set('fields', apiFields.join(','));
     }
   }
   const cleanLabel = (label || '').trim().slice(0, 24);
@@ -102,50 +172,56 @@ function buildImageSrc({ kind, theme, style, fields, label, handle, pillDeploy }
   return `${API}${endpoint}/${encodeURIComponent(cleanHandle)}.svg?${q.toString().replace(/%2C/g, ',')}`;
 }
 
-function buildAlt(kind) {
+function buildAlt(kind, handle) {
+  const h = (handle || '').trim().replace(/^@/, '') || 'zeekay';
   if (kind === 'built') return 'Built with Hanzo';
   if (kind === 'deploy') return 'Deploy to Hanzo';
   if (kind === 'edit') return 'Edit on Hanzo';
-  if (kind === 'rank') return 'Hanzo leaderboard';
-  return 'Hanzo stats';
+  if (kind === 'rank') return `Hanzo Leaderboard @${h}`;
+  return `Hanzo @${h}`;
 }
 
-/* Vector preview for live profile / rank badges when previewing any handle or before public profile is enabled */
-function LiveStatsSvgPreview({ kind, theme, style, fields, label, handle, liveStats }) {
-  const isDark = theme === 'dark';
-  const bg = isDark ? '#0a0a0a' : '#fafafa';
-  const fg = isDark ? '#fafafa' : '#0a0a0a';
-  const muted = isDark ? '#a1a1aa' : '#52525b';
-  const border = isDark ? '#27272a' : '#e4e4e7';
-  const pillBg = isDark ? '#18181b' : '#f4f4f5';
-  const displayHandle = (handle || '').trim().replace(/^@/, '') || 'zeekay';
-  const heading = (label || '').trim() || (kind === 'rank' ? 'Hanzo Leaderboard' : 'Hanzo AI');
+/* Standard horizontal GitHub badge (20px flat / flat-square / 24px pill) or wide 4-col horizontal strip */
+function CustomBadgePreview({ kind, style, fields, label, handle, accent }) {
+  const cleanHandle = (handle || '').trim().replace(/^@/, '').toLowerCase() || 'zeekay';
+  const preset = PROFILES[cleanHandle] || {
+    handle: cleanHandle,
+    rank: '#12 Global',
+    level: 'Lv 7 · Builder',
+    points: '1,240 pts',
+    tokens: '10M+ tok',
+    badges: '6 badges',
+  };
+  const accentObj = ACCENTS.find((a) => a.id === accent) || ACCENTS[0];
+  const heading = (label || '').trim() || (kind === 'rank' ? 'Hanzo Rank' : 'Hanzo');
 
-  const items = useMemo(() => {
+  const parts = useMemo(() => {
     if (kind === 'rank') {
-      return [
-        { k: 'Global Rank', v: liveStats?.rank ? `#${liveStats.rank}` : '#12 · Top 1%' },
-        { k: 'Points', v: liveStats?.points ? `${liveStats.points.toLocaleString()} pts` : '14,820 pts' },
-        { k: 'Compute Volume', v: liveStats?.tokens || '10B+ tokens' },
-      ];
+      return [preset.rank, preset.points];
     }
     const map = {
-      level: { k: 'Level', v: liveStats?.level || 'Lv 7 · Architect' },
-      points: { k: 'Points', v: liveStats?.points ? `${liveStats.points.toLocaleString()} pts` : '14,820 pts' },
-      tokens: { k: 'Tokens', v: liveStats?.tokens || '10B+ club' },
-      badges: { k: 'Badges', v: liveStats?.badges || '12 unlocked' },
+      rank: preset.rank,
+      level: preset.level,
+      points: preset.points,
+      tokens: preset.tokens,
+      badges: preset.badges,
     };
     return FIELDS.map((f) => f.id)
       .filter((id) => fields.includes(id))
       .map((id) => map[id]);
-  }, [kind, fields, liveStats]);
+  }, [kind, fields, preset]);
 
-  if (style === 'flat') {
-    const summary = items.map((i) => i.v).join('  ·  ');
+  if (style === 'strip') {
+    const stripCells = [
+      { k: 'Handle', v: `@${cleanHandle}` },
+      { k: 'Standing', v: preset.rank },
+      { k: 'Score', v: preset.points },
+      { k: 'Compute', v: preset.tokens },
+    ];
     return (
-      <div className={`bdg-live-flat ${isDark ? 'is-dark' : 'is-light'}`} role="img" aria-label={`${heading}: ${summary}`}>
-        <span className="bdg-live-flat-left">
-          <svg viewBox="0 0 67 67" width="13" height="13" aria-hidden="true">
+      <div className="bdg-strip" role="img" aria-label={`${heading} horizontal stats strip for @${cleanHandle}`}>
+        <div className="bdg-strip-brand">
+          <svg viewBox="0 0 67 67" width="16" height="16" aria-hidden="true">
             <path fill="currentColor" d="M22.21 67V44.6369H0V67H22.21Z" />
             <path fill="currentColor" d="M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z" />
             <path fill="currentColor" d="M22.21 0H0V22.3184H22.21V0Z" />
@@ -153,75 +229,72 @@ function LiveStatsSvgPreview({ kind, theme, style, fields, label, handle, liveSt
             <path fill="currentColor" d="M66.7198 67V44.6369H44.5098V67H66.7198Z" />
           </svg>
           <span>{heading}</span>
-        </span>
-        <span className="bdg-live-flat-right">
-          <strong>@{displayHandle}</strong>
-          <span>{summary}</span>
-        </span>
+        </div>
+        <div className="bdg-strip-cells">
+          {stripCells.map((c) => (
+            <div key={c.k} className="bdg-strip-cell">
+              <span className="bdg-strip-k">{c.k}</span>
+              <strong className="bdg-strip-v">{c.v}</strong>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
+  const radius = style === 'square' ? '0px' : style === 'pill' ? '999px' : '4px';
+  const heightPx = style === 'pill' ? '24px' : '20px';
+  const rightText = `@${cleanHandle} · ${parts.join(' · ')}`;
+
   return (
     <div
-      className="bdg-live-card"
-      style={{ background: bg, color: fg, borderColor: border }}
+      className="bdg-shield"
+      style={{ borderRadius: radius, height: heightPx }}
       role="img"
-      aria-label={`${heading} stats card for @${displayHandle}`}
+      aria-label={`${heading}: ${rightText}`}
     >
-      <div className="bdg-live-card-top">
-        <div className="bdg-live-card-brand">
-          <svg viewBox="0 0 67 67" width="18" height="18" aria-hidden="true">
-            <path fill={fg} d="M22.21 67V44.6369H0V67H22.21Z" />
-            <path fill={fg} d="M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z" />
-            <path fill={fg} d="M22.21 0H0V22.3184H22.21V0Z" />
-            <path fill={fg} d="M66.7198 0H44.5098V22.3184H66.7198V0Z" />
-            <path fill={fg} d="M66.7198 67V44.6369H44.5098V67H66.7198Z" />
-          </svg>
-          <span>{heading}</span>
-        </div>
-        <span className="bdg-live-card-handle" style={{ color: muted }}>
-          @{displayHandle}
-        </span>
-      </div>
-      <div className="bdg-live-card-grid">
-        {items.map((item) => (
-          <div key={item.k} className="bdg-live-card-cell" style={{ background: pillBg, borderColor: border }}>
-            <span className="bdg-live-card-k" style={{ color: muted }}>
-              {item.k}
-            </span>
-            <span className="bdg-live-card-v">{item.v}</span>
-          </div>
-        ))}
-      </div>
+      <span className="bdg-shield-left">
+        <svg viewBox="0 0 67 67" width="11" height="11" aria-hidden="true">
+          <path fill="#fafafa" d="M22.21 67V44.6369H0V67H22.21Z" />
+          <path fill="#fafafa" d="M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z" />
+          <path fill="#fafafa" d="M22.21 0H0V22.3184H22.21V0Z" />
+          <path fill="#fafafa" d="M66.7198 0H44.5098V22.3184H66.7198V0Z" />
+          <path fill="#fafafa" d="M66.7198 67V44.6369H44.5098V67H66.7198Z" />
+        </svg>
+        <span>{heading}</span>
+      </span>
+      <span
+        className="bdg-shield-right"
+        style={{ background: accentObj.bg, color: accentObj.fg }}
+      >
+        {rightText}
+      </span>
     </div>
   );
 }
 
 export default function Badge() {
+  // Default to standard horizontal 20px GitHub badge ('flat'), never vertical
   const [kind, setKind] = useState('profile');
   const [theme, setTheme] = useState('dark');
-  const [style, setStyle] = useState('card');
+  const [style, setStyle] = useState('flat'); // 'flat' | 'square' | 'pill' | 'strip'
+  const [accent, setAccent] = useState('carbon');
   const [pillDeploy, setPillDeploy] = useState(false);
-  const [fields, setFields] = useState(['level', 'points', 'tokens', 'badges']);
+  const [fields, setFields] = useState(['rank', 'points', 'tokens']);
   const [label, setLabel] = useState('');
   const [handle, setHandle] = useState('zeekay');
   const [repo, setRepo] = useState('hanzoai/hanzo');
   const [refCode, setRefCode] = useState('');
   const [format, setFormat] = useState('markdown');
   const [copiedKey, setCopiedKey] = useState('');
-  const [liveSvgLoaded, setLiveSvgLoaded] = useState(false);
-  const [signedProfile, setSignedProfile] = useState(null);
 
-  // Opportunistically read signed-in user's handle & referral code from api.hanzo.ai
   useEffect(() => {
     let alive = true;
     fetch(`${API}/v1/reward/me/profile`, { credentials: 'include' })
       .then((r) => (r.ok ? r.json() : null))
       .then((p) => {
-        if (!alive || !p) return;
-        setSignedProfile(p);
-        if (p.handle) setHandle(p.handle);
+        if (!alive || !p || !p.handle) return;
+        setHandle(p.handle);
       })
       .catch(() => undefined);
 
@@ -245,25 +318,22 @@ export default function Badge() {
     () =>
       buildImageSrc({
         kind,
-        theme: isPersonal ? theme : theme === 'dark' ? 'light' : 'dark',
+        theme,
         style,
         fields,
         label,
         handle,
         pillDeploy,
+        accent,
       }),
-    [kind, theme, style, fields, label, handle, pillDeploy, isPersonal],
+    [kind, theme, style, fields, label, handle, pillDeploy, accent],
   );
 
-  useEffect(() => {
-    setLiveSvgLoaded(false);
-  }, [imgSrc]);
-
-  const targetHref = useMemo(() => buildTargetHref(kind, refCode, repo), [kind, refCode, repo]);
-  const altText = useMemo(() => buildAlt(kind), [kind]);
+  const targetHref = useMemo(() => buildTargetHref(kind, refCode, repo, handle), [kind, refCode, repo, handle]);
+  const altText = useMemo(() => buildAlt(kind, handle), [kind, handle]);
 
   const markdownSnippet = useMemo(() => `[![${altText}](${imgSrc})](${targetHref})`, [altText, imgSrc, targetHref]);
-  const htmlSnippet = useMemo(() => `<a href="${targetHref}"><img src="${imgSrc}" alt="${altText}"></a>`, [altText, imgSrc, targetHref]);
+  const htmlSnippet = useMemo(() => `<a href="${targetHref}"><img src="${imgSrc}" alt="${altText}" /></a>`, [altText, imgSrc, targetHref]);
   const activeSnippet = format === 'markdown' ? markdownSnippet : htmlSnippet;
 
   const toggleField = (id) => {
@@ -282,51 +352,65 @@ export default function Badge() {
     } catch {}
   };
 
-  const cleanHandle = (handle || '').trim().replace(/^@/, '') || 'zeekay';
+  const cleanHandle = (handle || '').trim().replace(/^@/, '').toLowerCase() || 'zeekay';
   const cleanRepoSlug = cleanRepo(repo) || 'hanzoai/hanzo';
+  const presetProfile = PROFILES[cleanHandle];
   const githubReadmeTarget = isPersonal
-    ? `https://github.com/${cleanHandle}/${cleanHandle}/edit/main/README.md`
+    ? `https://github.com/${presetProfile?.readmeRepo || `${cleanHandle}/${cleanHandle}`}/edit/main/README.md`
     : `https://github.com/${cleanRepoSlug}/edit/main/README.md`;
 
   const quickPresets = useMemo(
     () => [
       {
+        id: 'zeekay',
+        title: '@zeekay · Personal GitHub Profile Badge',
+        sub: 'Live on github.com/zeekay/zeekay · #1 Global · 1,510 pts · 106M tokens',
+        badgeSrc: '/badges/zeekay.svg',
+        darkSrc: '/badges/zeekay-dark.svg',
+        md: `[![Hanzo @zeekay](${HOME}/badges/zeekay.svg)](${HOME}/leaderboard?ref=zeekay)`,
+      },
+      {
+        id: 'zooqueen',
+        title: '@zooqueen · Personal GitHub Profile Badge',
+        sub: 'Live on github.com/zooqueen · #3 Global · 252 pts · 5.2M tokens',
+        badgeSrc: '/badges/zooqueen.svg',
+        darkSrc: '/badges/zooqueen-dark.svg',
+        md: `[![Hanzo @zooqueen](${HOME}/badges/zooqueen.svg)](${HOME}/leaderboard?ref=zooqueen)`,
+      },
+      {
         id: 'deploy',
         title: 'Deploy to Hanzo',
-        sub: '1-click cloud deploy for any repo README.md',
+        sub: '1-click cloud deploy shield for any repository README.md',
         badgeSrc: '/badges/deploy-to-hanzo.svg',
-        md: `[![Deploy to Hanzo](${HOME}/badges/deploy-to-hanzo.svg)](${ buildTargetHref('deploy', refCode, repo) })`,
+        darkSrc: '/badges/deploy-to-hanzo-dark.svg',
+        md: `[![Deploy to Hanzo](${HOME}/badges/deploy-to-hanzo.svg)](${buildTargetHref('deploy', refCode, repo, handle)})`,
       },
       {
         id: 'edit',
         title: 'Edit on Hanzo',
-        sub: 'Open repo in Hanzo Dev cloud IDE & agent',
+        sub: 'Open repository in Hanzo Dev cloud IDE & coding agent',
         badgeSrc: '/badges/edit-on-hanzo.svg',
-        md: `[![Edit on Hanzo](${HOME}/badges/edit-on-hanzo.svg)](${ buildTargetHref('edit', refCode, repo) })`,
+        darkSrc: '/badges/edit-on-hanzo-dark.svg',
+        md: `[![Edit on Hanzo](${HOME}/badges/edit-on-hanzo.svg)](${buildTargetHref('edit', refCode, repo, handle)})`,
       },
       {
         id: 'built',
         title: 'Built with Hanzo',
-        sub: 'Repo badge with your referral link built in',
+        sub: 'Standard 20px vector repo badge with your referral link',
         badgeSrc: '/badges/built-with-hanzo.svg',
-        md: `[![Built with Hanzo](${HOME}/badges/built-with-hanzo.svg)](${ buildTargetHref('built', refCode, repo) })`,
-      },
-      {
-        id: 'profile',
-        title: 'Flex Profile Stats',
-        sub: `Personal GitHub profile (${cleanHandle}/${cleanHandle})`,
-        badgeSrc: null,
-        md: `[![Hanzo stats](${API}/v1/reward/badge/${encodeURIComponent(cleanHandle)}.svg?theme=dark&style=card)](${ buildTargetHref('profile', refCode, repo) })`,
+        darkSrc: '/badges/built-with-hanzo-dark.svg',
+        md: `[![Built with Hanzo](${HOME}/badges/built-with-hanzo.svg)](${buildTargetHref('built', refCode, repo, handle)})`,
       },
       {
         id: 'rank',
-        title: 'Global Leaderboard Rank',
-        sub: 'Live standing on the Hanzo Leaderboard',
-        badgeSrc: null,
-        md: `[![Hanzo leaderboard](${API}/v1/leaderboard/badge/${encodeURIComponent(cleanHandle)}.svg?theme=dark&style=flat)](${ buildTargetHref('rank', refCode, repo) })`,
+        title: 'Leaderboard Standing Badge',
+        sub: 'Compact global rank badge for any GitHub README',
+        badgeSrc: cleanHandle === 'zooqueen' ? '/badges/zooqueen-rank.svg' : '/badges/zeekay-rank.svg',
+        darkSrc: null,
+        md: `[![Hanzo Rank](${HOME}/badges/${cleanHandle === 'zooqueen' ? 'zooqueen' : 'zeekay'}-rank.svg)](${HOME}/leaderboard?ref=${cleanHandle})`,
       },
     ],
-    [refCode, repo, cleanHandle],
+    [refCode, repo, handle, cleanHandle],
   );
 
   return (
@@ -345,13 +429,12 @@ export default function Badge() {
               </a>
             </div>
           </div>
-          <h1 className="bdg-h1">
-            Show it off.
-          </h1>
+          <h1 className="bdg-h1">Show it off.</h1>
           <p className="bdg-lead">
-            Add a <strong>Deploy to Hanzo</strong> or <strong>Edit on Hanzo</strong> button to your repository{' '}
-            <code>README.md</code>, or flex your live AI compute volume, level, and global leaderboard rank on your
-            personal GitHub profile (<code>github.com/&lt;you&gt;/&lt;you&gt;</code>).
+            Standard horizontal GitHub badges for your repository <code>README.md</code> and personal profile (
+            <code>github.com/&lt;you&gt;/&lt;you&gt;</code>) — <strong>Deploy to Hanzo</strong>,{' '}
+            <strong>Edit on Hanzo</strong>, <strong>Built with Hanzo</strong>, or flex your live compute volume and
+            global leaderboard standing.
           </p>
         </div>
       </section>
@@ -384,9 +467,71 @@ export default function Badge() {
                 </div>
               </div>
 
-              <div className="bdg-row2">
+              {isPersonal && (
                 <div className="bdg-group">
-                  <span className="bdg-label">2. Surface theme</span>
+                  <span className="bdg-label">Featured profiles (click to preview or type your handle below)</span>
+                  <div className="bdg-pills" role="group" aria-label="Featured handles">
+                    {Object.values(PROFILES).map((p) => (
+                      <button
+                        key={p.handle}
+                        type="button"
+                        className={`bdg-pill ${cleanHandle === p.handle ? 'is-on' : ''}`}
+                        onClick={() => setHandle(p.handle)}
+                      >
+                        @{p.handle} ({p.rank})
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="bdg-row2">
+                {isPersonal && (
+                  <div className="bdg-group">
+                    <span className="bdg-label">2. Badge layout &amp; shape</span>
+                    <div className="bdg-pills" role="radiogroup" aria-label="Style">
+                      <button
+                        type="button"
+                        role="radio"
+                        aria-checked={style === 'flat'}
+                        className={`bdg-pill ${style === 'flat' ? 'is-on' : ''}`}
+                        onClick={() => setStyle('flat')}
+                      >
+                        Flat Shield (20px)
+                      </button>
+                      <button
+                        type="button"
+                        role="radio"
+                        aria-checked={style === 'square'}
+                        className={`bdg-pill ${style === 'square' ? 'is-on' : ''}`}
+                        onClick={() => setStyle('square')}
+                      >
+                        Flat Square
+                      </button>
+                      <button
+                        type="button"
+                        role="radio"
+                        aria-checked={style === 'pill'}
+                        className={`bdg-pill ${style === 'pill' ? 'is-on' : ''}`}
+                        onClick={() => setStyle('pill')}
+                      >
+                        Capsule Pill
+                      </button>
+                      <button
+                        type="button"
+                        role="radio"
+                        aria-checked={style === 'strip'}
+                        className={`bdg-pill ${style === 'strip' ? 'is-on' : ''}`}
+                        onClick={() => setStyle('strip')}
+                      >
+                        Wide Strip
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="bdg-group">
+                  <span className="bdg-label">{isPersonal ? '3. README canvas' : '2. Badge theme'}</span>
                   <div className="bdg-pills" role="radiogroup" aria-label="Theme">
                     <button
                       type="button"
@@ -408,32 +553,6 @@ export default function Badge() {
                     </button>
                   </div>
                 </div>
-
-                {isPersonal && (
-                  <div className="bdg-group">
-                    <span className="bdg-label">3. Layout style</span>
-                    <div className="bdg-pills" role="radiogroup" aria-label="Style">
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={style === 'card'}
-                        className={`bdg-pill ${style === 'card' ? 'is-on' : ''}`}
-                        onClick={() => setStyle('card')}
-                      >
-                        Stats Card
-                      </button>
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={style === 'flat'}
-                        className={`bdg-pill ${style === 'flat' ? 'is-on' : ''}`}
-                        onClick={() => setStyle('flat')}
-                      >
-                        Flat Shield
-                      </button>
-                    </div>
-                  </div>
-                )}
 
                 {kind === 'deploy' && (
                   <div className="bdg-group">
@@ -462,9 +581,30 @@ export default function Badge() {
                 )}
               </div>
 
-              {kind === 'profile' && (
+              {isPersonal && style !== 'strip' && (
+                <div className="bdg-group">
+                  <span className="bdg-label">Accent color</span>
+                  <div className="bdg-pills" role="radiogroup" aria-label="Accent color">
+                    {ACCENTS.map((a) => (
+                      <button
+                        key={a.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={accent === a.id}
+                        className={`bdg-pill bdg-colorPill ${accent === a.id ? 'is-on' : ''}`}
+                        onClick={() => setAccent(a.id)}
+                      >
+                        <i className="bdg-SwatchDot" style={{ background: a.bg }} />
+                        {a.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {kind === 'profile' && style !== 'strip' && (
                 <div className="bdg-group" data-slot="flair-fields">
-                  <span className="bdg-label">Stats to flex on your profile</span>
+                  <span className="bdg-label">Stats shown on badge</span>
                   <div className="bdg-pills">
                     {FIELDS.map((f) => {
                       const on = fields.includes(f.id);
@@ -487,7 +627,7 @@ export default function Badge() {
               <div className="bdg-inputs">
                 {isPersonal && (
                   <label className="bdg-field">
-                    <span className="bdg-label">Your Hanzo / GitHub handle</span>
+                    <span className="bdg-label">GitHub / Hanzo handle</span>
                     <input
                       type="text"
                       value={handle}
@@ -513,32 +653,32 @@ export default function Badge() {
 
                 {isPersonal && (
                   <label className="bdg-field">
-                    <span className="bdg-label">Custom badge heading (optional, max 24 chars)</span>
+                    <span className="bdg-label">Left segment label (optional, max 24 chars)</span>
                     <input
                       type="text"
                       maxLength={24}
                       value={label}
                       onChange={(e) => setLabel(e.target.value)}
-                      placeholder={kind === 'rank' ? 'Hanzo Leaderboard' : 'Hanzo AI'}
+                      placeholder={kind === 'rank' ? 'Hanzo Rank' : 'Hanzo'}
                       className="bdg-input"
                     />
                   </label>
                 )}
 
                 <label className="bdg-field">
-                  <span className="bdg-label">Referral code (optional — credits you +points on sign-ups)</span>
+                  <span className="bdg-label">Referral code (optional — credits +points on sign-ups)</span>
                   <input
                     type="text"
                     value={refCode}
                     onChange={(e) => setRefCode(e.target.value)}
-                    placeholder="e.g. ZEEKAY"
+                    placeholder={cleanHandle}
                     className="bdg-input"
                   />
                 </label>
               </div>
             </div>
 
-            {/* RIGHT: STAGE + README MOCKUP + SNIPPET */}
+            {/* RIGHT: STAGE + README PREVIEW + SNIPPET */}
             <div className="bdg-previewCol">
               <div className={`bdg-stage ${theme === 'dark' ? 'is-dark' : 'is-light'}`} data-slot="flair-stage">
                 <div className="bdg-stageBar">
@@ -548,9 +688,11 @@ export default function Badge() {
                     <i />
                   </span>
                   <span className="bdg-stageFile">
-                    {isPersonal ? `${cleanHandle}/${cleanHandle} · README.md` : `${cleanRepoSlug} · README.md`}
+                    {isPersonal
+                      ? `${presetProfile?.readmeRepo || `${cleanHandle}/${cleanHandle}`} · README.md`
+                      : `${cleanRepoSlug} · README.md`}
                   </span>
-                  <span className="bdg-stageTag">{isPersonal ? 'Live SVG' : 'Static Vector SVG'}</span>
+                  <span className="bdg-stageTag">{style === 'strip' ? 'Wide Strip' : 'Standard 20px GitHub Shield'}</span>
                 </div>
 
                 <div className="bdg-stageCanvas">
@@ -560,45 +702,61 @@ export default function Badge() {
                         src={
                           pillDeploy && kind === 'deploy'
                             ? '/deploy.svg'
-                            : `/badges/${kind === 'built' ? 'built-with-hanzo' : kind === 'deploy' ? 'deploy-to-hanzo' : 'edit-on-hanzo'}${theme === 'dark' ? '-dark' : ''}.svg`
+                            : `/badges/${kind === 'built' ? 'built-with-hanzo' : kind === 'deploy' ? 'deploy-to-hanzo' : 'edit-on-hanzo'}${theme === 'light' ? '-dark' : ''}.svg`
                         }
                         alt={altText}
-                        height={pillDeploy && kind === 'deploy' ? 36 : 28}
+                        height={pillDeploy && kind === 'deploy' ? 32 : 20}
                         data-slot="flair-image"
                       />
                     </a>
                   ) : (
                     <div className="bdg-personalPreview">
-                      {/* Try loading the live SVG from api.hanzo.ai; show our crisp vector preview while loading or if handle is a preview */}
-                      <img
-                        src={imgSrc}
-                        alt={altText}
-                        onLoad={() => setLiveSvgLoaded(true)}
-                        onError={() => setLiveSvgLoaded(false)}
-                        style={{ display: liveSvgLoaded ? 'block' : 'none', maxHeight: style === 'card' ? 140 : 32 }}
-                        data-slot="flair-image"
+                      <CustomBadgePreview
+                        kind={kind}
+                        style={style}
+                        fields={fields}
+                        label={label}
+                        handle={cleanHandle}
+                        accent={accent}
                       />
-                      {!liveSvgLoaded && (
-                        <LiveStatsSvgPreview
-                          kind={kind}
-                          theme={theme}
-                          style={style}
-                          fields={fields}
-                          label={label}
-                          handle={cleanHandle}
-                        />
+                      {/* Companion row showing how it sits alongside standard repo badges in a GitHub README */}
+                      {style !== 'strip' && (
+                        <div className="bdg-readmeRowPreview">
+                          <span className="bdg-readmeRowLabel">In your README badge bar:</span>
+                          <div className="bdg-readmeRowBadges">
+                            <img
+                              src={
+                                cleanHandle === 'zooqueen'
+                                  ? '/badges/zooqueen.svg'
+                                  : cleanHandle === 'valerypetrov'
+                                    ? '/badges/valerypetrov.svg'
+                                    : '/badges/zeekay.svg'
+                              }
+                              alt={altText}
+                              height="20"
+                              data-slot="flair-image"
+                            />
+                            <img src="/badges/built-with-hanzo.svg" alt="Built with Hanzo" height="20" />
+                            <img src="/badges/deploy-to-hanzo.svg" alt="Deploy to Hanzo" height="20" />
+                          </div>
+                        </div>
                       )}
                     </div>
                   )}
                 </div>
 
                 <div className="bdg-stageFoot">
-                  <span>Links to: <code>{targetHref}</code></span>
-                  {isPersonal && !signedProfile?.public && (
-                    <a href="https://hanzo.app/badge" className="bdg-stagePublicLink">
-                      Sign in to enable live stats for @{cleanHandle} →
-                    </a>
-                  )}
+                  <span>
+                    Target URL: <code>{targetHref}</code>
+                  </span>
+                  <a
+                    href={`https://github.com/${presetProfile?.readmeRepo || 'zeekay/zeekay'}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bdg-stagePublicLink"
+                  >
+                    View live on GitHub (@{cleanHandle}) ↗
+                  </a>
                 </div>
               </div>
 
@@ -657,8 +815,8 @@ export default function Badge() {
         <div className="bdg-wrap">
           <div className="bdg-secHead">
             <div>
-              <span className="bdg-eyebrow">Ready-to-paste snippets</span>
-              <h2 className="bdg-h2">Every Hanzo badge for your repo or profile.</h2>
+              <span className="bdg-eyebrow">Live on GitHub · Ready-to-paste snippets</span>
+              <h2 className="bdg-h2">Standard GitHub badges for profiles &amp; repositories.</h2>
             </div>
             <p className="bdg-secSub">
               Pure vector SVGs with zero external fonts or scripts — guaranteed to render fast through GitHub&apos;s{' '}
@@ -684,25 +842,16 @@ export default function Badge() {
                 </div>
 
                 <div className="bdg-presetPreview">
-                  {p.badgeSrc ? (
-                    <div className="bdg-presetPair">
+                  <div className="bdg-presetPair">
+                    <span className="bdg-presetSwatch is-dark" title="On dark README">
+                      <img src={p.badgeSrc} alt={p.title} height="20" />
+                    </span>
+                    {p.darkSrc && (
                       <span className="bdg-presetSwatch is-light" title="On light README">
-                        <img src={p.badgeSrc} alt={p.title} height="20" />
+                        <img src={p.darkSrc} alt={`${p.title} light`} height="20" />
                       </span>
-                      <span className="bdg-presetSwatch is-dark" title="On dark README">
-                        <img src={p.badgeSrc.replace('.svg', '-dark.svg')} alt={`${p.title} dark`} height="20" />
-                      </span>
-                    </div>
-                  ) : (
-                    <LiveStatsSvgPreview
-                      kind={p.id}
-                      theme="dark"
-                      style="flat"
-                      fields={['level', 'points', 'tokens']}
-                      label=""
-                      handle={cleanHandle}
-                    />
-                  )}
+                    )}
+                  </div>
                 </div>
 
                 <pre className="bdg-presetCode">
