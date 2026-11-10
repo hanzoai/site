@@ -282,32 +282,37 @@ header[data-slot=masthead] a[data-x-ask] { max-width: 240px; overflow: hidden; t
 @media (hover: hover) { header[data-slot=masthead] a[data-x-ask]:hover, header[data-slot=masthead] a[href='https://hanzo.ai/signup']:hover { opacity: 1 !important; background-color: color-mix(in srgb, var(--foreground) 84%, var(--background)); } }
 header[data-slot=masthead] a[data-x-ask]:active, header[data-slot=masthead] :is(button, a):active { transform: scale(.97); }
 
-/* ---------- header menus: the stage (a preview of the link under the pointer) and the phone sheet ---------- */
+/* ---------- header menus: the stage (on the far left in front of the menu columns) and the phone sheet ---------- */
 .x-nav-panel { display: flex; align-items: stretch; background: var(--x-raised); } /* opaque: nothing of the page shows through */
-.x-nav-grid { flex: 1; min-width: 0; }
+.x-nav-grid { flex: 1; min-width: 0; flex-wrap: wrap; }
 .x-nav-stage { display: none; }
-@media (min-width: 1240px) {
-  .x-nav-stage { position: relative; display: flex; flex-direction: column; justify-content: flex-end; flex: none; width: 320px; margin: 20px 24px 28px 0; padding: 22px; border-radius: 20px; background: var(--hz-50); color: var(--hz-950); overflow: hidden; }
+@media (min-width: 1024px) {
+  .x-nav-stage { position: relative; display: flex; flex-direction: column; justify-content: flex-end; flex: none; width: clamp(256px, 21vw, 308px); min-height: 224px; margin: 22px 8px 28px 24px; padding: 22px; border-radius: 18px; border: 1px solid var(--line); background: var(--hz-50); color: var(--hz-950); overflow: hidden; cursor: pointer; transition: border-color .2s; }
+  .x-nav-stage:hover { border-color: var(--x-e15); }
   .x-nav-sigil { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(10, 10, 11, .22); }
   .x-nav-stage-t { position: relative; display: flex; flex-direction: column; gap: 6px; }
   .x-nav-stage-t b { font-size: 20px; font-weight: 560; letter-spacing: -.02em; line-height: 1.15; }
   .x-nav-stage-t p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--hz-500); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .x-nav-stage-t span { font: 500 11.5px/1.2 var(--mono); color: var(--hz-400); overflow-wrap: anywhere; }
   /* dark mode: the menu's feature card on Hanzo's dark muted surface */
-  html:not(.light) .x-nav-stage { background: var(--muted); color: var(--foreground); }
+  html:not(.light) .x-nav-stage { background: var(--muted); color: var(--foreground); border-color: var(--border); }
+  html:not(.light) .x-nav-stage:hover { border-color: var(--border-control); }
+  html:not(.light) .x-nav-sigil { color: rgba(250, 250, 250, .14); }
   html:not(.light) .x-nav-stage-t p { color: var(--muted-foreground); } html:not(.light) .x-nav-stage-t span { color: var(--text-tertiary); }
 }
-.x-sheet { display: flex; flex-direction: column; height: 100dvh; padding: 0 20px calc(20px + env(safe-area-inset-bottom)); }
+.x-sheet { display: flex; flex-direction: column; height: 100dvh; padding: 0 20px calc(20px + env(safe-area-inset-bottom)); box-sizing: border-box; }
 .x-sheet-top { display: flex; align-items: center; gap: 4px; height: 68px; flex: none; }
 .x-sheet-home { font: 600 21px/1 var(--sans); letter-spacing: -.02em; color: var(--ink); text-decoration: none; margin-right: auto; }
 .x-sheet-s { width: 44px; height: 44px; margin-right: 52px; border-radius: 50%; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); display: grid; place-items: center; cursor: pointer; }
-.x-sheet-x { top: 12px !important; width: 44px !important; height: 44px !important; }
+.x-sheet-x { top: 12px !important; width: 44px !important; height: 44px !important; color: var(--ink); }
 .x-sheet-list { flex: 1 0 auto; }
 .x-sheet-b { min-height: 56px; }
+.x-sheet-body { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+@media (max-width: 380px) { .x-sheet-body { grid-template-columns: minmax(0, 1fr); } }
 .x-sheet-foot { flex: none; display: flex; flex-direction: column; gap: 12px; padding-top: 20px; }
 .x-sheet-lh { margin: 0 0 -4px; font: 500 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
 .x-sheet-login { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.x-sheet-login a { display: flex; flex-direction: column; gap: 3px; min-height: 56px; justify-content: center; padding: 10px 14px; border-radius: 14px; background: var(--hz-50); color: var(--ink); text-decoration: none; }
+.x-sheet-login a { display: flex; flex-direction: column; gap: 3px; min-height: 56px; justify-content: center; padding: 10px 14px; border-radius: 14px; background: var(--x-fill); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .x-sheet-login b { font-size: 15px; font-weight: 560; }
 .x-sheet-login span { font-size: 12.5px; color: var(--soft); }
 .x-sheet-ask { width: 100%; }

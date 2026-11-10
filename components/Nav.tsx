@@ -7,7 +7,7 @@
    the heading; Escape closes and returns focus. The items and words are Hanzo's own (lib/nav.js); pages add nothing. */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { NAV, MENUS } from '../lib/nav';
 import { LOGIN } from '../lib/header';
@@ -43,7 +43,8 @@ function Columns({ name, onGo, onPeek }) {
    and the page's own title and description from Hanzo's index; another site shows its address. Decorative for
    assistive tech: the link itself carries the meaning. Wide screens only. */
 let INDEX = null;
-function Stage({ l }) {
+function Stage({ l, onGo }) {
+  const router = useRouter();
   const [, force] = useState(0);
   useEffect(() => { if (!INDEX) import('../lib/search.json').then((m) => { INDEX = new Map(m.default.map(([p, t, d]) => [p, [t, d]])); force((x) => x + 1); }); }, []);
   if (!l) return null;
@@ -53,8 +54,13 @@ function Stage({ l }) {
   // the index keeps the first ~120 characters of Hanzo's description: end on a whole word with an ellipsis
   const d = raw && raw.length >= 115 ? raw.slice(0, raw.lastIndexOf(' ')).replace(/[,;:.]$/, '') + '…' : raw;
   const where = local ? 'hanzo.ai' + path : l.href.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const visit = () => {
+    onGo?.();
+    if (local) router.push(l.href);
+    else window.open(l.href, l.ext ? '_blank' : '_self', 'noopener,noreferrer');
+  };
   return (
-    <aside className="x-nav-stage" aria-hidden="true">
+    <aside className="x-nav-stage" aria-hidden="true" onClick={visit}>
       <Sigil seed={l.href} data={[l.label.length, (t || '').length]} className="x-nav-sigil" />
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div key={l.href} className="x-nav-stage-t" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3, ease: EASE }}>
@@ -211,6 +217,7 @@ export default function Nav({ headerRef }) {
               layout
             >
               <span className="x-nav-bridge" aria-hidden="true" />
+              <Stage l={peek} onGo={close} />
               <AnimatePresence mode="popLayout" initial={false} custom={dir}>
                 <motion.div
                   key={open}
@@ -224,7 +231,6 @@ export default function Nav({ headerRef }) {
                   <Columns name={open} onGo={close} onPeek={setPeek} />
                 </motion.div>
               </AnimatePresence>
-              <Stage l={peek} />
             </motion.div>
           </>
         )}
