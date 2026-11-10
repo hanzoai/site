@@ -15,6 +15,7 @@
    page from the first paint (search engines, screen readers); one shows at a time. */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
+import C from '../../content';
 import { EASE, Mark } from '../ui';
 import { Glyph } from './glyphs';
 import { track } from '../../lib/track';
@@ -277,6 +278,19 @@ export function Term({ sc, cmdEl, done, copy, copied, cmd }) {
 const Drawer = () => <svg width="15" height="9" viewBox="0 0 19 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M1 1h17M1 10h10.5" /></svg>;
 // what sits under an answer: copy, rate, listen, share, regenerate
 const REPLY = ['copy', 'thumbs-up', 'volume-2', 'share', 'refresh-cw'];
+const AGENT_ICON = Object.fromEntries((C.agents || []).map((a) => [a.name, a.icon]));
+const DUO_AGENTS = [
+  ['Hanzo Dev', 'Hanzo Dev', 164],
+  ['Claude Code', 'Claude Code', 142],
+  ['Codex', 'Codex', 118],
+  ['Gemini CLI', 'Gemini', 96],
+  ['Antigravity', 'Antigravity', 185],
+  ['Cursor', 'Cursor', 156],
+  ['ChatGPT', 'ChatGPT', 124],
+  ['DeepSeek', 'DeepSeek', 172],
+  ['Grok', 'Grok', 150],
+];
+const DUO_ROUTES = ['Zen6', 'Opus 4.8', 'GPT-5.6', 'Fable 5', 'Zen6 Max'];
 
 // the latest thing the phone was asked up to scene `sc`: an ask with its lines, or a piece made in Studio
 const asked = (s) => s.phone || s.place === 'studio';
@@ -295,37 +309,144 @@ function Turn({ ask, on, answer, children }) {
   );
 }
 
-/* The phone is hanzo.app on a phone (@hanzo/app's mobile layout, which is what people use): the bar's two round buttons,
-   the conversation, and the composer pinned above the home indicator, drawn at the phone's own 393 points and scaled to
-   the bezel. An empty chat asks "What's up?"; the composer says "Type / for skills", with + for files, agents and skills,
-   the mic and its menu, voice mode, and the effort, Auto, under it. */
+/* The phone is hanzo.app on a phone (@hanzo/app's mobile layout): closed (9:16) it shows the mobile conversation and
+   composer; when maxpower opens or a scene unfolds it, the phone animates into 9:8 Duo split-screen mode with hanzo.app
+   on the left half and the live maxpower agent roster on the right half. */
 export function Phone({ sc, phase }) {
   const now = last(sc, asked);
   const open = now < 0;
+  const [foldPick, setFoldPick] = useState(null);
+  const [off, setOff] = useState(() => new Set());
+  const [tick, setTick] = useState(0);
+  const [pump, setPump] = useState(false);
+
+  // reset manual fold override when the opening restarts
+  useEffect(() => { if (sc < 0 && phase === 0) setFoldPick(null); }, [sc, phase]);
+  useEffect(() => {
+    const t = setInterval(() => setTick((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const cur = sc >= 0 ? MORE[sc] : null;
+  const autoDuo = sc < 0 ? phase >= 3 : Boolean(cur && (cur.phone || cur.ship || cur.ships || cur.place === 'tabs'));
+  const duo = foldPick ?? autoDuo;
+  const flip = () => { track('hero_demo', { control: 'phone-duo' }); setFoldPick((v) => !(v ?? autoDuo)); };
+
+  const shipped = new Set();
+  for (let i = 0; i <= sc && i < MORE.length; i++) if (MORE[i]?.ships) shipped.add(MORE[i].ships);
+
+  const allOn = off.size === 0;
+  const toggleLane = (name) => {
+    setOff((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  };
+  const toggleAll = () => setOff(allOn ? new Set(DUO_AGENTS.map(([n]) => n)) : new Set());
+  const runAll = () => { setPump(true); setTimeout(() => setPump(false), 2600); };
+  const flowing = DUO_AGENTS.length - off.size;
+  const spent = ((tick + 4) * Math.max(1, flowing) * 0.0001).toFixed(4);
+
   return (
-    <motion.div className="x-phone" initial={{ opacity: 0, z: -80, x: 80 }} animate={{ opacity: 1, z: 130, x: 0 }} transition={{ duration: 1.4, ease: EASE, delay: 0.5 }}>
+    <motion.div className={'x-phone' + (duo ? ' duo' : '')} initial={{ opacity: 0, z: -80, x: 80 }} animate={{ opacity: 1, z: 130, x: 0 }} transition={{ duration: 1.4, ease: EASE, delay: 0.5 }}>
       <div className="x-phone-scr">
-        <div className="xm-ui">
-          <div className="xm-status"><b>9:41</b><span className="x-island" /><span className="xm-sys"><Glyph name="signal" size={18} stroke={2} /><Glyph name="wifi" size={18} stroke={2} /><Glyph name="battery-full" size={22} stroke={1.75} /></span></div>
-          <div className="xm-bar" aria-hidden="true"><span className="xm-round"><Drawer /></span><span className="xm-round"><Glyph name="square-pen" size={20} stroke={1.6} /></span></div>
-          <div className="xm-main">
-            <h2 className="xm-hi" data-on={open && phase < 1 ? '' : undefined}>What’s up?</h2>
-            <Turn ask={OPEN.ask} on={open && phase >= 1} answer={phase >= 2}><p>{OPEN.answer}</p></Turn>
-            {MORE.map((s, i) => (asked(s) ? (
-              <Turn key={i} ask={s.phone ? s.phone.ask : s.prompt} on={i === now} answer>
-                {s.phone ? <pre className="xm-code x-mono">{s.phone.cells.join('\n')}</pre> : <img className="xm-art" src={pic(s.made[s.pick ?? 0].src)} alt="" loading="lazy" decoding="async" />}
+        <div className="xm-pane-l">
+          <div className="xm-ui">
+            <div className="xm-status"><b>9:41</b><span className="x-island" /><span className="xm-sys"><Glyph name="signal" size={18} stroke={2} /><Glyph name="wifi" size={18} stroke={2} /><Glyph name="battery-full" size={22} stroke={1.75} /></span></div>
+            <div className="xm-bar" aria-hidden="true"><span className="xm-round"><Drawer /></span><span className="xm-round"><Glyph name="square-pen" size={20} stroke={1.6} /></span></div>
+            <div className="xm-main">
+              <h2 className="xm-hi" data-on={open && phase < 1 ? '' : undefined}>What’s up?</h2>
+              <Turn ask={OPEN.ask} on={open && phase >= 1} answer={phase >= 2}>
+                <p>{OPEN.answer}</p>
+                <div className="xm-duo-card">
+                  <span className="xm-duo-card-i"><Mark size={15} /></span>
+                  <span className="xm-duo-card-t"><b>maxpower</b><small>Mobile + Duo app</small></span>
+                  <button type="button" className="xm-duo-open" onClick={flip}>{duo ? 'Fold' : 'Open'}</button>
+                </div>
               </Turn>
-            ) : null))}
-          </div>
-          <div className="xm-shell">
-            <div className="xm-comp">
-              <p>Type / for skills</p>
-              <div><i><Glyph name="plus" size={22} stroke={1.5} /></i><span /><i><Glyph name="mic" size={20} stroke={1.6} /></i><i className="sm"><Glyph name="chevron-down" size={14} stroke={2} /></i><i><Glyph name="audio-lines" size={22} stroke={1.6} /></i></div>
+              {MORE.map((s, i) => (asked(s) ? (
+                <Turn key={i} ask={s.phone ? s.phone.ask : s.prompt} on={i === now} answer>
+                  {s.phone ? <pre className="xm-code x-mono">{s.phone.cells.join('\n')}</pre> : <img className="xm-art" src={pic(s.made[s.pick ?? 0].src)} alt="" loading="lazy" decoding="async" />}
+                </Turn>
+              ) : null))}
             </div>
-            <span className="xm-effort">Auto</span>
+            <div className="xm-shell">
+              <div className="xm-comp">
+                <p>Type / for skills</p>
+                <div><i><Glyph name="plus" size={22} stroke={1.5} /></i><span /><i><Glyph name="mic" size={20} stroke={1.6} /></i><i className="sm"><Glyph name="chevron-down" size={14} stroke={2} /></i><i><Glyph name="audio-lines" size={22} stroke={1.6} /></i></div>
+              </div>
+              <span className="xm-effort">Auto</span>
+            </div>
           </div>
-          <i className="xm-home" />
         </div>
+        <button type="button" className="xm-hinge" aria-label={duo ? 'Fold the phone' : 'Unfold the phone'} aria-pressed={duo} title={duo ? 'Fold' : 'Unfold'} onClick={flip} />
+        <div className="xm-pane-r" aria-hidden={duo ? undefined : true}>
+          <div className="xm-duo-sys" aria-hidden="true">
+            <Glyph name="signal" size={10} stroke={2} />
+            <Glyph name="wifi" size={10} stroke={2} />
+            <Glyph name="battery-full" size={12} stroke={1.75} />
+          </div>
+          <div className="xm-duo">
+            <div className="xm-duo-h">
+              <span className="xm-duo-brand">
+                <span className="xm-duo-icon"><Mark size={11} /></span>
+                <b>maxpower</b>
+              </span>
+              <span className="xm-duo-all">
+                <span>{allOn ? 'All on' : 'All off'}</span>
+                <button type="button" role="switch" aria-checked={allOn} aria-label="Toggle all agents" className="xm-sw" onClick={toggleAll}><i /></button>
+              </span>
+            </div>
+            <div className="xm-duo-lanes">
+              {DUO_AGENTS.map(([name, iconKey, rate], i) => {
+                const isOn = !off.has(name);
+                const model = DUO_ROUTES[(i + Math.floor(tick / 4)) % DUO_ROUTES.length];
+                const sway = 0.86 + 0.14 * Math.sin(tick * 0.65 + i * 1.7);
+                const tok = Math.round(rate * sway * (pump ? 1.65 : 1));
+                const svg = AGENT_ICON[iconKey];
+                return (
+                  <div key={name} className="xm-lane" data-off={!isOn || undefined}>
+                    <span className="xm-lane-i" aria-hidden="true">
+                      {svg ? <span dangerouslySetInnerHTML={{ __html: svg }} /> : <Mark size={11} />}
+                    </span>
+                    <div className="xm-lane-t">
+                      <span>{name}</span>
+                      <div className="xm-lane-sub">
+                        {isOn ? (<><b>{model}</b><code>{tok}/s</code></>) : <code>Off</code>}
+                      </div>
+                    </div>
+                    <button type="button" role="switch" aria-checked={isOn} aria-label={name} className="xm-sw" onClick={() => toggleLane(name)}><i /></button>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="xm-meter" aria-hidden="true">
+              <div className="xm-bars">
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((b) => {
+                  const swing = Math.abs(Math.sin(tick * 1.1 + b * 0.8));
+                  const level = 0.22 + (flowing / DUO_AGENTS.length) * (pump ? 0.75 : 0.42) * swing;
+                  return <i key={b} style={{ transform: `scaleY(${level.toFixed(2)})`, opacity: (0.38 + 0.62 * swing).toFixed(2) }} />;
+                })}
+              </div>
+              <div className="xm-meter-f">
+                <span>{pump ? <b>MAX POWER</b> : `$${spent}`}</span>
+                <span>demo</span>
+              </div>
+            </div>
+            {(shipped.has('offline') || shipped.has('board')) && (
+              <div className="xm-duo-pills">
+                {shipped.has('offline') && <span className="xm-duo-pill">Works offline</span>}
+                {shipped.has('board') && <span className="xm-duo-pill">Leaderboard: you</span>}
+              </div>
+            )}
+            {(shipped.has('run') || sc < 0) && (
+              <button type="button" className="xm-duo-run" onClick={runAll}>Run all</button>
+            )}
+          </div>
+        </div>
+        <i className="xm-home" />
       </div>
       <a className="x-phone-dl" href="/download">Download App</a>
     </motion.div>

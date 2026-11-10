@@ -133,10 +133,12 @@ html.dark .x-logo { filter: brightness(0) invert(1); } /* James 8 Nov: in dark m
 .x-ann[data-slot="beta"]:focus-visible { outline-color: #fff; }
 
 
-.x-setup { position: absolute; left: 50%; bottom: -52px; translate: -50% 0; display: inline-flex; z-index: 5; --mx: -50%; }
+.x-setup { position: absolute; left: 50%; bottom: -52px; translate: -50% 0; display: inline-flex; width: max-content; z-index: 5; --mx: -50%; }
 .x-setup.inline { position: relative; left: auto; bottom: auto; translate: none; align-self: flex-start; --mx: 0px; }
 .x-setup-main, .x-setup-chev { display: inline-flex; align-items: center; height: 40px; border: 1px solid var(--line); background: var(--x-raised); box-shadow: 0 10px 30px -14px rgba(0, 0, 0, .25); font: 500 13px/1 var(--sans); color: var(--ink); text-decoration: none; white-space: nowrap; cursor: pointer; transition: transform .35s var(--ease), box-shadow .35s var(--ease), background .2s; }
-.x-setup-main { gap: 9px; padding: 0 8px 0 14px; border-radius: 999px 0 0 999px; }
+.x-setup-main > svg, .x-setup-chev > svg { flex: none; }
+.x-hero .x-setup-main > svg { display: none; }
+.x-setup-main { gap: 9px; padding: 0 8px 0 15px; border-radius: 999px 0 0 999px; }
 .x-setup-chev { justify-content: center; width: 38px; padding: 0; border-left: 0; border-radius: 0 999px 999px 0; }
 .x-setup-main:hover, .x-setup-chev:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -14px rgba(0, 0, 0, .32); }
 .x-setup-main:active, .x-setup-chev:active { transform: scale(.97); }
@@ -671,7 +673,9 @@ html.dark .x-band { background: radial-gradient(80% 70% at 50% 100%, #1b1b1e, #0
    same radial glow in a fixed layer of its own, moved by transform to --lx and --ly, the pointer's place on the card in px,
    where the app repaints a gradient at each move: nothing is painted while a card follows the pointer, and at rest nothing runs.
    The card clips it. Reduced motion has neither (hanzo.css). */
-html [data-tilt] { position: relative; overflow: clip; isolation: isolate; }
+:where([data-tilt]) { position: relative; }
+html [data-tilt] { overflow: clip; isolation: isolate; }
+html .x-mtilt[data-tilt] { position: absolute; inset: 0; }
 html [data-tilt]::after { inset: auto; left: 0; top: 0; z-index: 2; width: 600px; height: 600px; margin: -300px 0 0 -300px; border-radius: 50%; pointer-events: none; background: radial-gradient(circle closest-side, color-mix(in oklab, var(--foreground) 10%, transparent), transparent 70%); transform: translate3d(var(--lx, 50%), var(--ly, 0px), 0); }
 html [data-tilt][data-lit], html [data-tilt][data-lit]::after { will-change: transform; }
 html .x-plot[data-tilt][data-lit] { transform: perspective(1200px) rotateX(calc(var(--rx, 0deg) * .35)) rotateY(calc(var(--ry, 0deg) * .35)) !important; }
@@ -731,3 +735,37 @@ html .x-plot[data-tilt][data-lit] { transform: perspective(1200px) rotateX(calc(
   .x-mcp-code pre { font-size: 12px; padding-right: 16px; padding-bottom: 54px; white-space: pre-wrap; overflow-wrap: anywhere; }
   .x-mcp-code .x-copy { top: auto; bottom: 10px; }
 }
+
+/* ---------- Corner: Help and preferences menu in the bottom-right corner (@hanzo/ui/corner) ---------- */
+.x-corner { position: fixed; bottom: max(16px, calc(env(safe-area-inset-bottom, 0px) + 8px)); inset-inline-end: max(16px, calc(env(safe-area-inset-right, 0px) + 8px)); z-index: 60; }
+.x-corner-btn { display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--ink); opacity: .85; cursor: pointer; transition: opacity .18s var(--ease), transform .18s var(--ease); }
+.x-corner-btn:hover, .x-corner-btn[aria-expanded='true'] { opacity: 1; transform: scale(1.06); }
+.x-corner-btn:focus-visible { outline: 2px solid var(--focus, #0a0a0b); outline-offset: 2px; }
+.x-corner-card { position: absolute; bottom: calc(100% + 8px); inset-inline-end: 0; width: 288px; max-width: calc(100vw - 24px); max-height: calc(100dvh - 76px); overflow-y: auto; padding: 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--x-raised); color: var(--ink); box-shadow: 0 24px 60px -18px rgba(0, 0, 0, .55); display: flex; flex-direction: column; gap: 6px; }
+.x-corner-h { display: flex; align-items: center; justify-content: space-between; min-height: 26px; padding: 0 2px; }
+.x-corner-h h2 { margin: 0; font: 500 12px/1.2 var(--sans); color: var(--faint); }
+.x-corner-h.sub h2 { font: 600 13.5px/1.2 var(--sans); color: var(--ink); }
+.x-corner-x { display: grid; place-items: center; width: 28px; height: 28px; margin-inline-end: -4px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--soft); cursor: pointer; }
+.x-corner-x:hover { background: var(--x-fill); color: var(--ink); }
+.x-corner-list { display: flex; flex-direction: column; gap: 1px; }
+.x-corner-item, .x-corner-row { display: flex; align-items: center; gap: 10px; min-height: 36px; margin: 0 -6px; padding: 0 8px; border: 0; border-radius: 9px; background: transparent; color: var(--ink); font: 500 13.5px/1.25 var(--sans); text-decoration: none; cursor: pointer; text-align: left; }
+.x-corner-item:hover, .x-corner-row:hover { background: var(--x-fill); }
+.x-corner-item svg:first-child { flex: none; color: var(--soft); }
+.x-corner-item span { flex: 1; min-width: 0; }
+.x-corner-ext { flex: none; color: var(--faint); }
+.x-corner-hr { height: 1px; margin: 4px 0; background: var(--line); }
+.x-corner-theme { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 36px; padding: 0 2px; font: 400 13.5px/1.2 var(--sans); color: var(--soft); }
+.x-corner-seg { display: inline-flex; align-items: center; padding: 2px; border-radius: 999px; border: 1px solid var(--line); background: var(--x-sunk); gap: 2px; }
+.x-corner-seg button { display: inline-flex; align-items: center; justify-content: center; height: 26px; min-width: 28px; padding: 0 9px; border: 0; border-radius: 999px; background: transparent; color: var(--soft); font: 500 12px/1 var(--sans); cursor: pointer; transition: background-color .18s var(--ease), color .18s var(--ease); }
+.x-corner-seg button[aria-checked='true'] { background: var(--x-raised); color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, .2); }
+.x-corner-row > span:first-child { flex: 1; font-weight: 400; color: var(--soft); }
+.x-corner-row > b { font-weight: 600; color: var(--ink); }
+.x-corner-row > svg { flex: none; color: var(--faint); }
+.x-corner-search { display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 10px; border-radius: 9px; border: 1px solid var(--line); background: var(--x-sunk); color: var(--faint); }
+.x-corner-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font: 400 13px/1 var(--sans); }
+.x-corner-opts { display: flex; flex-direction: column; gap: 1px; max-height: 260px; overflow-y: auto; margin: 0 -4px; padding: 0 4px; }
+.x-corner-opt { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 34px; padding: 0 8px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); font: 400 13px/1.2 var(--sans); cursor: pointer; text-align: left; }
+.x-corner-opt:hover, .x-corner-opt[aria-selected='true'] { background: var(--x-fill); }
+.x-corner-opt[aria-selected='true'] { font-weight: 600; }
+.x-corner-opt small { color: var(--faint); font-weight: 400; margin-left: 4px; }
+@media (pointer: coarse) { .x-corner-item, .x-corner-row, .x-corner-opt { min-height: 44px; } }

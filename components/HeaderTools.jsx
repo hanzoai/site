@@ -9,6 +9,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
+import { read as readAppearance, write as writeAppearance, apply as applyAppearance, current as currentAppearance, CHANGE as APPEARANCE_CHANGE } from '@hanzo/appearance';
 import { acceptAll, asks, consentPolicy, consentSheet, CONSENT_EVENT, declined, notice, noticed, POLICY_EVENT, readConsent, rejectAll, saveConsent } from '@hanzo/event';
 import { LOGIN, LANGS, SEARCH, COOKIES } from '../lib/header';
 import { play } from '../lib/sound';
@@ -295,6 +296,271 @@ function Consent() {
   );
 }
 
+const HELP_LINKS = [
+  ['Copy page as Markdown (AI)', '#copy-markdown', false],
+  ['Chat with us', '/buying-specialist', false],
+  ['Get help', '/support', false],
+  ['Report a bug', 'https://github.com/hanzoai/hanzo.ai/issues', true],
+  ['Docs', 'https://docs.hanzo.ai', true],
+  ['Contact us', '/contact', false],
+];
+const FONTS = [
+  ['default', 'Sans'],
+  ['system', 'System'],
+  ['serif', 'Serif'],
+  ['mono', 'Mono'],
+];
+const INSTALL_PREF = { theme: 'system' };
+
+function copyPageMarkdown() {
+  const title = document.title || 'Hanzo AI';
+  const desc = document.querySelector('meta[name="description"]')?.content || '';
+  const url = `https://hanzo.ai${location.pathname === '/' ? '' : location.pathname}`;
+  const main = document.querySelector('main') || document.body;
+  const blocks = [];
+  main.querySelectorAll('h1, h2, h3, p, li').forEach((el) => {
+    if (el.closest('[aria-hidden="true"], nav, header, footer')) return;
+    const t = el.textContent.replace(/\s+/g, ' ').trim();
+    if (!t || t.length < 3) return;
+    const tag = el.tagName.toLowerCase();
+    const line = tag === 'h1' ? `# ${t}` : tag === 'h2' ? `## ${t}` : tag === 'h3' ? `### ${t}` : tag === 'li' ? `- ${t}` : t;
+    if (blocks[blocks.length - 1] !== line) blocks.push(line);
+  });
+  const md = [`# ${title}`, `Source: ${url}`, desc && `\n> ${desc}`, '', ...blocks.slice(0, 120)].filter(Boolean).join('\n\n');
+  navigator.clipboard?.writeText(md).catch(() => {});
+}
+
+function Corner({ lang, setLang, router }) {
+  const [open, setOpen] = useState(false);
+  const [view, setView] = useState('main'); // 'main' | 'language' | 'font'
+  const [query, setQuery] = useState('');
+  const [theme, setTheme] = useState('system');
+  const [font, setFont] = useState('default');
+  const [copied, setCopied] = useState(false);
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    const sync = () => {
+      const p = readAppearance();
+      setTheme(p.theme || 'system');
+      setFont(p.font || 'default');
+    };
+    sync();
+    addEventListener(APPEARANCE_CHANGE, sync);
+    return () => removeEventListener(APPEARANCE_CHANGE, sync);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e) => { if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false); };
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      if (view !== 'main') { setView('main'); setQuery(''); }
+      else setOpen(false);
+    };
+    addEventListener('mousedown', onDown);
+    addEventListener('keydown', onKey);
+    return () => { removeEventListener('mousedown', onDown); removeEventListener('keydown', onKey); };
+  }, [open, view]);
+
+  const close = () => { setOpen(false); setView('main'); setQuery(''); };
+  const pickTheme = (next) => {
+    setTheme(next);
+    const p = readAppearance();
+    writeAppearance({ ...p, theme: next });
+    applyAppearance(currentAppearance({ install: INSTALL_PREF }).pref);
+  };
+  const pickFont = (next) => {
+    setFont(next);
+    const p = readAppearance();
+    const updated = { ...p, font: next === 'default' ? undefined : next };
+    if (next === 'default') delete updated.font;
+    writeAppearance(updated);
+    applyAppearance(currentAppearance({ install: INSTALL_PREF }).pref);
+    setView('main');
+  };
+  const pickLang = (code) => {
+    setLang(code);
+    try { localStorage.setItem('hz-lang', code); } catch {}
+    setView('main');
+    setQuery('');
+  };
+
+  const curLang = LANGS.find((l) => l[3] === lang) || LANGS[0];
+  const curFont = FONTS.find((f) => f[0] === font) || FONTS[0];
+  const filteredLangs = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return LANGS;
+    return LANGS.filter(([, native, en, code]) => native.toLowerCase().includes(q) || en.toLowerCase().includes(q) || code.toLowerCase().includes(q));
+  }, [query]);
+
+  return (
+    <div ref={rootRef} className="x-corner" data-slot="corner">
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="x-corner-card"
+            data-slot="corner-card"
+            role="dialog"
+            aria-label="Help and preferences"
+            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 6, scale: 0.97 }}
+            transition={{ duration: 0.2, ease: EASE }}
+          >
+            {view === 'main' && (
+              <>
+                <div className="x-corner-h">
+                  <span>Help</span>
+                  <button type="button" aria-label="Close" onClick={close}>
+                    <svg viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M2 2l8 8M10 2l-8 8" /></svg>
+                  </button>
+                </div>
+                {HELP_LINKS.map(([label, href, ext]) => (
+                  href === '#copy-markdown' ? (
+                    <button
+                      key={label}
+                      type="button"
+                      className="x-corner-item"
+                      onClick={() => {
+                        copyPageMarkdown();
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 1600);
+                      }}
+                    >
+                      <span>{copied ? 'Copied Markdown!' : label}</span>
+                      {copied && (
+                        <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3.5 8.5 6.5 11.5 12.5 4.5" /></svg>
+                      )}
+                    </button>
+                  ) : (
+                    <a
+                      key={label}
+                      href={href}
+                      target={ext ? '_blank' : undefined}
+                      rel={ext ? 'noopener noreferrer' : undefined}
+                      className="x-corner-item"
+                      onClick={(e) => {
+                        if (!ext && href.startsWith('/')) { e.preventDefault(); close(); go(router, href); }
+                        else close();
+                      }}
+                    >
+                      <span>{label}</span>
+                      {ext && <span className="ext" aria-hidden="true">↗</span>}
+                    </a>
+                  )
+                ))}
+                <hr />
+                <div className="x-corner-h"><span>Preferences</span></div>
+                <div className="x-corner-theme">
+                  <span>Theme</span>
+                  <div className="x-corner-seg" role="radiogroup" aria-label="Theme">
+                    <button type="button" role="radio" aria-checked={theme === 'system'} onClick={() => pickTheme('system')}>Auto</button>
+                    <button type="button" role="radio" aria-label="Light" aria-checked={theme === 'light'} onClick={() => pickTheme('light')}>
+                      <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><circle cx="8" cy="8" r="3" /><path d="M8 1.5v1.8M8 12.7v1.8M1.5 8h1.8M12.7 8h1.8M3.4 3.4l1.3 1.3M11.3 11.3l1.3 1.3M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3" /></svg>
+                    </button>
+                    <button type="button" role="radio" aria-label="Dark" aria-checked={theme === 'dark'} onClick={() => pickTheme('dark')}>
+                      <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13.2 9.8A5.5 5.5 0 0 1 6.2 2.8a5.5 5.5 0 1 0 7 7Z" /></svg>
+                    </button>
+                  </div>
+                </div>
+                <button type="button" className="x-corner-row" data-corner-row="language" onClick={() => { setView('language'); setQuery(''); }}>
+                  <span>Language</span>
+                  <span className="v">
+                    <span>{curLang[1]}</span>
+                    <svg viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 2.5 8 6l-3.5 3.5" /></svg>
+                  </span>
+                </button>
+                <button type="button" className="x-corner-row" data-corner-row="font" onClick={() => setView('font')}>
+                  <span>Font</span>
+                  <span className="v">
+                    <span>{curFont[1]}</span>
+                    <svg viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 2.5 8 6l-3.5 3.5" /></svg>
+                  </span>
+                </button>
+              </>
+            )}
+            {view === 'language' && (
+              <>
+                <div className="x-corner-h">
+                  <button type="button" className="back" onClick={() => { setView('language' === view ? 'main' : 'main'); setQuery(''); }}>
+                    <svg viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M7.5 2.5 4 6l3.5 3.5" /></svg>
+                    <span>Language</span>
+                  </button>
+                  <button type="button" aria-label="Close" onClick={close}>
+                    <svg viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M2 2l8 8M10 2l-8 8" /></svg>
+                  </button>
+                </div>
+                <input
+                  type="search"
+                  className="x-corner-search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search languages…"
+                  aria-label="Search languages"
+                  autoFocus
+                />
+                <div className="x-corner-opts" role="listbox" aria-label="Language">
+                  {filteredLangs.map(([flag, native, en, code]) => (
+                    <button key={code} type="button" role="option" aria-selected={code === lang} className="x-corner-opt" onClick={() => pickLang(code)}>
+                      <span>{flag} {native}{native !== en ? ` (${en})` : ''}</span>
+                      {code === lang && (
+                        <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6.5 4.8 9.2 10 3" /></svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+            {view === 'font' && (
+              <>
+                <div className="x-corner-h">
+                  <button type="button" className="back" onClick={() => setView('main')}>
+                    <svg viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M7.5 2.5 4 6l3.5 3.5" /></svg>
+                    <span>Font</span>
+                  </button>
+                  <button type="button" aria-label="Close" onClick={close}>
+                    <svg viewBox="0 0 12 12" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M2 2l8 8M10 2l-8 8" /></svg>
+                  </button>
+                </div>
+                <div className="x-corner-opts" role="listbox" aria-label="Font">
+                  {FONTS.map(([id, label]) => (
+                    <button key={id} type="button" role="option" aria-selected={id === font} className="x-corner-opt" onClick={() => pickFont(id)}>
+                      <span>{label}</span>
+                      {id === font && (
+                        <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6.5 4.8 9.2 10 3" /></svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <button
+        type="button"
+        className="x-corner-btn"
+        data-slot="corner-trigger"
+        aria-label="Help and preferences"
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        onClick={() => { setOpen((o) => !o); setView('main'); setQuery(''); }}
+      >
+        <svg viewBox="0 0 67 67" width="22" height="22" fill="currentColor" aria-hidden="true">
+          <path d="M22.21 67V44.6369H0V67H22.21Z" />
+          <path d="M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z" />
+          <path d="M22.21 0H0V22.3184H22.21V0Z" />
+          <path d="M66.7198 0H44.5098V22.3184H66.7198V0Z" />
+          <path d="M66.7198 67V44.6369H44.5098V67H66.7198Z" />
+          <path d="M0 44.6369L22.21 46.8285V44.6369H0Z" />
+          <path d="M66.6753 22.3185L44.5098 20.0822V22.3185H66.6753Z" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
 export default function HeaderTools({ headerRef }) {
   const [open, setOpen] = useState(null); // 'search' | 'lang' | 'login'
   const [lang, setLang] = useState('en-US');
@@ -372,6 +638,7 @@ export default function HeaderTools({ headerRef }) {
         )}
       </AnimatePresence>
       <Consent />
+      <Corner lang={lang} setLang={setLang} router={router} />
       {cur && <span className="x-sr" aria-live="polite">Language: {cur[2]}</span>}
     </>
   );
