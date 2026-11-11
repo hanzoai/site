@@ -1,7 +1,7 @@
 'use client';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
-import { EASE, Count, fine, copyText } from './ui';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView, useReducedMotion, useSpring } from 'motion/react';
+import { fine, copyText } from './ui';
 import SetupMenu from './SetupMenu';
 import { Desk, MORE, Phone, Term } from './home/Devices';
 import { press } from '../lib/press';
@@ -25,7 +25,6 @@ function Dots({ host }) {
     const gleamAlphas = [0.35, 0.47, 0.59, 0.71, 0.83, 0.94];
     let ambientStyles = ambientAlphas.map((a) => `rgba(${rgb},${a})`);
     let gleamStyles = gleamAlphas.map((a) => `rgba(${rgb},${a})`);
-    const t0 = performance.now();
     // the dot colour follows the page's ink (.x-dots { color: var(--ink) }) across light and dark
     const tone = () => {
       const m = getComputedStyle(cv).color.match(/[\d.]+/g) || [10, 10, 10];
@@ -39,7 +38,7 @@ function Dots({ host }) {
     const glm = [[], [], [], [], [], []];
 
     const draw = (now = performance.now()) => {
-      const t = calm ? 0 : (now - t0) * 0.001;
+      const t = 0; // the field rests; a pointer lights it
       cx.clearRect(0, 0, W, H);
       for (let b = 0; b < 3; b++) amb[b].length = 0;
       for (let b = 0; b < 6; b++) glm[b].length = 0;
@@ -207,10 +206,10 @@ function Dots({ host }) {
         ly += (ty - ly) * 0.28;
       }
       draw(now);
-      raf = (!calm || energy > 0.01) && vis ? requestAnimationFrame(tick) : 0;
+      raf = (energy > 0.01 || inside) && vis ? requestAnimationFrame(tick) : 0;
     };
     const startLoop = () => {
-      if (!raf && vis && (!calm || energy > 0.01 || inside)) raf = requestAnimationFrame(tick);
+      if (!raf && vis && (energy > 0.01 || inside)) raf = requestAnimationFrame(tick);
     };
     const size = () => {
       const r = el.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
@@ -262,50 +261,7 @@ function Dots({ host }) {
   return <canvas ref={ref} className="x-dots" aria-hidden="true" />;
 }
 
-/* Fits both display headline lines to the exact measure width (--w) of .x-hero-copy so left & right edges align flush. */
-function useFit(copyRef) {
-  useLayoutEffect(() => {
-    const root = copyRef.current;
-    if (!root) return;
-    let lastW = -1;
-    const fit = () => {
-      const h = root.querySelector('[data-fit]');
-      if (!h) return;
-      const w = h.clientWidth;
-      if (!(w > 0)) return;
-      for (const line of h.querySelectorAll('[data-line]')) {
-        const range = document.createRange();
-        range.selectNodeContents(line);
-        const measure = (size) => {
-          line.style.fontSize = `${size.toFixed(3)}px`;
-          return range.getBoundingClientRect().width;
-        };
-        const near = parseFloat(getComputedStyle(line).fontSize);
-        const drawn = range.getBoundingClientRect().width;
-        if (!(drawn > 0)) continue;
-        let lo = ((near * w) / drawn) / 1.12;
-        let hi = ((near * w) / drawn) * 1.12;
-        for (let i = 0; i < 14; i++) {
-          const mid = (lo + hi) / 2;
-          if (measure(mid) <= w) lo = mid;
-          else hi = mid;
-        }
-        measure(lo);
-      }
-    };
-    fit();
-    const ro = new ResizeObserver(() => {
-      if (root.clientWidth === lastW) return;
-      lastW = root.clientWidth;
-      fit();
-    });
-    ro.observe(root);
-    document.fonts?.ready?.then(() => { lastW = -1; fit(); });
-    return () => ro.disconnect();
-  }, [copyRef]);
-}
-
-/* Opening flash + interactive pointer gleam across "Pick all three." */
+/* A light that follows the pointer across "Pick all three." */
 function Three({ calm }) {
   const ref = useRef(null);
   const light = useRef({ x: -1e4, ink: 100, tx: -1e4, tink: 100, sweep: 0, frame: 0 });
@@ -337,19 +293,7 @@ function Three({ calm }) {
     };
     l.frame = requestAnimationFrame(step);
   };
-  useEffect(() => {
-    const l = light.current;
-    if (calm) return;
-    const timer = setTimeout(() => {
-      l.sweep = performance.now();
-      run();
-    }, 650);
-    return () => {
-      clearTimeout(timer);
-      cancelAnimationFrame(l.frame);
-      l.frame = 0;
-    };
-  }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => cancelAnimationFrame(light.current.frame), []);
   const at = (e, ink) => {
     const el = ref.current, l = light.current;
     if (!el) return;
@@ -375,10 +319,7 @@ function Three({ calm }) {
 
 export default function Hero() {
   const host = useRef(null);
-  const copyRef = useRef(null);
-  const fit = useRef(null);
   const calm = useReducedMotion();
-  useFit(copyRef);
   const inView = useInView(host, { amount: 0.2 });
   const live = useRef(true);
   live.current = inView;
@@ -455,17 +396,6 @@ export default function Hero() {
     return () => { dead = true; };
   }, [calm]);
 
-  // the stage is drawn at a fixed size and scaled to fit its column
-  const [k, setK] = useState(1);
-  useLayoutEffect(() => {
-    const el = fit.current;
-    const ro = new ResizeObserver(() => {
-      const sw = parseFloat(getComputedStyle(el).getPropertyValue('--sw')) || 720;
-      setK(Math.min(1.15, el.clientWidth / sw));
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
 
   // pointer: the three devices turn toward it, each at its own depth
   const rx = useSpring(0, { stiffness: 90, damping: 18 });
@@ -473,22 +403,13 @@ export default function Hero() {
   const onMove = (e) => {
     if (!fine(e)) return;
     const r = host.current.getBoundingClientRect();
-    ry.set(((e.clientX - r.left) / r.width - 0.5) * 12);
-    rx.set(-((e.clientY - r.top) / r.height - 0.5) * 8);
+    ry.set(((e.clientX - r.left) / r.width - 0.5) * 6);
+    rx.set(-((e.clientY - r.top) / r.height - 0.5) * 4);
   };
 
-  // scroll: the copy lifts away while the devices settle back
-  const { scrollYProgress: p } = useScroll({ target: host, offset: ['start start', 'end start'] });
-  const copyY = useTransform(p, [0, 1], [0, -90]);
-  const copyO = useTransform(p, [0, 0.6], [1, 0]);
-  const stageY = useTransform(p, [0, 1], [0, 120]);
-  const stageS = useTransform(p, [0, 1], [1, 0.9]);
-
-  const line = (content, d, idx) => (
+  const line = (content, idx) => (
     <span className="x-line">
-      <motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>
-        <span data-line={idx}>{content}</span>
-      </motion.span>
+      <span className="x-line-in"><span data-line={idx}>{content}</span></span>
     </span>
   );
 
@@ -496,51 +417,50 @@ export default function Hero() {
     <section className="x-hero" data-slot="hero" ref={host} onPointerMove={onMove} onPointerLeave={() => { rx.set(0); ry.set(0); }} aria-labelledby="home-title">
       <Dots host={host} />
       <div className="x-wrap x-hero-grid">
-        <motion.div className="x-hero-copy" ref={copyRef} style={{ y: copyY, opacity: copyO }}>
-          <motion.a href="/blog/pareto-frontier" className="x-badge" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE }} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+        <div className="x-hero-copy">
+          <a href="/blog/pareto-frontier" className="x-badge">
             <span className="x-badge-shine" aria-hidden="true" />
             <svg className="x-badge-spark" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 1.5l1.6 4.2 4.2 1.6-4.2 1.6L8 13.1 6.4 8.9 2.2 7.3l4.2-1.6z" fill="currentColor" /></svg>
             <span className="x-badge-t">A New Pareto Frontier</span>
             <svg className="x-badge-chev" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-          </motion.a>
-          <h1 id="home-title" className="x-h1" data-fit="">
-            <span className="x-h1-a">{line('Smarter, Faster, Open Source.', 0.1, '1')}</span>
-            <span className="x-h1-b">{line(<Three calm={calm} />, 0.25, '2')}</span>
+          </a>
+          <h1 id="home-title" className="x-h1">
+            <span className="x-h1-a">{line('Smarter, Faster, Open Source.', '1')}</span>
+            <span className="x-h1-b">{line(<Three calm={calm} />, '2')}</span>
           </h1>
-          <motion.p className="x-hero-lede" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.5 }}>
-            Frontier intelligence over <b className="x-num-slot"><span aria-hidden="true">200×</span><Count to={200} suffix="×" duration={1.8} delay={0.6} /></b> faster and <span className="x-nowrap"><b className="x-num-slot"><span aria-hidden="true">400×</span><Count to={400} suffix="×" duration={2} delay={0.7} /></b> cheaper.</span> Every model behind one key.
-          </motion.p>
-          <motion.div className="x-auth" initial="h" animate="s" variants={{ s: { transition: { staggerChildren: 0.07, delayChildren: 0.75 } } }}>
+          <p className="x-hero-lede">
+            Frontier intelligence over <b>200×</b> faster and <span className="x-nowrap"><b>400×</b> cheaper.</span> Every model behind one key.
+          </p>
+          <div className="x-auth">
             <div className="x-auth-row">
-              <motion.a variants={rise} href="https://hanzo.ai/signup?provider=google" className="x-auth-b" whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
+              <a href="https://hanzo.ai/signup?provider=google" className="x-auth-b">
                 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h6a5.1 5.1 0 0 1-2.2 3.4v2.8h3.6c2.1-2 3.2-4.9 3.2-8.2z" /><path fill="currentColor" d="M12 23c3 0 5.5-1 7.4-2.7l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2v2.9A11 11 0 0 0 12 23z" /><path fill="currentColor" d="M5.7 14c-.2-.7-.4-1.3-.4-2s.1-1.4.4-2V7.1H2a11 11 0 0 0 0 9.8L5.7 14z" /><path fill="currentColor" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2 7.1L5.7 10C6.6 7.4 9.1 5.4 12 5.4z" /></svg>
                 Continue with Google
-              </motion.a>
-              <motion.a variants={rise} href="https://hanzo.ai/signup?provider=github" className="x-auth-b" whileHover={{ y: -2 }} whileTap={{ scale: 0.97 }}>
+              </a>
+              <a href="https://hanzo.ai/signup?provider=github" className="x-auth-b">
                 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z" /></svg>
                 Continue with GitHub
-              </motion.a>
+              </a>
             </div>
-            <motion.div variants={rise} className="x-or"><span>or</span></motion.div>
+            <div className="x-or"><span>or</span></div>
             <div className="x-auth-mag">
-              <motion.a variants={rise} href="https://hanzo.ai/signup" className="x-auth-b solid" whileTap={{ scale: 0.97 }}>Continue with email</motion.a>
+              <a href="https://hanzo.ai/signup" className="x-auth-b solid">Continue with email</a>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
-        <motion.div className="x-hero-stage" ref={fit} style={{ y: stageY, scale: stageS, height: `calc(var(--sh) * ${k})` }}>
-          <div className="x-fit" style={{ transform: `scale(${k})` }}>
+        <div className="x-hero-stage">
+          <div className="x-fit">
             <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
               <Desk sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} side={side} onSide={() => setSide((v) => !v)} promptEl={promptEl} full={typed === PROMPT.length} />
               <Term onSelectScene={selectScene} calm={calm} inView={inView} copy={copy} copied={copied} />
               <Phone sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} />
             </motion.div>
           </div>
-          <SetupMenu up initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 1.1 }} />
-        </motion.div>
+          <SetupMenu up />
+        </div>
       </div>
     </section>
   );
 }
 
-const rise = { h: { opacity: 0, y: 14 }, s: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } } };

@@ -1,30 +1,23 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useInView, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
-import { EASE, Head, Arrow, Copy, Mark, fine } from './ui';
-import C from '../content';
+import { motion, useInView, useReducedMotion, useSpring } from 'motion/react';
+import { Head, Arrow, Copy, Mark } from './ui';
+import AGENTS from '../content/agents';
 import { SCRIPT } from '../lib/script';
 import SetupMenu from './SetupMenu';
-import McpPicker from './McpPicker';
 import { capture, track } from '../lib/track';
 
-/* Every agent Hanzo works with, as a field that swells toward the pointer, like a dock. */
-function Ico({ a, mx, my, i }) {
-  const ref = useRef(null);
-  const d = useTransform(() => {
-    const x = mx.get(), y = my.get(), el = ref.current;
-    if (x === Infinity || !el) return 999;
-    const r = el.getBoundingClientRect();
-    return Math.hypot(x - (r.left + r.width / 2), y - (r.top + r.height / 2));
-  });
-  const scale = useSpring(useTransform(d, [0, 70, 160], [1.65, 1.25, 1]), { stiffness: 320, damping: 22, mass: 0.35 });
-  const lift = useSpring(useTransform(d, [0, 160], [-8, 0]), { stiffness: 320, damping: 22, mass: 0.35 });
+/* The agents Hanzo works with, two even rows of twelve (four of six on a phone): each mark lifts under the pointer
+   (CSS, .x-ico:hover). The setup menu below lists every one. */
+const DOCK = AGENTS.filter((a) => a.name !== 'Hanzo Dev').slice(0, 24);
+
+function Ico({ a }) {
   return (
-    <motion.li initial={{ opacity: 0, y: 20, scale: 0.6 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} viewport={{ once: true }} transition={{ type: 'spring', stiffness: 300, damping: 22, delay: 0.02 * i }}>
-      <motion.a ref={ref} href={a.href} className="x-ico" style={{ scale, y: lift }} data-name={a.name} aria-label={a.name}>
+    <li>
+      <a href={a.href} className="x-ico" data-name={a.name} aria-label={a.name}>
         <span dangerouslySetInnerHTML={{ __html: a.icon }} />
-      </motion.a>
-    </motion.li>
+      </a>
+    </li>
   );
 }
 
@@ -155,19 +148,12 @@ function Steps() {
 }
 
 export default function Agents() {
-  const mx = useMotionValue(Infinity);
-  const my = useMotionValue(Infinity);
   return (
     <section className="x-sec x-agents" id="compatible" data-hz-view="compatible" aria-labelledby="compatible-h">
       <div className="x-wrap">
-        <Head title="Works with every agent, bot and CLI tool." lede="Claude Code, Codex, Cursor and the rest, every model behind one key. Or let your agent sign itself up." />
-        <ul
-          className="x-dock"
-          data-hz-view="works-with"
-          onPointerMove={(e) => { if (fine(e)) { mx.set(e.clientX); my.set(e.clientY); } }}
-          onPointerLeave={() => { mx.set(Infinity); my.set(Infinity); }}
-        >
-          {C.agents.filter((a) => a.name !== 'Hanzo Dev').map((a, i) => <Ico key={a.name} a={a} i={i} mx={mx} my={my} />)}
+        <Head id="compatible-h" title="Works with every agent, bot and CLI tool." lede="Claude Code, Codex, Cursor and the rest, every model behind one key. Or let your agent sign itself up." />
+        <ul className="x-dock" data-hz-view="works-with">
+          {DOCK.map((a) => <Ico key={a.name} a={a} />)}
         </ul>
         <div className="x-panels">
           <div className="x-panel">
@@ -182,7 +168,6 @@ export default function Agents() {
           </div>
           <div className="x-panel-wrap"><Steps /></div>
         </div>
-        <McpPicker />
         <div className="x-row-links">
           <Arrow href="https://docs.hanzo.ai/docs/guides/coding">Integration guides</Arrow>
           <Arrow href="https://docs.hanzo.ai/docs/guides/migrate/coding-agents">Migrate &amp; conventions map</Arrow>

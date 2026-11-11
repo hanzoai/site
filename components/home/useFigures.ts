@@ -5,7 +5,7 @@
 // build), so the first paint and a failed read show the same figures.
 // The three endpoints answer any origin (access-control-allow-origin: *), so the read runs wherever the page is served:
 // hanzo.ai, a preview or localhost.
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, createElement, useContext, useEffect, useState } from 'react';
 import { figuresOf } from './figures';
 import { readResearch, readModels } from '../../lib/liveSources.ts';
 
@@ -19,6 +19,8 @@ const read = () => (once ??= Promise.all([readResearch(get), readModels(get)]).t
 
 // the build's snapshot, worked out on the server (snapshot.js) and provided by the home page
 export const Figures = createContext(null);
+// the snapshot handed down from the server page (a server component cannot render a context itself)
+export const FiguresProvider = ({ value, children }) => createElement(Figures.Provider, { value }, children);
 
 export default function useFigures() {
   const [f, setF] = useState(useContext(Figures));

@@ -32,7 +32,7 @@ import { A, More, Band, Img } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './company/MaskLines';
 import { useEnter, useFilm, Letters } from './contact-sales/enter';
-import C from '../../content';
+import LOGOS from '../../content/logos';
 import '../v2/vc-type.css';
 import './company/deck.css';
 import './ContactSales.css';
@@ -358,8 +358,8 @@ function Rail() {
       </div>
       <div className="xcs-rail" data-rail ref={box} onPointerEnter={hold(true)} onPointerLeave={hold(false)} onFocus={hold(true)} onBlur={hold(false)}>
         <div className="xcs-track" ref={track}>
-          {C.trusted.map((l) => <Name key={l.name} l={l} />)}
-          {C.trusted.map((l) => <Name key={'g' + l.name} l={l} ghost />)}
+          {LOGOS.trusted.map((l) => <Name key={l.name} l={l} />)}
+          {LOGOS.trusted.map((l) => <Name key={'g' + l.name} l={l} ghost />)}
         </div>
       </div>
     </section>

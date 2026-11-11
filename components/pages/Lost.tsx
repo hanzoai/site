@@ -8,13 +8,12 @@ import { motion } from 'motion/react';
 import Sigil from '../Sigil';
 import { A } from '../kit';
 import { EASE } from '../ui';
-import SEARCH from '../../lib/search.json';
 import './Lost.css';
 
 const words = (s) => s.toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 1);
-function rank(q, path) {
+function rank(SEARCH, q, path) {
   const ws = words(q);
-  if (!ws.length) return [];
+  if (!SEARCH || !ws.length) return [];
   return SEARCH.map(([p, t, d]) => {
     const hay = (p + ' ' + t).toLowerCase(), desc = (d || '').toLowerCase();
     let s = 0;
@@ -27,13 +26,17 @@ export default function Lost() {
   const [path, setPath] = useState('');
   const [q, setQ] = useState('');
   const [back, setBack] = useState(false);
+  // the page index (lib/search.json, 150 KB) loads when this page is drawn: the root's not-found boundary rides on every
+  // page, so a static import would put the index into every page's script
+  const [index, setIndex] = useState(null);
+  useEffect(() => { import('../../lib/search.json').then((m) => setIndex(m.default)); }, []);
   useEffect(() => {
     let p = location.pathname;
     try { p = decodeURIComponent(p); } catch { /* a malformed address (/%E0%A4%A) stays as typed */ }
     setPath(p);
     setBack(history.length > 1 && !!document.referrer && new URL(document.referrer).origin === location.origin);
   }, []);
-  const hits = useMemo(() => rank(q || path.replace(/[/-]+/g, ' '), path), [q, path]);
+  const hits = useMemo(() => rank(index, q || path.replace(/[/-]+/g, ' '), path), [index, q, path]);
   const rise = (d) => ({ initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
   return (
     <main className="xlo" data-room="dark" data-ask="off">

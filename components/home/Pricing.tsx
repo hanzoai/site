@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
-import { EASE, Words } from '../ui';
+import { EASE } from '../ui';
 import { More } from '../kit';
 import { Glyph } from './glyphs';
 import { checkoutAbs } from '../../lib/plans';
@@ -128,7 +128,7 @@ export default function Pricing() {
   return (
     <section className="x-sec x-pricing" id="pricing" data-hz-view="plans" aria-labelledby="pricing-h">
       <div className="x-wrap">
-        <header className="x-head center"><Words text="Pricing" /></header>
+        <header className="x-head center"><h2 id="pricing-h">Pricing</h2></header>
         <div className="x-center"><Seg opts={['Personal', 'Team', 'API']} val={tab} set={setTab} id="price-tab" /></div>
         <LayoutGroup>
           <motion.div layout className={'x-plans n' + (tab === 'Personal' ? 3 : 2)}>

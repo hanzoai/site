@@ -15,7 +15,7 @@
    page from the first paint (search engines, screen readers); one shows at a time. */
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import C from '../../content';
+import AGENTS from '../../content/agents';
 import { EASE, Mark } from '../ui';
 import { Glyph } from './glyphs';
 import { track } from '../../lib/track';
@@ -391,7 +391,7 @@ export function Desk({ sc, navPick, onSelectScene, phase, side, onSide, promptEl
   const view = (p, children) => <section className="xw-view" data-p={p} aria-hidden={viewPlace === p ? undefined : true}>{children}</section>;
   const scenes = (p) => MORE.map((s, i) => (placeOf(i) === p ? <Scene key={i} s={s} on={i === sc} /> : null));
   return (
-    <motion.div className={'x-win' + (side ? '' : ' xs-noside')} data-place={viewPlace} initial={{ opacity: 0, z: -260, y: 40 }} animate={{ opacity: 1, z: 0, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.15 }}>
+    <motion.div className={'x-win' + (side ? '' : ' xs-noside')} data-place={viewPlace} initial={false} animate={{ opacity: 1, z: 0, y: 0 }}>
       <div className="x-win-bar">
         <i /><i /><i />
         <button type="button" className="xs-sidet" aria-expanded={side} aria-label={side ? 'Close sidebar' : 'Open sidebar'} onClick={() => { track('hero_demo', { control: 'sidebar' }); onSide(); }}>
@@ -533,9 +533,8 @@ export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
       onPointerEnter={() => { hoverRef.current = true; }}
       onPointerLeave={() => { hoverRef.current = false; }}
       onClick={() => setPinned(true)}
-      initial={{ opacity: 0, z: -120, y: 70 }}
+      initial={false}
       animate={{ opacity: 1, z: 70, y: 0 }}
-      transition={{ duration: 1.3, ease: EASE, delay: 0.35 }}
     >
       <div className="x-term-bar" role="tablist" aria-label="Terminal">
         <i /><i /><i />
@@ -605,7 +604,7 @@ const OPEN_TRACE = [
   '• Synced desktop, CLI & Duo live view',
   '  └ ready in 1.8s',
 ];
-const AGENT_ICON = Object.fromEntries((C.agents || []).map((a) => [a.name, a.icon]));
+const AGENT_ICON = Object.fromEntries(AGENTS.map((a) => [a.name, a.icon]));
 const DUO_AGENTS = [
   ['Hanzo Dev', 'Hanzo Dev', 164],
   ['Claude Code', 'Claude Code', 142],
@@ -863,7 +862,7 @@ export function Phone({ sc, navPick, onSelectScene, phase }) {
   );
 
   return (
-    <motion.div className={'x-phone' + (duo ? ' duo' : '')} initial={{ opacity: 0, z: -80, x: 80 }} animate={{ opacity: 1, z: 130, x: 0 }} transition={{ duration: 1.4, ease: EASE, delay: 0.5 }}>
+    <motion.div className={'x-phone' + (duo ? ' duo' : '')} initial={false} animate={{ opacity: 1, z: 130, x: 0 }}>
       <div className="xm-stage">
         {/* Stationary inner-right half: titanium frame + live maxpower app, revealed as the left leaf unfolds */}
         <div className="xm-base" aria-hidden={duo ? undefined : true}>

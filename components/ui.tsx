@@ -98,11 +98,12 @@ export function Lines({ lines, as = 'h2', className, delay = 0, play = 'view', a
   );
 }
 
-export function Head({ title, lede, center, dark }) {
+/* A section's heading and lede, drawn in the HTML as they are read: no reveal, so they paint with the first frame. */
+export function Head({ id, title, lede, center, dark }) {
   return (
     <header className={'x-head' + (center ? ' center' : '') + (dark ? ' dark' : '')}>
-      <Words text={title} />
-      {lede && <Rise as="p" delay={0.25}>{lede}</Rise>}
+      <h2 id={id}>{title}</h2>
+      {lede && <p>{lede}</p>}
     </header>
   );
 }

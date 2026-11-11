@@ -148,9 +148,8 @@ const viewBand = async (name) => {
 await open('/');
 await expects('home: the hero is drawn', 'home_viewed', {});
 await expects('home: the plans are listed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === 'free,go,pro-3x' && v.every((i) => i.item_category === 'individual' && typeof i.price === 'number') });
-await expects('home: a link in the hero', 'cta_clicked', { page: '/', section: 'hero', cta: 'home.hero-go', target: /^https:\/\/hanzo\.ai\/pay\/confirm\/card\?plan=go/ }, () => tap('.x-hero-price'));
-await expects('home: a link to checkout is also the funnel moment', 'checkout_started', { link_url: /hanzo\.ai\/pay/, page_path: '/', cta: 'home.hero-go' });
-await silent('home: the on-this-page index is not a call', 'cta_clicked', () => tap('.xh-spine a'));
+await expects('home: a link in the hero', 'cta_clicked', { page: '/', section: 'hero', cta: 'Continue with email', target: '/signup' }, () => tap('.x-hero .x-auth-b.solid'));
+await expects('home: a product in the grid', 'cta_clicked', { page: '/', section: 'products', cta: 'Open ↗', target: 'https://hanzo.app/chat' }, () => tap('.xp-card .x-btn.solid', 0));
 await expects('hero demo: the sidebar', 'hero_demo', { control: 'sidebar' }, () => tap('.xs-sidet'));
 await expects('hero demo: the account menu', 'hero_demo', { control: 'account' }, () => tap('.x-acct-b'));
 await expects('hero terminal: Copy', 'home_copied', { block: 'hero', command: 'curl -fsSL https://hanzo.sh | sh' }, () => tap('.x-term-copy'));
@@ -194,9 +193,9 @@ await open('/');
 await viewBand('API');
 await expects('plans: Volume & Dedicated', 'plan_clicked', { plan: 'api-enterprise', interval: 'month', cta: 'Contact API Sales', item_list_id: 'api', items: (v) => v[0].item_name === 'Volume & Dedicated' }, () => tap('.x-pricing .x-plan .x-btn', 1));
 await open('/');
-await expects('home: a link in a band', 'cta_clicked', { page: '/', section: 'plans', cta: 'Every plan, model rate and tool price', target: '/pricing/' }, () => tap('.x-pricing .x-row-links a'));
+await expects('home: a link in a band', 'cta_clicked', { page: '/', section: 'plans', cta: 'Every plan, model rate and tool price', target: '/pricing' }, () => tap('.x-pricing .x-row-links a'));
 await open('/');
-await expects('home: the beta ribbon', 'cta_clicked', { page: '/', section: 'beta', cta: /Apply for Beta/, target: '/beta/' }, () => tap('a.x-ann'));
+await expects('home: the beta ribbon', 'cta_clicked', { page: '/', section: 'beta', cta: /Apply for Beta/, target: '/beta' }, () => tap('a.x-ann'));
 await open('/');
 await expects('hero demo: Download App', 'hero_demo', { control: 'phone-download' }, () => tap('.x-phone-dl'));
 }

@@ -1,5 +1,5 @@
 """Run from the repo root: python3 scripts/extract.py
-Pull Hanzo's own markup and data from the captured page into content.js and hanzo.css (nothing rewritten but URLs)."""
+Pull Hanzo's own markup and data from the captured page into content/{agents,products,shell,logos}.ts and hanzo.css (nothing rewritten but URLs)."""
 import os, re, json
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
@@ -60,7 +60,10 @@ for t in o.find_all(string=re.compile(r'^hanzoai/')):
     while el and 'Pushed' not in el.get_text(): el = el.parent
     if el and ab(el) not in cards: cards.append(ab(el))
 C['repos'] = cards
-open('content.js', 'w').write('export default ' + json.dumps(C, ensure_ascii=False) + ';\n')
+# one module per use, so a page's script carries only what it draws (components import the one they need)
+for name, keys in (('agents', 'agents'), ('products', 'products'), ('shell', ('header', 'footer')), ('logos', ('backed', 'trusted'))):
+    v = C[keys] if isinstance(keys, str) else {k: C[k] for k in keys}
+    open(f'content/{name}.ts', 'w').write('export default ' + json.dumps(v, ensure_ascii=False) + ';\n')
 print({k: (len(v) if isinstance(v, list) else len(v)) for k, v in C.items()}, [p['name'] for p in P], [a['name'] for a in ag])
 # their stylesheet, fonts served locally
 css = open('source/hanzo-a.css').read() + '\n' + open('source/hanzo-b.css').read() + '\n' + '\n'.join(re.findall(r'<style[^>]*>(.*?)</style>', h, re.S))

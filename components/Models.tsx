@@ -1,32 +1,23 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import { EASE, Head, Arrow } from './ui';
+import { Head, Arrow } from './ui';
 import { useOpener } from './Opener';
 import { MODELS, media } from '../lib/models';
 
-/* A model card. Enso's film plays while on screen and the card under the pointer or focus plays too (at most two at once, PLAN-COMPONENTS 2.10); a click lifts the picture off the page and opens it into the model's own page. */
+/* A model card: its still at rest; its film loads and plays only under the pointer or focus (so a phone decodes none);
+   a click lifts the picture off the page and opens it into the model's own page. */
 function Card({ m, i, live, setLive }) {
   const vid = useRef(null);
   const box = useRef(null);
   const opener = useOpener();
-  const [inView, setInView] = useState(false);
   const big = i === 0;
-  const shouldPlay = inView;
-
-  useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const el = box.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.25 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  const shouldPlay = live === m.slug;
 
   useEffect(() => {
     const v = vid.current;
     if (!v) return;
-    if (shouldPlay) v.play().catch(() => {});
+    if (shouldPlay && !matchMedia('(prefers-reduced-motion: reduce)').matches) v.play().catch(() => {});
     else v.pause();
   }, [shouldPlay]);
 
@@ -37,13 +28,7 @@ function Card({ m, i, live, setLive }) {
   const leave = () => setLive((a) => (a === m.slug ? null : a));
 
   return (
-    <motion.li
-      className={'x-mcard' + (big ? ' big' : '')}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.55, ease: EASE, delay: 0.03 * i }}
-    >
+    <li className={'x-mcard' + (big ? ' big' : '')}>
       <motion.a
         href={'/' + m.slug}
         className="x-mbtn"
@@ -60,7 +45,7 @@ function Card({ m, i, live, setLive }) {
         <span className="x-mtilt" data-tilt="">
           <span className="x-mmedia">
             <img src={media(m.slug, 'webp')} alt="" />
-            <video ref={vid} src={media(m.slug, 'webm')} muted loop playsInline preload="metadata" aria-hidden="true" onPlaying={(e) => e.currentTarget.classList.add('on')} />
+            <video ref={vid} src={media(m.slug, 'webm')} muted loop playsInline preload="none" aria-hidden="true" onPlaying={(e) => e.currentTarget.classList.add('on')} />
           </span>
           <span className="x-mtext">
             {m.kicker && <span className="x-mkick">{m.kicker}</span>}
@@ -70,7 +55,7 @@ function Card({ m, i, live, setLive }) {
           <span className="x-mtags">{m.tags.map((t) => <span key={t}>{t}</span>)}</span>
         </span>
       </motion.a>
-    </motion.li>
+    </li>
   );
 }
 
@@ -92,7 +77,7 @@ export default function Models() {
   return (
     <section ref={sec} className="x-sec x-models" id="models" data-hz-view="models" aria-labelledby="models-h">
       <div className="x-wrap">
-        <Head title="Frontier AI for everything you build." lede="Language, routing, decisions and creative models." />
+        <Head id="models-h" title="Frontier AI for everything you build." lede="Language, routing, decisions and creative models." />
         <ul className="x-mgrid">{MODELS.map((x, i) => <Card key={x.slug} m={x} i={i} live={live} setLive={setLive} />)}</ul>
         <div className="x-row-links">
           <Arrow href="/pricing">Explore model pricing</Arrow>

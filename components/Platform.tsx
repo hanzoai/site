@@ -4,11 +4,11 @@
    to any product; the name opens into the product's page. On phones the products simply follow one another. */
 import { useLayoutEffect, useRef } from 'react';
 import { A } from './kit';
-import C from '../content';
+import PRODUCTS from '../content/products';
 import Lines from './v2/Lines';
 import Chapters from './v2/Chapters';
 
-const P = C.products;
+const P = PRODUCTS;
 const site = (h) => h.replace('https://hanzo.ai', '') || '/';
 
 /* Hanzo's product screen, drawn at the width it was made for and zoomed (layout, not a bitmap) to fill the frame. */

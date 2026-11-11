@@ -88,7 +88,7 @@ export default function Cheaper() {
   return (
     <section className="x-sec x-cheaper" id="cheaper" data-hz-view="cheaper" aria-labelledby="cheaper-h">
       <div className="x-wrap">
-        <Head title="The same intelligence. A smaller bill." lede="Enso routes each answer to the right model. Kai answers a decision directly." />
+        <Head id="cheaper-h" title="The same intelligence. A smaller bill." lede="Enso routes each answer to the right model. Kai answers a decision directly." />
         <div className="x-races"><EnsoCard /><KaiCard /></div>
         <div className="x-row-links">
           <Arrow href="https://docs.hanzo.ai/docs/models/enso">Which Enso tier for which job</Arrow>

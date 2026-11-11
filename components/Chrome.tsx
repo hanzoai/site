@@ -1,6 +1,6 @@
 'use client';
 /* The shell every page shares (mounted once in app/layout.jsx; pages import nothing from here except Marquee):
-   - Smooth: Lenis weighted scrolling (fine pointers, loaded after first paint), the site-wide reduced-motion policy (MotionConfig reducedMotion="user"),
+   - Smooth: the site-wide reduced-motion policy (MotionConfig reducedMotion="user"), native scrolling,
      [data-off] on any <main> section that is off screen (pause your CSS loops with `[data-off] .x { animation-play-state: paused }`),
      and every new page starting at its top.
    - Progress, Header, Footer: the scroll bar and the behaviour of Hanzo's own header and footer (their HTML is
@@ -9,6 +9,7 @@
    - Marquee: <Marquee items={[{ name, src, href }]} label="Trusted by" reverse /> an endless logo strip (it stands still
      under reduced motion and rests under the pointer or focus). An item with { w, h, hang } is a wordmark drawn at w x h px
      and sat on the strip's one baseline: hang is how far the logo falls below its text (a smile, a descender, a mark).
+     `still` draws the list once in a row with its label beside it, where the screen holds them all (wide screens).
    - After every in-site navigation, focus moves to the new page's <main> h1 (tabindex -1, no ring, no scroll). */
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
@@ -19,47 +20,8 @@ import HeaderTools from './HeaderTools';
 import { onDomChange } from '../lib/domwatch';
 import { lean } from '../lib/tilt';
 
-/* Smooth, weighted scrolling (Lenis) and one motion policy for the whole page. */
+/* One motion policy for the whole page. Scrolling is the browser's own: nothing sits between the wheel and the page. */
 export function Smooth({ children }) {
-  // Lenis loads after first paint (it is not needed to read the page) and only for fine pointers: touch keeps native
-  // scrolling, which Lenis would not change anyway (PLAN 2.13: Lenis off the first-load path, skip touch)
-  useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !matchMedia('(pointer: fine)').matches) return;
-    let l = null, dead = false;
-    const onAnchor = (e) => {
-      if (!l || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      const a = e.target.closest?.('a[href]');
-      const raw = a?.getAttribute('href');
-      if (!raw || !/^(#|\/#|\.#)/.test(raw)) return;
-      const hash = raw.slice(raw.indexOf('#'));
-      if (hash === '#' || hash === '#top') {
-        e.preventDefault();
-        l.scrollTo(0);
-        return;
-      }
-      let id = hash.slice(1);
-      try { id = decodeURIComponent(id); } catch {}
-      const el = document.getElementById(id);
-      if (!el) return;
-      e.preventDefault();
-      if (location.hash !== hash) {
-        history.pushState(null, '', hash);
-        dispatchEvent(new HashChangeEvent('hashchange'));
-      }
-      requestAnimationFrame(() => {
-        if (!l) return;
-        const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
-        l.scrollTo(el, { offset: -margin });
-      });
-    };
-    import('lenis').then(({ default: Lenis }) => {
-      if (dead) return;
-      l = new Lenis({ autoRaf: true, lerp: 0.105, wheelMultiplier: 0.9, anchors: false });
-      window.__lenis = l;
-      document.addEventListener('click', onAnchor);
-    });
-    return () => { dead = true; document.removeEventListener('click', onAnchor); l?.destroy(); window.__lenis = null; };
-  }, []);
   // every [data-tilt] card leans toward a mouse (or the phone's tilt) and a light follows it: one listener, lib/tilt.js
   useEffect(() => lean(), []);
   // every section pauses its animations while it is off screen
@@ -154,7 +116,7 @@ export function Footer() {
 
 /* An endless strip of logos. CSS drifts it (a transform on the compositor, nothing runs per frame in script); it rests under
    the pointer and on focus, turns the other way with `reverse`, and stands still under reduced motion and off screen. */
-export function Marquee({ items, label, reverse = false, view }) {
+export function Marquee({ items, label, reverse = false, view, still = false }) {
   // each half holds the list twice so one half is always wider than the screen
   const row = (k) => items.map((l) => {
     const hidden = k > 0;
@@ -165,7 +127,7 @@ export function Marquee({ items, label, reverse = false, view }) {
     );
   });
   return (
-    <section className="x-marquee" aria-label={label} data-hz-view={view}>
+    <section className={'x-marquee' + (still ? ' still' : '')} aria-label={label} data-hz-view={view}>
       <p className="x-kicker">{label}</p>
       <div className="x-mq-view">
         <div className={'x-mq-track' + (reverse ? ' rev' : '')}>

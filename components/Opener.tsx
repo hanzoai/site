@@ -102,11 +102,15 @@ export function OpenerProvider({ children }) {
   const router = useRouter();
   const canvas = useRef(null);
   const veil = useRef(null);
-  const gl = useRef(null);
+  const gl = useRef(undefined);
   const busy = useRef(false);
 
-  useEffect(() => { gl.current = makeGL(canvas.current); }, []);
-  const off = () => matchMedia('(prefers-reduced-motion: reduce)').matches || !gl.current;
+  // the context is made on the first open, not on load: most visits never open a card
+  const off = () => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+    if (gl.current === undefined) gl.current = makeGL(canvas.current);
+    return !gl.current;
+  };
   const prefetch = useCallback((href) => { try { router.prefetch(href); } catch {} }, [router]);
 
   const fly = useCallback((from, to, dur) => new Promise((ok) => {

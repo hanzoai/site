@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import C from '../content.ts';
+import AGENTS from '../content/agents.ts';
 import { lab } from './lab.ts';
 
-const icon = (name) => C.agents.find((a) => a.name === name).icon;
+const icon = (name) => AGENTS.find((a) => a.name === name).icon;
 
 // the chart's points, as the price list and the runs name them
 const WEAR = [

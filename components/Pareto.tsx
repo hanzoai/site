@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useInView } from 'motion/react';
-import { EASE, Head, Arrow, Rise } from './ui';
+import { motion } from 'motion/react';
+import { Head, Arrow } from './ui';
 import useFigures from './home/useFigures';
 import { lab } from './lab';
 
@@ -48,7 +48,6 @@ export default function Pareto() {
   const { GPQA } = useFigures();
   const D = useMemo(() => pointsOf(GPQA), [GPQA]);
   const box = useRef(null);
-  const seen = useInView(box, { once: true, amount: 0.45 });
   const [hot, setHot] = useState(null);
   const [ph, setPh] = useState(false);
   useEffect(() => {
@@ -102,8 +101,8 @@ export default function Pareto() {
   return (
     <section className="x-sec x-pareto" id="pareto" data-hz-view="pareto" aria-labelledby="pareto-h">
       <div className="x-wrap">
-        <Head title="A New Pareto Frontier of Intelligence" lede="GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers." />
-        <Rise className="x-plot" data-tilt="" ref={box} onPointerDown={(e) => { if (!e.target.closest('.pt, .x-tip')) setHot(null); }}>
+        <Head id="pareto-h" title="A New Pareto Frontier of Intelligence" lede="GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers." />
+        <div className="x-plot" data-tilt="" ref={box} onPointerDown={(e) => { if (!e.target.closest('.pt, .x-tip')) setHot(null); }}>
           <div className="x-plot-read" aria-live="polite">
             <span className="x-mono">Budget · ${c < 10 ? c.toFixed(2) : Math.round(c)} per 1,000 questions</span>
             <b>{pick ? `${pick.full} · ${pick.a.toFixed(1)}%` : '—'}</b>
@@ -117,7 +116,7 @@ export default function Pareto() {
             <text x={L} y={T - (ph ? 16 : 8)} className="tick">GPQA Diamond %</text>
             <text x={R} y={B + (ph ? 112 : 50)} textAnchor="end" className="tick">cheaper ← $ per 1,000 questions → dearer</text>
             <motion.rect x={L} y={T} height={B - T} className="x-plot-zone" initial={{ width: cap - L }} animate={{ width: cap - L }} transition={{ type: 'spring', stiffness: 400, damping: 40 }} />
-            <motion.path d={path} className="front" initial={{ pathLength: 0 }} animate={{ pathLength: seen ? 1 : 0 }} transition={{ duration: 1.6, ease: EASE, delay: 0.9 }} />
+            <path d={path} className="front" />
             {hot && (
               <g className="guide" aria-hidden="true">
                 <line x1={hot.x} x2={hot.x} y1={hot.y} y2={B} /><line x1={L} x2={hot.x} y1={hot.y} y2={hot.y} />
@@ -125,7 +124,6 @@ export default function Pareto() {
             )}
             {/* Enso's tiers are drawn last, on top, as the app draws them; the cards still enter in cost order */}
             {[...pts].sort((p, q) => p.e - q.e).map((p) => {
-              const i = pts.indexOf(p);
               const lit = (hot ? hot.n === p.n : true) && p.x <= cap;
               const best = pick && pick.n === p.n;
               const rad = u * (p.e ? px.ours : px.r), m = p.mark, ms = u * (p.e ? px.h : px.mark);
@@ -145,9 +143,9 @@ export default function Pareto() {
                   className={'pt' + (p.e ? ' enso' : '') + (p.r ? ' rep' : '') + (best ? ' best' : '') + (hot && hot.n === p.n ? ' hot' : '')}
                   {...(p.src ? {} : { tabIndex: 0, role: 'img', 'aria-label': p.say })}
                   onPointerEnter={() => show(p)} onPointerLeave={hide} onFocus={() => show(p)} onBlur={() => hide()}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={seen ? { opacity: lit ? 1 : 0.28, scale: 1 } : {}}
-                  transition={{ type: 'spring', stiffness: 360, damping: 20, delay: seen && !hot ? 0.15 + i * 0.05 : 0 }}
+                  initial={false}
+                  animate={{ opacity: lit ? 1 : 0.28 }}
+                  transition={{ duration: 0.2 }}
                   style={{ originX: p.x + 'px', originY: p.y + 'px', transformBox: 'view-box' }}
                 >
                   {p.src ? <a href={p.src} target="_blank" rel="noopener noreferrer" aria-label={p.say}>{body}</a> : body}
@@ -183,7 +181,7 @@ export default function Pareto() {
             Dashed discs are scores reported by a lab or an independent evaluation:
             {pts.filter((p) => p.src).map((p) => <a key={p.n} href={p.src} target="_blank" rel="noopener noreferrer">{p.full} ↗</a>)}
           </p>
-        </Rise>
+        </div>
         <div className="x-row-links">
           <Arrow href="/enso">How Enso routes</Arrow>
           <Arrow href="https://docs.hanzo.ai/docs/guides/cookbook/route">Route your own requests with Enso</Arrow>

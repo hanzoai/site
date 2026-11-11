@@ -1,18 +1,12 @@
-@import '../home/journey/journey.css'; /* the products journey (components/home/Platform.jsx) */
-/* Home's own layer: the spine (an on-this-page index at the right edge, desktop only) */
-.xh-spine { position: fixed; right: 18px; top: 50%; z-index: 40; transform: translateY(-50%); color: #fff; mix-blend-mode: difference; opacity: 0; pointer-events: none; transition: opacity .45s var(--ease); }
-.xh-spine.on { opacity: 1; pointer-events: auto; }
-.xh-spine ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-.xh-spine a { position: relative; display: flex; align-items: center; justify-content: flex-end; width: 32px; height: 28px; margin-left: auto; color: inherit; text-decoration: none; }
-.xh-spine a::after { content: ''; width: 14px; height: 2px; border-radius: 1px; background: currentColor; opacity: .35; transform-origin: 100% 50%; transition: transform .35s var(--ease), opacity .35s var(--ease); }
-.xh-spine a[aria-current]::after { opacity: 1; transform: scaleX(1.7); }
-.xh-spine span { position: absolute; right: 34px; top: 50%; max-width: 34ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 13px/1 var(--sans); letter-spacing: -.005em; opacity: 0; transform: translate(6px, -50%); transition: opacity .25s var(--ease), transform .3s var(--ease); pointer-events: none; }
-.xh-spine:hover span, .xh-spine a:focus-visible span { opacity: .75; transform: translate(0, -50%); }
-.xh-spine a[aria-current] span { opacity: 1; }
-.xh-spine:not(:hover) a[aria-current]:not(:focus-visible) span { opacity: 0; }
-.xh-spine a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 6px; }
-@media (max-width: 1100px), (pointer: coarse) { .xh-spine { display: none; } }
-@media (prefers-reduced-motion: reduce) { .xh-spine, .xh-spine a::after, .xh-spine span { transition: none; } }
+/* The landing's rhythm, as hanzo.ai drew it before the split (hanzo-inc/app components/home, 6 Nov): every section
+   80px above and below on one ground, a 26px heading with its 14px lede under it, the content 40px below. */
+.x-home > .x-sec { padding: 80px 0; }
+html main.x-home > section.x-sec { background: none; }
+.x-home .x-head { margin-bottom: 40px; }
+.x-home .x-head h2 { font-size: 26px; line-height: 1.22; font-weight: 500; letter-spacing: -.01em; max-width: none; }
+.x-home .x-head.dark h2 { color: var(--ink); }
+.x-home .x-head p, .x-home .x-head.dark p { margin-top: 14px; max-width: 760px; font-size: 14px; line-height: 1.65; color: var(--soft); }
+@media (max-width: 640px) { .x-home > .x-sec { padding: 56px 0; } .x-home .x-head { margin-bottom: 28px; } }
 
 /* Pricing on the home page: hanzo.ai's plan cards at full size, each with its mark and a mark for every line */
 .x-pricing .x-plans { align-items: stretch; }
@@ -42,7 +36,6 @@
   .x-auth-b.solid:hover { background: light-dark(#262626, var(--primary-hover)); border-color: light-dark(#262626, var(--primary-hover)); }
 }
 html:not(.js) .xh-cmd:empty::after { content: attr(data-cmd); }
-html:not(.js) .x-hero [style*='opacity'], html:not(.js) .x-hero .x-line-in { opacity: 1 !important; transform: none !important; }
 
 /* Agents: the two panels may not grow wider than the phone (the command rows were cut at the right edge) */
 .x-agents .x-panels > *, .x-agents .x-panel { min-width: 0; }
@@ -65,3 +58,35 @@ html:not(.js) .x-hero [style*='opacity'], html:not(.js) .x-hero .x-line-in { opa
 /* dark: GitHub's mark is its brand black (#181717), which vanishes on the dark tile; GitHub's own rule for a dark ground
    is the mark in white, so in dark it takes Hanzo's foreground like the other monochrome marks in the dock */
 html:not(.light) .x-agents .x-ico svg[color='#181717'] { color: var(--foreground); }
+
+/* models: Enso twice a model's width, two rows of 220px (6 Nov); the two links at either end */
+@media (min-width: 1101px) {
+  .x-home .x-mgrid { grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(2, 220px); gap: 12px; perspective: none; }
+}
+.x-home .x-models .x-row-links { justify-content: space-between; margin-top: 48px; }
+
+/* open source: every figure on one line across the six tiles; four repositories, one row */
+.x-home .x-tile { gap: 4px; min-height: 0; }
+.x-home .x-tile-n { order: 2; margin-top: 6px; }
+.x-home .x-tile-spark { order: 3; margin-top: 4px; }
+.x-home .x-tile-s { order: 4; }
+.x-home .x-repos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.x-home .x-oss .x-row-links { justify-content: flex-end; }
+@media (max-width: 1100px) { .x-home .x-repos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .x-home .x-repos { grid-template-columns: minmax(0, 1fr); } .x-home .x-repo:nth-child(n + 3) { display: none; } }
+
+/* pricing: its one centred heading at 52px, the tabs 48px under it */
+.x-home .x-head.center { margin-bottom: 48px; }
+.x-home .x-head.center h2 { font-size: 52px; line-height: 1.19; letter-spacing: -.012em; }
+@media (max-width: 640px) { .x-home .x-head.center h2 { font-size: 40px; } }
+
+/* the logo strips' label, in the mono of the page's other labels, as written */
+.x-home .x-marquee .x-kicker { text-transform: none; letter-spacing: 0; font-size: 12.5px; }
+
+/* agents: twelve marks a row, centred; six on a phone */
+.x-home .x-dock { display: grid; grid-template-columns: repeat(12, 44px); justify-content: center; gap: 16px 20px; }
+@media (max-width: 640px) {
+  .x-home .x-dock { grid-template-columns: repeat(6, 44px); justify-content: space-between; gap: 14px 0; }
+  .x-home .x-tile { padding: 14px; }
+}
+.x-home .x-tile-k { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

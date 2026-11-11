@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { NAV } from '../lib/nav.ts';
-import C from '../content.ts';
+import C from '../content/shell.ts';
 
 const investors = /^(https:\/\/hanzo\.ai)?\/investors\/?$/;
 

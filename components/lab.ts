@@ -1,14 +1,14 @@
 // The mark a lab wears on its points in the Pareto plot: one drawing per brand. A lab with a tile in the agents dock
-// (content.js C.agents) wears that tile's own drawing and colours; Z.ai has none there, so its mark is hanzoai/icons'
+// (content/agents.ts) wears that tile's own drawing and colours; Z.ai has none there, so its mark is hanzoai/icons'
 // (24 units, as hanzo-inc/app draws it), in the colour Z.ai publishes. Enso's tiers wear Hanzo's H, the Hanzo Dev tile.
 // A model of any other lab wears nothing, as in the app.
-import C from '../content.ts';
+import AGENTS from '../content/agents.ts';
 
 const ZAI = { box: '0 0 24 24', rule: 'evenodd', inner: '<path fill="#3859FF" d="M12.105 2L9.927 4.953H.653L2.83 2h9.276zM23.254 19.048L21.078 22h-9.242l2.174-2.952h9.244zM24 2L9.264 22H0L14.736 2H24z"></path>' };
 
 // a dock tile's icon, as markup: a flat mark is an inline svg, a gradient mark a file
 const tile = (name) => {
-  const html = C.agents.find((a) => a.name === name)?.icon;
+  const html = AGENTS.find((a) => a.name === name)?.icon;
   if (!html) throw new Error(`lab: the agents dock has no tile named ${name}`);
   const src = /<img[^>]*\ssrc="([^"]+)"/.exec(html)?.[1];
   if (src) return { src };
