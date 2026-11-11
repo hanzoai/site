@@ -63,7 +63,7 @@ const PROGRAMS = {
     ],
   },
   partner: {
-    name: 'Design partner', gets: 'Build it with the team. Chosen from applications.', film: null,
+    name: 'Design partner', gets: 'Build it with the team. Chosen from applications.', film: 'kai',
     asks: [
       { id: 'building', q: 'What are you building with Hanzo?', kind: 'line' },
       { id: 'size', q: 'How big is your team?', kind: 'one', options: ['1-49', '50-249', '250-999', '1000-4999', '5000+'] },
@@ -288,7 +288,10 @@ function Apply({ program }) {
   const cut = { initial: { y: calm ? 0 : dir > 0 ? '104%' : '-104%' }, animate: { y: 0 }, transition: { duration: calm ? 0 : 0.5, ease: EASE } };
 
   return (
-    <main className={'xp xba zf ' + program}>
+    <main className={'xp xba zf ' + program} data-ask="off">
+      <button type="button" className="xba-close" onClick={exit} aria-label="Exit application" title="Exit (Esc)">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
+      </button>
       <div className="xp-wrap xba-in">
         <Pass p={p} program={program} asks={asks} got={got} at={step} open={!gate} go={(i) => { setGate(false); to(i); }} />
         <section className="xba-form" aria-label="Apply to the Hanzo beta">

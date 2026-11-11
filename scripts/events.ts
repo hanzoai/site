@@ -41,10 +41,9 @@ const state = { lead: 'filed', news: 'pending' };
 await ctx.route(/.*/, (r) => r.abort()); // nothing else leaves the machine
 await ctx.route(/^https:\/\/hanzo\.ai\//, (route) => {
   const p = decodeURIComponent(new URL(route.request().url()).pathname);
-  let f = path.join(OUT, p);
-  if (p.endsWith('/')) f = path.join(f, 'index.html');
-  if (!fs.existsSync(f) && fs.existsSync(f + '.html')) f += '.html';
-  if (!fs.existsSync(f) || fs.statSync(f).isDirectory()) return route.fulfill({ status: 404, body: 'missing' });
+  const clean = p.replace(/\/$/, '') || '/index';
+  const f = [path.join(OUT, p), path.join(OUT, clean + '.html'), path.join(OUT, p, 'index.html')].find((c) => fs.existsSync(c) && !fs.statSync(c).isDirectory());
+  if (!f) return route.fulfill({ status: 404, body: 'missing' });
   route.fulfill({ status: 200, body: fs.readFileSync(f), headers: { 'content-type': TYPES[path.extname(f)] || 'application/octet-stream' } });
 });
 await ctx.route(/^https:\/\/api\.hanzo\.ai\//, (route) => {
@@ -368,6 +367,7 @@ if (on('beta')) {
 await open('/beta/');
 await expects('beta: the landing is viewed', 'beta_viewed', { initial_program: 'none', resumed: false });
 await expects('beta: a pass is chosen', 'beta_track_selected', { program: 'research', program_name: 'Research access', from_key: false }, () => tap('.xbt-hit', 1));
+await open('/beta/');
 await expects('beta: Feedback', 'beta_feedback_opened', { from: 'home', program: 'none' }, () => tap('.xbt-foot a.xbt-big'));
 await expects('beta: Book a call', 'beta_call_booked', { from: 'landing' }, () => tap('.xbt-foot a[href="https://cal.com/hanzo"]'));
 await page.evaluate(() => localStorage.clear());
