@@ -144,10 +144,10 @@ export const OFFERS = Object.fromEntries(Object.values(LIVE.plans).filter((p) =>
 
 const back = (page) => encodeURIComponent(`${APP}/${page}`);
 
-// card checkout for a plan id on hanzo.app; `page` is where the buyer lands afterwards (hanzo.app/<page>)
+// card checkout for a plan id on hanzo.ai/pay; `page` is where the buyer lands afterwards (hanzo.app/<page>)
 export const checkout = (id, page = 'chat') => `/pay/confirm/card?plan=${id}&returnUrl=${back(page)}`;
 // the same, as a full URL
-export const checkoutAbs = (id, page = 'chat') => APP + checkout(id, page);
+export const checkoutAbs = (id, page = 'chat') => SITE + checkout(id, page);
 // Team card checkout (/pricing's Team card): from the plan's minimum seats, yearly or monthly
 export const teamCheckout = (annual, quantity = SEATS.standard.min, page = 'chat') => `/pay/confirm/card?plan=team${annual ? '&interval=year' : ''}&quantity=${quantity}&returnUrl=${back(page)}`;
 // Team cart with a seat count (the buying specialist's quote)

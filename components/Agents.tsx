@@ -74,7 +74,7 @@ const STEPS = [
   ['Sign up with a wallet', 'POST hanzo.id/v1/iam/web3/verify'],
   ['Get an API key', 'POST /v1/account/keys'],
   ['Use AI', 'POST /v1/chat/completions'],
-  ['Top up in USDC or Card', 'POST /v1/billing/crypto/deposit · hanzo.app/pay'],
+  ['Top up in USDC or Card', 'POST /v1/billing/crypto/deposit · hanzo.ai/pay'],
 ];
 
 // a few colours for the script, in the page's own words: comments, strings, keywords
