@@ -38,7 +38,7 @@ function useSheet(onClose) {
 async function askHanzo(q, out, signal, calm) {
   const desc = document.querySelector('meta[name="description"]')?.content || '';
   const page = `The visitor is reading https://hanzo.ai${location.pathname}, the page "${document.title}"${desc ? ': ' + desc : ''}. Answer as Hanzo, briefly.`;
-  const res = await fetch(CHAT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal, body: JSON.stringify({ model: 'enso', messages: [{ role: 'system', content: page }, { role: 'user', content: q }] }) });
+  const res = await fetch(CHAT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal, body: JSON.stringify({ model: 'enso-auto', messages: [{ role: 'system', content: page }, { role: 'user', content: q }] }) });
   if (!res.ok || !res.body) throw new Error('chat ' + res.status);
   const sse = /event-stream/.test(res.headers.get('content-type') || '');
   const rd = res.body.getReader(), dec = new TextDecoder();

@@ -135,7 +135,7 @@ const GO = checkout(PLANS.go.id);
 const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'enso.go-' + slot} className="eo-go">{`Every model through Enso, Go is $${PLANS.go.price}/month`}</Cta>;
 
 const TIERS = [
-  { name: 'Enso Flash', code: 'enso', inp: '$0.33', out: '$1.65', ctx: true, axis: 0, why: 'at volume', wb: 'https://platform.hanzo.ai/workbench?model=enso', desc: 'For chat, extraction, classification and simple agent steps at volume.' },
+  { name: 'Enso Flash', code: 'enso-flash', inp: '$0.33', out: '$1.65', ctx: true, axis: 0, why: 'at volume', wb: 'https://platform.hanzo.ai/workbench?model=enso-flash', desc: 'For chat, extraction, classification and simple agent steps at volume.' },
   { name: 'Enso Pro', code: 'enso-pro', inp: '$4.40', out: '$22', ctx: '262K', axis: 1, why: 'while someone waits', wb: 'https://platform.hanzo.ai/workbench?model=enso-pro', desc: 'For coding, code review and agents that answer while someone waits.' },
   { name: 'Enso Ultra', code: 'enso-ultra', inp: '$5.50', out: '$27.50', ctx: true, axis: 2, why: 'a wrong answer is expensive', wb: 'https://platform.hanzo.ai/workbench?model=enso-ultra', desc: 'For work where a wrong answer is expensive: research, security review and long autonomous runs.', more: 'For hard reasoning over long material: it thinks at high effort, holds a 1M-token context and reads images.' },
 ];

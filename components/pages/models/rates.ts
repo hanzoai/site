@@ -4,8 +4,8 @@
    (PLAN-COMPONENTS 2.15). Browsers refresh it from api.hanzo.ai when the gateway answers. */
 // id, name, in $/M, out $/M, context. Hanzo's catalogue as api.hanzo.ai lists it; refreshed in the browser when the gateway answers.
 export const ROWS = [
-  ['enso', 'Enso', 0.33, 1.65, 900000], ['enso-auto', 'Enso', 0.33, 1.65, 900000], ['enso-flash', 'Enso Flash', 0.33, 1.65, 900000],
-  ['enso-free', 'Enso Free', 0, 0, 1000000], ['enso-pro', 'Enso Pro', 4.4, 22, 1000000], ['enso-ultra', 'Enso Ultra', 5.5, 27.5, 1000000],
+  ['enso-auto', 'Enso Auto', 0.33, 1.65, 900000], ['enso-flash', 'Enso Flash', 0.33, 1.65, 900000],
+  ['enso-pro', 'Enso Pro', 3.3, 16.5, 1000000], ['enso-max', 'Enso Max', 4.3, 21.5, 1000000], ['enso-ultra', 'Enso Ultra', 5.236, 26.18, 1000000],
   ['zen6', 'Zen6', 0.6, 2.4, 1048576], ['zen6-flash', 'Zen6 Flash', 0.6, 2.4, 1048576], ['zen6-coder', 'Zen6 Coder', 1.65, 13, 1048576],
   ['zen6-free', 'Zen6 Free', 0, 0, 1000000], ['zen6-max', 'Zen6 Max', 28, 168, 1048576],
   ['zen5', 'Zen5', 0, 0, 1000000], ['zen5-pro', 'Zen5 Pro', 0, 0, 1000000], ['zen5-coder', 'Zen5 Coder', 0, 0, 1000000], ['zen5-flash', 'Zen5 Flash', 0, 0, 1000000],

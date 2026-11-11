@@ -5,8 +5,8 @@
 export const COMMERCE = 'https://commerce.hanzo.ai';
 export const PLANS_URL = `${COMMERCE}/v1/billing/plans`;
 export const RUNS = 'https://api.hanzo.ai/v1/research/runs?org=hanzo';
-export const MODELS = `${COMMERCE}/v1/models?id=anthropic/claude-fable-5.1,anthropic/claude-opus-5,anthropic/claude-sonnet-5.5,enso,enso-flash,enso-max,enso-pro,enso-ultra,kai,openai/gpt-5.5,openai/gpt-6-astra,zen6,zen6-coder,zen6-flash,zen6-max,zen-embedding,zen-embedding-3`;
-export const PRICES = `${COMMERCE}/v1/pricing/models?id=anthropic/claude-fable-5,anthropic/claude-fable-5.1,anthropic/claude-haiku-5.5,anthropic/claude-opus-4.8,anthropic/claude-opus-5.5,anthropic/claude-sonnet-5,anthropic/claude-sonnet-5.5,deepseek/deepseek-v4-pro,openai/gpt-4o,openai/gpt-5.5,openai/gpt-5.6-sol,openai/gpt-6-sol,moonshotai/kimi-k3,x-ai/grok-4.7,z-ai/glm-5.3,enso,enso-flash,enso-pro,enso-max,enso-ultra,kai,zen6-flash,zen6,zen6-coder,zen6-max,zen-embedding,zen-embedding-3,zen5,zen5-coder,zen5-mini,zen5-pro,zen-vl,zen-guard`;
+export const MODELS = `${COMMERCE}/v1/models?id=anthropic/claude-fable-5.1,anthropic/claude-opus-5,anthropic/claude-sonnet-5.5,enso-auto,enso-flash,enso-max,enso-pro,enso-ultra,kai,openai/gpt-5.5,openai/gpt-6-astra,zen6,zen6-coder,zen6-flash,zen6-max,zen-embedding,zen-embedding-3`;
+export const PRICES = `${COMMERCE}/v1/pricing/models?id=anthropic/claude-fable-5,anthropic/claude-fable-5.1,anthropic/claude-haiku-5.5,anthropic/claude-opus-4.8,anthropic/claude-opus-5.5,anthropic/claude-sonnet-5,anthropic/claude-sonnet-5.5,deepseek/deepseek-v4-pro,openai/gpt-4o,openai/gpt-5.5,openai/gpt-5.6-sol,openai/gpt-6-sol,moonshotai/kimi-k3,x-ai/grok-4.7,z-ai/glm-5.3,enso-auto,enso-flash,enso-pro,enso-max,enso-ultra,kai,zen6-flash,zen6,zen6-coder,zen6-max,zen-embedding,zen-embedding-3,zen5,zen5-coder,zen5-mini,zen5-pro,zen-vl,zen-guard`;
 
 const need = (ok, what) => { if (!ok) throw new Error('unexpected data: ' + what); };
 

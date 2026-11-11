@@ -107,7 +107,7 @@ function Calculator({ doc, served }) {
   const [mode, setMode] = useState('tokens');
   const [rows, setRows] = useState(() => (choices[0] ? [{ model: choices[0].id, mTokIn: 500, mTokOut: 50, spend: 5000, share: 10 }] : []));
   const [people, setPeople] = useState(50);
-  const [sku, setSku] = useState(() => skus.find((m) => m.name === 'enso')?.name ?? skus[0]?.name ?? '');
+  const [sku, setSku] = useState(() => skus.find((m) => m.name === 'enso-auto')?.name ?? skus[0]?.name ?? '');
   const [rack, setRack] = useState(() => racks[0]?.gpu ?? '');
   const [count, setCount] = useState(1);
   const config = racks.find((g) => g.gpu === rack) ?? racks[0];

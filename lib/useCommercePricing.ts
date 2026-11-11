@@ -46,8 +46,16 @@ export function buildModelGroups(modelsSnap = SNAP_MODELS) {
 
   const ensoDefs = [
     {
-      id: 'enso-flash',
+      id: 'enso-auto',
       fallbackOrder: 1,
+      fallbackName: 'Enso Auto',
+      fallbackCtx: 1000000,
+      fallbackDesc: 'Adaptive Enso router — selects the right Enso model per request by reasoning depth and task, billing at the model that answers.',
+      chips: ['1M context window', 'Adaptive router'],
+    },
+    {
+      id: 'enso-flash',
+      fallbackOrder: 2,
       fallbackName: 'Enso Flash',
       fallbackCtx: 262144,
       fallbackDesc: 'Fast, economical Enso model for high-volume, low-latency everyday chat, coding, and tool calls.',
@@ -55,7 +63,7 @@ export function buildModelGroups(modelsSnap = SNAP_MODELS) {
     },
     {
       id: 'enso-pro',
-      fallbackOrder: 2,
+      fallbackOrder: 3,
       fallbackName: 'Enso Pro',
       fallbackCtx: 1000000,
       fallbackDesc: 'Balanced frontier reasoning and coding model for production agents, tool use, and repo-scale engineering.',
@@ -63,7 +71,7 @@ export function buildModelGroups(modelsSnap = SNAP_MODELS) {
     },
     {
       id: 'enso-max',
-      fallbackOrder: 3,
+      fallbackOrder: 4,
       fallbackName: 'Enso Max',
       fallbackCtx: 1000000,
       fallbackDesc: 'Extended frontier reasoning model for deep multi-step architecture, research, and autonomous coding loops.',
@@ -71,7 +79,7 @@ export function buildModelGroups(modelsSnap = SNAP_MODELS) {
     },
     {
       id: 'enso-ultra',
-      fallbackOrder: 4,
+      fallbackOrder: 5,
       fallbackName: 'Enso Ultra',
       fallbackCtx: 1000000,
       fallbackDesc: 'Adaptive fan-out frontier model — probes a task-appropriate model, escalates to a top-K panel when needed, then verifies and selects the best answer.',
@@ -203,7 +211,7 @@ export function buildModelGroups(modelsSnap = SNAP_MODELS) {
     {
       h: 'Hanzo Enso',
       id: 'xpr-enso-h',
-      d: 'Flagship frontier models — Enso Flash, Enso Pro, Enso Max, and Enso Ultra. Metered per million tokens via one API key.',
+      d: 'Flagship frontier models — Enso Auto, Enso Flash, Enso Pro, Enso Max, and Enso Ultra. Metered per million tokens via one API key.',
       link: ['Explore Enso', '/enso'],
       rows: ensoRows,
     },

@@ -274,7 +274,7 @@ const dollars = (v) => (v == null ? '—' : '$' + (v > 0 && v < 1 ? v.toFixed(3)
    content/live/models/<lab>/, content/live/models.json's price list and /pricing's API tab. Zen6, Zen6 Flash,
    Claude Fable 5, GPT-3.5 Turbo 0613, Grok 4.20, the rest of the Zen6 family, Zen Embedding 3, the creative models and
    Zen 7 print no price of their own, so the rows show none ("—"). Never a guessed price. */
-const PRICED = new Set(['enso', 'enso-flash', 'enso-pro', 'enso-ultra', 'zen5', 'zen5-pro', 'zen5-coder', 'zen5-flash', 'zen5-mini',
+const PRICED = new Set(['enso-auto', 'enso-flash', 'enso-pro', 'enso-max', 'enso-ultra', 'zen5', 'zen5-pro', 'zen5-coder', 'zen5-flash', 'zen5-mini',
   'zen-vl', 'zen-embedding', 'zen-guard', 'kai', 'google/gemini-2.5-pro', 'deepseek/deepseek-chat', 'meta/muse-glimmer-30b', 'cohere/command-a']);
 const cost = (r, i) => (!r || !PRICED.has(r[0]) || r[2] == null ? '—' : r[2] === 0 && r[3] === 0 ? 'Free' : dollars(r[i]));
 const side = (v) => (v === 0 ? 'Free' : dollars(v));
@@ -289,10 +289,11 @@ const ALL = Object.fromEntries([...ROWS, ...OTHERS].map((r) => [r[0], r]));
 
 /* ---------- 2. the catalogue: every model in one list, its price in and out, and "Use it now" on each ---------- */
 const ENSO = {
-  enso: ['Enso', '900K', "Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow.", ['text']],
-  'enso-auto': ['Enso', '900K', "Routes each request to one tier by the reasoning depth it asks for: enso-flash at off, none, minimal, low, default; enso-pro at medium, high; enso-ultra at xhigh, max. It bills at the price of the tier that answers; the price shown is a request's that states no depth. When nothing pays for that tier it answers on enso-free, at no charge, and says so.", ['text']],
-  'enso-flash': ['Enso Flash', '900K', 'Fast, economical Enso tier for high-volume, low-latency everyday work, with 1M-context overflow.', ['text']],
-  'enso-ultra': ['Enso Ultra', '1M', 'Adaptive fan-out — probes a task-appropriate model, escalates to a top-K panel only when needed, then verifies-then-selects the best answer.', ['text']],
+  'enso-auto': ['Enso Auto', '1M', "Adaptive Enso router — selects the right Enso model per request by reasoning depth and task, billing at the model that answers.", ['text']],
+  'enso-flash': ['Enso Flash', '262K', 'Fast, economical Enso model for high-volume, low-latency everyday chat, coding, and tool calls.', ['text']],
+  'enso-pro': ['Enso Pro', '1M', 'Balanced frontier reasoning and coding model for production agents, tool use, and repo-scale engineering.', ['text']],
+  'enso-max': ['Enso Max', '1M', 'Extended frontier reasoning model for deep multi-step architecture, research, and autonomous coding loops.', ['text']],
+  'enso-ultra': ['Enso Ultra', '1M', 'Adaptive fan-out — probes a task-appropriate model, escalates to a top-K panel only when needed, then verifies and selects the best answer.', ['text']],
 };
 const ZEN = {
   zen6: ['Zen6', '1M', null, ['text']],
@@ -521,7 +522,7 @@ function Catalogue({ makers }) {
 }
 /* ---------- 7. try any model: the request that changes its model by itself ---------- */
 const REQ = [
-  { tab: 'Enso', id: 'enso', d: "Hanzo's proprietary frontier model — Opus-class reasoning by default with 1M-context overflow.", ctx: '900K' },
+  { tab: 'Enso Auto', id: 'enso-auto', d: "Hanzo's adaptive frontier router — selects the right Enso model per request with 1M-context overflow.", ctx: '1M' },
   { tab: 'Zen 6', id: 'zen6', d: 'Open weights for the code, the copy, the images and the voice.', ctx: '1M' },
   { tab: 'Claude Fable 5', id: 'anthropic/claude-fable-5', d: 'Claude Fable 5 is a Mythos-class model from Anthropic, built for autonomous knowledge work and coding.', ctx: '1M' },
 ];

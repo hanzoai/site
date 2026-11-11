@@ -147,7 +147,7 @@ for (const path of PAGES) {
     const sent = page.sent[0];
     const aware = !!sent && JSON.stringify(sent.messages).includes(path === '/' ? 'hanzo.ai/' : path);
     if (chat === 'fail') check(`ask falls back to hanzo.ai/chat ${path}`, !!sent && a.fall.includes('q=What'), `request sent ${!!sent}, fallback link ${a.fall}`);
-    else check(`ask answers in place (${chat}) ${path}`, a.text.includes(ANSWER) && aware && sent.model === 'enso', `answer "${a.text.slice(0, 40)}", page-aware ${aware}, model ${sent?.model}, requests ${page.sent.length}`);
+    else check(`ask answers in place (${chat}) ${path}`, a.text.includes(ANSWER) && aware && sent.model === 'enso-auto', `answer "${a.text.slice(0, 40)}", page-aware ${aware}, model ${sent?.model}, requests ${page.sent.length}`);
   }));
   // 3. phone: thumb bar after the hero, 44 px hit areas, sheets rise from the bottom
   await step(`phone ${path}`, () => withPage(path, { phone: true }, `${path} phone`, async (page) => {
