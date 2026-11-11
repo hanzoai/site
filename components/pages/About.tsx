@@ -569,22 +569,21 @@ function Open() {
 
 /* ---------- 7. models and papers ---------- */
 const RUNTIMES = [
-  { name: 'Kai', kind: 'Decision Intelligence', d: 'Calibrated discrete decision model for autonomous agent loops. Factorized discrete choice, calibrated probability distributions, and deterministic policy governance.', tag: 'No output tokens · Calibrated confidence', to: '/kai', slug: 'kai' },
-  { name: 'Zen Multimodal', kind: 'Foundation Models', d: 'Multimodal reasoning models across text, code, vision, speech, and structured output, built for both low-power edge devices and sovereign GPU clusters.', tag: 'High token throughput · Edge & Cloud', to: '/zen', slug: 'zen' },
-  { name: 'Hanzo Engine', kind: 'Inference Runtime', d: 'Bare-metal C, CUDA, and Metal inference engine with speculative decoding and NVFP4/FP8 kernels, removing Python runtime overhead on production hardware.', tag: 'Zero Python runtime · C / CUDA / Metal', to: '/engine' },
-  { name: 'Enso Router', kind: 'Semantic Routing', d: 'Learned semantic router and multi-model coordinator (HIP-0510) that sends each prompt to a model by accuracy and cost.', tag: 'Learned arbitration · Accuracy & cost', to: '/enso', slug: 'enso' },
+  { name: 'Kai', kind: 'Decision Intelligence', d: 'Calibrated discrete decision model for autonomous agent loops. Factorized discrete choice, calibrated probability distributions, and deterministic policy governance.', tag: 'No output tokens · Calibrated confidence', to: '/kai', slug: 'kai', img: '/models/kai.webp' },
+  { name: 'Zen Multimodal', kind: 'Foundation Models', d: 'Multimodal reasoning models across text, code, vision, speech, and structured output, built for both low-power edge devices and sovereign GPU clusters.', tag: 'High token throughput · Edge & Cloud', to: '/zen', slug: 'zen', img: '/models/zen.webp' },
+  { name: 'Hanzo Engine', kind: 'Inference Runtime', d: 'Bare-metal C, CUDA, and Metal inference engine with speculative decoding and NVFP4/FP8 kernels, removing Python runtime overhead on production hardware.', tag: 'Zero Python runtime · C / CUDA / Metal', to: '/engine', img: '/images/categories/cloud.webp' },
+  { name: 'Enso Router', kind: 'Semantic Routing', d: 'Learned semantic router and multi-model coordinator (HIP-0510) that sends each prompt to a model by accuracy and cost.', tag: 'Learned arbitration · Accuracy & cost', to: '/enso', slug: 'enso', img: '/models/enso.webp' },
 ];
 
 function Runtime({ m }) {
   const box = useRef(null);
   const opener = useOpener();
-  // the card's own picture lifts into the model page (WebGL opener); Hanzo Engine has no film, so its plate is its contour field
-  const open = m.slug ? (e) => opener?.open(e, { el: box.current, src: `/models/${m.slug}.webp`, href: m.to, key: m.slug }) : undefined;
+  const open = m.slug ? (e) => opener?.open(e, { el: box.current, src: m.img, href: m.to, key: m.slug }) : undefined;
   return (
     <li>
-      <a href={href(m.to)} ref={box} data-card={m.slug} className={'xab-rt' + (m.slug ? '' : ' plain')} onClick={open}>
+      <a href={href(m.to)} ref={box} data-card={m.slug} className="xab-rt" onClick={open}>
         <span className="xab-rt-media" aria-hidden="true">
-          {m.slug ? <Img src={`/models/${m.slug}.webp`} w={1200} h={1500} /> : <Sigil seed={m.name} className="xab-rt-sigil" />}
+          <Img src={m.img} w={1200} h={1500} />
         </span>
         <span className="xab-rt-t">
           <h4 className="v2s-title">{m.name}</h4>

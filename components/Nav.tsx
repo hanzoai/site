@@ -11,15 +11,15 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'motion/react';
 import { NAV, MENUS } from '../lib/nav';
 import { LOGIN } from '../lib/header';
-import Sigil from './Sigil';
+import { resolveNavPreview, resolveNavDescription } from '../lib/visuals';
 
 const EASE = [0.16, 1, 0.3, 1];
 const isLocal = (h) => h.startsWith('/');
 
-function Item({ l, i, onGo, onPeek }) {
+function Item({ l, head, i, onGo, onPeek }) {
   const cls = 'x-nav-a' + (l.big ? ' big' : '');
   const body = <>{l.label}{l.ext && <span aria-hidden="true"> ↗</span>}</>;
-  const peek = onPeek ? { onMouseEnter: () => onPeek(l), onFocus: () => onPeek(l) } : {};
+  const peek = onPeek ? { onMouseEnter: () => onPeek({ head, l }), onFocus: () => onPeek({ head, l }) } : {};
   return (
     <motion.li initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE, delay: 0.04 + i * 0.018 }}>
       {isLocal(l.href)
@@ -34,39 +34,126 @@ function Columns({ name, onGo, onPeek }) {
   return NAV[name].map((c) => (
     <div className="x-nav-col" key={c.head}>
       <p className="x-nav-h">{c.head}</p>
-      <ul>{c.links.map((l) => <Item key={l.label + l.href} l={l} i={n++} onGo={onGo} onPeek={onPeek} />)}</ul>
+      <ul>{c.links.map((l) => <Item key={l.label + l.href} l={l} head={c.head} i={n++} onGo={onGo} onPeek={onPeek} />)}</ul>
     </div>
   ));
 }
 
-/* The menu's stage: a preview of the link under the pointer or focus. Its living Sigil (seeded by the page's address),
-   and the page's own title and description from Hanzo's index; another site shows its address. Decorative for
-   assistive tech: the link itself carries the meaning. Wide screens only. */
+/* The menu's stage: a high-resolution dark-cinema preview of the link under the pointer or focus — matching Hanzo's
+   flagship model cards (looping film + poster + kicker + tags), product window mockups (macOS dark-glass chrome +
+   live product UI), and thematic 3D category sculptures across all six menus. */
 let INDEX = null;
-function Stage({ l, onGo }) {
+function Stage({ menu, head, l, onGo }) {
   const router = useRouter();
+  const stageRef = useRef(null);
   const [, force] = useState(0);
   useEffect(() => { if (!INDEX) import('../lib/search.json').then((m) => { INDEX = new Map(m.default.map(([p, t, d]) => [p, [t, d]])); force((x) => x + 1); }); }, []);
   if (!l) return null;
   const local = isLocal(l.href);
   const path = local ? l.href.split(/[?#]/)[0].replace(/\/$/, '') || '/' : null;
-  const [t, raw] = (local && INDEX?.get(path)) || [];
+  const [, rawIdx] = (local && INDEX?.get(path)) || [];
+  const raw = rawIdx || resolveNavDescription(l.href);
   // the index keeps the first ~120 characters of Hanzo's description: end on a whole word with an ellipsis
   const d = raw && raw.length >= 115 ? raw.slice(0, raw.lastIndexOf(' ')).replace(/[,;:.]$/, '') + '…' : raw;
   const where = local ? 'hanzo.ai' + path : l.href.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  const spec = resolveNavPreview(menu || 'Company', head || '', l);
+  const mediaKey = `${spec.mode}|${spec.poster}|${spec.video || ''}|${spec.screen || ''}|${spec.pos || ''}`;
+
+  const onMove = (e) => {
+    if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const el = stageRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const nx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+    const ny = ((e.clientY - r.top) / r.height - 0.5) * 2;
+    el.style.setProperty('--nx', nx.toFixed(3));
+    el.style.setProperty('--ny', ny.toFixed(3));
+  };
+  const onLeave = () => {
+    const el = stageRef.current;
+    if (!el) return;
+    el.style.setProperty('--nx', '0');
+    el.style.setProperty('--ny', '0');
+  };
+
   const visit = () => {
     onGo?.();
     if (local) router.push(l.href);
     else window.open(l.href, l.ext ? '_blank' : '_self', 'noopener,noreferrer');
   };
   return (
-    <aside className="x-nav-stage" aria-hidden="true" onClick={visit}>
-      <Sigil seed={l.href} data={[l.label.length, (t || '').length]} className="x-nav-sigil" />
+    <aside
+      ref={stageRef}
+      className={`x-nav-stage x-nav-stage-${spec.mode}`}
+      data-mode={spec.mode}
+      aria-hidden="true"
+      onClick={visit}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+    >
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={mediaKey}
+          className="x-nav-stage-media"
+          initial={{ opacity: 0, scale: 1.03 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.36, ease: EASE }}
+          style={{
+            '--st-pos': spec.pos || '50% 50%',
+            '--st-scale': String(spec.scale || 1.04),
+            '--st-flip': String(spec.flip || 1),
+          }}
+        >
+          <img className="x-nav-stage-bg" src={spec.poster} alt="" decoding="async" draggable={false} />
+          {spec.video && (
+            <video
+              className="x-nav-stage-vid"
+              muted
+              loop
+              autoPlay
+              playsInline
+              preload="metadata"
+              onLoadedData={(e) => e.currentTarget.classList.add('on')}
+              onPlaying={(e) => e.currentTarget.classList.add('on')}
+            >
+              <source src={spec.video} type="video/webm" />
+              <source src={spec.video.replace(/\.webm$/, '.mp4')} type="video/mp4" />
+            </video>
+          )}
+          {spec.mode === 'product' && spec.screen && (
+            <div className="x-nav-win">
+              <div className="x-nav-win-bar">
+                <span className="x-nav-win-dots"><i /><i /><i /></span>
+                <span className="x-nav-win-title">{spec.windowBar || where}</span>
+              </div>
+              <div className="x-nav-win-body">
+                <img src={spec.screen} alt="" decoding="async" draggable={false} />
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="x-nav-stage-top">
+        <span className="x-nav-stage-kick">{spec.kicker}</span>
+        {spec.tags && spec.tags.length > 0 && (
+          <span className="x-nav-stage-tags">
+            {spec.tags.slice(0, 2).map((tag) => <i key={tag}>{tag}</i>)}
+          </span>
+        )}
+      </div>
+
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div key={l.href} className="x-nav-stage-t" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3, ease: EASE }}>
-          <b>{l.label}</b>
+          <b>
+            <span>{l.label}</span>
+            <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+              <path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </b>
           {d && <p>{d}</p>}
-          <span>{where}</span>
+          <span className="x-nav-stage-url">{where}</span>
         </motion.div>
       </AnimatePresence>
     </aside>
@@ -93,7 +180,12 @@ export default function Nav({ headerRef }) {
   const close = useCallback(() => { clearTimeout(timer.current); timer.current = 0; setOpen(null); setSheet(false); }, []);
 
   useEffect(close, [path, close]); // a new page closes every menu
-  useEffect(() => { if (open) setPeek(NAV[open][0].links[0]); }, [open]); // the stage starts on the menu's first link
+  useEffect(() => {
+    if (open) {
+      const col = NAV[open][0];
+      setPeek({ head: col.head, l: col.links[0] });
+    }
+  }, [open]); // the stage starts on the menu's first link
 
   // wire Hanzo's own header buttons. Hover intent is decided by WHERE the pointer is, not by enter/leave events:
   // while a menu is open it stays open as long as the pointer is over the header, the panel, or the corridor between
@@ -201,38 +293,39 @@ export default function Nav({ headerRef }) {
     <>
       <AnimatePresence>
         {open && (
-          <>
-            <motion.div key="scrim" className="x-nav-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} onClick={close} aria-hidden="true" />
-            <motion.div
-              key="panel"
-              id="x-nav-panel"
-              className="x-nav-panel"
-              role="region"
-              aria-label={open + ' menu'}
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6, transition: { duration: 0.22, ease: [0.7, 0, 0.84, 0] } }}
-              transition={{ duration: 0.35, ease: EASE }}
-              onKeyDown={panelKey}
-              layout
-            >
-              <span className="x-nav-bridge" aria-hidden="true" />
-              <Stage l={peek} onGo={close} />
-              <AnimatePresence mode="popLayout" initial={false} custom={dir}>
-                <motion.div
-                  key={open}
-                  data-menu={open}
-                  className="x-nav-grid"
-                  custom={dir}
-                  variants={{ i: (d) => ({ opacity: 0, x: d * 40 }), a: { opacity: 1, x: 0 }, o: (d) => ({ opacity: 0, x: d * -40 }) }}
-                  initial="i" animate="a" exit="o"
-                  transition={{ duration: 0.4, ease: EASE }}
-                >
-                  <Columns name={open} onGo={close} onPeek={setPeek} />
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-          </>
+          <motion.div key="scrim" className="x-nav-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} onClick={close} aria-hidden="true" />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="panel"
+            id="x-nav-panel"
+            className="x-nav-panel"
+            role="region"
+            aria-label={open + ' menu'}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6, transition: { duration: 0.18, ease: [0.7, 0, 0.84, 0] } }}
+            transition={{ duration: 0.3, ease: EASE }}
+            onKeyDown={panelKey}
+          >
+            <span className="x-nav-bridge" aria-hidden="true" />
+            <Stage menu={open} head={peek?.head} l={peek?.l} onGo={close} />
+            <AnimatePresence mode="popLayout" initial={false} custom={dir}>
+              <motion.div
+                key={open}
+                data-menu={open}
+                className="x-nav-grid"
+                custom={dir}
+                variants={{ i: (d) => ({ opacity: 0, x: d * 40 }), a: { opacity: 1, x: 0 }, o: (d) => ({ opacity: 0, x: d * -40 }) }}
+                initial="i" animate="a" exit="o"
+                transition={{ duration: 0.4, ease: EASE }}
+              >
+                <Columns name={open} onGo={close} onPeek={setPeek} />
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
         )}
       </AnimatePresence>
 

@@ -11,11 +11,12 @@
 .lx-close-repo { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ink); text-decoration: underline; text-decoration-color: rgba(0, 0, 0, .25); text-underline-offset: 3px; transition: text-decoration-color .15s cubic-bezier(0, 0, .2, 1); }
 .lx-close-repo em { font-style: normal; color: var(--faint); }
 @media (hover: hover) { .lx-close-repo:hover { text-decoration-color: currentColor; } }
-/* the art: the page's living contour field, drawn from its own figures, in ink on a flat tile */
-.lx-close-art { position: relative; aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; background: light-dark(#f5f5f5, var(--muted)); }
-.lx-close-sigil { position: absolute; inset: 0; width: 100%; height: 100%; display: block; color: #0a0a0a; opacity: .8; }
-.lx-close-mark { position: absolute; left: 24px; bottom: 22px; right: 24px; margin: 0; display: flex; justify-content: space-between; align-items: baseline; font: 500 13px/1 var(--mono); color: var(--ink); }
-.lx-close-mark b { font: 497 26px/1 var(--sans); letter-spacing: -.02em; }
+/* the art: dark-cinema high-res plate framed like Hanzo's flagship model cards */
+.lx-close-art { position: relative; aspect-ratio: 4 / 5; border-radius: 22px; overflow: hidden; background: #050507; border: 1px solid rgba(255, 255, 255, .12); box-shadow: 0 28px 60px -30px rgba(0, 0, 0, .55); }
+.lx-close-art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 52%, rgba(5, 5, 7, .82) 100%); pointer-events: none; z-index: 1; }
+.lx-close-sigil { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 1; }
+.lx-close-mark { position: absolute; left: 24px; bottom: 22px; right: 24px; z-index: 2; margin: 0; display: flex; justify-content: space-between; align-items: baseline; font: 500 13px/1 var(--mono); color: rgba(245, 245, 247, .76); }
+.lx-close-mark b { font: 560 26px/1 var(--sans); letter-spacing: -.02em; color: #f5f5f7; }
 @media (max-width: 899px) {
   .lx-close-in { grid-template-columns: minmax(0, 1fr); row-gap: 40px; }
   .lx-close-h { font-size: 44px; }

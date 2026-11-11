@@ -39,7 +39,24 @@ import './story.css';
 import './BlogIndex.css';
 
 /* a post whose tag names a Hanzo model shows that model's own art; the rest draw their own contour field */
-const ART = { kai: '/models/kai.webp', enso: '/models/enso.webp', zen: '/models/zen.webp' };
+const ART: Record<string, string> = {
+  kai: '/models/kai.webp',
+  enso: '/models/enso.webp',
+  zen: '/models/zen.webp',
+  commerce: '/images/blog/quantitative-financial-manifold.jpg',
+  'decision models': '/models/kai.webp',
+  'enterprise ai': '/images/blog/sovereign-ai-capital-hero.jpg',
+  architecture: '/images/categories/developers.webp',
+  infrastructure: '/images/categories/cloud.webp',
+  router: '/models/enso.webp',
+  datastore: '/images/categories/cloud.webp',
+  'proof-of-ai': '/images/blog/cryptographic-vault-lattice.jpg',
+  brain: '/images/categories/learn.webp',
+  'formal-verification': '/images/blog/cryptographic-vault-lattice.jpg',
+  ai: '/images/categories/research.webp',
+  hanzo: '/images/categories/company.webp',
+  gpu: '/images/categories/cloud.webp',
+};
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const EASE = [0.16, 1, 0.3, 1];
 const B = 'https://hanzo.blog/';
