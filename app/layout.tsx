@@ -25,7 +25,7 @@ import OneTap from '../components/OneTap';
 export const metadata = {
   metadataBase: new URL('https://hanzo.ai'),
   title: 'Hanzo AI — Smarter, Faster, Cheaper. Pick all three.',
-  description: 'Frontier intelligence over 200× faster and 400× cheaper. Every model behind one key.',
+  description: 'Frontier intelligence over 200× faster and 400× cheaper. Agentic OS for organizations of every size.',
   applicationName: 'Hanzo AI',
   robots: { index: true, follow: true, 'max-image-preview': 'large' },
   formatDetection: { telephone: false, email: false, address: false },

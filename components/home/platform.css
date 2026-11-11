@@ -18,3 +18,11 @@
   .xp-grid::-webkit-scrollbar { display: none; }
   .xp-card { scroll-snap-align: start; }
 }
+
+/* Hanzo's own accents in the cards are monochrome, as the app draws them now: a person's message on the neutral fill,
+   a mention and Hanzo's link in ink. Other apps' marks (X's blue, a browser's lights, a workspace's logo) keep theirs. */
+/* hanzo.css scopes its classes under :root, so these name the card too */
+.xp-card .xp-vis ._bg-data-blue-3 { background-color: var(--x-fill); color: var(--ink); }
+.xp-card .xp-vis ._bg-data-blue-3 * { color: inherit; }
+.xp-card .xp-vis ._col-a78bfa35, .xp-card .xp-vis ._col-93c5fd35 { color: var(--ink); font-weight: 600; }
+.xp-card .xp-vis ._bg-_platformweb_rgba29155242082155697 { background-color: color-mix(in srgb, var(--ink) 6%, transparent); }

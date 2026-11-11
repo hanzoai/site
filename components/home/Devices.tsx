@@ -136,9 +136,8 @@ const TERM_EXAMPLES = {
     {
       cmd: 'hanzo up',
       lines: [
-        ['out', '  ✓ k3s is up — https://127.0.0.1:6443'],
-        ['out', '  export KUBECONFIG=~/.kube/hanzo.yaml'],
-        ['ok', '  the cloud → http://127.0.0.1:3690'],
+        ['ok', '✓ k3s is up — API at https://127.0.0.1:6443'],
+        ['console', ''],
       ],
     },
     {
@@ -251,6 +250,7 @@ function Side({ sc, onSelectScene }) {
   return (
     <>
       <div className="xw-side" data-p="chat">
+        <b className="xw-side-t">Chat</b>
         <Row icon="square-pen" on={pickedRow === 'chat-new'} onClick={go('chat-new', -1, 'chat')}>New chat</Row>
         <Row icon="search" on={pickedRow === 'chat-search'} onClick={go('chat-search', 6, 'chat')}>Search</Row>
         <small>Recents</small>
@@ -259,7 +259,7 @@ function Side({ sc, onSelectScene }) {
         <Row on={pickedRow === 'chat-weekly'} onClick={go('chat-weekly', 28, 'chat')}>Weekly report</Row>
       </div>
       <div className="xw-side" data-p="dev">
-        <small>Work</small>
+        <b className="xw-side-t">Dev</b>
         <Row icon="code-xml" on={pickedRow === 'dev-new'} onClick={go('dev-new', 0, 'dev')}>New run</Row>
         <Row icon="folder-git-2" on={pickedRow === 'dev-proj'} onClick={go('dev-proj', 3, 'dev')}>Projects</Row>
         <Row icon="circle-dot" on={pickedRow === 'dev-iss'} onClick={go('dev-iss', 9, 'dev')}>Issues</Row>
@@ -271,20 +271,21 @@ function Side({ sc, onSelectScene }) {
         })}
       </div>
       <div className="xw-side" data-p="design">
-        <small>Design</small>
+        <b className="xw-side-t">Design</b>
         <Row icon="wand-sparkles" on={!pickedRow || pickedRow === 'des-new'} onClick={go('des-new', 1, 'design')}>New design</Row>
         <Row icon="layout-template" on={pickedRow === 'des-comp'} onClick={go('des-comp', 4, 'design')}>Components</Row>
         <Row icon="library" on={pickedRow === 'des-brand'} onClick={go('des-brand', 5, 'design')}>Brand kit</Row>
         <Row icon="activity" on={pickedRow === 'des-tok'} onClick={go('des-tok', 25, 'design')}>Tokens</Row>
       </div>
       <div className="xw-side" data-p="studio">
-        <small>Create</small>
+        <b className="xw-side-t">Studio</b>
         <Row icon="square-pen" on={!pickedRow || pickedRow === 'stu-new'} onClick={go('stu-new', 11, 'studio')}>New creation</Row>
         <Row icon="layout-template" on={pickedRow === 'stu-exp'} onClick={go('stu-exp', 12, 'studio')}>Explore</Row>
         <Row icon="library" on={pickedRow === 'stu-lib'} onClick={go('stu-lib', 19, 'studio')}>Library</Row>
         <Row icon="activity" on={pickedRow === 'stu-act'} onClick={go('stu-act', 25, 'studio')}>Activity</Row>
       </div>
       <div className="xw-side" data-p="tabs">
+        <b className="xw-side-t">Tabs</b>
         <Row icon="square-terminal" on={pickedRow === 'tab-term'} onClick={go('tab-term', 2, 'tabs')}>New terminal</Row>
         <Row icon="monitor" on={pickedRow === 'tab-desk'} onClick={go('tab-desk', 7, 'tabs')}>New desktop</Row>
         <Row icon="globe" on={pickedRow === 'tab-web'} onClick={go('tab-web', 14, 'tabs')}>New browser</Row>
@@ -402,6 +403,7 @@ export function Desk({ sc, navPick, onSelectScene, phase, side, onSide, promptEl
           <button type="button" className="xw-nav-b" aria-label="Previous scene" onClick={() => stepScene(-1)}><Glyph name="chevron-left" size={14} /></button>
           <button type="button" className="xw-nav-b" aria-label="Next scene" onClick={() => stepScene(1)}><Glyph name="chevron-right" size={14} /></button>
         </span>
+        <a className="x-win-open" href="https://hanzo.app" data-cta="home.hero-open-app"><span>Open App</span><svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" /></svg></a>
       </div>
       <div className="x-win-body">
         <Rail at={railAt} onPick={pickRail} />
@@ -443,6 +445,23 @@ function Lines({ lines }) {
       </p>
     );
   });
+}
+
+/* What `hanzo up` leaves on screen: the Sandboxes console (hanzoai/cli src/commands/up/tui.rs), its views, the agents it
+   runs in their own microVMs, and the hosts they reached. */
+const SANDBOXES = [
+  ['hanzo-dev-agent', 'Hanzo Dev', 'runc (native GPU)', '8%', '1h 14m'],
+  ['claude-docs', 'Claude Code', 'microvm', '4%', '39s'],
+];
+function Console() {
+  return (
+    <div className="xt-con">
+      <p className="xt-con-h"><b>Hanzo Sandboxes</b><span>● iam:3690</span></p>
+      <p className="xt-con-v"><span>1: Compute</span><b>2: Sandboxes</b><span>3: Local Models</span><span>4: Cloud Services</span></p>
+      {SANDBOXES.map((r) => <p key={r[0]} className="xt-con-r"><span>● {r[0]}</span>{r.slice(1).map((c, i) => <span key={i}>{c}</span>)}</p>)}
+      <p className="xt-con-n"><span>github.com</span> Allowed · <span>api.anthropic.com</span> Allowed</p>
+    </div>
+  );
 }
 
 export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
@@ -564,16 +583,15 @@ export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
             </span>
           </p>
           <div className="xt-out" data-on={shownOut > 0 || undefined}>
-            {ex.lines.slice(0, shownOut).map(([kind, text], idx) => (
-              <p key={idx} className={kind}><span>{text}</span></p>
-            ))}
+            {ex.lines.slice(0, shownOut).map(([kind, text], idx) => (kind === 'console'
+              ? <Console key={idx} />
+              : <p key={idx} className={kind}><span>{text}</span></p>))}
           </div>
         </div>
       </div>
       <div className="x-term-f">
-        <button type="button" className="x-term-copy xh-copy" onClick={(e) => { e.stopPropagation(); setPinned(true); copy(ex.cmd); }} data-cta="home.install_copy" data-on={copied || undefined}>{copied ? 'Copied' : 'Copy'}</button>
+        <button type="button" className="x-term-copy xh-copy" onClick={(e) => { e.stopPropagation(); setPinned(true); copy(); }} data-cta="home.install_copy" data-on={copied || undefined}>{copied ? 'Copied' : 'Copy install CLI →'}</button>
         <span className="xh-sr" role="status">{copied ? 'Copied' : ''}</span>
-        <a href="https://docs.hanzo.ai/docs/cli" onClick={(e) => e.stopPropagation()}>Install CLI ↗</a>
       </div>
     </motion.div>
   );
@@ -931,7 +949,6 @@ export function Phone({ sc, navPick, onSelectScene, phase }) {
                 )}
               </div>
             </div>
-            <i className="xm-home-r" aria-hidden="true" />
           </div>
         </div>
 
@@ -961,7 +978,6 @@ export function Phone({ sc, navPick, onSelectScene, phase }) {
               <PhoneBar at={mobilePlace} onPick={(id) => pickMobilePlace(id, false)} onNew={() => pickMobilePlace(mobilePlace, true)} />
               <div className="xm-main">{renderTurns(true)}</div>
               <div className="xm-foot">{duo ? <PhoneComposer id="xm-ask-duo" /> : <div className="xm-pill-comp" aria-hidden="true"><span>Ask anything</span><span className="xm-pill-send"><Glyph name="arrow-up" size={10} stroke={2.4} /></span></div>}</div>
-              <i className="xm-home-l" aria-hidden="true" />
             </div>
           </div>
         </div>
