@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
-import { EASE, Head, Arrow } from './ui';
+import { EASE, Head, Arrow, Count } from './ui';
 import useFigures from './home/useFigures';
 
 // hanzo.ai's own rows, worked out from the research runs and price list it reads (components/home/figures.js), read
@@ -23,6 +23,9 @@ function EnsoLane({ row, i, vol, dim, setDim, TOP }) {
   );
 }
 
+/* A card's headline, up to N× less, counted up from 0 as it arrives; N is the figure as written ("14.2", "530"). */
+const Big = ({ n }) => <Count to={+n} decimals={n.includes('.') ? 1 : 0} prefix="up to " suffix="× less" duration={1.4} />;
+
 /* Hanzo's Enso comparison, with one control: how many questions. The rates are Hanzo's; only the count changes. */
 function EnsoCard() {
   const { GPQA } = useFigures();
@@ -36,7 +39,7 @@ function EnsoCard() {
   return (
     <div className="x-cost" data-tilt="">
       <p className="x-race-k">Enso vs frontier LLMs · GPQA Diamond</p>
-      <p className="x-cost-big">{`up to ${GPQA.big}× less`}</p>
+      <p className="x-cost-big"><Big n={GPQA.big} /></p>
       <p className="x-race-cap">per 1,000 questions, at higher accuracy</p>
       <p className="x-race-note">{GPQA.note}</p>
       <label className="x-vol">
@@ -64,7 +67,7 @@ function KaiCard() {
   return (
     <div className="x-cost" data-tilt="">
       <p className="x-race-k">Kai vs frontier LLMs</p>
-      <p className="x-cost-big">{`up to ${PRICES.big}× less`}</p>
+      <p className="x-cost-big"><Big n={PRICES.big} /></p>
       <p className="x-race-cap">than frontier LLMs, per input token</p>
       <p className="x-race-note">Kai bills input only; an LLM also bills every token it writes.</p>
       <p className="x-vol"><span className="x-mono">Per million tokens, input and output · less is cheaper</span></p>

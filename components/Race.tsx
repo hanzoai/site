@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
-import { EASE, Head, Arrow } from './ui';
+import { EASE, Head, Arrow, Count } from './ui';
 import useFigures from './home/useFigures';
 
 /* One lane of a race at true speed: every bar grows at the same rate, so the faster one simply stops first. */
@@ -46,7 +46,7 @@ function RaceCard({ kicker, big, decimals, cap, note, title, lanes, extra, link 
           <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
         </motion.button>
       </div>
-      <p className="x-race-big">{big.toFixed(decimals)}×</p>
+      <p className="x-race-big"><Count to={big} decimals={decimals} suffix="×" duration={1.4} /></p>
       <p className="x-race-cap">{cap}</p>
       <p className="x-race-note">{note}</p>
       <p className="x-race-title x-mono">{title}</p>

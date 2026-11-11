@@ -113,9 +113,10 @@ export function Count({ to, decimals = 0, prefix = '', suffix = '', duration = 1
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   const calm = useReducedMotion();
-  // the page's HTML carries the real figure (search engines, no-JS readers); the browser rewinds it to 0 before first paint
+  // the page's HTML carries the real figure (search engines, no-JS readers); the browser rewinds it to 0 once the span is
+  // listening (an effect, not a layout effect: Motion subscribes the text in the child's effect, which runs before this one)
   const mv = useMotionValue(to);
-  useLayoutEffect(() => { if (!calm) mv.set(0); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (!calm) mv.set(0); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const fmt = (v) => prefix + v.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
   const text = useTransform(mv, fmt);
   const go = run === undefined ? seen : run;

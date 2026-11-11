@@ -5,7 +5,7 @@ import { DAYS, FROM, TO, FIRST_WEEKDAY, LAST7, WEEKS, level } from '../lib/commi
 import O from '../content/live/_oss.json';
 import repoCard from './home/repoCard';
 import spark from './home/spark';
-import { Head, Arrow } from './ui';
+import { Head, Arrow, Count } from './ui';
 
 // the figures hanzo.ai's home shows, from the same snapshot (content/live/_oss.json, refreshed by scripts/live.mjs)
 const G = Object.values(O.groups);
@@ -85,12 +85,12 @@ function Calendar() {
   );
 }
 
-function Tile({ t }) {
+function Tile({ t, i }) {
   const [label, n, sub, href, bars] = t;
   return (
     <a href={href} className="x-tile" data-tilt="">
       <span className="x-tile-k">{label}</span>
-      <span className="x-tile-n">{n.toLocaleString('en-US')}</span>
+      <Count className="x-tile-n" to={n} duration={1.6} delay={i * 0.06} />
       <span className="x-tile-s">{sub}</span>
       {bars && <span className="x-tile-spark" dangerouslySetInnerHTML={{ __html: bars }} />}
     </a>
@@ -102,7 +102,7 @@ export default function Open() {
     <section className="x-sec x-oss" id="open-source" data-hz-view="open-source" aria-labelledby="open-source-h">
       <div className="x-wrap">
         <Head id="open-source-h" title="We ship every day. Fork anything. Build your own." />
-        <div className="x-tiles">{TILES.map((t, i) => <Tile key={i} t={t} />)}</div>
+        <div className="x-tiles">{TILES.map((t, i) => <Tile key={i} t={t} i={i} />)}</div>
         <Calendar />
         <div className="x-repos">{CARDS.map((h, i) => <div key={i} className="x-repo" dangerouslySetInnerHTML={{ __html: h }} />)}</div>
         <div className="x-row-links"><Arrow href="/open-source">Explore every repository</Arrow></div>
