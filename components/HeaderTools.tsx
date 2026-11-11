@@ -156,7 +156,7 @@ function Palette({ onClose }) {
   );
 }
 
-function Pop({ anchor, children, onClose, label }) {
+function Pop({ anchor, children, onClose, label, onPointerEnter = undefined, onPointerLeave = undefined }) {
   const [pos, setPos] = useState(null);
   const { sheet, drag, grip } = useSheet(onClose);
   useEffect(() => {
@@ -170,7 +170,7 @@ function Pop({ anchor, children, onClose, label }) {
   }, [anchor, onClose]);
   if (!pos) return null;
   return (
-    <motion.div className={'x-pop' + (sheet ? ' x-pop-sheet' : '')} role="menu" aria-label={label} style={sheet ? undefined : pos} {...(sheet ? { initial: { y: '100%' }, animate: { y: 0 }, exit: { y: '100%' }, transition: { type: 'spring', stiffness: 420, damping: 40 } } : { initial: { opacity: 0, y: -6, scale: 0.97 }, animate: { opacity: 1, y: 0, scale: 1 }, exit: { opacity: 0, y: -4, scale: 0.98 }, transition: { duration: 0.25, ease: EASE } })} {...drag}>
+    <motion.div className={'x-pop' + (sheet ? ' x-pop-sheet' : '')} role="menu" aria-label={label} style={sheet ? undefined : pos} {...(sheet ? { initial: { y: '100%' }, animate: { y: 0 }, exit: { y: '100%' }, transition: { type: 'spring', stiffness: 420, damping: 40 } } : { initial: { opacity: 0, y: -6, scale: 0.97 }, animate: { opacity: 1, y: 0, scale: 1 }, exit: { opacity: 0, y: -4, scale: 0.98 }, transition: { duration: 0.25, ease: EASE } })} {...drag} onPointerEnter={onPointerEnter} onPointerLeave={onPointerLeave}>
       {grip}
       {children}
     </motion.div>
@@ -565,6 +565,8 @@ export default function HeaderTools({ headerRef }) {
   const [open, setOpen] = useState(null); // 'search' | 'lang' | 'login'
   const [lang, setLang] = useState('en-US');
   const anchors = useRef({});
+  // Log in opens under a mouse, as the menus beside it do, and stays open while the pointer is on it or its menu
+  const hover = useRef({ hold: () => {}, later: () => {} });
   const router = useRouter();
 
   useEffect(() => {
@@ -595,11 +597,28 @@ export default function HeaderTools({ headerRef }) {
       if (!kind) return;
       anchors.current[kind] = b;
       b.setAttribute('aria-haspopup', kind === 'search' ? 'dialog' : 'menu');
+      let hoverAt = 0;
       on(b, 'click', (e) => {
         e.preventDefault();
         window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'tools' }));
-        setOpen((o) => (o === kind ? null : kind));
+        // a click just after the pointer opened it keeps it open (hover, then click, must not close it)
+        const fresh = Date.now() - hoverAt < 700;
+        setOpen((o) => (o === kind && !fresh ? null : kind));
       });
+      if (kind !== 'login') return;
+      let shut = 0;
+      const hold = () => clearTimeout(shut);
+      const later = () => { clearTimeout(shut); shut = setTimeout(() => setOpen((o) => (o === 'login' && !b.matches(':hover') && !document.querySelector('.x-pop:hover') ? null : o)), 240); };
+      hover.current = { hold, later };
+      on(b, 'pointerenter', (e) => {
+        if (e.pointerType !== 'mouse' || innerWidth <= 900) return;
+        hold();
+        hoverAt = Date.now();
+        window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'tools' }));
+        setOpen('login');
+      });
+      on(b, 'pointerleave', (e) => { if (e.pointerType === 'mouse') later(); });
+      offs.push(() => clearTimeout(shut));
     });
     const k = (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'tools' })); setOpen((o) => (o === 'search' ? null : 'search')); } };
     on(window, 'keydown', k);
@@ -639,7 +658,7 @@ export default function HeaderTools({ headerRef }) {
           </Pop>
         )}
         {open === 'login' && anchors.current.login && (
-          <Pop key="login" anchor={anchors.current.login} onClose={close} label="Log in">
+          <Pop key="login" anchor={anchors.current.login} onClose={close} label="Log in" onPointerEnter={() => hover.current.hold()} onPointerLeave={(e) => { if (e.pointerType === 'mouse') hover.current.later(); }}>
             {LOGIN.map((l) => (
               <a key={l.label} role="menuitem" href={l.href} className="x-pop-i big" onClick={close}>
                 <b>{l.label}</b><span>{l.sub}</span>
