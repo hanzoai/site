@@ -751,12 +751,11 @@ export function Phone({ sc, navPick, onSelectScene, phase }) {
   const cur = sc >= 0 ? MORE[sc] : null;
   const rawPlace = sc < 0 ? 'chat' : cur?.place || 'chat';
   const mobilePlace = navPick && PLACE_SCENES[navPick] ? navPick : rawPlace;
-  const autoDuo = sc < 0 ? phase >= 3 : Boolean(cur && (cur.phone || cur.ship || cur.ships || cur.place === 'tabs'));
-  const duo = foldPick ?? autoDuo;
-  const flip = () => { track('hero_demo', { control: 'phone-duo' }); setFoldPick((v) => !(v ?? autoDuo)); };
+  // the Duo opens and closes at its hinge alone (the seam down the middle): never by the demo, never by another control
+  const duo = foldPick ?? false;
+  const flip = () => { track('hero_demo', { control: 'phone-duo' }); setFoldPick((v) => !v); };
 
   const pickMobilePlace = (id, advance = false) => {
-    setFoldPick(duo);
     const list = PLACE_SCENES[id] || [-1];
     const nextSc = (advance || mobilePlace === id) ? list[(list.indexOf(sc) + 1) % list.length] : list[0];
     onSelectScene?.(nextSc, id === 'beta' ? 'chat' : id);
@@ -783,9 +782,9 @@ export function Phone({ sc, navPick, onSelectScene, phase }) {
     <div className="xm-duo-card">
       <span className="xm-duo-card-i"><Mark size={11} /></span>
       <span className="xm-duo-card-t"><b>maxpower</b><small>Mobile + Duo app</small></span>
-      <button type="button" className="xm-duo-open" data-folded={!isInner || undefined} onClick={flip}>
+      <span className="xm-duo-open" data-folded={!isInner || undefined}>
         {isInner ? (<><Glyph name="check" size={10} stroke={2.6} /><span>Fold</span></>) : 'Open'}
-      </button>
+      </span>
     </div>
   );
 
