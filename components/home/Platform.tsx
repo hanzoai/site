@@ -1,7 +1,9 @@
 /* The nine products, three by three (hanzo-inc/app components/home/Products.tsx): each card is the product's own
    screen as hanzo.ai draws it (content/products.ts), its name and address, and its two ways in. Drawn on the server; the
-   one effect is the card's lean toward a mouse ([data-tilt], lib/tilt.ts). */
+   screen plays through Hanzo's other examples while it is on screen (Cycle), and the card leans toward a mouse
+   ([data-tilt], lib/tilt.ts). */
 import { Head } from '../ui';
+import Cycle from './Cycle';
 import P from '../../content/products';
 import './platform.css';
 
@@ -13,9 +15,9 @@ export default function Platform() {
       <div className="x-wrap">
         <Head id="products-h" title="Hanzo is the AI-native company platform." />
         <ul className="xp-grid">
-          {P.map((p) => (
+          {P.map((p, n) => (
             <li key={p.name} className="xp-card" data-tilt="">
-              <div className="xp-vis" dangerouslySetInnerHTML={{ __html: p.vis }} />
+              <Cycle i={n} html={p.vis} />
               <div className="xp-f">
                 <div className="xp-id">
                   <b>{p.name}</b>

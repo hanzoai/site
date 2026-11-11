@@ -2,8 +2,22 @@
    captured screens' own classes (public/hanzo.css), so light and dark both hold. Phones get one row that swipes. */
 .xp-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .xp-card { display: flex; flex-direction: column; min-width: 0; border-radius: 24px; background: var(--card); border: 1px solid var(--line); }
-.xp-vis { flex: 1; display: flex; min-height: 0; overflow: hidden; border-radius: 24px 24px 0 0; }
-.xp-vis > div { flex: 1; min-width: 0; }
+.xp-vis { flex: none; display: flex; height: 300px; overflow: hidden; border-radius: 24px 24px 0 0; } /* one height for every example: nothing below moves when one plays */
+.xp-scene, .xp-shot { flex: 1; display: flex; min-width: 0; min-height: 0; }
+.xp-shot > div { flex: 1; min-width: 0; min-height: 0 !important; }
+/* an example arrives: its screen fades in and its rows come one after another (transform and opacity only) */
+.xp-scene[data-play] { animation: xp-in .4s var(--ease) both; }
+.xp-scene[data-play] .xp-shot > div > * { animation: xp-row .5s var(--ease) both; }
+.xp-scene[data-play] .xp-shot > div > :nth-child(2) { animation-delay: .12s; }
+.xp-scene[data-play] .xp-shot > div > :nth-child(3) { animation-delay: .24s; }
+.xp-scene[data-play] .xp-shot > div > :nth-child(4) { animation-delay: .36s; }
+.xp-scene[data-play] .xp-shot > div > :nth-child(5) { animation-delay: .48s; }
+.xp-scene[data-play] .xp-shot > div > :nth-child(6) { animation-delay: .6s; }
+.xp-scene[data-play] .xp-shot > div > :nth-child(7) { animation-delay: .72s; }
+.xp-scene[data-play] .xp-shot > div > :nth-child(n + 8) { animation-delay: .84s; }
+@keyframes xp-in { from { opacity: 0; } }
+@keyframes xp-row { from { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .xp-scene[data-play], .xp-scene[data-play] .xp-shot > div > * { animation: none; } }
 .xp-f { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 20px 20px; }
 .xp-id { min-width: 0; }
 .xp-id b { display: block; font: 560 15px/1.3 var(--sans); letter-spacing: -.01em; color: var(--ink); }
@@ -26,3 +40,8 @@
 .xp-card .xp-vis ._bg-data-blue-3 * { color: inherit; }
 .xp-card .xp-vis ._col-a78bfa35, .xp-card .xp-vis ._col-93c5fd35 { color: var(--ink); font-weight: 600; }
 .xp-card .xp-vis ._bg-_platformweb_rgba29155242082155697 { background-color: color-mix(in srgb, var(--ink) 6%, transparent); }
+/* the captured examples froze some rows part-way into their reveal (opacity .25 to .35); here the rows come in by the
+   card's own stagger above, and every one lands whole */
+.xp-card .xp-shot ._o-0--25, .xp-card .xp-shot ._o-0--32, .xp-card .xp-shot ._o-0--35 { opacity: 1; }
+/* an example taller than the screen keeps its first line (the question, the command) and loses its last, never the top */
+.xp-card .xp-shot ._justify-center { justify-content: safe center; }
