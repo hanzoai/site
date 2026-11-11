@@ -414,17 +414,13 @@ html:not(.light) .xst-make button[aria-checked='true'] { background: var(--ink);
 .xst > .xst-strip { --hx: 100%; --hy: 0%; --lx: 20%; --ly: 0%; }
 .xst > .xst-chair { --hx: 0%; --hy: 100%; --lx: 70%; --ly: 0%; }
 
-/* the split heading's title: Hanzo's size, with a 44 x 3 ink hairline above it that draws itself */
+/* the split heading's title */
 .xst .xst-what .a2-headline, .xst .xst-graph .a2-display, .xst .xst-strip-h, .xst .xst-chair .a2-display {
-  position: relative; max-width: 15ch; padding-top: 22px; font-size: clamp(2.1rem, 3.55vw, 3.45rem); line-height: 1; letter-spacing: -.042em; }
-.xst .xst-what .a2-headline::before, .xst .xst-graph .a2-display::before, .xst .xst-strip-h::before, .xst .xst-chair .a2-display::before {
-  content: ''; position: absolute; left: 0; top: 0; width: 44px; height: 3px; border-radius: 3px; background: var(--ink); transform-origin: 0 50%; }
+  position: relative; max-width: 15ch; font-size: clamp(2.1rem, 3.55vw, 3.45rem); line-height: 1; letter-spacing: -.042em; }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .xst > .xst-what::before, .xst > .xst-graph::before, .xst > .xst-strip::before, .xst > .xst-chair::before { animation: xst-drift linear both; animation-timeline: view(); }
     @keyframes xst-drift { from { background-position: 0 60px; opacity: .2; } 45% { opacity: .9; } to { background-position: 0 -60px; opacity: .3; } }
-    .xst .xst-what .a2-headline::before, .xst .xst-graph .a2-display::before, .xst .xst-strip-h::before, .xst .xst-chair .a2-display::before { animation: xst-rule linear both; animation-timeline: view(); animation-range: entry 20% cover 45%; }
-    @keyframes xst-rule { from { transform: scaleX(0); } }
   }
 }
 
@@ -624,7 +620,8 @@ html:not(.light) .xst-make button[aria-checked='true'] { background: var(--ink);
 .xst-get-t .xst-get-meta a { min-height: 36px; }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .xst-ladder::after { animation: xst-rule linear both; animation-timeline: view(); animation-range: entry 30% cover 50%; }
+    .xst-ladder::after { animation: xst-ladder-bar linear both; animation-timeline: view(); animation-range: entry 30% cover 50%; }
+    @keyframes xst-ladder-bar { from { transform: scaleX(0); } }
   }
 }
 
@@ -649,7 +646,7 @@ html:not(.light) .xst-rung-k i { background: var(--background); }
 }
 @media (max-width: 899px) {
   .xst > .xst-what, .xst > .xst-graph, .xst > .xst-strip, .xst > .xst-chair { padding-block: 48px; }
-  .xst .xst-what .a2-headline, .xst .xst-graph .a2-display, .xst .xst-strip-h, .xst .xst-chair .a2-display { font-size: 2rem; padding-top: 16px; }
+  .xst .xst-what .a2-headline, .xst .xst-graph .a2-display, .xst .xst-strip-h, .xst .xst-chair .a2-display { font-size: 2rem; }
   .xst-hero { padding: 40px 0 36px; }
   .xst-hero .xst-top { grid-template-columns: minmax(0, 1fr); gap: 14px; }
   .xst-hero .xst-acts { flex-wrap: wrap; column-gap: 18px; }

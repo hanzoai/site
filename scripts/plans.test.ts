@@ -63,8 +63,9 @@ test('only Team has a monthly or yearly choice: the annual answer states its sav
   assert.doesNotMatch(a, /92/);
 });
 
-test('the bot floor is the cheapest plan with a bot', () => {
-  assert.equal(FLOOR.bot, Math.min(...rows.filter((p) => p.category === 'personal' && p.bots).map((p) => p.price)));
+test('the bot floor is Go and the team workspace floor is Pro', () => {
+  assert.equal(FLOOR.bot, PLANS.go.price);
+  assert.equal(FLOOR.team, PLANS.pro.price);
   assert.equal(FLOOR.paid, Math.min(...rows.filter((p) => p.category === 'personal' && p.price > 0).map((p) => p.price)));
   assert.equal(PLANS.ultra.bots, LIVE.plans.ultra.bots);
 });

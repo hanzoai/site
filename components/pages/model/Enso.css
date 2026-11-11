@@ -20,18 +20,15 @@
 html:not(.light) .eo > .eo-s::before { background-image: radial-gradient(circle, color-mix(in srgb, var(--ink) 22%, transparent) 1px, transparent 1.5px); }
 html:not(.light) .eo > .eo-s::after { background: radial-gradient(42% 46% at var(--lx, 18%) var(--ly, 0%), color-mix(in srgb, var(--ink) 9%, transparent), transparent 70%); }
 
-/* the split heading: title left, lede right on one baseline; a 44 x 3 hairline above the title draws itself */
+/* the split heading: title left, lede right on one baseline */
 .eo-sh { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: end; gap: 14px clamp(32px, 5vw, 80px); margin-bottom: clamp(22px, 3.2svh, 34px); }
-.eo-h2, .eo .mc-h { position: relative; margin: 0; padding-top: 22px; font-size: clamp(2.1rem, 3.55vw, 3.45rem); font-weight: 497; line-height: 1; letter-spacing: -.042em; max-width: 15ch; color: var(--ink); text-wrap: balance; }
-.eo-h2::before, .eo .mc-h::before { content: ''; position: absolute; left: 0; top: 0; width: 44px; height: 3px; border-radius: 3px; background: var(--ink); transform-origin: 0 50%; }
+.eo-h2, .eo .mc-h { position: relative; margin: 0; font-size: clamp(2.1rem, 3.55vw, 3.45rem); font-weight: 497; line-height: 1; letter-spacing: -.042em; max-width: 15ch; color: var(--ink); text-wrap: balance; }
 .eo-lede, .eo .mc-sub { margin: 0 0 4px; max-width: 46ch; justify-self: end; font-size: clamp(.98rem, 1.12vw, 1.1rem); line-height: 1.5; color: var(--soft); text-wrap: pretty; }
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .eo > .eo-s::before { animation: eo-drift linear both; animation-timeline: view(); }
     @keyframes eo-drift { from { background-position: 0 60px; opacity: .2; } 45% { opacity: .9; } to { background-position: 0 -60px; opacity: .3; } }
-    .eo-h2::before, .eo .mc-h::before { animation: eo-rule linear both; animation-timeline: view(); animation-range: entry 20% cover 45%; }
-    @keyframes eo-rule { from { transform: scaleX(0); } }
   }
 }
 
@@ -312,7 +309,7 @@ html:not(.light) .eo-stage { background: var(--card); box-shadow: 0 0 0 1px var(
 @media (max-width: 640px) {
   .eo > .eo-s { padding-block: 40px; }
   .eo > .eo-hero { padding-block: 12px 36px; }
-  .eo-h2, .eo .mc-h { font-size: 2rem; padding-top: 16px; }
+  .eo-h2, .eo .mc-h { font-size: 2rem; }
   .eo-hero .lv-lines { font-size: 2.35rem; }
   .eo-px { margin-inline: -8px; padding: 12px 6px 6px; border-radius: 24px; }
   .eo-px-h { padding: 0 10px 10px; }

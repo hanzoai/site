@@ -24,6 +24,7 @@ import { play } from '../../lib/sound';
 import '../v2/AppType.css';
 import './Bot.css';
 import { PLANS as PLAN, FLOOR, checkout, usd } from '../../lib/plans';
+import useCommercePricing from '../../lib/useCommercePricing';
 
 const CREW = [['dev', 'Dev', 'Software'], ['qa', 'Qa', 'Quality'], ['cyber', 'Cyber', 'Security'], ['des', 'Des', 'Designer'], ['mark', 'Mark', 'Marketing'], ['su', 'Su', 'Support'], ['doc', 'Doc', 'Docs'], ['opera', 'Opera', 'Operations'], ['sci', 'Sci', 'Research'], ['data', 'Data', 'Analytics'], ['sal', 'Sal', 'Sales'], ['fin', 'Fin', 'Finance'], ['law', 'Law', 'Legal']];
 
@@ -692,30 +693,33 @@ function Install() {
   );
 }
 
-/* ---------- pricing: the slider is the hero, more bots and the pricing model beneath ---------- */
+/* ---------- pricing: every paid plan from Go upward includes unlimited bots on hanzo.bot ---------- */
 const PERKS = ['Early access to new models and features', 'Train custom models on your data', 'Hanzo Engine to run models on your own hardware', 'Dedicated support'];
-const PLANS = [
-  [PLAN.pro.name, '$' + PLAN.pro.price, PLAN.pro.bots, ['3x more usage than Go', '3x higher limits than Go'], PLAN.pro.id],
-  [PLAN.dev.name, '$' + PLAN.dev.price, PLAN.dev.bots, ['5x more usage than Go', '5x higher limits than Go'], PLAN.dev.id],
-  [PLAN.max.name, '$' + PLAN.max.price, PLAN.max.bots, ['15x more usage than Go', '15x higher limits than Go'], PLAN.max.id],
-  [PLAN.ultra.name, '$' + PLAN.ultra.price, PLAN.ultra.bots, ['25x more usage than Go', '25x higher limits than Go', 'Usage beyond what is included is paid from your prepaid balance at list price'], PLAN.ultra.id],
+const botPlansOf = (P) => [
+  [P.go.name, '$' + P.go.price, '1x', ['Usage included on every model', 'Priority inference and priority support'], P.go.id, false],
+  [P.pro.name, '$' + P.pro.price, '3x', ['3x more usage than Go', '3x higher limits than Go', ...(P.pro.hasTeam ? ['Hanzo Team (hanzo.team) workspace included'] : [])], P.pro.id, true],
+  [P.dev.name, '$' + P.dev.price, '5x', ['5x more usage than Go', '5x higher limits than Go', ...(P.dev.hasTeam ? ['Hanzo Team (hanzo.team) workspace included'] : [])], P.dev.id, true],
+  [P.max.name, '$' + P.max.price, '15x', ['15x more usage than Go', '15x higher limits than Go', ...(P.max.hasTeam ? ['Hanzo Team (hanzo.team) workspace included'] : [])], P.max.id, true],
+  [P.ultra.name, '$' + P.ultra.price, '∞', ['Unlimited usage across every model', '25x higher limits than Go & priority queue', ...(P.ultra.hasTeam ? ['Hanzo Team (hanzo.team) workspace included'] : [])], P.ultra.id, true],
 ];
-const planFor = (n) => PLANS.findIndex((p) => p[2] >= n);
 const FEATS = [
-  ['Dedicated Cloud Sandbox', 'Each extra bot runs in its own isolated Linux environment with dedicated memory and compute.'],
+  ['Dedicated Cloud Sandbox', 'Each bot runs in its own isolated Linux environment with dedicated memory and compute.'],
   ['Isolated Browser & Shell', 'Independent Chromium browser sessions and private bash terminals with separate logins and cookies.'],
   ['Independent Markdown Memory', 'Private workspace memory files (MEMORY.md) so multiple bots never pollute each other’s context.'],
-  ['Parallel Schedules & Cron', 'Run background jobs simultaneously across multiple bots without hitting single-bot queues.'],
+  ['Parallel Schedules & Cron', 'Run background jobs simultaneously across unlimited bots without hitting single-bot queues.'],
 ];
-const WHY = [
-  ['Compute Floor', `Why a ${usd(FLOOR.bot)}/mo entry floor?`, 'Not a chat window. A resident cloud computer.', `Standard chat models terminate compute as soon as tokens finish streaming. A resident Hanzo Bot lives in an active cloud sandbox with its own Chromium browser, bash terminal, isolated filesystem, and scheduled cron jobs. The ${usd(FLOOR.bot)}/month floor covers continuous cloud sandboxing and dedicated container resources.`],
-  ['Token Economics', 'Routine work at 1/5th the token cost', 'Intelligent routing through Enso & Sol 6.1.', 'Up to 90% of a resident bot’s daily work consists of triaging inboxes, summarizing documents, parsing receipts, and scraping pages. Rather than burning expensive frontier reasoning on routine tasks, Hanzo Bot executes routine loops on Enso & Sol 6.1 at ~1/5th the token price, leaving your monthly AI allowance intact for the tasks that need it.'],
-  ['Frontier Autonomy', `Zen Ultra for complex reasoning (${usd(PLAN.ultra.price)}/mo)`, 'Extended capacity for long autonomous loops.', `When your bot needs to perform deep multi-hour research, autonomous software engineering, or multi-step strategic analysis, the Ultra tier (${usd(PLAN.ultra.price)}/mo) includes Zen Ultra and Astra Ultra frontier models with 25x Go's usage and 25x its limits every 5 hours and every day. Usage beyond what is included is paid from your prepaid balance at list price.`],
+const whyOf = (P, F) => [
+  ['Compute Floor', `Why a ${usd(F.bot)}/mo entry floor?`, 'Not a chat window. A resident cloud computer.', `Standard chat models terminate compute as soon as tokens finish streaming. A resident Hanzo Bot lives in an active cloud sandbox with its own Chromium browser, bash terminal, isolated filesystem, and scheduled cron jobs. The ${usd(F.bot)}/month floor unlocks hanzo.bot with unlimited bots.`],
+  ['Token Economics', 'Routine work at 1/5th the token cost', 'Intelligent routing through Enso & Kai.', 'Up to 90% of a resident bot’s daily work consists of triaging inboxes, summarizing documents, parsing receipts, and scraping pages. Rather than burning expensive frontier reasoning on routine tasks, Hanzo Bot routes routine loops through Enso Flash & Kai at a fraction of frontier token cost.'],
+  ['Frontier Autonomy', `Ultra tier for massive workloads (${usd(P.ultra.price)}/mo)`, 'Unlimited usage across every model, 25x higher rate limits.', `When your bots need deep multi-hour research, autonomous software engineering, or multi-step strategic analysis, the Ultra tier (${usd(P.ultra.price)}/mo) includes unlimited usage across every model with 25x higher rate limits than Go and priority queue access.`],
   ['Auditable Memory', 'Plain Markdown files you can inspect & edit', 'No black-box fine-tuning or opaque vector locks.', 'Hanzo Bot records what it learns in human-readable Markdown files in its workspace (`MEMORY.md`, `SKILLS.md`). You can open them, audit them, version-control them in Git, or delete them anytime. The bot begins every session from what you leave.'],
 ];
 
 function Pricing() {
-  const [n, setN] = useState(1);
+  const { plans: LP, floor: LF } = useCommercePricing();
+  const PLANS = botPlansOf(LP);
+  const WHY = whyOf(LP, LF);
+  const [k, setK] = useState(1);
   const [hl, setHl] = useState(0); // which included part the drawn machines light
   const [hold, setHold] = useState(false);
   const rack = useRef(null);
@@ -727,38 +731,38 @@ function Pricing() {
     const t = setTimeout(() => setHl((v) => (v + 1) % FEATS.length), 2400);
     return () => clearTimeout(t);
   }, [racked, hold, calm, hl]);
-  const k = planFor(n);
+  const n = [2, 4, 6, 8, 10][k] || 4;
   return (
     <section className="av-sec bt-price" id="pricing">
       <div className="av-wrap av-grid" data-enter="grow-from-point">
         <div className="bt-price-l">
-          <h2 className="av-head">{`Included in plans from $${PLAN.pro.price}`}</h2>
-          <p className="av-body">Each plan below includes resident cloud bots. Or run Hanzo Bot free on your own machine.</p>
-          <div className="bt-need" style={{ '--f': (n - 1) / 9 }}>
-            <label htmlFor="bt-n">How many resident bots do you need?</label>
+          <h2 className="av-head">{`Included in plans from $${LF.bot}`}</h2>
+          <p className="av-body">{`Create unlimited bots on hanzo.bot starting at $${LF.bot}. Plans from $${LF.team} upward also include hanzo.team. Or run Hanzo Bot free on your own machine.`}</p>
+          <div className="bt-need" style={{ '--f': k / (PLANS.length - 1) }}>
+            <label htmlFor="bt-n">Choose your usage tier (all include unlimited bots)</label>
             <div className="bt-need-fig" aria-hidden="true">
-              <span className="av-num">{n}</span>
+              <span className="av-num">{PLANS[k][2]}</span>
               <span className="bt-need-faces">{CREW.slice(0, 10).map(([id], i) => <span key={id} className={'bt-nf' + (i < n ? ' on' : '')}><Face size={24} id={id} /></span>)}</span>
             </div>
-            <input id="bt-n" data-sound="tick" type="range" min="1" max="10" step="1" value={n} onChange={(e) => setN(+e.target.value)} aria-valuetext={`${n} ${n === 1 ? 'bot' : 'bots'}: ${PLANS[k][0]}`} />
-            <output htmlFor="bt-n" className="x-mono"><b>{n}</b> {n === 1 ? 'bot' : 'bots'} → <b>{PLANS[k][0]}</b>, {PLANS[k][1]} / month</output>
+            <input id="bt-n" data-sound="tick" type="range" min="0" max={PLANS.length - 1} step="1" value={k} onChange={(e) => setK(+e.target.value)} aria-valuetext={`${PLANS[k][0]}: unlimited bots`} />
+            <output htmlFor="bt-n" className="x-mono"><b>Unlimited bots</b> → <b>{PLANS[k][0]}</b>, {PLANS[k][1]} / month</output>
           </div>
         </div>
         <div className="bt-plans-w">
           <ul className="bt-plans">
-            {PLANS.map(([name, price, bots, lines, plan], i) => (
+            {PLANS.map(([name, price, mult, lines, plan, proPerks], i) => (
               <li key={name} className={i === k ? 'pick' : ''}>
                 {i === k && <motion.span layoutId="bt-plan" className="bt-plan-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
                 <div className="bt-plan-top">
                   <h3>{name}</h3>
                   <p className="bt-plan-p"><b className="av-num">{price}</b> <span>/</span> <span>month</span></p>
-                  <span className="bt-plan-n x-mono">{bots} ×</span>
+                  <span className="bt-plan-n x-mono">{mult}</span>
                   <A to={checkout(plan)} className="x-btn" data-cta={'bot-plan-' + name.toLowerCase()}>Get {name}</A>
                 </div>
                 <ul className="bt-plan-l">
+                  <li className="bt-bots">Hanzo Bot (hanzo.bot) — unlimited bots</li>
                   {lines.map((l) => <li key={l}>{l}</li>)}
-                  <li className="bt-bots">Hanzo Bot: {bots} {bots === 1 ? 'bot' : 'bots'} of your own</li>
-                  {PERKS.map((l) => <li key={l}>{l}</li>)}
+                  {proPerks && PERKS.map((l) => <li key={l}>{l}</li>)}
                 </ul>
               </li>
             ))}
@@ -769,8 +773,8 @@ function Pricing() {
       <div className="av-wrap av-grid bt-fleet">
         <div className="bt-fleet-c">
           <div className="bt-fleet-l" id="additional-bots">
-            <h3 className="av-title">Need more than one resident bot?</h3>
-            <p className="av-body">Each plan includes the resident cloud bots it lists. For more bots, choose a plan that includes more.</p>
+            <h3 className="av-title">Unlimited bots, zero per-bot limits</h3>
+            <p className="av-body">Every paid plan unlocks hanzo.bot so you can spin up as many specialized bots as your workflows need — scaled only by your plan’s usage and rate-limit tier.</p>
             <div className="bt-fleet-acts">
               <More to="/pricing">See the plans</More>
               <Sheet label="Why Hanzo Bot is built and priced this way" kick="Agent Architecture & Pricing Model" title="Why Hanzo Bot is built and priced this way">
@@ -827,7 +831,7 @@ const QA = [
   ['Can it work on a schedule?', 'Yes. Cron jobs run it every morning or at a set time, survive a restart, and can post the result to a chat.'],
   ['Does it remember what I tell it?', 'It writes what it learns to Markdown files in its workspace and searches them when it needs them. If you want something to stick, ask it to write it down.'],
   ['I use OpenClaw. Can I move over?', 'hanzo-bot migrate openclaw shows what would move and writes nothing. Add --apply to move config, credentials, workspace, sessions, skills and cron jobs. It never changes ~/.openclaw.'],
-  ['What does Hanzo Bot cost?', 'Running Hanzo Bot on your own machine is 100% free and open source (MIT licensed). In our cloud, resident bots come with the plans listed under Pricing, each with the number of bots it states — compute is metered per bot-hour beyond the included allowance, with auto-reload to keep going.'],
+  ['What does Hanzo Bot cost?', 'Running Hanzo Bot on your own machine is 100% free and open source (MIT licensed). In our cloud, every paid plan from Go upward unlocks hanzo.bot with unlimited bots — compute and tokens scale with your plan’s usage tier, with prepaid auto-reload to keep going.'],
   [`Why is there a ${usd(FLOOR.bot)}/mo floor for cloud resident bots?`, `Unlike simple chat prompts where compute ends as soon as generation stops, a resident bot has an always-on dedicated cloud environment. It runs an isolated sandbox container, headless browser, terminal, filesystem, and active cron listeners. The ${usd(FLOOR.bot)}/mo floor covers dedicated compute and guarantees uptime.`],
   ['How do model token costs work for bots?', 'Routine tasks (sorting inboxes, web scraping, scheduling, receipt parsing) execute on fast, cost-effective Enso and Sol 6.1 models at ~1/5th the token cost of frontier models, preserving 85-90% of your plan allowance. Higher tiers include Zen Ultra and Astra Ultra frontier models for complex multi-step reasoning.'],
 ];

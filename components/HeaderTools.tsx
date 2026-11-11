@@ -595,10 +595,15 @@ export default function HeaderTools({ headerRef }) {
       if (!kind) return;
       anchors.current[kind] = b;
       b.setAttribute('aria-haspopup', kind === 'search' ? 'dialog' : 'menu');
-      on(b, 'click', (e) => { e.preventDefault(); setOpen((o) => (o === kind ? null : kind)); });
+      on(b, 'click', (e) => {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'tools' }));
+        setOpen((o) => (o === kind ? null : kind));
+      });
     });
-    const k = (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setOpen((o) => (o === 'search' ? null : 'search')); } };
+    const k = (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'tools' })); setOpen((o) => (o === 'search' ? null : 'search')); } };
     on(window, 'keydown', k);
+    on(window, 'hz-header-exclusive', (e) => { if (e.detail !== 'tools') setOpen((o) => (o === 'lang' || o === 'login' ? null : o)); });
     return () => offs.forEach((f) => f());
   }, [headerRef]);
 
@@ -623,7 +628,7 @@ export default function HeaderTools({ headerRef }) {
       <AnimatePresence>{open === 'search' && <Palette onClose={close} />}</AnimatePresence>
       <AnimatePresence>
         {open === 'lang' && anchors.current.lang && (
-          <Pop anchor={anchors.current.lang} onClose={close} label="Language">
+          <Pop key="lang" anchor={anchors.current.lang} onClose={close} label="Language">
             <div className="x-pop-langs">
               {LANGS.map(([flag, native, en, code]) => (
                 <button key={code} type="button" role="menuitemradio" aria-checked={code === lang} className={'x-pop-i' + (code === lang ? ' on' : '')} lang={code} onClick={() => { setLang(code); try { localStorage.setItem('hz-lang', code); } catch {} close(); }}>
@@ -634,7 +639,7 @@ export default function HeaderTools({ headerRef }) {
           </Pop>
         )}
         {open === 'login' && anchors.current.login && (
-          <Pop anchor={anchors.current.login} onClose={close} label="Log in">
+          <Pop key="login" anchor={anchors.current.login} onClose={close} label="Log in">
             {LOGIN.map((l) => (
               <a key={l.label} role="menuitem" href={l.href} className="x-pop-i big" onClick={close}>
                 <b>{l.label}</b><span>{l.sub}</span>

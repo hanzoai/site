@@ -448,8 +448,8 @@ html:not(.js) .xpr-bills > li { display: grid !important; }
 
 /* ---------- the ladder ---------- */
 .xpr-lad { --hx: 0%; --hy: 100%; --lx: 60%; --ly: 20%; }
-.xpr-lad-g { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(7, auto); overflow: hidden; }
-.xpr-lad-c { position: relative; display: grid; grid-row: span 7; grid-template-rows: subgrid; row-gap: 0; padding: 0 16px 18px; border-left: 1px solid var(--line); }
+.xpr-lad-g { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(12, auto); overflow: hidden; }
+.xpr-lad-c { position: relative; display: grid; grid-row: span 12; grid-template-rows: subgrid; row-gap: 0; padding: 0 16px 18px; border-left: 1px solid var(--line); }
 .xpr-lad-c:first-child { border-left: 0; }
 .xpr-lad-c.rec { background: color-mix(in srgb, var(--ink) 4%, transparent); }
 .xpr-lad-step { display: flex; align-items: flex-end; height: 88px; margin: 0 -16px 14px; padding: 0 16px; border-bottom: 1px solid var(--line); }
@@ -479,8 +479,9 @@ html:not(.js) .xpr-bills > li { display: grid !important; }
   }
 }
 
-/* ---------- Enso, in the dark room ---------- */
+/* ---------- Enso, Kai, and Zen model pricing ---------- */
 .xpr.zf .xpr-enso { padding-block: clamp(64px, 10svh, 116px); }
+.xpr-enso-stack { display: grid; gap: clamp(48px, 7svh, 80px); }
 .xpr-enso .zf-head { align-items: end; }
 .xpr-enso-lede { display: grid; justify-items: start; gap: 10px; justify-self: end; max-width: 46ch; }
 .xpr-enso-lede p { margin: 0; font-size: clamp(.98rem, 1.12vw, 1.1rem); line-height: 1.5; color: #a1a1a6; }
@@ -505,7 +506,7 @@ html:not(.js) .xpr-bills > li { display: grid !important; }
 .xpr.zf .xpr-room .xpr-trust { margin-top: 0; padding-top: 28px; border-top: 0; }
 
 @media (max-width: 1100px) {
-  .xpr-lad-g { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(14, auto); }
+  .xpr-lad-g { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(24, auto); }
   .xpr-lad-c:nth-child(4) { border-left: 0; }
   .xpr-lad-c:nth-child(n + 4) { border-top: 1px solid var(--line); }
   .xpr-enso-r { grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr)); }
@@ -523,7 +524,7 @@ html:not(.js) .xpr-bills > li { display: grid !important; }
   .xpr-lad-step { display: none; }
   .xpr-lad-top { grid-column: 1; }
   .xpr-lad-p { grid-column: 2; grid-row: 1; margin: 0; justify-self: end; }
-  .xpr-lad-row { grid-column: 1 / -1; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; padding: 6px 0; border-top: 0; }
+  .xpr-lad-row { grid-column: 1 / -1; grid-template-columns: 118px minmax(0, 1fr); gap: 10px; padding: 6px 0; border-top: 0; }
   .xpr-lad-row .k { padding-top: 2px; }
   .xpr-lad-c .xpr-lad-cta { grid-column: 1 / -1; margin-top: 8px; }
 }

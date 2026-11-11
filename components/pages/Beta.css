@@ -4,8 +4,7 @@
    the film strip, all inside the first screen (at 1470 x 801 and on a phone) */
 .xbt-open { --hx: 100%; --hy: 0%; --lx: 20%; --ly: 0%; padding-block: clamp(20px, 3svh, 36px) clamp(40px, 6svh, 72px); overflow: clip; }
 .xbt-hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px 64px; margin-bottom: clamp(26px, 4.4svh, 44px); }
-.xbt-h1 { position: relative; margin: 0; padding-top: 22px; font-size: clamp(2.75rem, 5.6vw, 5.4rem); font-weight: 600; line-height: .98; letter-spacing: -.045em; }
-.xbt-h1::before { content: ''; position: absolute; left: 0; top: 0; width: 44px; height: 3px; border-radius: 3px; background: currentColor; }
+.xbt-h1 { position: relative; margin: 0; font-size: clamp(2.75rem, 5.6vw, 5.4rem); font-weight: 600; line-height: .98; letter-spacing: -.045em; }
 .xbt-side { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; max-width: 380px; }
 .xbt-side .xp-lede { max-width: 30ch; }
 .xbt-v-cta { display: inline-flex !important; align-items: center; gap: 20px; flex-wrap: wrap; }
@@ -121,7 +120,7 @@
 @media (max-width: 900px) {
   .xbt-open { padding-block: 8px 40px; }
   .xbt-hero { grid-template-columns: 1fr; gap: 14px; margin-bottom: 22px; }
-  .xbt-h1 { font-size: 44px; padding-top: 16px; }
+  .xbt-h1 { font-size: 44px; }
   .xbt-side { gap: 12px; max-width: none; }
   .xbt-v-cta { gap: 8px 18px; }
   .xbt-strip { width: 100%; padding: 0; }

@@ -1,56 +1,136 @@
-/* Hanzo's plans, as GET api.hanzo.ai/v1/billing/plans states them: content/live/_pricing.json, which scripts/live.mjs
-   writes before every build and which stops the build when a plan is missing. No price is typed here; change a price
-   in admin.hanzo.ai (commerce) and the next build shows it. Per-token model rates are not plans: see README.md. */
+/* Hanzo's plans, as GET https://commerce.hanzo.ai/v1/billing/plans states them: content/live/_pricing.json, which
+   scripts/live.ts writes before every build and which lib/useCommercePricing.ts refreshes live on page load. No price is
+   typed here; change a plan in admin.hanzo.ai (commerce) and commerce.hanzo.ai serves it immediately. Per-token model
+   rates are models, not plans — managed under admin.hanzo.ai/models and served from commerce.hanzo.ai/v1/models & /v1/pricing/models. */
 
 import LIVE from '../content/live/_pricing.json' with { type: 'json' };
 import { APP } from './app.ts';
 
 export const SITE = 'https://hanzo.ai';
 
-const plan = (slug) => {
-  const p = LIVE.plans[slug];
-  if (!p) throw new Error(`plan ${slug} is not in ${LIVE.source}`);
-  return p;
-};
-
 // Whole dollars as a page writes them: $8, $4,999.
 export const usd = (n) => '$' + n.toLocaleString('en-US');
 
-// Personal plans: billed by the month only. `id` is the slug checkout takes (/pay/confirm/card?plan=<id>); `bots` is the
-// resident Hanzo Bots it includes.
-const personal = (slug) => ({ name: plan(slug).name, price: plan(slug).price, id: slug, bots: plan(slug).bots });
-export const PLANS = {
-  free: { name: plan('free').name, price: plan('free').price },
-  go: personal('go'),
-  pro: personal('pro-3x'),
-  dev: personal('dev-5x'),
-  max: personal('max-15x'),
-  ultra: personal('ultra'),
-};
+// Strip a leading "Everything in X, plus:" inheritance header from a backend plan's feature list when the UI renders `head` separately.
+export function splitPlanFeatures(features = [], fallbackHead = '') {
+  const list = Array.isArray(features) ? features.filter(Boolean) : [];
+  if (list.length > 0 && (/^Everything in .+, plus:?$/i.test(list[0]) || /^All .+ features, plus:?$/i.test(list[0]))) {
+    return { head: list[0], items: list.slice(1) };
+  }
+  return { head: fallbackHead, items: list };
+}
 
-// The cheapest plan of a kind: the cheapest a person pays, and the floor under a resident Hanzo Bot (the cheapest plan that
-// includes one).
-const floor = (plans) => Math.min(...plans.map((p) => p.price));
-export const FLOOR = { paid: floor(Object.values(PLANS).filter((p) => p.price > 0)), bot: floor(Object.values(PLANS).filter((p) => p.bots)) };
+export function derivePlans(rawPlans = LIVE.plans) {
+  const plan = (slug) => {
+    const p = rawPlans[slug] ?? LIVE.plans[slug];
+    if (!p) throw new Error(`plan ${slug} is not in ${LIVE.source}`);
+    return p;
+  };
 
-// Seats (per member): the month's price, the month when billed by the year, and that year. Enterprise is sold by the
-// year only, from its minimum seats.
-const seat = (slug) => {
-  const p = plan(slug);
-  return { month: p.price, monthAnnual: p.priceAnnual, year: p.priceAnnual * 12, min: p.minSeats, max: p.maxMembers };
-};
-const enterprise = plan('enterprise');
-export const SEATS = {
-  standard: seat('team'),
-  premium: seat('team-premium'),
-  enterprise: { year: enterprise.price, monthAnnual: enterprise.priceAnnual, min: enterprise.minSeats },
-  // what a year saves against twelve months, as a whole percent
-  saving: Math.round((1 - plan('team').priceAnnual / plan('team').price) * 100),
-};
+  const personal = (slug, fallbackHead = '') => {
+    const p = plan(slug);
+    const { head, items } = splitPlanFeatures(p.features, fallbackHead);
+    const products = Array.isArray(p.products) ? p.products : [];
+    return {
+      name: p.name,
+      price: p.price,
+      id: slug,
+      bots: p.bots ?? 0,
+      description: p.description ?? '',
+      head,
+      features: items,
+      rawFeatures: Array.isArray(p.features) ? p.features : [],
+      products,
+      hasBot: products.includes('bot') || p.bots === -1,
+      hasTeam: products.includes('team'),
+      hasEngine: products.includes('engine'),
+      popular: !!p.popular,
+      earlyAccess: !!p.earlyAccess,
+    };
+  };
+
+  const freePlan = plan('free');
+  const freeSplit = splitPlanFeatures(freePlan.features, '');
+  const plans = {
+    free: {
+      name: freePlan.name,
+      price: freePlan.price,
+      id: 'free',
+      bots: freePlan.bots ?? 0,
+      description: freePlan.description ?? '',
+      head: freeSplit.head,
+      features: freeSplit.items,
+      rawFeatures: Array.isArray(freePlan.features) ? freePlan.features : [],
+      products: Array.isArray(freePlan.products) ? freePlan.products : [],
+      hasBot: false,
+      hasTeam: false,
+      hasEngine: false,
+      popular: false,
+      earlyAccess: false,
+    },
+    go: personal('go', 'Everything in Free, plus:'),
+    pro: personal('pro-3x', 'Everything in Go, plus:'),
+    dev: personal('dev-5x', 'Everything in Pro, plus:'),
+    max: personal('max-15x', 'Everything in Dev, plus:'),
+    ultra: personal('ultra', 'Everything in Max, plus:'),
+  };
+
+  const paidPersonal = Object.values(plans).filter((p) => p.price > 0);
+  const withBot = paidPersonal.filter((p) => p.hasBot);
+  const withTeam = paidPersonal.filter((p) => p.hasTeam);
+  const minPrice = (arr, fallback) => (arr.length ? Math.min(...arr.map((p) => p.price)) : fallback);
+
+  const floor = {
+    paid: minPrice(paidPersonal, plans.go.price),
+    bot: minPrice(withBot, plans.go.price),
+    team: minPrice(withTeam, plans.pro.price),
+  };
+
+  const seat = (slug) => {
+    const p = plan(slug);
+    return {
+      name: p.name,
+      description: p.description ?? '',
+      features: splitPlanFeatures(p.features, '').items.filter((f) => !/per member a month/i.test(f)),
+      month: p.price,
+      monthAnnual: p.priceAnnual,
+      year: p.priceAnnual * 12,
+      min: p.minSeats,
+      max: p.maxMembers,
+      hasBot: (p.products ?? []).includes('bot') || p.bots === -1,
+      hasTeam: (p.products ?? []).includes('team'),
+    };
+  };
+
+  const ent = plan('enterprise');
+  const entSplit = splitPlanFeatures(ent.features, 'All Team plan features, plus:');
+  const seats = {
+    standard: seat('team'),
+    premium: seat('team-premium'),
+    enterprise: {
+      name: ent.name,
+      description: ent.description ?? '',
+      head: entSplit.head || 'All Team plan features, plus:',
+      features: entSplit.items.filter((f) => !/billed annually|minimum/i.test(f)),
+      year: ent.price,
+      monthAnnual: ent.priceAnnual,
+      min: ent.minSeats,
+    },
+    saving: Math.round((1 - plan('team').priceAnnual / plan('team').price) * 100),
+  };
+
+  return { plans, floor, seats };
+}
+
+const DERIVED = derivePlans(LIVE.plans);
+
+export const PLANS = DERIVED.plans;
+export const FLOOR = DERIVED.floor;
+export const SEATS = DERIVED.seats;
 
 // Partners (/enterprise): the White-label plan, and the agency plans, which start at the cheapest of them.
 const agency = Object.values(LIVE.plans).filter((p) => p.category === 'agency');
-export const PARTNERS = { label: plan('white-label'), agency: { names: agency.map((p) => p.name), from: Math.min(...agency.map((p) => p.price)) } };
+export const PARTNERS = { label: LIVE.plans['white-label'], agency: { names: agency.map((p) => p.name), from: Math.min(...agency.map((p) => p.price)) } };
 
 // What /pricing's schema.org OfferCatalog states for a plan, by plan name (components/JsonLd.jsx): a month's price and,
 // where the catalog sells one, a year's. Enterprise is sold by the year only, so its month is the year spread over twelve.
@@ -75,8 +155,8 @@ export const teamCart = (quantity) => `/pay/cart?plan=team&interval=year&quantit
 
 // What one term of a plan charges, in dollars: a month is the plan's price, a year is twelve of its per-month price when
 // billed by the year. 0 where the catalog sells no such term (app lib/api/read.ts `charge`).
-export const charge = (slug, every) => {
-  const p = LIVE.plans[slug];
+export const charge = (slug, every, rawPlans = LIVE.plans) => {
+  const p = rawPlans[slug] ?? LIVE.plans[slug];
   const n = every === 'month' ? p?.price : p?.priceAnnual != null ? Math.round(p.priceAnnual * 1200) / 100 : 0;
   return n > 0 ? n : 0;
 };

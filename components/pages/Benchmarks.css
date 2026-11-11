@@ -897,10 +897,9 @@ html:not(.light) .xbm-seg button:is([aria-selected='true'], [aria-pressed='true'
 :is(.xbm, .xbm-body) > .xbm-methods { --hx: 100%; --hy: 0%; --lx: 0%; --ly: 100%; }
 :is(.xbm, .xbm-body) > .xbm-shelf { --hx: 0%; --hy: 30%; --lx: 100%; --ly: 10%; border-top: 0; }
 
-/* the split heading's type and the hairline above every section title */
-.xbm-sec h2.pf-head, .xbm-hero .xbm-h1 { position: relative; padding-top: 22px; font-weight: 560; line-height: 1.02; letter-spacing: -.04em; text-wrap: balance; }
+/* the split heading's type */
+.xbm-sec h2.pf-head, .xbm-hero .xbm-h1 { position: relative; font-weight: 560; line-height: 1.02; letter-spacing: -.04em; text-wrap: balance; }
 .xbm-sec h2.pf-head { max-width: 18ch; font-size: clamp(1.9rem, 2.6vw, 2.6rem); }
-.xbm-sec h2.pf-head::before, .xbm-hero .xbm-h1::before { content: ''; position: absolute; left: 0; top: 0; width: 44px; height: 3px; border-radius: 3px; background: var(--ink); transform-origin: 0 50%; }
 .xbm-sec .pf-body { font-size: 15px; line-height: 1.55; }
 .xbm-sec .xbm-cap { margin-top: 14px; font-size: 12px; }
 .xbm-sec .xbm-cap + .pf-body { margin-top: 14px; }
@@ -909,8 +908,6 @@ html:not(.light) .xbm-seg button:is([aria-selected='true'], [aria-pressed='true'
   @media (prefers-reduced-motion: no-preference) {
     :is(.xbm, .xbm-body) > .xbm-sec::before { animation: xbm-drift linear both; animation-timeline: view(); }
     @keyframes xbm-drift { from { background-position: 0 60px; opacity: .2; } 45% { opacity: .9; } to { background-position: 0 -60px; opacity: .3; } }
-    .xbm-sec h2.pf-head::before { animation: xbm-rule linear both; animation-timeline: view(); animation-range: entry 20% cover 45%; }
-    @keyframes xbm-rule { from { transform: scaleX(0); } }
   }
 }
 
@@ -968,8 +965,7 @@ html:not(.light) .xbm-seg button:is([aria-selected='true'], [aria-pressed='true'
 
 /* ---------- 2. the race: its five names beside the stage ---------- */
 .xbm-racesec .xbm-trk { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: clamp(24px, 3.4vw, 52px); align-items: start; margin-top: 0; }
-.xbm-trk-side { display: flex; flex-direction: column; position: relative; padding-top: 22px; }
-.xbm-trk-side::before { content: ''; position: absolute; left: 0; top: 0; width: 44px; height: 3px; border-radius: 3px; background: var(--ink); }
+.xbm-trk-side { display: flex; flex-direction: column; position: relative; }
 .xbm-racesec .xbm-trk-tabs { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 2px; margin: 0; }
 .xbm-racesec .xbm-trk-tabs > button { min-height: 0; padding: 12px 16px; border: 0; border-radius: 14px; background: none; text-align: left; font: 560 clamp(1rem, 1.25vw, 1.15rem)/1.25 var(--sans); letter-spacing: -.015em; color: var(--faint); }
 .xbm-racesec .xbm-trk-tabs > button[aria-selected='true'] { color: var(--x-on-ink); }

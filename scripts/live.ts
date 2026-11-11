@@ -17,7 +17,7 @@
 //    NODE_USE_ENV_PROXY=1 NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt.
 // 2. --pages [/path ...]: render hanzo.ai pages in headless Chrome and keep what a visitor sees (content/live/<path>.json
 //    { text, links }, parity.py's reference). A browser job: not on James's laptop unless he asks (docs/build-notes/MASTER.md section 5).
-import { RUNS, MODELS, PRICES, readResearch, readModels } from '../lib/liveSources.ts';
+import { RUNS, MODELS, PRICES, PLANS_URL, shapePlan, readResearch, readModels } from '../lib/liveSources.ts';
 import { estate, github, combine } from '../lib/oss.ts';
 import { shape } from '../components/pages/openSource/shape.ts';
 import fs from 'node:fs';
@@ -65,9 +65,9 @@ async function figures() {
     return { source: GIT, fetched_at, read: a.read, window: a.window, commits, merges, orgs: o, week: days.slice(-7).reduce((s, x) => s + x[1], 0), days };
   };
 
-  // The plan prices on the home page, /pricing, /bot and /enterprise, in USD (the API gives cents): the plans the site
-  // names, and every agency and white-label plan (/enterprise's Partners band lists them as the catalog does).
-  const PLANS = 'https://api.hanzo.ai/v1/billing/plans';
+  // The plan prices and entitlements on the home page, /pricing, /bot and /enterprise, in USD (commerce.hanzo.ai gives cents):
+  // the plans the site names, and every agency and white-label plan (/enterprise's Partners band lists them as the catalog does).
+  const PLANS = PLANS_URL;
   const SHOWN = ['free', 'go', 'pro-3x', 'dev-5x', 'max-15x', 'ultra', 'team', 'team-premium', 'enterprise', 'enterprise-300'];
   const pricing = async () => {
     const list = await get(PLANS);
@@ -76,7 +76,7 @@ async function figures() {
     const plans = {};
     for (const p of list.filter((x) => SHOWN.includes(x.slug) || x.category === 'agency' || x.category === 'white-label')) {
       need(int(p.price) && (p.priceAnnual == null || int(p.priceAnnual)), 'plan ' + p.slug);
-      plans[p.slug] = { name: p.name, category: p.category, description: p.description, price: p.price / 100, priceAnnual: p.priceAnnual == null ? null : p.priceAnnual / 100, interval: p.interval, perSeat: !!p.perSeat, minSeats: p.limits?.minSeats ?? null, maxMembers: p.limits?.maxMembers ?? null, bots: p.limits?.bots ?? 0 };
+      plans[p.slug] = shapePlan(p);
     }
     need(plans['white-label'] && Object.values(plans).some((p) => p.category === 'agency'), 'the white-label and agency plans');
     return { source: PLANS, fetched_at, currency: 'usd', plans };

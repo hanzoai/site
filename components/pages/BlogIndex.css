@@ -28,13 +28,9 @@ html:not(.light) .xbl > .xbl-sec::after { background: radial-gradient(42% 46% at
   @media (prefers-reduced-motion: no-preference) {
     .xbl > .xbl-sec::before { animation: xbl-drift linear both; animation-timeline: view(); }
     @keyframes xbl-drift { from { background-position: 0 60px; opacity: .2; } 45% { opacity: .9; } to { background-position: 0 -60px; opacity: .3; } }
-    .xbl .xbl-h1::before, .xbl .xbl-c-h::before { animation: xbl-rule linear both; animation-timeline: view(); animation-range: entry 0% cover 35%; }
-    @keyframes xbl-rule { from { transform: scaleX(0); } }
   }
 }
-/* the home's hairline: 44 x 3 of ink above each title, drawing itself as the section arrives */
-.xbl-h1, .xbl-c-h { position: relative; padding-top: 22px; }
-.xbl-h1::before, .xbl-c-h::before { content: ''; position: absolute; left: 0; top: 0; width: 44px; height: 3px; border-radius: 3px; background: var(--ink); transform-origin: 0 50%; }
+.xbl-h1, .xbl-c-h { position: relative; }
 
 /* ---------- 1. the masthead (a split heading) and the cover that turns itself ---------- */
 .xbl-hero { padding-top: clamp(28px, 4svh, 48px) !important; }

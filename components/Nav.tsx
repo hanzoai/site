@@ -174,6 +174,7 @@ export default function Nav({ headerRef }) {
   const show = useCallback((name) => {
     clearTimeout(timer.current); timer.current = 0;
     openedAt.current = { name, t: performance.now() };
+    window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'nav' }));
     setOpen((cur) => { if (cur && name && cur !== name) setDir(MENUS.indexOf(name) > MENUS.indexOf(cur) ? 1 : -1); return name; });
   }, []);
   const later = useCallback(() => { clearTimeout(timer.current); timer.current = setTimeout(() => { timer.current = 0; setOpen(null); }, 600); }, []);
@@ -201,6 +202,7 @@ export default function Nav({ headerRef }) {
     let rest = 0, origin = null;
     const intoPanel = (name) => { let n = 0; const t = () => { const a = document.querySelector(`#x-nav-panel .x-nav-grid[data-menu="${name}"] a`); if (a) a.focus(); else if (n++ < 20) requestAnimationFrame(t); }; requestAnimationFrame(t); };
     const nameOf = (b) => (b.getAttribute('aria-label') === 'Company' ? 'Company' : b.textContent.trim());
+    const menuTargets = [];
     h.querySelectorAll('button').forEach((b) => {
       const name = nameOf(b);
       if (!NAV[name]) return;
@@ -209,6 +211,7 @@ export default function Nav({ headerRef }) {
       b.setAttribute('aria-expanded', 'false');
       b.setAttribute('aria-controls', 'x-nav-panel');
       const hoverTarget = name === 'Company' ? (b.parentElement || b) : b;
+      menuTargets.push(hoverTarget);
       on(hoverTarget, 'pointerenter', (e) => {
         if (e.pointerType !== 'mouse' || innerWidth <= 900) return;
         clearTimeout(rest);
@@ -227,10 +230,25 @@ export default function Nav({ headerRef }) {
         // a click right after hover opened the menu keeps it open (hover-then-click must not close it)
         const fresh = openedAt.current.name === name && performance.now() - openedAt.current.t < 900;
         origin = b.getBoundingClientRect();
+        window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'nav' }));
         setOpen((cur) => (cur === name && !fresh ? null : (cur && cur !== name && setDir(MENUS.indexOf(name) > MENUS.indexOf(cur) ? 1 : -1), name)));
         openedAt.current = { name, t: 0 };
       });
     });
+    // hovering a non-menu header item (Pricing, Search, EN, Log in, Try Hanzo) closes any open dropdown menu immediately
+    h.querySelectorAll('a[href], button').forEach((el) => {
+      if (menuTargets.some((t) => t.contains(el))) return;
+      on(el, 'pointerenter', (e) => {
+        if (e.pointerType !== 'mouse' || innerWidth <= 900) return;
+        clearTimeout(rest);
+        clearTimeout(timer.current);
+        timer.current = 0;
+        origin = null;
+        if (openRef.current) setOpen(null);
+        if (el.tagName === 'A') window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'link' }));
+      });
+    });
+    on(window, 'hz-header-exclusive', (e) => { if (e.detail !== 'nav' && openRef.current) { clearTimeout(rest); close(); } });
     // inside = header, panel, or the funnel from the heading down to the panel's full width
     const inside = (x, y) => {
       const hr = h.getBoundingClientRect();

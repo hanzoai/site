@@ -4,20 +4,18 @@ import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
 import { EASE, Words } from '../ui';
 import { More } from '../kit';
 import { Glyph } from './glyphs';
-import { PLANS, SEATS, checkoutAbs } from '../../lib/plans';
+import { checkoutAbs } from '../../lib/plans';
+import useCommercePricing from '../../lib/useCommercePricing';
 import { asked, chose, LIST, picked, RUNG, termed, viewed } from '../../lib/funnel';
 import { press } from '../../lib/press';
 
-const go = checkoutAbs(PLANS.go.id);
-const bots = (n) => `Hanzo Bot: ${n} bot${n === 1 ? '' : 's'} of your own`;
-const TIERS = {
-  '3x': { name: PLANS.pro.name, price: PLANS.pro.price, after: 'Everything in Go, plus:', href: checkoutAbs(PLANS.pro.id), desc: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['3x more usage than Go', '3x higher limits than Go', bots(PLANS.pro.bots)] },
-  '5x': { name: PLANS.dev.name, price: PLANS.dev.price, after: 'Everything in Pro, plus:', href: checkoutAbs(PLANS.dev.id), desc: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['5x more usage than Go', '5x higher limits than Go', bots(PLANS.dev.bots)] },
-  '15x': { name: PLANS.max.name, price: PLANS.max.price, after: 'Everything in Dev, plus:', href: checkoutAbs(PLANS.max.id), desc: 'For serious builders running agents, shipping code, and needing substantially higher limits.', f: ['15x more usage than Go', '15x higher limits than Go', bots(PLANS.max.bots)] },
-  '∞': { name: PLANS.ultra.name, price: PLANS.ultra.price, after: 'Everything in Max, plus:', href: checkoutAbs(PLANS.ultra.id), desc: 'For the biggest workloads. Usage beyond what is included is paid from your prepaid balance at list price', f: ['∞ usage across every model', '∞ rate limits & priority queue', 'Usage beyond what is included is paid from your prepaid balance at list price', bots(PLANS.ultra.bots)] },
-};
-const COMMON = ['Early access to new models and features', 'Train custom models on your data', 'Hanzo Engine to run models on your own hardware', 'Dedicated support'];
-const ENT_ITEMS = [
+const tiersOf = (P) => ({
+  '3x': { name: P.pro.name, price: P.pro.price, after: P.pro.head || 'Everything in Go, plus:', href: checkoutAbs(P.pro.id), desc: P.pro.description, f: P.pro.features },
+  '5x': { name: P.dev.name, price: P.dev.price, after: P.dev.head || 'Everything in Pro, plus:', href: checkoutAbs(P.dev.id), desc: P.dev.description, f: P.dev.features },
+  '15x': { name: P.max.name, price: P.max.price, after: P.max.head || 'Everything in Dev, plus:', href: checkoutAbs(P.max.id), desc: P.max.description, f: P.max.features },
+  '∞': { name: P.ultra.name, price: P.ultra.price, after: P.ultra.head || 'Everything in Max, plus:', href: checkoutAbs(P.ultra.id), desc: P.ultra.description, f: P.ultra.features },
+});
+const ENT_FALLBACK = [
   'SSO (SAML 2.0 & OIDC) and SCIM provisioning through Hanzo IAM',
   'Audit logs, role-based access control and organization policies',
   'Zero data retention, custom privacy controls and HIPAA / BAA',
@@ -112,6 +110,10 @@ function Seg({ opts, val, set, id }) {
 }
 
 export default function Pricing() {
+  const { plans: PLANS, seats: SEATS } = useCommercePricing();
+  const go = checkoutAbs(PLANS.go.id);
+  const TIERS = tiersOf(PLANS);
+  const ENT_ITEMS = SEATS.enterprise.features.length ? SEATS.enterprise.features : ENT_FALLBACK;
   const [tab, setTab] = useState('Personal');
   const [x, setX] = useState('3x');
   const [bill, setBill] = useState('Annual');
@@ -132,13 +134,13 @@ export default function Pricing() {
           <motion.div layout className={'x-plans n' + (tab === 'Personal' ? 3 : 2)}>
             <AnimatePresence mode="popLayout" initial={false}>
               {tab === 'Personal' && [
-                <Plan key="free" i={0} free sold={sale('free', 'free', 'Try Hanzo')} name="Free" desc="Chat and build with Hanzo, free." price="Free" unit="" sub="No card needed" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Instant access · Free forever" head="What’s included" items={['Chat on the web with Enso Auto', 'Free model requests and Kai decisions included', 'Search the web from chat', 'Write, edit and create content', 'Make code, pages and charts beside the chat', 'Choose how hard it thinks']} />,
-                <Plan key="go" i={1} sold={sale(PLANS.go.id, 'card', 'Get ' + PLANS.go.name)} name="Go" desc="Your everyday AI development toolkit, with access to every model and more included usage." price={PLANS.go.price} sub="Billed monthly" cta="Try Hanzo" href={go} note="No commitment · Cancel anytime" head="Everything in Free, plus:" items={['Build apps with Hanzo Dev', 'Connect any MCP server in Hanzo Dev', 'The Hanzo CLI for macOS, Windows and Linux', 'Every model, including Enso Ultra and Kai', 'Usage included on every model', 'Priority inference and priority support', 'Your own agents, working in the background', 'Automations, with daily runs included']} />,
-                <Plan key="pro" i={2} solid sold={sale(rung, 'card', 'Get ' + t.name)} name={t.name} desc={t.desc} price={t.price} sub="Billed monthly" cta="Try Hanzo" href={t.href || '/pricing'} note="No commitment · Cancel anytime" head={t.after} items={[...t.f, ...COMMON]}
+                <Plan key="free" i={0} free sold={sale('free', 'free', 'Try Hanzo')} name={PLANS.free.name} desc={PLANS.free.description} price="Free" unit="" sub="No card needed" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Instant access · Free forever" head="What’s included" items={PLANS.free.features} />,
+                <Plan key="go" i={1} sold={sale(PLANS.go.id, 'card', 'Get ' + PLANS.go.name)} name={PLANS.go.name} desc={PLANS.go.description} price={PLANS.go.price} sub="Billed monthly" cta="Try Hanzo" href={go} note="No commitment · Cancel anytime" head={PLANS.go.head || 'Everything in Free, plus:'} items={PLANS.go.features} />,
+                <Plan key="pro" i={2} solid sold={sale(rung, 'card', 'Get ' + t.name)} name={t.name} desc={t.desc} price={t.price} sub="Billed monthly" cta="Try Hanzo" href={t.href || '/pricing'} note="No commitment · Cancel anytime" head={t.after} items={t.f}
                   pill={<Seg opts={['3x', '5x', '15x', '∞']} val={x} set={(v) => { setX(v); if (v !== x) picked(RUNG[Object.keys(TIERS).indexOf(v)], 'individual'); }} id="mult" />} />,
               ]}
               {tab === 'Team' && [
-                <Plan key="team" i={0} solid sold={sale('team', 'card', 'Get Team', every)} name="Team" desc="For teams of 2 to 100: every model and usage for each member, one workspace, one bill." sub="Standard & Premium seats · From 2 members" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Organizations can mix Standard and Premium seats · Cancel anytime"
+                <Plan key="team" i={0} solid sold={sale('team', 'card', 'Get Team', every)} name={SEATS.standard.name} desc={SEATS.standard.description} sub="Standard & Premium seats · From 2 members" cta="Try Hanzo" href="https://hanzo.ai/signup" note="Organizations can mix Standard and Premium seats · Cancel anytime"
                   top={(
                     <>
                       <div className="x-bill"><Seg opts={['Annual', 'Monthly']} val={bill} set={(v) => { setBill(v); if (v !== bill) termed('team', v === 'Annual', 'team'); }} id="bill" /><span className="x-save">{`−${SEATS.saving}%`}</span></div>
@@ -148,8 +150,8 @@ export default function Pricing() {
                       </div>
                     </>
                   )}
-                  head="" items={['Add premium seats to raise the team\'s shared usage', 'One shared workspace: chat, meetings, calendar and contacts', 'Single sign-on, roles and an audit log', 'One bill for the whole team', 'Automations, with daily runs included']} />,
-                <Plan key="ent" i={1} sold={sale('enterprise', 'sales', 'Get Enterprise plan', every)} name="Enterprise" desc="For large businesses operating at scale" price="Seat price + usage at API rates" unit="" sub={`US$${SEATS.enterprise.monthAnnual}/seat/month, billed annually, ${SEATS.enterprise.min} seat minimum. Usage cost scales with model and task.`} cta="Get Enterprise plan" href="/contact-sales" alt={['Chat with buying specialist', '/buying-specialist']} head="All Team plan features, plus:" items={ENT_ITEMS} />,
+                  head="" items={SEATS.standard.features} />,
+                <Plan key="ent" i={1} sold={sale('enterprise', 'sales', 'Get Enterprise plan', every)} name={SEATS.enterprise.name} desc={SEATS.enterprise.description} price="Seat price + usage at API rates" unit="" sub={`US$${SEATS.enterprise.monthAnnual}/seat/month, billed annually, ${SEATS.enterprise.min} seat minimum. Usage cost scales with model and task.`} cta="Get Enterprise plan" href="/contact-sales" alt={['Chat with buying specialist', '/buying-specialist']} head={SEATS.enterprise.head || 'All Team plan features, plus:'} items={ENT_ITEMS} />,
               ]}
               {tab === 'API' && [
                 <Plan key="payg" i={0} solid sold={sale('api-payg', 'free', 'Get API Key')} name="Pay as you go" desc="Direct metered access to all frontier models, coding agents, and tools with zero commitments." price="Pay as you go" unit="" sub="Metered per token & second" cta="Open" href="https://platform.hanzo.ai" head="What’s included" items={['Frontier & open-source models via unified API', 'OpenAI-compatible /v1/chat/completions endpoint', 'Intelligent semantic auto-routing & fallback', 'Prompt caching discounts up to 90%', 'Sandboxed code execution, web search & tools', 'Real-time spend limits, webhooks & usage alerts']} />,
