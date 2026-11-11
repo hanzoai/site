@@ -429,7 +429,7 @@ export default function Hero() {
             <span className="x-h1-b">{line(<Three calm={calm} />, '2')}</span>
           </h1>
           <p className="x-hero-lede">
-            Frontier intelligence over <b>200×</b> faster and <span className="x-nowrap"><b>400×</b> cheaper.</span> Agentic OS for organizations of every size.
+            Frontier intelligence over <b>200×</b> faster and <span className="x-nowrap"><b>400×</b> cheaper.</span> Agentic OS for organizations of every size.
           </p>
           <div className="x-auth">
             <div className="x-auth-row">
