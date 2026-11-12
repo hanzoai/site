@@ -71,8 +71,16 @@ html:not(.light) .x-agents .x-ico svg[color='#181717'] { color: var(--foreground
 .x-home .x-tile-s { order: 4; }
 .x-home .x-repos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
 .x-home .x-oss .x-row-links { justify-content: flex-end; }
+@media (min-width: 641px) { .x-home .x-repo:nth-child(n + 5) { display: none; } }
 @media (max-width: 1100px) { .x-home .x-repos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 640px) { .x-home .x-repos { grid-template-columns: minmax(0, 1fr); } .x-home .x-repo:nth-child(n + 3) { display: none; } }
+/* a phone: eight repositories two by two, each card down to its name, what it is, its counts and its year of commits */
+@media (max-width: 640px) {
+  .x-home .x-repos { gap: 10px; }
+  .x-home .x-repo > div { padding: 12px; gap: 8px; border-radius: 18px; }
+  .x-home .x-repo [data-slot='repo'] a > span:last-child { font-size: 12.5px; min-height: 0; }
+  .x-home .x-repo div:has(> [data-slot='counts']), .x-home .x-repo [data-slot='counts'] { gap: 4px 8px; flex-wrap: wrap; flex-shrink: 1; }
+  .x-home .x-repo [data-slot='repo-foot'] > :first-child, .x-home .x-repo span:has(> time), .x-home .x-repo [data-year] { display: none; }
+}
 
 /* pricing: its one centred heading at 52px, the tabs 48px under it */
 .x-home .x-head.center { margin-bottom: 48px; }

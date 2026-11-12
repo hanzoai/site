@@ -18,7 +18,8 @@ const TILES = [
   ['GitHub stars', sum('stars'), 'as GitHub counts them', 'https://github.com/hanzoai'],
   ['GitHub forks', sum('forks'), 'as GitHub counts them', 'https://github.com/hanzoai'],
 ];
-const CARDS = O.groups.hanzo.top.slice(0, 4).map(repoCard);
+// four across on a laptop; a phone shows eight, two by two (Home.css)
+const CARDS = O.groups.hanzo.top.slice(0, 8).map(repoCard);
 /* Hanzo's commit calendar, rebuilt from its own numbers. Point at any day (or move with the arrow keys) for Hanzo's
    readout; the days around it swell like a lens. At rest nothing moves. */
 const LEAD = FIRST_WEEKDAY; // Hanzo's grid opens with blank days so the weeks line up (Sunday first)

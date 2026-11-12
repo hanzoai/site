@@ -19,7 +19,7 @@ export default function repoCard(r) {
     href: esc(r.forge), repo: esc(r.repo), desc: esc(r.description), lang: esc(r.language),
     stars: n(r.stars), forks: n(r.forks), faces, bars: bars(r.months || []),
     contributors: r.contributors === 1 ? '1 contributor' : `${n(r.contributors)} contributors`,
-    commits: r.commits === 1 ? '1 commit this year' : `${n(r.commits)} commits this year`,
+    commits: (r.commits === 1 ? '1 commit' : `${n(r.commits)} commits`) + '<span data-year=""> this year</span>',
     pushedAt: esc(r.pushed), pushed: day(r.pushed),
   });
 }
