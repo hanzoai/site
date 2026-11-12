@@ -1,9 +1,9 @@
 'use client';
 /* A product card's screen plays through Hanzo's examples for it, as the landing's cards did (hanzo-inc/app
    components/home/Products.tsx useScene): while the card is on screen, the next example every HOLD ms, its rows coming
-   in one after another. The first example is the server's (the card's own screen, content/products.ts) and stands as
-   drawn until the first step. The others (scenes.json, captured from hanzo.ai) load when the card comes near; off
-   screen, in a hidden tab or under reduced motion nothing plays. */
+   in one after another. The first example is the server's (the card's own screen, content/products.ts): it plays its
+   rows in as the card is first seen, then the next example follows. The others (scenes.json, captured from hanzo.ai)
+   load as the card comes into view; off screen, in a hidden tab or under reduced motion nothing plays. */
 import { useEffect, useRef, useState } from 'react';
 import './scenes.css';
 
@@ -23,7 +23,11 @@ export default function Cycle({ i, html }) {
     const run = () => { clearInterval(t); if (seen && !document.hidden && list?.length) t = setInterval(step, HOLD + i * 140); };
     const io = new IntersectionObserver(([e]) => {
       seen = e.isIntersecting;
-      if (seen && !list) import('./scenes.json').then((m) => { list = m.default[i] || []; setExtra(list); run(); });
+      if (seen && !list) {
+        setAt((a) => (a.k || a.round ? a : { k: 0, round: 1 })); // first seen: the card's own example plays in
+        list = [];
+        import('./scenes.json').then((m) => { list = m.default[i] || []; setExtra(list); run(); });
+      }
       else run();
     }, { threshold: 0.35 });
     io.observe(el);
