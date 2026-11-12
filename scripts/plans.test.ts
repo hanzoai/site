@@ -63,10 +63,13 @@ test('only Team has a monthly or yearly choice: the annual answer states its sav
   assert.doesNotMatch(a, /92/);
 });
 
-test('the bot floor is Go and the team workspace floor is Pro', () => {
-  assert.equal(FLOOR.bot, PLANS.go.price);
-  assert.equal(FLOOR.team, PLANS.pro.price);
-  assert.equal(FLOOR.paid, Math.min(...rows.filter((p) => p.category === 'personal' && p.price > 0).map((p) => p.price)));
+test('the bot and team workspace floors are the cheapest personal plans whose rows grant bots and Hanzo Team', () => {
+  // read off the rows, not named: @hanzo/plans 1.10 moves them (Go keeps no bot and gains the team workspace)
+  const paid = rows.filter((p) => p.category === 'personal' && p.price > 0);
+  const least = (has, fallback) => { const xs = paid.filter(has).map((p) => p.price); return xs.length ? Math.min(...xs) : fallback; };
+  assert.equal(FLOOR.bot, least((p) => p.products.includes('bot') || (p.bots ?? 0) !== 0, PLANS.go.price));
+  assert.equal(FLOOR.team, least((p) => p.products.includes('team'), PLANS.pro.price));
+  assert.equal(FLOOR.paid, Math.min(...paid.map((p) => p.price)));
   assert.equal(PLANS.ultra.bots, LIVE.plans.ultra.bots);
 });
 
