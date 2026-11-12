@@ -66,7 +66,9 @@ async function figures() {
   };
 
   // The plan prices and entitlements on the home page, /pricing, /bot and /enterprise, in USD (commerce.hanzo.ai gives cents):
-  // the plans the site names, and every agency and white-label plan (/enterprise's Partners band lists them as the catalog does).
+  // the plans the site names, every personal plan commerce lists (the usage slider's rungs above Ultra, Ultimate and
+  // Unlimited, stand on the page only while listed: lib/plans.ts), and every agency and white-label plan (/enterprise's
+  // Partners band lists them as the catalog does).
   const PLANS = PLANS_URL;
   const SHOWN = ['free', 'go', 'pro-3x', 'dev-5x', 'max-15x', 'ultra', 'team', 'team-premium', 'enterprise', 'enterprise-300'];
   const pricing = async () => {
@@ -74,7 +76,7 @@ async function figures() {
     need(Array.isArray(list), 'plan list');
     for (const slug of SHOWN) need(list.some((x) => x.slug === slug), 'plan ' + slug);
     const plans = {};
-    for (const p of list.filter((x) => SHOWN.includes(x.slug) || x.category === 'agency' || x.category === 'white-label')) {
+    for (const p of list.filter((x) => SHOWN.includes(x.slug) || ['personal', 'agency', 'white-label'].includes(x.category))) {
       need(int(p.price) && (p.priceAnnual == null || int(p.priceAnnual)), 'plan ' + p.slug);
       plans[p.slug] = shapePlan(p);
     }

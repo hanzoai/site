@@ -1,11 +1,12 @@
 /* The plan funnel's moments, as hanzo-inc/app's Plans.tsx states them, for every plan card on the site (the home's and
    /pricing's). Each goes out through lib/track.js: our stream and the browser tags under one event_id. */
-import { PLANS, planItem, charge } from './plans';
+import { PLANS, RUNGS, planItem, charge } from './plans';
 import { track } from './track';
 
-/** The catalog slug of each rung of Personal's usage ladder (3x, 5x, 15x, 25x), and the plans each tab shows. */
-export const RUNG = [PLANS.pro.id, PLANS.dev.id, PLANS.max.id, PLANS.ultra.id];
-export const LIST = { individual: ['free', PLANS.go.id, PLANS.pro.id], team: ['team', 'enterprise'], api: ['api-payg', 'api-enterprise'] };
+/** The catalog slug of each rung of Personal's usage ladder the catalog sells (Pro 3x, Dev 5x, Max 15x, Ultra 25x, and
+    Ultimate 50x and Unlimited ∞ once listed), and the plans each tab offers: Personal's are Free, Go and every rung. */
+export const RUNG = RUNGS.map((p) => p.id);
+export const LIST = { individual: ['free', PLANS.go.id, ...RUNG], team: ['team', 'enterprise'], api: ['api-payg', 'api-enterprise'] };
 
 /** A tab's plans were shown: once per tab a reader looks at, with the prices it shows. */
 export const viewed = (tab, slugs) => track('pricing_viewed', { currency: 'USD', item_list_id: tab, items: slugs.map((s) => planItem(s, 'month', tab)) });

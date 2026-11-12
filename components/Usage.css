@@ -1,0 +1,25 @@
+/* The usage slider (components/Usage.tsx): one 48px row the card's width, every pixel of it the input's, so a tap
+   anywhere on it (a stop's name too) is a tap on the slider. The track and its thumb ride the top 28px, each stop's
+   multiple sits under its place. The thumb's box is 44px for a finger, drawn as a 22px knob. Ink on the page's own
+   greys, in light and in dark. */
+.x-usage { --t: 44px; --fill: calc(var(--t) / 2 + (100% - var(--t)) * var(--at) / var(--n)); display: grid; margin: 4px 0 0; }
+.x-usage > * { grid-area: 1 / 1; }
+.x-usage input { -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 48px; margin: 0; padding: 0 0 20px; border: 0; background: none; cursor: pointer; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+.x-usage input::-webkit-slider-runnable-track { height: 4px; border-radius: 4px; background: linear-gradient(to right, var(--ink) var(--fill), var(--x-e15) 0); }
+.x-usage input::-moz-range-track { height: 4px; border-radius: 4px; background: var(--x-e15); }
+.x-usage input::-moz-range-progress { height: 4px; border-radius: 4px; background: var(--ink); }
+.x-usage input::-webkit-slider-thumb { -webkit-appearance: none; width: var(--t); height: var(--t); margin-top: -20px; border: 0; border-radius: 50%; background: radial-gradient(circle closest-side, var(--x-knob) 10px, var(--x-e15) 10.5px 11px, light-dark(rgba(0, 0, 0, .08), rgba(0, 0, 0, .4)) 11.5px, transparent 14px); transition: scale .15s var(--ease); }
+.x-usage input::-moz-range-thumb { width: var(--t); height: var(--t); border: 0; border-radius: 50%; background: radial-gradient(circle closest-side, var(--x-knob) 10px, var(--x-e15) 10.5px 11px, light-dark(rgba(0, 0, 0, .08), rgba(0, 0, 0, .4)) 11.5px, transparent 14px); }
+.x-usage input:active::-webkit-slider-thumb { scale: 1.08; }
+.x-usage input:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 12px; }
+.x-usage ol { position: relative; align-self: end; height: 20px; margin: 0; padding: 0; list-style: none; pointer-events: none; }
+.x-usage li { position: absolute; top: 0; left: calc(var(--t) / 2 + (100% - var(--t)) * var(--k) / var(--n)); translate: -50% 0; font: 500 12.5px/20px var(--sans); font-feature-settings: 'tnum'; color: var(--faint); white-space: nowrap; transition: color .2s var(--ease); }
+.x-usage li[data-on] { color: var(--ink); }
+.x-usage li[data-inf] { font-size: 17px; }
+@media (prefers-reduced-motion: reduce) { .x-usage input::-webkit-slider-thumb, .x-usage li { transition: none; } }
+
+/* every stop's version of a line in one cell, the current one shown (Stack in components/Usage.tsx) */
+.x-stack { display: grid; }
+.x-stack > * { grid-area: 1 / 1; min-width: 0; transition: opacity .25s var(--ease), visibility .25s; }
+.x-stack > :not([data-on]) { opacity: 0; visibility: hidden; }
+@media (prefers-reduced-motion: reduce) { .x-stack > * { transition: none; } }

@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import LIVE from '../content/live/_pricing.json' with { type: 'json' };
 import MODELS from '../content/live/_models.json' with { type: 'json' };
-import { FLOOR, OFFERS, PARTNERS, PLANS, SEATS, charge, checkout, planItem, usd } from '../lib/plans.ts';
+import { FLOOR, OFFERS, PARTNERS, PLANS, RUNGS, SEATS, charge, checkout, derivePlans, planItem, usd } from '../lib/plans.ts';
 import { QA as PRICING } from '../components/pages/Pricing.faq.ts';
 import { QA as AGENTS, KAI } from '../components/pages/AgentsPage.faq.ts';
 
@@ -15,7 +15,7 @@ const jsonld = (route) => JSON.parse(fs.readFileSync(new URL(`../content/jsonld/
 const code = (file) => fs.readFileSync(new URL(`../components/${file}`, import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
 
 test('personal plans are the API rows, billed by the month only', () => {
-  for (const k of ['go', 'pro', 'dev', 'max', 'ultra']) {
+  for (const k of ['go', 'pro', 'dev', 'max', 'ultra', 'ultimate', 'unlimited'].filter((k) => PLANS[k])) {
     const row = LIVE.plans[PLANS[k].id];
     assert.equal(PLANS[k].price, row.price, k);
     assert.equal(row.priceAnnual, null, `${k} offers no year`);
@@ -103,4 +103,43 @@ test('the structured data holds no price and no answer of its own: the plan list
   }
   for (const route of ['pricing', 'agents']) assert.ok(!jsonld(route).some((d) => d.mainEntity), `${route} types its FAQ`);
   assert.equal(faq['@type'], 'FAQPage');
+});
+
+test('the usage slider stops at every rung the catalog sells, each named by its multiple of Go as its plan states it', () => {
+  const ladder = ['pro-3x', 'dev-5x', 'max-15x', 'ultra', 'ultimate', 'unlimited'];
+  assert.deepEqual(RUNGS.map((r) => r.id), ladder.filter((s) => LIVE.plans[s]), 'lowest first, only what the catalog lists');
+  const times = { 'pro-3x': '3x', 'dev-5x': '5x', 'max-15x': '15x', ultra: '25x', ultimate: '50x', unlimited: '∞' };
+  for (const r of RUNGS) {
+    assert.equal(r.x, times[r.id], r.id);
+    assert.equal(r.price, LIVE.plans[r.id].price, r.id);
+    assert.ok(r.x === '∞' || r.features.some((f) => f.startsWith(r.x + ' ')), `${r.id} states ${r.x}`);
+  }
+  assert.equal(PLANS.ultimate?.head ?? 'Everything in Ultra, plus:', 'Everything in Ultra, plus:');
+  assert.equal(PLANS.unlimited?.head ?? 'Everything in Ultimate, plus:', 'Everything in Ultimate, plus:');
+});
+
+test('a catalog without Ultimate and Unlimited stops the slider at Ultra, whatever the snapshot holds', () => {
+  const { ultimate, unlimited, ...older } = LIVE.plans;
+  const d = derivePlans(older);
+  assert.equal(d.plans.ultimate, null);
+  assert.equal(d.plans.unlimited, null);
+  assert.deepEqual(d.rungs.map((r) => r.id), ['pro-3x', 'dev-5x', 'max-15x', 'ultra']);
+  assert.equal(d.floor.paid, PLANS.go.price);
+});
+
+test('a rung that states no multiple of Go and lifts no cap is refused, never shown as ∞', () => {
+  const raw = { ...LIVE.plans, 'max-15x': { ...LIVE.plans['max-15x'], features: ['Everything in Dev, plus:', 'More usage than Go'] } };
+  assert.throws(() => derivePlans(raw), /max-15x states no multiple/);
+});
+
+test('every rung the slider offers is named and priced on the analytics tags by its catalog row', () => {
+  for (const r of RUNGS) assert.deepEqual(planItem(r.id, 'month', 'individual'), { item_id: r.id, item_name: r.name, item_category: 'individual', price: r.price }, r.id);
+});
+
+test('the home and /pricing draw the ladder as one slider: no tab of multiples is left', () => {
+  for (const file of ['home/Pricing.tsx', 'pages/Pricing.tsx']) {
+    const text = code(file);
+    assert.match(text, /<Usage rungs=\{rungs\}/, file);
+    assert.doesNotMatch(text, /'3x'|'15x'|'∞'|proRungs|tiersOf/, file);
+  }
 });

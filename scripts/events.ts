@@ -6,19 +6,12 @@
 // with the app's name and exactly the app's param keys (the ambient ones the client adds to every event are set aside).
 // A negative check for each place the app says nothing. Every step runs; the exit code is 1 if any missed.
 //
-// Needs a Playwright with browsers (~/.cache/ms-playwright): the one in ~/work/hanzo-inc/app/node_modules.
-import { createRequire } from 'node:module';
-import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+// Needs a Playwright with browsers (~/.cache/ms-playwright): the one in ~/work/hanzo-inc/app/node_modules (scripts/host.ts).
+import { chromium, host, HOST } from './host.ts';
+import LIVE from '../content/live/_pricing.json' with { type: 'json' };
 
-const require = createRequire(path.join(os.homedir(), 'work/hanzo-inc/app/package.json'));
-const { chromium } = require('@playwright/test');
-
-const OUT = fileURLToPath(new URL('../out/', import.meta.url));
-const HOST = 'https://hanzo.ai';
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.png': 'image/png', '.woff2': 'font/woff2', '.txt': 'text/plain', '.webm': 'video/webm', '.jpg': 'image/jpeg', '.ico': 'image/x-icon', '.md': 'text/markdown', '.xml': 'application/xml' };
+// what Personal offers, as the build's plan list has it: Free, Go and every rung of the usage ladder it lists
+const PERSONAL = ['free', 'go', ...['pro-3x', 'dev-5x', 'max-15x', 'ultra', 'ultimate', 'unlimited'].filter((s) => LIVE.plans[s])].join();
 // what the client adds to an event, whatever it is about (touch, consent, the page): not the app's params
 const AMBIENT = new Set(['fbp', 'fbc', 'cid', 'gclid', 'gbraid', 'wbraid', 'fbclid', 'clicked', 'event_id', 'consent', 'tags', 'userAgent', 'url', 'internal']);
 
@@ -39,13 +32,7 @@ const posts = []; // every other write: { url, body }
 const state = { lead: 'filed', news: 'pending' };
 
 await ctx.route(/.*/, (r) => r.abort()); // nothing else leaves the machine
-await ctx.route(/^https:\/\/hanzo\.ai\//, (route) => {
-  const p = decodeURIComponent(new URL(route.request().url()).pathname);
-  const clean = p.replace(/\/$/, '') || '/index';
-  const f = [path.join(OUT, p), path.join(OUT, clean + '.html'), path.join(OUT, p, 'index.html')].find((c) => fs.existsSync(c) && !fs.statSync(c).isDirectory());
-  if (!f) return route.fulfill({ status: 404, body: 'missing' });
-  route.fulfill({ status: 200, body: fs.readFileSync(f), headers: { 'content-type': TYPES[path.extname(f)] || 'application/octet-stream' } });
-});
+await host(ctx);
 await ctx.route(/^https:\/\/api\.hanzo\.ai\//, (route) => {
   const req = route.request();
   const u = new URL(req.url());
@@ -105,6 +92,12 @@ const tap = (sel, i = 0) => page.evaluate(([s, k]) => {
   el.click();
 }, [sel, i]);
 const type = async (sel, text) => { await page.locator(sel).first().fill(text); };
+// the usage slider (components/Usage.tsx) moved up by the keyboard from where it stands, one stop a press
+const raise = async (sel, n) => {
+  await page.locator(sel + ' .x-usage input').focus();
+  for (let i = 0; i < n; i++) await page.keyboard.press('ArrowRight');
+  await page.waitForTimeout(500);
+};
 
 const own = (p) => Object.fromEntries(Object.entries(p).filter(([k]) => !AMBIENT.has(k)));
 const same = (got, want) => (typeof want === 'function' ? want(got) : want instanceof RegExp ? want.test(String(got)) : JSON.stringify(got) === JSON.stringify(want));
@@ -147,7 +140,7 @@ const viewBand = async (name) => {
 };
 await open('/');
 await expects('home: the hero is drawn', 'home_viewed', {});
-await expects('home: the plans are listed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === 'free,go,pro-3x' && v.every((i) => i.item_category === 'individual' && typeof i.price === 'number') });
+await expects('home: the plans are listed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === PERSONAL && v.every((i) => i.item_category === 'individual' && typeof i.price === 'number') });
 await expects('home: a link in the hero', 'cta_clicked', { page: '/', section: 'hero', cta: 'Continue with email', target: '/signup' }, () => tap('.x-hero .x-auth-b.solid'));
 await expects('home: a product in the grid', 'cta_clicked', { page: '/', section: 'products', cta: 'Open ↗', target: 'https://hanzo.app/chat' }, () => tap('.xp-card .x-btn.solid', 0));
 await expects('hero demo: the sidebar', 'hero_demo', { control: 'sidebar' }, () => tap('.xs-sidet'));
@@ -175,7 +168,7 @@ await expects('plans: Go starts the checkout', 'checkout_started', { currency: '
 ok('plans: and the link does not also send its own checkout moment', !sent.slice(fromGo).some((e) => e.event === 'checkout_started' && 'link_url' in e.p), '');
 ok('plans: nor a cta_clicked', !sent.slice(fromGo).some((e) => e.event === 'cta_clicked' && e.p.target?.includes('plan=go')), '');
 await expects('plans: Pro', 'plan_clicked', { plan: 'pro-3x', interval: 'month', cta: 'Get Pro', item_list_id: 'individual', items: (v) => v[0].item_id === 'pro-3x' && v[0].price === 15 }, () => tap('.x-pricing .x-plan .x-btn', 2));
-await expects('plans: the usage ladder', 'plan_tier_picked', { plan: 'dev-5x', item_list_id: 'individual' }, () => viewBand('5x'));
+await expects('plans: the usage ladder', 'plan_tier_picked', { plan: 'dev-5x', item_list_id: 'individual' }, () => raise('.x-pricing', 1));
 await expects('plans: the Team tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'team', items: (v) => v.map((i) => i.item_id).join() === 'team,enterprise' }, () => viewBand('Team'));
 await expects('plans: the Team term', 'plan_term_changed', { plan: 'team', interval: 'month', item_list_id: 'team' }, () => viewBand('Monthly'));
 await expects('plans: Team', 'plan_clicked', { plan: 'team', interval: 'month', cta: 'Get Team', item_list_id: 'team', items: (v) => v[0].item_id === 'team' && v[0].price === 25 }, () => tap('.x-pricing .x-plan .x-btn', 0));
@@ -183,7 +176,7 @@ await expects('plans: the API tab is viewed', 'pricing_viewed', { currency: 'USD
 await expects('plans: Pay as you go', 'plan_clicked', { plan: 'api-payg', interval: 'month', cta: 'Get API Key', item_list_id: 'api', items: (v) => v[0].item_name === 'Pay as you go' && v[0].price === 0 }, () => tap('.x-pricing .x-plan .x-btn', 0));
 // links to pages of this site leave the page: each is the last thing done on it
 await open('/');
-await viewBand('5x');
+await raise('.x-pricing', 1);
 await expects('plans: the Pro card follows the ladder', 'plan_clicked', { plan: 'dev-5x', interval: 'month', cta: 'Get Dev', item_list_id: 'individual', items: (v) => v[0].item_id === 'dev-5x' }, () => tap('.x-pricing .x-plan .x-btn', 2));
 await open('/');
 await viewBand('Team');
@@ -229,7 +222,7 @@ await seen('/investors/', ['research', 'trusted']);
 /* ---------------------------------------------------------------- pricing */
 if (on('pricing')) {
 await open('/pricing/');
-await expects('pricing: Personal is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === 'free,go,pro-3x' });
+await expects('pricing: Personal is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === PERSONAL });
 await expects('pricing: Free', 'plan_clicked', { plan: 'free', interval: 'month', cta: 'Try Hanzo', item_list_id: 'individual', items: (v) => v[0].price === 0 }, () => tap('.xpr-card[data-id="free"] .xpr-cta'));
 await silent('pricing: Free is not a checkout', 'plan_selected', () => Promise.resolve(), (p) => p.items?.[0]?.item_id === 'free');
 const fromGoCard = sent.length;
@@ -237,7 +230,7 @@ await expects('pricing: Go', 'plan_clicked', { plan: 'go', interval: 'month', ct
 await expects('pricing: Go is selected', 'plan_selected', { currency: 'USD', value: 8, items: (v) => v[0].item_id === 'go' });
 await expects('pricing: Go starts the checkout', 'checkout_started', { currency: 'USD', value: 8, interval: 'month', items: (v) => v[0].item_id === 'go' });
 ok('pricing: and the link does not also send its own checkout moment', !sent.slice(fromGoCard).some((e) => e.event === 'checkout_started' && 'link_url' in e.p), '');
-await expects('pricing: the usage ladder', 'plan_tier_picked', { plan: 'max-15x', item_list_id: 'individual' }, () => page.evaluate(() => [...document.querySelectorAll('.xpr-seg button')].find((b) => b.textContent === '15x').click()));
+await expects('pricing: the usage ladder', 'plan_tier_picked', { plan: 'max-15x', item_list_id: 'individual' }, () => raise('.xpr-card[data-id="pro"]', 2));
 await expects('pricing: the Pro card follows the ladder', 'plan_clicked', { plan: 'max-15x', interval: 'month', cta: 'Get Max', item_list_id: 'individual', items: (v) => v[0].item_id === 'max-15x' && v[0].price === 95 }, () => tap('.xpr-card[data-id="pro"] .xpr-cta'));
 await expects('pricing: the Team tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'team', items: (v) => v.map((i) => i.item_id).join() === 'team,enterprise' }, () => page.evaluate(() => [...document.querySelectorAll('[role="tablist"] [role="tab"]')].find((b) => b.textContent.trim() === 'Team').click()));
 await expects('pricing: Team, by the year', 'plan_clicked', { plan: 'team', interval: 'year', cta: 'Get Team', item_list_id: 'team', items: (v) => v[0].item_id === 'team' && v[0].price === 240 }, () => tap('.xpr-card[data-id="team"] .xpr-cta'));

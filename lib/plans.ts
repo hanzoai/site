@@ -41,7 +41,7 @@ export function derivePlans(rawPlans = LIVE.plans) {
       features: items,
       rawFeatures: Array.isArray(p.features) ? p.features : [],
       products,
-      hasBot: products.includes('bot') || p.bots === -1,
+      hasBot: products.includes('bot') || (p.bots ?? 0) !== 0, // -1 is as many as you like, a count is that many
       hasTeam: products.includes('team'),
       hasEngine: products.includes('engine'),
       popular: !!p.popular,
@@ -73,9 +73,25 @@ export function derivePlans(rawPlans = LIVE.plans) {
     dev: personal('dev-5x', 'Everything in Pro, plus:'),
     max: personal('max-15x', 'Everything in Dev, plus:'),
     ultra: personal('ultra', 'Everything in Max, plus:'),
+    // the two rungs above Ultra stand only where the catalog read lists them (null otherwise), never from the snapshot
+    // under a live read that lacks them: the slider never offers a rung that cannot be bought
+    ultimate: rawPlans.ultimate ? personal('ultimate', 'Everything in Ultra, plus:') : null,
+    unlimited: rawPlans.unlimited ? personal('unlimited', 'Everything in Ultimate, plus:') : null,
   };
 
-  const paidPersonal = Object.values(plans).filter((p) => p.price > 0);
+  // The usage ladder above Go, lowest first: the plan cards' slider stops at each rung the catalog sells, each named by
+  // its multiple of Go as its own lines state it ("15x more usage than Go", "25x higher limits …"); a rung whose lines
+  // lift every cap is ∞. A rung that states neither stops the build (and a live read that does keeps the page on its
+  // snapshot), so a stop never claims what its plan does not.
+  const times = (p) => {
+    const n = p.features.map((f) => /^(\d+)x\b/i.exec(f)?.[1]).find(Boolean);
+    if (n) return n + 'x';
+    if (p.features.some((f) => /\bno usage caps\b|\bunlimited usage\b/i.test(f))) return '∞';
+    throw new Error(`plan ${p.id} states no multiple of Go's usage`);
+  };
+  const rungs = [plans.pro, plans.dev, plans.max, plans.ultra, plans.ultimate, plans.unlimited].filter(Boolean).map((p) => ({ ...p, x: times(p) }));
+
+  const paidPersonal = Object.values(plans).filter((p) => p?.price > 0);
   const withBot = paidPersonal.filter((p) => p.hasBot);
   const withTeam = paidPersonal.filter((p) => p.hasTeam);
   const minPrice = (arr, fallback) => (arr.length ? Math.min(...arr.map((p) => p.price)) : fallback);
@@ -119,12 +135,13 @@ export function derivePlans(rawPlans = LIVE.plans) {
     saving: Math.round((1 - plan('team').priceAnnual / plan('team').price) * 100),
   };
 
-  return { plans, floor, seats };
+  return { plans, rungs, floor, seats };
 }
 
 const DERIVED = derivePlans(LIVE.plans);
 
 export const PLANS = DERIVED.plans;
+export const RUNGS = DERIVED.rungs;
 export const FLOOR = DERIVED.floor;
 export const SEATS = DERIVED.seats;
 

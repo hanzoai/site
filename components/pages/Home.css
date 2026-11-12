@@ -16,7 +16,7 @@ html main.x-home > section.x-sec { background: none; }
 }
 .x-pricing .x-price b.long { font-size: 26px; line-height: 1.15; white-space: normal; text-wrap: balance; }
 .x-pricing .x-row-links { justify-content: center; }
-.x-plan-h { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; min-height: 44px; }
+.x-plan-h { display: flex; align-items: center; min-height: 44px; }
 .x-plan-h h3 { display: flex; align-items: center; gap: 10px; }
 .x-plan-h h3 svg { flex: none; }
 .x-pricing .x-plan-l summary { margin: 0 0 10px; font-size: 13.5px; font-weight: 500; list-style: none; pointer-events: none; }

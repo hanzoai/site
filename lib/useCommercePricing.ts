@@ -234,26 +234,25 @@ export function buildModelGroups(modelsSnap = SNAP_MODELS) {
   ];
 }
 
-export function buildCompareDiff(plans) {
-  const order = [plans.free, plans.go, plans.pro, plans.dev, plans.max, plans.ultra];
+export function buildCompareDiff(plans, rungs) {
+  // a column per plan: Free, Go, then every rung of the ladder the catalog sells (lib/plans.ts `rungs`)
+  const order = [plans.free, plans.go, ...rungs];
   const usageLine = (p, fallback) => p.features.find((f) => /usage/i.test(f)) || fallback;
   const limitLine = (p, fallback) => {
-    const raw = p.features.find((f) => /higher limits|rate limits/i.test(f));
+    const raw = p.features.find((f) => /higher limits|rate limits|^no limits/i.test(f));
     if (!raw) return fallback;
     const hasPrio = p.features.some((f) => /priority queue/i.test(f));
-    const short = raw.replace(/\s+every 5 hours and every day/i, ' than Go');
+    const short = raw.replace(/(higher limits)\s+every 5 hours and every day/i, '$1 than Go');
     return hasPrio && !/priority/i.test(short) ? `${short} & priority queue` : short;
   };
+  const capped = (r) => r.x !== '∞';
   return [
     [
       'Usage',
       [
         'Free daily requests & Kai decisions',
-        usageLine(order[1], 'Usage included on every model'),
-        usageLine(order[2], '3x more usage than Go'),
-        usageLine(order[3], '5x more usage than Go'),
-        usageLine(order[4], '15x more usage than Go'),
-        usageLine(order[5], 'Unlimited usage across every model'),
+        usageLine(plans.go, 'Usage included on every model'),
+        ...rungs.map((r) => usageLine(r, capped(r) ? `${r.x} more usage than Go` : 'No usage caps on any model')),
       ],
     ],
     [
@@ -261,13 +260,10 @@ export function buildCompareDiff(plans) {
       [
         'Standard daily pool',
         'Standard paid limits',
-        limitLine(order[2], '3x higher limits than Go'),
-        limitLine(order[3], '5x higher limits than Go'),
-        limitLine(order[4], '15x higher limits than Go'),
-        limitLine(order[5], '25x higher limits than Go & priority queue'),
+        ...rungs.map((r) => limitLine(r, capped(r) ? `${r.x} higher limits than Go` : 'No limits every 5 hours or every day')),
       ],
     ],
-    ['Hanzo Bot', order.map((p) => (p.hasBot ? 'Unlimited bots (hanzo.bot)' : null))],
+    ['Hanzo Bot', order.map((p) => (!p.hasBot ? null : p.bots > 0 ? `${p.bots} ${p.bots === 1 ? 'bot' : 'bots'} (hanzo.bot)` : 'Unlimited bots (hanzo.bot)'))],
     ['Hanzo Team', order.map((p) => (p.hasTeam ? 'Included (hanzo.team)' : null))],
     [
       'Models',
@@ -304,7 +300,7 @@ function buildState(rawPlans, modelsSnap) {
     ...derived,
     rawPlans,
     groups: buildModelGroups(modelsSnap),
-    compareDiff: buildCompareDiff(derived.plans),
+    compareDiff: buildCompareDiff(derived.plans, derived.rungs),
   };
 }
 
@@ -321,7 +317,9 @@ const fetchLive = () =>
   (livePromise ??= Promise.all([
     getJson(PLANS_URL).then((list) => {
       if (!Array.isArray(list)) throw new Error('invalid plans');
-      const map = { ...SNAP_PRICING.plans };
+      // what commerce lists now, and nothing else: a plan the page always shows falls back to the snapshot in
+      // derivePlans, but a rung above Ultra stands only if this read lists it, so no stop sells a plan that is gone
+      const map = {};
       for (const p of list) {
         if (p?.slug && Number.isFinite(p.price)) map[p.slug] = shapePlan(p);
       }

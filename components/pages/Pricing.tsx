@@ -1,6 +1,6 @@
 'use client';
 /* Pricing, v2 (VISION archetype E, Utility: calm, precise and fast, with one delight; PLAN-COMPONENTS 5.2).
-   Every subscription plan (Free, Go, Pro, Dev, Max, Ultra, Team, Enterprise) and per-token AI model family
+   Every subscription plan (Free, Go, the usage ladder Pro to Unlimited on one slider, Team, Enterprise) and per-token AI model family
    (Hanzo Enso, Hanzo Kai, Hanzo Zen) is read live from https://commerce.hanzo.ai (seeded from content/live snapshots
    for zero-CLS SSR and refreshed on mount so admin.hanzo.ai edits reflect immediately).
    Models (Enso, Kai, Zen) are metered per million tokens and NEVER badged as subscription plans. */
@@ -10,12 +10,13 @@ import { EASE, useCalm } from '../ui';
 import { A, More, Cta, Tabs, Faq, DataTable, Band } from '../kit';
 import Odometer from '../v2/Odometer';
 import NoJs from '../NoJs';
+import Usage, { Stack } from '../Usage';
 import './Frame.css';
 import './Pricing.css';
 import { checkout, teamCheckout } from '../../lib/plans';
 import useCommercePricing from '../../lib/useCommercePricing';
 import { QA } from './Pricing.faq';
-import { asked, chose, LIST, picked, RUNG, termed, viewed } from '../../lib/funnel';
+import { asked, chose, LIST, picked, termed, viewed } from '../../lib/funnel';
 import { press } from '../../lib/press';
 
 const PAY = (p) => checkout(p);
@@ -57,23 +58,14 @@ const ENT_FALLBACK = [
 const PAYG_INC = ['Frontier & open-source models via unified API', 'OpenAI-compatible /v1/chat/completions endpoint', 'Intelligent semantic auto-routing & fallback', 'Prompt caching discounts up to 90%', 'Sandboxed code execution, web search & tools', 'Real-time spend limits, webhooks & usage alerts'];
 const VOL_INC = ['Committed-use volume discounts starting at $5k/mo', 'Dedicated GPU clusters (H100, B200) in your cloud or VPC', 'Custom rate limits exceeding 100k+ RPM', 'Zero data retention & HIPAA / BAA compliance', '24/7 dedicated engineering Slack & priority routing'];
 const SETS = [['free', 'go', 'pro'], ['team', 'ent'], ['payg', 'vol']];
-const DEF = { x: '3x', bill: 'Annual', std: 2, prem: 0 };
+const DEF = { at: 0, bill: 'Annual', std: 2, prem: 0 }; // `at`: the usage slider's stop, Pro
 const BUY = 'Chat with buying specialist';
 
-function proRungsOf(P) {
-  return [
-    { x: '3x', name: P.pro.name, price: P.pro.price, to: PAY(P.pro.id), head: P.pro.head || 'Everything in Go, plus:', d: P.pro.description, f: P.pro.features },
-    { x: '5x', name: P.dev.name, price: P.dev.price, to: PAY(P.dev.id), head: P.dev.head || 'Everything in Pro, plus:', d: P.dev.description, f: P.dev.features },
-    { x: '15x', name: P.max.name, price: P.max.price, to: PAY(P.max.id), head: P.max.head || 'Everything in Dev, plus:', d: P.max.description, f: P.max.features },
-    { x: '∞', name: P.ultra.name, price: P.ultra.price, to: PAY(P.ultra.id), head: P.ultra.head || 'Everything in Max, plus:', d: P.ultra.description, f: P.ultra.features },
-  ];
-}
-
-function colsOf(P, proRungs) {
+function colsOf(P, rungs) {
   return [
     { name: P.free.name, price: 'No card needed', to: '/signup' },
     { name: P.go.name, price: '$' + P.go.price, to: PAY(P.go.id) },
-    ...proRungs.map((p) => ({ name: p.name, price: '$' + p.price, to: p.to })),
+    ...rungs.map((r) => ({ name: r.name, price: '$' + r.price, to: PAY(r.id) })),
   ];
 }
 
@@ -132,15 +124,15 @@ function CompareSheet({ lit, cols, rows }) {
   );
 }
 
-function planOf(id, s, live, proRungs) {
+function planOf(id, s, live) {
   const { plans: P, seats: S } = live;
   const seatRates = { Standard: [S.standard.monthAnnual, S.standard.month], Premium: [S.premium.monthAnnual, S.premium.month] };
   const entItems = S.enterprise.features.length ? S.enterprise.features : ENT_FALLBACK;
   if (id === 'free') return { name: P.free.name, d: P.free.description, word: 'No card needed', cta: ['Try Hanzo', '/signup', 'pricing.free'], note: 'Instant access · Free forever', items: P.free.features.slice(0, 4), fullItems: P.free.features, col: 0 };
   if (id === 'go') return { name: P.go.name, d: P.go.description, fig: '$' + P.go.price, sub: 'Billed monthly', cta: ['Try Hanzo', PAY(P.go.id), 'pricing.go'], note: 'No commitment · Cancel anytime', head: P.go.head || 'Everything in Free, plus:', items: P.go.features.slice(0, 4), fullItems: P.go.features, col: 1 };
   if (id === 'pro') {
-    const i = Math.max(0, proRungs.findIndex((q) => q.x === s.x)), q = proRungs[i];
-    return { name: q.name, ladder: true, d: q.d, fig: '$' + q.price, sub: 'Billed monthly', cta: q.to ? ['Try Hanzo', q.to, 'pricing.' + q.name.toLowerCase()] : [BUY, HELP, 'pricing.help'], note: 'No commitment · Cancel anytime', head: q.head, items: q.f, fullItems: q.f, col: 2 + i };
+    const q = live.rungs[s.at];
+    return { name: q.name, ladder: true, d: q.description, fig: '$' + q.price, sub: 'Billed monthly', cta: ['Try Hanzo', PAY(q.id), 'pricing.' + q.name.toLowerCase()], note: 'No commitment · Cancel anytime', head: q.head, items: q.features, fullItems: q.features, col: 2 + s.at };
   }
   if (id === 'team') {
     const k = s.bill === 'Annual' ? 0 : 1;
@@ -153,13 +145,13 @@ function planOf(id, s, live, proRungs) {
 const lines = (v) => [].concat(v || []);
 
 const TAB = { free: 'individual', go: 'individual', pro: 'individual', team: 'team', ent: 'team', payg: 'api', vol: 'api' };
-function sold(id, s, live, proRungs) {
+function sold(id, s, live) {
   const every = s.bill === 'Annual' ? 'year' : 'month';
-  const rung = Math.max(0, proRungs.findIndex((q) => q.x === s.x));
+  const rung = live.rungs[s.at];
   const row = {
     free: { slug: 'free', how: 'free', cta: 'Try Hanzo' },
     go: { slug: live.plans.go.id, how: 'card', cta: 'Get ' + live.plans.go.name },
-    pro: { slug: RUNG[rung], how: 'card', cta: 'Get ' + proRungs[rung].name },
+    pro: { slug: rung.id, how: 'card', cta: 'Get ' + rung.name },
     team: { slug: 'team', how: 'card', cta: 'Get Team', every },
     ent: { slug: 'enterprise', how: 'sales', cta: 'Get Enterprise plan', every },
     payg: { slug: 'api-payg', how: 'free', cta: 'Get API Key' },
@@ -169,30 +161,16 @@ function sold(id, s, live, proRungs) {
 }
 
 /* ---------- panel motion ---------- */
-const EM = [0.4, 0, 0.2, 1];
-const MOVE = { duration: 0.5, ease: EM };
 const IN = { duration: 0.3, ease: EASE };
 
-function Swap({ k, children, className = '', roll }) {
-  const d = roll ? '105%' : 10;
+/* the ladder card's name rolls to the next as the slider moves: up, out of a one-line window */
+function Roll({ k, children }) {
   return (
-    <span className={'xpr-swap ' + (roll ? 'roll ' : '') + className}>
+    <span className="xpr-swap">
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span key={k} className="xpr-swap-i" initial={{ opacity: 0, y: d }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: roll ? '-105%' : -10 }} transition={IN}>{children}</motion.span>
+        <motion.span key={k} className="xpr-swap-i" initial={{ opacity: 0, y: '105%' }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: '-105%' }} transition={IN}>{children}</motion.span>
       </AnimatePresence>
     </span>
-  );
-}
-
-function Lines({ items }) {
-  return (
-    <ul className="xpr-list">
-      <AnimatePresence mode="popLayout" initial={false}>
-        {items.map((t, i) => (
-          <motion.li key={t} layout="position" transition={MOVE} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0, transition: { ...IN, delay: 0.06 * i } }} exit={{ opacity: 0, transition: { duration: 0.15 } }}><Ck />{t}</motion.li>
-        ))}
-      </AnimatePresence>
-    </ul>
   );
 }
 
@@ -251,8 +229,8 @@ function Trust() {
   );
 }
 
-function cardOf(id, s, live, proRungs) {
-  const p = planOf(id, s, live, proRungs);
+function cardOf(id, s, live) {
+  const p = planOf(id, s, live);
   if (id === 'free') return { ...p, word: 'Free', sub: 'No card needed', items: p.fullItems };
   if (id === 'go') return { ...p, items: p.fullItems };
   if (id === 'pro') return { ...p, items: p.fullItems, rec: true };
@@ -277,22 +255,23 @@ function SeatPrices({ bill, seats }) {
   );
 }
 
-function Card({ id, s, set, hand, i, live, proRungs }) {
-  const p = cardOf(id, s, live, proRungs);
+function Card({ id, s, set, hand, i, live }) {
+  const p = cardOf(id, s, live);
   const sub = lines(p.sub);
+  const { rungs } = live;
   return (
     <motion.article className={'xpr-card' + (p.rec ? ' rec' : '')} data-id={id} aria-labelledby={'xpr-c-' + id} style={{ '--i': i }}
       initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0, transition: { ...IN, delay: 0.06 * i } }} exit={{ opacity: 0, transition: { duration: 0.12 } }}>
       {id === 'pro' && <span className="xpr-recd">Recommended</span>}
       <div className="xpr-c-top">
-        <h2 className="xpr-c-name" id={'xpr-c-' + id}>{p.ladder ? <Swap k={p.name} roll>{p.name}</Swap> : p.name}</h2>
-        {p.ladder && <Seg opts={proRungs.map((q) => q.x)} val={s.x} set={(v) => { hand(); set.x(v); if (v !== s.x) picked(RUNG[proRungs.findIndex((q) => q.x === v)], 'individual'); }} id="xpr-mult" label="Usage multiple" />}
+        <h2 className="xpr-c-name" id={'xpr-c-' + id}>{p.ladder ? <Roll k={p.name}>{p.name}</Roll> : p.name}</h2>
         {id === 'team' && <div className="xpr-bill"><Seg opts={['Annual', 'Monthly']} val={s.bill} set={(v) => { set.bill(v); if (v !== s.bill) termed('team', v === 'Annual', 'team'); }} id="xpr-bill" label="Billing period" /><span className="xpr-save">−{live.seats.saving}%</span></div>}
       </div>
-      <p className="xpr-c-d">{p.ladder ? <Swap k={p.d}>{p.d}</Swap> : p.d}</p>
+      <p className="xpr-c-d">{p.ladder ? <Stack at={s.at}>{rungs.map((r) => r.description)}</Stack> : p.d}</p>
       <div className="xpr-c-price">
         {p.fig ? <span className="xpr-fig"><Odometer value={p.fig} /><span className="xpr-u">USD/month</span></span> : <span className="xpr-word">{p.word}</span>}
         {sub.map((t) => <span key={t} className="xpr-c-sub">{t}</span>)}
+        {p.ladder && <Usage rungs={rungs} at={s.at} set={(k) => { hand(); set.at(k); if (k !== s.at) picked(rungs[k].id, 'individual'); }} />}
       </div>
       <div className="xpr-c-acts">
         <Cta to={p.cta[1]} size="lg" kind={p.rec ? 'solid' : 'outline'} id={p.cta[2]} className="xpr-cta" thumb={p.rec} data-ga="">{p.cta[0]}</Cta>
@@ -301,14 +280,14 @@ function Card({ id, s, set, hand, i, live, proRungs }) {
       </div>
       {id === 'team' ? <SeatPrices bill={s.bill} seats={live.seats} /> : <div className="xpr-c-gap" />}
       <div className="xpr-c-inc">
-        <p className="xpr-head">{p.head || 'What’s included'}</p>
-        {p.ladder ? <Lines items={p.items} /> : <List items={p.items} />}
+        <p className="xpr-head">{p.ladder ? <Stack at={s.at}>{rungs.map((r) => r.head)}</Stack> : p.head || 'What’s included'}</p>
+        {p.ladder ? <Stack at={s.at} as="div">{rungs.map((r) => <List key={r.id} items={r.features} />)}</Stack> : <List items={p.items} />}
       </div>
     </motion.article>
   );
 }
 
-function Plans({ tab, s, set, hand, live, proRungs }) {
+function Plans({ tab, s, set, hand, live }) {
   const calm = useCalm();
   return (
     <MotionCfg calm={calm}>
@@ -316,7 +295,7 @@ function Plans({ tab, s, set, hand, live, proRungs }) {
         <div key={t} className={'xpr-cards n' + ids.length} role="tabpanel" id={'xpr-plans-panel-' + t} aria-labelledby={'xpr-plans-tab-' + t} hidden={t !== tab}
           data-enter={t === 0 ? 'grow-from-point' : undefined} onPointerEnter={hand} onFocusCapture={hand}>
           <AnimatePresence initial={false}>
-            {t === tab && ids.map((id, i) => <Card key={id} id={id} s={s} set={set} hand={hand} i={i} live={live} proRungs={proRungs} />)}
+            {t === tab && ids.map((id, i) => <Card key={id} id={id} s={s} set={set} hand={hand} i={i} live={live} />)}
           </AnimatePresence>
         </div>
       ))}
@@ -345,15 +324,15 @@ function useEnter(root) {
 
 const MotionCfg = ({ calm, children }) => <MotionConfig reducedMotion={calm ? 'always' : 'never'}>{children}</MotionConfig>;
 
-function Index({ live, proRungs }) {
-  const all = [['Personal', ['free', 'go', ...proRungs.map((q) => ['pro', { ...DEF, x: q.x }])]], ['Team', ['team', 'ent']], ['API', ['payg', 'vol']]];
+function Index({ live }) {
+  const all = [['Personal', ['free', 'go', ...live.rungs.map((_, k) => ['pro', { ...DEF, at: k }])]], ['Team', ['team', 'ent']], ['API', ['payg', 'vol']]];
   return (
     <div className="xpr-all" hidden>
       {all.map(([t, ids]) => (
         <section key={t} aria-label={t}>
           <h2 className="xpr-all-t">{t}</h2>
           {ids.map((x) => {
-            const p = Array.isArray(x) ? planOf(x[0], x[1], live, proRungs) : planOf(x, DEF, live, proRungs);
+            const p = Array.isArray(x) ? planOf(x[0], x[1], live) : planOf(x, DEF, live);
             return (
               <article key={p.name} className="xpr-all-p">
                 <h3>{p.name}</h3>
@@ -543,8 +522,10 @@ function ApiMore({ on, groups }) {
 
 /* ---------- Compare plans ladder ---------- */
 function Ladder({ lit, cols, diff, rows }) {
+  // a column per plan (Free, Go and every rung sold); narrower, two rows of half as many
+  const half = Math.ceil(cols.length / 2);
   return (
-    <section className="zf-sec xpr-lad" aria-labelledby="xpr-lad-h">
+    <section className="zf-sec xpr-lad" aria-labelledby="xpr-lad-h" style={{ '--cols': cols.length, '--half': half }}>
       <div className="xpr-w">
         <header className="zf-head">
           <h2 id="xpr-lad-h">Compare plans</h2>
@@ -555,7 +536,7 @@ function Ladder({ lit, cols, diff, rows }) {
             const rec = i === 2;
             const paid = c.price.startsWith('$');
             return (
-              <li key={c.name} className={'xpr-lad-c' + (rec ? ' rec' : '') + (i === lit ? ' lit' : '')} style={{ '--i': i }}>
+              <li key={c.name} className={'xpr-lad-c' + (rec ? ' rec' : '') + (i === lit ? ' lit' : '')} style={{ '--i': i }} data-row={i < half ? 1 : 2} data-start={i % half === 0 || undefined}>
                 <span className="xpr-lad-step" aria-hidden="true"><i /></span>
                 <div className="xpr-lad-top">
                   <h3>{c.name}</h3>
@@ -655,26 +636,27 @@ export default function Pricing() {
   const root = useRef(null);
   useEnter(root);
   const live = useCommercePricing();
-  const proRungs = proRungsOf(live.plans);
-  const cols = colsOf(live.plans, proRungs);
+  const cols = colsOf(live.plans, live.rungs);
   const fullRows = fullRowsOf(live.plans, live.compareDiff);
 
   const [tab, setTab] = useState(0);
-  const [x, setX] = useState(DEF.x);
+  const [step, setStep] = useState(DEF.at);
+  // a live catalog that sells fewer rungs than the stop stood on brings the slider down to its highest
+  const at = Math.min(step, live.rungs.length - 1);
   const [bill, setBill] = useState(DEF.bill);
   const [std, setStd] = useState(DEF.std);
   const [prem, setPrem] = useState(DEF.prem);
   const [placed, setPlaced] = useState(false);
-  const s = { x, bill, std, prem };
-  const now = useRef({ s, live, proRungs });
-  now.current = { s, live, proRungs };
+  const s = { at, bill, std, prem };
+  const now = useRef({ s, live });
+  now.current = { s, live };
   useEffect(() => press('.xpr-card .xpr-cta', (a) => {
     const id = a.closest('.xpr-card').dataset.id;
     const cur = now.current;
-    if (a.dataset.cta === 'pricing.help') asked(sold(id, cur.s, cur.live, cur.proRungs).slug, TAB[id], a.textContent.trim());
-    else chose(sold(id, cur.s, cur.live, cur.proRungs));
+    if (a.dataset.cta === 'pricing.help') asked(sold(id, cur.s, cur.live).slug, TAB[id], a.textContent.trim());
+    else chose(sold(id, cur.s, cur.live));
   }), []);
-  const set = { x: setX, bill: setBill, std: setStd, prem: setPrem };
+  const set = { at: setStep, bill: setBill, std: setStd, prem: setPrem };
   const rail = useRef(null);
   const [, setMine] = useState(false);
   const hand = useCallback(() => setMine(true), []);
@@ -707,15 +689,15 @@ export default function Pricing() {
           <div className="xpr-tabs"><Tabs id="xpr-plans" label="Plans" tabs={TABS} value={tab} onChange={pick} size="lg" /></div>
         </div>
         <div className="xpr-w xpr-panels" ref={rail}>
-          <Plans tab={tab} s={s} set={set} hand={hand} live={live} proRungs={proRungs} />
+          <Plans tab={tab} s={s} set={set} hand={hand} live={live} />
         </div>
       </section>
-      {tab === 0 && <Ladder lit={proRungs.findIndex((q) => q.x === x) + 2} cols={cols} diff={live.compareDiff} rows={fullRows} />}
+      {tab === 0 && <Ladder lit={at + 2} cols={cols} diff={live.compareDiff} rows={fullRows} />}
       <ModelFamilies groups={live.groups} />
       <div className="xpr-room">
         <div className="xpr-w">
           <Trust />
-          <Index live={live} proRungs={proRungs} />
+          <Index live={live} />
           <ApiMore on={tab === 2} groups={live.groups} />
         </div>
       </div>
