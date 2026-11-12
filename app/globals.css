@@ -378,7 +378,6 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
 .x-plot .ax { stroke: rgba(0, 0, 0, .07); }
 .x-plot .tick { font: 400 12.5px/1 var(--mono); fill: var(--faint); }
 .x-plot .front { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 1 0; }
-.x-plot-zone { y: 24px; fill: rgba(0, 0, 0, .025); }
 .x-plot .pt { cursor: pointer; outline: none; }
 .x-plot .pt circle { fill: var(--bg); stroke: #8e8e93; stroke-width: 1.5; }
 .x-plot .pt text { font: 500 12.5px/1 var(--sans); fill: var(--soft); pointer-events: none; }
@@ -405,20 +404,6 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
 .x-plot-src a { color: var(--soft); text-decoration: none; }
 .x-plot-src a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 .x-plot .guide line { stroke: var(--ink); stroke-dasharray: 3 4; stroke-width: 1; opacity: .5; }
-.x-plot .cap { cursor: ew-resize; outline: none; }
-/* the budget line and its shade rest out of sight: they show under the pointer, while dragged, or focused */
-.x-plot .cap, .x-plot-zone { opacity: 0; transition: opacity .25s var(--ease); }
-.x-plot:hover .cap, .x-plot:hover .x-plot-zone, .x-plot .cap.on, .x-plot .cap:focus-visible, .x-plot:has(.cap:focus-visible) .x-plot-zone { opacity: 1; }
-@media (prefers-reduced-motion: reduce) { .x-plot .cap, .x-plot-zone { transition: none; } }
-.x-plot .cap line { stroke: var(--ink); stroke-width: 1.5; }
-.x-plot .cap rect:not(.hit) { fill: var(--ink); }
-.x-plot .cap path { stroke: var(--bg); stroke-width: 1.5; stroke-linecap: round; }
-.x-plot .cap .hit { fill: transparent; }
-.x-plot .cap:focus-visible rect:not(.hit) { stroke: var(--ink); stroke-width: 2; }
-.x-plot-read { position: absolute; top: clamp(18px, 3vw, 32px); right: clamp(18px, 3vw, 32px); display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; z-index: 1; }
-.x-plot-read span { font-size: 11.5px; color: var(--soft); }
-.x-plot-read b { font-size: 18px; font-weight: 560; letter-spacing: -.02em; }
-.x-plot-hint { margin: 12px 0 0; font-size: 12.5px; color: var(--faint); }
 
 /* ---------- open source ---------- */
 .x-tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; perspective: 1000px; }
@@ -509,7 +494,6 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
   .x-cmd { font-size: 12px; }
   .x-cal { padding: 16px; overflow-x: auto; }
   .x-cal-grid { min-width: 560px; }
-  .x-plot-read { position: static; align-items: flex-start; text-align: left; margin-bottom: 8px; }
   .x-plot .pt text { font-size: 22px; }
   .x-plot .tick { font-size: 20px; }
   .x-seats { grid-template-columns: 1fr; }

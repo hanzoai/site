@@ -41,7 +41,6 @@ const geo = (g) => ({
   ...g,
   lx: (c) => g.L + ((Math.log10(c) - Math.log10(0.8)) / (Math.log10(60) - Math.log10(0.8))) * (g.R - g.L),
   ly: (a) => g.B - ((a - 75) / 25) * (g.B - g.T),
-  cost: (x) => 10 ** (Math.log10(0.8) + ((x - g.L) / (g.R - g.L)) * (Math.log10(60) - Math.log10(0.8))),
 });
 
 export default function Pareto() {
@@ -70,11 +69,6 @@ export default function Pareto() {
   }, [ph]);
   const u = k ?? (ph ? 1.9 : 1.4);
   const px = DISC(VW / u);
-  // the budget is kept in dollars, so it holds its place when the drawing changes
-  const [budget, setBudget] = useState(4);
-  const cap = lx(budget);
-  const setCap = (f) => setBudget((b) => g.cost(typeof f === 'function' ? f(lx(b)) : f));
-  const [dragging, setDragging] = useState(false);
   // a point's card stays while the pointer travels to its source link; touch keeps it until you tap elsewhere
   const gone = useRef(0);
   const show = (p) => { clearTimeout(gone.current); setHot(p); };
@@ -87,35 +81,23 @@ export default function Pareto() {
   }).sort((p, q) => p.c - q.c), [D, lx, ly]);
   const front = useMemo(() => { let best = -1; return pts.filter((p) => (p.a > best ? ((best = p.a), true) : false)); }, [pts]);
   const path = front.map((p, i) => (i ? 'L' : 'M') + p.x.toFixed(1) + ' ' + p.y.toFixed(1)).join(' ');
-  const within = pts.filter((p) => p.x <= cap);
-  const pick = within.reduce((m, p) => (!m || p.a > m.a ? p : m), null);
-
-  // the budget line: drag it along the cost axis; the most accurate model under it lights up
-  const toX = (clientX) => { const r = box.current.querySelector('svg').getBoundingClientRect(); return Math.max(L + 4, Math.min(R, ((clientX - r.left) / r.width) * VW)); };
-  const onDown = (e) => { e.currentTarget.setPointerCapture(e.pointerId); setDragging(true); setCap(toX(e.clientX)); };
-  const onMove = (e) => { if (dragging) setCap(toX(e.clientX)); };
-  const onKey = (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); setCap((c) => Math.max(L + 4, Math.min(R, c + (e.key === 'ArrowRight' ? 12 : -12)))); } };
-  const c = budget;
-  const hw = ph ? 48 : 14, flip = VW * 0.8;
+  // the cheapest Enso tier is the frontier's point: it wears the ring and keeps its label on a phone
+  const pick = pts.find((p) => p.e);
+  const flip = VW * 0.8;
 
   return (
     <section className="x-sec x-pareto" id="pareto" data-hz-view="pareto" aria-labelledby="pareto-h">
       <div className="x-wrap">
         <Head id="pareto-h" title="A New Pareto Frontier of Intelligence" lede="GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers." />
         <div className="x-plot" data-tilt="" ref={box} onPointerDown={(e) => { if (!e.target.closest('.pt, .x-tip')) setHot(null); }}>
-          <div className="x-plot-read" aria-live="polite">
-            <span className="x-mono">Budget · ${c < 10 ? c.toFixed(2) : Math.round(c)} per 1,000 questions</span>
-            <b>{pick ? `${pick.full} · ${pick.a.toFixed(1)}%` : '—'}</b>
-          </div>
           <div className="x-plot-svg">
-          <svg viewBox={`0 0 ${VW} ${VH}`} role="group" aria-label={KEY} style={{ '--u': u }} onPointerMove={onMove} onPointerUp={() => setDragging(false)}>
+          <svg viewBox={`0 0 ${VW} ${VH}`} role="group" aria-label={KEY} style={{ '--u': u }}>
             {[75, 80, 85, 90, 95, 100].map((a) => (
               <g key={a}><line x1={L} x2={R} y1={ly(a)} y2={ly(a)} className="ax" /><text x={L - 12} y={ly(a) + (ph ? 8 : 4)} textAnchor="end" className="tick">{a}</text></g>
             ))}
             {[1, 3, 10, 30].map((v) => <text key={v} x={lx(v)} y={B + (ph ? 74 : 26)} textAnchor="middle" className="tick">${v}</text>)}
             <text x={L} y={T - (ph ? 16 : 8)} className="tick">GPQA Diamond %</text>
             <text x={R} y={B + (ph ? 112 : 50)} textAnchor="end" className="tick">cheaper ← $ per 1,000 questions → dearer</text>
-            <motion.rect x={L} y={T} height={B - T} className="x-plot-zone" initial={{ width: cap - L }} animate={{ width: cap - L }} transition={{ type: 'spring', stiffness: 400, damping: 40 }} />
             <path d={path} className="front" />
             {hot && (
               <g className="guide" aria-hidden="true">
@@ -124,7 +106,7 @@ export default function Pareto() {
             )}
             {/* Enso's tiers are drawn last, on top, as the app draws them; the cards still enter in cost order */}
             {[...pts].sort((p, q) => p.e - q.e).map((p) => {
-              const lit = (hot ? hot.n === p.n : true) && p.x <= cap;
+              const lit = hot ? hot.n === p.n : true;
               const best = pick && pick.n === p.n;
               const rad = u * (p.e ? px.ours : px.r), m = p.mark, ms = u * (p.e ? px.h : px.mark);
               const body = (
@@ -152,21 +134,6 @@ export default function Pareto() {
                 </motion.g>
               );
             })}
-            <g
-              className={'cap' + (dragging ? ' on' : '')}
-              transform={`translate(${cap} 0)`}
-              tabIndex={0}
-              role="slider"
-              aria-label="Budget per 1,000 questions"
-              aria-valuemin={0.8} aria-valuemax={60} aria-valuenow={+c.toFixed(2)} aria-valuetext={`$${c.toFixed(2)}`}
-              onPointerDown={onDown}
-              onKeyDown={onKey}
-            >
-              <line y1={T - 6} y2={B} />
-              <rect x={-hw} y={B - 4} width={hw * 2} height={ph ? 44 : 22} rx={ph ? 22 : 11} />
-              <path d={ph ? `M-8 ${B + 18}l-8 0M8 ${B + 18}l8 0` : `M-4 ${B + 7}l-3 0M4 ${B + 7}l3 0`} />
-              <rect x={-Math.max(22, hw)} y={T - 6} width={Math.max(44, hw * 2)} height={B - T + (ph ? 50 : 30)} className="hit" />
-            </g>
           </svg>
           {hot && (
             <div className={'x-tip' + (hot.y < 190 ? ' below' : '')} style={{ left: Math.max(24, Math.min(76, (hot.x / VW) * 100)) + '%', top: (hot.y / VH) * 100 + '%' }} onPointerEnter={() => show(hot)} onPointerLeave={hide}>
@@ -176,7 +143,6 @@ export default function Pareto() {
             </div>
           )}
           </div>
-          <p className="x-plot-hint">Drag the line to set a budget. Point at any model to read it.</p>
           <p className="x-plot-src">
             Dashed discs are scores reported by a lab or an independent evaluation:
             {pts.filter((p) => p.src).map((p) => <a key={p.n} href={p.src} target="_blank" rel="noopener noreferrer">{p.full} ↗</a>)}

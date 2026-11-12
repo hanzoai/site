@@ -43,7 +43,6 @@ html:not(.js) .xh-cmd:empty::after { content: attr(data-cmd); }
 /* Phones: every tap target 44px tall; the frontier's own phone drawing reads at 12px */
 @media (max-width: 599px) {
   .x-pareto .x-plot .tick { font-size: 25px; }
-  .x-pareto .x-plot-zone { y: 40px; }
   .x-pareto .x-plot .pt text { font-size: 26px; }
   .x-pareto .x-plot .pt.enso:not(.best):not(.hot) text { opacity: 0; }
   .x-plot-src a, .x-row-links a, .x-race-end a, .x-sec .x-head + * a.x-arrow { display: inline-flex; align-items: center; min-height: 44px; }

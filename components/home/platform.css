@@ -1,23 +1,26 @@
 /* The products, three by three (components/home/Platform.tsx). Colours are page tokens (app/globals.css) and the
-   captured screens' own classes (public/hanzo.css), so light and dark both hold. Phones get one row that swipes. */
+   captured screens' own classes (public/hanzo.css), so light and dark both hold. Phones get two by two. */
 .xp-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .xp-card { display: flex; flex-direction: column; min-width: 0; border-radius: 24px; background: var(--card); border: 1px solid var(--line); }
-.xp-vis { flex: none; display: flex; height: 300px; overflow: hidden; border-radius: 24px 24px 0 0; } /* one height for every example: nothing below moves when one plays */
-.xp-scene, .xp-shot { flex: 1; display: flex; min-width: 0; min-height: 0; }
+.xp-vis { flex: none; display: flex; height: 300px; overflow: hidden; border-radius: 24px 24px 0 0; } /* one height for every step of a story: nothing below moves */
+.xp-shot { flex: 1; display: flex; min-width: 0; min-height: 0; }
 .xp-shot > div { flex: 1; min-width: 0; min-height: 0 !important; }
-/* an example arrives: its screen fades in and its rows come one after another (transform and opacity only) */
-.xp-scene[data-play] { animation: xp-in .4s var(--ease) both; }
-.xp-scene[data-play] .xp-shot > div > * { animation: xp-row .5s var(--ease) both; }
-.xp-scene[data-play] .xp-shot > div > :nth-child(2) { animation-delay: .12s; }
-.xp-scene[data-play] .xp-shot > div > :nth-child(3) { animation-delay: .24s; }
-.xp-scene[data-play] .xp-shot > div > :nth-child(4) { animation-delay: .36s; }
-.xp-scene[data-play] .xp-shot > div > :nth-child(5) { animation-delay: .48s; }
-.xp-scene[data-play] .xp-shot > div > :nth-child(6) { animation-delay: .6s; }
-.xp-scene[data-play] .xp-shot > div > :nth-child(7) { animation-delay: .72s; }
-.xp-scene[data-play] .xp-shot > div > :nth-child(n + 8) { animation-delay: .84s; }
-@keyframes xp-in { from { opacity: 0; } }
-@keyframes xp-row { from { opacity: 0; transform: translateY(6px); } }
-@media (prefers-reduced-motion: reduce) { .xp-scene[data-play], .xp-scene[data-play] .xp-shot > div > * { animation: none; } }
+/* Design's reel, as the landing played it (Products.tsx StudioCard): six stills, each 2.6s, easing in from a slight zoom
+   and crossfading to the next; it runs while the card is in view (Story sets data-on) */
+@keyframes xp-reel {
+  0% { opacity: 0; transform: scale(1.08) translate3d(2%, 1%, 0); }
+  8% { opacity: 1; transform: scale(1.05) translate3d(1%, .5%, 0); }
+  16.667% { opacity: 1; transform: none; }
+  24.667%, 100% { opacity: 0; transform: none; }
+}
+.xp-vis [data-reel] > [data-shot] { animation: xp-reel 15.6s ease-in-out infinite; animation-play-state: paused; will-change: opacity, transform; }
+.xp-vis[data-on] [data-reel] > [data-shot] { animation-play-state: running; }
+.xp-vis [data-reel] > :nth-child(1) { animation-delay: -1.3s; }
+.xp-vis [data-reel] > :nth-child(2) { animation-delay: 1.3s; }
+.xp-vis [data-reel] > :nth-child(3) { animation-delay: 3.9s; }
+.xp-vis [data-reel] > :nth-child(4) { animation-delay: 6.5s; }
+.xp-vis [data-reel] > :nth-child(5) { animation-delay: 9.1s; }
+.xp-vis [data-reel] > :nth-child(6) { animation-delay: 11.7s; }
 .xp-f { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 20px 20px; }
 .xp-id { min-width: 0; }
 .xp-id b { display: block; font: 560 15px/1.3 var(--sans); letter-spacing: -.01em; color: var(--ink); }
@@ -47,8 +50,5 @@
 .xp-card .xp-vis ._bg-data-blue-3 * { color: inherit; }
 .xp-card .xp-vis ._col-a78bfa35, .xp-card .xp-vis ._col-93c5fd35 { color: var(--ink); font-weight: 600; }
 .xp-card .xp-vis ._bg-_platformweb_rgba29155242082155697 { background-color: color-mix(in srgb, var(--ink) 6%, transparent); }
-/* the captured examples froze some rows part-way into their reveal (opacity .25 to .35); here the rows come in by the
-   card's own stagger above, and every one lands whole */
-.xp-card .xp-shot ._o-0--25, .xp-card .xp-shot ._o-0--32, .xp-card .xp-shot ._o-0--35 { opacity: 1; }
-/* an example taller than the screen keeps its first line (the question, the command) and loses its last, never the top */
+/* a screen taller than the card keeps its first line (the question, the command) and loses its last, never the top */
 .xp-card .xp-shot ._justify-center { justify-content: safe center; }
