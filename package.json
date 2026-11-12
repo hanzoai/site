@@ -16,8 +16,8 @@
     "ladder": "node scripts/ladder.ts"
   },
   "dependencies": {
-    "@hanzo/appearance": "0.2.14",
-    "@hanzo/design": "0.5.39",
+    "@hanzo/appearance": "0.2.15",
+    "@hanzo/design": "0.5.43",
     "@hanzo/event": "0.3.66",
     "@hanzo/observe": "0.1.17",
     "@hanzo/replay": "0.1.4",

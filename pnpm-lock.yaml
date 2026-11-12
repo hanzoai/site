@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@hanzo/appearance':
-        specifier: 0.2.14
-        version: 0.2.14(react@19.2.8)
+        specifier: 0.2.15
+        version: 0.2.15(react@19.2.8)
       '@hanzo/design':
-        specifier: 0.5.39
-        version: 0.5.39
+        specifier: 0.5.43
+        version: 0.5.43
       '@hanzo/event':
         specifier: 0.3.66
         version: 0.3.66(react@19.2.8)
@@ -54,8 +54,8 @@ packages:
   '@emnapi/runtime@1.11.3':
     resolution: {integrity: sha512-Xz4Tpyki7XyrpbUK1jR1AhdAdaXyhhY4lZ3neLodmhpuWfy2PAQN5B46sAiU4liOXGLkHypn/qU+jvfWSCYYLA==}
 
-  '@hanzo/appearance@0.2.14':
-    resolution: {integrity: sha512-DdKPuOyP8aMz2HqmetIcw+n4K+XOriyWJg3tKq+JOKKUlGeYcpeHqQCtwU61Dr0bEWbG57qL7lJE+EmIIUwTBw==}
+  '@hanzo/appearance@0.2.15':
+    resolution: {integrity: sha512-a3f6MfLkpnhJMteWkerdtHzevzF/ijzhI9iy/GUQ9GfxtzDg6eNMGn+ZVpW8AuRSP2LYTgwXmsx9c/MVZxyqsQ==}
     peerDependencies:
       react: '>=19.2.8'
 
@@ -63,8 +63,8 @@ packages:
     resolution: {integrity: sha512-CNGAkwN4BYKaIf852uJ5KDFh8wF08SIQvEUEQ3v4/zQso9jRSCRv3RF6iLwRADZfWGQcIjS9OUJUCX0/mX/nUg==}
     hasBin: true
 
-  '@hanzo/design@0.5.39':
-    resolution: {integrity: sha512-xuwm76nw7xahucWwWNM+qlW2VJoVfM8PQpyhO4p0eK81uzdLQIbzjAGq0k9CJ6+L4KGazd6bKCYfthSRsWA1ow==}
+  '@hanzo/design@0.5.43':
+    resolution: {integrity: sha512-L2PrPloxXz2cAeNPfBJbkiDW3Ye4aTJERhlpe2RrXO5n/Go+wAwHro49xrtqd5UFiUZGTD2+12mYPvZA/vY2Hg==}
     hasBin: true
 
   '@hanzo/event@0.3.66':
@@ -828,14 +828,14 @@ snapshots:
       tslib: 2.9.1
     optional: true
 
-  '@hanzo/appearance@0.2.14(react@19.2.8)':
+  '@hanzo/appearance@0.2.15(react@19.2.8)':
     dependencies:
       '@hanzo/design': 0.5.38
       react: 19.2.8
 
   '@hanzo/design@0.5.38': {}
 
-  '@hanzo/design@0.5.39': {}
+  '@hanzo/design@0.5.43': {}
 
   '@hanzo/event@0.3.66(react@19.2.8)':
     dependencies:
