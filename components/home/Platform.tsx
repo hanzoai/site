@@ -4,6 +4,7 @@
    ([data-tilt], lib/tilt.ts). */
 import { Head } from '../ui';
 import Story from './Story';
+import { BotCardPreview, TeamCardPreview } from './ProductPreviews';
 import P from '../../content/products';
 import './platform.css';
 
@@ -17,7 +18,7 @@ export default function Platform() {
         <ul className="xp-grid">
           {P.map((p, n) => (
             <li key={p.name} className="xp-card" data-tilt="">
-              <Story i={n} html={p.vis} />
+              {p.name === 'Bot' ? <BotCardPreview /> : p.name === 'Team' ? <TeamCardPreview /> : <Story i={n} html={p.vis} />}
               <div className="xp-f">
                 <div className="xp-id">
                   <b>{p.name}</b>

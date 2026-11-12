@@ -1,11 +1,16 @@
 /* The hero's three devices (components/home/Devices.jsx): the Hanzo desktop window, the terminal running `hanzo dev` and the
    Hanzo mobile app, drawn at the stage's own 720 x 590 and scaled to fit. */
 .x-win, .x-term, .x-phone { position: absolute; transform-style: preserve-3d; }
+@media (min-width: 641px) and (prefers-reduced-motion: no-preference) {
+  .x-term { transform: translateZ(70px); }
+  .x-phone { transform: translateZ(130px); }
+}
 /* the stage is drawn at one size and scaled: small type keeps its spaces and its weights only at its true size */
 .x-3d { text-rendering: geometricPrecision; }
 
 /* ---------- the desktop: the window's bar, the rail, the lit place's sidebar, the pane inset in the window ---------- */
-.x-win { left: 0; top: 8px; width: 576px; height: 344px; border-radius: 16px; background: var(--x-sunk); border: 1px solid light-dark(var(--x-e10), rgba(255, 255, 255, .09)); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .28), 0 0 0 1px light-dark(rgba(255, 255, 255, .6), transparent) inset; overflow: hidden; display: flex; flex-direction: column; }
+.x-win { --tap-target: 0px; left: 0; top: 8px; width: 576px; height: 344px; border-radius: 16px; background: var(--x-sunk); border: 1px solid light-dark(var(--x-e10), rgba(255, 255, 255, .09)); box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .28), 0 0 0 1px light-dark(rgba(255, 255, 255, .6), transparent) inset; overflow: hidden; display: flex; flex-direction: column; }
+.x-win button, .x-win a { min-height: 0; min-width: 0; }
 .x-win-bar { height: 34px; flex: none; display: flex; align-items: center; gap: 7px; padding: 0 12px; }
 .x-win-bar > i, .x-term-bar > i { width: 10px; height: 10px; border-radius: 50%; background: #d9d9de; }
 .xw-nav { display: flex; gap: 2px; color: var(--faint); }
@@ -283,20 +288,53 @@
 
 @media (prefers-reduced-motion: reduce) { .xs-scene.on, .xs-sh.on p, .xt-out > [data-shown], .xm-turn[data-on] { animation: none; } .xm-leaf, .xm-base, .xm-face-front, .xm-face-back, .xm-crease, .x-phone-dl { transition: none; } }
 
-/* a phone-wide stage is the phone and the terminal under it: the desktop window is not drawn */
-/* a phone draws the same three as a desktop, on a 420-wide stage (app/globals.css): the web app across the top without
-   its sidebar, the terminal under it on the left, the phone on the right over both; the Duo opens leftward over them */
+/* Mobile stage (<= 640px): native 360px width (k ~ 1.0 on iPhones, zero shrink), stacked cleanly with zero overlap:
+   1. Full-width Hanzo Desktop app at top (360 x 248) with full-width chat + AppCard + composer
+   2. Prominent centered iPhone (240 x 328) that unfolds into full-bleed 360 x 328 Duo + Download App pill below
+   3. Full-width unclipped Terminal underneath (360 x 174) so every CLI command and output line is 100% readable */
 @media (max-width: 640px) {
-  .x-win { top: 0; width: 420px; height: 270px; }
-  .x-win .x-win-body { grid-template-columns: 40px minmax(0, 1fr); }
+  .x-3d, .x-win, .x-term, .x-phone { transform-style: flat; }
+  .x-win { left: 0; top: 0; width: 360px; height: 248px; border-radius: 15px; }
+  .x-win-bar { height: 32px; padding: 0 10px; }
+  .x-win .x-win-body { grid-template-columns: 36px minmax(0, 1fr); }
   .x-win .x-side, .x-win .xs-sidet { display: none; }
-  .x-phone { top: 196px; }
-  .x-term { left: 0; top: 300px; width: 306px; height: 198px; }
-  /* the phone stands over the terminal's right side: its tabs tighten and its one way out sits on the left */
-  .x-term-bar { gap: 2px; padding: 0 8px; }
-  .x-term-bar > i { width: 8px; height: 8px; margin-right: 2px; }
-  .xt-tab { padding-inline: 4px; }
-  .xt-tab:first-of-type { margin-left: 4px; }
-  .xt-dots { display: none; }
-  .x-term-f { justify-content: flex-start; }
+  .xw-rail { gap: 2px; padding: 2px 0 6px; }
+  .xw-rail > hr, .xw-rail > .xw-mark:nth-of-type(n+6) { display: none; }
+  .xw-pane { margin: 0 6px 6px 0; border-radius: 11px; }
+  .xw-log { padding: 9px 11px 5px 11px; gap: 6px; }
+  .x-bub, .xs-me { max-width: 90%; padding: 6.5px 10px; font-size: 11.5px; line-height: 1.34; }
+  .xs-ai { max-width: 96%; font-size: 11px; line-height: 1.36; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .x-appcard { padding: 6px 9px; gap: 8px; border-radius: 12px; font-size: 11.5px; }
+  .x-appicon { width: 24px; height: 24px; border-radius: 7px; }
+  .x-input { margin: 0 9px 7px 9px; min-height: 32px; border-radius: 12px; font-size: 11.5px; }
+  .x-send { width: 24px; height: 24px; }
+
+  .x-phone { left: 0; right: auto; top: 260px; width: 360px; height: 328px; }
+  .xm-face-front { left: -120px; width: 240px; right: auto; }
+  .xm-cover .xm-status-cover { height: 26px; padding: 3px 16px 0 20px; }
+  .xm-cover .xm-status-cover b { font-size: 10.5px; }
+  .xm-cover .xm-main { gap: 8px; padding: 6px 12px 6px; }
+  .xm-cover .xm-me { padding: 6.5px 10px; font-size: 10.5px; line-height: 1.36; border-radius: 12px 12px 4px 12px; }
+  .xm-cover .xm-ai { gap: 7px; font-size: 10.5px; line-height: 1.38; }
+  .xm-cover .xm-duo-card { padding: 7px 9px; gap: 8px; border-radius: 11px; }
+  .xm-cover .xm-duo-card-i { width: 22px; height: 22px; border-radius: 7px; }
+  .xm-cover .xm-duo-card-t b { font-size: 10.5px; }
+  .xm-cover .xm-duo-card-t small { font-size: 9px; }
+  .xm-cover .xm-duo-open { height: 22px; padding: 0 9px; font-size: 9px; }
+  .xm-cover .xm-code { font-size: 9px; padding: 6px 8.5px; }
+  .xm-cover .xm-foot { padding: 0 12px 14px; }
+  .xm-cover .xm-pill-comp { height: 29px; padding: 0 4px 0 11px; }
+  .xm-cover .xm-pill-comp input, .xm-cover .xm-pill-comp > span:first-child { font-size: 10px; }
+  .xm-cover .xm-pill-send { width: 21px; height: 21px; }
+  .x-phone:not(.duo) .xm-hinge { left: 60px; width: 24px; }
+  .x-phone.duo .xm-hinge { left: 50%; width: 24px; }
+  .x-phone-dl { left: 50%; top: calc(100% + 8px); }
+
+  .x-term { left: 0; top: 636px; width: 360px; height: 174px; border-radius: 14px; }
+  .x-term-bar { height: 32px; gap: 4px; padding: 0 10px; }
+  .x-term-bar > i { width: 8.5px; height: 8.5px; }
+  .xt-tab { padding-inline: 6.5px; font-size: 10.5px; }
+  .xt-tab:first-of-type { margin-left: 6px; }
+  .x-term-body { padding: 8px 14px 2px; font-size: 11px; line-height: 1.44; }
+  .x-term-f { padding: 4px 12px 8px; justify-content: flex-end; }
 }

@@ -30,17 +30,109 @@
 
 /* two columns below a laptop; the last card across both, so none stands alone */
 @media (max-width: 1023px) { .xp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } .xp-card:last-child:nth-child(odd) { grid-column: 1 / -1; } }
-/* a phone: two by two down the page, each screen drawn at half size so its whole composition shows */
+/* a phone: full-width 1:1 cards (no WebKit flex zoom distortion) so every desktop + mobile product preview is crisp */
 @media (max-width: 639px) {
-  .xp-grid { gap: 10px; }
-  .xp-card { border-radius: 18px; }
-  .xp-vis { height: 160px; border-radius: 18px 18px 0 0; }
-  .xp-shot { zoom: .5; }
-  .xp-f { flex-direction: column; align-items: stretch; gap: 8px; padding: 2px 12px 12px; }
-  .xp-id b { font-size: 14px; }
-  .xp-addr { font-size: 11px; }
-  .xp-acts { flex-direction: column; gap: 6px; }
-  .xp-acts .x-btn { width: 100%; padding: 0 10px; font-size: 13px; }
+  .xp-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .xp-card:last-child:nth-child(odd) { grid-column: auto; }
+  .xp-card { border-radius: 20px; }
+  .xp-vis { height: 268px; border-radius: 20px 20px 0 0; }
+  .xp-shot { zoom: 1; }
+  .xp-f { flex-direction: row; align-items: center; gap: 10px; padding: 6px 16px 16px; }
+  .xp-id b { font-size: 15px; }
+  .xp-addr { font-size: 12px; }
+  .xp-acts { flex-direction: row; gap: 6px; }
+  .xp-acts .x-btn { width: auto; padding: 0 12px; font-size: 13px; }
+}
+
+/* ---------- Live Desktop + Mobile previews for Bot (hanzo.bot) and Team (hanzo.team) ---------- */
+.xpp-stage { position: relative; padding: 12px; background: radial-gradient(90% 90% at 20% 0%, color-mix(in srgb, var(--ink) 5%, transparent), transparent 72%); }
+.xpp-desk { position: absolute; left: 12px; top: 12px; right: 86px; bottom: 16px; border-radius: 14px; background: var(--x-raised); border: 1px solid var(--line); box-shadow: 0 18px 40px -22px rgba(0, 0, 0, .35); display: flex; flex-direction: column; overflow: hidden; }
+.xpp-bar { height: 28px; flex: none; display: flex; align-items: center; gap: 6px; padding: 0 10px; border-bottom: 1px solid var(--line); background: var(--x-sunk); }
+.xpp-dots { display: inline-flex; gap: 4px; }
+.xpp-dots i { width: 6.5px; height: 6.5px; border-radius: 50%; background: light-dark(#d4d4d8, #3f3f46); }
+.xpp-brand { display: inline-flex; align-items: center; gap: 5px; margin-left: 3px; color: var(--ink); font: 600 10.5px/1 var(--sans); }
+.xpp-ch { padding: 2px 6px; border-radius: 5px; background: light-dark(rgba(0, 0, 0, .05), rgba(255, 255, 255, .07)); font-size: 9.5px; color: var(--soft); }
+.xpp-live { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; font-size: 9px; color: var(--faint); }
+.xpp-live i, .xpp-sync i { width: 5.5px; height: 5.5px; border-radius: 50%; background: var(--ink); animation: xpp-pulse 2.2s ease-in-out infinite; }
+@keyframes xpp-pulse { 50% { opacity: .35; transform: scale(.78); } }
+.xpp-faces { margin-left: auto; display: inline-flex; }
+.xpp-faces img { width: 14px; height: 14px; border-radius: 50%; margin-left: -4px; background: var(--x-raised); box-shadow: 0 0 0 1.5px var(--x-sunk); }
+.xpp-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 68px minmax(0, 1fr); }
+.xpp-rail { padding: 7px 6px; border-right: 1px solid var(--line); background: var(--x-sunk); display: flex; flex-direction: column; gap: 3px; overflow: hidden; }
+.xpp-mate, .xpp-chan { display: flex; align-items: center; gap: 5px; height: 23px; padding: 0 5px; border-radius: 6px; font-size: 9.5px; color: var(--soft); white-space: nowrap; overflow: hidden; transition: background-color .2s, color .2s; }
+.xpp-mate img { width: 15px; height: 15px; border-radius: 50%; flex: none; }
+.xpp-mate span, .xpp-chan span:last-child { overflow: hidden; text-overflow: ellipsis; }
+.xpp-mate.on, .xpp-chan.on { background: var(--x-raised); color: var(--ink); font-weight: 600; box-shadow: inset 0 0 0 1px var(--line); }
+.xpp-mate i { margin-left: auto; width: 4.5px; height: 4.5px; border-radius: 50%; background: var(--ink); flex: none; }
+
+.xpp-pane { padding: 8px 34px 8px 9px; display: flex; flex-direction: column; justify-content: center; gap: 7px; min-width: 0; overflow: hidden; }
+.xpp-ask { padding: 6px 8px; border-radius: 9px; background: light-dark(#f3f3f5, rgba(255, 255, 255, .055)); display: flex; flex-direction: column; gap: 2px; }
+.xpp-who { display: flex; align-items: baseline; gap: 5px; font-size: 9.5px; color: var(--ink); }
+.xpp-who small { font-size: 8px; color: var(--faint); }
+.xpp-ask-t { font-size: 9.5px; line-height: 1.32; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.xpp-bot-card { padding: 7px 8px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); display: flex; flex-direction: column; gap: 5px; }
+.xpp-bot-h { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--ink); }
+.xpp-bot-h img { width: 16px; height: 16px; border-radius: 50%; }
+.xpp-role { font-size: 8.5px; color: var(--faint); }
+.xpp-steps { display: flex; flex-direction: column; gap: 3.5px; }
+.xpp-step { display: flex; align-items: center; gap: 5px; font-size: 9px; line-height: 1.25; color: var(--faint); opacity: .35; transition: opacity .28s ease, color .28s ease, transform .28s ease; }
+.xpp-step.on { opacity: 1; color: var(--ink); }
+.xpp-step > span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xpp-chk { width: 12px; height: 12px; flex: none; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); color: var(--ink); background: light-dark(#f4f4f5, rgba(255, 255, 255, .08)); }
+.xpp-step.on .xpp-chk { background: var(--ink); border-color: var(--ink); color: var(--x-on-ink); }
+
+.xpp-thread { display: flex; flex-direction: column; gap: 6px; }
+.xpp-msg { display: flex; align-items: flex-start; gap: 6px; opacity: .28; transform: translateY(3px); transition: opacity .28s ease, transform .28s ease; }
+.xpp-msg.on { opacity: 1; transform: none; }
+.xpp-msg img { width: 17px; height: 17px; border-radius: 50%; flex: none; margin-top: 1px; background: var(--x-sunk); }
+.xpp-msg-b { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.xpp-msg-t { font-size: 9.5px; line-height: 1.3; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.xpp-msg-t b { color: var(--ink); font-weight: 600; }
+
+.xpp-tasks { display: flex; flex-direction: column; gap: 5px; }
+.xpp-task { padding: 5.5px 7.5px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); display: flex; flex-direction: column; gap: 3px; transition: border-color .25s ease; }
+.xpp-task.hot { border-color: var(--ink); }
+.xpp-task-top { display: flex; justify-content: space-between; gap: 4px; font-size: 8.5px; color: var(--faint); }
+.xpp-own { color: var(--soft); font-weight: 600; }
+.xpp-task > b { font-size: 9.5px; font-weight: 560; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xpp-prog { height: 3px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.xpp-prog i { display: block; height: 100%; border-radius: inherit; background: var(--ink); transition: width .45s cubic-bezier(.16, 1, .3, 1); }
+
+/* Foreground iPhone Mobile Handset */
+.xpp-phone { position: absolute; right: 12px; bottom: 10px; width: 124px; height: 224px; padding: 4px; border-radius: 23px; background: #262626; box-shadow: inset 0 0 0 1px #404040, -12px 20px 38px -14px rgba(0, 0, 0, .55); z-index: 2; }
+.xpp-ph-screen { position: relative; width: 100%; height: 100%; border-radius: 19px; background: var(--bg); color: var(--ink); overflow: hidden; display: flex; flex-direction: column; padding: 0 7px 9px; }
+.xpp-ph-status { position: relative; height: 19px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 2px 3px 0 5px; font-size: 8px; }
+.xpp-ph-status b { font-weight: 600; }
+.xpp-island { position: absolute; left: 50%; top: 4px; width: 32px; height: 9px; margin-left: -16px; border-radius: 99px; background: #000; }
+.xpp-sys { display: inline-flex; align-items: center; gap: 2.5px; opacity: .85; }
+.xpp-ph-head { display: flex; align-items: center; justify-content: space-between; padding: 2px 2px 5px; border-bottom: 1px solid var(--line); font-size: 8px; color: var(--soft); }
+.xpp-sync { display: inline-flex; align-items: center; gap: 3.5px; font-weight: 600; color: var(--ink); }
+.xpp-ph-main { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 5px 0; }
+.xpp-ph-bot { display: flex; align-items: center; gap: 5px; }
+.xpp-ph-bot img { width: 20px; height: 20px; border-radius: 50%; flex: none; background: var(--x-raised); }
+.xpp-ph-bot div { min-width: 0; display: flex; flex-direction: column; }
+.xpp-ph-bot b { font-size: 8.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xpp-ph-bot span { font-size: 7.5px; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xpp-ph-box { padding: 6px 6.5px; border-radius: 9px; border: 1px solid var(--line); background: var(--x-raised); display: flex; flex-direction: column; gap: 3.5px; }
+.xpp-ph-row { display: flex; justify-content: space-between; font-size: 7.5px; color: var(--soft); }
+.xpp-ph-box > b { font-size: 8.5px; font-weight: 600; line-height: 1.2; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xpp-ph-box > span { font-size: 7.5px; line-height: 1.3; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.xpp-ph-ver { display: flex; align-items: center; gap: 4px; margin-top: 1px; padding-top: 3.5px; border-top: 1px solid var(--line); font-size: 7.5px; font-weight: 600; color: var(--ink); }
+.xpp-ph-ver img { width: 13px; height: 13px; border-radius: 50%; flex: none; }
+.xpp-ph-crew { display: flex; align-items: center; padding: 0 2px; }
+.xpp-ph-crew img { width: 16px; height: 16px; border-radius: 50%; margin-right: -4px; background: var(--x-raised); box-shadow: 0 0 0 1.5px var(--bg); }
+.xpp-ph-crew span { margin-left: 8px; font-size: 7.5px; color: var(--faint); }
+.xpp-ph-pill { flex: none; height: 20px; padding: 0 3px 0 7px; border-radius: 99px; border: 1px solid var(--line); background: var(--x-raised); display: flex; align-items: center; justify-content: space-between; font-size: 7.5px; color: var(--faint); }
+.xpp-ph-pill > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xpp-ph-pill > i { width: 14px; height: 14px; border-radius: 50%; background: var(--ink); color: var(--x-on-ink); font: 700 8px/14px var(--sans); text-align: center; flex: none; }
+.xpp-home { position: absolute; left: 50%; bottom: 3px; width: 36px; height: 2.5px; margin-left: -18px; border-radius: 2px; background: var(--ink); opacity: .72; }
+
+@media (max-width: 639px) {
+  .xpp-phone { width: 118px; height: 206px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xpp-live i, .xpp-sync i { animation: none; }
+  .xpp-step, .xpp-msg, .xpp-prog i { transition: none; }
 }
 
 /* Hanzo's own accents in the cards are monochrome, as the app draws them now: a person's message on the neutral fill,

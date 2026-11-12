@@ -392,7 +392,7 @@ export function Desk({ sc, navPick, onSelectScene, phase, side, onSide, promptEl
   const view = (p, children) => <section className="xw-view" data-p={p} aria-hidden={viewPlace === p ? undefined : true}>{children}</section>;
   const scenes = (p) => MORE.map((s, i) => (placeOf(i) === p ? <Scene key={i} s={s} on={i === sc} /> : null));
   return (
-    <motion.div className={'x-win' + (side ? '' : ' xs-noside')} data-place={viewPlace} initial={false} animate={{ opacity: 1, z: 0, y: 0 }}>
+    <div className={'x-win' + (side ? '' : ' xs-noside')} data-place={viewPlace}>
       <div className="x-win-bar">
         <i /><i /><i />
         <button type="button" className="xs-sidet" aria-expanded={side} aria-label={side ? 'Close sidebar' : 'Open sidebar'} onClick={() => { track('hero_demo', { control: 'sidebar' }); onSide(); }}>
@@ -428,7 +428,7 @@ export function Desk({ sc, navPick, onSelectScene, phase, side, onSide, promptEl
           {view('tabs', <div className="xw-log">{scenes('tabs')}</div>)}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -475,8 +475,8 @@ export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
   const tab = TERM_TABS[cursor.tabIdx];
   const list = TERM_EXAMPLES[tab];
   const ex = list[cursor.exIdx % list.length];
-  const [typedLen, setTypedLen] = useState(() => (calm ? ex.cmd.length : 0));
-  const [shownOut, setShownOut] = useState(() => (calm ? ex.lines.length : 0));
+  const [typedLen, setTypedLen] = useState(() => ex.cmd.length);
+  const [shownOut, setShownOut] = useState(() => ex.lines.length);
 
   useEffect(() => {
     if (!pinned) return;
@@ -493,24 +493,31 @@ export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
     }
     let dead = false;
     const nap = (ms) => new Promise((r) => setTimeout(r, ms));
-    setTypedLen(0);
-    setShownOut(0);
+    const opening = firstRun.current && cursor.seq === 0 && cursor.tabIdx === 0 && cursor.exIdx === 0;
+    firstRun.current = false;
+    if (opening) {
+      setTypedLen(ex.cmd.length);
+      setShownOut(ex.lines.length);
+    } else {
+      setTypedLen(0);
+      setShownOut(0);
+    }
     (async () => {
-      const opening = firstRun.current && cursor.tabIdx === 0 && cursor.exIdx === 0;
-      firstRun.current = false;
-      await nap(opening ? 550 : 180);
-      for (let i = 1; i <= ex.cmd.length; i++) {
-        if (dead) return;
-        setTypedLen(i);
-        await nap(ex.cmd[i - 1] === ' ' ? 38 : 22);
+      if (!opening) {
+        await nap(180);
+        for (let i = 1; i <= ex.cmd.length; i++) {
+          if (dead) return;
+          setTypedLen(i);
+          await nap(ex.cmd[i - 1] === ' ' ? 38 : 22);
+        }
+        await nap(240);
+        for (let j = 1; j <= ex.lines.length; j++) {
+          if (dead) return;
+          setShownOut(j);
+          await nap(165);
+        }
       }
-      await nap(240);
-      for (let j = 1; j <= ex.lines.length; j++) {
-        if (dead) return;
-        setShownOut(j);
-        await nap(165);
-      }
-      await nap(opening ? 4500 : 2200);
+      await nap(opening ? 3800 : 2400);
       while (!dead && (!live.current || hoverRef.current)) await nap(250);
       if (dead) return;
       setCursor((prev) => {
@@ -545,15 +552,13 @@ export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
   const typing = !calm && typedLen < ex.cmd.length;
 
   return (
-    <motion.div
+    <div
       ref={box}
       className="x-term"
       data-active={pinned || copied || undefined}
       onPointerEnter={() => { hoverRef.current = true; }}
       onPointerLeave={() => { hoverRef.current = false; }}
       onClick={() => setPinned(true)}
-      initial={false}
-      animate={{ opacity: 1, z: 70, y: 0 }}
     >
       <div className="x-term-bar" role="tablist" aria-label="Terminal">
         <i /><i /><i />
@@ -594,7 +599,7 @@ export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
         <button type="button" className="x-term-copy xh-copy" onClick={(e) => { e.stopPropagation(); setPinned(true); copy(); }} data-cta="home.install_copy" data-on={copied || undefined}>{copied ? 'Copied' : 'Copy install CLI →'}</button>
         <span className="xh-sr" role="status">{copied ? 'Copied' : ''}</span>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -880,7 +885,7 @@ export function Phone({ sc, navPick, onSelectScene, phase }) {
   );
 
   return (
-    <motion.div className={'x-phone' + (duo ? ' duo' : '')} initial={false} animate={{ opacity: 1, z: 130, x: 0 }}>
+    <div className={'x-phone' + (duo ? ' duo' : '')}>
       <div className="xm-stage">
         {/* Stationary inner-right half: titanium frame + live maxpower app, revealed as the left leaf unfolds */}
         <div className="xm-base" aria-hidden={duo ? undefined : true}>
@@ -987,6 +992,6 @@ export function Phone({ sc, navPick, onSelectScene, phase }) {
         <button type="button" className="xm-hinge" data-cue="flip" title={duo ? 'Fold' : 'Unfold'} aria-label={duo ? 'Fold the phone' : 'Unfold the phone'} aria-pressed={duo} onClick={flip} />
       </div>
       <a className="x-phone-dl" href="/download"><span>Download App</span><svg viewBox="0 0 16 16" width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" /></svg></a>
-    </motion.div>
+    </div>
   );
 }

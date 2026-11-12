@@ -168,6 +168,10 @@ function Canvas({ ok }) {
     land(i, live, (ms) => sleepFor(calm ? 0 : ms, live)).then(() => { if (live.on) { setAt(-1); setPhase(calm ? 'rest' : 'drift'); } }).catch(() => {});
   };
 
+  const activeIdx = at >= 0 ? at : 4;
+  const [activeId, activeTag, activeTitle, , activeOwn] = CARDS[activeIdx];
+  const activePct = shown[activeIdx];
+
   return (
     <div className="xtm-win xtm-tk" ref={box}>
       <header className="xtm-win-h">
@@ -182,32 +186,70 @@ function Canvas({ ok }) {
           </button>
         )}
       </header>
-      <div className="xtm-tk-sc" ref={scroller}>
-        <div className="xtm-tk-board" ref={board} data-phase={phase}>
-          {TRACK.map(([head, st, list], c) => (
-            <div className="xtm-tk-col" key={head}>
-              <p className="xtm-tk-head x-mono"><i data-st={st} /><span>{head}</span></p>
-              {list.map(([id, tag, title, , own]) => {
-                const i = CARDS.findIndex((k) => k[0] === id);
-                return (
-                  <button type="button" key={id} ref={(el) => { cards.current[i] = el; }} className="xtm-tk-card" data-on={at === i || undefined} data-col={c} onClick={() => pick(i)} aria-label={`${id} ${title}`}>
-                    <span className="xtm-tk-top"><span className="x-mono">{id}</span><span className="xtm-tk-tag">{tag}</span></span>
-                    <span className="xtm-tk-t">{title}</span>
-                    <span className="xtm-tk-ft x-mono"><span className="xtm-tk-pc"><Ring v={shown[i]} />{shown[i]}%</span><span className="xtm-tk-own">@{own}</span></span>
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-          <Cursor c={agent} name={NAME[who]} tone="agent a" agent />
+      <div className="xtm-tk-main">
+        <div className="xtm-tk-sc" ref={scroller}>
+          <div className="xtm-tk-board" ref={board} data-phase={phase}>
+            {TRACK.map(([head, st, list], c) => (
+              <div className="xtm-tk-col" key={head}>
+                <p className="xtm-tk-head x-mono"><i data-st={st} /><span>{head}</span></p>
+                {list.map(([id, tag, title, , own]) => {
+                  const i = CARDS.findIndex((k) => k[0] === id);
+                  return (
+                    <button type="button" key={id} ref={(el) => { cards.current[i] = el; }} className="xtm-tk-card" data-on={at === i || undefined} data-col={c} onClick={() => pick(i)} aria-label={`${id} ${title}`}>
+                      <span className="xtm-tk-top"><span className="x-mono">{id}</span><span className="xtm-tk-tag">{tag}</span></span>
+                      <span className="xtm-tk-t">{title}</span>
+                      <span className="xtm-tk-ft x-mono"><span className="xtm-tk-pc"><Ring v={shown[i]} />{shown[i]}%</span><span className="xtm-tk-own">@{own}</span></span>
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+            <Cursor c={agent} name={NAME[who]} tone="agent a" agent />
+          </div>
         </div>
-      </div>
-      <div className="xtm-tk-ph">
-        <p className="xtm-tk-ph-h x-mono"><b>9:41</b><span className="xtm-tk-dev"><i /><span>iPhone · hanzo.team Mobile</span></span><span className="xtm-tk-sync" key={sync} data-hot={sync > 0 || undefined}>Web + Mobile synced</span></p>
-        <div className="xtm-tk-row">
-          <span className="xtm-tk-rev"><Face n="mark" size={30} /><i /></span>
-          <span className="xtm-tk-rt"><span className="xtm-tk-rn">#hanzo-mark · Mark (Marketing &amp; Growth)</span><span>Connected to Google Analytics 4 · pulling 28-day landing &amp; checkout funnel</span></span>
-          <span className="xtm-tk-fs">{['dev', 'cyber', 'mark', 'sci'].map((f) => <Face key={f} n={f} size={22} />)}</span>
+        <div className="xtm-tk-ph" aria-label="Hanzo Team mobile iPhone workspace synced live">
+          <div className="xtm-phone">
+            <div className="xtm-ph-scr">
+              <div className="xtm-ph-st" aria-hidden="true">
+                <b>9:41</b>
+                <span className="xtm-ph-isl" />
+                <span className="xtm-ph-sys x-mono">5G</span>
+              </div>
+              <div className="xtm-ph-hd x-mono">
+                <b>hanzo.team</b>
+                <span className="xtm-tk-sync" key={sync} data-hot={sync > 0 || undefined}><i />Synced</span>
+              </div>
+              <div className="xtm-ph-bd">
+                <div className="xtm-ph-task">
+                  <div className="xtm-tk-top">
+                    <span className="x-mono">{activeId}</span>
+                    <span className="xtm-tk-tag">{activeTag}</span>
+                  </div>
+                  <b className="xtm-ph-tt">{activeTitle}</b>
+                  <div className="xtm-tk-ft x-mono">
+                    <span className="xtm-tk-pc"><Ring v={activePct} />{activePct}%</span>
+                    <span className="xtm-tk-own">@{activeOwn}</span>
+                  </div>
+                </div>
+                <div className="xtm-tk-row">
+                  <span className="xtm-tk-rev"><Face n="mark" size={26} /><i /></span>
+                  <span className="xtm-tk-rt">
+                    <span className="xtm-tk-rn">#hanzo-mark · Mark</span>
+                    <span>28-day GA4 landing &amp; checkout funnel synced</span>
+                  </span>
+                </div>
+                <div className="xtm-ph-foot-crew">
+                  <span className="xtm-tk-fs">{['dev', 'cyber', 'mark', 'sci'].map((f) => <Face key={f} n={f} size={20} />)}</span>
+                  <span className="x-mono">Web + iOS</span>
+                </div>
+              </div>
+              <div className="xtm-ph-comp" aria-hidden="true">
+                <span>Message #hanzo-mark…</span>
+                <i>↑</i>
+              </div>
+              <i className="xtm-ph-home" aria-hidden="true" />
+            </div>
+          </div>
         </div>
       </div>
     </div>

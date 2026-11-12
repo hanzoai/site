@@ -172,12 +172,11 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
 .x-terms { margin: 6px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--faint); }
 .x-terms a { color: var(--soft); }
 
-.x-hero-stage { --sw: 720px; --sh: 590px; position: relative; width: 100%; container-type: inline-size; }
-/* the stage is drawn at --sw x --sh and scaled to its column in CSS (k = column / --sw, at most 1.15), so the server's
-   HTML is already the size it stays: nothing moves when the script arrives */
-.x-hero-stage::before, .x-fit { --k: min(1.15, tan(atan2(100cqw, var(--sw)))); }
+.x-hero-stage { --sw: 720px; --sh: 590px; --k-css: min(1.15, tan(atan2(100cqw, var(--sw)))); position: relative; width: 100%; container-type: inline-size; }
+/* the stage is drawn at --sw x --sh and scaled to its column in CSS (k = column / --sw, at most 1.15), with --k-js synced by ResizeObserver for Mobile Safari */
+.x-hero-stage::before, .x-fit { --k: var(--k-js, var(--k-css, 1)); }
 .x-hero-stage::before { content: ''; display: block; height: calc(var(--sh) * var(--k)); }
-.x-fit { position: absolute; left: calc((100cqw - var(--sw) * var(--k)) / 2); top: 0; width: 720px; height: 590px; transform: scale(var(--k)); transform-origin: 0 0; perspective: 1700px; } /* centred when k stops at 1.15 */
+.x-fit { position: absolute; left: calc((100% - var(--sw) * var(--k)) / 2); top: 0; width: var(--sw); height: var(--sh); transform: scale(var(--k)); transform-origin: 0 0; perspective: 1700px; } /* centred when k stops at 1.15 */
 .x-3d { position: absolute; inset: 0; transform-style: preserve-3d; }
 .x-ann { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; background: var(--x-fill); border-bottom: 1px solid var(--line); color: var(--ink); font: 500 13.5px/1.3 var(--sans); text-decoration: none; text-align: center; }
 .x-ann svg { flex: none; transition: transform .35s var(--ease); }
@@ -475,11 +474,11 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
   .x-modal { grid-template-columns: 1fr; grid-template-rows: 46% 1fr; height: min(720px, 100%); }
 }
 @media (max-width: 640px) {
-  .x-wrap { width: min(100% - 32px, var(--wrap)); }
-  .x-hero-stage { --sw: 420px; --sh: 532px; }
-  .x-hero-grid { gap: 100px; }
-  .x-fit { width: 420px; }
-  .x-setup { bottom: -68px; }
+  .x-wrap { width: min(100% - 28px, var(--wrap)); }
+  .x-hero-stage { --sw: 360px; --sh: 810px; }
+  .x-hero-grid { gap: 86px; }
+  .x-fit { width: 360px; height: 810px; perspective: none; }
+  .x-setup { bottom: -58px; }
   .x-mgrid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .x-mcard.big { grid-column: span 2; height: 340px; }
   .x-mcard:not(.big) { height: 220px; }

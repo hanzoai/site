@@ -319,6 +319,7 @@ function Three({ calm }) {
 
 export default function Hero() {
   const host = useRef(null);
+  const stageRef = useRef(null);
   const calm = useReducedMotion();
   const inView = useInView(host, { amount: 0.2 });
   const live = useRef(true);
@@ -339,19 +340,40 @@ export default function Hero() {
   useEffect(() => { capture('home_viewed'); }, []);
   useEffect(() => press('.x-phone-dl', () => track('hero_demo', { control: 'phone-download' })), []);
 
-  const [typed, setTypedState] = useState(0);
+  // Safari fallback for CSS tan(atan2(100cqw, var(--sw))): keep --k-js synced with the stage's live width
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const sync = () => {
+      const w = el.clientWidth;
+      if (!w) return;
+      const rawSw = parseFloat(getComputedStyle(el).getPropertyValue('--sw'));
+      const sw = rawSw > 0 ? rawSw : (window.innerWidth <= 640 ? 360 : 720);
+      const k = Math.min(1.15, w / sw);
+      el.style.setProperty('--k-js', k.toFixed(4));
+    };
+    sync();
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(sync) : null;
+    ro?.observe(el);
+    window.addEventListener('resize', sync, { passive: true });
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener('resize', sync);
+    };
+  }, []);
+
+  // Start populated on SSR and first paint so Desktop and Phone never flash blank white on load or loop wrap
+  const [typed, setTypedState] = useState(PROMPT.length);
   const promptEl = useRef(null);
   const setTyped = (i) => { if (promptEl.current) promptEl.current.textContent = PROMPT.slice(0, i); if (i === 0 || i === PROMPT.length) setTypedState(i); };
-  const [phase, setPhase] = useState(0);
-  // after the opening, the rest of Hanzo's day plays: one scene every 6.5 s
+  const [phase, setPhase] = useState(4);
+  // scene -1 is the opening maxpower build; then the rest of Hanzo's day plays: one scene every 6.5 s, wrapping back to -1
   const [sc, setSc] = useState(-1);
   const [navPick, setNavPick] = useState(null);
   const [side, setSide] = useState(true);
-  const manualRef = useRef(false);
   const holdUntilRef = useRef(0);
 
   const selectScene = (nextSc, navId = null) => {
-    manualRef.current = true;
     holdUntilRef.current = Date.now() + 12000;
     setTyped(PROMPT.length);
     setPhase(4);
@@ -360,40 +382,14 @@ export default function Hero() {
   };
 
   useEffect(() => {
-    if (calm || phase < 4) return;
+    if (calm) return;
+    holdUntilRef.current = Date.now() + 5200;
     const t = setInterval(() => {
       if (!live.current || Date.now() < holdUntilRef.current) return;
       setNavPick(null);
-      setSc((n) => (n + 1) % MORE.length);
-    }, 6500);
+      setSc((n) => ((n + 2) % (MORE.length + 1)) - 1);
+    }, 6200);
     return () => clearInterval(t);
-  }, [calm, phase >= 4]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // the demo: the prompt types itself, sends, the app answers, then the day's scenes play
-  useEffect(() => {
-    if (calm) { setTyped(PROMPT.length); setPhase(4); return; }
-    let dead = false;
-    const stop = () => dead || manualRef.current;
-    const nap = (ms) => new Promise((r) => setTimeout(r, ms));
-    const held = async () => { while (!stop() && !live.current) await nap(400); };
-    (async () => {
-      await nap(1100);
-      while (!stop()) {
-        await held(); if (stop()) return;
-        setPhase(0); setTyped(0); setSc(-1);
-        for (let i = 0; i <= PROMPT.length && !stop(); i++) { setTyped(i); await nap(PROMPT[i] === ' ' ? 55 : 26); }
-        await nap(500); if (stop()) return;
-        setPhase(1);
-        await nap(900); if (stop()) return;
-        setPhase(2);
-        await nap(2000); if (stop()) return;
-        setPhase(3);
-        await nap(1900); if (stop()) return;
-        setPhase(4);
-        await nap(9000 + MORE.length * 6500);
-      }
-    })();
-    return () => { dead = true; };
   }, [calm]);
 
 
@@ -449,7 +445,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="x-hero-stage">
+        <div className="x-hero-stage" ref={stageRef}>
           <div className="x-fit">
             <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
               <Desk sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} side={side} onSide={() => setSide((v) => !v)} promptEl={promptEl} full={typed === PROMPT.length} />

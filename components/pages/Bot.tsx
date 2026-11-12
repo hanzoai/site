@@ -46,7 +46,7 @@ function Face({ k = '', size, id }) {
 /* ---------- the signature: the org chart ---------- */
 const BEAT = [650, 1200, 1500, 1050, 500]; // ms from beat b to b + 1: ask, run to the bot, it answers, hand to the verifier, verified
 const HOLD = 3700;
-const FIRST = 900; // the server's finished case holds this long before the next mention runs
+const FIRST = 4200; // the server's finished case holds cleanly on first paint before the next mention runs
 const CYCLE = BEAT.reduce((a, b) => a + b, 0) + HOLD;
 const R = 12;
 
@@ -185,6 +185,38 @@ function Org() {
               <p><span className="bt-badge x-mono">{w.verifier.badge}</span></p>
               <p>{w.verifier.reply}</p>
             </div>
+          </div>
+        </div>
+        {/* Synced iPhone hanzo.bot mobile preview alongside the desktop org chart */}
+        <div className="bt-hero-ph" aria-label="Hanzo Bot mobile iPhone app synced live">
+          <div className="bt-hph-scr">
+            <div className="bt-hph-st" aria-hidden="true">
+              <b>9:41</b>
+              <span className="bt-hph-isl" />
+              <span className="bt-hph-sys">iOS</span>
+            </div>
+            <div className="bt-hph-hd">
+              <span className="x-mono">hanzo.bot</span>
+              <span className="bt-hph-sync"><i className={live ? 'on' : ''} />Synced</span>
+            </div>
+            <div className="bt-hph-bd">
+              <div className="bt-hph-ch x-mono"># {w.channel} · Mobile</div>
+              <div className="bt-hph-card">
+                <div className="bt-hph-who">
+                  <Face k={b >= 2 ? 'p' : ''} size={22} id={w.primary.id} />
+                  <div>
+                    <b>{w.primary.name}</b>
+                    <span>{w.primary.role}</span>
+                  </div>
+                </div>
+                <div className="bt-hph-art x-mono">{w.primary.codeOrArtifact}</div>
+                <div className="bt-hph-ver">
+                  <Face k={b >= 4 ? 'v' : ''} size={16} id={w.verifier.id} />
+                  <span className="x-mono">{b >= 4 ? w.verifier.badge : b >= 2 ? `→ @${w.verifier.name}` : `Routing ${w.human.mention}`}</span>
+                </div>
+              </div>
+            </div>
+            <i className="bt-hph-home" aria-hidden="true" />
           </div>
         </div>
       </div>
@@ -427,26 +459,54 @@ function Routines({ on }) {
   const list = [['Daily #hanzo-marketing update', 'Weekdays around 9:00 AM'], ['Answer #hanzo-marketing mentions', 'When @mentioned']];
   return (
     <div className={'bt-vis bt-rt' + (on ? ' on' : '')}>
-      <div className="bt-rt-card">
-        <div className="bt-rt-top"><Face k="p" size={40} id="mark" /><b><span>Mark · Marketing</span></b></div>
-        <div className="bt-rt-tabs" aria-hidden="true"><span>Details</span><span>Library</span><span>Computer</span><span className="on">Routines</span></div>
-        <ul>
-          {list.map(([t, wh], i) => (
-            <li key={t} style={{ '--i': i }}>
-              <span><b><span>{t}</span></b><span className="x-mono">{wh}</span></span>
-              <button type="button" role="switch" aria-checked={sw[i]} aria-label={t} className={'bt-sw' + (sw[i] ? ' on' : '')} onClick={() => setSw(sw.map((v, k) => (k === i ? !v : v)))}><i /></button>
-            </li>
-          ))}
-        </ul>
-        <span className="bt-rt-new">+ New routine</span>
+      <div className="bt-rt-stage">
+        <div className="bt-rt-card">
+          <div className="bt-rt-top"><Face k="p" size={40} id="mark" /><b><span>Mark · Marketing</span></b></div>
+          <div className="bt-rt-tabs" aria-hidden="true"><span>Details</span><span>Library</span><span>Computer</span><span className="on">Routines</span></div>
+          <ul>
+            {list.map(([t, wh], i) => (
+              <li key={t} style={{ '--i': i }}>
+                <span><b><span>{t}</span></b><span className="x-mono">{wh}</span></span>
+                <button type="button" role="switch" aria-checked={sw[i]} aria-label={t} className={'bt-sw' + (sw[i] ? ' on' : '')} onClick={() => setSw(sw.map((v, k) => (k === i ? !v : v)))}><i /></button>
+              </li>
+            ))}
+          </ul>
+          <span className="bt-rt-new">+ New routine</span>
+        </div>
+        {/* Synced iPhone hanzo.bot mobile handset beside the web app */}
+        <div className="bt-rt-phone" aria-label="Hanzo Bot mobile app synced with web routines">
+          <div className="bt-hph-scr">
+            <div className="bt-hph-st" aria-hidden="true">
+              <b>9:41</b>
+              <span className="bt-hph-isl" />
+              <span className="bt-hph-sys">5G</span>
+            </div>
+            <div className="bt-hph-hd">
+              <span className="x-mono">hanzo.bot</span>
+              <span className="bt-hph-sync"><i className="on" />Live</span>
+            </div>
+            <div className="bt-hph-bd">
+              <div className="bt-hph-who">
+                <Face k="p" size={24} id="mark" />
+                <div>
+                  <b>Mark · Mobile</b>
+                  <span>{sw.filter(Boolean).length} of 2 routines on</span>
+                </div>
+              </div>
+              <div className="bt-rt-ph-list">
+                {list.map(([t, wh], i) => (
+                  <div key={t} className={'bt-rt-ph-it' + (sw[i] ? ' on' : '')}>
+                    <b>{t}</b>
+                    <span className="x-mono">{sw[i] ? wh : 'Paused'}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <i className="bt-hph-home" aria-hidden="true" />
+          </div>
+        </div>
       </div>
-      {/* hanzo.ai's phone beside the web app: the same bot, synced (live /bot, 8 Nov) */}
-      <div className="bt-rt-ph">
-        <span className="bt-rt-ph-d"><span className="x-mono">9:41</span><span>iPhone · hanzo.bot Mobile</span></span>
-        <span className="bt-rt-ph-w"><Face k="p" size={24} id="mark" /><span>Mark · Mobile App</span></span>
-        <span className="bt-rt-ph-s x-mono"><i aria-hidden="true" /><span>Synced live with Web</span></span>
-      </div>
-      <p className="bt-rt-ph-c">Tap any teammate to hand off from phone or web</p>
+      <p className="bt-rt-ph-c">Desktop + iPhone stay synced live — tap any teammate to hand off from phone or web</p>
     </div>
   );
 }
