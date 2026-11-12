@@ -453,9 +453,9 @@ const SANDBOXES = [
   ['hanzo-dev-agent', 'Hanzo Dev', 'runc (native GPU)', '8%', '1h 14m'],
   ['claude-docs', 'Claude Code', 'microvm', '4%', '39s'],
 ];
-function Console() {
+function Console({ on }) {
   return (
-    <div className="xt-con">
+    <div className="xt-con" data-shown={on || undefined}>
       <p className="xt-con-h"><b>Hanzo Sandboxes</b><span>● iam:3690</span></p>
       <p className="xt-con-v"><span>1: Compute</span><b>2: Sandboxes</b><span>3: Local Models</span><span>4: Cloud Services</span></p>
       {SANDBOXES.map((r) => <p key={r[0]} className="xt-con-r"><span>● {r[0]}</span>{r.slice(1).map((c, i) => <span key={i}>{c}</span>)}</p>)}
@@ -582,10 +582,11 @@ export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
               {typing && <span className="x-caret" aria-hidden="true" />}
             </span>
           </p>
-          <div className="xt-out" data-on={shownOut > 0 || undefined}>
-            {ex.lines.slice(0, shownOut).map(([kind, text], idx) => (kind === 'console'
-              ? <Console key={idx} />
-              : <p key={idx} className={kind}><span>{text}</span></p>))}
+          {/* every line of the example is laid out from the start and shown in turn, so nothing above it moves */}
+          <div className="xt-out">
+            {ex.lines.map(([kind, text], idx) => (kind === 'console'
+              ? <Console key={idx} on={idx < shownOut} />
+              : <p key={idx} className={kind} data-shown={idx < shownOut || undefined}><span>{text}</span></p>))}
           </div>
         </div>
       </div>
