@@ -3650,5 +3650,9 @@
 "/beta/design": {
 "title": "Design partner — Hanzo AI",
 "description": "Build it with the team. Chosen from applications."
+},
+"/legal/refunds": {
+"title": "Refund Policy — Hanzo",
+"description": "When a payment to Hanzo is refunded, how cancelling works, and how to ask about a charge."
 }
 }
