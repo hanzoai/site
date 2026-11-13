@@ -20,6 +20,7 @@ import { EASE, Mark } from '../ui';
 import { Glyph } from './glyphs';
 import { track } from '../../lib/track';
 import SCENES from './hero-scenes.json';
+import * as app from '../../lib/app';
 
 const pic = (src) => src.replace('/images/models/', '/models/').replace(/^(\/models\/\w+)$/, '$1.webp');
 const step = (s) => (Array.isArray(s) ? s[0].replace('{file}', s[1]) : s);
@@ -717,7 +718,7 @@ function PhoneComposer({ id }) {
     track('hero_demo', { control: 'phone-ask' });
     setDraft('');
     if (typeof window !== 'undefined') {
-      window.location.assign(`https://hanzo.app/chat?q=${encodeURIComponent(q)}&anon=true`);
+      window.location.assign(`${app.ask(q)}&anon=true`);
     }
   };
   return (

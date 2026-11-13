@@ -1,7 +1,7 @@
 'use client';
 // Persona: a consumer choosing a chat app (MASTER 1: consumers).
 // Goal: open Hanzo Chat. Metric: first_chat.
-// CTA: "Open Hanzo Chat" -> /login?next=%2Fchat (hero, header ask bar, closing Band).
+// CTA: "Open Hanzo Chat" -> hanzo.ai/login, landing on Chat at hanzo.app/; a typed question -> hanzo.app/?q=, answered at once.
 // Signature: the live chat runs itself once; each question visibly routes through Enso to the model that answers.
 // Beyond: who answers what, Enso's card that opens into each model's page.
 /* Hanzo Chat, v4 (JAMES.md, MASTER 4.1). Persona: consumer choosing a chat app. Goal: open Hanzo Chat.
@@ -27,6 +27,7 @@ import { EASE, Copy, Magnetic } from '../ui';
 import { A, Img, Cta } from '../kit';
 import { useOpener } from '../Opener';
 import { href } from '../../lib/route';
+import { ask } from '../../lib/app';
 import { useDemo } from '../v2/AppDemo';
 import { MODELS } from '../../lib/models';
 import '../v2/AppLines.css';
@@ -34,9 +35,9 @@ import './Frame.css'; // the shared v2a type and wrap (it came in with AppLines 
 import './ChatPage.css';
 import { PLANS, checkout } from '../../lib/plans';
 
-const OPEN = '/login?next=%2Fchat';
-/* where the prompt goes: Hanzo Chat opens on what was typed (hanzo.app/chat?q=), after sign-in */
-const openWith = (q) => (q ? '/login?next=' + encodeURIComponent('/chat?q=' + encodeURIComponent(q)) : OPEN);
+const OPEN = '/login';
+/* where the prompt goes: Hanzo Chat answers what was typed at once, signed in or not (hanzo.app/?q=) */
+const openWith = (q) => (q ? ask(q) : OPEN);
 const DOCS = 'https://docs.hanzo.ai/docs/chat';
 const GO = checkout(PLANS.go.id);
 const PRO = checkout(PLANS.pro.id);
@@ -101,7 +102,8 @@ function useHandoff() {
   return (e) => {
     const a = e.target.closest && e.target.closest('a[href]');
     if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    if (!a.getAttribute('href').includes('/login?next=%2Fchat')) return;
+    const h = a.getAttribute('href');
+    if (!(h === href(OPEN) || h.startsWith(ask('')))) return;
     e.preventDefault();
     if (a.hasAttribute('data-leaving')) return;
     a.setAttribute('data-leaving', '');

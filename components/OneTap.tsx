@@ -21,8 +21,8 @@ export const CLIENT = '113591532635-s8pvqrebprkbndluhftddmdap4htvu1p.apps.google
 const SCRIPT = 'https://accounts.google.com/gsi/client';
 /** Where the tap waits for the sign-in page (hanzo-inc/app components/auth/tap.ts `carried`). */
 export const TAP = 'hanzo:tap';
-/** Where a tap signs in: hanzo.ai's sign-in page, going on to the chat. */
-const ENTRY = `${SIGNIN}/login?next=${encodeURIComponent('/chat')}`;
+/** Where a tap signs in: hanzo.ai's sign-in page, landing on Chat at hanzo.app/. */
+const ENTRY = `${SIGNIN}/login`;
 
 const offered = () =>
   (location.hostname === 'hanzo.ai' || location.hostname === 'www.hanzo.ai') && navigator.webdriver !== true && readConsent().marketing;

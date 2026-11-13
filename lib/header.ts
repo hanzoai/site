@@ -2,7 +2,7 @@
 import { SIGNIN } from './app';
 
 export const LOGIN = [
-  { label: 'Hanzo', sub: 'Chat, Dev and Studio', href: SIGNIN + '/login?next=%2Fchat' },
+  { label: 'Hanzo', sub: 'Chat, Dev and Studio', href: SIGNIN + '/login' },
   { label: 'API Platform', sub: 'API keys, usage and billing', href: 'https://platform.hanzo.ai' },
 ];
 

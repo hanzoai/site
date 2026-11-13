@@ -12,6 +12,7 @@ import { motion, AnimatePresence, useDragControls } from 'motion/react';
 import { read as readAppearance, write as writeAppearance, apply as applyAppearance, current as currentAppearance, CHANGE as APPEARANCE_CHANGE } from '@hanzo/appearance';
 import { acceptAll, asks, consentPolicy, consentSheet, CONSENT_EVENT, declined, notice, noticed, POLICY_EVENT, readConsent, rejectAll, saveConsent } from '@hanzo/event';
 import { LOGIN, LANGS, SEARCH, COOKIES } from '../lib/header';
+import { ask } from '../lib/app';
 import { play } from '../lib/sound';
 import { track } from '../lib/track';
 
@@ -23,7 +24,7 @@ const nameOf = (p) => {
 };
 const go = (router, href) => { if (href.startsWith('/')) router.push(href); else window.open(href, href.startsWith('https://hanzo.ai') ? '_self' : '_blank', 'noopener'); };
 const CHAT = 'https://api.hanzo.ai/v1/chat/public';
-const chatLink = (q) => 'https://hanzo.app/chat?q=' + encodeURIComponent(q);
+const chatLink = ask;
 
 // phones get bottom sheets that close when the grip is dragged down; read only after a tap opens one, never on the server
 function useSheet(onClose) {
