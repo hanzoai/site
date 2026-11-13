@@ -67,10 +67,10 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   (Grok Build did). Flat marks are inline paths; a gradient mark is a file (`public/<name>-mark.svg`). Colour is the
   brand's own (Claude orange, DeepSeek blue, Amp red, Codex, Antigravity, Gemini, Muse, OpenHands); the rest are in ink.
   A tile's tooltip (`data-name`) and its accessible name are the same words.
-- The Pareto plot's points wear their lab's mark (`lab()` in `components/lab.js`) at hanzo-inc/app's sizes in CSS px (`DISC` in
-  `components/Pareto.jsx`, read off the drawing as it is shown, so a disc is the same at every width). A lab with a dock tile
+- The Pareto plot's points wear their lab's mark (`lab()` in `components/lab.ts`) at hanzo-inc/app's sizes in CSS px (`DISC` in
+  `components/Pareto.tsx`, read off the drawing as it is shown, so a disc is the same at every width). A lab with a dock tile
   wears that tile's drawing, so a brand has one mark on the page; Enso's tiers wear Hanzo's H on ink; Z.ai, with no tile, wears
-  hanzoai/icons' mark; any other lab wears none. A new lab is a dock tile and a pattern in `OF`; `components/lab.test.mjs` holds it.
+  hanzoai/icons' mark; any other lab wears none. A new lab is a dock tile and a pattern in `OF`; `components/lab.test.ts` holds it.
 - How to add Hanzo MCP to each client (the file or command for the hosted endpoint with a key, and for the local server)
   lives on docs.hanzo.ai, `guides/coding` (hanzo-docs/docs LLM.md, "MCP clients"); the home draws no picker, and the setup
   menu's rows (`lib/setup.ts`) link those pages and their anchors. The marks for VS Code, OpenClaw and NanoClaw are files
