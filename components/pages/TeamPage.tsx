@@ -20,6 +20,7 @@ import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useRed
 import { Copy } from '../ui';
 import { A, Cta } from '../kit';
 import Sigil from '../Sigil';
+import HeroDither from './HeroDither';
 import MaskLines from './company/MaskLines';
 import useArrived from './company/useArrived';
 import '../v2/vc-type.css';
@@ -265,6 +266,7 @@ function Hero() {
   const scale = useTransform(scrollYProgress, [0, 0.45], [0.9, 1]);
   return (
     <section className="xtm-hero" ref={ref} aria-labelledby="xtm-h1" data-ask-name="Hanzo Team">
+      <HeroDither />
       <noscript dangerouslySetInnerHTML={NOJS} />
       <div className="vc-grid xtm-hero-g">
         <div className="xtm-hero-t">
@@ -273,8 +275,8 @@ function Hero() {
         <motion.div className="xtm-hero-r" initial={{ opacity: 0, y: 16 }} animate={ok ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.5, ease: EASE, delay: 0.45 }}>
           <p className="vc-lede">Your people and your AI agents plan, build, and ship together — in one connected workspace.</p>
           <div className="xtm-acts">
-            <Cta to={ASK[1]} className="xtm-big" id="team.hero" thumb>{ASK[0]}</Cta>
-            <Cta to="https://hanzo.team" kind="quiet" className="xtm-big" id="team.hero-open">Open Hanzo Team</Cta>
+            <Cta to="https://hanzo.team" className="xtm-big" id="team.hero-open" thumb>Open Team</Cta>
+            <Cta to="/contact-sales" kind="quiet" className="xtm-big" id="team.hero-sales">Contact sales</Cta>
           </div>
           <Lk to="https://docs.hanzo.ai/docs/usage/teams">Teams in the docs</Lk>
         </motion.div>
@@ -846,8 +848,11 @@ function Close() {
         <div className="xtm-close-art" aria-hidden="true"><Sigil seed="/team" data={[10, 42, 418, 7]} /></div>
         <div className="xtm-close-r">
           <p className="vc-lede">Bring your projects, tasks, conversations, docs, meetings, and knowledge together.</p>
-          <Cta to={ASK[1]} className="xtm-big" id="team.close" data-thumb={ASK[0]}>{ASK[0]}</Cta>
-          <p className="xtm-note">Hanzo Team · <a href="https://hanzo.team" target="_blank" rel="noopener noreferrer">Open Hanzo Team</a></p>
+          <div className="xtm-acts">
+            <Cta to="https://hanzo.team" className="xtm-big" id="team.close" data-thumb="Open Team">Open Team</Cta>
+            <Cta to="/contact-sales" kind="quiet" className="xtm-big" id="team.close-sales">Contact sales</Cta>
+          </div>
+          <p className="xtm-note">Hanzo Team · <a href="https://docs.hanzo.ai/docs/usage/teams" target="_blank" rel="noopener noreferrer">Documentation</a></p>
         </div>
       </div>
     </section>

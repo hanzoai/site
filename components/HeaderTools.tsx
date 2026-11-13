@@ -7,7 +7,7 @@
    - the language menu with all of Hanzo's locales, the Log in choices, and Hanzo's cookie notice with its preferences.
    - On phones (≤ 700 px) search and the menus rise from the bottom as sheets; drag the grip down to close. */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useDragControls } from 'motion/react';
 import { read as readAppearance, write as writeAppearance, apply as applyAppearance, current as currentAppearance, CHANGE as APPEARANCE_CHANGE } from '@hanzo/appearance';
 import { acceptAll, asks, consentPolicy, consentSheet, CONSENT_EVENT, declined, notice, noticed, POLICY_EVENT, readConsent, rejectAll, saveConsent } from '@hanzo/event';
@@ -562,13 +562,85 @@ function Corner({ lang, setLang, router }) {
   );
 }
 
+function hasLiveSession() {
+  try {
+    const tok = localStorage.getItem('hanzo_iam_access_token');
+    if (!tok) return false;
+    const exp = Number(localStorage.getItem('hanzo_iam_expires_at') || 0);
+    if (exp && exp < Date.now()) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export default function HeaderTools({ headerRef }) {
   const [open, setOpen] = useState(null); // 'search' | 'lang' | 'login'
   const [lang, setLang] = useState('en-US');
+  const [signedIn, setSignedIn] = useState(false);
   const anchors = useRef({});
   // Log in opens under a mouse, as the menus beside it do, and stays open while the pointer is on it or its menu
   const hover = useRef({ hold: () => {}, later: () => {} });
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const sync = () => setSignedIn(hasLiveSession());
+    sync();
+    window.addEventListener('storage', sync);
+    document.addEventListener('visibilitychange', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      document.removeEventListener('visibilitychange', sync);
+    };
+  }, []);
+
+  // Keep header CTAs coherent with session + product surface:
+  // never show "Log in" while logged in, and on /team put "Contact sales" right next to "Open Team".
+  useEffect(() => {
+    const h = headerRef.current?.querySelector('header');
+    if (!h) return;
+    const loginBtn = h.querySelector('button[data-slot="login"]') as HTMLButtonElement | null;
+    const ctaLink = h.querySelector('a[href="https://hanzo.ai/signup"], a[data-slot="header-primary"]') as HTMLAnchorElement | null;
+    if (ctaLink) ctaLink.setAttribute('data-slot', 'header-primary');
+    const isTeam = pathname === '/team' || pathname?.startsWith('/team/');
+    const isBot = pathname === '/bot' || pathname?.startsWith('/bot/');
+
+    if (signedIn || isTeam) {
+      if (loginBtn) {
+        setOpen((o) => (o === 'login' ? null : o));
+        loginBtn.textContent = 'Contact sales';
+        loginBtn.removeAttribute('aria-haspopup');
+        loginBtn.removeAttribute('aria-expanded');
+        loginBtn.dataset.salesLink = '1';
+      }
+      if (ctaLink) {
+        if (isTeam) {
+          ctaLink.textContent = 'Open Team';
+          ctaLink.href = 'https://hanzo.team';
+        } else if (isBot) {
+          ctaLink.textContent = 'Open Bot';
+          ctaLink.href = 'https://hanzo.bot';
+        } else if (signedIn) {
+          ctaLink.textContent = 'Open Hanzo';
+          ctaLink.href = 'https://hanzo.app/chat';
+        } else {
+          ctaLink.textContent = 'Try Hanzo';
+          ctaLink.href = 'https://hanzo.ai/signup';
+        }
+      }
+    } else {
+      if (loginBtn && loginBtn.dataset.salesLink === '1') {
+        delete loginBtn.dataset.salesLink;
+        loginBtn.textContent = 'Log in';
+        loginBtn.setAttribute('aria-haspopup', 'menu');
+      }
+      if (ctaLink) {
+        ctaLink.textContent = isBot ? 'Open Bot' : 'Try Hanzo';
+        ctaLink.href = isBot ? 'https://hanzo.bot' : 'https://hanzo.ai/signup';
+      }
+    }
+  }, [headerRef, signedIn, pathname]);
 
   useEffect(() => {
     try {
@@ -593,14 +665,19 @@ export default function HeaderTools({ headerRef }) {
     const on = (el, ev, fn) => { el.addEventListener(ev, fn); offs.push(() => el.removeEventListener(ev, fn)); };
     h.querySelectorAll('button').forEach((b) => {
       const label = b.getAttribute('aria-label') || '';
+      const slot = b.getAttribute('data-slot') || '';
       const text = b.textContent.trim();
-      const kind = label.startsWith('Search') ? 'search' : label.startsWith('Language') ? 'lang' : text === 'Log in' ? 'login' : null;
+      const kind = label.startsWith('Search') ? 'search' : label.startsWith('Language') ? 'lang' : slot === 'login' || text === 'Log in' ? 'login' : null;
       if (!kind) return;
       anchors.current[kind] = b;
       b.setAttribute('aria-haspopup', kind === 'search' ? 'dialog' : 'menu');
       let hoverAt = 0;
       on(b, 'click', (e) => {
         e.preventDefault();
+        if (kind === 'login' && b.dataset.salesLink === '1') {
+          router.push('/contact-sales');
+          return;
+        }
         window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'tools' }));
         // a click just after the pointer opened it keeps it open (hover, then click, must not close it)
         const fresh = Date.now() - hoverAt < 700;
@@ -612,6 +689,7 @@ export default function HeaderTools({ headerRef }) {
       const later = () => { clearTimeout(shut); shut = setTimeout(() => setOpen((o) => (o === 'login' && !b.matches(':hover') && !document.querySelector('.x-pop:hover') ? null : o)), 240); };
       hover.current = { hold, later };
       on(b, 'pointerenter', (e) => {
+        if (b.dataset.salesLink === '1') return;
         if (e.pointerType !== 'mouse' || innerWidth <= 900) return;
         hold();
         hoverAt = Date.now();

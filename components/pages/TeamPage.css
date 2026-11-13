@@ -11,7 +11,7 @@
 .xtm-face::after { content: ''; position: absolute; inset: 0; background: var(--img) center / cover no-repeat; }
 
 /* 1. stage hero */
-.xtm-hero { padding: 132px 0 0; }
+.xtm-hero { position: relative; padding: 132px 0 0; }
 .xtm-hero-g { align-items: end; row-gap: 40px; }
 .xtm-hero-t { grid-column: 1 / 9; display: flex; flex-direction: column; gap: 28px; }
 .xtm-h1 { font-size: clamp(56px, 8.4vw, 128px); }
