@@ -5,19 +5,23 @@ import fs from 'node:fs';
 import LIVE from '../content/live/_pricing.json' with { type: 'json' };
 import MODELS from '../content/live/_models.json' with { type: 'json' };
 import { FLOOR, OFFERS, PARTNERS, PLANS, RUNGS, SEATS, charge, checkout, derivePlans, planItem, usd } from '../lib/plans.ts';
+import type { Plan } from '../lib/liveSources.ts';
 import { QA as PRICING } from '../components/pages/Pricing.faq.ts';
 import { QA as AGENTS, KAI } from '../components/pages/AgentsPage.faq.ts';
 
 const rows = Object.values(LIVE.plans);
-const answer = (qa, q) => qa.find(([name]) => name === q)?.[1];
-const jsonld = (route) => JSON.parse(fs.readFileSync(new URL(`../content/jsonld/${route}.json`, import.meta.url), 'utf8'));
+const ROWS = LIVE.plans as Record<string, Plan>; // the JSON import types each slug as its own object
+const answer = (qa: readonly (readonly string[])[], q: string) => qa.find(([name]) => name === q)?.[1];
+/** A JSON-LD block of a page, as far as the checks read it. */
+interface Block { '@type': string; mainEntity?: unknown; itemListElement: { name: string }[] }
+const jsonld = (route: string): Block[] => JSON.parse(fs.readFileSync(new URL(`../content/jsonld/${route}.json`, import.meta.url), 'utf8'));
 // the code of a page or a band (a path under components/) without its comments: a figure in a comment is a note, one in a string is what a visitor reads
-const code = (file) => fs.readFileSync(new URL(`../components/${file}`, import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+const code = (file: string) => fs.readFileSync(new URL(`../components/${file}`, import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
 
 test('personal plans are the API rows, billed by the month only', () => {
-  for (const k of ['go', 'pro', 'dev', 'max', 'ultra', 'ultimate', 'unlimited'].filter((k) => PLANS[k])) {
-    const row = LIVE.plans[PLANS[k].id];
-    assert.equal(PLANS[k].price, row.price, k);
+  for (const k of (['go', 'pro', 'dev', 'max', 'ultra', 'ultimate', 'unlimited'] as const).filter((k) => PLANS[k])) {
+    const row = ROWS[PLANS[k]!.id];
+    assert.equal(PLANS[k]!.price, row.price, k);
     assert.equal(row.priceAnnual, null, `${k} offers no year`);
     assert.equal(row.interval, 'month', k);
   }
@@ -57,7 +61,7 @@ test('only Team has a monthly or yearly choice: the annual answer states its sav
   const team = LIVE.plans.team;
   assert.equal(SEATS.saving, Math.round((1 - team.priceAnnual / team.price) * 100));
   assert.equal(LIVE.plans.enterprise.interval, 'year');
-  const a = answer(PRICING, 'Do you offer annual billing?');
+  const a = answer(PRICING, 'Do you offer annual billing?')!;
   assert.match(a, new RegExp(`Annual on the Team card .* saves ${SEATS.saving}% against paying monthly`));
   assert.match(a, /Enterprise is sold by the year/);
   assert.doesNotMatch(a, /92/);
@@ -66,7 +70,7 @@ test('only Team has a monthly or yearly choice: the annual answer states its sav
 test('the bot and team workspace floors are the cheapest personal plans whose rows grant bots and Hanzo Team', () => {
   // read off the rows, not named: @hanzo/plans 1.10 moves them (Go keeps no bot and gains the team workspace)
   const paid = rows.filter((p) => p.category === 'personal' && p.price > 0);
-  const least = (has, fallback) => { const xs = paid.filter(has).map((p) => p.price); return xs.length ? Math.min(...xs) : fallback; };
+  const least = (has: (p: Plan) => boolean, fallback: number) => { const xs = paid.filter(has).map((p) => p.price); return xs.length ? Math.min(...xs) : fallback; };
   assert.equal(FLOOR.bot, least((p) => p.products.includes('bot') || (p.bots ?? 0) !== 0, PLANS.go.price));
   assert.equal(FLOOR.team, least((p) => p.products.includes('team'), PLANS.pro.price));
   assert.equal(FLOOR.paid, Math.min(...paid.map((p) => p.price)));
@@ -82,9 +86,9 @@ test('the partners are the white-label and agency plans', () => {
 });
 
 test('the agents cost answer names the price list\'s Kai rate and the cheapest plan for a person', () => {
-  const kai = MODELS.models.find((m) => m.id === 'kai').pricing.input_per_million;
+  const kai = MODELS.models.find((m) => m.id === 'kai')!.pricing!.input_per_million;
   assert.equal(KAI, '$' + kai);
-  const a = answer(AGENTS, 'What does it cost after that?');
+  const a = answer(AGENTS, 'What does it cost after that?')!;
   assert.ok(a.includes(`Kai is ${KAI} per million input tokens`), a);
   assert.ok(a.includes(`start at ${usd(FLOOR.paid)} a month`), a);
 });
@@ -110,11 +114,11 @@ test('the structured data holds no price and no answer of its own: the plan list
 
 test('the usage slider stops at every rung the catalog sells, each named by its multiple of Go as its plan states it', () => {
   const ladder = ['pro-3x', 'dev-5x', 'max-15x', 'ultra', 'ultimate', 'unlimited'];
-  assert.deepEqual(RUNGS.map((r) => r.id), ladder.filter((s) => LIVE.plans[s]), 'lowest first, only what the catalog lists');
-  const times = { 'pro-3x': '3x', 'dev-5x': '5x', 'max-15x': '15x', ultra: '25x', ultimate: '50x', unlimited: '∞' };
+  assert.deepEqual(RUNGS.map((r) => r.id), ladder.filter((s) => ROWS[s]), 'lowest first, only what the catalog lists');
+  const times: Record<string, string> = { 'pro-3x': '3x', 'dev-5x': '5x', 'max-15x': '15x', ultra: '25x', ultimate: '50x', unlimited: '∞' };
   for (const r of RUNGS) {
     assert.equal(r.x, times[r.id], r.id);
-    assert.equal(r.price, LIVE.plans[r.id].price, r.id);
+    assert.equal(r.price, ROWS[r.id].price, r.id);
     assert.ok(r.x === '∞' || r.features.some((f) => f.startsWith(r.x + ' ')), `${r.id} states ${r.x}`);
   }
   assert.equal(PLANS.ultimate?.head ?? 'Everything in Ultra, plus:', 'Everything in Ultra, plus:');

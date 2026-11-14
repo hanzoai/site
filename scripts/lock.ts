@@ -2,7 +2,7 @@
 // HZ_PRIORITY=1 (the conductor's checks) goes next in line: ordinary jobs step back while a priority job is waiting.
 import fs from 'node:fs';
 const L = '/tmp/hz-browser.lock', P = '/tmp/hz-browser.priority';
-const alive = (f) => { try { return process.kill(+fs.readFileSync(f, 'utf8'), 0); } catch { return false; } };
+const alive = (f: string) => { try { return process.kill(+fs.readFileSync(f, 'utf8'), 0); } catch { return false; } };
 export async function lock() {
   const pri = process.env.HZ_PRIORITY === '1';
   if (pri) fs.writeFileSync(P, String(process.pid));

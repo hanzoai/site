@@ -20,7 +20,7 @@ test('weeks that are quiet beside the year are a shade, not the empty cell', () 
 });
 
 test('bars are as tall as their share of the tallest, at least 4%, and none is a line one pixel tall', () => {
-  const h = (html) => [...html.matchAll(/style="height:([^"]+)"/g)].map((m) => m[1]);
+  const h = (html: string) => [...html.matchAll(/style="height:([^"]+)"/g)].map((m) => m[1]);
   assert.deepEqual(h(bars([0, 5, 10])), ['1px', '50%', '100%']);
   assert.deepEqual(h(bars([1, 100])), ['4%', '100%']);
   assert.match(bars([0, 5]), /x-bar none"[^>]*height:1px/);

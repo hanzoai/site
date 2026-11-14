@@ -23,7 +23,7 @@ assert.ok(still.some((v, i) => Math.abs(v - later[i]) > 1e-3), 'the field drifts
 // cost of one full-screen frame (field + every contour level), worst cell size, after warm-up
 const pen = { n: 0, moveTo() { this.n++; }, lineTo() {} };
 const v = new Float32Array(cols * rows), lv = levels(P, field(P, v, cols, rows, P.cell, W, H, 0, { x: 0.5, y: 0.5, s: 0 }));
-const frame = (t) => { field(P, v, cols, rows, P.cell, W, H, t, { x: 0.5, y: 0.5, s: 0.5 }); for (const l of lv) contour(pen, v, cols, rows, P.cell, l); };
+const frame = (t: number) => { field(P, v, cols, rows, P.cell, W, H, t, { x: 0.5, y: 0.5, s: 0.5 }); for (const l of lv) contour(pen, v, cols, rows, P.cell, l); };
 for (let i = 0; i < 30; i++) frame(i / 30);
 const t0 = performance.now();
 for (let i = 0; i < 120; i++) frame(i / 30);

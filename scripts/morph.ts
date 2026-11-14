@@ -5,6 +5,11 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import puppeteer from 'puppeteer-core';
 import { lock } from './lock.ts';
+import { why } from './why.ts';
+
+declare global {
+  interface Window { __vt: string[] }
+}
 const CASES = [
   ['/legal/', '.xlg-card[href*="/legal/"]', 'open'],
   ['/enterprise/', 'main a[href="/contact-sales"], main a[href="/contact-sales/"]', 'any'],
@@ -24,7 +29,7 @@ for (const [from, sel, want] of CASES) {
     if (!el) { console.log(`${from}: no link matches ${sel}`); bad++; continue; }
     await el.evaluate((e) => e.scrollIntoView({ block: 'center' }));
     await new Promise((r) => setTimeout(r, 900));
-    const to = await el.evaluate((e) => new URL(e.href).pathname);
+    const to = await el.evaluate((e) => new URL((e as HTMLAnchorElement).href).pathname);
     const file = `shots/morph/${String(++n).padStart(2, '0')}`;
     // screenshots force a frame each time, so they catch the transition itself (a screencast can miss it)
     const ys = [];
@@ -40,7 +45,7 @@ for (const [from, sel, want] of CASES) {
     execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-framerate', '10', '-i', `${file}-f%02d.jpg`, '-vf', 'scale=368:-1,tile=4x4', '-frames:v', '1', '-q:v', '5', `${file}-sheet.jpg`]);
     for (const f of fs.readdirSync('shots/morph').filter((x) => x.startsWith(file.split('/').pop() + '-f'))) fs.unlinkSync('shots/morph/' + f);
     console.log(`${from} -> ${to}: ${ok ? 'OK' : 'PROBLEM'}  transition ${r.vt.join(',') || 'none'} (want ${want}), landed at y=${r.y}, scroll during: ${ys.join(' ')}  sheet ${file}-sheet.jpg`);
-  } catch (e) { bad++; console.log(`${from}: FAILED ${e.message.slice(0, 140)}`); }
+  } catch (e) { bad++; console.log(`${from}: FAILED ${why(e, 140)}`); }
   finally { await page.close(); }
 }
 await b.close();

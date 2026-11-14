@@ -13,8 +13,15 @@
 // The exit code is 1 if any check failed.
 import fs from 'node:fs';
 import { chromium, host, HOST } from './host.ts';
+import type { Locator } from './host.ts';
 import { PLANS_URL } from '../lib/liveSources.ts';
 import SNAP from '../content/live/_pricing.json' with { type: 'json' };
+
+declare global {
+  interface Window { __cls: number }
+}
+/** A layout-shift entry of the PerformanceObserver. */
+interface Shift extends PerformanceEntry { hadRecentInput: boolean; value: number }
 
 // the usage ladder above Go, lowest first, and each rung's multiple of Go's usage (hanzo/plans subscription.json)
 const LADDER = [['pro-3x', '3x'], ['dev-5x', '5x'], ['max-15x', '15x'], ['ultra', '25x'], ['ultimate', '50x'], ['unlimited', '∞']];
@@ -22,7 +29,7 @@ const SHOTS = new URL('../shots/ladder/', import.meta.url).pathname;
 fs.mkdirSync(SHOTS, { recursive: true });
 
 // a catalog's rungs, as the page must show them: the ladder's slugs it lists, each with its name and monthly price
-const rungsOf = (rows) => LADDER.filter(([s]) => rows[s]).map(([slug, x]) => ({ slug, x, name: rows[slug].name, price: rows[slug].price }));
+const rungsOf = (rows: Record<string, { name: string; price: number }>) => LADDER.filter(([s]) => rows[s]).map(([slug, x]) => ({ slug, x, name: rows[slug].name, price: rows[slug].price }));
 const live = await (await fetch(PLANS_URL, { signal: AbortSignal.timeout(15000) })).json();
 if (!Array.isArray(live)) throw new Error('unexpected data from ' + PLANS_URL);
 const CATALOGS = {
@@ -30,20 +37,25 @@ const CATALOGS = {
   live: rungsOf(Object.fromEntries(live.map((p) => [p.slug, { name: p.name, price: p.price / 100 }]))),
 };
 
-const results = [];
-const ok = (label, pass, why = '') => { results.push(pass); console.log(`${pass ? 'ok  ' : 'FAIL'} ${label}${pass ? '' : '  ' + why}`); };
+const results: boolean[] = [];
+const ok = (label: string, pass: boolean, why: string | null = '') => { results.push(pass); console.log(`${pass ? 'ok  ' : 'FAIL'} ${label}${pass ? '' : '  ' + why}`); };
 
 // what each page's ladder card shows now; a name or price on its way out (Motion pops it out of the flow) is not read
-const CARDS = {
-  home: { path: '/', card: '.x-pricing .x-plan.strong', read: (c) => ({
-    name: c.querySelector('h3').textContent.trim(),
-    price: [...c.querySelectorAll('.x-price-roll b')].filter((b) => getComputedStyle(b).position !== 'absolute').pop()?.textContent.trim(),
-    href: c.querySelector('a.x-btn').getAttribute('href'),
+/** What a card shows on a page; the pricing page also carries its comparison table. */
+interface Read { name?: string; price?: string; href: string | null; lit?: number; cols?: number; table?: number }
+/** A box of a visible element: the cards are scrolled into view before they are measured. */
+const rect = async (l: Locator) => (await l.boundingBox())!;
+
+const CARDS: Record<string, { path: string; card: string; read: (c: HTMLElement) => Read }> = {
+  home: { path: '/', card: '.x-pricing .x-plan.strong', read: (c: HTMLElement) => ({
+    name: c.querySelector('h3')!.textContent!.trim(),
+    price: [...c.querySelectorAll('.x-price-roll b')].filter((b) => getComputedStyle(b).position !== 'absolute').pop()?.textContent!.trim(),
+    href: c.querySelector('a.x-btn')!.getAttribute('href'),
   }) },
-  pricing: { path: '/pricing', card: '.xpr-card[data-id="pro"]', read: (c) => ({
-    name: [...c.querySelectorAll('.xpr-c-name .xpr-swap-i')].filter((s) => getComputedStyle(s).position !== 'absolute').pop()?.textContent.trim(),
-    price: c.querySelector('.xpr-fig .v2-odo-t').textContent.trim(),
-    href: c.querySelector('a.xpr-cta').getAttribute('href'),
+  pricing: { path: '/pricing', card: '.xpr-card[data-id="pro"]', read: (c: HTMLElement) => ({
+    name: [...c.querySelectorAll('.xpr-c-name .xpr-swap-i')].filter((s) => getComputedStyle(s).position !== 'absolute').pop()?.textContent!.trim(),
+    price: c.querySelector('.xpr-fig .v2-odo-t')!.textContent!.trim(),
+    href: c.querySelector('a.xpr-cta')!.getAttribute('href'),
     lit: [...document.querySelectorAll('.xpr-lad-c')].findIndex((x) => x.classList.contains('lit')),
     cols: document.querySelectorAll('.xpr-lad-c').length,
     table: document.querySelectorAll('.xpr-cmp thead th').length,
@@ -61,7 +73,7 @@ for (const [source, want] of Object.entries(CATALOGS)) {
     await ctx.addInitScript(() => {
       localStorage.setItem('hz-consent', JSON.stringify({ necessary: true }));
       window.__cls = 0;
-      new PerformanceObserver((l) => { for (const e of l.getEntries()) if (!e.hadRecentInput) window.__cls += e.value; }).observe({ type: 'layout-shift', buffered: true });
+      new PerformanceObserver((l) => { for (const e of l.getEntries() as Shift[]) if (!e.hadRecentInput) window.__cls += e.value; }).observe({ type: 'layout-shift', buffered: true });
     });
     await ctx.route(/.*/, (r) => r.abort()); // nothing else leaves the machine
     await ctx.route(/^https:\/\/api\.hanzo\.ai\//, (r) => r.fulfill({ status: 200, body: '{}', headers: { 'content-type': 'application/json', 'access-control-allow-origin': HOST, 'access-control-allow-credentials': 'true', 'access-control-allow-headers': '*' } }));
@@ -70,7 +82,7 @@ for (const [source, want] of Object.entries(CATALOGS)) {
     for (const [where, C] of Object.entries(CARDS)) {
       const at = `${source} ${where} ${width}`;
       const page = await ctx.newPage();
-      const errors = [];
+      const errors: string[] = [];
       page.on('pageerror', (e) => errors.push(String(e).slice(0, 160)));
       page.on('console', (m) => m.type() === 'error' && !/Failed to load resource|ERR_FAILED/.test(m.text()) && errors.push(m.text().slice(0, 160)));
       await page.goto(HOST + C.path, { waitUntil: 'networkidle' });
@@ -85,10 +97,10 @@ for (const [source, want] of Object.entries(CATALOGS)) {
       ok(`${at}: the stops are ${want.map((r) => r.x).join(' ')}`, stops.join(' ') === want.map((r) => r.x).join(' '), stops.join(' '));
       ok(`${at}: the last stop is ∞ exactly when Unlimited is sold`, (stops.at(-1) === '∞') === want.some((r) => r.slug === 'unlimited'), stops.at(-1));
       ok(`${at}: the slider goes no higher than the highest rung sold`, (await input.getAttribute('max')) === String(n - 1), await input.getAttribute('max'));
-      const box = await input.boundingBox();
+      const box = await rect(input);
       const face = await card.evaluate((c) => { const s = getComputedStyle(c); return c.clientWidth - parseFloat(s.paddingLeft) - parseFloat(s.paddingRight); });
       ok(`${at}: the slider fills the card and is a 44px target`, Math.abs(box.width - face) < 1 && box.height >= 44, `${box.width}x${box.height} in ${face}`);
-      const tall = (await card.boundingBox()).height;
+      const tall = (await rect(card)).height;
 
       await input.focus();
       await page.keyboard.press('Home');
@@ -97,13 +109,13 @@ for (const [source, want] of Object.entries(CATALOGS)) {
         await page.waitForTimeout(550);
         const r = want[k];
         const got = await read();
-        const plan = new URL(got.href, HOST).searchParams.get('plan');
-        ok(`${at}: stop ${k + 1} is ${r.name}, $${r.price}, checkout ${r.slug}`, got.name === r.name && got.price === '$' + r.price && plan === r.slug && new URL(got.href, HOST).pathname === '/pay/confirm/card', JSON.stringify(got));
+        const plan = new URL(got.href!, HOST).searchParams.get('plan');
+        ok(`${at}: stop ${k + 1} is ${r.name}, $${r.price}, checkout ${r.slug}`, got.name === r.name && got.price === '$' + r.price && plan === r.slug && new URL(got.href!, HOST).pathname === '/pay/confirm/card', JSON.stringify(got));
         const said = await input.getAttribute('aria-valuetext');
         ok(`${at}: stop ${k + 1} is told as "${said}"`, said === `${r.name}, ${r.x === '∞' ? 'no usage caps' : r.x + ' usage'}, $${r.price} a month`, said);
         if (where === 'pricing') ok(`${at}: the comparison lights ${r.name}`, got.lit === k + 2 && got.cols === n + 2, `lit ${got.lit} of ${got.cols}`);
-        const now = await input.boundingBox();
-        const h = (await card.boundingBox()).height;
+        const now = await rect(input);
+        const h = (await rect(card)).height;
         ok(`${at}: at ${r.name} the card and the slider stay put`, Math.abs(h - tall) < 0.5 && Math.abs(now.y - box.y) < 0.5, `height ${tall} -> ${h}, slider ${box.y} -> ${now.y}`);
         const name = { 0: 'pro', 2: 'max', [n - 1]: 'last' }[k];
         if (name && (width === 1440 || width === 390)) await card.screenshot({ path: `${SHOTS}${where}-${width}-${source}-${name}.png` });
@@ -112,12 +124,12 @@ for (const [source, want] of Object.entries(CATALOGS)) {
       // a pointer: drag from the first stop to the last, then a tap on the third stop's name
       await page.keyboard.press('Home');
       await page.waitForTimeout(300);
-      const b = await input.boundingBox();
-      const xAt = (k) => b.x + 22 + ((b.width - 44) * k) / (n - 1);
+      const b = await rect(input);
+      const xAt = (k: number) => b.x + 22 + ((b.width - 44) * k) / (n - 1);
       const y = b.y + 14;
       if (phone) {
         const cdp = await ctx.newCDPSession(page);
-        const touch = (type, x) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
+        const touch = (type: string, x?: number) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y }] });
         await touch('touchStart', xAt(0));
         for (let i = 1; i <= 16; i++) await touch('touchMove', xAt(0) + ((xAt(n - 1) - xAt(0)) * i) / 16);
         await touch('touchEnd');
@@ -129,7 +141,7 @@ for (const [source, want] of Object.entries(CATALOGS)) {
       }
       await page.waitForTimeout(700);
       const end = await read();
-      ok(`${at}: a ${phone ? 'finger' : 'mouse'} drags to ${want[n - 1].name}`, (await input.inputValue()) === String(n - 1) && new URL(end.href, HOST).searchParams.get('plan') === want[n - 1].slug, `${await input.inputValue()} ${end.href}`);
+      ok(`${at}: a ${phone ? 'finger' : 'mouse'} drags to ${want[n - 1].name}`, (await input.inputValue()) === String(n - 1) && new URL(end.href!, HOST).searchParams.get('plan') === want[n - 1].slug, `${await input.inputValue()} ${end.href}`);
       if (phone) await page.touchscreen.tap(xAt(2), b.y + b.height - 8);
       else await page.mouse.click(xAt(2), b.y + b.height - 8);
       await page.waitForTimeout(700);

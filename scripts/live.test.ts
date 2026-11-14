@@ -9,17 +9,22 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import type { Models, Plan, Research } from '../lib/liveSources.ts';
+import type { Hub } from '../lib/oss.ts';
+
+/** content/live/_git.json: a year of [day, commits, active repositories]. */
+interface Git { read: string; window: { from: string; to: string }; commits: number; merges: number; orgs: number; week: number; days: [string, number, number][] }
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const FILES = ['_git.json', '_github.json', '_pricing.json', '_oss.json', '_research.json', '_models.json'];
-const read = (f, root = ROOT) => fs.readFileSync(path.join(root, 'content', 'live', f), 'utf8');
-const run = (env = {}, stub, root = ROOT) => {
+const read = (f: string, root = ROOT) => fs.readFileSync(path.join(root, 'content', 'live', f), 'utf8');
+const run = (env: Record<string, string> = {}, stub?: string, root = ROOT) => {
   try { return { code: 0, out: execFileSync(process.execPath, [...(stub ? ['--import', stub] : []), path.join(root, 'scripts', 'live.ts')], { cwd: root, encoding: 'utf8', stdio: 'pipe', env: { ...process.env, HZ_LIVE_OFFLINE: '', ...env } }) }; }
-  catch (e) { return { code: e.status, out: String(e.stdout) + String(e.stderr) }; }
+  catch (e) { const { status, stdout, stderr } = e as { status: number; stdout: unknown; stderr: unknown }; /* execFileSync's error carries the child's result */ return { code: status, out: String(stdout) + String(stderr) }; }
 };
 // a run where some source fails must stop the build: exit 1, and name the failure
-const live = (env, stub, root) => { const r = run(env, stub, root); assert.equal(r.code, 1, 'a failed source must exit 1'); assert.match(r.out, /LIVE FIGURES FAILED/); return r.out; };
-const fresh = (s, since) => Date.parse(s) >= since;
+const live = (env: Record<string, string>, stub?: string, root?: string) => { const r = run(env, stub, root); assert.equal(r.code, 1, 'a failed source must exit 1'); assert.match(r.out, /LIVE FIGURES FAILED/); return r.out; };
+const fresh = (s: string, since: number) => Date.parse(s) >= since;
 
 if (process.argv.includes('--online')) {
   const since = Date.now();
@@ -38,6 +43,7 @@ const before = Object.fromEntries(FILES.map((f) => [f, read(f)]));
 fs.mkdirSync(path.join(tmp, 'scripts'));
 fs.mkdirSync(path.join(tmp, 'content', 'live'), { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'scripts', 'live.ts'), path.join(tmp, 'scripts', 'live.ts'));
+fs.copyFileSync(path.join(ROOT, 'scripts', 'why.ts'), path.join(tmp, 'scripts', 'why.ts'));
 fs.mkdirSync(path.join(tmp, 'lib'));
 fs.copyFileSync(path.join(ROOT, 'lib', 'liveSources.ts'), path.join(tmp, 'lib', 'liveSources.ts')); // the sources live.ts shares with the home page
 fs.copyFileSync(path.join(ROOT, 'lib', 'oss.ts'), path.join(tmp, 'lib', 'oss.ts'));
@@ -45,20 +51,20 @@ fs.copyFileSync(path.join(ROOT, 'lib', 'heat.ts'), path.join(tmp, 'lib', 'heat.t
 fs.mkdirSync(path.join(tmp, 'components', 'pages', 'openSource'), { recursive: true });
 fs.copyFileSync(path.join(ROOT, 'components', 'pages', 'openSource', 'shape.ts'), path.join(tmp, 'components', 'pages', 'openSource', 'shape.ts'));
 for (const f of FILES) fs.writeFileSync(path.join(tmp, 'content', 'live', f), before[f]);
-const g = JSON.parse(before['_git.json']);
+const g: Git = JSON.parse(before['_git.json']);
 const activity = {
   complete: true, read: g.read, window: g.window, totals: { commits: g.commits, merges: g.merges, orgs: g.orgs },
   daily: Object.fromEntries(g.days.map(([d, c]) => [d, c])), active: Object.fromEntries(g.days.map(([d, , r]) => [d, r])),
 };
-const stub = (name, body) => {
+const stub = (name: string, body: string) => {
   const f = path.join(tmp, name + '.ts');
   fs.writeFileSync(f, `const json = (b, status = 200, h = {}) => new Response(JSON.stringify(b), { status, headers: { 'content-type': 'application/json', ...h } });
 const ACT = ${JSON.stringify(activity)};
 globalThis.fetch = async (u) => { u = String(u); ${body} };`);
   return f;
 };
-const kept = (out, f, why) => assert.match(out, new RegExp(`${f.replace('.', '\\.')}\\s+kept snapshot from \\S+: .*(?:${why})`), `${f} should keep its snapshot (${why})`);
-const same = (...fs_) => { for (const f of fs_) assert.equal(read(f, tmp), before[f], f + ' changed'); };
+const kept = (out: string, f: string, why: string) => assert.match(out, new RegExp(`${f.replace('.', '\\.')}\\s+kept snapshot from \\S+: .*(?:${why})`), `${f} should keep its snapshot (${why})`);
+const same = (...fs_: string[]) => { for (const f of fs_) assert.equal(read(f, tmp), before[f], f + ' changed'); };
 
 try {
   for (const [name, body, why] of [
@@ -82,29 +88,29 @@ try {
 }
 
 // The shapes the pages and lib/commits.js read. A number is never missing, empty, negative or made up of parts.
-const int = (n) => Number.isInteger(n) && n >= 0;
+const int = (n: unknown) => typeof n === 'number' && Number.isInteger(n) && n >= 0;
 for (const f of FILES) {
   const d = JSON.parse(read(f));
   assert.match(d.source, /^(https:\/\/|snapshot: )/, f + ' source');
   assert.ok(Date.parse(d.fetched_at) <= Date.now() + 6e4, f + ' fetched_at');
 }
-const git = JSON.parse(read('_git.json'));
+const git: Git = JSON.parse(read('_git.json'));
 assert.ok(git.days.length === 365 || git.days.length === 366, 'a year of days');
 git.days.forEach(([d, c, r], i) => {
   assert.ok(int(c) && int(r), 'counts on ' + d);
   if (i) assert.equal(Date.parse(d) - Date.parse(git.days[i - 1][0]), 864e5, 'consecutive days at ' + d);
 });
-assert.deepEqual([git.days[0][0], git.days.at(-1)[0]], [git.window.from, git.window.to]);
+assert.deepEqual([git.days[0][0], git.days.at(-1)![0]], [git.window.from, git.window.to]);
 assert.ok([git.commits, git.merges, git.orgs].every((n) => int(n) && n > 0), 'year, merges, orgs');
 assert.equal(git.week, git.days.slice(-7).reduce((s, x) => s + x[1], 0), 'week is the last 7 days');
-const gh = JSON.parse(read('_github.json'));
+const gh: Hub = JSON.parse(read('_github.json'));
 for (const k of ['hanzo', 'lux', 'zoo']) {
   const x = gh.groups[k];
   assert.ok([x.checked, x.repos, x.public, x.stars, x.forks].every((n) => int(n) && n > 0) && x.repos <= x.public, 'github totals ' + k);
-  assert.ok(x.top.length >= 6 && x.top.every((c) => int(c.stars) && int(c.contributors) && Array.isArray(c.faces) && int(c.commits) && c.months.length === 13), 'github cards ' + k);
+  assert.ok(x.top.length >= 6 && x.top.every((c) => int(c.stars) && int(c.contributors) && Array.isArray(c.faces) && int(c.commits) && c.months?.length === 13), 'github cards ' + k);
   assert.ok(x.languages.length > 0 && x.orgs.length > 0 && x.orgs.every((o) => o.login && int(o.repos)), 'github languages and orgs ' + k);
 }
-const pr = JSON.parse(read('_pricing.json'));
+const pr: { plans: Record<string, Plan> } = JSON.parse(read('_pricing.json'));
 for (const slug of ['free', 'go', 'pro-3x', 'dev-5x', 'max-15x', 'ultra', 'team', 'team-premium', 'enterprise', 'enterprise-300', 'white-label']) {
   const p = pr.plans[slug];
   assert.ok(p && typeof p.name === 'string' && Number.isFinite(p.price) && p.price >= 0 && (p.priceAnnual === null || Number.isFinite(p.priceAnnual)), 'plan ' + slug);
@@ -114,8 +120,8 @@ const oss = JSON.parse(read('_oss.json'));
 assert.ok([oss.estate.commits, oss.estate.merges, oss.estate.orgs, oss.calendar.week].every((n) => int(n) && n > 0), 'open-source figures');
 assert.ok(oss.estate.mergeMonths.length > 0 && oss.estate.mergeMonths.every(int), 'merges a month');
 assert.ok(oss.calendar.days.length >= 365 && oss.groups.hanzo.top.length >= 12, 'calendar and repository cards');
-const rs = JSON.parse(read('_research.json'));
-for (const k of ['repair', 'latency', 'gpqa']) assert.ok(Array.isArray(rs[k]) && rs[k].length > 0, 'research ' + k);
-const md = JSON.parse(read('_models.json'));
-assert.ok(md.models.some((m) => m.id === 'kai' && m.pricing.input_per_million > 0) && Object.keys(md.names).length > 0, 'models and names');
+const rs: Research = JSON.parse(read('_research.json'));
+for (const k of ['repair', 'latency', 'gpqa'] as const) assert.ok(Array.isArray(rs[k]) && rs[k].length > 0, 'research ' + k);
+const md: Models = JSON.parse(read('_models.json'));
+assert.ok(md.models.some((m) => m.id === 'kai' && (m.pricing?.input_per_million ?? 0) > 0) && Object.keys(md.names).length > 0, 'models and names');
 for (const f of FILES) console.log(`ok  shape ${f.padEnd(14)}${JSON.parse(read(f)).source} · ${JSON.parse(read(f)).fetched_at}`);

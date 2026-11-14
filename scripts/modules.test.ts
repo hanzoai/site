@@ -9,8 +9,8 @@ import path from 'node:path';
 const OUT = path.resolve(import.meta.dirname, '..', 'out');
 const MODULES = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, 'modules.json'), 'utf8'));
 // the Sites plane serves <route>/index.html, then <route>.html (next.config.mjs writes the second)
-const page = (name) => [`${name}/index.html`, `${name}.html`].map((f) => path.join(OUT, f)).find((f) => fs.existsSync(f));
-const meta = (html, name) => [...html.matchAll(new RegExp(`<meta name="${name}" content="([^"]*)"`, 'g'))].map((m) => m[1]);
+const page = (name: string) => [`${name}/index.html`, `${name}.html`].map((f) => path.join(OUT, f)).find((f) => fs.existsSync(f));
+const meta = (html: string, name: string) => [...html.matchAll(new RegExp(`<meta name="${name}" content="([^"]*)"`, 'g'))].map((m) => m[1]);
 
 test('out/ has been built', () => {
   assert.ok(fs.existsSync(path.join(OUT, 'index.html')), 'run pnpm build first');

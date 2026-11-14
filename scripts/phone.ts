@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import puppeteer from 'puppeteer-core';
 import { lock } from './lock.ts';
+import { why } from './why.ts';
 await lock();
 
 const paths = process.argv.slice(2);
@@ -14,7 +15,7 @@ let bad = 0;
 for (const p of paths) {
   const page = await b.newPage();
   await page.emulate({ viewport: { width: 375, height: 812, deviceScaleFactor: 2, isMobile: true, hasTouch: true }, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1' });
-  const errs = [];
+  const errs: string[] = [];
   page.on('pageerror', (e) => errs.push(e.message.slice(0, 160)));
   page.on('console', (m) => m.type() === 'error' && !/favicon|Failed to load resource/.test(m.text()) && errs.push(m.text().slice(0, 160)));
   try {
@@ -39,7 +40,7 @@ for (const p of paths) {
     if (!ok) bad++;
     console.log(`${p}: ${ok ? 'OK' : 'PROBLEM'}  width ${r.sw}/${r.W}${r.wide.length ? '  too wide: ' + r.wide.join(', ') : ''}${errs.length ? '  errors: ' + errs.slice(0, 3).join(' | ') : ''}`);
   } catch (e) {
-    bad++; console.log(`${p}: FAILED ${e.message.slice(0, 120)}`);
+    bad++; console.log(`${p}: FAILED ${why(e, 120)}`);
   } finally { await page.close(); }
 }
 await b.close();

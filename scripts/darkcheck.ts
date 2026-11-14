@@ -6,18 +6,19 @@ import fs from 'node:fs';
 const pages = fs.readFileSync(process.env.PAGES || new URL('./copycheck-pages.txt', import.meta.url).pathname, 'utf8').split('\n').map(s => s.trim()).filter(Boolean);
 const OUT = process.env.OUT || 'darkcheck-out';
 const b = await puppeteer.launch({ executablePath: process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
-const res = {};
-async function check(path) {
+interface Sample { t: string; ratio: number; fg: string; bg: string; cls: string }
+const res: Record<string, { notDark: boolean; count: number; samples: Sample[] }> = {};
+async function check(path: string) {
   const p = await b.newPage(); await p.setViewport({ width: 1470, height: 801 });
   await p.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'dark' }, { name: 'prefers-reduced-motion', value: 'reduce' }]);
   try { await p.goto((process.env.HZ_BASE || 'http://localhost:4300') + (path === '/' ? '/' : path + '/'), { waitUntil: 'networkidle2', timeout: 90000 }); } catch {}
   await p.evaluate(async () => { for (let y = 0; y < document.documentElement.scrollHeight; y += 700) { scrollTo(0, y); await new Promise(r => setTimeout(r, 120)); } scrollTo(0, 0); });
   await new Promise(r => setTimeout(r, 800));
   const r = await p.evaluate(() => {
-    const parse = c => { const m = c.match(/[\d.]+/g); return m ? m.map(Number) : null; };
-    const lum = ([r, g, b]) => { const f = v => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }; return .2126 * f(r) + .7152 * f(g) + .0722 * f(b); };
-    const bgOf = e => { for (let n = e; n; n = n.parentElement) { const s = getComputedStyle(n); if (s.backgroundImage !== 'none' && n !== document.body && n !== document.documentElement) return null; const c = parse(s.backgroundColor); if (c && (c[3] === undefined || c[3] > .85)) return c; } return [13, 13, 13]; };
-    const bad = [];
+    const parse = (c: string) => { const m = c.match(/[\d.]+/g); return m ? m.map(Number) : null; };
+    const lum = ([r, g, b]: number[]) => { const f = (v: number) => { v /= 255; return v <= .03928 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }; return .2126 * f(r) + .7152 * f(g) + .0722 * f(b); };
+    const bgOf = (e: Element): number[] | null => { for (let n: Element | null = e; n; n = n.parentElement) { const s = getComputedStyle(n); if (s.backgroundImage !== 'none' && n !== document.body && n !== document.documentElement) return null; const c = parse(s.backgroundColor); if (c && (c[3] === undefined || c[3] > .85)) return c; } return [13, 13, 13]; };
+    const bad: Sample[] = [];
     if (!document.documentElement.classList.contains('dark')) return { notDark: true, bad };
     for (const e of document.querySelectorAll('body *')) {
       if (e.children.length || !e.textContent.trim() || e.closest('svg,canvas,[aria-hidden=true],.x-sr,script,style')) continue;
@@ -35,7 +36,7 @@ async function check(path) {
   console.log(path, r.notDark ? 'NOT DARK' : r.bad.length);
 }
 const q = [...pages];
-await Promise.all([0, 1].map(async () => { while (q.length) await check(q.shift()); }));
+await Promise.all([0, 1].map(async () => { while (q.length) await check(q.shift()!); }));
 await b.close();
 fs.writeFileSync(OUT + '/summary.json', JSON.stringify(res, null, 1));
 const bad = Object.entries(res).filter(([, v]) => v.count || v.notDark).sort((a, b) => b[1].count - a[1].count);

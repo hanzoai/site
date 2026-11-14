@@ -14,7 +14,7 @@ await page.evaluateOnNewDocument(() => { try { sessionStorage.setItem('hz-arrive
 await page.goto('http://127.0.0.1:4180' + page0, { waitUntil: 'domcontentloaded', timeout: 180000 });
 await page.waitForSelector('header button[aria-controls="x-nav-panel"]', { timeout: 120000 }); // hydrated
 await new Promise((r) => setTimeout(r, 2500));
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const btns = await page.evaluate(() => [...document.querySelectorAll('header button[aria-controls="x-nav-panel"]')].map((b) => { const r = b.getBoundingClientRect(); return { name: b.getAttribute('aria-label') === 'Company' ? 'Company' : b.textContent.trim(), x: r.left + r.width / 2, y: r.top + r.height / 2 }; }));
 let bad = 0;
 const state = () => page.evaluate(() => { const p = document.querySelector('#x-nav-panel'); return p ? p.getAttribute('aria-label') : null; });

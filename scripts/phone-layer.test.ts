@@ -2,7 +2,7 @@
 // within their own family, top-level pages have none. Runs the real siblings() from components/Phone.jsx.
 import assert from 'node:assert';
 import fs from 'node:fs';
-const S = JSON.parse(fs.readFileSync(new URL('../lib/search.json', import.meta.url)));
+const S = JSON.parse(fs.readFileSync(new URL('../lib/search.json', import.meta.url), 'utf8'));
 const src = fs.readFileSync(new URL('../components/Phone.tsx', import.meta.url), 'utf8');
 const fn = src.slice(src.indexOf('const FLAG'), src.indexOf('function go('))
   .replace("MODELS.map((m) => '/' + m.slug)", JSON.stringify(['enso', 'kai', 'zen', 'iro', 'koma', 'oto', 'koe', 'uta', 'mori'].map((s) => '/' + s)));

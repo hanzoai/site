@@ -27,7 +27,7 @@ export interface Estate {
   groups: Counted[]; orgs: Org[]; repos: Repo[];
 }
 /** What GitHub says of an org: its own name and description. */
-interface About { name?: string | null; description?: string | null }
+export interface About { name?: string | null; description?: string | null }
 /** A repository card on the home and /open-source. */
 export interface Card {
   repo: string; description?: string; language?: string; stars?: number; forks?: number; commits?: number; months?: number[];
@@ -40,8 +40,21 @@ export interface Held {
   checked: number; repos: number; public: number; stars: number; forks: number;
   languages: { name: string; count: number }[]; orgs: Entry[]; top: Card[];
 }
+/** What a push keeps of the last read: the cards and the orgs, whose contributors, sites and descriptions github() reuses. */
+export interface Kept { groups?: Record<string, { top?: Card[]; orgs?: (About & { login: string })[] }> }
 /** What github() answers, and what a push keeps for the next one. */
 export interface Hub { groups: Record<string, Held> }
+/** A group in oss-stats.json: the estate's counts and GitHub's, with the forge's address on each org and card. */
+export interface Slice {
+  name: string; lead: string; checked: number; repos: number; public: number; stars: number; forks: number; active30: number;
+  orgs: (Entry & { commits?: number; months?: number[]; forge?: string })[];
+  commits: { year: number; month: number; week: number };
+  estate: Record<string, number | number[]>;
+  languages: Held['languages'];
+  top: (Card & { forge?: string })[];
+}
+/** A group in oss-activity.json: the days and the newest commits. */
+export interface Daily { daily: Record<string, number>; active: Record<string, number>; latest: Commit[] }
 /** A repository as GitHub lists an org's. */
 interface Row {
   full_name: string; name: string; stargazers_count?: number; forks_count?: number; fork?: boolean; archived?: boolean;
@@ -109,7 +122,7 @@ async function pool<T, R>(items: T[], n: number, fn: (item: T) => Promise<R>): P
 
 // What only GitHub knows. `kept` is the last read this returned; with `thrifty` its cards' contributors and sites and its
 // orgs' descriptions are reused instead of asked again.
-export async function github({ index, token, kept, thrifty }: { index: Estate; token?: string; kept?: Partial<Hub> | null; thrifty?: boolean }): Promise<{ source: string; groups: Record<string, Held> }> {
+export async function github({ index, token, kept, thrifty }: { index: Estate; token?: string; kept?: Kept | null; thrifty?: boolean }): Promise<{ source: string; groups: Record<string, Held> }> {
   if (!token) throw new Error('needs GITHUB_TOKEN: the organizations take about 150 requests and GitHub allows 60 an hour without one');
   const head = { accept: 'application/vnd.github+json', authorization: 'Bearer ' + token };
   // a read asked again when the network drops it or GitHub says wait: one slow answer in two thousand must not cost the year
@@ -218,7 +231,7 @@ export function combine(index: Estate, gh: Hub) {
   const today = Date.parse(`${index.window.to}T00:00:00Z`);
   const indexed = new Map(index.repos.map((r) => [r.repo.toLowerCase(), r]));
   const forged = new Map(index.orgs.map((o) => [o.name.toLowerCase(), o]));
-  const groups: Record<string, unknown> = {}, groupsAct: Record<string, unknown> = {};
+  const groups: Record<string, Slice> = {}, groupsAct: Record<string, Daily> = {};
   for (const [group, g] of Object.entries(GROUPS)) {
     const counted = index.groups.find((x) => x.name === group);
     const h = gh.groups[group];

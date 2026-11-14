@@ -7,14 +7,14 @@ const b = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.
 const p = await b.newPage();
 await p.setViewport({ width: 1470, height: 900 });
 await p.goto('https://hanzo.ai/', { waitUntil: 'networkidle2' });
-const W = (ms) => new Promise((r) => setTimeout(r, ms));
-const visible = () => p.evaluate(() => [...document.querySelectorAll('body *')].filter((e) => e.offsetParent !== null && e.childElementCount === 0 && e.textContent.trim()).map((e) => e.textContent.trim()));
+const W = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const visible = () => p.evaluate(() => [...document.querySelectorAll<HTMLElement>('body *')].filter((e) => e.offsetParent !== null && e.childElementCount === 0 && e.textContent.trim()).map((e) => e.textContent.trim()));
 // Manage preferences: opens the choices, nothing is chosen
 for (const x of await p.$$('button')) {
   if ((await x.evaluate((e) => e.textContent.trim())) === 'Manage preferences') { await x.click(); break; }
 }
 await W(800);
-console.log('PREFS ::', await p.evaluate(() => { const d = [...document.querySelectorAll('[role=dialog]')].pop(); return d ? d.innerText.replace(/\n+/g, ' ; ') + ' | controls: ' + [...d.querySelectorAll('button,a,input,[role=switch]')].map((x) => (x.getAttribute('aria-label') || x.textContent.trim() || x.type) + (x.getAttribute('href') ? '->' + x.getAttribute('href') : '')).join(' / ') : 'none'; }));
+console.log('PREFS ::', await p.evaluate(() => { const d = [...document.querySelectorAll<HTMLElement>('[role=dialog]')].pop(); return d ? d.innerText.replace(/\n+/g, ' ; ') + ' | controls: ' + [...d.querySelectorAll<HTMLInputElement>('button,a,input,[role=switch]')].map((x) => (x.getAttribute('aria-label') || x.textContent.trim() || x.type) + (x.getAttribute('href') ? '->' + x.getAttribute('href') : '')).join(' / ') : 'none'; }));
 await p.evaluate(() => document.querySelectorAll('[role=dialog]').forEach((d) => d.remove()));
 const before = new Set(await visible());
 for (const x of await p.$$('header button')) {
