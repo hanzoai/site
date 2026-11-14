@@ -6,14 +6,17 @@
    - Pointer: useTilt(), <Magnetic>. Controls: <Btn href solid small busy disabled selected>, <Arrow>, <Copy text>;
      copyText(str) → true only if the copy happened; useCalm() → true under reduced motion (live, follows changes).
    - Tokens: EASE and SPRING here, or the full set in lib/motion.js. */
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent, type ReactNode } from 'react';
 import { play } from '../lib/sound';
 import {
   motion, AnimatePresence, animate, useInView, useMotionValue, useMotionTemplate,
-  useSpring, useTransform, useReducedMotion,
+  useSpring, useTransform, useReducedMotion, type HTMLMotionProps,
 } from 'motion/react';
 
-export const EASE = [0.16, 1, 0.3, 1];
+export const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+// the tags the reveal components can be drawn as
+type Tag = 'h1' | 'h2' | 'h3' | 'h4' | 'p' | 'div' | 'span' | 'header' | 'li' | 'ul' | 'section';
 
 /* true when the visitor asks for less motion; follows the setting live (server and first render: false) */
 export function useCalm() {
@@ -26,12 +29,12 @@ export function useCalm() {
   }, []);
   return calm;
 }
-export const SPRING = { type: 'spring', stiffness: 260, damping: 26, mass: 0.8 };
-export const mod = (a, n) => ((a % n) + n) % n;
-export const fine = (e) => e.pointerType === 'mouse' || e.pointerType === 'pen';
+export const SPRING = { type: 'spring', stiffness: 260, damping: 26, mass: 0.8 } as const;
+export const mod = (a: number, n: number) => ((a % n) + n) % n;
+export const fine = (e: { pointerType: string }) => e.pointerType === 'mouse' || e.pointerType === 'pen';
 
 /* A heading that arrives word by word, rising out of a blur. */
-export function Words({ text, as = 'h2', className, delay = 0, amount = 0.6 }) {
+export function Words({ text, as = 'h2', className, delay = 0, amount = 0.6 }: { text: string; as?: Tag; className?: string; delay?: number; amount?: number }) {
   const Tag = motion[as];
   const words = text.split(' ');
   return (
@@ -62,8 +65,8 @@ export function Words({ text, as = 'h2', className, delay = 0, amount = 0.6 }) {
 }
 
 /* Fades and rises into place once, when it reaches the screen. */
-export function Rise({ children, delay = 0, y = 28, className, as = 'div', amount = 0.3, ...rest }) {
-  const Tag = motion[as];
+export function Rise({ children, delay = 0, y = 28, className, as = 'div', amount = 0.3, ...rest }: Omit<HTMLMotionProps<'div'>, 'children' | 'className'> & { children?: ReactNode; delay?: number; y?: number; className?: string; as?: Tag; amount?: number }) {
+  const Tag = motion[as] as typeof motion.div; // the tag varies, the props do not
   return (
     <Tag
       className={className}
@@ -81,8 +84,8 @@ export function Rise({ children, delay = 0, y = 28, className, as = 'div', amoun
 /* The line-mask headline reveal (BRIEF-v3 §8 pattern 2): one line per mask, rising 110% → 0 over 1.1 s, staggered
    80 ms, once in view (or on load with play="load", for a hero). Screen readers and search engines get the whole
    sentence; under reduced motion the lines are simply there. */
-export function Lines({ lines, as = 'h2', className, delay = 0, play = 'view', amount = 0.5, ...rest }) {
-  const Tag = motion[as];
+export function Lines({ lines, as = 'h2', className, delay = 0, play = 'view', amount = 0.5, ...rest }: Omit<HTMLMotionProps<'div'>, 'className'> & { lines: string | string[]; as?: Tag; className?: string; delay?: number; play?: 'view' | 'load'; amount?: number }) {
+  const Tag = motion[as] as typeof motion.div; // the tag varies, the props do not
   const list = Array.isArray(lines) ? lines : [lines];
   const show = { s: { transition: { staggerChildren: 0.08, delayChildren: delay } } };
   const when = play === 'load' ? { animate: 's' } : { whileInView: 's', viewport: { once: true, amount } };
@@ -99,7 +102,7 @@ export function Lines({ lines, as = 'h2', className, delay = 0, play = 'view', a
 }
 
 /* A section's heading and lede, drawn in the HTML as they are read: no reveal, so they paint with the first frame. */
-export function Head({ id, title, lede, center, dark }) {
+export function Head({ id, title, lede, center, dark }: { id?: string; title: ReactNode; lede?: ReactNode; center?: boolean; dark?: boolean }) {
   return (
     <header className={'x-head' + (center ? ' center' : '') + (dark ? ' dark' : '')}>
       <h2 id={id}>{title}</h2>
@@ -109,15 +112,15 @@ export function Head({ id, title, lede, center, dark }) {
 }
 
 /* A number that counts up to its value when it is seen, in tabular figures. */
-export function Count({ to, decimals = 0, prefix = '', suffix = '', duration = 1.6, run, className, delay = 0 }) {
-  const ref = useRef(null);
+export function Count({ to, decimals = 0, prefix = '', suffix = '', duration = 1.6, run, className, delay = 0 }: { to: number; decimals?: number; prefix?: string; suffix?: string; duration?: number; run?: boolean; className?: string; delay?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   const calm = useReducedMotion();
   // the page's HTML carries the real figure (search engines, no-JS readers); the browser rewinds it to 0 once the span is
   // listening (an effect, not a layout effect: Motion subscribes the text in the child's effect, which runs before this one)
   const mv = useMotionValue(to);
   useEffect(() => { if (!calm) mv.set(0); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const fmt = (v) => prefix + v.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+  const fmt = (v: number) => prefix + v.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
   const text = useTransform(mv, fmt);
   const go = run === undefined ? seen : run;
   useEffect(() => {
@@ -137,7 +140,7 @@ export function useTilt(max = 7, light = 'rgba(255,255,255,.14)') {
   const mx = useMotionValue(50);
   const my = useMotionValue(50);
   const glow = useMotionTemplate`radial-gradient(520px circle at ${mx}% ${my}%, ${light}, transparent 55%)`;
-  const onPointerMove = (e) => {
+  const onPointerMove = (e: PointerEvent<HTMLElement>) => {
     if (!fine(e)) return;
     const r = e.currentTarget.getBoundingClientRect();
     const px = (e.clientX - r.left) / r.width;
@@ -152,7 +155,7 @@ export function useTilt(max = 7, light = 'rgba(255,255,255,.14)') {
 }
 
 /* An element that leans toward the pointer, then springs home. */
-export function Magnetic({ children, strength = 0.3, className }) {
+export function Magnetic({ children, strength = 0.3, className }: { children?: ReactNode; strength?: number; className?: string }) {
   const x = useSpring(0, { stiffness: 260, damping: 17, mass: 0.5 });
   const y = useSpring(0, { stiffness: 260, damping: 17, mass: 0.5 });
   return (
@@ -173,7 +176,7 @@ export function Magnetic({ children, strength = 0.3, className }) {
 }
 
 /* busy: a ring turns in place of the label (same width). disabled: quiet, not clickable. selected: inverted. */
-export function Btn({ href, children, solid, small, busy, disabled, selected, className = '', ...rest }) {
+export function Btn({ href, children, solid, small, busy, disabled, selected, className = '', ...rest }: Omit<HTMLMotionProps<'a'>, 'children' | 'className' | 'href'> & { href?: string; children?: ReactNode; solid?: boolean; small?: boolean; busy?: boolean; disabled?: boolean; selected?: boolean; className?: string }) {
   const off = busy || disabled;
   return (
     <motion.a
@@ -192,7 +195,7 @@ export function Btn({ href, children, solid, small, busy, disabled, selected, cl
   );
 }
 
-export function Arrow({ href, children, className = '' }) {
+export function Arrow({ href, children, className = '' }: { href?: string; children?: ReactNode; className?: string }) {
   return (
     <motion.a
       href={href}
@@ -209,7 +212,7 @@ export function Arrow({ href, children, className = '' }) {
 
 /* Copies text and says so only when it truly did (clipboard API, then a select-and-copy fallback). Returns true/false.
    Use it for any copy button: copyText(cmd).then((ok) => ok && showTick()). Never confirm a copy that failed. */
-export async function copyText(text) {
+export async function copyText(text: string) {
   try { await navigator.clipboard.writeText(text); play('chime'); return true; } catch { /* blocked or insecure: try the old way */ }
   try {
     const ta = document.createElement('textarea');
@@ -223,9 +226,9 @@ export async function copyText(text) {
 }
 
 /* Copy to clipboard; the icon turns into a drawn tick, only when the copy really happened. */
-export function Copy({ text, label = 'Copy', className = '', onCopy }) {
+export function Copy({ text, label = 'Copy', className = '', onCopy }: { text: string; label?: string; className?: string; onCopy?: () => void }) {
   const [ok, setOk] = useState(false);
-  const t = useRef(0);
+  const t = useRef<ReturnType<typeof setTimeout>>(undefined);
   return (
     <motion.button
       type="button"
@@ -257,7 +260,7 @@ export function Copy({ text, label = 'Copy', className = '', onCopy }) {
   );
 }
 
-export function Mark({ size = 16 }) {
+export function Mark({ size = 16 }: { size?: number }) {
   return (
     <svg viewBox="0 0 67 67" width={size} height={size} fill="currentColor" aria-hidden="true">
       <path d="M22.21 67V44.6369H0V67H22.21Z" />

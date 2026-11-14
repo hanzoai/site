@@ -1,17 +1,20 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform, type MotionValue } from 'motion/react';
 import { EASE, Head, Arrow, Count } from './ui';
 import useFigures from './home/useFigures';
 
+// a lane: who, how long it takes (ms), and how that is said once it has finished
+interface Timed { who: string; ms: number; done: string; hi?: boolean }
+
 /* One lane of a race at true speed: every bar grows at the same rate, so the faster one simply stops first. */
-function Lane({ t, max, who, ms, done, label, hi }) {
-  const w = useTransform(t, (v) => Math.min(v, ms) / max);
-  const live = useTransform(t, (v) => {
+function Lane({ t, max, who, ms, done, label, hi }: Timed & { t: MotionValue<number>; max: number; label?: ReactNode }) {
+  const w = useTransform(t, (v: number) => Math.min(v, ms) / max);
+  const live = useTransform(t, (v: number) => {
     const x = Math.min(v, ms);
     return x >= ms ? done : ms >= 1000 ? (x / 1000).toFixed(2) + ' s' : Math.round(x).toLocaleString('en-US') + ' ms';
   });
-  const fin = useTransform(t, (v) => (v >= ms ? 1 : 0));
+  const fin = useTransform(t, (v: number) => (v >= ms ? 1 : 0));
   return (
     <div className={'x-lane' + (hi ? ' hi' : '')}>
       <div className="x-lane-h">
@@ -23,8 +26,8 @@ function Lane({ t, max, who, ms, done, label, hi }) {
   );
 }
 
-function RaceCard({ kicker, big, decimals, cap, note, title, lanes, extra, link }) {
-  const ref = useRef(null);
+function RaceCard({ kicker, big, decimals, cap, note, title, lanes, extra, link }: { kicker: ReactNode; big: number; decimals: number; cap: ReactNode; note: ReactNode; title: ReactNode; lanes: Timed[]; extra?: ReactNode; link: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.55 });
   const calm = useReducedMotion();
   const max = Math.max(...lanes.map((l) => l.ms));
@@ -60,7 +63,7 @@ function RaceCard({ kicker, big, decimals, cap, note, title, lanes, extra, link 
 }
 
 export default function Race() {
-  const { CODING: K1, KAI: K2 } = useFigures();
+  const { CODING: K1, KAI: K2 } = useFigures()!;
   return (
     <section className="x-sec x-faster" data-room="dark" id="faster" data-hz-view="faster" aria-labelledby="faster-h">
       <div className="x-wrap">

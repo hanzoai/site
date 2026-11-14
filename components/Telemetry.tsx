@@ -15,6 +15,7 @@
    - the visitor carried across a link to another Hanzo host (hanzo.app above all), so the journey is one visitor with its
      first touch. */
 import { useEffect } from 'react';
+import type { ReplayHandle } from '@hanzo/replay';
 import { usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { AnalyticsProvider, useAnalytics, usePageview } from '@hanzo/event/react';
@@ -33,9 +34,9 @@ const Observe = dynamic(() => (observe ?? import('@hanzo/observe/react')).then((
 const DOMAINS = ['hanzo.ai', 'hanzo.app', 'hanzo.chat', 'pay.hanzo.ai', 'hanzo.id', 'hanzo.build', 'docs.hanzo.ai', 'platform.hanzo.ai', 'cal.hanzo.ai'];
 
 /** The funnel moment a click to one of these is: a host, or a host and the path it is mounted at. */
-const INTENT = { 'hanzo.app/pay': 'checkout_started', 'hanzo.ai/pay': 'checkout_started', 'billing.hanzo.ai': 'checkout_started', 'cal.com/hanzo': 'sales_contacted' };
+const INTENT: Record<string, string> = { 'hanzo.app/pay': 'checkout_started', 'hanzo.ai/pay': 'checkout_started', 'billing.hanzo.ai': 'checkout_started', 'cal.com/hanzo': 'sales_contacted' };
 
-const intent = (href) => {
+const intent = (href: string) => {
   const u = new URL(href, location.href);
   const at = u.host + u.pathname;
   const key = Object.keys(INTENT).find((k) => at === k || at.startsWith(k + '/'));
@@ -49,13 +50,13 @@ const NOISE = [
   /\bwindow\.ethereum\b/,
   /^ResizeObserver loop (completed with undelivered notifications|limit exceeded)/,
 ];
-const noise = (err) => {
+const noise = (err: unknown) => {
   const said = typeof err === 'string' ? err : err && typeof err === 'object' && 'message' in err ? String(err.message) : '';
   return NOISE.some((re) => re.test(said));
 };
 
 /** What the page is about, from its JSON-LD: a product (`@id` ending `#product`) or a model page (app lib/analytics/viewed). */
-function viewed(path) {
+function viewed(path: string) {
   const nodes = [];
   for (const s of document.querySelectorAll('script[type="application/ld+json"]')) {
     try {
@@ -91,8 +92,8 @@ function Wiring() {
 
   // A link to another Hanzo host carries the visitor, however it is opened: decorated before a click, a middle click or a copy.
   useEffect(() => {
-    const carry = (e) => {
-      const a = e.target?.closest?.('a[href]');
+    const carry = (e: Event) => {
+      const a = (e.target as Element | null)?.closest?.('a[href]');
       if (!a) return;
       const href = new URL(a.getAttribute('href') || '', document.baseURI).href;
       const to = client.link(href);
@@ -105,8 +106,8 @@ function Wiring() {
 
   // The funnel's moments; a link marked data-ga sends its own.
   useEffect(() => {
-    const click = (e) => {
-      const a = e.target?.closest?.('a[href]');
+    const click = (e: MouseEvent) => {
+      const a = (e.target as Element | null)?.closest?.('a[href]');
       if (!a || a.hasAttribute('data-ga')) return;
       const href = new URL(a.getAttribute('href') || '', document.baseURI).href;
       const name = intent(href);
@@ -118,9 +119,9 @@ function Wiring() {
 
   // Unhandled errors and rejections that are this site's.
   useEffect(() => {
-    const report = (err) => { if (!noise(err)) client.captureError(err, { handled: false }); };
-    const error = (e) => report(e.error ?? e.message);
-    const rejection = (e) => report(e.reason);
+    const report = (err: unknown) => { if (!noise(err)) client.captureError(err, { handled: false }); };
+    const error = (e: ErrorEvent) => report(e.error ?? e.message);
+    const rejection = (e: PromiseRejectionEvent) => report(e.reason);
     addEventListener('error', error);
     addEventListener('unhandledrejection', rejection);
     return () => { removeEventListener('error', error); removeEventListener('unhandledrejection', rejection); };
@@ -128,7 +129,7 @@ function Wiring() {
 
   // Session replay, for a visitor who has allowed analytics; asked again on every route and every consent change.
   useEffect(() => {
-    let handle = null;
+    let handle: ReplayHandle | null = null;
     let gone = false;
     const refuse = () => !!document.querySelector('meta[name="robots"][content*="noindex"]');
     const go = () => {

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { motion } from 'motion/react';
 import { Head, Arrow } from './ui';
 import { useOpener } from './Opener';
@@ -7,9 +7,9 @@ import { MODELS, media } from '../lib/models';
 
 /* A model card: its still at rest; its film loads and plays only under the pointer or focus (so a phone decodes none);
    a click lifts the picture off the page and opens it into the model's own page. */
-function Card({ m, i, live, setLive }) {
-  const vid = useRef(null);
-  const box = useRef(null);
+function Card({ m, i, live, setLive }: { m: (typeof MODELS)[number]; i: number; live: string | null; setLive: Dispatch<SetStateAction<string | null>> }) {
+  const vid = useRef<HTMLVideoElement>(null);
+  const box = useRef<HTMLAnchorElement>(null);
   const opener = useOpener();
   const big = i === 0;
   const shouldPlay = live === m.slug;
@@ -38,7 +38,7 @@ function Card({ m, i, live, setLive }) {
         onPointerLeave={leave}
         onFocus={enter}
         onBlur={leave}
-        onClick={(e) => { opener.open(e, { el: box.current, src: media(m.slug, 'webp'), href: '/' + m.slug, key: m.slug }); }}
+        onClick={(e) => { opener?.open(e, { el: box.current!, src: media(m.slug, 'webp'), href: '/' + m.slug, key: m.slug }); }}
         whileTap={{ scale: 0.985 }}
         aria-label={`${m.name}: ${m.desc}`}
       >
@@ -60,9 +60,9 @@ function Card({ m, i, live, setLive }) {
 }
 
 export default function Models() {
-  const [live, setLive] = useState(null);
+  const [live, setLive] = useState<string | null>(null);
   const opener = useOpener();
-  const sec = useRef(null);
+  const sec = useRef<HTMLElement>(null);
   useEffect(() => {
     const el = sec.current;
     if (!el) return;

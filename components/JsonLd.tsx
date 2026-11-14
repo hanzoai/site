@@ -6,10 +6,12 @@ import { OFFERS } from '../lib/plans';
 /* What a page states with figures is stated once, so the data and the words cannot differ: a page that asks its own
    questions passes them as `faq` ([question, answer] pairs, the ones it draws) and they are the FAQPage's; a plan in an
    OfferCatalog is priced by the plan list (lib/plans.js), never by the file. */
-function stated(d, faq) {
+interface Schema { '@type'?: string; itemListElement?: { name: string }[]; [key: string]: unknown }
+
+function stated(d: Schema, faq?: readonly (readonly string[])[]): Schema {
   if (d['@type'] === 'FAQPage' && faq) return { ...d, mainEntity: faq.map(([name, text]) => ({ '@type': 'Question', name, acceptedAnswer: { '@type': 'Answer', text } })) };
   if (d['@type'] !== 'OfferCatalog') return d;
-  return { ...d, itemListElement: d.itemListElement.map((o) => { if (!OFFERS[o.name]) throw new Error(`${o.name} is not a plan in the plan list`); return { ...o, ...OFFERS[o.name] }; }) };
+  return { ...d, itemListElement: d.itemListElement!.map((o) => { if (!OFFERS[o.name]) throw new Error(`${o.name} is not a plan in the plan list`); return { ...o, ...OFFERS[o.name] }; }) };
 }
 
 /* Every page renders <JsonLd route="/its/path" /> once, in its page.jsx. That gives it three things, with nothing else to do:
@@ -18,9 +20,9 @@ function stated(d, faq) {
    - Hanzo's schema.org data for the page (FAQs, products, breadcrumbs), so search engines read the same facts;
    - its share card: Open Graph and X <meta> tags pointing at its own image (/og/<route>.png, drawn by app/og). React
      lifts these tags into <head>. */
-export default function JsonLd({ route, faq }) {
+export default function JsonLd({ route, faq }: { route: string; faq?: readonly (readonly string[])[] }) {
   const f = path.join(process.cwd(), 'content', 'jsonld', (route.replace(/^\/|\/$/g, '') || 'index') + '.json');
-  const items = (fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : []).map((d) => stated(d, faq));
+  const items = ((fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : []) as Schema[]).map((d) => stated(d, faq));
   const { route: r, title, description } = cardText(route);
   const img = 'https://hanzo.ai' + cardPath(r);
   const url = 'https://hanzo.ai' + (r === '/' ? '' : r);

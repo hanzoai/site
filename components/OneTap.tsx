@@ -28,7 +28,7 @@ const offered = () =>
   (location.hostname === 'hanzo.ai' || location.hostname === 'www.hanzo.ai') && navigator.webdriver !== true && readConsent().marketing;
 
 /** Hands a tap to the sign-in page: kept for it in this tab, then the page. */
-export function hand(credential, nonce) {
+export function hand(credential: string | undefined, nonce: string) {
   if (!credential) return;
   try {
     sessionStorage.setItem(TAP, JSON.stringify({ credential, nonce, at: Date.now() }));
@@ -41,12 +41,12 @@ export function hand(credential, nonce) {
 export default function OneTap() {
   useEffect(() => {
     let asked = false;
-    const prompt = (id) => {
+    const prompt = (id: GoogleIdentity) => {
       const nonce = crypto.randomUUID();
       id.initialize({
         client_id: CLIENT,
         nonce,
-        callback: ({ credential }) => hand(credential, nonce),
+        callback: ({ credential }: GoogleCredential) => hand(credential, nonce),
         auto_select: false,
         cancel_on_tap_outside: true,
         use_fedcm_for_prompt: true,

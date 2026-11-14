@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import AGENTS from '../content/agents.ts';
 import { lab } from './lab.ts';
 
-const icon = (name) => AGENTS.find((a) => a.name === name).icon;
+const icon = (name: string) => AGENTS.find((a) => a.name === name)!.icon;
 
 // the chart's points, as the price list and the runs name them
 const WEAR = [
@@ -19,17 +19,17 @@ test('a lab with a tile in the agents dock wears that tile\'s drawing', () => {
   for (const [model, tile] of WEAR) {
     const m = lab(model, false);
     assert.ok(m, model);
-    if (m.src) assert.ok(icon(tile).includes(m.src), model);
+    if (m.src !== undefined) assert.ok(icon(tile).includes(m.src), model);
     else assert.ok(icon(tile).includes(m.inner), model);
   }
 });
 
 test('an Enso tier wears Hanzo\'s H, whatever it is called', () => {
-  assert.equal(lab('Enso Ultra', true).inner, lab('Enso', true).inner);
-  assert.ok(icon('Hanzo Dev').includes(lab('Enso', true).inner));
+  assert.equal(lab('Enso Ultra', true)!.inner, lab('Enso', true)!.inner);
+  assert.ok(icon('Hanzo Dev').includes(lab('Enso', true)!.inner!));
 });
 
 test('Z.ai wears its own mark; a lab with none wears nothing', () => {
-  assert.ok(lab('GLM 5.3', false).inner.includes('#3859FF'));
+  assert.ok(lab('GLM 5.3', false)!.inner!.includes('#3859FF'));
   assert.equal(lab('Totally New Lab 1', false), null);
 });

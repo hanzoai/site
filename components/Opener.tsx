@@ -3,12 +3,25 @@
    to fill the screen, and lands exactly where the next page's hero sits; the page swaps underneath and the plane
    dissolves into it. Close runs it backwards into the card it came from. Without WebGL or with reduced motion,
    links simply navigate. */
-import { createContext, useCallback, useContext, useEffect, useRef } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { animate } from 'motion';
 import { play } from '../lib/sound';
 
-const Ctx = createContext(null);
+interface Rect { x: number; y: number; w: number; h: number }
+type Click = Pick<MouseEvent, 'metaKey' | 'ctrlKey' | 'shiftKey' | 'button' | 'preventDefault'>;
+
+/** A card opening into its page: the element holding the picture, the picture, where it goes, the key of its hero. */
+interface OpenArgs { el: Element; src: string; href: string; key: string }
+/** A page closing back into its card; `home` is where to go when there is no card to return to. */
+interface CloseArgs { key: string; src: string; home?: string }
+interface Opener {
+  open(e: Click, args: OpenArgs): Promise<void>;
+  close(e: { preventDefault?: () => void } | null | undefined, args: CloseArgs): Promise<void>;
+  prefetch(href: string): void;
+}
+
+const Ctx = createContext<Opener | null>(null);
 export const useOpener = () => useContext(Ctx);
 export const HERO_TOP = 60; // the header's height: heroes start under it
 
@@ -42,17 +55,17 @@ void main() {
   gl_FragColor = vec4(col * (1.0 - shade), uAlpha);
 }`;
 
-function makeGL(canvas) {
+function makeGL(canvas: HTMLCanvasElement) {
   const gl = canvas.getContext('webgl', { premultipliedAlpha: false, antialias: true, alpha: true });
   if (!gl) return null;
-  const sh = (t, src) => { const s = gl.createShader(t); gl.shaderSource(s, src); gl.compileShader(s); return s; };
-  const p = gl.createProgram();
+  const sh = (t: number, src: string) => { const s = gl.createShader(t)!; gl.shaderSource(s, src); gl.compileShader(s); return s; };
+  const p = gl.createProgram()!;
   gl.attachShader(p, sh(gl.VERTEX_SHADER, VS));
   gl.attachShader(p, sh(gl.FRAGMENT_SHADER, FS));
   gl.linkProgram(p);
   if (!gl.getProgramParameter(p, gl.LINK_STATUS)) return null;
   gl.useProgram(p);
-  const N = 40, pts = [];
+  const N = 40, pts: number[] = [];
   for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
     const a = i / N, b = j / N, c = (i + 1) / N, d = (j + 1) / N;
     pts.push(a, b, c, b, a, d, a, d, c, b, c, d);
@@ -63,7 +76,7 @@ function makeGL(canvas) {
   const loc = gl.getAttribLocation(p, 'aPos');
   gl.enableVertexAttribArray(loc);
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  const u = Object.fromEntries(['uRect', 'uView', 'uBend', 'uT', 'uTex', 'uImg', 'uAlpha', 'uShade'].map((k) => [k, gl.getUniformLocation(p, k)]));
+  const u = Object.fromEntries(['uRect', 'uView', 'uBend', 'uT', 'uTex', 'uImg', 'uAlpha', 'uShade'].map((k): [string, WebGLUniformLocation | null] => [k, gl.getUniformLocation(p, k)]));
   const tex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, tex);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -72,8 +85,8 @@ function makeGL(canvas) {
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   return {
-    image(img) { gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); gl.uniform2f(u.uImg, img.naturalWidth, img.naturalHeight); },
-    draw(r, bend, t, alpha, shade) {
+    image(img: HTMLImageElement) { gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img); gl.uniform2f(u.uImg, img.naturalWidth, img.naturalHeight); },
+    draw(r: Rect, bend: number, t: number, alpha: number, shade: number) {
       const dpr = Math.min(devicePixelRatio || 1, 2), W = innerWidth, H = innerHeight;
       if (canvas.width !== W * dpr) { canvas.width = W * dpr; canvas.height = H * dpr; }
       gl.viewport(0, 0, canvas.width, canvas.height);
@@ -86,44 +99,44 @@ function makeGL(canvas) {
   };
 }
 
-const lerp = (a, b, k) => a + (b - a) * k;
-const mix = (A, B, k) => ({ x: lerp(A.x, B.x, k), y: lerp(A.y, B.y, k), w: lerp(A.w, B.w, k), h: lerp(A.h, B.h, k) });
-const rectOf = (el) => { const b = el.getBoundingClientRect(); return { x: b.left, y: b.top, w: b.width, h: b.height }; };
-const heroRect = () => ({ x: 0, y: HERO_TOP, w: innerWidth, h: innerHeight - HERO_TOP });
-const load = (src, el) => {
+const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
+const mix = (A: Rect, B: Rect, k: number): Rect => ({ x: lerp(A.x, B.x, k), y: lerp(A.y, B.y, k), w: lerp(A.w, B.w, k), h: lerp(A.h, B.h, k) });
+const rectOf = (el: Element): Rect => { const b = el.getBoundingClientRect(); return { x: b.left, y: b.top, w: b.width, h: b.height }; };
+const heroRect = (): Rect => ({ x: 0, y: HERO_TOP, w: innerWidth, h: innerHeight - HERO_TOP });
+const load = (src: string, el?: Element | null) => {
   const existing = el?.querySelector?.('img');
   if (existing && existing.complete && existing.naturalWidth > 0) return Promise.resolve(existing);
-  return new Promise((ok, no) => { const i = new Image(); i.onload = () => (i.decode ? i.decode().then(() => ok(i), () => ok(i)) : ok(i)); i.onerror = no; i.src = src; });
+  return new Promise<HTMLImageElement>((ok, no) => { const i = new Image(); i.onload = () => (i.decode ? i.decode().then(() => ok(i), () => ok(i)) : ok(i)); i.onerror = no; i.src = src; });
 };
-const waitFor = (fn, ms = 900) => new Promise((ok) => { const t0 = performance.now(); const f = () => { const v = fn(); if (v || performance.now() - t0 > ms) ok(v); else requestAnimationFrame(f); }; f(); });
-const EASE = [0.76, 0, 0.24, 1];
+const waitFor = <T,>(fn: () => T, ms = 900) => new Promise<T>((ok) => { const t0 = performance.now(); const f = () => { const v = fn(); if (v || performance.now() - t0 > ms) ok(v); else requestAnimationFrame(f); }; f(); });
+const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
 
-export function OpenerProvider({ children }) {
+export function OpenerProvider({ children }: { children?: ReactNode }) {
   const router = useRouter();
-  const canvas = useRef(null);
-  const veil = useRef(null);
-  const gl = useRef(undefined);
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const veil = useRef<HTMLDivElement>(null);
+  const gl = useRef<ReturnType<typeof makeGL>>(undefined);
   const busy = useRef(false);
 
   // the context is made on the first open, not on load: most visits never open a card
   const off = () => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
-    if (gl.current === undefined) gl.current = makeGL(canvas.current);
+    if (gl.current === undefined) gl.current = makeGL(canvas.current!);
     return !gl.current;
   };
-  const prefetch = useCallback((href) => { try { router.prefetch(href); } catch {} }, [router]);
+  const prefetch = useCallback((href: string) => { try { router.prefetch(href); } catch {} }, [router]);
 
-  const fly = useCallback((from, to, dur) => new Promise((ok) => {
+  const fly = useCallback((from: Rect, to: Rect, dur: number) => new Promise<void>((ok) => {
     const t0 = performance.now();
     animate(0, 1, {
       duration: dur, ease: EASE,
-      onUpdate: (k) => gl.current.draw(mix(from, to, k), Math.sin(k * Math.PI), (performance.now() - t0) / 1000, 1, 1),
+      onUpdate: (k: number) => gl.current!.draw(mix(from, to, k), Math.sin(k * Math.PI), (performance.now() - t0) / 1000, 1, 1),
       onComplete: ok,
     });
   }), []);
 
   /* card -> page */
-  const open = useCallback(async (e, { el, src, href, key }) => {
+  const open = useCallback(async (e: Click, { el, src, href, key }: OpenArgs) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return; // new-tab clicks behave like links
     e.preventDefault();
     if (off()) { router.push(href); return; }
@@ -135,12 +148,12 @@ export function OpenerProvider({ children }) {
       sessionStorage.setItem('hz:ret:' + key, JSON.stringify({ y: scrollY, from: location.pathname })); // close returns to the page and card it opened from
       el.setAttribute('data-opening', '');
       const img = await load(src, el);
-      gl.current.image(img);
+      gl.current!.image(img);
       const from = rectOf(el);
-      gl.current.draw(from, 0, 0, 1, 1);
-      canvas.current.classList.add('on');
+      gl.current!.draw(from, 0, 0, 1, 1);
+      canvas.current!.classList.add('on');
       el.setAttribute('data-lifted', '');
-      veil.current.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
+      veil.current!.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 280, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
       window.__lenis?.stop();
       router.push(href, { scroll: false });
       await Promise.all([
@@ -152,9 +165,9 @@ export function OpenerProvider({ children }) {
       ]);
       window.__lenis?.start();
       window.__lenis ? window.__lenis.scrollTo(0, { immediate: true }) : scrollTo(0, 0);
-      const fade = { duration: 220, easing: 'ease-out', fill: 'forwards' };
-      canvas.current.animate([{ opacity: 1 }, { opacity: 0 }], fade).finished.then(() => { canvas.current.classList.remove('on'); canvas.current.getAnimations().forEach((a) => a.cancel()); gl.current.clear(); });
-      veil.current.animate([{ opacity: 1 }, { opacity: 0 }], fade);
+      const fade: KeyframeAnimationOptions = { duration: 220, easing: 'ease-out', fill: 'forwards' };
+      canvas.current!.animate([{ opacity: 1 }, { opacity: 0 }], fade).finished.then(() => { canvas.current!.classList.remove('on'); canvas.current!.getAnimations().forEach((a) => a.cancel()); gl.current!.clear(); });
+      veil.current!.animate([{ opacity: 1 }, { opacity: 0 }], fade);
     } catch {
       router.push(href);
     } finally {
@@ -164,10 +177,10 @@ export function OpenerProvider({ children }) {
   }, [router, fly]);
 
   /* page -> card, when the page was opened from one */
-  const close = useCallback(async (e, { key, src, home: fallback = '/' }) => {
+  const close = useCallback(async (e: { preventDefault?: () => void } | null | undefined, { key, src, home: fallback = '/' }: CloseArgs) => {
     e?.preventDefault?.();
-    let ret = null;
-    try { ret = JSON.parse(sessionStorage.getItem('hz:ret:' + key)); } catch {}
+    let ret: { y: number; from: string } | null = null;
+    try { ret = JSON.parse(sessionStorage.getItem('hz:ret:' + key) ?? 'null'); } catch {}
     const home = ret?.from || fallback;
     if (off() || !ret) { router.push(home); return; }
     if (busy.current) return;
@@ -175,12 +188,12 @@ export function OpenerProvider({ children }) {
     try {
       const heroEl = document.querySelector(`[data-hero="${key}"]`);
       const img = await load(src, heroEl);
-      gl.current.image(img);
+      gl.current!.image(img);
       const top = scrollY;
       const from = { ...heroRect(), y: HERO_TOP - top };
-      gl.current.draw(from, 0, 0, 1, 1);
-      canvas.current.classList.add('on');
-      veil.current.animate([{ opacity: 1 }, { opacity: 1 }], { duration: 1, fill: 'forwards' });
+      gl.current!.draw(from, 0, 0, 1, 1);
+      canvas.current!.classList.add('on');
+      veil.current!.animate([{ opacity: 1 }, { opacity: 1 }], { duration: 1, fill: 'forwards' });
       window.__hzHold = true;
       router.push(home, { scroll: false });
       const card = await waitFor(() => location.pathname.replace(/\/$/, '') === home.replace(/\/$/, '') && document.querySelector(`[data-card="${key}"]`), 1500);
@@ -189,14 +202,14 @@ export function OpenerProvider({ children }) {
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
       if (!card) throw new Error('no card');
       card.setAttribute('data-lifted', '');
-      veil.current.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 650, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
+      veil.current!.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 650, easing: 'cubic-bezier(.76,0,.24,1)', fill: 'forwards' });
       await fly(from, rectOf(card), 0.7);
       card.removeAttribute('data-lifted');
-      canvas.current.classList.remove('on');
-      gl.current.clear();
+      canvas.current!.classList.remove('on');
+      gl.current!.clear();
     } catch {
-      canvas.current.classList.remove('on');
-      veil.current.getAnimations().forEach((a) => a.cancel());
+      canvas.current!.classList.remove('on');
+      veil.current!.getAnimations().forEach((a) => a.cancel());
     } finally {
       busy.current = false;
       window.__hzHold = false;

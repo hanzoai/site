@@ -5,18 +5,26 @@
    Keyboard: Enter, Space or ↓ on a heading opens its menu and moves focus to the first link; ↑ ↓ move through the
    links; Tab past the last link closes it and goes on to the next heading; Shift+Tab from the first link goes back to
    the heading; Escape closes and returns focus. The items and words are Hanzo's own (lib/nav.js); pages add nothing. */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, type MotionStyle } from 'motion/react';
 import { NAV, MENUS } from '../lib/nav';
 import { LOGIN } from '../lib/header';
 import { resolveNavPreview, resolveNavDescription } from '../lib/visuals';
+import type { Shell } from './types';
 
-const EASE = [0.16, 1, 0.3, 1];
-const isLocal = (h) => h.startsWith('/');
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const isLocal = (h: string) => h.startsWith('/');
 
-function Item({ l, head, i, onGo, onPeek }) {
+type Column = (typeof NAV)[keyof typeof NAV][number];
+type NavLink = Column['links'][number];
+/** The link under the pointer or focus, and the heading of its column. */
+interface Peek { head: string; l: NavLink }
+// the menus by name: MENUS (lib/nav) lists the names as plain strings
+const columns = (name: string) => (NAV as Record<string, Column[]>)[name];
+
+function Item({ l, head, i, onGo, onPeek }: { l: NavLink; head: string; i: number; onGo?: () => void; onPeek?: (p: Peek) => void }) {
   const cls = 'x-nav-a' + (l.big ? ' big' : '');
   const body = <>{l.label}{l.ext && <span aria-hidden="true"> ↗</span>}</>;
   const peek = onPeek ? { onMouseEnter: () => onPeek({ head, l }), onFocus: () => onPeek({ head, l }) } : {};
@@ -29,9 +37,9 @@ function Item({ l, head, i, onGo, onPeek }) {
   );
 }
 
-function Columns({ name, onGo, onPeek }) {
+function Columns({ name, onGo, onPeek }: { name: string; onGo?: () => void; onPeek?: (p: Peek) => void }) {
   let n = 0;
-  return NAV[name].map((c) => (
+  return columns(name).map((c) => (
     <div className="x-nav-col" key={c.head}>
       <p className="x-nav-h">{c.head}</p>
       <ul>{c.links.map((l) => <Item key={l.label + l.href} l={l} head={c.head} i={n++} onGo={onGo} onPeek={onPeek} />)}</ul>
@@ -42,15 +50,15 @@ function Columns({ name, onGo, onPeek }) {
 /* The menu's stage: a high-resolution dark-cinema preview of the link under the pointer or focus — matching Hanzo's
    flagship model cards (looping film + poster + kicker + tags), product window mockups (macOS dark-glass chrome +
    live product UI), and thematic 3D category sculptures across all six menus. */
-let INDEX = null;
-function Stage({ menu, head, l, onGo }) {
+let INDEX: Map<string, [string, string]> | null = null;
+function Stage({ menu, head, l, onGo }: { menu: string; head?: string; l?: NavLink; onGo?: () => void }) {
   const router = useRouter();
-  const stageRef = useRef(null);
+  const stageRef = useRef<HTMLElement>(null);
   const [, force] = useState(0);
-  useEffect(() => { if (!INDEX) import('../lib/search.json').then((m) => { INDEX = new Map(m.default.map(([p, t, d]) => [p, [t, d]])); force((x) => x + 1); }); }, []);
+  useEffect(() => { if (!INDEX) import('../lib/search.json').then((m) => { INDEX = new Map(m.default.map(([p, t, d]): [string, [string, string]] => [p, [t, d]])); force((x) => x + 1); }); }, []);
   if (!l) return null;
   const local = isLocal(l.href);
-  const path = local ? l.href.split(/[?#]/)[0].replace(/\/$/, '') || '/' : null;
+  const path = local ? l.href.split(/[?#]/)[0].replace(/\/$/, '') || '/' : '';
   const [, rawIdx] = (local && INDEX?.get(path)) || [];
   const raw = rawIdx || resolveNavDescription(l.href);
   // the index keeps the first ~120 characters of Hanzo's description: end on a whole word with an ellipsis
@@ -59,7 +67,7 @@ function Stage({ menu, head, l, onGo }) {
   const spec = resolveNavPreview(menu || 'Company', head || '', l);
   const mediaKey = `${spec.mode}|${spec.poster}|${spec.video || ''}|${spec.screen || ''}|${spec.pos || ''}`;
 
-  const onMove = (e) => {
+  const onMove = (e: ReactPointerEvent<HTMLElement>) => {
     if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const el = stageRef.current;
     if (!el) return;
@@ -103,7 +111,7 @@ function Stage({ menu, head, l, onGo }) {
             '--st-pos': spec.pos || '50% 50%',
             '--st-scale': String(spec.scale || 1.04),
             '--st-flip': String(spec.flip || 1),
-          }}
+          } as MotionStyle}
         >
           <img className="x-nav-stage-bg" src={spec.poster} alt="" decoding="async" draggable={false} />
           {spec.video && (
@@ -160,18 +168,18 @@ function Stage({ menu, head, l, onGo }) {
   );
 }
 
-export default function Nav({ headerRef }) {
-  const [open, setOpen] = useState(null);
-  const [peek, setPeek] = useState(null);
+export default function Nav({ headerRef }: { headerRef: Shell }) {
+  const [open, setOpen] = useState<string | null>(null);
+  const [peek, setPeek] = useState<Peek | null>(null);
   const [dir, setDir] = useState(0);
   const [sheet, setSheet] = useState(false);
-  const [acc, setAcc] = useState(null);
-  const timer = useRef(0);
-  const openedAt = useRef({ name: null, t: 0 });
-  const btns = useRef({});
+  const [acc, setAcc] = useState<string | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | 0>(0);
+  const openedAt = useRef<{ name: string | null; t: number }>({ name: null, t: 0 });
+  const btns = useRef<Record<string, HTMLButtonElement>>({});
   const path = usePathname();
 
-  const show = useCallback((name) => {
+  const show = useCallback((name: string) => {
     clearTimeout(timer.current); timer.current = 0;
     openedAt.current = { name, t: performance.now() };
     window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'nav' }));
@@ -183,7 +191,7 @@ export default function Nav({ headerRef }) {
   useEffect(close, [path, close]); // a new page closes every menu
   useEffect(() => {
     if (open) {
-      const col = NAV[open][0];
+      const col = columns(open)[0];
       setPeek({ head: col.head, l: col.links[0] });
     }
   }, [open]); // the stage starts on the menu's first link
@@ -192,38 +200,39 @@ export default function Nav({ headerRef }) {
   // while a menu is open it stays open as long as the pointer is over the header, the panel, or the corridor between
   // the heading it opened from and the panel; it closes 600 ms after the pointer has truly left. Switching to another
   // heading needs the pointer to rest on it (160 ms), so a diagonal trip down to a link never flips the menu.
-  const openRef = useRef(null);
+  const openRef = useRef<string | null>(null);
   useEffect(() => { openRef.current = open; }, [open]);
   useEffect(() => {
     const h = headerRef.current?.querySelector('header');
     if (!h) return;
-    const offs = [];
-    const on = (el, ev, fn, o) => { el.addEventListener(ev, fn, o); offs.push(() => el.removeEventListener(ev, fn, o)); };
-    let rest = 0, origin = null;
-    const intoPanel = (name) => { let n = 0; const t = () => { const a = document.querySelector(`#x-nav-panel .x-nav-grid[data-menu="${name}"] a`); if (a) a.focus(); else if (n++ < 20) requestAnimationFrame(t); }; requestAnimationFrame(t); };
-    const nameOf = (b) => (b.getAttribute('aria-label') === 'Company' ? 'Company' : b.textContent.trim());
-    const menuTargets = [];
-    h.querySelectorAll('button').forEach((b) => {
+    const offs: (() => void)[] = [];
+    // the handler's event type follows from the event it is given for (the registrar hands the listener its Event)
+    const on = <T extends Event>(el: EventTarget, ev: string, fn: (e: T) => void, o?: AddEventListenerOptions) => { const f = fn as EventListener; el.addEventListener(ev, f, o); offs.push(() => el.removeEventListener(ev, f, o)); };
+    let rest: ReturnType<typeof setTimeout> | undefined, origin: DOMRect | null = null;
+    const intoPanel = (name: string) => { let n = 0; const t = () => { const a = document.querySelector<HTMLElement>(`#x-nav-panel .x-nav-grid[data-menu="${name}"] a`); if (a) a.focus(); else if (n++ < 20) requestAnimationFrame(t); }; requestAnimationFrame(t); };
+    const nameOf = (b: HTMLButtonElement) => (b.getAttribute('aria-label') === 'Company' ? 'Company' : b.textContent.trim());
+    const menuTargets: HTMLElement[] = [];
+    h.querySelectorAll<HTMLButtonElement>('button').forEach((b) => {
       const name = nameOf(b);
-      if (!NAV[name]) return;
+      if (!columns(name)) return;
       btns.current[name] = b;
       b.setAttribute('aria-haspopup', 'true');
       b.setAttribute('aria-expanded', 'false');
       b.setAttribute('aria-controls', 'x-nav-panel');
       const hoverTarget = name === 'Company' ? (b.parentElement || b) : b;
       menuTargets.push(hoverTarget);
-      on(hoverTarget, 'pointerenter', (e) => {
+      on(hoverTarget, 'pointerenter', (e: PointerEvent) => {
         if (e.pointerType !== 'mouse' || innerWidth <= 900) return;
         clearTimeout(rest);
         const cur = openRef.current;
         rest = setTimeout(() => { if (hoverTarget.matches(':hover')) { origin = hoverTarget.getBoundingClientRect(); show(name); } }, cur && cur !== name ? 80 : 60);
       });
       on(hoverTarget, 'pointerleave', () => clearTimeout(rest));
-      on(b, 'keydown', (e) => {
+      on(b, 'keydown', (e: KeyboardEvent) => {
         if (e.key !== 'ArrowDown' || innerWidth <= 900) return;
         e.preventDefault(); origin = b.getBoundingClientRect(); show(name); intoPanel(name);
       });
-      on(b, 'click', (e) => {
+      on(b, 'click', (e: MouseEvent) => {
         e.preventDefault();
         if (innerWidth <= 900) { setSheet((s) => !s); return; } // on phones the chevron opens the sheet
         if (e.detail === 0 && openRef.current !== name) intoPanel(name); // opened from the keyboard: focus goes into the menu
@@ -236,9 +245,9 @@ export default function Nav({ headerRef }) {
       });
     });
     // hovering a non-menu header item (Pricing, Search, EN, Log in, Try Hanzo) closes any open dropdown menu immediately
-    h.querySelectorAll('a[href], button').forEach((el) => {
+    h.querySelectorAll<HTMLElement>('a[href], button').forEach((el) => {
       if (menuTargets.some((t) => t.contains(el))) return;
-      on(el, 'pointerenter', (e) => {
+      on(el, 'pointerenter', (e: PointerEvent) => {
         if (e.pointerType !== 'mouse' || innerWidth <= 900) return;
         clearTimeout(rest);
         clearTimeout(timer.current);
@@ -248,9 +257,9 @@ export default function Nav({ headerRef }) {
         if (el.tagName === 'A') window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'link' }));
       });
     });
-    on(window, 'hz-header-exclusive', (e) => { if (e.detail !== 'nav' && openRef.current) { clearTimeout(rest); close(); } });
+    on(window, 'hz-header-exclusive', (e: CustomEvent<string>) => { if (e.detail !== 'nav' && openRef.current) { clearTimeout(rest); close(); } });
     // inside = header, panel, or the funnel from the heading down to the panel's full width
-    const inside = (x, y) => {
+    const inside = (x: number, y: number) => {
       const hr = h.getBoundingClientRect();
       if (y >= hr.top && y <= hr.bottom + 2) return true;
       const p = document.getElementById('x-nav-panel');
@@ -260,13 +269,13 @@ export default function Nav({ headerRef }) {
       if (origin && y > origin.top && y < pr.top + 40) { const k = (y - origin.bottom) / Math.max(1, pr.top - origin.bottom); return x > origin.left - k * origin.left - 40 && x < origin.right + k * (pr.right - origin.right) + 40; }
       return false;
     };
-    on(window, 'pointermove', (e) => {
+    on(window, 'pointermove', (e: PointerEvent) => {
       if (e.pointerType !== 'mouse' || !openRef.current) return;
       if (inside(e.clientX, e.clientY)) { clearTimeout(timer.current); timer.current = 0; }
       else if (!timer.current) timer.current = setTimeout(() => { timer.current = 0; setOpen(null); }, 600);
     }, { passive: true });
     on(document.documentElement, 'pointerleave', () => { if (openRef.current) later(); }); // pointer left the window
-    const key = (e) => { if (e.key === 'Escape' && openRef.current) { const b = btns.current[openRef.current]; close(); b?.focus(); } };
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape' && openRef.current) { const b = btns.current[openRef.current]; close(); b?.focus(); } };
     on(window, 'keydown', key);
     return () => { clearTimeout(rest); offs.forEach((f) => f()); };
   }, [headerRef, show, later, close]);
@@ -274,17 +283,17 @@ export default function Nav({ headerRef }) {
   useEffect(() => { Object.entries(btns.current).forEach(([n, b]) => b.setAttribute('aria-expanded', String(open === n || (sheet && n === 'Company')))); }, [open, sheet]);
 
   // keyboard inside the open panel: arrows walk the links; Tab off either end hands focus back to the header
-  const panelKey = (e) => {
-    const links = [...e.currentTarget.querySelectorAll(`.x-nav-grid[data-menu="${open}"] a`)];
-    const i = links.indexOf(document.activeElement);
+  const panelKey = (e: ReactKeyboardEvent<HTMLElement>) => {
+    const links = [...e.currentTarget.querySelectorAll<HTMLElement>(`.x-nav-grid[data-menu="${open}"] a`)];
+    const i = links.indexOf(document.activeElement as HTMLElement);
     if (i < 0) return;
-    const trigger = btns.current[open];
+    const trigger = btns.current[open!];
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); links[(i + (e.key === 'ArrowDown' ? 1 : -1) + links.length) % links.length].focus(); }
     else if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); links[e.key === 'Home' ? 0 : links.length - 1].focus(); }
     else if (e.key === 'Tab' && e.shiftKey && i === 0) { e.preventDefault(); trigger?.focus(); }
     else if (e.key === 'Tab' && !e.shiftKey && i === links.length - 1) {
       e.preventDefault();
-      const all = [...(headerRef.current?.querySelectorAll('header a[href], header button') || [])];
+      const all = [...(headerRef.current?.querySelectorAll<HTMLElement>('header a[href], header button') || [])];
       const next = all[all.indexOf(trigger) + 1];
       close(); (next || trigger)?.focus();
     }
@@ -293,15 +302,15 @@ export default function Nav({ headerRef }) {
     if (!sheet) return;
     window.__lenis?.stop();
     document.documentElement.classList.add('x-lock');
-    const esc = (e) => { if (e.key === 'Escape') { setSheet(false); btns.current.Company?.focus(); } };
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') { setSheet(false); btns.current.Company?.focus(); } };
     addEventListener('keydown', esc);
-    const t = setTimeout(() => document.querySelector('.x-sheet-x')?.focus(), 60);
+    const t = setTimeout(() => document.querySelector<HTMLElement>('.x-sheet-x')?.focus(), 60);
     return () => { clearTimeout(t); removeEventListener('keydown', esc); window.__lenis?.start(); document.documentElement.classList.remove('x-lock'); };
   }, [sheet]);
   // Tab stays inside the open sheet
-  const sheetKey = (e) => {
+  const sheetKey = (e: ReactKeyboardEvent<HTMLElement>) => {
     if (e.key !== 'Tab') return;
-    const f = [...e.currentTarget.querySelectorAll('a[href], button:not([disabled])')];
+    const f = [...e.currentTarget.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')];
     if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
     else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
   };
@@ -336,7 +345,7 @@ export default function Nav({ headerRef }) {
                 data-menu={open}
                 className="x-nav-grid"
                 custom={dir}
-                variants={{ i: (d) => ({ opacity: 0, x: d * 40 }), a: { opacity: 1, x: 0 }, o: (d) => ({ opacity: 0, x: d * -40 }) }}
+                variants={{ i: (d: number) => ({ opacity: 0, x: d * 40 }), a: { opacity: 1, x: 0 }, o: (d: number) => ({ opacity: 0, x: d * -40 }) }}
                 initial="i" animate="a" exit="o"
                 transition={{ duration: 0.4, ease: EASE }}
               >

@@ -1,20 +1,21 @@
 'use client';
 import { useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { motion, useMotionValue, useSpring, useTransform, type MotionValue, type Variants } from 'motion/react';
 import { EASE, Head, Arrow, Count } from './ui';
-import useFigures from './home/useFigures';
+import useFigures, { type Figs } from './home/useFigures';
 
 // hanzo.ai's own rows, worked out from the research runs and price list it reads (components/home/figures.js), read
 // again when the page opens (components/home/useFigures.js)
-const ensoRows = (GPQA) => GPQA.rows.map((r) => [r.who, r.acc, r.cost, r.hi]);
-const money = (v) => (v >= 1e6 ? '$' + (v / 1e6).toFixed(2) + 'M' : v >= 1000 ? '$' + Math.round(v).toLocaleString('en-US') : '$' + v.toFixed(2));
-const nice = (q) => { const p = 10 ** Math.floor(Math.log10(q)); return Math.round(q / p * 2) / 2 * p; };
+type Row = [who: string, acc: string, cost: number, hi: boolean | undefined];
+const ensoRows = (GPQA: Figs['GPQA']): Row[] => GPQA.rows.map((r): Row => [r.who, r.acc, r.cost, r.hi]);
+const money = (v: number) => (v >= 1e6 ? '$' + (v / 1e6).toFixed(2) + 'M' : v >= 1000 ? '$' + Math.round(v).toLocaleString('en-US') : '$' + v.toFixed(2));
+const nice = (q: number) => { const p = 10 ** Math.floor(Math.log10(q)); return Math.round(q / p * 2) / 2 * p; };
 
-const bar = (i) => ({ h: { scaleX: 0 }, s: { scaleX: 1, transition: { type: 'spring', stiffness: 90, damping: 18, delay: 0.25 + i * 0.09 } } });
+const bar = (i: number): Variants => ({ h: { scaleX: 0 }, s: { scaleX: 1, transition: { type: 'spring', stiffness: 90, damping: 18, delay: 0.25 + i * 0.09 } } });
 
-function EnsoLane({ row, i, vol, dim, setDim, TOP }) {
+function EnsoLane({ row, i, vol, dim, setDim, TOP }: { row: Row; i: number; vol: MotionValue<number>; dim: number | null; setDim: (i: number | null) => void; TOP: number }) {
   const [who, acc, cost, hi] = row;
-  const v = useTransform(vol, (q) => `${acc} · ${money(cost * q / 1000)}`);
+  const v = useTransform(vol, (q: number) => `${acc} · ${money(cost * q / 1000)}`);
   return (
     <div className={'x-lane' + (hi ? ' hi' : '') + (dim !== null && dim !== i ? ' dim' : '')} onPointerEnter={() => setDim(i)} onPointerLeave={() => setDim(null)}>
       <div className="x-lane-h"><span>{who}</span><motion.span className="x-mono x-lane-v">{v}</motion.span></div>
@@ -24,14 +25,14 @@ function EnsoLane({ row, i, vol, dim, setDim, TOP }) {
 }
 
 /* A card's headline, up to N× less, counted up from 0 as it arrives; N is the figure as written ("14.2", "530"). */
-const Big = ({ n }) => <Count to={+n} decimals={n.includes('.') ? 1 : 0} prefix="up to " suffix="× less" duration={1.4} />;
+const Big = ({ n }: { n: string }) => <Count to={+n} decimals={n.includes('.') ? 1 : 0} prefix="up to " suffix="× less" duration={1.4} />;
 
 /* Hanzo's Enso comparison, with one control: how many questions. The rates are Hanzo's; only the count changes. */
 function EnsoCard() {
-  const { GPQA } = useFigures();
+  const { GPQA } = useFigures()!;
   const ENSO = ensoRows(GPQA);
   const TOP = Math.max(...ENSO.map((r) => r[2]));
-  const [dim, setDim] = useState(null);
+  const [dim, setDim] = useState<number | null>(null);
   const [exp, setExp] = useState(0); // 10^exp thousand questions
   const raw = useMotionValue(1000);
   const vol = useSpring(raw, { stiffness: 120, damping: 22 });
@@ -60,9 +61,9 @@ function EnsoCard() {
 }
 
 function KaiCard() {
-  const { PRICES } = useFigures();
+  const { PRICES } = useFigures()!;
   const KAI = PRICES.rows;
-  const [dim, setDim] = useState(null);
+  const [dim, setDim] = useState<number | null>(null);
   const max = PRICES.max;
   return (
     <div className="x-cost" data-tilt="">
