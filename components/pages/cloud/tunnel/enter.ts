@@ -5,8 +5,8 @@
    `prefers-reduced-motion: no-preference`, so JS off and reduced motion always show the final state. */
 import { useEffect, useRef, useState } from 'react';
 
-export function useEnter(amount = 0.18) {
-  const ref = useRef(null);
+export function useEnter<T extends HTMLElement = HTMLElement>(amount = 0.18) {
+  const ref = useRef<T>(null);
   const [on, setOn] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -15,11 +15,12 @@ export function useEnter(amount = 0.18) {
     io.observe(el);
     return () => io.disconnect();
   }, [amount, on]);
-  return [ref, on];
+  return [ref, on] as const;
 }
 
 /* a small deterministic scatter, so the server and the browser draw the same fragments */
-export const scatter = (i, k = 1) => {
+export const scatter = (i: number, k = 1) =>
+ {
   const a = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453;
   return a - Math.floor(a);
 };

@@ -4,13 +4,14 @@
    the final state; initial states exist only under html.js and prefers-reduced-motion: no-preference (enter.css), and
    reduced motion marks every section "in" at once. */
 import { useEffect, useRef, useState } from 'react';
+import type { ElementType, ReactNode, RefObject } from 'react';
 import './enter.css';
 
 const calmNow = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // true once the element has come into view (or at once under reduced motion)
-export function useEnter(amount = 0.2) {
-  const ref = useRef(null);
+export function useEnter<T extends HTMLElement = HTMLElement>(amount = 0.2): [RefObject<T | null>, boolean] {
+  const ref = useRef<T>(null);
   const [inn, setIn] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -24,7 +25,9 @@ export function useEnter(amount = 0.2) {
 }
 
 // a section that enters one way: k is the entrance name, used as the class xe-en-<k>
-export function Enter({ k, as: T = 'section', className = '', amount, children, ...rest }) {
+type EnterProps = { k: string; as?: ElementType; className?: string; amount?: number; children?: ReactNode; [attr: string]: unknown };
+
+export function Enter({ k, as: T = 'section', className = '', amount, children, ...rest }: EnterProps) {
   const [ref, inn] = useEnter(amount);
   return <T ref={ref} className={`${className} xe-en xe-en-${k}${inn ? ' in' : ''}`} {...rest}>{children}</T>;
 }
@@ -32,12 +35,12 @@ export function Enter({ k, as: T = 'section', className = '', amount, children, 
 /* scramble: the characters scramble and decode into the words, left to right (about 700 ms). The real words stay in
    the layout (hidden while it runs) so nothing reflows; the scrambled copy lies over them, aria-hidden. */
 const GLYPHS = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghkmnpqrstuvwxyz0123456789';
-export function Scramble({ text, run, delay = 0, ms = 700 }) {
-  const [out, setOut] = useState(null);
+export function Scramble({ text, run, delay = 0, ms = 700 }: { text: string; run: boolean; delay?: number; ms?: number }) {
+  const [out, setOut] = useState<string | null>(null);
   useEffect(() => {
     if (!run || calmNow()) return;
     let raf = 0, t0 = 0, wait = setTimeout(() => {
-      const step = (t) => {
+      const step = (t: number) => {
         if (!t0) t0 = t;
         const p = Math.min(1, (t - t0) / ms);
         const done = Math.floor(p * text.length * 1.15 - text.length * 0.15);

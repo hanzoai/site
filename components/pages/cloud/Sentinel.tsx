@@ -20,6 +20,7 @@
    alert router (state) + five entrances, each once. Every word and link is Hanzo's; the error, its frames and its counts
    are made-up examples. */
 import { useEffect, useRef, useState } from 'react';
+import type { ElementType, HTMLAttributes } from 'react';
 import { useInView } from 'motion/react';
 import useCalm from '../../v2/useCalm';
 import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
@@ -29,7 +30,7 @@ import './Sentinel.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/guides/migrate/sentry';
 const GH = 'https://github.com/hanzoai';
-const rnd = (i) => { const x = Math.sin(i * 51.7) * 9301.3; return x - Math.floor(x); };
+const rnd = (i: number) => { const x = Math.sin(i * 51.7) * 9301.3; return x - Math.floor(x); };
 const CRUMBS = ['navigation /cart', 'click “Apply code”', 'fetch POST /discount', 'exception'];
 
 /* ---------- decode (page-local): text nodes are split into fixed-width glyph cells while they scramble, then the
@@ -37,11 +38,15 @@ const CRUMBS = ['navigation /cart', 'click “Apply code”', 'fetch POST /disco
 const GLY = 'ABCDEFGHJKLMNPRSTUVXYZabdeghknopqrsuvxyz0123456789#%&*+=<>/';
 const still = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 const glyph = () => GLY[Math.floor(Math.random() * GLY.length)];
-const isGlyph = (ch) => /[0-9A-Za-zÀ-ɏ]/.test(ch);
+const isGlyph = (ch: string) => /[0-9A-Za-zÀ-ɏ]/.test(ch);
 
 /* copy rule (8 Nov): while an effect has the line cut into letters or reels, Hanzo's whole line stays in the page as
    one piece of text beside it (visually hidden, aria-hidden), and leaves again the moment the line is whole */
-function keep(el) {
+/* an element the effects below are working on (__busy: one effect at a time) */
+type BusyEl = HTMLElement & { __busy?: boolean };
+const textOf = (n: Node) => n.nodeValue ?? '';
+
+function keep(el: HTMLElement) {
   const s = document.createElement('span');
   s.className = 'x-sr';
   s.setAttribute('aria-hidden', 'true');
@@ -50,16 +55,16 @@ function keep(el) {
   return () => s.remove();
 }
 
-function split(el) {
+function split(el: HTMLElement) {
   const drop = keep(el);
-  const nodes = [];
+  const nodes: Node[] = [];
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-  for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue.trim()) nodes.push(n);
-  const cells = [], pairs = [];
+  for (let n = w.nextNode(); n; n = w.nextNode()) if (textOf(n).trim()) nodes.push(n);
+  const cells: [HTMLSpanElement, string][] = [], pairs: [HTMLSpanElement, Node][] = [];
   nodes.forEach((n) => {
     const box = document.createElement('span');
     box.className = 'sn2-dt';
-    n.nodeValue.split(/(\s+)/).forEach((part) => {
+    textOf(n).split(/(\s+)/).forEach((part) => {
       if (!part) return;
       if (/^\s+$/.test(part)) { box.appendChild(document.createTextNode(part)); return; }
       const word = document.createElement('span');
@@ -67,21 +72,21 @@ function split(el) {
       for (const ch of part) { const c = document.createElement('span'); c.className = 'sn2-dc'; c.textContent = ch; word.appendChild(c); cells.push([c, ch]); }
       box.appendChild(word);
     });
-    n.parentNode.replaceChild(box, n);
+    n.parentNode?.replaceChild(box, n);
     pairs.push([box, n]);
   });
   cells.forEach(([c]) => { c.style.width = c.getBoundingClientRect().width + 'px'; });
   return { cells, undo: () => { pairs.forEach(([box, n]) => box.parentNode && box.parentNode.replaceChild(n, box)); drop(); } };
 }
 
-function decode(el, dur = 700) {
+function decode(el: BusyEl | null, dur = 700) {
   if (!el || el.__busy || still()) return;
   el.__busy = true;
   const { cells, undo } = split(el);
   const n = cells.length, t0 = performance.now();
   const at = cells.map((_, i) => dur * (0.2 + 0.8 * (i / Math.max(1, n - 1))) * (0.85 + rnd(i + n) * 0.15));
   let last = 0;
-  const step = (now) => {
+  const step = (now: number) => {
     const t = now - t0;
     if (now - last > 48 || t >= dur) {
       last = now;
@@ -95,7 +100,7 @@ function decode(el, dur = 700) {
 }
 
 /* entrance 1, typewriter: the glyphs appear one by one behind a caret (hidden until typed, so nothing reflows) */
-function type(el, gap = 70) {
+function type(el: BusyEl | null, gap = 70) {
   if (!el || el.__busy) return;
   if (still()) { el.classList.add('go'); return; }
   el.__busy = true;
@@ -118,19 +123,19 @@ function type(el, gap = 70) {
 }
 
 /* entrance 5, slot-roll: each word rolls down through three scrambled reels into place */
-function roll(el, delay = 0) {
+function roll(el: BusyEl | null, delay = 0) {
   if (!el || el.__busy) return;
   if (still()) { el.classList.add('go'); return; }
   el.__busy = true;
   const drop = keep(el);
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-  const nodes = [];
-  for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue.trim()) nodes.push(n);
-  const pairs = [], reels = [];
+  const nodes: Node[] = [];
+  for (let n = w.nextNode(); n; n = w.nextNode()) if (textOf(n).trim()) nodes.push(n);
+  const pairs: [HTMLSpanElement, Node][] = [], reels: HTMLSpanElement[] = [];
   nodes.forEach((n) => {
     const box = document.createElement('span');
     box.className = 'sn2-dt';
-    n.nodeValue.split(/(\s+)/).forEach((part) => {
+    textOf(n).split(/(\s+)/).forEach((part) => {
       if (!part) return;
       if (/^\s+$/.test(part)) { box.appendChild(document.createTextNode(part)); return; }
       const mask = document.createElement('span');
@@ -147,7 +152,7 @@ function roll(el, delay = 0) {
       box.appendChild(mask);
       reels.push(r);
     });
-    n.parentNode.replaceChild(box, n);
+    n.parentNode?.replaceChild(box, n);
     pairs.push([box, n]);
   });
   el.classList.add('go');
@@ -157,19 +162,20 @@ function roll(el, delay = 0) {
 }
 
 /* <Dec>: decodes once when it arrives (or types / rolls, for the entrances), and re-scrambles on hover or tap */
-function Dec({ as: T = 'span', className = '', arrive = 'decode', children, ...rest }) {
-  const ref = useRef(null);
+interface DecProps extends HTMLAttributes<HTMLElement> { as?: ElementType; arrive?: string | null }
+function Dec({ as: T = 'span', className = '', arrive = 'decode', children, ...rest }: DecProps) {
+  const ref = useRef<BusyEl>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    let io;
+    let io: IntersectionObserver | undefined;
     if (arrive === 'type') type(el);
     else if (arrive) {
-      io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); arrive === 'roll' ? roll(el) : decode(el); } }, { threshold: 0.6 });
+      io = new IntersectionObserver(([e], obs) => { if (e.isIntersecting) { obs.disconnect(); arrive === 'roll' ? roll(el) : decode(el); } }, { threshold: 0.6 });
       io.observe(el);
     }
-    const hover = (e) => { if (e.pointerType !== 'touch') decode(el, 520); };
-    const tap = (e) => { if (e.pointerType === 'touch') decode(el, 520); };
+    const hover = (e: PointerEvent) => { if (e.pointerType !== 'touch') decode(el, 520); };
+    const tap = (e: PointerEvent) => { if (e.pointerType === 'touch') decode(el, 520); };
     el.addEventListener('pointerenter', hover);
     el.addEventListener('pointerdown', tap);
     return () => { io && io.disconnect(); el.removeEventListener('pointerenter', hover); el.removeEventListener('pointerdown', tap); };
@@ -178,8 +184,8 @@ function Dec({ as: T = 'span', className = '', arrive = 'decode', children, ...r
 }
 
 /* adds .in once the element is a quarter on screen (each section's entrance) */
-function useEnter(amount = 0.25) {
-  const ref = useRef(null);
+function useEnter<T extends HTMLElement = HTMLElement>(amount = 0.25) {
+  const ref = useRef<T>(null);
   const [inn, setIn] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -188,7 +194,7 @@ function useEnter(amount = 0.25) {
     io.observe(el);
     return () => io.disconnect();
   }, [amount]);
-  return [ref, inn];
+  return [ref, inn] as const;
 }
 
 /* The Stage object: the issue as Sentinel shows it, live. Events arrive (the count and the last bar grow), the top frame
@@ -242,25 +248,27 @@ function Issue() {
    the card's count is written straight into its text node. */
 const N = 900;
 const P = Array.from({ length: N }, (_, i) => ({ x: rnd(i), y: rnd(i + 1777), v: 0.05 + rnd(i + 31) * 0.12, d: rnd(i + 99) * 0.42, jx: rnd(i + 5), jy: rnd(i + 8) }));
-const ease = (u) => (u <= 0 ? 0 : u >= 1 ? 1 : 1 - Math.pow(1 - u, 3));
+const ease = (u: number) => (u <= 0 ? 0 : u >= 1 ? 1 : 1 - Math.pow(1 - u, 3));
 
 function Collapse() {
-  const cv = useRef(null);
-  const card = useRef(null);
-  const copy = useRef(null);
-  const num = useRef(null);
-  const one = useRef(null);
+  const cv = useRef<HTMLCanvasElement>(null);
+  const card = useRef<HTMLDivElement>(null);
+  const copy = useRef<HTMLDivElement>(null);
+  const num = useRef<BusyEl>(null);
+  const one = useRef<BusyEl>(null);
   const [ref, live, , paused, toggle] = useDemo(0.25);
   const calm = useCalm();
-  const [scene, inn] = useEnter(0.2);
+  const [scene, inn] = useEnter<HTMLElement>(0.2);
   const [done, setDone] = useState(false);
   const doneR = useRef(false);
   useEffect(() => {
     const c = cv.current;
     if (!c) return;
     const g = c.getContext('2d');
+    if (!g) return;
     let raf = 0, t0 = performance.now(), last = -1;
-    const draw = (now) => {
+    const draw = (now: number) => {
+      if (!card.current || !copy.current) return;
       const w = c.clientWidth, h = c.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
       if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -333,7 +341,7 @@ function Route() {
   const [k, setK] = useState(2);
   // once, when the router comes into view, it builds one rule by itself (a spike → PagerDuty → Jira, then back to a
   // regression → Slack → GitHub) so the sentence visibly rewrites; any press stops it
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.6, once: true });
   const calm = useCalm();
   const [mine, setMine] = useState(false);
@@ -343,7 +351,7 @@ function Route() {
     const ids = plan.map((f, i) => setTimeout(f, 900 + i * 900));
     return () => ids.forEach(clearTimeout);
   }, [seen, calm, mine]);
-  const pick = (list, at, set, label) => (
+  const pick = (list: string[], at: number, set: (v: number) => void, label: string) => (
     <div className="sn2-rt-row" role="group" aria-label={label}>
       <p className="l2-mono">{label}</p>
       <div>{list.map((x, i) => <button key={x} type="button" aria-pressed={at === i} onClick={() => set(at === i && label === 'opens a ticket in' ? -1 : i)}>{x}</button>)}</div>
@@ -359,7 +367,7 @@ function Route() {
   );
 }
 
-function Pic({ i }) {
+function Pic({ i }: { i: number }) {
   if (i === 1) return (
     <div className="sn2-trace">
       {[[0, 94, 'request'], [4, 30, 'service a'], [12, 66, 'service b'], [16, 20, 'service c'], [38, 34, 'service d']].map(([l, wd, t], k) => (
@@ -397,8 +405,8 @@ const FACTS = [
 ];
 
 /* Facts 02–06 as plain sheets; facts 02–04 glitch in, 05–06 are uncovered by a page curl. */
-function Sheet({ i, t, d, how }) {
-  const ref = useRef(null);
+function Sheet({ i, t, d, how }: { i: number; t: string; d: string; how: string }) {
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.3 });
   return (
     <article ref={ref} className={'sn2-sheet ' + how + (i % 2 ? ' alt' : '') + (seen ? ' in' : '')} style={{ '--i': i }}>
@@ -412,7 +420,7 @@ function Sheet({ i, t, d, how }) {
   );
 }
 
-function Sheets({ from, to, how }) {
+function Sheets({ from, to, how }: { from: number; to: number; how: string }) {
   return (
     <section className={'sn2-sheets ' + how}>
       <div className="l2-wrap">
@@ -443,10 +451,11 @@ function Resolved() {
 
 export default function Sentinel() {
   // entrance 5 also rolls the band's own "Get Sentinel" heading and tag (rendered by the shared Finale) as they arrive
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useEffect(() => {
-    const els = root.current ? [...root.current.querySelectorAll('.l2-band .l2-get-name, .l2-band .l2-get-tag')] : [];
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { io.unobserve(e.target); roll(e.target); } }), { threshold: 0.9 });
+    const els = root.current ? [...root.current.querySelectorAll<HTMLElement>('.l2-band .l2-get-name, .l2-band .l2-get-tag')] : [];
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { io.unobserve(e.target); roll(e.target as BusyEl); } }), { threshold: 0.9 });
+
     els.forEach((el) => { el.classList.add('sn2-roll'); io.observe(el); });
     return () => io.disconnect();
   }, []);

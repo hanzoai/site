@@ -23,6 +23,7 @@
    Goal: trust how hanzo.id issues and protects tokens (PKCE, single-use refresh, one tenancy per organization).
    CTA: API reference (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
+import type { ElementType, MouseEvent, PointerEvent, FocusEvent, ReactNode } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
@@ -30,6 +31,8 @@ import { Lines } from '../../v2/LiftStage';
 import ShipPrompt from '../../v2/ShipPrompt';
 import LivePause, { usePause } from '../../v2/LivePause';
 import { Decode, useEnter } from './iam/IamMotion';
+import type { DecodeHandle } from './iam/IamMotion';
+
 import '../../v2/v2scale.css';
 import '../../v2/GetIt.css';
 import './Iam.css';
@@ -44,7 +47,7 @@ const WAYS = ['Google', 'GitHub', 'OIDC', 'passkey'];
    Reduced motion and JS off show the finished sign-in through CSS alone, so nothing flips after hydration. */
 const BEAT = [1100, 900, 760, 760, 900, 1900];
 
-const Glyph = ({ k }) => (
+const Glyph = ({ k }: { k: number }) => (
   <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
     {k === 0 && <path d="M10 3.5a6.5 6.5 0 1 0 6.3 8.1H10" />}
     {k === 1 && <path d="M7 16.5c-3-1-4.5-3.4-4.5-6.5a7.5 7.5 0 0 1 15 0c0 3.1-1.5 5.5-4.5 6.5M8 16.5V14M12 16.5V14" />}
@@ -54,7 +57,7 @@ const Glyph = ({ k }) => (
 );
 
 /* the hanzo.id card: a way in, then the code, PKCE, the signed token and its key in the JWKS (shape for every state) */
-function SignInCard({ s, pick }) {
+function SignInCard({ s, pick }: { s: number; pick: number }) {
   return (
     <div className="ia-si" data-s={s}>
       <p className="ia-si-mark">hanzo.id</p>
@@ -80,12 +83,12 @@ function SignInCard({ s, pick }) {
 }
 
 function SignIn() {
-  const [ref, seen, calm] = useLive(0.3);
+  const [ref, seen, calm] = useLive<HTMLDivElement>(0.3);
   const [paused, togglePause] = usePause();
   const live = seen && !paused && !calm;
   const [s, setS] = useState(0);
   const [pick, setPick] = useState(1);
-  const card = useRef(null);
+  const card = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (!live) return;
     const id = setTimeout(() => {
@@ -97,7 +100,7 @@ function SignIn() {
     return () => clearTimeout(id);
   }, [s, live]);
   // a fine pointer tilts the card up to 2.5°; touch and reduced motion leave it flat
-  const tilt = (e) => {
+  const tilt = (e: PointerEvent) => {
     const el = card.current;
     if (!el || calm || e.pointerType !== 'mouse') return;
     const r = el.getBoundingClientRect();
@@ -125,8 +128,8 @@ function SignIn() {
 }
 
 /* the stage settles back and lifts away as the rail comes in: scale 1 to .94, up 40px; the server paints it at rest */
-function Recede({ children }) {
-  const ref = useRef(null); // reduced motion: the CSS holds it at rest, so the server and client render the same
+function Recede({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null); // reduced motion: the CSS holds it at rest, so the server and client render the same
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.1', 'end start'] });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
   const y = useTransform(scrollYProgress, [0, 1], [0, -40]);
@@ -138,7 +141,9 @@ function Recede({ children }) {
 }
 
 /* card 03 says only its figure and title: its sentence lives in the refresh room it opens into */
-const FACTS = [
+/* [title, sentence (none for card 03), figure, selector of the room it opens into] */
+type FactRow = [string, string | null, string, string?];
+const FACTS: FactRow[] = [
   ['PKCE', 'Authorization code with PKCE, always S256.', 'S256'],
   ['Passwords', 'The passwords that do exist are argon2id digests, and a scheme IAM does not recognize fails closed.', 'argon2id'],
   ['Refresh tokens', null, 'single-use', '#ia-refresh'],
@@ -149,7 +154,7 @@ const FACTS = [
   ['Authorization', 'What you may reach once signed in is Authz’s to decide, reading the same token.', 'Authz'],
 ];
 const N = FACTS.length;
-const pad = (k) => String(k).padStart(2, '0');
+const pad = (k: number) => String(k).padStart(2, '0');
 
 /* each fact's own drawn object (no words): the S256 hash of a verifier, a gate that fails closed, a refresh chain with a
    struck link, a device and a key, three issuers meeting in one, two keys in one set, organizations as boundaries, a
@@ -168,17 +173,17 @@ const OBJ = [
 /* a fact card: lit while it is the rail's active card; its object draws in. Card 03 opens into the refresh room: it
    glides there and the room's family plays as it arrives. Its title stays for screen readers only, so "Refresh tokens"
    is seen once, as the room's heading. */
-function Fact({ f: [t, d, big, to], i, on }) {
-  const Tag = to ? 'a' : 'article';
-  const dc = useRef(null);
-  const go = to ? (e) => {
+function Fact({ f: [t, d, big, to], i, on }: { f: FactRow; i: number; on: boolean }) {
+  const Tag: ElementType = to ? 'a' : 'article';
+  const dc = useRef<DecodeHandle>(null);
+  const go = to ? (e: MouseEvent) => {
     const room = document.querySelector(to);
     if (!room) return;
     e.preventDefault();
     room.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   } : undefined;
   // hovering or focusing a card scrambles its figure again (Decode)
-  const again = (e) => { if (!e || e.type === 'focus' || e.pointerType === 'mouse') dc.current?.run(); };
+  const again = (e?: PointerEvent | FocusEvent) => { if (!e || e.type === 'focus' || ('pointerType' in e && e.pointerType === 'mouse')) dc.current?.run(); };
   return (
     <Tag className={'ia-card' + (to ? ' ia-card-go' : '')} data-on={on || undefined} href={to} onClick={go} onPointerEnter={again} onFocus={again}>
       <div className="ia-card-top">
@@ -204,18 +209,18 @@ function Fact({ f: [t, d, big, to], i, on }) {
 const ChevL = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const ChevR = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 function FactRail() {
-  const rail = useRef(null);
-  const view = useRef(null);
+  const rail = useRef<HTMLOListElement>(null);
+  const view = useRef<HTMLDivElement>(null);
   const enter = useEnter();
   const [active, setActive] = useState(0);
-  const step = () => { const c = rail.current?.children[0]; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(rail.current).columnGap || '16') : 1; };
+  const step = () => { const c = rail.current?.children[0]; return c && rail.current ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(rail.current).columnGap || '16') : 1; };
   const swiped = () => {
     const v = view.current;
     if (!v) return;
     const end = v.scrollLeft >= v.scrollWidth - v.clientWidth - 4;
     setActive(end ? N - 1 : Math.min(N - 1, Math.max(0, Math.round(v.scrollLeft / step()))));
   };
-  const move = (d) => {
+  const move = (d: number) => {
     const v = view.current;
     if (!v) return;
     v.scrollBy({ left: d * step(), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
@@ -242,21 +247,21 @@ function FactRail() {
 }
 
 /* the dark room enters as a rounded card inside the gutters and opens to full width as it is reached */
-function Room({ children }) {
-  const ref = useRef(null);
+function Room({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLElement | null>(null);
   const enter = useEnter();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.5'] });
   // the inset stays inside the text gutter (16px of 24 on desktop, 8px of 16 on phones), so no word is ever cut by the card edge
   const clip = useTransform(scrollYProgress, (p) => { const k = (1 - Math.min(1, Math.max(0, p))).toFixed(3); return `inset(0px calc(var(--ia-m) * ${k}) round calc(var(--ia-m) * ${k} * 1.5))`; });
   return <motion.section id="ia-refresh" ref={(el) => { ref.current = el; enter(el); }} className="ia-room v2-dark" data-room="dark" data-entrance="accordion" style={{ clipPath: clip }}>{children}</motion.section>;
 }
-const fold = (ms) => ({ '--ia-fd': ms + 'ms' });
+const fold = (ms: number) => ({ '--ia-fd': ms + 'ms' });
 
 /* Beyond: the refresh family. It plays once as it arrives: each refresh spends the live token and issues the next, then a
    spent one is presented and the whole family is revoked. Then it is yours: press the live token, or a spent one.
    Eight places are drawn from the start, so the room never changes height. Reduced motion: it rests revoked. */
 const MAX = 8;
-const RUN = [[700, { n: 2, dead: false }], [1400, { n: 3, dead: false }], [2100, { n: 4, dead: false }], [3100, { n: 4, dead: true }]];
+const RUN: [number, { n: number; dead: boolean }][] = [[700, { n: 2, dead: false }], [1400, { n: 3, dead: false }], [2100, { n: 4, dead: false }], [3100, { n: 4, dead: true }]];
 function Family() {
   const [s, setS] = useState({ n: 1, dead: false });
   const [run, setRun] = useState(0);
@@ -270,7 +275,7 @@ function Family() {
     const ids = RUN.map(([ms, v]) => setTimeout(() => setS(v), ms));
     return () => ids.forEach(clearTimeout);
   }, [seen, calm, run]);
-  const present = (k) => setS((v) => (v.dead ? v : k < v.n ? { ...v, dead: true } : v.n < MAX ? { ...v, n: v.n + 1 } : v));
+  const present = (k: number) => setS((v) => (v.dead ? v : k < v.n ? { ...v, dead: true } : v.n < MAX ? { ...v, n: v.n + 1 } : v));
   const replay = () => { setS({ n: 1, dead: false }); played.current = -1; setRun((r) => r + 1); };
   return (
     <Room>

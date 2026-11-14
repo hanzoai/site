@@ -8,13 +8,14 @@
      The real characters are in the server HTML; the scramble only rewrites the same text node on the client and restores
      it; the element carries the real text as its accessible name while it runs. Reduced motion: no scramble. */
 import { useCallback, useEffect, useImperativeHandle, useRef, forwardRef } from 'react';
+import type { ElementType, HTMLAttributes, PointerEvent } from 'react';
 
 const POOL = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789#%&*+=/<>';
 const calmNow = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export function useEnter() {
   const seen = useRef(false);
-  return useCallback((el) => {
+  return useCallback((el: HTMLElement | null) => {
     if (!el || seen.current || typeof IntersectionObserver === 'undefined') return;
     const io = new IntersectionObserver((es) => {
       if (es.some((e) => e.isIntersecting)) { seen.current = true; el.setAttribute('data-in', ''); io.disconnect(); }
@@ -23,8 +24,16 @@ export function useEnter() {
   }, []);
 }
 
-export const Decode = forwardRef(function Decode({ text, as: Tag = 'span', className = '', name = true, ms = 700, ...rest }, api) {
-  const vis = useRef(null);
+export interface DecodeHandle { run: () => void }
+interface DecodeProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
+  text: string;
+  as?: ElementType;
+  name?: boolean;
+  ms?: number;
+}
+
+export const Decode = forwardRef<DecodeHandle, DecodeProps>(function Decode({ text, as: Tag = 'span', className = '', name = true, ms = 700, ...rest }, api) {
+  const vis = useRef<HTMLSpanElement>(null);
   const busy = useRef(false);
   const run = useCallback(() => {
     const el = vis.current, node = el && el.firstChild;
@@ -32,7 +41,8 @@ export const Decode = forwardRef(function Decode({ text, as: Tag = 'span', class
     busy.current = true;
     el.style.minWidth = el.getBoundingClientRect().width + 'px';
     const t0 = performance.now();
-    const step = (t) => {
+    const step = (t: number) => {
+
       const p = Math.min(1, (t - t0) / ms);
       const keep = Math.floor(p * text.length);
       let out = '';
@@ -59,7 +69,7 @@ export const Decode = forwardRef(function Decode({ text, as: Tag = 'span', class
     <Tag
       className={'ia-dc ' + className}
       aria-label={name ? text : undefined}
-      onPointerEnter={(e) => { if (e.pointerType === 'mouse') run(); }}
+      onPointerEnter={(e: PointerEvent) => { if (e.pointerType === 'mouse') run(); }}
       onFocus={run}
       {...rest}
     >

@@ -10,13 +10,25 @@ import { useInView } from 'motion/react';
 import { A } from '../../kit';
 import useCalm from '../../v2/useCalm';
 
-const Arrow = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const shape = (label) => (/^Generally available$/i.test(label) ? 'ga' : /^Beta$/i.test(label) ? 'beta' : 'fam');
-const Chip = ({ label }) => <span className={'xcf-chip ' + shape(label)}><i aria-hidden="true" />{label}</span>;
+/* what the family of a product shows for one neighbour: its name, status, endpoint, lede and Google Cloud pair */
+export interface Preview { name: string; label: string; lede: string; api: string; google: string }
+export interface Sibling { label: string; href: string; current: boolean }
+/* this product's own console view */
+export interface Own {
+  preview: Preview;
+  features: string[];
+  cmd?: string | null;
+  console: { label: string; href: string } | null;
+}
+export interface FamilyDoc { slug: string; window: { siblings: Sibling[] } | null }
+
+const Arrow = ({ s = 14 }: { s?: number }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const shape = (label: string) => (/^Generally available$/i.test(label) ? 'ga' : /^Beta$/i.test(label) ? 'beta' : 'fam');
+const Chip = ({ label }: { label: string }) => <span className={'xcf-chip ' + shape(label)}><i aria-hidden="true" />{label}</span>;
 
 /* this product's own features, lit one after another once while its panel is open and on screen (hover picks one) */
-function Feats({ list, open }) {
-  const ref = useRef(null);
+function Feats({ list, open }: { list: string[]; open: boolean }) {
+  const ref = useRef<HTMLOListElement>(null);
   const seen = useInView(ref, { amount: 0.5 });
   const calm = useCalm();
   const [at, setAt] = useState(0);
@@ -28,7 +40,7 @@ function Feats({ list, open }) {
   }, [calm, held, open, seen, at, list.length]);
   return (
     <ol ref={ref} className="xro-feats" onPointerLeave={() => setHeld(false)}>
-      {list.map((f, i) => (
+      {list.map((f: string, i: number) => (
         <li key={f} className={at === i ? 'on' : ''} onPointerEnter={() => { setHeld(true); setAt(i); }}>
           <span className="xcf-n">{String(i + 1).padStart(2, '0')}</span><span className="xro-ft">{f}</span><i className="xcf-dot" aria-hidden="true" />
         </li>
@@ -37,7 +49,7 @@ function Feats({ list, open }) {
   );
 }
 
-function Detail({ s, p, own, open }) {
+function Detail({ s, p, own, open }: { s: Sibling; p: Preview | undefined; own: Own | null; open: boolean }) {
   const host = p && p.api ? ['api.hanzo.ai', p.api] : ['hanzo.ai', s.href];
   return (
     <div className="xro-win" data-room="dark">
@@ -71,8 +83,8 @@ export function useMounted() {
   return m;
 }
 
-export default function RowsOpen({ doc, previews, own }) {
-  const sibs = doc.window ? doc.window.siblings : [];
+export default function RowsOpen({ doc, previews, own }: { doc: FamilyDoc; previews: Record<string, Preview>; own: Own }) {
+  const sibs: Sibling[] = doc.window ? doc.window.siblings : [];
   const first = Math.max(0, sibs.findIndex((s) => s.current));
   const [at, setAt] = useState(first);
   const dwell = useRef(0);
@@ -81,10 +93,10 @@ export default function RowsOpen({ doc, previews, own }) {
   const id = 'xro-' + doc.slug;
   // a row opens on a click, tap or focus, never on a passing pointer: an opening row is a few hundred px tall, and opening
   // under a moving mouse pushed the rows below (and the section after) up and down (CLS 0.16). Hover only lights the row.
-  const pointIn = () => {};
+  const pointIn = (_e: React.PointerEvent<HTMLButtonElement>, _i: number) => {};
   return (
     <ol className="xro" onPointerLeave={() => clearTimeout(dwell.current)}>
-      {sibs.map((s, i) => {
+      {sibs.map((s: Sibling, i: number) => {
         const p = s.current ? own.preview : previews[s.href];
         const open = at === i;
         return (

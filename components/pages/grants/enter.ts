@@ -8,14 +8,15 @@
      sheet stamps it again from that point (--sx/--sy).
    Reduced motion: the CSS ignores all of it and shows the final state. */
 import { useEffect } from 'react';
+import type { RefObject } from 'react';
 
-const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+const restart = (el: HTMLElement, cls: string) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
 
-function waveFrom(grid, x, y) {
+function waveFrom(grid: HTMLElement, x: number, y: number) {
   const r = grid.getBoundingClientRect();
-  const tiles = grid.children;
+  const tiles = grid.children as HTMLCollectionOf<HTMLElement>;
   let max = 1;
-  const d = [];
+  const d: number[] = [];
   for (const t of tiles) {
     const q = t.getBoundingClientRect();
     const v = Math.hypot(q.left + q.width / 2 - x, q.top + q.height / 2 - y);
@@ -25,20 +26,20 @@ function waveFrom(grid, x, y) {
   return r;
 }
 
-export default function useEnter(root) {
+export default function useEnter(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const el = root.current;
     if (!el) return;
     const vh = () => innerHeight || 800;
-    const seen = (e) => e.isIntersecting && (e.intersectionRatio >= 0.25 || e.intersectionRect.height >= vh() * 0.25);
+    const seen = (e: IntersectionObserverEntry) => e.isIntersecting && (e.intersectionRatio >= 0.25 || e.intersectionRect.height >= vh() * 0.25);
 
     /* grid-wave: the hero art's tiles */
-    const grid = el.querySelector('.xgr-grid');
+    const grid = el.querySelector<HTMLElement>('.xgr-grid');
     const art = grid && grid.parentElement;
-    let pointer = null;
-    const onMove = (e) => { pointer = [e.clientX, e.clientY]; };
-    const onRipple = (e) => {
-      if (!grid || !grid.parentElement.closest('.xgr-in')) return;
+    let pointer: [number, number] | null = null;
+    const onMove = (e: PointerEvent) => { pointer = [e.clientX, e.clientY]; };
+    const onRipple = (e: PointerEvent) => {
+      if (!grid || !grid.parentElement?.closest('.xgr-in')) return;
       waveFrom(grid, e.clientX, e.clientY);
       restart(grid, 'xgr-ripple');
     };
@@ -51,10 +52,10 @@ export default function useEnter(root) {
     const io = new IntersectionObserver((list) => {
       for (const e of list) {
         if (!seen(e)) continue;
-        const t = e.target;
+        const t = e.target as HTMLElement;
         if (t.matches('[data-stamp]')) t.classList.add('xgr-stamped');
         else {
-          if (t.dataset.enter === 'grid-wave' && grid) {
+          if (t.dataset.enter === 'grid-wave' && grid && art) {
             const a = art.getBoundingClientRect();
             const [x, y] = pointer || [a.left, a.top + a.height * 0.35];
             waveFrom(grid, x, y);
@@ -67,9 +68,10 @@ export default function useEnter(root) {
     el.querySelectorAll('[data-enter],[data-stamp]').forEach((s) => io.observe(s));
 
     /* stamp again where the sheet is clicked or tapped (a tap, not a scroll; links and buttons keep their own job) */
-    const onStamp = (e) => {
-      const li = e.target.closest('[data-stamp]');
-      if (!li || e.target.closest('a,button')) return;
+    const onStamp = (e: MouseEvent) => {
+      const tg = e.target as Element;
+      const li = tg.closest<HTMLElement>('[data-stamp]');
+      if (!li || tg.closest('a,button')) return;
       const r = li.getBoundingClientRect();
       li.style.setProperty('--sx', Math.round(e.clientX - r.left) + 'px');
       li.style.setProperty('--sy', Math.round(e.clientY - r.top) + 'px');
@@ -78,10 +80,10 @@ export default function useEnter(root) {
     el.addEventListener('click', onStamp);
 
     /* scroll-linked: cover-slide rises over the section before it, shrink-to-card folds the section away as you leave */
-    const cover = el.querySelectorAll('[data-enter="cover-slide"]');
-    const shrink = el.querySelectorAll('[data-enter="shrink-to-card"]');
+    const cover = el.querySelectorAll<HTMLElement>('[data-enter="cover-slide"]');
+    const shrink = el.querySelectorAll<HTMLElement>('[data-enter="shrink-to-card"]');
     let raf = 0;
-    const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+    const clamp = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
     const tick = () => {
       raf = 0;
       const h = vh();

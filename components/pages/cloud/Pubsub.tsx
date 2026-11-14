@@ -22,6 +22,8 @@
    at the middle (pubsub/PsFacts.jsx); the prompt and the 4222 spec in the quiet room; the close. Entrances
    (pubsub/PsEnter.jsx): line-draw, cursor-trail, spring-snap, cover-slide, pixel-resolve. */
 import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
+
 import { motion, AnimatePresence } from 'motion/react';
 import { A, Img } from '../../kit';
 import { useCalm } from '../../ui';
@@ -37,9 +39,10 @@ import { Outline, CursorTrail, CoverSlide, PixelResolve } from './pubsub/PsEnter
 import './Pubsub.css';
 
 const GH = 'https://github.com/hanzoai/pubsub';
-const EASE = [0.16, 1, 0.3, 1]; // ease-emphasis: arrivals
+type Bezier = [number, number, number, number];
+const EASE: Bezier = [0.16, 1, 0.3, 1]; // ease-emphasis: arrivals
 const ARRIVE = { duration: 0.3, ease: EASE };
-const QUICK = { duration: 0.15, ease: [0, 0, 0.2, 1] };
+const QUICK = { duration: 0.15, ease: [0, 0, 0.2, 1] as Bezier };
 
 // Hanzo's three ack choices, each with its own clause from "Acked, so nothing goes quiet"
 const ACKS = [
@@ -49,7 +52,7 @@ const ACKS = [
 ];
 
 /* the fan-out clock: 0 publish, 1 stored, 2 fanned out, 3 acks (one redelivered), 4 settled */
-function useFan(run, calm) {
+function useFan(run: boolean, calm: boolean): [number, number] {
   const [t, setT] = useState(4); // the server frame is a settled fan-out; the next publish drops in within half a second
   const [seq, setSeq] = useState(41);
   useEffect(() => { if (calm) setT(4); }, [calm]);
@@ -63,7 +66,7 @@ function useFan(run, calm) {
   return [t, seq];
 }
 
-const subState = (t, ack, i, top) => {
+const subState = (t: number, ack: string, i: number, top: number): [string, string] => {
   if (t < 2) return ['', '—'];
   if (t < 3 || ack === 'none') return ['', 'delivered'];
   if (ack === 'every' && i === 1 && t === 3) return ['wait', 'redelivered'];
@@ -71,7 +74,7 @@ const subState = (t, ack, i, top) => {
 };
 
 /* the inView observer for the hero object (its own, so the loop stops off screen) */
-function useSeen(ref, amount) {
+function useSeen(ref: RefObject<Element | null>, amount: number) {
   const [seen, setSeen] = useState(false);
   useEffect(() => {
     const el = ref.current; if (!el) return;
@@ -84,22 +87,22 @@ function useSeen(ref, amount) {
 
 /* ---------- the hero object: the globe, the stream tray under it, the subscribers, the ack switch ---------- */
 function Planet() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   const seen = useSeen(ref, 0.25);
   const [paused, pause] = usePause();
   const run = seen && !paused && !calm;
   const [t, seq] = useFan(run, calm);
   const [ack, setAck] = useState('every');
-  const [rp, setRp] = useState(null); // the sequence a replay would start from, under the pointer
-  const [hov, setHov] = useState(null); // the place under the pointer on the globe
+  const [rp, setRp] = useState<number | null>(null); // the sequence a replay would start from, under the pointer
+  const [hov, setHov] = useState<string | null>(null); // the place under the pointer on the globe
   const top = seq + (t >= 1 ? 1 : 0);
   const pick = seq % 3;
   const nums = Array.from({ length: 6 }, (_, i) => top - 5 + i);
   const states = ['analytics', 'audit'].map((s, i) => subState(t, ack, i, top));
   const qState = subState(t, ack, 2, top);
-  const mark = (c, l) => (c === 'ack' ? '✓ ' + l : c === 'wait' ? '↻ ' + l : l);
-  const label = {
+  const mark = (c: string, l: string) => (c === 'ack' ? '✓ ' + l : c === 'wait' ? '↻ ' + l : l);
+  const label: Record<string, string> = {
     pub: 'events.user.signup',
     str: t >= 1 ? '#' + top : '#' + seq,
     analytics: mark(...states[0]),
@@ -160,7 +163,7 @@ function Planet() {
   );
 }
 
-const FACTS = [
+const FACTS: [string, string][] = [
   ['Streams write it down', 'A stream captures the subjects you name and keeps them by age, by count or by bytes. A consumer starts at the beginning, at the newest message, at a sequence number or at a wall-clock time, and reads at the original pace or as fast as it can take them.'],
   ['Acked, so nothing goes quiet', 'A message is redelivered until a consumer acknowledges it. Publishers that stamp a message id get duplicates collapsed inside a window — two minutes unless you say otherwise. Ack every message, ack a sequence to cover everything below it, or ask for no acks at all when fire-and-forget is what you meant.'],
   ['Key-value buckets', 'A bucket is a stream that keeps the last value per key, so you get watches, per-key history and expiry from the same server and the same connection. It is where Hanzo Stream keeps its consumer offsets.'],
@@ -195,7 +198,7 @@ for _, msg := range msgs {
    beat each (1.25 s, 5 s in all), then every line back in ink. A pointer on the code ends the walk at once. */
 const BEATS = ['conn', 'stream', 'pub', 'sub'];
 function Walked() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   const seen = useSeen(ref, 0.5);
   const [beat, setBeat] = useState(-1);

@@ -19,18 +19,22 @@
 // Signature: the ledger files in: measured rows first, the vendors' own claims filing in under them, every cell a verdict mark, every row stamped with its provenance
 // Beyond: only where they differ: one switch folds the rows where all four say the same and counts what is left
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Count, Lines } from '../../ui';
 import { EASE_OUT_EXPO as EASE, DUR } from '../../../lib/motion';
 import { A, Cta, Tabs, TabPanel, DataTable } from '../../kit';
 import './Ledger.css';
+import type { Cell, CompareDoc, DeeperDoc, Em, HonestDoc, Link, Row, Side } from './Ledger.types';
+
+type LedgerRow = Row & { k: 'ours' | 'theirs' };
 
 /* JavaScript off: the headline and lede that cut in, the race bars at their real lengths, the dark room unclipped */
 /* JavaScript off: the race bars at their real lengths (the shared rule clears the other entrance states) */
 const NOJS = '.xvs-race-b i{transform:scaleX(var(--w))!important}';
 const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 /* the page's one ask, in Hanzo's words: its own product, the first door in "Go deeper"; solid once per screen */
-function Ask({ to, big, thumb, id }) {
+function Ask({ to, big, thumb, id }: { to?: Link; big?: boolean; thumb?: boolean; id?: string }) {
   if (!to) return null;
   return (
     <span className="xvs-ask-w" {...(thumb ? {} : { 'data-ask-hide': '' })}>
@@ -38,18 +42,18 @@ function Ask({ to, big, thumb, id }) {
     </span>
   );
 }
-const num = (t) => { const m = /^([\d,.]+)\+?/.exec(t || ''); return m ? parseFloat(m[1].replace(/,/g, '')) : null; };
-const host = (h) => { try { return new URL(h).host.replace(/^www\./, ''); } catch { return ''; } };
+const num = (t?: string) => { const m = /^([\d,.]+)\+?/.exec(t || ''); return m ? parseFloat(m[1].replace(/,/g, '')) : null; };
+const host = (h: string) => { try { return new URL(h).host.replace(/^www\./, ''); } catch { return ''; } };
 
-function Mark({ v }) {
+function Mark({ v }: { v: string }) {
   return <i className="xvs-mark" data-v={v} aria-hidden="true" />;
 }
 
 /* "Yes — same key" → the verdict word, then the rest of the sentence */
-function Said({ c }) {
+function Said({ c }: { c: Cell }) {
   const m = /^(Yes|No|Not published|not measured by us)( — |\.\s|$)(.*)$/i.exec(c.t);
-  if (c.v === 'figure') {
-    const f = /^([\d,.]+\+?)\s*(.*)$/.exec(c.t);
+  const f = c.v === 'figure' ? /^([\d,.]+\+?)\s*(.*)$/.exec(c.t) : null;
+  if (f) {
     return <span className="xvs-said"><b className="xvs-fig x-mono">{f[1]}</b>{f[2] && <span>{' ' + f[2]}</span>}</span>;
   }
   if (m) return <span className="xvs-said"><b><span>{m[1]}</span></b>{m[3] && <span>{(m[2].trim() ? ' ' + m[2].trim() + ' ' : ' ') + m[3]}</span>}</span>;
@@ -57,19 +61,19 @@ function Said({ c }) {
 }
 
 /* ---------- hero figures: the published counts, raced in the table's order ---------- */
-function Race({ row, cols, stamp }) {
-  const box = useRef(null);
+function Race({ row, cols, stamp }: { row: Row; cols: string[]; stamp?: string }) {
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { once: true, amount: 0.3 });
   const live = useInView(box, { amount: 0.3 });
   const vals = row.cells.map((c) => num(c.t));
-  const max = Math.max(...vals.filter((v) => v !== null), 1);
+  const max = Math.max(...vals.filter((v): v is number => v !== null), 1);
   const [at, setAt] = useState(-1); // the router being read; -1 before the race lands and after its one pass
   const [held, setHeld] = useState(false);
   useEffect(() => {
     if (!live || held || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     // reading passes over the routers after the race lands: each pass ends with every figure in ink for a breath, then
     // the next begins, so the first screen stays quietly alive while it is in view (a hover holds the router you point at)
-    let k = 0, t = 0;
+    let k = 0, t: ReturnType<typeof setTimeout> | undefined;
     const step = () => { setAt(k < vals.length ? k : -1); k = (k + 1) % (vals.length + 1); t = setTimeout(step, 2400); };
     t = setTimeout(step, 2300);
     return () => clearTimeout(t);
@@ -99,25 +103,25 @@ function Race({ row, cols, stamp }) {
 }
 
 /* ---------- the ledger ---------- */
-function Ledger({ s, theirs, diffLabel }) {
+function Ledger({ s, theirs, diffLabel }: { s: Side; theirs: string; diffLabel?: string }) {
   const [tab, setTab] = useState(0);
   const [diff, setDiff] = useState(false);
-  const rows = useMemo(() => [
-    ...s.measured.map((r) => ({ ...r, k: 'ours' })),
-    ...s.reported.map((r) => ({ ...r, k: 'theirs', mark: theirs })),
+  const rows = useMemo<LedgerRow[]>(() => [
+    ...s.measured.map((r): LedgerRow => ({ ...r, k: 'ours' })),
+    ...s.reported.map((r): LedgerRow => ({ ...r, k: 'theirs', mark: theirs })),
   ], [s, theirs]);
-  const same = (r) => r.cells.every((c) => c.v === r.cells[0].v && c.v !== 'figure');
+  const same = (r: LedgerRow) => r.cells.every((c) => c.v === r.cells[0].v && c.v !== 'figure');
   const toggles = s.toggles.length === 2 ? s.toggles : ['Measured', '+ Reported'];
   // the kit's DataTable: the first column is the row header, Enso the tinted subject column, provenance last
-  const cols = [{ key: 'label', label: s.corner }, ...s.head.map((h, i) => ({ key: 'c' + i, label: h, subject: i === 0 })), { key: 'prov', label: s.prov }];
-  const cell = (c) => (
+  const cols: { key: string; label: string; subject?: boolean }[] = [{ key: 'label', label: s.corner }, ...s.head.map((h, i) => ({ key: 'c' + i, label: h, subject: i === 0 })), { key: 'prov', label: s.prov }];
+  const cell = (c: Cell) => (
     <span className="xvs-cell" data-v={c.v}>
       <Mark v={c.v} />
       <Said c={c} />
       {c.link && <A to={c.link.href} className="xvs-run x-mono">[ {c.link.label} ]</A>}
     </span>
   );
-  const row = (r) => ({ label: r.label, ...Object.fromEntries(r.cells.map((c, i) => ['c' + i, cell(c)])), prov: <span className="xvs-stamp" data-k={r.k}>{r.mark}</span> });
+  const row = (r: LedgerRow) => ({ label: r.label, ...Object.fromEntries(r.cells.map((c, i): [string, ReactNode] => ['c' + i, cell(c)])), prov: <span className="xvs-stamp" data-k={r.k}>{r.mark}</span> });
   const measured = rows.filter((r) => r.k === 'ours');
   const all = rows.filter((r) => !diff || !same(r));
   const folded = diff ? rows.filter(same) : [];
@@ -152,13 +156,13 @@ function Ledger({ s, theirs, diffLabel }) {
 }
 
 /* ---------- reading it honestly: the one dark room, opened by a wipe ---------- */
-function Honest({ h }) {
+function Honest({ h }: { h: HonestDoc }) {
   const [legend, ...rest] = h.paras;
   const last = rest.length ? rest[rest.length - 1].join('') : '';
   const cut = last.indexOf('. ');
   const big = cut > 0 ? last.slice(0, cut + 1) : last;
   const tail = cut > 0 ? last.slice(cut + 2) : '';
-  const marks = { 'we ran this': 'ours', 'they published this': 'theirs', 'not published': 'none' };
+  const marks: Record<string, string> = { 'we ran this': 'ours', 'they published this': 'theirs', 'not published': 'none' };
   return (
     <motion.section className="xvs-sec xvs-honest" data-room="dark" aria-labelledby="xvs-hon-h"
       initial={{ clipPath: 'inset(0% 2.2% 0% 2.2% round 24px)' }} whileInView={{ clipPath: 'inset(0% 0% 0% 0% round 0px)' }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: DUR.reveal, ease: EASE }}>
@@ -179,7 +183,7 @@ function Honest({ h }) {
   );
 }
 
-function Deeper({ d }) {
+function Deeper({ d }: { d: DeeperDoc }) {
   const [us, ...them] = d.links;
   return (
     <section className="xvs-sec xvs-deep" aria-labelledby="xvs-deep-h">
@@ -203,9 +207,9 @@ function Deeper({ d }) {
   );
 }
 
-export default function Versus({ doc }) {
+export default function Versus({ doc }: { doc: CompareDoc }) {
   const s = doc.side;
-  const theirs = doc.honest && doc.honest.paras.flat().find((k) => k && k.em && /published this/.test(k.em));
+  const theirs = doc.honest && doc.honest.paras.flat().find((k): k is Em => typeof k !== 'string' && /published this/.test(k.em));
   const hero = s && s.reported.find((r) => r.cells.every((c) => c.v === 'figure'));
   // the switch's label is the lede's own words ("…and where they do differ…")
   const said = /where they (do )?differ/i.exec(doc.lede || '');
@@ -219,7 +223,7 @@ export default function Versus({ doc }) {
             {doc.label && <p className="xvs-meta">{doc.label}</p>}
             <motion.p className="xvs-lede" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: DUR.enter, ease: EASE, delay: 0.35 }}>{doc.lede}</motion.p>
           </div>
-          {hero && <Race row={hero} cols={s.cols} stamp={theirs && theirs.em} />}
+          {s && hero && <Race row={hero} cols={s.cols} stamp={theirs && theirs.em} />}
           {doc.deeper && <div className="xvs-hero-a"><Ask to={doc.deeper.links[0]} big thumb id="compare-model-routing.hero" /></div>}
         </div>
       </section>

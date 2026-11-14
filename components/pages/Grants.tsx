@@ -15,11 +15,13 @@
    + the track chip gliding.
    0 UI hues. The form sends what hanzo.ai sends. Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, FormEvent, KeyboardEvent } from 'react';
 import { motion, AnimatePresence, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, Cta, Field, Tick } from '../kit';
 import Sigil from '../Sigil';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { TRACKS, apply } from './Grants.apply';
+import type { Fields } from './Grants.apply';
 import { track as fire } from '../../lib/track';
 import '../v2/ProgramScale.css';
 import usePhoneAsk from './usePhoneAsk';
@@ -27,17 +29,17 @@ import useEnter from './grants/enter';
 import './Grants.css';
 import './grants/enter.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const STEPS = [
   ['Apply or Contribute', 'Share your open-source PRs, repository, or academic research topic'],
   ['Fast-Track Review', 'Our engineering and research leads review applications weekly'],
   ['Credits & Team Access', 'Receive free API & GPU credits plus full access to Hanzo Team'],
   ['Ship in the Open', 'Publish open code, models, and papers under your own name'],
 ];
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 const TILES = Array.from({ length: 42 }, (_, i) => i);
 /* pixel-resolve blocks, each with a fixed scattered delay (same on server and client) */
-const blocks = (n, span) => Array.from({ length: n }, (_, i) => <span key={i} style={{ '--d': Math.round(((i * 7) % n) * (span / n)) + 'ms' }} />);
+const blocks = (n: number, span: number) => Array.from({ length: n }, (_, i) => <span key={i} style={{ '--d': Math.round(((i * 7) % n) * (span / n)) + 'ms' }} />);
 
 /* the sigil reads its ink once when drawn: a theme flip (the html class) draws it again in the new ink */
 function useTheme() {
@@ -121,7 +123,7 @@ const GETS = [
 ];
 
 /* one row of the ledger: it lights, and its tick draws, as it scrolls into view */
-function Get({ t, d, i, lit }) {
+function Get({ t, d, i, lit }: { t: string; d: string; i: number; lit: (k: number) => void }) {
   const ref = useRef(null);
   const on = useInView(ref, { once: true, amount: 0.6 });
   useEffect(() => { if (on) lit(i + 1); }, [on]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -138,7 +140,7 @@ function Get({ t, d, i, lit }) {
 function Gets() {
   // the head stays beside the ledger and counts the rows as they light: 01 / 04 up to 04 / 04
   const [n, setN] = useState(0);
-  const lit = (k) => setN((v) => Math.max(v, k));
+  const lit = (k: number) => setN((v) => Math.max(v, k));
   return (
     <section className="xp-sec tight xgr-gets" data-enter="pixel-resolve" aria-labelledby="xgr-gets-h">
       <div className="xp-wrap xp-grid">
@@ -166,7 +168,9 @@ function Gets() {
   );
 }
 
-const WAYS = [
+// a way in: key, title, facts line, description, ask, and its own link (label, address)
+type Way = [key: string, title: string, meta: string, text: string, ask: string, more: [label: string, to: string]];
+const WAYS: Way[] = [
   ['oss', 'Open Source Contributor Grants', '1700+ repositories · 38 organizations', 'We always welcome and accept open-source contributors across our repositories on GitHub and git.hanzo.ai. Ship pull requests, maintain SDKs or MCP servers, or build open-source tools powered by Hanzo to receive recurring API, Cloud, and Dev credit grants.', 'Apply as OSS Contributor', ['Explore Repositories', '/open-source']],
   ['academic', 'Academic & PhD Research Grants', 'PhD students · University labs · Independent researchers', 'Investigating foundation models, RLHF/post-training, ML compilers, post-quantum cryptography, or agentic systems? Approved academic researchers receive free API & compute credits and full access to Hanzo Team for their research.', 'Apply for Research Credits', ['Research Access Questionnaire', '/beta/research']],
   ['internship', 'Academic & PhD Research Internships', 'Remote / SF · Year-round cohorts', 'Looking to intern with our research and systems teams during your PhD or graduate studies? Work directly on Zen, Kai, Enso, Hanzo Engine, and Hanzo Dev — with free compute credits, Hanzo Team access, and co-authored publications.', 'Apply for Internship', ['View Internship Role', '/careers/academic-research-intern']],
@@ -175,7 +179,7 @@ const WAYS = [
 /* One sheet of the stack: it pins, and settles back while the next one slides over it. The list's own progress
    drives it (sheet i over i/n to (i+1)/n), since a pinned sheet's own progress stands still. */
 /* Each way's own facts (its meta line, Hanzo's words) as the sheet's object: the first as a figure, the rest as chips. */
-function Facts({ meta }) {
+function Facts({ meta }: { meta: string }) {
   const [first, ...rest] = meta.split(' · ');
   const num = /^[\d,]+/.test(first);
   return (
@@ -188,7 +192,7 @@ function Facts({ meta }) {
 }
 
 /* One sheet: it stamps down once in view, and again wherever it is clicked or tapped (grants/enter.js). */
-function Sheet({ way, i, pick }) {
+function Sheet({ way, i, pick }: { way: Way; i: number; pick: (k: string) => void }) {
   const [k, t, meta, d, cta, [more, to]] = way;
   return (
     <li className="xgr-sheet-li" data-stamp="">
@@ -211,7 +215,7 @@ function Sheet({ way, i, pick }) {
   );
 }
 
-function Ways({ pick }) {
+function Ways({ pick }: { pick: (k: string) => void }) {
   return (
     <section className="xp-sec xp-dark xgr-ways" data-room="dark" data-enter="cover-slide" aria-labelledby="xgr-ways-h">
       <div className="xp-wrap">
@@ -227,39 +231,42 @@ function Ways({ pick }) {
   );
 }
 
-const FIELDS = [
+const FIELDS: [key: keyof Fields, label: string, placeholder: string, type: string, required: boolean][] = [
   ['name', 'Full Name', 'Ada Lovelace', 'text', true],
   ['email', 'Email (.edu or work/personal)', 'ada@university.edu', 'email', true],
   ['affiliation', 'University / Lab / Open Source Project', 'e.g. Stanford AI Lab, MIT CSAIL, or hanzoai/engine', 'text', false],
   ['github', 'GitHub / Forge Profile or PR Links', 'https://github.com/...', 'text', false],
   ['scholar', 'Google Scholar / ArXiv / Personal Website (optional)', 'https://scholar.google.com/...', 'text', false],
 ];
-const EMPTY = { name: '', email: '', affiliation: '', github: '', scholar: '', summary: '' };
+const EMPTY: Fields = { name: '', email: '', affiliation: '', github: '', scholar: '', summary: '' };
 
-function Apply({ track, setTrack }) {
-  const [f, setF] = useState(EMPTY);
+// the arrows move between the program tracks
+const STEP: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1 };
+
+function Apply({ track, setTrack }: { track: string; setTrack: (k: string) => void }) {
+  const [f, setF] = useState<Fields>(EMPTY);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
-  const [err, setErr] = useState(null);
-  const [bad, setBad] = useState({});
+  const [err, setErr] = useState<string | null>(null);
+  const [bad, setBad] = useState<Partial<Record<keyof Fields, boolean>>>({});
   const [offline, setOffline] = useState(false);
   useEffect(() => {
     const f = () => setOffline(!navigator.onLine);
     f(); addEventListener('online', f); addEventListener('offline', f);
     return () => { removeEventListener('online', f); removeEventListener('offline', f); };
   }, []);
-  const form = useRef(null);
-  const on = (k) => (e) => setF((o) => ({ ...o, [k]: e.target.value }));
-  const role = TRACKS.find(([k]) => k === track)[2];
-  const send = async (e) => {
+  const form = useRef<HTMLFormElement>(null);
+  const on = (k: keyof Fields) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setF((o) => ({ ...o, [k]: e.target.value }));
+  const role = TRACKS.find(([k]) => k === track)![2]; // track is always one of TRACKS' keys
+  const send = async (e: FormEvent) => {
     e.preventDefault();
     if (busy) return;
     const r = apply(track, f);
     if (r.error) {
       const b = { name: !f.name.trim(), email: !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim()), summary: !f.summary.trim() };
       setBad(b); setErr(r.error);
-      const first = ['name', 'email', 'summary'].find((k) => b[k]);
-      form.current?.querySelector(`[name="${first}"]`)?.focus();
+      const first = (['name', 'email', 'summary'] as const).find((k) => b[k]);
+      form.current?.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
       return;
     }
     setBad({}); setErr(null); setBusy(true);
@@ -270,14 +277,14 @@ function Apply({ track, setTrack }) {
       setDone(true);
     } catch (e) { fire('grant_application_submitted', { track, role, error: String(e) }); setErr('Your application did not reach us. Please try again, or email grants@hanzo.ai.'); } finally { setBusy(false); }
   };
-  const keys = (e) => {
-    const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+  const keys = (e: KeyboardEvent) => {
+    const d = STEP[e.key];
     if (!d) return;
     e.preventDefault();
     const i = (TRACKS.findIndex(([k]) => k === track) + d + 3) % 3;
     setTrack(TRACKS[i][0]); document.getElementById('xgr-t-' + i)?.focus();
   };
-  const label = TRACKS.find(([k]) => k === track)[1];
+  const label = TRACKS.find(([k]) => k === track)![1];
   const shown = [['Program Track', label], ['Full Name', f.name], ['Email (.edu or work/personal)', f.email], ['University / Lab / Open Source Project', f.affiliation], ['GitHub / Forge Profile or PR Links', f.github], ['Google Scholar / ArXiv / Personal Website (optional)', f.scholar], ['Research Proposal, OSS Contributions, or Internship Goals', f.summary]];
   return (
     <section className="xp-sec xgr-apply" id="apply" data-enter="shrink-to-card" aria-labelledby="xgr-apply-h">
@@ -319,7 +326,7 @@ function Apply({ track, setTrack }) {
                 <Field key={k} className={'xgr-f ' + k} label={label} name={k} type="text" inputMode={type === 'email' ? 'email' : undefined} placeholder={ph} aria-required={req || undefined} aria-invalid={bad[k] ? 'true' : undefined} value={f[k]} onChange={on(k)} autoComplete={k === 'name' ? 'name' : k === 'email' ? 'email' : 'off'} />
               ))}
               <Field as="textarea" className="xgr-f summary" label="Research Proposal, OSS Contributions, or Internship Goals" name="summary" rows={4} aria-required="true" aria-invalid={bad.summary ? 'true' : undefined} placeholder="Describe the open-source repositories you contribute to, your PhD / academic research topic, and how you plan to use Hanzo API credits, GPU compute, and Hanzo Team." value={f.summary} onChange={on('summary')} />
-              {(err || offline) && <p className="xgr-err" role="alert">{offline || err.includes('grants@hanzo.ai') ? <>Your application did not reach us. Please try again, or email <a href="mailto:grants@hanzo.ai">grants@hanzo.ai</a>.</> : err}</p>}
+              {(err || offline) && <p className="xgr-err" role="alert">{offline || err?.includes('grants@hanzo.ai') ? <>Your application did not reach us. Please try again, or email <a href="mailto:grants@hanzo.ai">grants@hanzo.ai</a>.</> : err}</p>}
               <div className="xgr-send-row">
                 <Cta type="submit" id="grants.apply" busy={busy} disabled={offline} className="xp-cta xgr-send">Submit Grant Application</Cta>
                 <A to="https://hanzo.ai/privacy" className="xgr-priv">Privacy Policy</A>
@@ -334,7 +341,7 @@ function Apply({ track, setTrack }) {
 
 export default function Grants() {
   usePhoneAsk();
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useEnter(root);
   const [track, setTrack] = useState('oss');
   return (

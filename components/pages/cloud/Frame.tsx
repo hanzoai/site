@@ -3,21 +3,24 @@
    "Get X" block, and the hooks that run a demo only while it is seen. Each page brings its own hero visual and composes
    its own sections, so no two pages share a layout; these parts are the words they have in common. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Rise, Copy } from '../../ui';
 import { A, Go, More } from '../../kit';
 import './Frame.css';
 
-/* [ref, live, calm]: live is true while the element is on screen and motion is allowed. */
-export function useLive(amount = 0.2) {
-  const ref = useRef(null);
+/* [ref, live, calm]: live is true while the element is on screen and motion is allowed. T defaults to never so the ref
+   fits whichever element it is put on; name the element where .current is read (useLive<HTMLDivElement>()). */
+export function useLive<T extends Element = never>(amount = 0.2) {
+
+  const ref = useRef<T>(null);
   const seen = useInView(ref, { amount });
   const calm = useReducedMotion();
-  return [ref, seen && !calm, calm];
+  return [ref, seen && !calm, calm] as const;
 }
 
 /* Calls fn every ms while run is true (the latest fn, so it can read fresh state). */
-export function useEvery(ms, run, fn) {
+export function useEvery(ms: number, run: boolean, fn: () => void) {
   const f = useRef(fn);
   f.current = fn;
   useEffect(() => {
@@ -28,13 +31,13 @@ export function useEvery(ms, run, fn) {
 }
 
 /* A requestAnimationFrame loop, fn(t seconds, dt), only while run is true. */
-export function useFrame(run, fn) {
+export function useFrame(run: boolean, fn: (t: number, dt: number) => void) {
   const f = useRef(fn);
   f.current = fn;
   useEffect(() => {
     if (!run) return;
     let raf = 0, last = performance.now();
-    const loop = (now) => {
+    const loop = (now: number) => {
       f.current(now / 1000, Math.min(0.05, (now - last) / 1000));
       last = now;
       raf = requestAnimationFrame(loop);
@@ -45,7 +48,7 @@ export function useFrame(run, fn) {
 }
 
 /* A step counter that advances every ms while live; returns [step, setStep(byHand)] and pauses once the hand has chosen. */
-export function useSteps(n, ms, live) {
+export function useSteps(n: number, ms: number, live: boolean): [number, (i: number) => void, boolean] {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   useEffect(() => {
@@ -56,17 +59,31 @@ export function useSteps(n, ms, live) {
   return [at, (i) => { setAt(i); setMine(true); }, mine];
 }
 
-const lineIn = (t, d, key) => (
+const lineIn = (t: ReactNode, d: number, key: number) => (
   <span className="x-line" key={key}>
     <motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: d }}>{t}</motion.span>
   </span>
 );
 
-const fadeUp = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const fadeUp = (d: number) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 
 /* The hero shell. look: split (copy left), flip (visual left), stack (copy above a wide visual), over (copy on the visual).
    title is a string or an array of lines; sub is a second, softer line under it (the live pages' subtitles). */
-export function Hero({ kick, icon, title, sub, lede, acts = [], children, look = 'split', note, dark, className = '' }) {
+interface HeroProps {
+  kick?: ReactNode;
+  icon?: ReactNode;
+  title: string | string[];
+  sub?: ReactNode;
+  lede?: ReactNode;
+  acts?: [string, string][];
+  children?: ReactNode;
+  look?: string;
+  note?: ReactNode;
+  dark?: boolean;
+  className?: string;
+}
+
+export function Hero({ kick, icon, title, sub, lede, acts = [], children, look = 'split', note, dark, className = '' }: HeroProps) {
   const lines = Array.isArray(title) ? title : [title];
   return (
     <section className={`cf-hero ${look} ${dark ? 'dark' : ''} ${className}`} data-room={dark ? 'dark' : undefined}>
@@ -92,7 +109,7 @@ export function Hero({ kick, icon, title, sub, lede, acts = [], children, look =
 }
 
 /* "Paste and ship": the prompt that hands this product to any agent. */
-export function Paste({ name, prompt, api, dark, className = '' }) {
+export function Paste({ name, prompt, api, dark, className = '' }: { name: ReactNode; prompt: string; api?: ReactNode; dark?: boolean; className?: string }) {
   return (
     <Rise className={`cf-paste ${dark ? 'dark' : ''} ${className}`}>
       <div className="cf-paste-h">
@@ -112,7 +129,7 @@ export function Paste({ name, prompt, api, dark, className = '' }) {
 }
 
 /* Light syntax colour for shell, python and JSON lines: comments, strings, the command word. */
-function hl(line, lang) {
+function hl(line: string, lang?: string) {
   if (/^\s*(#|\/\/)/.test(line)) return <span className="c">{line}</span>;
   const parts = line.split(/("[^"]*"|'[^']*')/);
   return parts.map((p, i) => {
@@ -128,13 +145,15 @@ function hl(line, lang) {
 }
 
 /* A line with one phrase picked out (mark), the rest coloured as usual. */
-function marked(l, lang, mark) {
+function marked(l: string, lang: string | undefined, mark?: string) {
   if (!mark || !l.includes(mark)) return hl(l, lang);
   return l.split(mark).flatMap((x, i) => [i > 0 && <mark key={'m' + i} className="cf-mark">{mark}</mark>, <span key={i}>{hl(x, lang)}</span>]);
 }
 
 /* A code pane: one or more tabs [{ k: 'curl', label, code, lang }]; every tab's code is in the page, the chosen one shown. */
-export function Code({ tabs, title, light, mark, className = '' }) {
+export interface CodeTab { k: string; label?: ReactNode; code: string; lang?: string }
+
+export function Code({ tabs, title, light, mark, className = '' }: { tabs: CodeTab[]; title?: string; light?: boolean; mark?: string; className?: string }) {
   const [at, setAt] = useState(0);
   const cur = tabs[at];
   return (
@@ -164,7 +183,7 @@ export function Code({ tabs, title, light, mark, className = '' }) {
 }
 
 /* Related products, as a row of links. */
-export function Related({ items, title = 'Related capabilities', className = '' }) {
+export function Related({ items, title = 'Related capabilities', className = '' }: { items: [string, string, string?][]; title?: string; className?: string }) {
   return (
     <div className={'cf-related ' + className}>
       <p className="cf-related-k">{title}</p>
@@ -180,7 +199,20 @@ export function Related({ items, title = 'Related capabilities', className = '' 
 const Gh = () => <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
 
 /* The closing block: Get X, its line, its licence and source, and where to run it. */
-export function Get({ name, tag, repo = ['hanzoai', 'https://github.com/hanzoai'], stars, license = 'Apache-2.0', deploy = 'https://platform.hanzo.ai/deploy', self, children, mark, dark }) {
+interface GetProps {
+  name: ReactNode;
+  tag?: ReactNode;
+  repo?: [string, string] | null;
+  stars?: ReactNode;
+  license?: string | null;
+  deploy?: string | null;
+  self?: string;
+  children?: ReactNode;
+  mark?: ReactNode;
+  dark?: boolean;
+}
+
+export function Get({ name, tag, repo = ['hanzoai', 'https://github.com/hanzoai'], stars, license = 'Apache-2.0', deploy = 'https://platform.hanzo.ai/deploy', self, children, mark, dark }: GetProps) {
   return (
     <section className={'cf-get' + (dark ? ' dark' : '')} data-room={dark ? 'dark' : undefined}>
       <div className="x-wrap cf-get-in">
@@ -204,7 +236,7 @@ export function Get({ name, tag, repo = ['hanzoai', 'https://github.com/hanzoai'
 }
 
 /* A section head that is just the page's words, left or centred. */
-export function Head({ kick, title, lede, center, dark, className = '' }) {
+export function Head({ kick, title, lede, center, dark, className = '' }: { kick?: ReactNode; title: ReactNode; lede?: ReactNode; center?: boolean; dark?: boolean; className?: string }) {
   return (
     <header className={`cf-head ${center ? 'center' : ''} ${dark ? 'dark' : ''} ${className}`}>
       {kick && <Rise as="p" className="x-kick" y={10}>{kick}</Rise>}
@@ -215,7 +247,7 @@ export function Head({ kick, title, lede, center, dark, className = '' }) {
 }
 
 /* The live pages' example console: this product's sidebar links, four example projects and their state. */
-const PROJECTS = (cap) => [
+const PROJECTS = (cap: string): [string, string, string?][] => [
   ['gateway', 'Ready', cap],
   ['payments-api', 'Ready'],
   ['checkout-web', 'Building', 'A build is running from the last commit on main.'],
@@ -224,7 +256,19 @@ const PROJECTS = (cap) => [
 const ICONS = ['M8 2v4M8 6 4 10M8 6l4 4M4 10v4M12 10v4', 'M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13', 'M3 3h3v3H3zM10 10h3v3h-3zM6 4.5h3.5v5.5', 'M2.5 3h11v4h-11zM2.5 9h11v4h-11z', 'M8 2 2.5 5v6L8 14l5.5-3V5zM2.5 5 8 8l5.5-3M8 8v6', 'M2 12l4-4 3 3 5-6', 'M5 2.5h6M3.5 6h9M2 9.5h12v4H2z', 'M8 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM2.5 14c.8-2.6 3-4 5.5-4s4.7 1.4 5.5 4'];
 
 /* side: [[label, href]], the first being this product; cap: the gateway row's line on this page; light: a white window. */
-export function Console({ name, side, api, cap = 'Every request enters here, so the limiter does too.', host = true, light, session, className = '' }) {
+interface ConsoleProps {
+  name: ReactNode;
+  side: [string, string][];
+  api?: ReactNode;
+  cap?: string;
+  host?: boolean;
+  light?: boolean;
+  session?: ReactNode[];
+  className?: string;
+}
+
+export function Console({ name, side, api, cap = 'Every request enters here, so the limiter does too.', host = true, light, session, className = '' }: ConsoleProps) {
+
   const ROWS = PROJECTS(cap);
   const [at, setAt] = useState(0);
   const ref = useRef(null);

@@ -5,7 +5,7 @@ export const SUPPORT = 'support@hanzo.ai';
 const PULL = new RegExp(`^https://github\\.com/(${ORGS.join('|')})/[A-Za-z0-9._-]+/pull/\\d+/?$`);
 
 // a pull request address as people paste it: no scheme, www, a tab (/files, /commits, /checks), a query, a hash or a trailing slash
-export const tidy = (u) => {
+export const tidy = (u: string) => {
   let p = u.trim().replace(/[?#].*$/, '').replace(/\/(files|commits|checks)\/?$/, '').replace(/\/+$/, '');
   if (/^(www\.)?github\.com\//i.test(p)) p = 'https://' + p;
   return p.replace(/^http:\/\//i, 'https://').replace(/^https:\/\/www\./i, 'https://');

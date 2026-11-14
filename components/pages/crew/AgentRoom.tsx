@@ -22,6 +22,7 @@
 // Order: Crew = split (headline, team + find, roll call) → Bots room → "Or build your own."; SDK = split (headline, install, three pillars) → code room → parts → close
 // Beyond: start in one step: type a need and the agent whose own role matches takes the baton (Enter opens the chat); the SDK's own pip or cargo line, ready to copy
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { ElementType, KeyboardEvent, ReactNode, RefObject } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useInView } from 'motion/react';
 import { Copy } from '../../ui';
@@ -30,16 +31,19 @@ import { A, Cta, CodeBlock } from '../../kit';
 import Sigil from '../../Sigil';
 import { href as route } from '../../../lib/route';
 import './AgentRoom.css';
+import type { AgentsDoc, CodeSection, ConsoleDoc, Fold, GetSection, Link, PartsSection, Pic, RoomSection, RosterSection, Section } from './agentsData.types';
+
+type Agent = RosterSection['agents'][number];
 
 // Hanzo's own pictures, copied into public/agents/ (the faces keep their paths; the room's screenshots sit in agents/room/)
-const ASSET = (p) => (p && p.startsWith('/shots/') ? '/agents/room/' + p.slice(7) : p);
-const MOVE = [0.4, 0, 0.2, 1]; // the deck's ease-in-out, for things that move and stay (no springs)
+const ASSET = (p: string) => (p && p.startsWith('/shots/') ? '/agents/room/' + p.slice(7) : p);
+const MOVE: [number, number, number, number] = [0.4, 0, 0.2, 1]; // the deck's ease-in-out, for things that move and stay (no springs)
 const INK = { duration: DUR.fade, ease: EASE };
 /* entrances (docs/MOTION-MAP.md rule 7): each main section arrives its own way, once, when it first comes into view.
    The server HTML is the final state; the start pose is CSS under html.js on [data-ent] without [data-in], and this
    hook sets data-in straight on the element (no React state, so nothing differs at hydration). Reduced motion: none. */
 function useEnter() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -50,13 +54,15 @@ function useEnter() {
   }, []);
   return ref;
 }
-function Enter({ as: Tag = 'div', kind, className = '', children, ...rest }) {
+type EnterProps = { as?: ElementType; kind: string; className?: string; children?: ReactNode; [attr: string]: unknown };
+
+function Enter({ as: Tag = 'div', kind, className = '', children, ...rest }: EnterProps) {
   const ref = useEnter();
   return <Tag ref={ref} data-ent={kind} className={className} {...rest}>{children}</Tag>;
 }
 /* count-roll: each digit is a strip 0–9 that rolls up to its value as the section arrives (the real figure is in the
    accessible text beside it) */
-function Roll9({ text, className = '' }) {
+function Roll9({ text, className = '' }: { text: string; className?: string }) {
   return (
     <span className={'xag-roll ' + className}>
       <span className="x-sr">{text}</span>
@@ -68,7 +74,7 @@ function Roll9({ text, className = '' }) {
 }
 
 /* client-only facts, read after mount so the server HTML and the first client render agree */
-function useMedia(q) {
+function useMedia(q: string) {
   const [on, setOn] = useState(false);
   useEffect(() => {
     const m = matchMedia(q);
@@ -81,41 +87,41 @@ function useMedia(q) {
 const useCalm = () => useMedia('(prefers-reduced-motion: reduce)');
 
 /* the baton: an index that moves on by itself while its box is on screen and nobody holds it */
-function useBaton(n, ms, box, calm) {
+function useBaton(n: number, ms: number, box: RefObject<Element | null>, calm: boolean) {
   const live = useInView(box, { amount: 0.3 });
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   useEffect(() => { // one full round each time it comes into view, then it rests where it started
     if (!live || held || n < 2 || calm) return;
-    let k = 0, t = 0;
+    let k = 0, t: ReturnType<typeof setTimeout> | undefined;
     const step = () => { setAt((a) => (a + 1) % n); k += 1; if (k < n) t = setTimeout(step, ms); }; // one round, then rest
     t = setTimeout(step, 650); // something moves within the first second
     return () => clearTimeout(t);
   }, [live, held, n, ms, calm]);
-  return { at, take: (i) => { setAt(i); setHeld(true); }, free: () => setHeld(false) };
+  return { at, take: (i: number) => { setAt(i); setHeld(true); }, free: () => setHeld(false) };
 }
 
-function Kick({ children, className = '' }) { return children ? <p className={'xag-kick x-mono ' + className}>{children}</p> : null; }
+function Kick({ children, className = '' }: { children?: ReactNode; className?: string }) { return children ? <p className={'xag-kick x-mono ' + className}>{children}</p> : null; }
 
 /* ---------- the signature, split screen: the live object holds still while the words beside it scroll and change it ----------
    Desktop: two columns, the object sticky in the right eight, the steps scrolling past in the left five. Phone: the first
    step (the headline) reads first, then the object sticks under the header while the other steps scroll up beneath it.
    The step whose middle crosses the screen's middle line is the one in charge; `still(step)` draws the object for it.
    No scroll scrub: each step is a state, changed by a short tween. Server HTML = step 0, so hydration moves nothing. */
-function useLine(refs, n, set) {
+function useLine(refs: RefObject<(HTMLElement | null)[]>, n: number, set: (i: number) => void) {
   useEffect(() => {
-    const els = refs.current.slice(0, n).filter(Boolean);
+    const els = refs.current.slice(0, n).filter((el): el is HTMLElement => !!el);
     if (!els.length || typeof IntersectionObserver === 'undefined') return;
     const io = new IntersectionObserver((list) => {
-      for (const e of list) if (e.isIntersecting) set(+e.target.dataset.k);
+      for (const e of list) if (e.isIntersecting) set(+(e.target as HTMLElement).dataset.k!);
     }, { rootMargin: '-50% 0px -50% 0px' });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [refs, n, set]);
 }
 
-function Split({ steps, still, art, step, setStep, kind }) {
-  const refs = useRef([]);
+function Split({ steps, still, art, step, setStep, kind }: { steps: ReactNode[]; still: ReactNode; art: ReactNode; step: number; setStep: (i: number) => void; kind: string }) {
+  const refs = useRef<(HTMLElement | null)[]>([]);
   useLine(refs, steps.length, setStep);
   const [first, ...rest] = steps;
   return (
@@ -139,7 +145,7 @@ function Split({ steps, still, art, step, setStep, kind }) {
 
 /* the headline cuts into its line on arrival. The server HTML carries it set (readable with JS off and before hydration);
    the masked start pose and the cut-in are CSS under html.js, so they run from the first paint, not after hydration */
-function Title({ f }) {
+function Title({ f }: { f: Fold }) {
   return (
     <>
       <h1 id="xag-h1" className="xag-h1" data-morph-target="">
@@ -153,7 +159,7 @@ function Title({ f }) {
 
 const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 /* one solid ask (the first, in Hanzo's words); every other action is a text link with an arrow */
-function Acts({ list, big, solid = true, thumb, id }) {
+function Acts({ list, big, solid = true, thumb, id }: { list: Link[] | null | undefined; big?: boolean; solid?: boolean; thumb?: boolean; id?: string }) {
   if (!list || !list.length) return null;
   return (
     <div className="xag-acts" {...(solid && !thumb ? { 'data-ask-hide': '' } : {})}>
@@ -168,7 +174,7 @@ function Acts({ list, big, solid = true, thumb, id }) {
 /* each agent's own mark on the ring, drawn under Hanzo's portrait (and in its place wherever the picture cannot load):
    the initial and a dot on a hairline orbit at the agent's own place on the ring, so no two marks are alike. The seat
    number lives only in the hub ("04 / 10"); the room list and the close use type, not a second set of coins */
-function Face({ a, i = 0, n = 10 }) {
+function Face({ a, i = 0, n = 10 }: { a: { name: string; img?: Pic }; i?: number; n?: number }) {
   const t = (i / n) * Math.PI * 2;
   return (
     <span className="xag-face" data-tone={i % 2 ? 'b' : 'a'} aria-hidden="true">
@@ -182,13 +188,15 @@ function Face({ a, i = 0, n = 10 }) {
   );
 }
 
-function Ring({ r, b }) {
-  const box = useRef(null);
+type Held = ReturnType<typeof useBaton> & { hit: number[] | null };
+
+function Ring({ r, b }: { r: RosterSection; b: Held }) {
+  const box = useRef<HTMLDivElement>(null);
   const cur = r.agents[b.at];
   const step = 360 / r.agents.length;
   const moved = useRef(false); // the first name is drawn as it stands (server and first paint agree); later turns slide in
   useEffect(() => { if (b.at !== 0) moved.current = true; }, [b.at]);
-  const come = (y) => (moved.current || b.at !== 0 ? { y, opacity: 0 } : false);
+  const come = (y: number) => (moved.current || b.at !== 0 ? { y, opacity: 0 } : false);
   return (
     <div className="xag-ring" ref={box} onMouseLeave={b.free} style={{ '--n': r.agents.length }}>
       <span className="xag-orbit" aria-hidden="true" />
@@ -209,10 +217,10 @@ function Ring({ r, b }) {
   );
 }
 
-function Find({ r, b, q, setQ }) {
+function Find({ r, b, q, setQ }: { r: RosterSection; b: Held; q: string; setQ: (q: string) => void }) {
   const router = useRouter();
   const top = b.hit && b.hit.length ? r.agents[b.hit[0]] : null;
-  const inp = useRef(null);
+  const inp = useRef<HTMLInputElement>(null);
   // the kit Field's markup and look, with a fixed id (its useId drifted between server and client here) and its own clear
   return (
     <div className="xag-find">
@@ -236,8 +244,8 @@ function Find({ r, b, q, setQ }) {
 
 /* the roll call, the split's last step: the crew in type, each name a door to its chat with its role underneath. As each
    row crosses the middle of the screen it takes the turn on the ring that holds still beside it */
-function Roll({ r, roll, setRoll, label }) {
-  const refs = useRef([]);
+function Roll({ r, roll, setRoll, label }: { r: RosterSection; roll: number; setRoll: (i: number) => void; label: string }) {
+  const refs = useRef<(HTMLElement | null)[]>([]);
   useLine(refs, r.agents.length, setRoll);
   return (
     <ul className="xag-mates" aria-label={label}>
@@ -253,9 +261,8 @@ function Roll({ r, roll, setRoll, label }) {
   );
 }
 
-function Crew({ doc, roster, room, build }) {
-  const f = doc.fold;
-  const box = useRef(null);
+function Crew({ doc, f, roster, room, build }: { doc: AgentsDoc; f: Fold; roster: RosterSection; room: RoomSection | undefined; build: Link | null }) {
+  const box = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   const [step, setStep] = useState(0);
   const [roll, setRoll] = useState(-1);
@@ -301,11 +308,12 @@ function Crew({ doc, roster, room, build }) {
 }
 
 /* the Bots room, the crew's one dark room: Hanzo's screenshot, light or dark; the room is drawn from its own description underneath */
-function Room({ s, agents }) {
+function Room({ s, agents }: { s: RoomSection; agents: Agent[] }) {
+  const sketch = s.sketch;
   const [night, setNight] = useState(true);
   const [dark, light] = s.shots.length > 1 ? s.shots : [s.shots[0], s.shots[0]];
   const shot = night ? dark : light;
-  const to = s.sketch ? agents.findIndex((a) => a.name === s.sketch.to) : -1;
+  const to = sketch ? agents.findIndex((a) => a.name === sketch.to) : -1;
   const who = agents[to] || agents[0];
   // the window keeps the screenshot's shape only once Hanzo's picture has actually loaded; until then (or if it never
   // does) it is as tall as the room drawn from the picture's own description, so no empty pane
@@ -335,13 +343,13 @@ function Room({ s, agents }) {
             </button>
           </div>
           <div className="xag-shot-i" data-pic={pic || undefined}>
-            {s.sketch && (
+            {sketch && (
               <div className="xag-sk" aria-hidden="true">
-                <aside>{agents.slice(0, 7).map((a) => <span key={a.name} data-on={a.name === s.sketch.to || undefined}><i className="xag-sk-dot" />{a.name}</span>)}</aside>
+                <aside>{agents.slice(0, 7).map((a) => <span key={a.name} data-on={a.name === sketch.to || undefined}><i className="xag-sk-dot" />{a.name}</span>)}</aside>
                 <div className="xag-sk-m">
-                  <div className="xag-sk-h"><p>{s.sketch.to}</p>{who.role && <span>{who.role}</span>}</div>
-                  <ul>{s.sketch.runs.map((r, i) => <li key={r} style={{ '--i': i }}><span>{r}</span><em className="x-mono">done</em></li>)}</ul>
-                  <p className="xag-sk-box">{s.sketch.to}</p>
+                  <div className="xag-sk-h"><p>{sketch.to}</p>{who.role && <span>{who.role}</span>}</div>
+                  <ul>{sketch.runs.map((r, i) => <li key={r} style={{ '--i': i }}><span>{r}</span><em className="x-mono">done</em></li>)}</ul>
+                  <p className="xag-sk-box">{sketch.to}</p>
                 </div>
               </div>
             )}
@@ -358,8 +366,8 @@ function Room({ s, agents }) {
 /* ---------- SDK: the console ---------- */
 /* drive: null = the conversation plays by itself (the hero step); a number = the split's scrolling step sets how many
    turns are on screen, forwards and back */
-function Console({ c, drive = null }) {
-  const box = useRef(null);
+function Console({ c, drive = null }: { c: ConsoleDoc; drive?: number | null }) {
+  const box = useRef<HTMLElement>(null);
   const live = useInView(box, { amount: 0.15 }); // starts as soon as it shows, so the phone's first screen moves too
   const calm = useCalm();
   const [shown, setShown] = useState(c.turns.length);
@@ -367,7 +375,7 @@ function Console({ c, drive = null }) {
   useEffect(() => {
     if (drive !== null) { setThink(false); setShown(Math.min(c.turns.length, drive)); return; }
     if (!live || calm) { setShown(c.turns.length); setThink(false); return; }
-    let i = 0, t = 0;
+    let i = 0, t: ReturnType<typeof setTimeout> | undefined;
     const next = () => {
       if (i >= c.turns.length) return; // the conversation settles; it plays again only when it comes back into view
       const agent = c.turns[i].who !== 'you';
@@ -410,15 +418,15 @@ function Console({ c, drive = null }) {
   );
 }
 
-function Install({ lines }) {
+function Install({ lines }: { lines: string[] }) {
   const [at, setAt] = useState(0);
-  const tool = (l) => l.split(' ')[0];
+  const tool = (l: string) => l.split(' ')[0];
   return (
     <div className="xag-inst">
       <div role="radiogroup" aria-label="Install with" className="xag-inst-r">
         {lines.map((l, i) => (
           <button key={l} type="button" role="radio" aria-checked={i === at} tabIndex={i === at ? 0 : -1} onClick={() => setAt(i)}
-            onKeyDown={(e) => { if (/Arrow(Right|Left|Up|Down)/.test(e.key)) { e.preventDefault(); const n = (at + 1) % lines.length; setAt(n); e.currentTarget.parentNode.children[n]?.focus(); } }}>
+            onKeyDown={(e) => { if (/Arrow(Right|Left|Up|Down)/.test(e.key)) { e.preventDefault(); const n = (at + 1) % lines.length; setAt(n); (e.currentTarget.parentElement?.children[n] as HTMLElement | undefined)?.focus(); } }}>
             {i === at && <motion.i layoutId="xag-inst-ink" transition={INK} />}<span>{tool(l)}</span>
           </button>
         ))}
@@ -429,7 +437,7 @@ function Install({ lines }) {
   );
 }
 
-function Head({ s, className = '' }) {
+function Head({ s, className = '' }: { s: { h2?: string; eyebrow?: string; lede?: string }; className?: string }) {
   return (
     <div className={'xag-head ' + className}>
       {s.h2 && <h2 className="xag-h2">{s.h2}</h2>}
@@ -441,16 +449,17 @@ function Head({ s, className = '' }) {
 
 /* the parts, one open at a time: the titles are the index, the open one shows its paragraph, and the contour beside it
    is redrawn from that part's own numbers (its place and its length), so the picture changes with the part */
-function Spec({ s, seed }) {
+function Spec({ s, seed }: { s: PartsSection; seed: string }) {
   const [open, setOpen] = useState(0);
   const n = s.cards.length;
-  const pad = (k) => String(k).padStart(2, '0');
-  const key = (e, i) => {
-    const to = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: n - 1 }[e.key];
+  const pad = (k: number) => String(k).padStart(2, '0');
+  const key = (e: KeyboardEvent<HTMLButtonElement>, i: number) => {
+    const moves: Record<string, number> = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: n - 1 };
+    const to = moves[e.key];
     if (to === undefined) return;
     e.preventDefault();
     const k = (to + n) % n;
-    e.currentTarget.closest('ol').querySelectorAll('button')[k]?.focus();
+    e.currentTarget.closest('ol')?.querySelectorAll('button')[k]?.focus();
   };
   return (
     <section className="xag-sec xag-spec">
@@ -485,7 +494,7 @@ function Spec({ s, seed }) {
 }
 
 /* the code, in the SDK's one dark room: lines land one after another when it arrives */
-function Code({ s }) {
+function Code({ s }: { s: CodeSection }) {
   const src = s.lines.map((l) => l.map((x) => x[1]).join('')).join('\n');
   return (
     // invert-flash: the graphite room arrives as its negative for a beat, then turns dark
@@ -498,7 +507,7 @@ function Code({ s }) {
   );
 }
 
-function Close({ s, get, ask }) {
+function Close({ s, get, ask }: { s: { h2: string; lede?: string; actions: Link[] }; get?: GetSection | null; ask?: Link[] }) {
   return (
     // count-roll: as the close arrives, the licence's version rolls up to its figure
     <Enter as="section" kind="count-roll" className="xag-sec xag-close">
@@ -525,9 +534,8 @@ function Close({ s, get, ask }) {
   );
 }
 
-function Sdk({ doc }) {
-  const f = doc.fold;
-  const by = (k) => doc.sections.filter((s) => s.k === k);
+function Sdk({ doc, f }: { doc: AgentsDoc; f: Fold }) {
+  const by = <K extends Section['k']>(k: K) => doc.sections.filter((s): s is Extract<Section, { k: K }> => s.k === k);
   const nums = [doc.sections.length, ...(f.console ? f.console.turns.map((t) => t.text.length) : []), f.through.length];
   const [lead, ...rest] = f.lede;
   const [step, setStep] = useState(0);
@@ -582,14 +590,16 @@ function Sdk({ doc }) {
   );
 }
 
-export default function AgentRoom({ doc }) {
-  const roster = doc.sections.find((s) => s.k === 'roster');
+export default function AgentRoom({ doc }: { doc: AgentsDoc }) {
+  const f = doc.fold;
+  if (!f) return null;
+  const roster = doc.sections.find((s): s is RosterSection => s.k === 'roster');
   return (
     <main className="xag" data-kind={roster ? 'crew' : 'sdk'}>
       <div className="xag-first" aria-hidden="true" />
       {roster
-        ? <Crew doc={doc} roster={roster} room={doc.sections.find((s) => s.k === 'room')} build={roster.more} />
-        : <Sdk doc={doc} />}
+        ? <Crew doc={doc} f={f} roster={roster} room={doc.sections.find((s): s is RoomSection => s.k === 'room')} build={roster.more} />
+        : <Sdk doc={doc} f={f} />}
     </main>
   );
 }

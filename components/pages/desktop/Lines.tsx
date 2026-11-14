@@ -4,12 +4,15 @@
    (reduced motion only changes the transition to an instant one, so there is no hydration mismatch), and with JS off
    DesktopPage.css sets the lines in place (html:not(.js)). Transform only. */
 import { useRef } from 'react';
+import type { ElementType } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-export default function Lines({ lines, as = 'h2', className = '', now = false, delay = 0, id }) {
-  const ref = useRef(null);
+type LinesProps = { lines: string[]; as?: ElementType; className?: string; now?: boolean; delay?: number; id?: string };
+
+export default function Lines({ lines, as = 'h2', className = '', now = false, delay = 0, id }: LinesProps) {
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const calm = useReducedMotion();
   const go = now || seen || calm;

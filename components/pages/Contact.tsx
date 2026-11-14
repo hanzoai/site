@@ -22,6 +22,7 @@
    Band's hover; the opacity-0 and inert server states that hid three routes with JS off.
    Every word and link is Hanzo's. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { KeyboardEvent } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion } from 'motion/react';
 import { A, Go, Band } from '../kit';
 import { copyText } from '../ui';
@@ -33,8 +34,8 @@ import '../v2/vc-type.css';
 import './company/deck.css';
 import './Contact.css';
 
-const EM = [0.16, 1, 0.3, 1]; // deck ease-emphasis (arrivals)
-const IO = [0.4, 0, 0.2, 1]; // deck ease-in-out (things that move and stay)
+const EM: [number, number, number, number] = [0.16, 1, 0.3, 1]; // deck ease-emphasis (arrivals)
+const IO: [number, number, number, number] = [0.4, 0, 0.2, 1]; // deck ease-in-out (things that move and stay)
 const SWING = { duration: 0.4, ease: EM }; // the plug lifts and seats: ease-emphasis, no spring, no overshoot
 const LINES = [
   { k: 'Sales', go: 'Talk to sales' },
@@ -61,9 +62,9 @@ function useGo() {
 
 /* Copy hello@hanzo.ai: the icon turns into a drawn tick and a visible "Copied" slides out beside it (role=status), only
    when the copy really happened (clipboard API, then the select-and-copy fallback phones need; the kit's chime). */
-function CopyMail({ text }) {
+function CopyMail({ text }: { text: string }) {
   const [ok, setOk] = useState(false);
-  const t = useRef(0);
+  const t = useRef<ReturnType<typeof setTimeout> | 0>(0);
   useEffect(() => () => clearTimeout(t.current), []);
   return (
     <span className="xct-cpw">
@@ -82,11 +83,11 @@ function CopyMail({ text }) {
 }
 
 // the flow's progress: two marks, the current one filled (no words)
-const Dots = ({ n }) => <span className="xct-dots" aria-hidden="true">{[0, 1].map((k) => <i key={k} className={k === n ? 'on' : ''} />)}</span>;
+const Dots = ({ n }: { n: number }) => <span className="xct-dots" aria-hidden="true">{[0, 1].map((k) => <i key={k} className={k === n ? 'on' : ''} />)}</span>;
 
 const Arr = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-function Route({ i }) {
+function Route({ i }: { i: number }) {
   if (i === 0) return (
     <>
       <h2 className="xct-rh">Bring Hanzo to your company.</h2>
@@ -130,23 +131,23 @@ function Route({ i }) {
    Desktop: once the headline has landed, the cable alone sweeps the four sockets once and lands back on Sales. Then
    it hangs and sways a little (the hero's one continuous mover), and leans toward a jack you point at. Pointer or
    focus on the panel ends the sweep at once. The plug, the nub and the wire are one drawing. */
-function Panel({ go }) {
+function Panel({ go }: { go: boolean }) {
   const [at, setAt] = useState(0);
   const [cab, setCab] = useState(0);
   const [held, setHeld] = useState(false); // the visitor is here: no demo
   const [hyd, setHyd] = useState(false);
   const [wide, setWide] = useState(true);
   const calm = useReducedMotion();
-  const box = useRef(null);
-  const row = useRef(null);
-  const plug = useRef(null);
-  const jacks = useRef([]);
-  const wire = useRef(null);
-  const nub = useRef(null);
-  const geo = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
+  const row = useRef<HTMLDivElement>(null);
+  const plug = useRef<HTMLSpanElement>(null);
+  const jacks = useRef<(HTMLButtonElement | null)[]>([]);
+  const wire = useRef<SVGPathElement>(null);
+  const nub = useRef<SVGGElement>(null);
+  const geo = useRef<{ px: number; py: number; js: number[][] } | null>(null);
   const cabRef = useRef(0);
   const leanTo = useRef(-1);
-  const [size, setSize] = useState(null);
+  const [size, setSize] = useState<[number, number] | null>(null);
   const seen = useInView(box, { amount: 0.35 });
   const sx = useMotionValue(0);
   const sy = useMotionValue(0);
@@ -164,7 +165,7 @@ function Panel({ go }) {
   // one question at a time: step 0 asks (the jacks are the answers), step 1 slides in the answer's route and its action,
   // with the answer summarised above it
   const [step, setStep] = useState(0);
-  const pick = (i) => { setHeld(true); setAt(i); setCab(i); setStep(1); };
+  const pick = (i: number) => { setHeld(true); setAt(i); setCab(i); setStep(1); };
   const hold = () => { if (!held) { setHeld(true); setCab(at); } };
   const back = () => {
     setHeld(true); setStep(0);
@@ -179,7 +180,7 @@ function Panel({ go }) {
       return () => clearTimeout(t);
     }
     if (held || calm || !go || !seen || !wide) return;
-    let k = 0, t = 0;
+    let k = 0, t: ReturnType<typeof setTimeout> | undefined;
     const path = [1, 2, 3, 0];
     const tick = () => { setCab(path[k]); k += 1; if (k < path.length) t = setTimeout(tick, 600); else t = setTimeout(() => { setHeld(true); setStep(1); }, 450); };
     t = setTimeout(tick, 1000);
@@ -206,8 +207,8 @@ function Panel({ go }) {
     const b = 1 + sway.get() * 0.06;
     const l = leanTo.current >= 0 && g.js[leanTo.current] ? (g.js[leanTo.current][0] - x0) * 0.22 * lean.get() : 0;
     wire.current.setAttribute('d', `M ${x0} ${y0} C ${x0 + s + l} ${y0 + sag * b}, ${x1 + s * 0.8 + l * 0.6} ${y1 - sag * 0.7 * b}, ${x1} ${y1}`);
-    nub.current.setAttribute('transform', `translate(${x0 - 9} ${y0 - 7})`);
-    if (!box.current.dataset.wired) box.current.dataset.wired = '1';
+    nub.current?.setAttribute('transform', `translate(${x0 - 9} ${y0 - 7})`);
+    if (box.current && !box.current.dataset.wired) box.current.dataset.wired = '1';
   };
   useEffect(() => {
     const u = [sx, sy, sway, lean].map((m) => m.on('change', draw));
@@ -223,7 +224,7 @@ function Panel({ go }) {
       const k = r.width / b.offsetWidth || 1; // the curtain scales the page while it lifts: measure in layout pixels
       geo.current = {
         px: (p.left - r.left + p.width / 2) / k, py: (p.top - r.top + 2) / k,
-        js: jacks.current.map((j) => { const q = j.getBoundingClientRect(); return [(q.left - r.left + q.width / 2) / k, (q.bottom - r.top + 2) / k]; }),
+        js: jacks.current.filter((j): j is HTMLButtonElement => !!j).map((j) => { const q = j.getBoundingClientRect(); return [(q.left - r.left + q.width / 2) / k, (q.bottom - r.top + 2) / k]; }),
       };
       setSize([b.offsetWidth, b.offsetHeight]);
       const [x, y] = geo.current.js[cabRef.current];
@@ -232,12 +233,12 @@ function Panel({ go }) {
     };
     measure();
     const ro = new ResizeObserver(measure);
-    ro.observe(box.current);
+    if (box.current) ro.observe(box.current);
     const r = row.current;
-    r.addEventListener('scroll', measure, { passive: true });
+    r?.addEventListener('scroll', measure, { passive: true });
     addEventListener('hz-arrived', measure);
     document.fonts?.ready.then(measure);
-    return () => { ro.disconnect(); r.removeEventListener('scroll', measure); removeEventListener('hz-arrived', measure); };
+    return () => { ro.disconnect(); r?.removeEventListener('scroll', measure); removeEventListener('hz-arrived', measure); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -251,7 +252,7 @@ function Panel({ go }) {
   }, [cab, calm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // pointer: the hanging wire leans toward the jack you point at (fine pointers only)
-  const point = (i) => {
+  const point = (i: number) => {
     if (calm || i === cabRef.current) { animate(lean, 0, { duration: 0.3, ease: IO }); return; }
     leanTo.current = i;
     animate(lean, 1, { duration: 0.3, ease: IO });
@@ -271,17 +272,18 @@ function Panel({ go }) {
   useEffect(() => {
     const j = jacks.current[at];
     const r = row.current;
-    if (!r || r.scrollWidth <= r.clientWidth) return;
+    if (!r || !j || r.scrollWidth <= r.clientWidth) return;
     r.scrollTo({ left: Math.max(0, j.offsetLeft - 20), behavior: calm ? 'auto' : 'smooth' });
   }, [at, calm]);
 
-  const key = (e, i) => {
-    const n = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+  const key = (e: KeyboardEvent<HTMLButtonElement>, i: number) => {
+    const arrows: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    const n = arrows[e.key];
     if (!n) return;
     e.preventDefault();
     const j = (i + n + LINES.length) % LINES.length;
     pick(j);
-    e.currentTarget.parentElement.children[j]?.focus();
+    (e.currentTarget.parentElement?.children[j] as HTMLElement | undefined)?.focus();
   };
 
   return (
@@ -348,12 +350,12 @@ function Panel({ go }) {
 /* San Francisco's time on a big dial, beside the address. Drawn in the browser only: the hands appear with the first
    tick (none with JS off), and the dial's name carries the time for screen readers, once a minute. */
 function Clock() {
-  const box = useRef(null);
-  const dial = useRef(null);
-  const t = useRef(null);
-  const hr = useRef(null);
-  const mn = useRef(null);
-  const sc = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
+  const dial = useRef<SVGSVGElement>(null);
+  const t = useRef<HTMLParagraphElement>(null);
+  const hr = useRef<SVGLineElement>(null);
+  const mn = useRef<SVGLineElement>(null);
+  const sc = useRef<SVGLineElement>(null);
   const seen = useInView(box, { margin: '200px' });
   const calm = useReducedMotion();
   useEffect(() => {
@@ -366,7 +368,7 @@ function Clock() {
       const s = f.format(now);
       if (t.current) t.current.textContent = s;
       if (s !== last && box.current) { box.current.setAttribute('aria-label', 'San Francisco, ' + s); last = s; }
-      const p = Object.fromEntries(parts.formatToParts(now).map((x) => [x.type, +x.value]));
+      const p = Object.fromEntries(parts.formatToParts(now).map((x): [string, number] => [x.type, +x.value]));
       if (hr.current) hr.current.style.transform = `rotate(${(p.hour % 12) * 30 + p.minute * 0.5}deg)`;
       if (mn.current) mn.current.style.transform = `rotate(${p.minute * 6 + p.second * 0.1}deg)`;
       if (sc.current) sc.current.style.transform = `rotate(${p.second * 6}deg)`;
@@ -413,17 +415,17 @@ const NETS = [
    draw-on: the new contour wipes in left to right over the last one behind a moving hairline (500ms ease-emphasis), its
    name rising in. On phones the plate sits under the heading and scrolls away with it, without its name. */
 // the link's own address, https:// and www. dropped, breakable only after a slash
-const where = (u) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').split('/').flatMap((s, i) => (i ? [<wbr key={i} />, '/' + s] : [s]));
+const where = (u: string) => u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '').split('/').flatMap((s, i) => (i ? [<wbr key={i} />, '/' + s] : [s]));
 function Community() {
   const [on, setOn] = useState(0);
   const [hyd, setHyd] = useState(false);
   const hover = useRef(false);
-  const rows = useRef([]);
+  const rows = useRef<(HTMLLIElement | null)[]>([]);
   useEffect(() => setHyd(true), []);
   useEffect(() => {
     const io = new IntersectionObserver((es) => {
       if (hover.current) return;
-      es.forEach((e) => { if (e.isIntersecting) setOn(+e.target.dataset.i); });
+      es.forEach((e) => { if (e.isIntersecting) setOn(+(e.target as HTMLElement).dataset.i!); });
     }, { rootMargin: '-46% 0px -50% 0px' });
     rows.current.forEach((r) => r && io.observe(r));
     return () => io.disconnect();
@@ -435,7 +437,7 @@ function Community() {
   const pu = shown[1] >= 0 ? NETS[shown[1]][1] : null;
   const calm = useReducedMotion();
   const fresh = hyd && !calm;
-  const tilt = useTilt(7);
+  const tilt = useTilt<HTMLDivElement>(7);
   return (
     <section className="xct-com" aria-labelledby="xct-com-h">
       <div className="vc-grid">

@@ -16,6 +16,7 @@
    arrival = the cut-in title, the timed wipe into the dark room; scroll = which chapter is on (desktop only).
    Every word and link is Hanzo's; chart and table values are drawn, not measured. */
 import { useEffect, useRef, useState } from 'react';
+import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent, ReactNode, RefObject } from 'react';
 import { useInView, useReducedMotion, useScroll, useMotionValueEvent } from 'motion/react';
 import ClipWipe from '../../v2/ClipWipe';
 import LaunchClose, { Arr } from '../../v2/LaunchClose';
@@ -33,16 +34,16 @@ const PROMPT = 'Read https://hanzo.ai/skill.md and use Hanzo Metrics in my proje
 /* [ref, live, calm]: live while the element is on screen and motion is allowed. calm is read after mount, so the
    server's frame and the first client frame match (no hydration mismatch under reduced motion). */
 function useLive(amount = 0.2) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount });
   const rm = useReducedMotion();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const calm = mounted && !!rm;
-  return [ref, seen && !calm, calm];
+  return [ref, seen && !calm, calm] as const;
 }
 /* a requestAnimationFrame loop that only reads (the line itself moves by CSS), while run is true */
-function useRaf(run, fn) {
+function useRaf(run: boolean, fn: () => void) {
   const f = useRef(fn);
   f.current = fn;
   useEffect(() => {
@@ -59,21 +60,21 @@ function useRaf(run, fn) {
    rewrites a path while it runs. Three spikes per window: one about every 5.7 s. */
 const N = 96, STEP = 0.075, W = (N - 1) * STEP, SPEED = 0.42, PER = W / SPEED;
 const OM = (2 * Math.PI) / W, F = 3 * OM, CUR = 60;
-const md = (x, m) => ((x % m) + m) % m;
-const wave = (t, k) => 0.36 + 0.11 * Math.sin(OM * t + k * 2.1) + 0.05 * Math.sin(2 * OM * t + k) + 0.02 * Math.sin(5 * OM * t + 2 * k) - k * 0.08 + (k === 0 ? Math.max(0, Math.sin(F * t)) ** 16 * 0.52 : 0);
-const Y = (w) => 96 - w * 58; // y in % of the chart: the spike peaks near 38%
-const X = (i) => (i * 100) / (N - 1);
-const path = (k) => Array.from({ length: 2 * N - 1 }, (_, j) => (j ? 'L' : 'M') + X(j).toFixed(2) + ' ' + Y(wave(j * STEP, k)).toFixed(2)).join('');
-const isSpike = (t, i) => wave(t + i * STEP, 0) > 0.6;
+const md = (x: number, m: number) => ((x % m) + m) % m;
+const wave = (t: number, k: number) => 0.36 + 0.11 * Math.sin(OM * t + k * 2.1) + 0.05 * Math.sin(2 * OM * t + k) + 0.02 * Math.sin(5 * OM * t + 2 * k) - k * 0.08 + (k === 0 ? Math.max(0, Math.sin(F * t)) ** 16 * 0.52 : 0);
+const Y = (w: number) => 96 - w * 58; // y in % of the chart: the spike peaks near 38%
+const X = (i: number) => (i * 100) / (N - 1);
+const path = (k: number) => Array.from({ length: 2 * N - 1 }, (_, j) => (j ? 'L' : 'M') + X(j).toFixed(2) + ' ' + Y(wave(j * STEP, k)).toFixed(2)).join('');
+const isSpike = (t: number, i: number) => wave(t + i * STEP, 0) > 0.6;
 const TS = md(Math.PI / 2 / F - CUR * STEP, W / 3); // the window start that puts a spike under the cursor
 const T0 = md(TS - 1.9 * SPEED, W); // the first spike lands 1.9 s in, after the line has drawn and the title has cut in
 const PATHS = [0, 1, 2, 3].map(path);
 const AREA = PATHS[0] + 'L200 100L0 100Z';
-const SPANS = [['gateway', 0, 92], ['chat.completion', 6, 78], ['datastore.query', 14, 18], ['model.generate', 34, 48]];
+const SPANS: [string, number, number][] = [['gateway', 0, 92], ['chat.completion', 6, 78], ['datastore.query', 14, 18], ['model.generate', 34, 48]];
 
 /* The plot: grid, the area under the lead series and up to four series. `start` is where the window opens (0..W);
    `calm` sets it still at the spike. Reading the time back comes from the running animation's progress. */
-function Plot({ g, n = 3, start, calm, id, hl = null }) {
+function Plot({ g, n = 3, start, calm, id, hl = null }: { g: RefObject<SVGGElement | null>; n?: number; start: number; calm: boolean; id: string; hl?: number | null }) {
   return (
     <svg className="mt-plot" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
       <defs><linearGradient id={id} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="currentColor" stopOpacity=".1" /><stop offset="1" stopColor="currentColor" stopOpacity="0" /></linearGradient></defs>
@@ -85,7 +86,7 @@ function Plot({ g, n = 3, start, calm, id, hl = null }) {
     </svg>
   );
 }
-const readT = (g) => {
+const readT = (g: SVGGElement | null) => {
   const a = g?.getAnimations?.()[0];
   const p = a?.effect?.getComputedTiming().progress;
   return p == null ? TS : p * W;
@@ -93,18 +94,20 @@ const readT = (g) => {
 
 /* ---------- the hero object: the live chart and its traces ---------- */
 const SPLIT = { 'per-model': ['zen', 'kai', 'enso'], 'per-route': ['/v1/chat', '/v1/embed', '/v1/search'], 'per-tenant': ['org a', 'org b', 'org c'] };
+type Split = keyof typeof SPLIT;
+const SPLITS = Object.keys(SPLIT) as Split[];
 
-function Field({ lead }) {
+function Field({ lead }: { lead: ReactNode }) {
   const [ref, live, calm] = useLive(0.15); // the chart tile only: the loop stops once the chart leaves
   const [paused, pause] = usePause();
-  const [split, setSplit] = useState('per-model');
+  const [split, setSplit] = useState<Split>('per-model');
   const [open, setOpen] = useState(false); // the traces for that window are open (3 s after a spike)
   const [ride, setRide] = useState(0); // spikes seen: each restarts the flag riding its spike
   const [seen, setSeen] = useState(false); // traces have opened once: between spikes they rest, dimmed, not blank
-  const [held, setHeld] = useState(null); // { i, spike } the hand is holding, or null
-  const [hk, setHk] = useState(null); // the series under the crosshair
-  const g = useRef(null);
-  const el = useRef({ x: null, dot: null, was: false, until: 0 });
+  const [held, setHeld] = useState<{ i: number; spike: boolean } | null>(null); // { i, spike } the hand is holding, or null
+  const [hk, setHk] = useState<number | null>(null); // the series under the crosshair
+  const g = useRef<SVGGElement>(null);
+  const el = useRef<{ x: HTMLSpanElement | null; dot: HTMLElement | null; was: boolean; until: number }>({ x: null, dot: null, was: false, until: 0 });
   const run = live && held === null && !paused;
   useEffect(() => { if (calm) { setOpen(true); setSeen(true); } }, [calm]);
   useRaf(run, () => {
@@ -116,7 +119,7 @@ function Field({ lead }) {
     setOpen((v) => (v === o ? v : o));
   });
   // the crosshair reads the line under a fine pointer (transforms only) and names the series it is nearest
-  const move = (e) => {
+  const move = (e: ReactPointerEvent<HTMLButtonElement>) => {
     if (e.pointerType !== 'mouse' || calm) return;
     const r = el.current, box = e.currentTarget.getBoundingClientRect(), t = readT(g.current);
     const fx = Math.min(1, Math.max(0, (e.clientX - box.left) / box.width));
@@ -131,7 +134,7 @@ function Field({ lead }) {
   };
   const out = () => { el.current.x?.removeAttribute('data-on'); setHk(null); };
   // a click holds the moment under the pointer; the line only says "spike" if a spike is really there
-  const hold = (e) => {
+  const hold = (e: ReactMouseEvent<HTMLButtonElement>) => {
     if (held !== null) { setHeld(null); return; }
     const box = e.currentTarget.getBoundingClientRect();
     const i = e.detail === 0 ? CUR : Math.round(Math.min(1, Math.max(0, (e.clientX - box.left) / box.width)) * (N - 1));
@@ -149,8 +152,8 @@ function Field({ lead }) {
           <LivePause paused={paused} onToggle={pause} inline className="mt-pause" />
           <span className="mt-host">metrics.hanzo.ai</span>
           <code className="mt-q">rate(http_requests_total[5m])</code>
-          <div className="mt-split" role="group" aria-label="Split by label" style={{ '--i': Object.keys(SPLIT).indexOf(split) }}>
-            {Object.keys(SPLIT).map((l) => <button key={l} type="button" aria-pressed={split === l} onClick={() => setSplit(l)}>{l}</button>)}
+          <div className="mt-split" role="group" aria-label="Split by label" style={{ '--i': SPLITS.indexOf(split) }}>
+            {SPLITS.map((l) => <button key={l} type="button" aria-pressed={split === l} onClick={() => setSplit(l)}>{l}</button>)}
           </div>
           <ul className="mt-legend" aria-label="Series">{series.map((s, k) => <li key={s} className={'s' + k + (hk === k ? ' hl' : '')}><i />{s}</li>)}</ul>
         </div>
@@ -162,7 +165,7 @@ function Field({ lead }) {
             <i className="mt-cur" />
             <span className={'mt-flag' + (flag ? ' on' : '')}><svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 2l9 6-4 1-2 4z" fill="currentColor" /></svg>spike · {series[0]}</span>
           </span>
-          <span className="mt-x" ref={(e) => (el.current.x = e)} aria-hidden="true"><i ref={(e) => (el.current.dot = e)} /></span>
+          <span className="mt-x" ref={(e) => { el.current.x = e; }} aria-hidden="true"><i ref={(e) => { el.current.dot = e; }} /></span>
         </button>
         <div className={'mt-traces' + (show ? ' on' : seen ? ' rest' : '')}>
           <p className="mt-tk" aria-live="polite">{show || seen ? <>traces for that window · <b>{who}</b></> : 'a spike is the start of a question'}</p>
@@ -178,7 +181,7 @@ function Field({ lead }) {
 }
 
 /* ---------- the chapters' object: a metric as a row ---------- */
-const ROWS = [
+const ROWS: [kind: string, name: string, v: number, model: string, route: string, tenant: string][] = [
   ['metric', 'http_requests_total', 0.46, 'zen', '/v1/chat', 'org a'],
   ['trace', 'chat.completion', 0.72, 'zen', '/v1/chat', 'org a'],
   ['log', 'request served', 0.2, 'zen', '/v1/chat', 'org a'],
@@ -188,13 +191,13 @@ const ROWS = [
   ['log', 'request served', 0.18, 'enso', '/v1/search', 'org c'],
 ];
 const TAGS = ['per-model', 'per-route', 'per-tenant'];
-const COL = { 'per-model': 'model', 'per-route': 'route', 'per-tenant': 'tenant' };
+const COL: Record<string, string> = { 'per-model': 'model', 'per-route': 'route', 'per-tenant': 'tenant' };
 // how many beats each chapter plays when it arrives (intro = -1), one every BEAT ms, then it rests on the last
-const BEATS = { '-1': 3, 0: 3, 1: 0, 2: 2, 3: 3, 4: 2, 5: 3 };
+const BEATS: Record<number, number> = { '-1': 3, 0: 3, 1: 0, 2: 2, 3: 3, 4: 2, 5: 3 };
 const BEAT = 900;
 
 /* the beat a chapter is on: 0 when it arrives, +1 every BEAT while seen, resting at its last (calm: the last at once) */
-function useBeat(key, live, calm) {
+function useBeat(key: number, live: boolean, calm: boolean) {
   const max = BEATS[key];
   const [s, setS] = useState({ k: key, p: 0 });
   const p = calm ? max : s.k === key ? s.p : 0;
@@ -209,7 +212,7 @@ function useBeat(key, live, calm) {
 /* The flip board (the page's signature): a departure-board strip of tiles. When the value changes, each tile whose
    letter changes flips down to the new one, left to right. Padded to a fixed width, so nothing beside it moves. */
 const BOARD = 19; // the longest mode, "org from your token"
-function Flip({ text, n = BOARD, className = '' }) {
+function Flip({ text, n = BOARD, className = '' }: { text: string; n?: number; className?: string }) {
   const s = text.padStart(n, ' ');
   return (
     <span className={'mt-board ' + className} role="img" aria-label={text}>
@@ -218,7 +221,7 @@ function Flip({ text, n = BOARD, className = '' }) {
   );
 }
 
-function Table({ step, on, auto }) {
+function Table({ step, on, auto }: { step: number; on: boolean[]; auto?: (p: number) => void }) {
   const [ref, live, calm] = useLive(0.55); // plays once most of the table is in view, so the reader sees it play
   const p = useBeat(step, live, calm);
   const [alt, setAlt] = useState(false);
@@ -288,7 +291,7 @@ function Table({ step, on, auto }) {
   );
 }
 
-function LabelCheck({ on, pick }) {
+function LabelCheck({ on, pick }: { on: boolean[]; pick: (i: number) => void }) {
   const picked = TAGS.filter((_, i) => on[i]);
   const f = picked.length ? picked.map((l) => l.slice(4) + 's').join(' × ') : 'one';
   return (
@@ -307,9 +310,9 @@ function LabelCheck({ on, pick }) {
 /* The chapters: desktop pins the words beside one table that plays each chapter once as it comes on; the numbered rail
    fills while it plays. Under 900px nothing pins: each chapter is its own table above its words. Hidden chapters are
    inert, so their buttons leave the tab order. JS off: every chapter in reading order beside the table. */
-const pad = (n) => String(n).padStart(2, '0');
-function Chapters({ intro, steps, table }) {
-  const ref = useRef(null);
+const pad = (n: number) => String(n).padStart(2, '0');
+function Chapters({ intro, steps, table }: { intro: { title: string[]; lede: ReactNode }; steps: { t: string; d: string; extra: ReactNode }[]; table: (at: number) => ReactNode }) {
+  const ref = useRef<HTMLElement>(null);
   const n = steps.length, total = n + 1;
   const [at, setAt] = useState(-1);
   const [mounted, setMounted] = useState(false);
@@ -321,7 +324,7 @@ function Chapters({ intro, steps, table }) {
     const i = Math.min(total - 1, Math.max(0, Math.floor(p * total * 0.999))) - 1;
     setAt((v) => (v === i ? v : i));
   });
-  const jump = (i) => {
+  const jump = (i: number) => {
     const el = ref.current;
     if (!el) return;
     const y = el.getBoundingClientRect().top + window.scrollY + ((i + 1.5) / total) * (el.offsetHeight - window.innerHeight);
@@ -337,8 +340,8 @@ function Chapters({ intro, steps, table }) {
     arts.forEach((a) => io.observe(a));
     return () => io.disconnect();
   }, [mounted, wide]);
-  const where = (i) => (i < at ? 'past' : i === at ? 'on' : 'next');
-  const step = (i, body) => (
+  const where = (i: number) => (i < at ? 'past' : i === at ? 'on' : 'next');
+  const step = (i: number, body: ReactNode) => (
     <article key={i} className={'mt-ch-step' + (i < 0 ? ' mt-ch-intro' : '')} data-at={where(i)} inert={pin && i !== at ? true : undefined}>
       {body}
     </article>
@@ -387,7 +390,7 @@ const POINTS = [
 const SIDE = [['Metrics', '/metrics'], ['Logs', '/cloud/logs'], ['Dashboards', '/dashboards'], ['O11y', '/o11y'], ['AI Metrics', '/cloud/ai-metrics'], ['Billing', '/billing'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions']];
 const ICONS = ['M2 12l4-4 3 3 5-6', 'M5 2.5h6M3.5 6h9M2 9.5h12v4H2z', 'M2.5 3h11v4h-11zM2.5 9h11v4h-11z', 'M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM1.5 8h13', 'M8 2 2.5 5v6L8 14l5.5-3V5zM2.5 5 8 8l5.5-3M8 8v6', 'M3 3h3v3H3zM10 10h3v3h-3zM6 4.5h3.5v5.5', 'M8 2v4M8 6 4 10M8 6l4 4M4 10v4M12 10v4', 'M8 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM2.5 14c.8-2.6 3-4 5.5-4s4.7 1.4 5.5 4'];
 const CAP = 'The service the session above is changing.';
-const SERVICES = [['gateway', CAP], ['payments-api'], ['checkout-web', 'A build is running from the last commit on main.'], ['docs-site', 'Static, published by the same pipeline as the rest.']];
+const SERVICES: [string, string?][] = [['gateway', CAP], ['payments-api'], ['checkout-web', 'A build is running from the last commit on main.'], ['docs-site', 'Static, published by the same pipeline as the rest.']];
 const LAND = 72; // where a sent query lands on the line (index)
 const RT0 = md(TS + 9, W);
 
@@ -395,10 +398,10 @@ function Room() {
   const [ref, live, calm] = useLive(0.3);
   const [paused, pause] = usePause();
   const [sent, setSent] = useState(0); // queries sent: the first goes on arrival
-  const [land, setLand] = useState(null); // { x, y } of the landed query, in % of the chart
+  const [land, setLand] = useState<{ x: number; y: number } | null>(null); // { x, y } of the landed query, in % of the chart
   const [built, setBuilt] = useState(false); // checkout-web builds once, then rests
   const [at, setAt] = useState(0);
-  const g = useRef(null);
+  const g = useRef<SVGGElement>(null);
   const run = live && !paused;
   const send = () => setSent((v) => v + 1);
   useEffect(() => { if (live && sent === 0) send(); }, [live]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -415,7 +418,7 @@ function Room() {
     const t = setTimeout(() => { setBuilt(true); play('done'); }, 3200);
     return () => clearTimeout(t);
   }, [land, built, calm, paused]);
-  const status = (n) => (n === 'checkout-web' && !built ? 'Building' : 'Ready');
+  const status = (n: string) => (n === 'checkout-web' && !built ? 'Building' : 'Ready');
   const cur = SERVICES[at];
   return (
     <ClipWipe dark className="mt-send">
@@ -505,8 +508,9 @@ function Room() {
 export default function Metrics() {
   const [on, setOn] = useState([true, false, false]);
   const mine = useRef(false);
-  const pick = (i) => { mine.current = true; setOn((o) => o.map((v, j) => (j === i ? !v : v))); };
-  const auto = (p) => { if (!mine.current) setOn([true, p >= 1, p >= 2]); };
+  const pick = (i: number) => { mine.current = true; setOn((o) => o.map((v, j) => (j === i ? !v : v))); };
+  const auto = (p: number) => {
+ if (!mine.current) setOn([true, p >= 1, p >= 2]); };
   const steps = POINTS.map(([t, d], i) => ({ t, d, extra: i === 2 ? <LabelCheck on={on} pick={pick} /> : null }));
   return (
     <main className="lx mt">

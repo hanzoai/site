@@ -1,13 +1,15 @@
 'use client';
 /* Draws a captured HTML tree (see htmltree.js) in the new design: Hanzo's words as they were, our elements. */
 import { useRef, useState } from 'react';
+import type { ElementType, ReactNode } from 'react';
 import { A } from '../kit';
+import type { Branch, Child } from './htmltree';
 
 const PLAIN = new Set(['p', 'ul', 'ol', 'li', 'strong', 'em', 'b', 'i', 'code', 'blockquote', 'thead', 'tbody', 'tr', 'h4', 'sup', 'sub', 'span', 'small']);
 
-export function CopyLink({ id }) {
+export function CopyLink({ id }: { id: string }) {
   const [ok, setOk] = useState(false);
-  const t = useRef(0);
+  const t = useRef<ReturnType<typeof setTimeout> | 0>(0);
   return (
     <button
       type="button"
@@ -33,7 +35,7 @@ export function CopyLink({ id }) {
 }
 
 const NUM = /^(\d+)\.\s+(.*)$/s;
-export function Heading({ n, children, Tag }) {
+export function Heading({ n, children, Tag }: { n: Branch; children?: ReactNode; Tag: 'h2' | 'h3' }) {
   const id = n.a && n.a.id;
   return (
     <Tag id={id} className="xlg-hd">
@@ -43,9 +45,9 @@ export function Heading({ n, children, Tag }) {
   );
 }
 
-function Table({ n }) {
-  const head = n.c.find((k) => k.t === 'thead');
-  const label = head ? head.c.flatMap((r) => r.c).map((h) => (typeof h === 'string' ? h : h.c.join(''))).join(', ') : 'Table';
+function Table({ n }: { n: Branch }) {
+  const head = n.c.find((k): k is Branch => typeof k !== 'string' && k.t === 'thead');
+  const label = head ? head.c.flatMap((r) => (typeof r === 'string' ? [] : r.c)).map((h) => (typeof h === 'string' ? h : h.c.join(''))).join(', ') : 'Table';
   return (
     <div className="xlg-tw" tabIndex={0} role="region" aria-label={'Table: ' + label} data-lenis-prevent>
       <table>{n.c.map((k, i) => <Node key={i} n={k} />)}</table>
@@ -53,7 +55,7 @@ function Table({ n }) {
   );
 }
 
-export function Node({ n }) {
+export function Node({ n }: { n: Child }) {
   if (typeof n === 'string') return n;
   const kids = n.c.map((k, i) => <Node key={i} n={k} />);
   const t = n.t;
@@ -70,9 +72,9 @@ export function Node({ n }) {
     const T = t;
     return <T colSpan={n.a && n.a.colspan ? +n.a.colspan : undefined} scope={t === 'th' ? 'col' : undefined}>{kids}</T>;
   }
-  if (PLAIN.has(t)) { const T = t; return <T id={n.a && n.a.id}>{kids}</T>; }
+  if (PLAIN.has(t)) { const T = t as ElementType; return <T id={n.a && n.a.id}>{kids}</T>; }
   return <>{kids}</>;
 }
 
-export const Nodes = ({ nodes }) => nodes.map((n, i) => <Node key={i} n={n} />);
-export const split = (text) => { const m = NUM.exec(text); return m ? [m[1] + '.', m[2]] : [null, text]; };
+export const Nodes = ({ nodes }: { nodes: Child[] }) => nodes.map((n, i) => <Node key={i} n={n} />);
+export const split = (text: string): [string | null, string] => { const m = NUM.exec(text); return m ? [m[1] + '.', m[2]] : [null, text]; };

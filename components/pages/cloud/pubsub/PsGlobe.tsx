@@ -12,10 +12,12 @@ import { useInView } from 'motion/react';
 import { useFrame } from '../Frame';
 
 const RAD = Math.PI / 180;
-const vec = (lat, lon) => [Math.cos(lat * RAD) * Math.sin(lon * RAD), Math.sin(lat * RAD), Math.cos(lat * RAD) * Math.cos(lon * RAD)];
+type Vec3 = [number, number, number];
+const vec = (lat: number, lon: number): Vec3 => [Math.cos(lat * RAD) * Math.sin(lon * RAD), Math.sin(lat * RAD), Math.cos(lat * RAD) * Math.cos(lon * RAD)];
 
 // the places on this drawing (the names are the subscribers in events.go and on the bus)
-export const PLACES = {
+export interface Place { v: Vec3; name: string; q?: number }
+export const PLACES: Record<string, Place> = {
   pub: { v: vec(36, -74), name: 'publish' },
   str: { v: vec(52, -10), name: 'stream EVENTS' },
   analytics: { v: vec(38, 58), name: 'analytics' },
@@ -30,7 +32,7 @@ const QS = ['q0', 'q1', 'q2'];
 const LOOK = [-50, -24, 12, 14, 0].map((l) => -l * RAD);
 
 // ease-emphasis cubic-bezier(.16,1,.3,1), solved for x
-function emph(x) {
+function emph(x: number) {
   if (x <= 0) return 0; if (x >= 1) return 1;
   let t = x;
   for (let i = 0; i < 6; i++) {
@@ -44,7 +46,7 @@ function emph(x) {
 
 // a point s of the way along the great circle from a to b, lifted off the surface (hi: acks and redelivery fly higher,
 // so the way home never hides under the way out)
-function slerp(a, b, s, hi = 1) {
+function slerp(a: Vec3, b: Vec3, s: number, hi = 1): Vec3 {
   const dot = Math.min(1, Math.max(-1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]));
   const om = Math.acos(dot), so = Math.sin(om) || 1;
   const ka = Math.sin((1 - s) * om) / so, kb = Math.sin(s * om) / so;
@@ -55,8 +57,10 @@ function slerp(a, b, s, hi = 1) {
 /* the arcs a frame shows, from the beat t (0 publish, 1 stored, 2 fanned out, 3 acks, 4 settled), how far into it (p,
    0..1) and the ack policy. Each: [from, to, drawn 0..1, kind] with kind 'msg' (solid), 'ack' (dashed home), 're'
    (redelivery, dashed out). */
-function arcs(t, p, ack, pick) {
-  const out = [];
+type ArcKind = 'msg' | 'ack' | 're';
+type Arc = [string, string, number, ArcKind];
+function arcs(t: number, p: number, ack: string, pick: number): Arc[] {
+  const out: Arc[] = [];
   const q = QS[pick];
   const to = [...SUBS, q];
   if (t === 0) out.push(['pub', 'str', emph(p / 0.9), 'msg']);
@@ -73,11 +77,15 @@ function arcs(t, p, ack, pick) {
   return out;
 }
 
-export default function PsGlobe({ t, seq, ack, pick, run, calm, onHover, label }) {
-  const wrap = useRef(null);
-  const cv = useRef(null);
+interface Hand { x: number; y: number; yaw: number; tilt: number; lx: number; lt: number; moved: boolean }
+interface Globe { yaw: number; tilt: number; vy: number; hand: number; drag: Hand | null; hover: string | null; w: number; h: number; dpr: number; font: string; t0: number; hit?: [string, number, number][] }
+interface PsGlobeProps { t: number; seq: number; ack: string; pick: number; run: boolean; calm: boolean; onHover?: (id: string | null) => void; label: Record<string, string> }
+
+export default function PsGlobe({ t, seq, ack, pick, run, calm, onHover, label }: PsGlobeProps) {
+  const wrap = useRef<HTMLDivElement>(null);
+  const cv = useRef<HTMLCanvasElement>(null);
   const seen = useInView(wrap, { amount: 0.2 });
-  const st = useRef({ yaw: LOOK[4], tilt: 0.32, vy: 0, hand: 0, drag: null, hover: null, w: 0, h: 0, dpr: 1, font: 'monospace', t0: 0 });
+  const st = useRef<Globe>({ yaw: LOOK[4], tilt: 0.32, vy: 0, hand: 0, drag: null, hover: null, w: 0, h: 0, dpr: 1, font: 'monospace', t0: 0 });
   const latest = useRef({ t, ack, pick, calm, label });
   latest.current = { t, ack, pick, calm, label };
 
@@ -104,17 +112,18 @@ export default function PsGlobe({ t, seq, ack, pick, run, calm, onHover, label }
 
   useFrame(run && seen && !calm, (now, dt) => draw(now * 1000, dt));
 
-  function project(p, s) {
+  function project(p: Vec3, s: Globe): Vec3 {
     const cy = Math.cos(s.yaw), sy = Math.sin(s.yaw), ct = Math.cos(s.tilt), stl = Math.sin(s.tilt);
     const x1 = p[0] * cy + p[2] * sy, z1 = -p[0] * sy + p[2] * cy;
     const y2 = p[1] * ct - z1 * stl, z2 = p[1] * stl + z1 * ct;
     return [x1, y2, z2];
   }
 
-  function draw(now, dt) {
+  function draw(now: number, dt: number) {
     const el = cv.current; const s = st.current; if (!el || !s.w) return;
     const { t, ack: a, pick: k, calm: c, label } = latest.current;
     const ctx = el.getContext('2d');
+    if (!ctx) return;
     const { w, h, dpr } = s;
     const R = w < 520 ? Math.min(w * 0.31, h * 0.38) : Math.min(w * 0.36, h * 0.42), cx = w / 2, cy = h / 2 + h * 0.03;
     const p = c ? 1 : Math.min(1, (now - s.t0) / ([900, 900, 1300, 1500, 1800][t] || 1000));
@@ -130,12 +139,12 @@ export default function PsGlobe({ t, seq, ack, pick, run, calm, onHover, label }
     }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
-    const P = (v) => { const q = project(v, s); return [cx + q[0] * R, cy - q[1] * R, q[2], Math.hypot(q[0], q[1])]; };
+    const P = (v: Vec3): [number, number, number, number] => { const q = project(v, s); return [cx + q[0] * R, cy - q[1] * R, q[2], Math.hypot(q[0], q[1])]; };
     // the planet: a rim and a graticule, front lines brighter than the back ones seen through it
     ctx.lineWidth = 1;
     ctx.strokeStyle = 'rgba(255,255,255,.22)';
     ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
-    const line = (pts) => {
+    const line = (pts: number[][]) => {
       for (let i = 1; i < pts.length; i++) {
         const A = pts[i - 1], B = pts[i];
         ctx.strokeStyle = A[2] > 0 && B[2] > 0 ? 'rgba(255,255,255,.14)' : 'rgba(255,255,255,.05)';
@@ -169,8 +178,8 @@ export default function PsGlobe({ t, seq, ack, pick, run, calm, onHover, label }
     ctx.font = `500 ${fs}px ${s.font}`;
     ctx.textBaseline = 'middle';
     // a name is set on a black edge, so an arc passing under it never cuts through the letters
-    const say = (str, x, y) => { ctx.save(); ctx.strokeStyle = '#000'; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.strokeText(str, x, y); ctx.restore(); ctx.fillText(str, x, y); };
-    const hit = [];
+    const say = (str: string, x: number, y: number) => { ctx.save(); ctx.strokeStyle = '#000'; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.strokeText(str, x, y); ctx.restore(); ctx.fillText(str, x, y); };
+    const hit: [string, number, number][] = [];
     for (const [id, pl] of Object.entries(PLACES)) {
       const q = P(pl.v); if (q[2] < -0.05) continue;
       const isQ = pl.q !== undefined;
@@ -201,8 +210,8 @@ export default function PsGlobe({ t, seq, ack, pick, run, calm, onHover, label }
       // names read away from the planet's middle; with no room there (phones) a long second line is dropped first,
       // then the name goes under its place
       let sub = label && label[id];
-      const room = (tw) => (right ? q[0] + 12 + tw <= w - 2 : q[0] - 12 - tw >= 2);
-      const wOf = (a, b) => Math.max(ctx.measureText(a).width, b ? ctx.measureText(b).width : 0);
+      const room = (tw: number) => (right ? q[0] + 12 + tw <= w - 2 : q[0] - 12 - tw >= 2);
+      const wOf = (a: string, b?: string) => Math.max(ctx.measureText(a).width, b ? ctx.measureText(b).width : 0);
       if (sub && !room(wOf(txt, sub)) && room(wOf(txt))) sub = '';
       const tw = wOf(txt, sub);
       const fitsR = right && room(tw), fitsL = !right && room(tw);
@@ -224,12 +233,12 @@ export default function PsGlobe({ t, seq, ack, pick, run, calm, onHover, label }
   }
 
   // the hand: drag to spin (pointer capture; touch keeps vertical scroll), hover names a place
-  const down = (e) => {
+  const down = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const s = st.current;
     s.drag = { x: e.clientX, y: e.clientY, yaw: s.yaw, tilt: s.tilt, lx: e.clientX, lt: performance.now(), moved: false };
     e.currentTarget.setPointerCapture?.(e.pointerId);
   };
-  const move = (e) => {
+  const move = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const s = st.current;
     if (s.drag) {
       const dx = e.clientX - s.drag.x, dy = e.clientY - s.drag.y;
@@ -244,12 +253,14 @@ export default function PsGlobe({ t, seq, ack, pick, run, calm, onHover, label }
       return;
     }
     if (e.pointerType !== 'mouse') return;
-    const r = cv.current.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
-    let best = null, bd = 22;
+    const box = cv.current; if (!box) return;
+    const r = box.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    let best: string | null = null, bd = 22;
     for (const [id, hx, hy] of s.hit || []) { const d = Math.hypot(hx - x, hy - y); if (d < bd) { bd = d; best = id; } }
     if (best !== s.hover) { s.hover = best; onHover?.(best); if (!run || !seen || latest.current.calm) draw(performance.now(), 0); }
   };
-  const up = (e) => {
+  const up = (e: React.PointerEvent<HTMLCanvasElement>) => {
+
     const s = st.current;
     if (!s.drag) return;
     if (latest.current.calm) s.vy = 0;

@@ -3,24 +3,29 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+/* a parsed element: its tag name, the attributes kept (absent when none), its children (strings and elements) */
+export interface Branch { t: string; a?: Record<string, string>; c: Child[] }
+export type Child = string | Branch;
+export interface Meta { title: string; description: string }
+
 const VOID = new Set(['br', 'img', 'input', 'hr', 'meta', 'link', 'source', 'wbr']);
 const SKIP = new Set(['svg', 'script', 'style']);
 const KEEP = ['href', 'id', 'data-slot', 'data-code', 'data-label', 'aria-current', 'colspan', 'rowspan', 'placeholder', 'required', 'type', 'name', 'accept'];
-const ENT = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', hellip: '…', mdash: '—', ndash: '–', rsquo: '’', lsquo: '‘', ldquo: '“', rdquo: '”' };
-const decode = (s) => s.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (m, e) => {
+const ENT: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', hellip: '…', mdash: '—', ndash: '–', rsquo: '’', lsquo: '‘', ldquo: '“', rdquo: '”' };
+const decode = (s: string) => s.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (m: string, e: string) => {
   if (e[0] === '#') return String.fromCodePoint(e[1].toLowerCase() === 'x' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10));
   return ENT[e.toLowerCase()] ?? m;
 });
 // Cloudflare hides e-mail addresses as a hex string XOR-ed with its first byte; the page ships them decoded
-const cf = (h) => { const k = parseInt(h.slice(0, 2), 16); let o = ''; for (let i = 2; i < h.length; i += 2) o += String.fromCharCode(parseInt(h.slice(i, i + 2), 16) ^ k); return o; };
+const cf = (h: string) => { const k = parseInt(h.slice(0, 2), 16); let o = ''; for (let i = 2; i < h.length; i += 2) o += String.fromCharCode(parseInt(h.slice(i, i + 2), 16) ^ k); return o; };
 const STRUCT = new Set(['ul', 'ol', 'table', 'thead', 'tbody', 'tr', 'div', 'section', 'nav', 'blockquote', 'main', 'form', 'pre']);
 
-export function parse(html) {
-  const root = { t: 'root', c: [] };
-  const stack = [root];
+export function parse(html: string) {
+  const root: Branch = { t: 'root', c: [] };
+  const stack: Branch[] = [root];
   const L = html.length;
   let i = 0;
-  const skipTo = (needle) => { const e = html.indexOf(needle, i); i = e < 0 ? L : e + needle.length; };
+  const skipTo = (needle: string) => { const e = html.indexOf(needle, i); i = e < 0 ? L : e + needle.length; };
   while (i < L) {
     const top = stack[stack.length - 1];
     if (html[i] !== '<') {
@@ -34,7 +39,7 @@ export function parse(html) {
       for (let k = stack.length - 1; k > 0; k--) if (stack[k].t === name) { stack.length = k; break; }
     } else if (/[a-zA-Z]/.test(html[i + 1] || '')) {
       let j = i + 1; while (j < L && !/[\s/>]/.test(html[j])) j++;
-      const name = html.slice(i + 1, j).toLowerCase(); const a = {}; let self = false;
+      const name = html.slice(i + 1, j).toLowerCase(); const a: Record<string, string> = {}; let self = false;
       for (;;) {
         while (j < L && /\s/.test(html[j])) j++;
         if (j >= L) break;
@@ -53,7 +58,7 @@ export function parse(html) {
       if (SKIP.has(name)) { if (!self) skipTo('</' + name); if (!self) skipTo('>'); continue; }
       if (a['data-cfemail']) { top.c.push(cf(a['data-cfemail'])); if (!self && !VOID.has(name)) { skipTo('</' + name); skipTo('>'); } continue; }
       if (a.href && a.href.includes('email-protection#')) a.href = 'mailto:' + cf(a.href.split('#')[1]);
-      const n = { t: name, c: [] };
+      const n: Branch = { t: name, c: [] };
       if (Object.keys(a).length) n.a = a;
       top.c.push(n);
       if (!self && !VOID.has(name)) stack.push(n);
@@ -61,23 +66,23 @@ export function parse(html) {
   }
   return root;
 }
-export function load(rel) {
+export function load(rel: string) {
   return parse(fs.readFileSync(path.join(process.cwd(), 'content', 'pages', rel + '.html'), 'utf8'));
 }
-export const isN = (n) => n && typeof n === 'object';
-export function findAll(n, f, out = []) {
+export const isN = (n: unknown): n is Branch => !!n && typeof n === 'object';
+export function findAll(n: Child | null | undefined, f: (n: Branch) => unknown, out: Branch[] = []): Branch[] {
   if (!isN(n)) return out;
   if (f(n)) out.push(n);
   n.c.forEach((k) => findAll(k, f, out));
   return out;
 }
-export const find = (n, f) => findAll(n, f)[0];
-export const textOf = (n) => (isN(n) ? n.c.map(textOf).join('') : n || '');
-export const slot = (s) => (n) => n.a && n.a['data-slot'] === s;
-export const tag = (t) => (n) => n.t === t;
-export const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+export const find = (n: Child | null | undefined, f: (n: Branch) => unknown) => findAll(n, f)[0];
+export const textOf = (n: Child | null | undefined): string => (isN(n) ? n.c.map(textOf).join('') : n || '');
+export const slot = (s: string) => (n: Branch) => n.a && n.a['data-slot'] === s;
+export const tag = (t: string) => (n: Branch) => n.t === t;
+export const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 /* the page's title (without the site name) from content/pages.json */
-export function metaOf(route) {
-  const idx = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'content', 'pages.json'), 'utf8'));
+export function metaOf(route: string): Meta {
+  const idx: Record<string, Meta> = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'content', 'pages.json'), 'utf8'));
   return idx[route];
 }

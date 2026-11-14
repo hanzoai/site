@@ -18,6 +18,7 @@
    measured) Pareto scatter, invented labels, visible initials, the forked UiBtn buttons (now the kit's Cta).
    Every word, figure and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll } from 'motion/react';
 import { A, Img, Cta } from '../kit';
 import Sigil from '../Sigil';
@@ -29,7 +30,7 @@ import './company/deck.css';
 import usePhoneAsk from './usePhoneAsk';
 import './Investors.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 // JS off: the hero's lede, asks and counter show, and every pinned scene stacks readable (PLAN 2.3, 2.17)
 const NOJS = { __html: '<style>.xin-roll-f[aria-hidden=true]{display:none!important}.xin-hero-l,.xin-hero-o,.xin-stats li{opacity:1!important;transform:none!important}.xin-pin{height:auto!important}.xin-pin-st{position:static!important;height:auto!important}.xin-pin-g{display:block!important}.xin-pin-s{display:grid!important;padding:48px 0}.xin-pin-s *{opacity:1!important;transform:none!important}</style>' };
 // H: Hanzo's commit record as /investors shows it live (investorsEco.js)
@@ -43,8 +44,8 @@ const Up = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="tr
 const BACKERS = [['techstars', 'Techstars', 'https://www.techstars.com'], ['amazon', 'Amazon', 'https://aws.amazon.com'], ['digitalocean', 'DigitalOcean', 'https://www.digitalocean.com'], ['google', 'Google', 'https://cloud.google.com'], ['microsoft', 'Microsoft', 'https://azure.microsoft.com'], ['nvidia', 'NVIDIA', 'https://www.nvidia.com'], ['nebius', 'Nebius', 'https://nebius.com']];
 
 /* A logo (the kit's Img: reserved box, lazy) that falls back to its name, set in type, when the file can't be fetched. */
-function Logo({ src, name }) {
-  const ref = useRef(null);
+function Logo({ src, name }: { src: string; name: string }) {
+  const ref = useRef<HTMLImageElement>(null);
   const [bad, setBad] = useState(false);
   useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
   return bad
@@ -143,7 +144,7 @@ function Hero() {
 }
 
 /* A figure that rolls in digit by digit when its scene is on (the counter's own roll). */
-function RollFig({ v, on, className = '' }) {
+function RollFig({ v, on, className = '' }: { v: string; on: boolean; className?: string }) {
   return (
     <span className={'xin-rf vc-num ' + className}>
       {[...v].map((c, j) => (
@@ -159,13 +160,22 @@ function RollFig({ v, on, className = '' }) {
 /* A pinned scene (page-local): the words pin on the left while the object on the right changes. The outgoing title
    slides out of its mask before the next one rises, so two titles never share the frame. Phones, reduced motion and
    JS off get every scene stacked. Keyboard focus inside a scene scrolls the page to it. */
-function Pinned({ id, label, dark, scenes, className = '', head }) {
-  const ref = useRef(null);
+/* one scene of a pinned room: its words and its object, each handed whether the scene is the one on show */
+interface Scene {
+  key: string;
+  pre?: ReactNode;
+  title: (on: boolean) => ReactNode;
+  body: ReactNode;
+  visual: (on: boolean) => ReactNode;
+}
+
+function Pinned({ id, label, dark, scenes, className = '', head }: { id?: string; label: string; dark?: boolean; scenes: Scene[]; className?: string; head?: ReactNode }) {
+  const ref = useRef<HTMLElement>(null);
   const n = scenes.length;
   const [at, setAt] = useState(0);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => setAt(Math.min(n - 1, Math.max(0, Math.floor(p * n * 0.999)))));
-  const go = (i) => {
+  const go = (i: number) => {
     const el = ref.current;
     if (!el || innerWidth <= 900) return;
     const y = el.getBoundingClientRect().top + scrollY + (el.offsetHeight - innerHeight) * ((i + 0.5) / n);
@@ -200,13 +210,13 @@ function Pinned({ id, label, dark, scenes, className = '', head }) {
 /* ---------- the thesis: three pinned chapters, each with a true object ---------- */
 const THESIS = [['Smarter', 'Frontier intelligence on a measured Pareto frontier.'], ['Faster', 'Up to 200× faster for direct decisions.'], ['Cheaper', 'Up to 400× cheaper on the work we measure.']];
 // 200× and 400× against the same 1× mark: the 400× bar is twice the 200× bar
-const Times = ({ v, w, on }) => (
+const Times = ({ v, w, on }: { v: string; w: number; on: boolean }) => (
   <div className="xin-big-f" aria-hidden="true">
     <b className="vc-num">{v}</b>
     <span className="xin-big-bar"><i className="one" /><span><motion.i style={{ '--xin-s': w }} initial={false} animate={{ scaleX: on ? w : 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.35 }} /></span></span>
   </div>
 );
-const THESIS_V = [
+const THESIS_V: ((on: boolean) => ReactNode)[] = [
   () => <div className="xin-th-sig" aria-hidden="true"><Sigil seed="Hanzo.Thesis Smarter" data={[93.7, 95.6, 16]} /></div>,
   (on) => <Times v="200×" w={0.5} on={on} />,
   (on) => <Times v="400×" w={1} on={on} />,
@@ -256,13 +266,13 @@ function Stack() {
 }
 
 /* ---------- the results room: a pinned scene, one giant figure at a time (the one dark room) ---------- */
-const LCB = [['Enso', 93.7], ['gpt-5.6-sol', 93.1], ['gpt-5.5', 91.4], ['opus-5.5', 80.0], ['fable-5.1', 80.0], ['fable-5', 78.3]];
-const Dots = ({ n, lit, cols, on }) => (
+const LCB: [string, number][] = [['Enso', 93.7], ['gpt-5.6-sol', 93.1], ['gpt-5.5', 91.4], ['opus-5.5', 80.0], ['fable-5.1', 80.0], ['fable-5', 78.3]];
+const Dots = ({ n, lit, cols, on }: { n: number; lit: number; cols: number; on: boolean }) => (
   <span className="xin-dots" style={{ '--cols': cols }} aria-hidden="true">
     {Array.from({ length: n }, (_, i) => <motion.i key={i} className={i < lit ? 'on' : ''} initial={false} animate={{ opacity: on ? 1 : 0.2 }} transition={{ duration: 0.3, delay: on ? 0.3 + (i / n) * 0.8 : 0 }} />)}
   </span>
 );
-const Bars = ({ rows, max, on, fmt }) => (
+const Bars = ({ rows, max, on, fmt }: { rows: [string, number][]; max: number; on: boolean; fmt: (v: number) => string }) => (
   <ul className="xin-bars" aria-hidden="true">
     {rows.map(([nm, v], i) => (
       <li key={nm} className={i ? '' : 'me'}>
@@ -273,14 +283,18 @@ const Bars = ({ rows, max, on, fmt }) => (
     ))}
   </ul>
 );
-const Interval = ({ on }) => ( // 3.02×, 95% interval 2.06–4.36×, on an axis from 0 with the 1× mark
+const Interval = ({ on }: { on: boolean }) => ( // 3.02×, 95% interval 2.06–4.36×, on an axis from 0 with the 1× mark
   <span className="xin-int" aria-hidden="true">
     <i className="axis" /><i className="one" style={{ left: `${(1 / 5) * 100}%` }} />
     <motion.i className="band" initial={false} style={{ left: `${(2.06 / 5) * 100}%`, width: `${((4.36 - 2.06) / 5) * 100}%` }} animate={{ opacity: on ? 1 : 0, scaleX: on ? 1 : 0.2 }} transition={{ duration: 0.7, ease: EASE, delay: 0.35 }} />
     <motion.i className="pt" initial={false} style={{ left: `${(3.02 / 5) * 100}%` }} animate={{ scale: on ? 1 : 0 }} transition={{ duration: 0.3, ease: EASE, delay: 0.6 }} />
   </span>
 );
-const RESULTS = [
+interface Result {
+  key: string; k?: string; m: string; v: string; t?: string; d: ReactNode; to: string; go?: string;
+  vis: (on: boolean) => ReactNode;
+}
+const RESULTS: Result[] = [
   { key: 'ds', k: 'Research.DecisionSuite', m: 'Kai', v: '16 of 16', t: 'Decision Suite tasks won by Kai', d: <><span>Each set on</span> <span className="x-mono">Oct 15, 2026,</span> <span>with its public data and the runs of both models.</span></>, to: '/benchmarks#decision-suite', go: 'Each task and its runs →', vis: (on) => <Dots n={16} lit={16} cols={4} on={on} /> },
   { key: 'lcb', k: 'Research.LiveCodeBench', m: '175 questions', v: '93.7%', d: <><span className="xin-pin-p">Enso as enso-bench measured it on 2026-07-19, beside each single model on the same questions. Each bar is a run&apos;s accuracy.</span><span className="xin-pin-p"><span>LiveCodeBench&apos;s recent problems: Enso</span> <b className="x-mono"><span>93.7%,</span></b> <span>164 of 175 right, against 93.1% for gpt-5.6-sol, the next model on the same questions.</span></span></>, to: '/enso', vis: (on) => <Bars rows={LCB} max={100} on={on} fmt={(v) => v.toFixed(1) + '%'} /> },
   { key: 'gpqa', m: 'Enso Ultra', v: '95.6%', t: 'GPQA Diamond', d: '152 of 159 new questions right, against 93.1% for the best single model on the same questions.', to: '/enso', vis: (on) => <Dots n={159} lit={152} cols={20} on={on} /> },
@@ -323,9 +337,9 @@ function Research() {
 /* Hanzo's stat captions count up with their figures, as hanzo.ai's activity cards do (useCount): every number in the
    caption reads 0 until the cards are seen, then counts to its value in 1.1 s, easing out. The server and reduced
    motion show the finished words ("In the past 7 days"). */
-function countText(e, r) {
+function countText(e: string, r: number) {
   if (r >= 1) return e;
-  return e.replace(/\d[\d,]*(?:\.\d+)?/g, (m) => {
+  return e.replace(/\d[\d,]*(?:\.\d+)?/g, (m: string) => {
     const t = Number(m.replace(/,/g, ''));
     if (!Number.isFinite(t)) return m;
     const a = m.indexOf('.'), n = a >= 0 ? m.length - a - 1 : 0, i = t * r;
@@ -333,8 +347,8 @@ function countText(e, r) {
     return n > 0 ? i.toFixed(n) : String(Math.round(i));
   });
 }
-function Cap({ s, on }) {
-  const ref = useRef(null);
+function Cap({ s, on }: { s: string; on: boolean }) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const el = ref.current;
@@ -343,7 +357,7 @@ function Cap({ s, on }) {
     if (!on) { el.textContent = countText(s, 0); return; }
     const t0 = performance.now();
     let raf = 0;
-    const tick = (now) => { const n = Math.min(1, (now - t0) / 1100); el.textContent = countText(s, 1 - (1 - n) ** 3); if (n < 1) raf = requestAnimationFrame(tick); };
+    const tick = (now: number) => { const n = Math.min(1, (now - t0) / 1100); el.textContent = countText(s, 1 - (1 - n) ** 3); if (n < 1) raf = requestAnimationFrame(tick); };
     raf = requestAnimationFrame(tick);
     return () => { cancelAnimationFrame(raf); el.textContent = s; };
   }, [s, on, calm]);
@@ -412,8 +426,8 @@ function Built() {
 
 /* ---------- people and structure ---------- */
 /* A portrait (the kit's Img) whose fallback is the person's own Sigil, not a blank disc. */
-function Face({ slug, name }) {
-  const ref = useRef(null);
+function Face({ slug, name }: { slug: string; name: string }) {
+  const ref = useRef<HTMLImageElement>(null);
   const [bad, setBad] = useState(false);
   useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
   return (
@@ -459,9 +473,9 @@ function People() {
    giant tabular counter fills as you go. Kept in this browser (try/catch: private windows just start empty). */
 const SAVE = 'hz-investors-checked';
 function Diligence() {
-  const [done, setDone] = useState([]);
-  useEffect(() => { try { setDone(JSON.parse(localStorage.getItem(SAVE)) || []); } catch { /* private window: start empty */ } }, []);
-  const mark = (i, on = true) => setDone((d) => {
+  const [done, setDone] = useState<number[]>([]);
+  useEffect(() => { try { setDone(JSON.parse(localStorage.getItem(SAVE) ?? 'null') || []); } catch { /* private window: start empty */ } }, []);
+  const mark = (i: number, on = true) => setDone((d) => {
     const nx = on ? [...new Set([...d, i])] : d.filter((x) => x !== i);
     try { localStorage.setItem(SAVE, JSON.stringify(nx)); } catch { /* not stored; still ticked for this visit */ }
     return nx;
@@ -525,7 +539,8 @@ function usePhoneThumb() {
     if (!a) return undefined;
     const was = a.getAttribute('data-thumb');
     a.setAttribute('data-thumb', 'ir@hanzo.ai');
-    return () => a.setAttribute('data-thumb', was);
+    return () => { if (was === null) a.removeAttribute('data-thumb'); else a.setAttribute('data-thumb', was); };
+
   }, []);
 }
 

@@ -1,9 +1,12 @@
 /* /history, year by year, as hanzo.ai/history publishes it (its timeline data). pic: a photo or logo from Hanzo's own
    case studies where one exists; the other years show their figure instead. */
 const B = 'https://hanzo.blog/blog';
-const Y = (year, title, badge, lines, tag, htitle, desc, metric, posts, pic) => ({ year, title, badge, lines, tag, htitle, desc, metric, posts, pic });
+export interface Pic { photo?: string; logo?: string; logo2?: string; video?: string }
+export interface Year { year: string; title: string; badge: string; lines: string[]; tag: string; htitle: string; desc: string; metric: string; posts: [string, string][]; pic: Pic }
+export type Era = [span: string, title: string, desc: string, from: number];
+const Y = (year: string, title: string, badge: string, lines: string[], tag: string, htitle: string, desc: string, metric: string, posts: [string, string][], pic: Pic): Year => ({ year, title, badge, lines, tag, htitle, desc, metric, posts, pic });
 
-export const YEARS = [
+export const YEARS: Year[] = [
   Y('2014', 'SKULLY & Open-Source Commerce', '$5.8M Raised · Indiegogo #1', ['First customer: SKULLY, pioneering the world’s first AI and augmented reality heads-up display motorcycle helmet.', 'Raised $2.5M on Indiegogo and $3.3M directly on Hanzo, reaching tens of millions of people worldwide with embedded spatial computer vision and real-time telematics.', 'Open-sourced hanzoai/commerce as one of our earliest public repositories, establishing our long-term commitment to open infrastructure.'],
     'Launch · 2014', 'SKULLY AR Helmet', 'Spatial computing, heads-up display telemetry, and computer vision interface reaching tens of millions.', '$5.8M Raised · #1 Campaign', [['SKULLY Case Study', '/customers#skully'], ['hanzoai/commerce (GitHub)', 'https://github.com/hanzoai/commerce']], { logo: '/logos/customers/skully.png' }),
   Y('2015', 'Bellabeat AI Wearables for Women', '250k Signups · Health Wearables', ['Partnered with Bellabeat to architect their women’s health AI wearable platform and data infrastructure.', 'Collected 250,000 email signups and tens of thousands of pre-orders at launch, establishing their wearable platform and analytics stack.'],
@@ -32,7 +35,7 @@ export const YEARS = [
     'Sovereign Cloud · 2026', 'Zen, Enso, Kai & Sovereign Stack', 'Full sovereign AI cloud: bare-metal C/CUDA/Metal engine, private KMS custody, and frontier foundation & decision models.', 'Zen · Enso · Kai', [['Zen 4 Launch', B + '/2026-02-09-zen4-launch/'], ['Introducing Enso', B + '/introducing-enso/'], ['Explore Models', '/models'], ['Sovereign Cloud', '/platform']], { photo: '/models/zen.webp', video: '/models/zen.webm' }),
 ];
 
-export const ERAS = [
+export const ERAS: Era[] = [
   ['2014 – 2016', 'Hardware AI & Open Commerce', 'SKULLY AR-1 head-up display sets crowdfunding speed records; open-source commerce powers global launches.', 0],
   ['2017 – 2019', 'Techstars ’17 & Applied AI', 'Graduated Techstars Kansas City ’17, scaling venture-backed consumer, media, and infrastructure partners.', 3],
   ['2020 – 2023', 'Public Markets & Cloud Scale', 'Supported Damon Motors, Bellabeat, Triller, Cover, and Casperlabs across hypergrowth and public exits.', 6],

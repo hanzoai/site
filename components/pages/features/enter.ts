@@ -4,44 +4,50 @@
    marks a section `xft-in` when about a quarter of it is in view (once), and the CSS in enter.css plays its entrance.
    Reduced motion: enter.css shows the final states and this hook only marks the sections. */
 import { useEffect } from 'react';
+import type { RefObject } from 'react';
 
 const PX = [18, 12, 8, 5, 3]; // pixel-resolve: block sizes, coarse to fine, ~110 ms each
 
-function pixelResolve(el) {
+function pixelResolve(el: HTMLElement) {
   const f = document.getElementById('xft-px');
   if (!f) return el.classList.add('xft-done');
   const [fl, co, mo] = [f.querySelector('feFlood'), f.querySelector('feComposite'), f.querySelector('feMorphology')];
+  if (!fl || !co || !mo) return el.classList.add('xft-done');
   let k = 0;
   const step = () => {
     if (k >= PX.length) { el.classList.add('xft-done'); return; }
     const s = PX[k++], h = Math.floor(s / 2);
-    fl.setAttribute('x', h); fl.setAttribute('y', h);
-    co.setAttribute('width', s); co.setAttribute('height', s);
-    mo.setAttribute('radius', h);
+    fl.setAttribute('x', String(h)); fl.setAttribute('y', String(h));
+    co.setAttribute('width', String(s)); co.setAttribute('height', String(s));
+    mo.setAttribute('radius', String(h));
     setTimeout(step, 110);
   };
   step();
 }
 
-export default function useFeaturesEnter(root) {
+export default function useFeaturesEnter(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const main = root.current;
     if (!main) return;
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
     let px = innerWidth / 2, py = innerHeight * 0.6, moved = false;
-    const off = [];
-    const on = (t, e, f, o = { passive: true }) => { t.addEventListener(e, f, o); off.push(() => t.removeEventListener(e, f, o)); };
-    on(window, 'pointermove', (e) => { px = e.clientX; py = e.clientY; moved = true; });
+    const off: (() => void)[] = [];
+    // f is stored as the DOM's EventListener; callers name the event type they expect (the cast is only for that)
+    const on = <E extends Event>(t: EventTarget, e: string, f: (ev: E) => void, o: AddEventListenerOptions = { passive: true }) => {
+      const h = f as (ev: Event) => void;
+      t.addEventListener(e, h, o); off.push(() => t.removeEventListener(e, h, o));
+    };
+    on(window, 'pointermove', (e: PointerEvent) => { px = e.clientX; py = e.clientY; moved = true; });
 
-    const play = (el) => {
+    const play = (el: HTMLElement) => {
       const kind = el.dataset.enter;
       if (calm) { el.classList.add('xft-in', 'xft-done'); return; }
       if (kind === 'pixel') { el.classList.add('xft-in'); pixelResolve(el); return; }
       if (kind === 'wave') {
         // each key waits by its distance from the pointer (or from where a thumb would be): a ripple outward
         const ox = moved ? px : innerWidth / 2, oy = moved ? py : el.getBoundingClientRect().top;
-        el.querySelectorAll('.xft-key').forEach((k) => {
+        el.querySelectorAll<HTMLElement>('.xft-key').forEach((k) => {
           const r = k.getBoundingClientRect(), d = Math.hypot(r.left + r.width / 2 - ox, r.top + r.height / 2 - oy);
           k.style.setProperty('--d', Math.round(Math.min(d, 1200) * 0.38) + 'ms');
         });
@@ -56,14 +62,15 @@ export default function useFeaturesEnter(root) {
       const need = 0.25 * Math.min(e.boundingClientRect.height, innerHeight);
       const needW = 0.25 * Math.min(e.boundingClientRect.width, innerWidth);
       if (e.intersectionRect.height < need || e.intersectionRect.width < needW) return;
-      io.unobserve(e.target); play(e.target);
+      io.unobserve(e.target); play(e.target as HTMLElement); // only [data-enter] page elements are observed
+
     }), { threshold: [0, 0.1, 0.2, 0.25, 0.35, 0.5, 0.75, 1] });
     main.querySelectorAll('[data-enter]').forEach((el) => io.observe(el));
     off.push(() => io.disconnect());
 
     // tilt-3d-hover: the room's film leans toward the pointer as it arrives, then follows it (2.5° at most)
-    main.querySelectorAll('[data-enter="tilt"]').forEach((el) => {
-      const lean = (x, y, big) => {
+    main.querySelectorAll<HTMLElement>('[data-enter="tilt"]').forEach((el) => {
+      const lean = (x: number, y: number, big: boolean) => {
         const r = el.getBoundingClientRect(), a = big ? 14 : 2.5;
         const nx = Math.max(-1, Math.min(1, ((x - r.left) / r.width) * 2 - 1)), ny = Math.max(-1, Math.min(1, ((y - r.top) / r.height) * 2 - 1));
         el.style.setProperty('--tx', (nx * a).toFixed(2) + 'deg');
@@ -71,14 +78,14 @@ export default function useFeaturesEnter(root) {
       };
       lean(px, py, true);
       if (!fine || calm) return;
-      on(window, 'pointermove', (e) => { if (!el.classList.contains('xft-in')) lean(e.clientX, e.clientY, true); });
-      on(el, 'pointermove', (e) => { if (el.classList.contains('xft-done')) lean(e.clientX, e.clientY, false); });
+      on(window, 'pointermove', (e: PointerEvent) => { if (!el.classList.contains('xft-in')) lean(e.clientX, e.clientY, true); });
+      on(el, 'pointermove', (e: PointerEvent) => { if (el.classList.contains('xft-done')) lean(e.clientX, e.clientY, false); });
       on(el, 'pointerleave', () => { if (el.classList.contains('xft-done')) { el.style.setProperty('--tx', '0deg'); el.style.setProperty('--ty', '0deg'); } });
     });
 
     // h-gallery: on wide screens the section is tall and its stage holds still; vertical scroll moves the track
     // of rooms sideways for that stretch, then lets go. Phones get a swipe rail (CSS scroll-snap, no pin).
-    const gal = main.querySelector('.xft-gal'), track = gal?.querySelector('.xft-gal-track');
+    const gal = main.querySelector<HTMLElement>('.xft-gal'), track = gal?.querySelector<HTMLElement>('.xft-gal-track');
     if (gal && track) {
       const wide = matchMedia('(min-width: 900px)');
       const set = () => {
@@ -93,11 +100,12 @@ export default function useFeaturesEnter(root) {
       on(window, 'scroll', set);
       on(window, 'resize', set);
       // keyboard: focus inside a room that is off to the side scrolls the page to that room
-      on(track, 'focusin', (e) => {
+      on(track, 'focusin', (e: FocusEvent) => {
         if (!wide.matches || calm) return;
-        const panel = e.target.closest('.xft-prod');
-        const panels = [...track.querySelectorAll(':scope > .xft-prod')], i = panels.indexOf(panel);
-        if (i < 0) return;
+        const panel = (e.target as Element).closest<HTMLElement>('.xft-prod');
+        const panels = [...track.querySelectorAll<HTMLElement>(':scope > .xft-prod')], i = panel ? panels.indexOf(panel) : -1;
+        if (i < 0 || !panel) return;
+
         const run = gal.offsetHeight - innerHeight, top = gal.getBoundingClientRect().top + scrollY;
         const dist = track.scrollWidth - document.documentElement.clientWidth;
         const want = Math.max(0, Math.min(dist, panel.offsetLeft - (document.documentElement.clientWidth - panel.offsetWidth) / 2));

@@ -25,6 +25,7 @@
 // Beyond: the prefill instrument: pick a prompt size and read Hanzo's measured prefill time and rate for Zen 6 on one DGX Spark
 import { useEffect, useRef, useState } from 'react';
 import { useCallback } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { motion, animate, AnimatePresence, LayoutGroup, useInView, useMotionValue, useReducedMotion } from 'motion/react';
 import { Enter, useEnter, Scramble } from './enterprise/enter';
 import { EASE } from '../ui';
@@ -37,7 +38,7 @@ import './Enterprise.css';
 
 const Check = ({ size = 18 }) => <svg className="xe-ck" viewBox="0 0 24 24" width={size} height={size} aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="none" strokeWidth="1.5" /><path d="M7.5 12.5l3 3 6-6.5" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-const PLACES = [
+const PLACES: string[][] = [
   ['Hanzo Cloud', 'We run it for you', "Start today. On Hanzo Base, your organization's data is its own database."],
   ['Your cloud', 'Inside your VPC', 'Hanzo runs in your own cloud account, on your network.'],
   ['Your servers', 'On premises', 'On hardware in your data center, beside the systems you already run.'],
@@ -46,7 +47,7 @@ const PLACES = [
 
 /* ---------- the workspace: Hanzo's audit log, writing ---------- */
 // Hanzo's audit log records who acted, from where, what they called and the status it returned
-const LOG = [
+const LOG: string[][] = [
   ['Member', 'Single sign-on', 'POST /v1/chat/completions', '200'],
   ['Service account', 'API key', 'POST /v1/decisions', '200'],
   ['SCIM 2.0', 'Your directory', 'Account created', '201'],
@@ -59,10 +60,10 @@ const LOG = [
   ['SCIM 2.0', 'Your directory', 'Account removed', '204'],
 ];
 const ROW = 44;
-const mod = (a, n) => ((a % n) + n) % n;
+const mod = (a: number, n: number) => ((a % n) + n) % n;
 
-function Workspace({ at }) {
-  const ref = useRef(null);
+function Workspace({ at }: { at: number }) {
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.15 });
   const calm = useReducedMotion();
   const [n, setN] = useState(7);
@@ -106,8 +107,8 @@ function Workspace({ at }) {
 }
 
 /* ---------- the hero: the words, and Hanzo's workspace writing its audit log inside the four walls (unpinned) ---------- */
-function Hero({ at: chosen, mine }) {
-  const ref = useRef(null);
+function Hero({ at: chosen, mine }: { at: number; mine: boolean }) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   // the walls turn by themselves while the hero is on screen; once a hand opens a place in the rows below, they show it
   const seen = useInView(ref, { amount: 0.3 });
@@ -119,7 +120,7 @@ function Hero({ at: chosen, mine }) {
   }, [idle, mine, calm, seen]);
   const at = mine ? chosen : idle;
 
-  const line = (t, d) => (
+  const line = (t: string, d: number) => (
     <span className="xe-line"><span style={{ animationDelay: d + 's' }}>{t}</span></span>
   );
 
@@ -163,7 +164,7 @@ function Hero({ at: chosen, mine }) {
 
 /* ---------- the signature, rows that open: the four places as a tight list; a row opens in place on hover (fine
    pointers) or tap into its full detail: the walls with its own drawn solid, what it means, where it sits ---------- */
-function Glyph({ at }) {
+function Glyph({ at }: { at: number }) {
   return (
     <span className="xe-glyph" aria-hidden="true">
       {PLACES.map((pl, i) => <i key={pl[0]} className={i === at ? 'on' : i < at ? 'out' : undefined} style={{ inset: `${i * 12}%` }} />)}
@@ -172,8 +173,8 @@ function Glyph({ at }) {
   );
 }
 
-function Places({ at, open }) {
-  const [ref, inn] = useEnter(0.25);
+function Places({ at, open }: { at: number; open: (i: number) => void }) {
+  const [ref, inn] = useEnter<HTMLElement>(0.25);
   const fine = useRef(false);
   useEffect(() => { fine.current = matchMedia('(hover: hover) and (pointer: fine)').matches; }, []);
   return (
@@ -219,7 +220,7 @@ function Places({ at, open }) {
 
 // a pause control for a looping film (first in reading order of its tile, 44px, aria-pressed)
 function PauseFilm() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLButtonElement>(null);
   const calm = useReducedMotion();
   const [off, setOff] = useState(false);
   const [up, setUp] = useState(false); // the server cannot know reduced motion: decide after hydration, so both renders match
@@ -248,8 +249,8 @@ function PauseFilm() {
 /* entrance 3, inertia-drag: the tiles are thrown in from the right and decay to rest; then they can be dragged and
    thrown (on phones a rail you fling through; on desktop the grid gives under the hand and settles back) */
 function Includes() {
-  const [ref, inn] = useEnter(0.15);
-  const wrap = useRef(null);
+  const [ref, inn] = useEnter<HTMLElement>(0.15);
+  const wrap = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   useEffect(() => {
     if (!inn || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -318,10 +319,10 @@ function Includes() {
 }
 
 /* ---------- the dark room: your own GPUs ---------- */
-const PREFILL = [['512 tokens', 1.9, 270], ['2,048 tokens', 0.8, 2658], ['8,192 tokens', 4.5, 1835], ['16,384 tokens', 9.6, 1701], ['32,768 tokens', 23.2, 1414]];
+const PREFILL: [string, number, number][] = [['512 tokens', 1.9, 270], ['2,048 tokens', 0.8, 2658], ['8,192 tokens', 4.5, 1835], ['16,384 tokens', 9.6, 1701], ['32,768 tokens', 23.2, 1414]];
 const TOP = 2658;
 
-function Roll({ k, children }) {
+function Roll({ k, children }: { k: string; children?: ReactNode }) {
   return (
     <span className="xe-roll">
       <AnimatePresence mode="popLayout" initial={false}>
@@ -334,11 +335,11 @@ function Roll({ k, children }) {
 function Prefill() {
   const [k, setK] = useState(1);
   const [hot, setHot] = useState(false); // the figures rest small and grow while a size is being picked
-  const timer = useRef(0);
+  const timer = useRef<ReturnType<typeof setTimeout> | 0>(0);
   useEffect(() => () => clearTimeout(timer.current), []);
-  const pick = (i) => { setMine(true); setK(i); setHot(true); clearTimeout(timer.current); timer.current = setTimeout(() => setHot(false), 1600); };
+  const pick = (i: number) => { setMine(true); setK(i); setHot(true); clearTimeout(timer.current); timer.current = setTimeout(() => setHot(false), 1600); };
   // until a hand takes over, the instrument steps through the sizes by itself while it is on screen (figures at rest)
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
   const [mine, setMine] = useState(false);
@@ -372,7 +373,7 @@ function Prefill() {
   );
 }
 
-function Rack({ name, total, specs, guide, to }) {
+function Rack({ name, total, specs, guide, to }: { name: string; total: number; specs: [string, string][]; guide: string; to: string }) {
   return (
     <div className="xe-rack">
       <h3>{name}</h3>
@@ -387,7 +388,7 @@ function Rack({ name, total, specs, guide, to }) {
 
 // four 8-GPU servers, drawn: the 32 GPUs light one by one each time the card comes fully into view
 function RackGlyph() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement>(null);
   const seen = useInView(ref, { amount: 1, margin: '0px 0px -20% 0px' });
   return (
     <span ref={ref} className={'xe-rackglyph' + (seen ? ' on' : '')} aria-hidden="true">
@@ -398,8 +399,8 @@ function RackGlyph() {
 
 /* Your own GPUs: the measurement in the open, the rack detail in a drawer that grows out of its card */
 function Gpus() {
-  const [src, setSrc] = useState(null);
-  const open = useCallback((e) => setSrc(e.currentTarget), []);
+  const [src, setSrc] = useState<HTMLElement | null>(null);
+  const open = useCallback((e: MouseEvent<HTMLElement>) => setSrc(e.currentTarget), []);
   const close = useCallback(() => setSrc(null), []);
   return (
     <Enter k="draw" className="xe-sec xe-gpu" amount={0.12} aria-labelledby="xe-gpu-h">
@@ -463,11 +464,11 @@ function Gpus() {
 
 /* ---------- proof, on a split-flap board ---------- */
 // a figure, Hanzo's own value, in place in the server HTML (the section's snap entrance carries it in)
-function Fig({ value, className = '' }) {
+function Fig({ value, className = '' }: { value: string; className?: string }) {
   return <span className={'xe-fig ' + className}><span>{value}</span></span>;
 }
 
-const PROOF = [
+const PROOF: string[][] = [
   ['$8.4M', 'in bikes sold in 30 days', 'Damon Motorcycles', 'CES launch and preorders', '/customers/damon-motorcycles', '/logos/customers/damon-motorcycles.svg'],
   ['$7M+', 'raised in preorders', 'KANOA', 'Crowdfunding and preorders', '/customers/kanoa', '/logos/customers/kanoa.png'],
   ['169M', 'people watched TrillerFest', 'Triller', 'Growth marketing', '/customers#trillerfest', '/logos/customers/trillerfest.png'],
@@ -479,16 +480,16 @@ const PROOF = [
 // The logo files are not in public/ yet (requested in docs/build-notes/requests/enterprise.md), so nothing hot-links or 404s:
 // a cloud is its name set in type, and a customer row carries its name. Once the files are vendored, set LOGOS true.
 const LOGOS = true;
-function CloudMark({ name, src }) {
+function CloudMark({ name, src }: { name: string; src: string }) {
   return LOGOS ? <Img src={src} alt={name} w={132} h={32} /> : <span className="xe-cloudname">{name}</span>;
 }
-function Mark({ src }) {
+function Mark({ src }: { src: string }) {
   return LOGOS ? <Img src={src} alt="" w={96} h={20} /> : null;
 }
 
 // sixteen marks, one per task of the suite, filled one by one the first time the figure is reached
-function Tally({ n }) {
-  const ref = useRef(null);
+function Tally({ n }: { n: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const seen = useInView(ref, { once: true, amount: 1, margin: '0px 0px -25% 0px' });
   return (
     <span ref={ref} className={'xe-tally' + (seen ? ' on' : '')} aria-hidden="true">
@@ -544,7 +545,7 @@ const SEC = [
 ];
 
 // the workspace's own security settings, drawn from the four lines below; the row you are reading lights
-const PANEL = [
+const PANEL: [string, string[]][] = [
   ['Single sign-on', ['OpenID Connect', 'SCIM 2.0']],
   ['Your data, apart', ['Hanzo Base', 'its own database file']],
   ['Audit log', ['who acted', 'from where', 'what they called', 'status']],
@@ -552,8 +553,8 @@ const PANEL = [
 ];
 
 // the row each item lights: single sign-on shows a sign-in arriving, the audit log writes a new row while you read it
-const SECROW = [LOG[0], null, null, LOG[7]];
-function SecPanel({ at }) {
+const SECROW: (string[] | null)[] = [LOG[0], null, null, LOG[7]];
+function SecPanel({ at }: { at: number }) {
   const calm = useReducedMotion();
   const [n, setN] = useState(0);
   useEffect(() => {
@@ -561,28 +562,31 @@ function SecPanel({ at }) {
     let t = setTimeout(function tick() { setN((v) => v + 1); t = setTimeout(tick, 1800); }, 500);
     return () => clearTimeout(t);
   }, [at, calm]);
-  const row = (r, key) => (
+  const row = (r: string[], key: string) => (
     <span className="xe-panel-r" key={key}><span>{r[0]}</span><span>{r[1]}</span><code>{r[2]}</code><b className={'xe-st s' + r[3][0]}>{r[3]}</b></span>
   );
   return (
     <div className="xe-panel" aria-hidden="true">
       <div className="xe-panel-bar"><i /><i /><i /><span>Hanzo Enterprise · Your company</span></div>
       <ul>
-        {PANEL.map(([t, chips], i) => (
-          <li key={t} className={i === at ? 'on' : undefined}>
-            <span className="xe-panel-t"><b />{t}</span>
-            <span className="xe-panel-c">{chips.map((c) => <em key={c}>{c}</em>)}</span>
-            {i === 2 ? <span className="xe-panel-log">{row(LOG[mod(n, LOG.length)], 'r' + n)}</span>
-              : SECROW[i] ? <span className="xe-panel-log">{row(SECROW[i], 'r')}</span> : null}
-          </li>
-        ))}
+        {PANEL.map(([t, chips], i) => {
+          const lit = SECROW[i];
+          return (
+            <li key={t} className={i === at ? 'on' : undefined}>
+              <span className="xe-panel-t"><b />{t}</span>
+              <span className="xe-panel-c">{chips.map((c) => <em key={c}>{c}</em>)}</span>
+              {i === 2 ? <span className="xe-panel-log">{row(LOG[mod(n, LOG.length)], 'r' + n)}</span>
+                : lit ? <span className="xe-panel-log">{row(lit, 'r')}</span> : null}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
 }
 
 function Security() {
-  const list = useRef(null);
+  const list = useRef<HTMLUListElement>(null);
   const [at, setAt] = useState(0);
   useEffect(() => {
     const items = [...(list.current?.children || [])];
@@ -662,7 +666,7 @@ function Partners() {
 }
 
 /* ---------- questions, and the close ---------- */
-const QA = [
+const QA: [string, ReactNode][] = [
   ['How is Enterprise priced?', <>Each contract is priced for your organization: where Hanzo runs and the compute you need. Members are unlimited. <A to="/contact-sales">Talk to sales</A> for a quote.</>],
   ['What do we get with Enterprise?', 'All of Hanzo for your whole company: models, agents and one shared workspace, running in Hanzo Cloud, your cloud, your own servers or fully offline. Dedicated compute, unlimited members, engineering support around the clock with hands-on onboarding, and an uptime guarantee and a security review written into your contract.'],
   ['Can Hanzo run fully offline?', <>Yes. Hanzo runs air-gapped on your own servers, with models served on machines you control. <A to="https://docs.hanzo.ai/docs/self-hosting">Read the self-hosting &amp; air-gapped guide</A>.</>],
@@ -676,7 +680,8 @@ function Questions() {
     <section className="xe-sec xe-qa" aria-labelledby="xe-qa-h">
       <div className="xe-w xe-g">
         <header className="xe-head xe-stick"><h2 id="xe-qa-h" className="xe-h">Questions</h2></header>
-        <div className="xe-qa-list"><Faq items={QA} first={0} onOpen={(q) => capture('faq_opened', { q, page: 'enterprise' })} /></div>
+        <div className="xe-qa-list"><Faq items={QA} first={0} onOpen={(q: ReactNode) => capture('faq_opened', { q, page: 'enterprise' })}
+ /></div>
       </div>
     </section>
   );
@@ -692,7 +697,7 @@ export default function Enterprise() {
   // one place in focus, shared by the hero's walls and the rows that open; a hand choosing a place stops the idle turn
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
-  const open = useCallback((i) => { setMine(true); setAt(i); }, []);
+  const open = useCallback((i: number) => { setMine(true); setAt(i); }, []);
   return (
     <main className={'xe' + (cut ? ' xe-cut' : '')}>
       <Hero at={at} mine={mine} />

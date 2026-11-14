@@ -21,7 +21,9 @@
 //   your own container) in chapter 01, ask for the NVIDIA GPU in 04, and canary or Blue/green in 06.
 // Every word and link is Hanzo's; the scenes are drawn, not measured.
 import { createContext, Fragment, useContext, useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, RefObject } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import { Magnetic } from '../../ui';
 import { A, Cta } from '../../kit';
 import KeynoteChapters from '../../v2/KeynoteChapters';
@@ -30,7 +32,7 @@ import FnUses from './functions/FnUses';
 import FnClose from './functions/FnClose';
 import './Functions.css';
 
-const EMPH = [0.16, 1, 0.3, 1];
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const TRIGGERS = ['HTTP route', 'cron schedule', 'Kafka topic', 'RabbitMQ queue'];
 const CODE = `export async function handler(req, res) {
   // Process incoming data
@@ -45,7 +47,7 @@ const CODE = `export async function handler(req, res) {
 }`;
 const LINES = CODE.split('\n');
 
-function hlJs(line) {
+function hlJs(line: string) {
   if (/^\s*\/\//.test(line)) return <span className="c">{line}</span>;
   return line.split(/\b(export|async|function|const|await|return|true|handler|processData)\b/).map((w, i) => (i % 2 ? <span key={i} className={/^(handler|processData)$/.test(w) ? 'f' : 'k'}>{w}</span> : w));
 }
@@ -66,7 +68,7 @@ function useMounted() {
 }
 
 function Life() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.25 });
   const mounted = useMounted();
   const calm = useReducedMotion() && mounted;
@@ -74,7 +76,7 @@ function Life() {
   const [ready, setReady] = useState(false);
   const [t, setT] = useState(6); // first paint: a run already under way, slots filled, so the first frame sells
   // the visitor can choose the trigger that fires (the composer's trigger choice, folded into the hero)
-  const [pick, setPick] = useState(null);
+  const [pick, setPick] = useState<number | null>(null);
   useEffect(() => { const id = setTimeout(() => setReady(true), WRITTEN); return () => clearTimeout(id); }, []);
   // one tick at a time, only while seen and not paused (a single timeout, never an interval)
   useEffect(() => {
@@ -90,7 +92,7 @@ function Life() {
   // the moment: as the slots fill up from zero the cluster swells a little, then settles back
   const grow = burst && c >= 1 && c <= 5;
   // clicking a trigger fires it now: a fresh burst from that trigger, the pods filling and the handler pulsing
-  const fire = (i) => {
+  const fire = (i: number) => {
     setPick((v) => (v === i ? null : i));
     setReady(true);
     setT((v) => (Math.floor(v / CYCLE) + 1) * CYCLE);
@@ -138,11 +140,13 @@ const GETS = [
 
 /* which of n steps a scene is on: from the scroll through its chapter (desktop), or once through by itself while seen
    (phones: it steps every 1.4 s and rests on the last step, so nothing loops) */
-function useStepOf(p, n, on) {
+interface SceneProps { p?: MotionValue<number> | null; on?: boolean }
+
+function useStepOf(p: MotionValue<number> | null | undefined, n: number, on?: boolean) {
   const [k, setK] = useState(0);
   const calm = useReducedMotion();
   useEffect(() => {
-    if (p) { const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
+    if (p) { const f = (v: number) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
     if (calm) { setK(n - 1); return; }
     if (!on || k >= n - 1) return;
     const t = setTimeout(() => setK((x) => Math.min(n - 1, x + 1)), 1400);
@@ -154,8 +158,9 @@ function useStepOf(p, n, on) {
 const RUNTIMES = ['Python', 'Go', 'Node.js', 'Rust', 'a container you built yourself'];
 
 /* arrow keys move a radio group's choice (one tab stop, roving) */
-function arrows(e, i, n, choose, refs) {
-  const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+const STEPS: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+function arrows(e: KeyboardEvent, i: number, n: number, choose: (j: number) => void, refs: RefObject<(HTMLButtonElement | null)[]>) {
+  const k = STEPS[e.key];
   if (!k) return;
   e.preventDefault();
   const j = (i + k + n) % n;
@@ -164,10 +169,10 @@ function arrows(e, i, n, choose, refs) {
 }
 
 /* chapter 01: the runtimes step with the scroll; pick one and it stays chosen (the composer's runtime choice, folded in) */
-function RuntimeScene({ p, on }) {
+function RuntimeScene({ p, on }: SceneProps) {
   const k0 = useStepOf(p, 5, on);
-  const [pick, setPick] = useState(null);
-  const refs = useRef([]);
+  const [pick, setPick] = useState<number | null>(null);
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const k = pick ?? k0;
   return (
     <div className="kn-obj fn-sc fn-sc-rt">
@@ -183,7 +188,7 @@ function RuntimeScene({ p, on }) {
   );
 }
 
-function WarmScene({ p, on }) {
+function WarmScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 4, on);
   return (
     <div className="kn-obj ink fn-sc fn-sc-warm" data-k={k}>
@@ -195,7 +200,7 @@ function WarmScene({ p, on }) {
   );
 }
 
-function ClusterScene({ p, on }) {
+function ClusterScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 3, on);
   const TAGS = ['quotas', 'node pools', 'network policy'];
   return (
@@ -217,9 +222,9 @@ function ClusterScene({ p, on }) {
 /* chapter 04: the request lands on the node that has the GPU; press the request to ask for it yourself (the composer's
    GPU choice, folded in). Nodes are shapes, not names; only the GPU node carries Hanzo's words. */
 const BUSY = [[0, 1, 3], [0, 2]]; // the plain nodes carry other work (filled slots); the GPU node waits for the ask
-function GpuScene({ p, on }) {
+function GpuScene({ p, on }: SceneProps) {
   const k0 = useStepOf(p, 3, on);
-  const [pick, setPick] = useState(null); // null: follow the scroll; true or false: the visitor's choice
+  const [pick, setPick] = useState<boolean | null>(null); // null: follow the scroll; true or false: the visitor's choice
   const k = pick === true ? 2 : pick === false ? 0 : k0;
   return (
     <div className="kn-obj fn-sc fn-sc-gpu" data-k={k}>
@@ -237,7 +242,7 @@ function GpuScene({ p, on }) {
 }
 
 /* chapter 05: four triggers, one handler; the lines draw in full (900 ms) each time the chapter arrives */
-function TriggerScene({ on }) {
+function TriggerScene({ on }: SceneProps) {
   const calm = useReducedMotion(); // reduced motion: the lines stand joined at once (after mount, so hydration matches)
   return (
     <div className="kn-obj fn-sc fn-sc-tr">
@@ -255,10 +260,10 @@ function TriggerScene({ on }) {
 /* chapter 06: canary slices traffic to the next version, Blue/green flips it; choose either (the composer's version
    choice, folded in). The versions are shapes, not invented names. */
 const MOVES = ['canary', 'Blue/green'];
-function VersionScene({ p, on }) {
+function VersionScene({ p, on }: SceneProps) {
   const k0 = useStepOf(p, 4, on);
-  const [pick, setPick] = useState(null);
-  const refs = useRef([]);
+  const [pick, setPick] = useState<number | null>(null);
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const mode = pick ?? (k0 >= 2 ? 1 : 0);
   const k = pick == null ? k0 : pick === 1 ? 2 : 1;
   const share = k >= 2 ? 1 : k === 1 ? 0.125 : 0; // the next version's slice of the traffic
@@ -349,7 +354,7 @@ function Hero() {
 
 /* the chapters' first screen: the heading and its three nouns joined by a line that draws once, so the screen holds an object */
 function Joined() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.6, once: true });
   return (
     <div className="fn-join" ref={ref} aria-hidden="true">
@@ -375,7 +380,8 @@ export default function Functions() {
         className="fn-ch"
         head={<div className="fn-ch-head"><div className="fn-ch-hw"><KeynoteLines id="fn-ch-h" className="kn-headline fn-ch-h" lines="A handler file, a trigger, and the cluster you already run" /><p className="kn-kick">What you get</p></div><Joined /></div>}
         items={GETS.map(([t, d]) => ({ title: t, body: <p>{d}</p> }))}
-        visual={(i, on, p) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
+        visual={(i: number, on: boolean, p: MotionValue<number> | null) => { const S = SCENES[i]; return <S on={on} p={p} />; }}
+
         side="right"
         swap="rise"
         count

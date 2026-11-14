@@ -2,11 +2,12 @@
 /* A card that opens into its page: the card's rectangle fills the screen with ink, the next page arrives, and the ink wipes away.
    The cover lives on <body>, so it survives the route change; the destination calls useArrival() to lift it. */
 import { useEffect } from 'react';
+import type { MouseEvent } from 'react';
 
 const OPEN = 'cubic-bezier(.76,0,.24,1)'; // the open transition's curve (docs/DESIGN.md)
 
 // `el` (optional): the element whose rectangle grows (default: the clicked element), e.g. a whole card around its link.
-export function openDoor(e, href, router, tone = '#0a0a0a', el) {
+export function openDoor(e: MouseEvent<HTMLElement>, href: string, router: { push: (href: string) => void }, tone = '#0a0a0a', el?: Element | null) {
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { router.push(href); return; }
@@ -23,7 +24,7 @@ export function openDoor(e, href, router, tone = '#0a0a0a', el) {
 
 export function useArrival() {
   useEffect(() => {
-    document.querySelectorAll('[data-door]').forEach((d) => {
+    document.querySelectorAll<HTMLElement>('[data-door]').forEach((d) => {
       if (d.dataset.landing) return; // already landing (React runs effects twice in development)
       d.dataset.landing = '1';
       d.getAnimations().forEach((a) => a.cancel());

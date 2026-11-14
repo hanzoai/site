@@ -17,6 +17,7 @@
    descriptions say it light up; Enter plays the first.
    Every word is Hanzo's. */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Magnetic } from '../ui';
 import { A } from '../kit';
@@ -31,7 +32,8 @@ import useFeaturesEnter from './features/enter';
 import './Features.css';
 import './features/enter.css';
 
-const GROUPS = [
+type Group = [string, string | null, [string, string][]];
+const GROUPS: Group[] = [
   ['Hanzo Chat', 'Default', [
     ['Enso Model Routing', 'Enso dynamically routes each prompt to the frontier model that answers it best, optimizing for quality, speed, and cost.'],
     ['Live Web Search & Code', 'Searches the real-time web for current facts, runs code in isolated sandboxes, and verifies computational answers automatically.'],
@@ -50,9 +52,9 @@ const GROUPS = [
   ]],
 ];
 const KEYS = GROUPS.flatMap(([g, tag, fs], gi) => fs.map(([t, d]) => ({ g, tag, gi, t, d })));
-const CAP = (i) => String((i + 1) % 10);
-const words = (s) => s.toLowerCase().match(/[a-z0-9]+/g) || [];
-const pad = (n) => String(n).padStart(2, '0');
+const CAP = (i: number) => String((i + 1) % 10);
+const words = (s: string) => s.toLowerCase().match(/[a-z0-9]+/g) || [];
+const pad = (n: number) => String(n).padStart(2, '0');
 /* Hanzo's own model films: Enso routes Hanzo Chat, Zen codes in Hanzo Dev, Iro draws on the Design canvas. */
 const FILMS = ['enso', 'zen', 'iro'];
 const TO = ['/chat', '/dev', '/design'];
@@ -64,15 +66,15 @@ function Instrument() {
   const [mine, setMine] = useState(false);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const [q, setQ] = useState('');
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.05 }); // the keyboard is tall on a phone: a sliver in view is enough
   const calm = useReducedMotion();
   const hits = useMemo(() => {
     const w = words(q).filter((x) => x.length > 1);
     if (!w.length) return null;
-    return KEYS.map((k, i) => [i, words(k.t + ' ' + k.d + ' ' + k.g)]).filter(([, kw]) => w.every((x) => kw.some((y) => y.startsWith(x)))).map(([i]) => i);
+    return KEYS.map((k, i): [number, string[]] => [i, words(k.t + ' ' + k.d + ' ' + k.g)]).filter(([, kw]) => w.every((x) => kw.some((y) => y.startsWith(x)))).map(([i]) => i);
   }, [q]);
-  const press = (i, hand) => { setAt(i); setDown(i); if (hand) setMine(true); setTimeout(() => setDown((d) => (d === i ? -1 : d)), 180); };
+  const press = (i: number, hand?: boolean) => { setAt(i); setDown(i); if (hand) setMine(true); setTimeout(() => setDown((d) => (d === i ? -1 : d)), 180); };
   const first = useRef(true); // the first self-press lands within a second of arrival, then one every 2.1 s
   useEffect(() => {
     if (mine || calm || !seen || paused) return;
@@ -80,8 +82,8 @@ function Instrument() {
     return () => clearTimeout(t);
   }, [at, mine, calm, seen, paused]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
-    const key = (e) => {
-      if (e.metaKey || e.ctrlKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName) || !seen) return;
+    const key = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName ?? '') || !seen) return;
       const n = '1234567890'.indexOf(e.key);
       if (n >= 0) press(n, true);
     };
@@ -162,9 +164,9 @@ function Hero() {
 
 /* A product room: the features as rows (one open at a time, stepping by itself while the room is in view; hover, tap
    and focus take over) beside the product's Hanzo film, which opens the product. */
-function Product({ gi }) {
+function Product({ gi }: { gi: number }) {
   const [g, tag, fs] = GROUPS[gi];
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { amount: 0.45 });
   const calm = useReducedMotion();
   const paused = usePaused();
@@ -175,7 +177,7 @@ function Product({ gi }) {
     const t = setTimeout(() => setRow((v) => (v + 1) % fs.length), 2600);
     return () => clearTimeout(t);
   }, [row, seen, calm, mine, paused, fs.length]);
-  const pick = (i) => { setMine(true); setRow(i); };
+  const pick = (i: number) => { setMine(true); setRow(i); };
   return (
     <section ref={ref} className={'xft-prod p' + gi} aria-labelledby={'xft-p' + gi} style={{ '--r': row }} data-enter={ENTER[gi]} {...(gi === 1 ? { 'data-room': 'dark' } : {})}>
       <div className="w2-wrap xft-prod-in">
@@ -241,7 +243,7 @@ function Gallery() {
 // so Hanzo's footer lines are part of this page's copy. While this page is mounted, the shared footer (server HTML, not
 // React-managed) sits inside our <main> as its last child: same order on screen, same structure as Hanzo's. It goes
 // back to its place when the page unmounts.
-function useFooterInMain(root) {
+function useFooterInMain(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const host = document.querySelector('[data-x-shell="footer"]');
     const main = root.current;
@@ -254,7 +256,8 @@ function useFooterInMain(root) {
 
 export default function Features() {
   usePhoneAsk();
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
+
   useFeaturesEnter(root);
   useFooterInMain(root);
   return (

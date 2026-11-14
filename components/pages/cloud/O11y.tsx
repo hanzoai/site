@@ -38,7 +38,7 @@ const ASK = 'View on GitHub';
 /* ---------- the hero object: one request, pivoting once, then resting on the slow span ---------- */
 // [service, operation, start %, width %]
 const SPANS = [['gateway', 'GET /v1/checkout', 0, 100], ['api', 'checkout', 3, 92], ['auth', 'verify token', 5, 9], ['queue', 'enqueue receipt', 18, 7], ['db', 'SELECT cart', 27, 46], ['payments', 'charge', 76, 16]];
-const LOGS = {
+const LOGS: Record<number, string[]> = {
   4: ['db · query plan: seq scan', 'db · rows read', 'api · waited on db'],
   5: ['payments · charge created', 'payments · webhook queued'],
   1: ['api · request received', 'api · cart loaded', 'api · response sent'],
@@ -49,11 +49,11 @@ const SLOW = 4;
 const STEP = 3000;
 
 function Pivot() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.3);
   const [paused, setPaused] = useState(false);
   const [t, setT] = useState(0);
-  const [held, setHeld] = useState(null); // a clicked span stays open
-  const [hov, setHov] = useState(null); // a span under a fine pointer previews its logs
+  const [held, setHeld] = useState<number | null>(null); // a clicked span stays open
+  const [hov, setHov] = useState<number | null>(null); // a span under a fine pointer previews its logs
   const last = RUN.length - 1;
   const done = calm || t >= last;
   const running = live && !paused && hov === null && held === null && !done;
@@ -101,7 +101,7 @@ function Pivot() {
         <div className="ob-pv-card" key={sel}>
           <p className="ob-k">logs</p>
           <p className="ob-pv-span"><i />{svc} · {op}</p>
-          <ul>{(LOGS[sel] || []).map((l) => <li key={l}>{l}</li>)}</ul>
+          <ul>{(LOGS[sel] || []).map((l: string) => <li key={l}>{l}</li>)}</ul>
         </div>
         <div className="ob-pv-exc">
           <p className="ob-k">exceptions</p>
@@ -125,12 +125,12 @@ const LOGROWS = [['info', 'api', 'request received', 1], ['info', 'db', 'query p
 // the suite's clock: a live UTC readout in the window's bar, ticking only while the window is on screen (the one idle
 // mover in the pinned scene beside the playhead); it renders after mount, so the server HTML and hydration agree
 function Clock() {
-  const [ref, live, calm] = useLive(0.1);
-  const [now, setNow] = useState(null);
+  const [ref, live, calm] = useLive<HTMLSpanElement>(0.1);
+  const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
     setNow(new Date());
     if (!live || calm) return;
-    let id;
+    let id: ReturnType<typeof setTimeout> | undefined;
     const tick = () => { const d = new Date(); setNow(d); id = setTimeout(tick, 1000 - d.getMilliseconds()); };
     id = setTimeout(tick, 1000 - new Date().getMilliseconds());
     return () => clearTimeout(id);
@@ -141,8 +141,8 @@ function Clock() {
 
 // one part's illustration inside its card's window (aria-hidden: the card's own words carry the meaning). Only that
 // part's pane renders; `on` (the card has entered view) draws it in
-function Pane({ i, on }) {
-  const d = () => on || undefined;
+function Pane({ i, on }: { i: number; on: boolean }) {
+  const d = (_i?: number) => on || undefined;
   return (
       <div className="ob-panes" aria-hidden="true">
         {i === 0 && <div className="ob-pane ob-trs ob-live" data-on={d(0)}>
@@ -206,7 +206,7 @@ function Pane({ i, on }) {
 }
 
 // 4. sticky-stack: each part is a card that sticks under the header and the next one stacks over it
-function Card({ i, t, d }) {
+function Card({ i, t, d }: { i: number; t: string; d: string }) {
   const [ref, inn] = useEnter(0.35);
   return (
     <li className="ob-card" ref={ref} style={{ '--i': i }}>
@@ -235,8 +235,10 @@ const PARTS = [
   ['OpenTelemetry on the wire', 'OTLP over gRPC on 4317 and HTTP on 4318. Any OTel SDK or collector points at it by setting one endpoint variable — there is no agent of ours to install.'],
 ];
 // [what you run now (Hanzo's own phrase), the part that keeps it, its object]
-const KEEP = [['PromQL', 1, 'q'], ['Any OTel SDK or collector', 5, 'otlp'], ['PagerDuty, Opsgenie, Slack, Teams, email or a webhook', 4, 'routes']];
-const SIDE = [['O11y', '/o11y'], ['Logs', '/cloud/logs'], ['Metrics', '/metrics'], ['Dashboards', '/dashboards'], ['AI Metrics', '/cloud/ai-metrics'], ['Billing', '/billing'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions']];
+const KEEP: [string, number, string][] = [['PromQL', 1, 'q'],
+ ['Any OTel SDK or collector', 5, 'otlp'], ['PagerDuty, Opsgenie, Slack, Teams, email or a webhook', 4, 'routes']];
+const SIDE: [string, string][] = [['O11y', '/o11y'],
+ ['Logs', '/cloud/logs'], ['Metrics', '/metrics'], ['Dashboards', '/dashboards'], ['AI Metrics', '/cloud/ai-metrics'], ['Billing', '/billing'], ['Plans & Pricing', '/cloud/plans'], ['Sessions', '/cloud/sessions']];
 
 /* The agent prompt: Frame's Paste markup and classes, with the namespace chip printed whole as hanzo.ai prints it
    ("api /v1/o11y", one run of mono). */

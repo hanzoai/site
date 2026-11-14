@@ -3,6 +3,7 @@
    one change: all four projects carry the line hanzo.ai's console gives them (payments-api and docs-site included),
    every line kept in the DOM and only the chosen one shown. Requested for the shared one in docs/build-notes/requests/o11y.md. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A } from '../../kit';
 import './Frame.css';
@@ -10,7 +11,7 @@ import '../../v2/LaunchType.css';
 import '../../v2/LaunchConsole.css';
 
 // every project carries its own line, as hanzo.ai's console does
-const ROWS = (cap) => [
+const ROWS = (cap: string) => [
   ['gateway', 'Ready', cap],
   ['payments-api', 'Ready', 'The service the session above is changing.'],
   ['checkout-web', 'Building', 'A build is running from the last commit on main.'],
@@ -18,7 +19,10 @@ const ROWS = (cap) => [
 ];
 const ICONS = ['M8 2v4M8 6 4 10M8 6l4 4M4 10v4M12 10v4', 'M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13', 'M3 3h3v3H3zM10 10h3v3h-3zM6 4.5h3.5v5.5', 'M2.5 3h11v4h-11zM2.5 9h11v4h-11z', 'M8 2 2.5 5v6L8 14l5.5-3V5zM2.5 5 8 8l5.5-3M8 8v6', 'M2 12l4-4 3 3 5-6', 'M5 2.5h6M3.5 6h9M2 9.5h12v4H2z', 'M8 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM2.5 14c.8-2.6 3-4 5.5-4s4.7 1.4 5.5 4'];
 
-export default function O11yConsole({ name, side, api, cap = 'Every request enters here, so the limiter does too.', light, className = '' }) {
+interface O11yConsoleProps { name: ReactNode; side: [string, string][]; api?: ReactNode; cap?: string; light?: boolean; className?: string }
+
+export default function O11yConsole({ name, side, api, cap = 'Every request enters here, so the limiter does too.', light, className = '' }: O11yConsoleProps) {
+
   const rows = ROWS(cap);
   const [at, setAt] = useState(0);
   const ref = useRef(null);

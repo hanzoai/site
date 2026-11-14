@@ -2,11 +2,14 @@
 /* Page-local copy of components/v2/SceneWipe for /integrations: the same room, but reduced motion is read after
    hydration (the shared one mismatches the server HTML under reduced motion; see docs/build-notes/requests/integrations.md). */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useMotionTemplate, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import '../../v2/ProofScale.css';
 
-export default function SceneWipe({ children, className = '', dark = true, tone = '#000', label, id }) {
-  const ref = useRef(null);
+interface Props { children?: ReactNode; className?: string; dark?: boolean; tone?: string; label?: string; id?: string }
+
+export default function SceneWipe({ children, className = '', dark = true, tone = '#000', label, id }: Props) {
+  const ref = useRef<HTMLElement>(null);
   // reduced motion is read only after hydration, so the server HTML and the first client render agree
   const rm = useReducedMotion();
   const [mounted, setMounted] = useState(false);

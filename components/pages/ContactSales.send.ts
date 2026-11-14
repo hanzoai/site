@@ -4,16 +4,24 @@
    Enterprise order carried here (lib/order `sales`: the keys of the needs, never their words). */
 export const API = 'https://api.hanzo.ai';
 
+/* what the form holds, and what the address carried in */
+export type Fields = { name: string; email: string; company: string; size: string; need: string };
+export type Arrived = {
+  campaign: Record<string, string> | null;
+  coupon: string | null;
+  program: { program: string; answers: { question: string; answer: string }[] } | null;
+};
+
 const SLUG = 'enterprise';
 const QUESTION = 'Does your team need any of these?';
 const CODE = /^[A-Za-z0-9_-]{1,32}$/;
 const UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
 
 /* an offer code from the address (or the one this tab kept), when it has a code's shape */
-export const code = (raw) => { const c = (raw ?? '').trim(); return CODE.test(c) ? c : null; };
+export const code = (raw?: string | null) => { const c = (raw ?? '').trim(); return CODE.test(c) ? c : null; };
 
 /* the needs an order ticked, as the lead says them, from the fixed list: no other text in an address is filed */
-export function asked(keys, most) {
+export function asked(keys?: string | null, most?: string | number | null) {
   const ticked = (keys ?? '').split(',').filter((k) => k === 'seats' || k === 'contract');
   const n = Number(most);
   const m = Number.isInteger(n) && n > 0 && n <= 1_000_000 ? n : null;
@@ -21,16 +29,16 @@ export function asked(keys, most) {
 }
 
 /* what the address carries into the lead: the campaign, the offer code, and an Enterprise order's needs */
-export function arrived(search, kept = null) {
+export function arrived(search: string, kept: string | null = null): Arrived {
   const q = new URLSearchParams(search);
-  const campaign = Object.fromEntries(UTM.filter((k) => q.get(k)).map((k) => [k, q.get(k)]));
+  const campaign = Object.fromEntries(UTM.filter((k) => q.get(k)).map((k): [string, string] => [k, q.get(k) ?? '']));
   const coupon = code(q.get('coupon')) ?? code(kept);
   const program = q.get('program') === SLUG ? { program: SLUG, answers: asked(q.get('asked'), q.get('most')) ? [{ question: QUESTION, answer: asked(q.get('asked'), q.get('most')) }] : [] } : null;
   return { campaign: Object.keys(campaign).length ? campaign : null, coupon, program };
 }
 
 /* the lead's body */
-export function lead({ name, email, company, size, need }, visit, from) {
+export function lead({ name, email, company, size, need }: Fields, visit: Record<string, unknown>, from: Arrived) {
   return {
     name: name.trim(), email: email.trim(), company: company.trim(), size, need,
     source: 'hanzo.ai/contact-sales', visit,
@@ -41,8 +49,8 @@ export function lead({ name, email, company, size, need }, visit, from) {
 }
 
 /* the form response's body: one answer for each question that was answered, under the lead's own id when there is one */
-export function response({ name, email, company, size, need }, from, id, now = Date.now()) {
-  const text = (field, v) => (v.trim() ? [{ field, text: v.trim() }] : []);
+export function response({ name, email, company, size, need }: Fields, from: Arrived, id?: string, now = Date.now()) {
+  const text = (field: string, v: string) => (v.trim() ? [{ field, text: v.trim() }] : []);
   return {
     token: 'cs_' + (id || `${now}`).replace(/[^A-Za-z0-9]/g, '').slice(0, 30),
     answers: [...text('name', name), { field: 'email', text: email.trim() }, ...text('company', company), ...text('size', size), ...text('need', need)],

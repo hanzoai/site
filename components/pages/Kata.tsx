@@ -17,6 +17,7 @@
    sentences about what Kata supports, and a tick draws beside each one that holds them. Nothing is invented: every
    option and sentence is Hanzo's. Greys only; the diff is drawn as bars, not invented code. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, Cta, Band, Tick } from '../kit';
 import A2Paste from '../v2/A2Paste';
@@ -30,7 +31,7 @@ import usePhoneAsk from './usePhoneAsk';
 import './Kata.css';
 
 const KEYS = 'https://platform.hanzo.ai/keys';
-const SESSION = [
+const SESSION: [string | null, string, string][] = [
   ['kata run --suite tests/unit', '12 passed · 1 failed (test_token_expiry)', 'bad'],
   ['kata triage', 'Kai decision: patch · confidence: 0.96 · root cause: off-by-one jitter', ''],
   ['kata repair --model enso-ultra', 'synthesized AST edit in auth/tokens.py · re-running test suite...', ''],
@@ -38,13 +39,13 @@ const SESSION = [
 ];
 const DIFF = ['ctx', 'ctx', 'out', 'in', 'in', 'ctx']; // the diff's shape only: lines out (−) and in (+)
 const WORDS = ['Test.', 'Repair.', 'Verify.'];
-const wordAt = (s) => (s <= 1 ? 0 : s <= 3 ? 1 : 2);
+const wordAt = (s: number) => (s <= 1 ? 0 : s <= 3 ? 1 : 2);
 
 /* One clock for the hero: 0 running, 1 one failing, 2 triage, 3 repair, 4 passing. The server paints step 0, so the
    first frame you see is the first frame of the loop (nothing finished is shown and then wiped); reduced motion jumps
    to the passing state, and with JS off CSS shows the whole session. A chain of timeouts (no setInterval) that stops
    off screen and while paused. */
-function useLoop(ref, paused) {
+function useLoop(ref: RefObject<HTMLElement | null>, paused: boolean) {
   const [step, setStep] = useState(0);
   const [run, setRun] = useState(0);
   const seen = useInView(ref, { amount: 0.2 });
@@ -55,10 +56,10 @@ function useLoop(ref, paused) {
     const t = setTimeout(() => (step < 4 ? setStep(step + 1) : (setStep(0), setRun((r) => r + 1))), step === 4 ? 3800 : step === 0 ? 1000 : 1900);
     return () => clearTimeout(t);
   }, [step, seen, calm, paused]);
-  return [step, run, () => { setStep(0); setRun((r) => r + 1); }];
+  return [step, run, () => { setStep(0); setRun((r) => r + 1); }] as const;
 }
 
-function Board({ step, run }) {
+function Board({ step, run }: { step: number; run: number }) {
   const pass = step >= 4;
   const fail = step >= 1 && !pass;
   return (
@@ -86,7 +87,7 @@ function Board({ step, run }) {
   );
 }
 
-function Term({ step, run, replay }) {
+function Term({ step, run, replay }: { step: number; run: number; replay: () => void }) {
   return (
     <div className="xkt-term" role="log" aria-label="A Kata session">
       <div className="xkt-term-bar"><i /><i /><i />
@@ -109,7 +110,7 @@ function Term({ step, run, replay }) {
 }
 
 function Hero() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const [paused, setPaused] = useState(false);
   const [step, run, replay] = useLoop(ref, paused);
   const lit = wordAt(step);
@@ -150,8 +151,8 @@ function Hero() {
 /* Lines: the page's own line mask (the h1's 700 ms cut, 60 ms apart), in CSS so the server paint and the client agree
    under every preference (the shared A2Lines branches on reduced motion while rendering, which fails hydration).
    Reduced motion and JS off show the final lines. */
-function Lines({ lines, id, className = '' }) {
-  const ref = useRef(null);
+function Lines({ lines, id, className = '' }: { lines: string[]; id: string; className?: string }) {
+  const ref = useRef<HTMLHeadingElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.3 });
   return (
     <h2 id={id} ref={ref} className={className + ' xkt-lines' + (seen ? ' go' : '')}>
@@ -162,8 +163,8 @@ function Lines({ lines, id, className = '' }) {
 
 /* Room: the dark room enters as a rounded card inside the gutters and opens to full width as it is reached (as the
    shared A2Room), with no preference branch while rendering: phones and reduced motion open it in CSS. */
-function Room({ className = '', children, ...rest }) {
-  const ref = useRef(null);
+function Room({ className = '', children, ...rest }: { className?: string; children?: ReactNode; 'aria-label'?: string }) {
+  const ref = useRef<HTMLElement>(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.25'] });
   const clip = useTransform(p, (v) => { const k = 1 - Math.min(1, Math.max(0, v)); return `inset(0px ${Math.round(k * 32)}px round ${Math.round(k * 24)}px)`; });
   return <motion.section ref={ref} className={'a2-dark ' + className} style={{ clipPath: clip }} {...rest}>{children}</motion.section>;
@@ -178,7 +179,7 @@ const STATIONS = [
 ];
 const C = 2 * Math.PI * 44;
 
-function Dial({ at }) {
+function Dial({ at }: { at: number }) {
   return (
     <div className="xkt-dial">
       <svg viewBox="0 0 100 100">
@@ -203,16 +204,17 @@ function TheLoop() {
           <p className="a2-lede xkt-intro-l">Kata never submits speculative code: Kai triages every failure, Enso writes the fix, and your own test suite decides whether it lands.</p>
         </div>
       </section>
-      <A2Chapters flip label="The loop" items={STATIONS.map(([k, t, d]) => ({ k, t, d }))} visual={(i) => <Dial at={i} />} />
+      <A2Chapters flip label="The loop" items={STATIONS.map(([k, t, d]) => ({ k, t, d }))} visual={(i: number) => <Dial at={i} />} />
     </>
   );
 }
 
 /* The one dark room: it enters as a rounded card, holds "1 failed" until a white wipe, scrubbed by scroll, turns the
    suite. The figure is the page's moment: it rests at 64px, grows while the wipe runs, and settles after it. */
-const ease3 = (k) => k * k * (3 - 2 * k);
+const ease3 = (k: number) => k * k * (3 - 2 * k);
 function Wipe() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
+
   const calm0 = useReducedMotion();
   const narrow0 = useNarrow();
   const [ready, setReady] = useState(false); // the server and the first client paint agree; preferences apply after mount
@@ -264,7 +266,7 @@ const FIT = [
   { name: 'Language', opts: ['Python', 'TypeScript', 'Go', 'Rust', 'cURL'], says: 'runnable examples in Python, TypeScript, Go, Rust, and cURL' },
 ];
 
-function Lit({ text, word }) {
+function Lit({ text, word }: { text: string; word: string | null }) {
   if (!word) return <span>{text}</span>;
   const i = text.indexOf(word);
   if (i < 0) return <span>{text}</span>;
@@ -275,8 +277,8 @@ function Lit({ text, word }) {
    ring on the chip, not a selection; the sentences are not announced). Your first pick stops it for good. A chain of
    timeouts that waits while the panel is off screen; none under reduced motion. */
 function Fit() {
-  const ref = useRef(null);
-  const [pick, setPick] = useState([null, null, null]);
+  const ref = useRef<HTMLDivElement>(null);
+  const [pick, setPick] = useState<(string | null)[]>([null, null, null]);
   const [touched, setTouched] = useState(false);
   const [demo, setDemo] = useState(-1);
   const seen = useInView(ref, { amount: 0, margin: '0px 0px 120px 0px' }); // it is already trying as it comes up the screen
@@ -286,9 +288,9 @@ function Fit() {
     const t = setTimeout(() => setDemo((d) => d + 1), demo < 0 ? 700 : 1600);
     return () => clearTimeout(t);
   }, [demo, touched, calm, seen]);
-  const set = (g, o) => { setTouched(true); setPick((p) => p.map((v, k) => (k === g ? (v === o ? null : o) : v))); };
+  const set = (g: number, o: string) => { setTouched(true); setPick((p) => p.map((v, k) => (k === g ? (v === o ? null : o) : v))); };
   const dg = demo % FIT.length; // the group being tried
-  const tried = (gi) => (!touched && demo >= 0 && gi === dg ? FIT[gi].opts[Math.floor(demo / FIT.length) % FIT[gi].opts.length] : null);
+  const tried = (gi: number) => (!touched && demo >= 0 && gi === dg ? FIT[gi].opts[Math.floor(demo / FIT.length) % FIT[gi].opts.length] : null);
   return (
     <div className={'xkt-fit' + (!touched && demo >= 0 ? ' demo' : '')} ref={ref}>
       {FIT.map((g, gi) => {
@@ -332,7 +334,7 @@ function Capabilities() {
   );
 }
 
-const READ = [
+const READ: [string, [string, string, string?][]][] = [
   ['Kata', [['https://github.com/hanzoai/kata', 'hanzoai/kata', 'GitHub Repository.'], ['https://github.com/hanzoai/kata/tree/main/examples', 'Multi-Language SDKs'], ['https://github.com/hanzoai/kata/tree/main/recipes', 'Rust Recipes Crate']]],
   ['Agent Systems', [['/dev', 'Hanzo Dev', 'Our coding agent.'], ['/gen', 'Hanzo Gen', 'Universal harness.'], ['/kai', 'Kai', 'Decision engine.']]],
   ['Models', [['/enso', 'Enso', 'Model router.'], ['/zen', 'Zen', 'Open weights.'], ['/models', 'Every model']]],
@@ -366,7 +368,7 @@ function Read() {
   );
 }
 
-const QA = [
+const QA: [string, string][] = [
   ['How does Kata differ from Hanzo Dev and Gen?', 'Dev is the coding agent that plans and writes whole features. Gen runs any coding agent on Hanzo’s tools and models. Kata repairs failing tests in CI: it triages each failure and lands a fix only when the suite passes.'],
   ['Which test frameworks does Kata support?', 'Kata natively supports pytest, vitest, jest, cargo test, go test, and custom test runners emitting standard TAP or JUnit XML output.'],
   ['Where can I find the open-source examples and recipes?', 'The open-source repository is at github.com/hanzoai/kata with runnable examples in Python, TypeScript, Go, Rust, and cURL, along with a standalone Rust recipes crate.'],
@@ -392,12 +394,13 @@ function Questions() {
 /* The kit Band's button carries no data-cta yet (requested in docs/build-notes/requests/kata.md). Until it does, the page marks
    it kata.band and sends the same cta_click a kit Cta sends, so the closing ask is measured and the header's ask turns
    to an outline while the Band's solid ask is on screen (usePhoneAsk reads data-cta): one solid fill at a time. */
-function useBandAsk(id) {
+function useBandAsk(id: string) {
   useEffect(() => {
     const a = document.querySelector('main.xkt .x-band a');
     if (!a) return undefined;
     a.setAttribute('data-cta', id);
-    const fire = () => dispatchEvent(new CustomEvent('hz-event', { detail: { name: 'cta_click', id, label: a.textContent.trim(), path: location.pathname } }));
+    const fire = () => dispatchEvent(new CustomEvent('hz-event', { detail: { name: 'cta_click', id, label: a.textContent?.trim()
+, path: location.pathname } }));
     a.addEventListener('click', fire);
     return () => { a.removeEventListener('click', fire); a.removeAttribute('data-cta'); };
   }, [id]);

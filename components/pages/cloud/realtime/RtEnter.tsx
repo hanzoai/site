@@ -6,13 +6,14 @@
    only after mount and only for a section still below the fold; each observer watches an unclipped box, so every
    arrival fires. Only transform, clip-path and opacity move: no box changes size. */
 import { useEffect, useRef, useState } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { useCalm } from '../../../ui'; // read after hydration, so the server frame and the first client frame match
 
 const calmNow = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function useArrive(margin = '0px 0px -18% 0px') {
-  const ref = useRef(null);
+function useArrive<T extends HTMLElement = HTMLElement>(margin = '0px 0px -18% 0px') {
+  const ref = useRef<T>(null);
   const [st, setSt] = useState('idle'); // idle (final, untouched) -> armed -> play
   useEffect(() => {
     const el = ref.current;
@@ -23,12 +24,12 @@ function useArrive(margin = '0px 0px -18% 0px') {
     io.observe(el);
     return () => io.disconnect();
   }, [margin]);
-  return [ref, st];
+  return [ref, st] as const;
 }
 
 /* shrink-to-card: as you scroll off the hero it settles back into a grey rounded card, a little smaller */
-export function ShrinkToCard({ children, className = '', ...rest }) {
-  const ref = useRef(null);
+export function ShrinkToCard({ children, className = '', ...rest }: HTMLAttributes<HTMLElement>) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const scale = useTransform(scrollYProgress, [0, 0.8], [1, 0.92], { clamp: true });
@@ -47,7 +48,7 @@ export function ShrinkToCard({ children, className = '', ...rest }) {
 /* tile-flip: a grid of white tiles over the graph's tile turns edge-on, one diagonal at a time, and the graph is
    formed under them (the veil exists only while it plays) */
 export function FlipVeil({ cols = 8, rows = 5 }) {
-  const [ref, st] = useArrive('0px 0px -20% 0px');
+  const [ref, st] = useArrive<HTMLSpanElement>('0px 0px -20% 0px');
   const [gone, setGone] = useState(false);
   useEffect(() => { if (st !== 'play') return; const t = setTimeout(() => setGone(true), 1500); return () => clearTimeout(t); }, [st]);
   return (
@@ -58,19 +59,20 @@ export function FlipVeil({ cols = 8, rows = 5 }) {
 }
 
 /* card-deal: the use cases start as one deck at the first card's place and are dealt out to theirs */
-export function CardDeal({ children, className = '', ...rest }) {
-  const [ref, st] = useArrive('0px 0px -24% 0px');
+export function CardDeal({ children, className = '', ...rest }: HTMLAttributes<HTMLElement>) {
+  const [ref, st] = useArrive<HTMLElement>('0px 0px -24% 0px');
   return <section ref={ref} className={'rt-deal ' + className} data-deal={st} {...rest}>{children}</section>;
 }
 
 /* vertical-ticker: each spec row's figure and line ride up from under the row's edge into place, one after another */
-export function Ticker({ children }) {
-  const [ref, st] = useArrive('0px 0px -15% 0px');
+export function Ticker({ children }: { children?: ReactNode }) {
+  const [ref, st] = useArrive<HTMLDivElement>('0px 0px -15% 0px');
   return <div ref={ref} className="rt-tick" data-tick={st}>{children}</div>;
 }
 
 /* venetian-type: each line of the heading, then the line under it and the two links, slide in from alternating sides */
-export function Venetian({ children, className = '' }) {
-  const [ref, st] = useArrive('0px 0px -20% 0px');
+export function Venetian({ children, className = '' }: { children?: ReactNode; className?: string }) {
+  const [ref, st] = useArrive<HTMLDivElement>('0px 0px -20% 0px');
+
   return <div ref={ref} className={'rt-ven ' + className} data-ven={st}>{children}</div>;
 }

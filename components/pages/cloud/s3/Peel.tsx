@@ -10,6 +10,8 @@
    move; the labels beside it ride the same heights in 2D. Reduced motion: open and still. JS off: open, every word in
    order. */
 import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
+
 import { useCalm } from '../../../ui';
 import LivePause, { usePause } from '../../../v2/LivePause';
 import { useArrive } from './S3Enter';
@@ -28,7 +30,7 @@ const DEAD = new Set([2, 6, 11, 13]);
 const FACT_OF = [0, 0, 1, 2, 3];
 const HOLD = [1700, 2800, 2600, 3200, 2800];
 
-function useSeen(ref) {
+function useSeen(ref: RefObject<Element | null>) {
   const [seen, setSeen] = useState(false);
   useEffect(() => {
     const el = ref.current; if (!el) return;
@@ -40,13 +42,13 @@ function useSeen(ref) {
 }
 
 export default function Peel() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   const seen = useSeen(ref);
   const [paused, pause] = usePause();
   const [ph, setPh] = useState(1); // the server frame is open: with JS off every role is named
   const [mine, setMine] = useState(false);
-  const [hot, setHot] = useState(null);
+  const [hot, setHot] = useState<number | null>(null);
   // below the fold at load, it closes into one binary so the first thing seen is the lift
   useEffect(() => {
     const el = ref.current;
@@ -58,10 +60,10 @@ export default function Peel() {
     const id = setTimeout(() => setPh((p) => (p + 1) % 5), HOLD[ph]);
     return () => clearTimeout(id);
   }, [ph, seen, paused, mine, calm]);
-  const go = (f) => { setMine(true); setPh(f + 1); };
+  const go = (f: number) => { setMine(true); setPh(f + 1); };
   // entrances (MOTION-MAP): a film plays through the heading's letters (text-mask-film), the stage opens on an iris
-  const [filmRef, film] = useArrive('0px 0px -15% 0px', 1900);
-  const [irisRef, iris] = useArrive('0px 0px -20% 0px');
+  const [filmRef, film] = useArrive<HTMLHeadingElement>('0px 0px -15% 0px', 1900);
+  const [irisRef, iris] = useArrive<HTMLDivElement>('0px 0px -20% 0px');
   const open = ph > 0;
   const fact = FACT_OF[ph];
   return (

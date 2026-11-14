@@ -6,13 +6,21 @@
    opposite-drift is the one scroll-linked move: the section's two halves ([data-half=l] / [data-half=r]) slide in
    from opposite sides as it is scrolled in, then hold for good. */
 import { createElement, useEffect, useRef, useState } from 'react';
+import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 import useCalm from '../../v2/useCalm';
 
-export const ENTRANCES = ['swing-door', 'opposite-drift', 'letter-cascade', 'iris', 'squash-land'];
-const CLS = { 'swing-door': 'swing', 'opposite-drift': 'drift', 'letter-cascade': 'cascade', iris: 'iris', 'squash-land': 'squash' };
+export const ENTRANCES = ['swing-door', 'opposite-drift', 'letter-cascade', 'iris', 'squash-land'] as const;
+export type Kind = (typeof ENTRANCES)[number];
+const CLS: Record<Kind, string> = { 'swing-door': 'swing', 'opposite-drift': 'drift', 'letter-cascade': 'cascade', iris: 'iris', 'squash-land': 'squash' };
 
-export function Enter({ kind, as = 'section', className = '', children, ...rest }) {
-  const ref = useRef(null);
+interface EnterProps extends HTMLAttributes<HTMLElement> {
+  kind?: Kind | null;
+  as?: ElementType;
+  children?: ReactNode;
+}
+
+export function Enter({ kind, as = 'section', className = '', children, ...rest }: EnterProps) {
+  const ref = useRef<HTMLElement>(null);
   const [on, setOn] = useState(false);
   const calm = useCalm();
   useEffect(() => {
@@ -51,11 +59,11 @@ export function Enter({ kind, as = 'section', className = '', children, ...rest 
 
 /* letter-cascade: a heading's letters, each its own span, falling into place one by one (words never break apart).
    Without the cascade it is the plain text. */
-export function Letters({ text, on }) {
+export function Letters({ text, on }: { text?: string; on?: boolean }) {
   if (!on || !text) return text || null;
   let n = 0;
   // the heading reads once, whole (screen readers and the copy check); the falling letters are the picture of it
-  return <><span className="x-sr">{text}</span><span aria-hidden="true">{text.split(/(\s+)/).map((w, i) => (/^\s+$/.test(w) || !w ? w : (
+  return <><span className="x-sr">{text}</span><span aria-hidden="true">{text.split(/(\s+)/).map((w: string, i: number) => (/^\s+$/.test(w) || !w ? w : (
     <span key={i} className="xe-w">{Array.from(w).map((ch, k) => <span key={k} className="xe-l" style={{ '--i': Math.min(n++, 40) }}>{ch}</span>)}</span>
   )))}</span></>;
 }

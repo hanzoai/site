@@ -4,8 +4,9 @@
    and enter.css plays that block's entrance. It also feeds the tilt-3d-hover cards (--rx, --ry) from the pointer, fine
    pointers only and never under reduced motion (checked here, after mount, never while rendering). */
 import { useEffect } from 'react';
+import type { RefObject } from 'react';
 
-export default function useIdeEnter(root) {
+export default function useIdeEnter(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const el = root.current;
     if (!el) return undefined;
@@ -14,13 +15,13 @@ export default function useIdeEnter(root) {
       for (const e of es) if (e.isIntersecting) { e.target.classList.add('ide-in'); io.unobserve(e.target); }
     }, { rootMargin: '0px 0px -25% 0px', threshold: 0 });
     marks.forEach((m) => io.observe(m));
-    const off = [];
+    const off: (() => void)[] = [];
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
     if (!calm && fine) {
-      el.querySelectorAll('[data-enter="tilt-3d-hover"]').forEach((box) => {
-        const cards = [...box.querySelectorAll('[data-tilt]')];
-        const move = (ev) => {
+      el.querySelectorAll<HTMLElement>('[data-enter="tilt-3d-hover"]').forEach((box) => {
+        const cards = [...box.querySelectorAll<HTMLElement>('[data-tilt]')];
+        const move = (ev: PointerEvent) => {
           for (const c of cards) {
             const r = c.getBoundingClientRect();
             const x = Math.max(-1, Math.min(1, (ev.clientX - (r.left + r.width / 2)) / (r.width / 2 + 160)));

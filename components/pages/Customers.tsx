@@ -16,6 +16,7 @@
    rises, the close's sliding figures. Deleted: the pinned launch stage and the phone's sticky figure strip (the map
    gives this page no `split`), the line-mask cut-in on the close heading, the lede's and plate's fade-ups. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, MouseEvent, ReactNode } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'motion/react';
 import { useCalm } from '../ui';
 import { useRouter } from 'next/navigation';
@@ -29,7 +30,7 @@ import '../v2/vc-type.css';
 import './company/deck.css';
 import './Customers.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const H1 = ['Products Hanzo', 'built and launched'];
 const LEDE = 'Hanzo built the store, ran the ads and found the audience for each of these launches. Here is what we did and what each one sold.';
 const CASES = [
@@ -37,7 +38,8 @@ const CASES = [
   { name: 'KANOA', year: '2015', d: 'Built the site and store, then ran paid acquisition, email and the preorder campaign.', to: '/customers/kanoa', img: '/customers/kanoa/athlete.webp', alt: 'An athlete wearing KANOA earphones', logo: '/logos/customers/kanoa.png', n: '$7M+', w: 'raised in preorders' },
 ];
 
-const LAUNCHES = [
+type Launch = { id: string; name: string; year?: string; kind: string; d: string; f: [string, string][]; logo?: string };
+const LAUNCHES: Launch[] = [
   { id: 'skully', name: 'SKULLY', kind: 'Crowdfunding', d: "Built the Indiegogo campaign into SKULLY's own store and ran its AI ad campaigns.", f: [['$2.5M', 'raised on Indiegogo'], ['$3.3M', 'more through the Hanzo store']], logo: 'skully.png' },
   { id: 'bellabeat', name: 'Bellabeat', year: '2015', kind: 'Preorders', d: 'Ran prelaunch marketing and audience targeting for LEAF.', f: [['250,000', 'email signups']], logo: 'bellabeat.svg' },
   { id: 'stoned', name: 'STONED Audio', year: '2016', kind: 'Social commerce launch', d: 'Grew a wireless audio brand from zero on a small budget.', f: [['$135K', 'in sales from a $20K budget'], ['70,000', 'social followers']], logo: 'stoned.svg' },
@@ -52,12 +54,12 @@ const LAUNCHES = [
 ];
 
 // years exactly as the case copy prints them; the index keeps Hanzo's own order (SKULLY first, as on hanzo.ai)
-const YEARS = [...new Set(LAUNCHES.map((l) => l.year).filter(Boolean))].sort();
+const YEARS = [...new Set(LAUNCHES.map((l) => l.year).filter((y): y is string => !!y))].sort();
 const ORDER = LAUNCHES;
 // the doorway's hold is capped (MASTER part 9): if the case page has not lifted the ink by then, cut to it
-const door = (e, to, router) => {
+const door = (e: MouseEvent<HTMLElement>, to: string, router: { push: (href: string) => void }) => {
   openDoor(e, to, router, '#0a0a0a');
-  setTimeout(() => document.querySelectorAll('[data-door]').forEach((d) => { if (!d.dataset.landing) d.remove(); }), 640 + 700);
+  setTimeout(() => document.querySelectorAll<HTMLElement>('[data-door]').forEach((d) => { if (!d.dataset.landing) d.remove(); }), 640 + 700);
 };
 // JS off: both cases show stacked and readable; the row figures stand in place
 const NOJS = { __html: '<style>.xcu-plate{aspect-ratio:auto!important}.xcu-case{position:relative!important;clip-path:none!important;aspect-ratio:16/8.4}.xcu-case-txt{opacity:1!important}.xcu-row-f dt,.xcu-row-f dd{transform:none!important}.xcu-line{display:none}.xcu-mark{display:none}.xcu-ph img{color:transparent}@media (max-width:899px){.xcu-case{aspect-ratio:4/5.4}}</style>' };
@@ -70,12 +72,12 @@ const BACKERS = [
 ];
 // magnet-gather: where each name starts, scattered (fixed values, so server and client agree)
 const SCATTER = [[-160, -70, -9], [120, 90, 7], [-60, 120, 5], [200, -60, -6], [-220, 40, 8], [80, -110, -5], [160, 70, 9]];
-const scatter = (k) => { const [x, y, r] = SCATTER[k % SCATTER.length]; return { '--k': k, '--mx': x + 'px', '--my': y + 'px', '--mr': r + 'deg' }; };
+const scatter = (k: number): CSSProperties => { const [x, y, r] = SCATTER[k % SCATTER.length]; return { '--k': k, '--mx': x + 'px', '--my': y + 'px', '--mr': r + 'deg' }; };
 
 /* A picture from Hanzo's media that steps aside for its fallback when it cannot load (PLAN 2.17 media failure). */
-function Pic({ fallback = null, ...p }) {
+function Pic({ fallback = null, ...p }: { fallback?: ReactNode; src: string; alt: string; w: number; h: number; className?: string; priority?: boolean }) {
   const [bad, setBad] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLImageElement>(null);
   useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
   if (bad) return fallback;
   return <Img ref={ref} {...p} onError={() => setBad(true)} />;
@@ -84,7 +86,7 @@ function Pic({ fallback = null, ...p }) {
 /* One case at a time on a big plate. Once the curtain is up its line fills; it wipes to the other case once, then rests. */
 function Plate() {
   const router = useRouter();
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const ok = useArrived();
   const [at, setAt] = useState(0);
   const [steps, setSteps] = useState(0);
@@ -110,7 +112,7 @@ function Plate() {
             initial={false}
             animate={{ clipPath: i === at ? 'inset(0% 0% 0% 0%)' : 'inset(0% 0% 0% 100%)', zIndex: i === at ? 2 : 1 }}
             transition={{ clipPath: { duration: i === at ? 1.1 : 0.01, delay: i === at ? 0 : 1.1, ease: [0.76, 0, 0.24, 1] } }}>
-            <A to={c.to} className="xcu-case-a" data-no-morph onClick={(e) => door(e, c.to, router)}>
+            <A to={c.to} className="xcu-case-a" data-no-morph onClick={(e: MouseEvent<HTMLElement>) => door(e, c.to, router)}>
               <span className="xcu-ph">
                 <Pic src={c.img} alt={c.alt} w={1600} h={840} priority={i === 0}
                   fallback={<span className="xcu-ph-s"><Sigil seed={c.to} data={[parseFloat(c.n.replace(/[^\d.]/g, ''))]} /></span>} />
@@ -139,24 +141,25 @@ function Plate() {
       </div>
       <div className="xcu-tabs">
         <h2 className="xcu-cs" id="xcu-cs">Case studies</h2>
-        <Tabs id="xcu-case" tabs={CASES.map((c) => c.name)} value={at} onChange={(i) => { setMine(true); setAt(i); }} label="Case studies" />
+        <Tabs id="xcu-case" tabs={CASES.map((c) => c.name)} value={at} onChange={(i: number) => { setMine(true); setAt(i); }} label="Case studies" />
       </div>
     </div>
   );
 }
 
 function Every() {
-  const box = useRef(null);
-  const [year, setYear] = useState(null);
+  const box = useRef<HTMLElement>(null);
+  const [year, setYear] = useState<string | null>(null);
   const shown = year ? ORDER.filter((l) => l.year === year) : ORDER;
   const [at, setAt] = useState(ORDER[0].id);
   const [read, setRead] = useState(() => new Set());
-  const rows = useRef({});
+  const rows = useRef<Record<string, HTMLElement | null>>({});
   useEnterAll(box, '.xcu-row[data-e="curtain"]');
   // the heading and the year rail are clipped shut before they rise, so an observer on them never fires (a fully
   // clipped box has no area): they rise together when the section itself comes into view
   useEffect(() => {
     const el = box.current;
+    if (!el) return;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       el.querySelectorAll('#xcu-every-h, .xcu-years').forEach((x) => x.setAttribute('data-in', ''));
@@ -165,28 +168,28 @@ function Every() {
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  const see = (id) => setRead((r) => (r.has(id) ? r : new Set(r).add(id)));
+  const see = (id: string) => setRead((r) => (r.has(id) ? r : new Set(r).add(id)));
   useEffect(() => { see(at); }, [at]);
   useEffect(() => {
     // a row's figures rise once the row is up in the top three quarters of the screen (not only at the middle), so a
     // number is never left waiting below its row
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) see(e.target.id); }), { rootMargin: '0px 0px -25% 0px' });
-    shown.forEach((l) => rows.current[l.id] && io.observe(rows.current[l.id]));
+    shown.forEach((l) => { const row = rows.current[l.id]; if (row) io.observe(row); });
     return () => io.disconnect();
   }, [year]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { setAt(shown[0].id); }, [year]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     // the row crossing the middle of the screen is the one being read: its figures rise into place (once)
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(e.target.id); }), { rootMargin: '-50% 0px -50% 0px' });
-    shown.forEach((l) => rows.current[l.id] && io.observe(rows.current[l.id]));
+    shown.forEach((l) => { const row = rows.current[l.id]; if (row) io.observe(row); });
     return () => io.disconnect();
   }, [year]); // eslint-disable-line react-hooks/exhaustive-deps
   const cur = shown.find((l) => l.id === at) || shown[0];
-  const rail = useRef(null);
+  const rail = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // phones: the year rail keeps the year being read in view
-    const r = rail.current, c = r && r.querySelector('button.here');
-    if (c && r.scrollWidth > r.clientWidth) r.scrollTo({ left: Math.max(0, c.offsetLeft - 20), behavior: 'smooth' });
+    const r = rail.current, c = r && r.querySelector<HTMLElement>('button.here');
+    if (r && c && r.scrollWidth > r.clientWidth) r.scrollTo({ left: Math.max(0, c.offsetLeft - 20), behavior: 'smooth' });
   }, [cur.year]);
   return (
     <section className="vc-sec xcu-every" id="every" aria-labelledby="xcu-every-h" ref={box}>

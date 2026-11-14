@@ -17,6 +17,8 @@
    timed wipe into the dark room; scroll = the Stage settle and the scrubbed sentence.
    Every word and link is Hanzo's; the meter shows proportions, not measured figures. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
+
 import { motion, AnimatePresence, useScroll, useReducedMotion, useTransform } from 'motion/react';
 import { Copy } from '../../ui';
 import { useLive } from './Frame';
@@ -30,14 +32,14 @@ import { useEnter, useScramble } from '../playground/enter';
 import './Playground.css';
 
 const PLAY = 'https://platform.hanzo.ai/playground';
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const MODES = ['Chat', 'Completions', 'Decisions', 'Embeddings', 'Image', 'Video', 'Audio', 'Vision'];
 const MODEL = ['zen', 'zen', 'zen', 'zen', 'iro', 'koma', 'oto', 'kai']; // the model each kind runs on: the media it shows
 const FIRST = 4; // the window opens on Image, so the first screen carries Iro's own colour; the tabs keep Hanzo's order
 // relative run shape for the meter bars only: [tokens in, tokens out, time]; never shown as numbers
 const RUN = [[0.3, 0.6, 0.2], [0.4, 0.9, 0.3], [0.5, 0.1, 0.1], [0.35, 0, 0.05], [0.45, 0, 0.55], [0.5, 0, 0.95], [0.4, 0, 0.35], [0.6, 0.45, 0.25]];
 /* the kinds take turns; a kind you pick holds for two turns, then the window carries on by itself */
-function useSteps(n, ms, live) {
+function useSteps(n: number, ms: number, live: boolean): [number, (i: number) => void, boolean] {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   useEffect(() => {
@@ -45,11 +47,11 @@ function useSteps(n, ms, live) {
     const t = setTimeout(() => { setMine(false); setAt((v) => (v + 1) % n); }, mine ? ms * 2 : ms);
     return () => clearTimeout(t);
   }, [at, live, mine, n, ms]);
-  return [at, (i) => { setAt(i); setMine(true); }, mine];
+  return [at, (i: number) => { setAt(i); setMine(true); }, mine];
 }
 // rounded: Math.sin of large arguments can differ in the last digits between the server and the browser (hydration)
-const rnd = (i) => { const x = Math.sin(i * 91.7) * 43758.5453; return Math.round((x - Math.floor(x)) * 1e4) / 1e4; };
-const r2 = (v) => Math.round(v * 100) / 100;
+const rnd = (i: number) => { const x = Math.sin(i * 91.7) * 43758.5453; return Math.round((x - Math.floor(x)) * 1e4) / 1e4; };
+const r2 = (v: number) => Math.round(v * 100) / 100;
 
 function Chat() {
   return (
@@ -96,14 +98,14 @@ function Image() {
     </div>
   );
 }
-function Video({ paused }) {
-  const box = useRef(null);
+function Video({ paused }: { paused: boolean }) {
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => { const v = box.current?.querySelector('video'); if (!v) return; if (paused) v.pause(); else v.play?.().catch(() => {}); }, [paused]);
   return <div className="pg-vid" ref={box}><Film src="/models/koma.webm" poster="/models/koma.webp" w={1200} h={1500} /><i className="pg-head" /></div>;
 }
 /* Audio: Oto's own film, with the waveform it is singing drawn along its foot */
-function Audio({ paused }) {
-  const box = useRef(null);
+function Audio({ paused }: { paused: boolean }) {
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => { const v = box.current?.querySelector('video'); if (!v) return; if (paused) v.pause(); else v.play?.().catch(() => {}); }, [paused]);
   return (
     <div className="pg-aud" ref={box}>
@@ -125,24 +127,24 @@ function Vision() {
 const CANVAS = [Chat, Completions, Decisions, Embeddings, Image, Video, Audio, Vision];
 
 function Window() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.3);
   const [paused, pause] = usePause();
-  const [hov, setHov] = useState(null); // a kind under a fine pointer previews its run
+  const [hov, setHov] = useState<number | null>(null); // a kind under a fine pointer previews its run
   const run = live && !paused && hov === null;
   const [raw, chooseRaw, mine] = useSteps(MODES.length, 3800, run);
   const at = (raw + FIRST) % MODES.length;
   const cur = hov ?? at;
-  const choose = (i) => { setHov(null); chooseRaw((i - FIRST + MODES.length) % MODES.length); };
+  const choose = (i: number) => { setHov(null); chooseRaw((i - FIRST + MODES.length) % MODES.length); };
   const Canvas = CANVAS[cur];
-  const strip = useRef(null);
+  const strip = useRef<HTMLDivElement>(null);
   useEffect(() => { // phones: keep the lit kind inside the tab strip
-    const s = strip.current, b = s?.children[cur]; if (!s || !b || s.scrollWidth <= s.clientWidth) return;
+    const s = strip.current, b = s?.children[cur] as HTMLElement | undefined; if (!s || !b || s.scrollWidth <= s.clientWidth) return;
     s.scrollTo({ left: b.offsetLeft - (s.clientWidth - b.offsetWidth) / 2, behavior: calm ? 'auto' : 'smooth' });
   }, [cur, calm]);
-  const key = (e) => {
+  const key = (e: React.KeyboardEvent) => {
     const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : e.key === 'Home' ? -cur : e.key === 'End' ? MODES.length - 1 - cur : 0;
     if (!d) return; e.preventDefault();
-    const n = (cur + d + MODES.length) % MODES.length; choose(n); strip.current?.children[n]?.focus();
+    const n = (cur + d + MODES.length) % MODES.length; choose(n); (strip.current?.children[n] as HTMLElement | undefined)?.focus();
   };
   const [tin, tout, secs] = RUN[cur];
   const bars = [['Tokens in', tin], ['Tokens out', tout], ['Time', secs], ['Cost', Math.min(1, (tin + tout) * 0.6 + secs * 0.5)]];
@@ -200,9 +202,9 @@ api = ApiClient(Configuration(
 print(KeysApi(api).get_keys().keys)`;
 const PARTS = [['A key', 'HANZO_API_KEY'], ['a model name', '"zen"'], ['a message', '"Hello"']];
 
-function marked(code, mark) {
-  return code.split('\n').map((l, j) => {
-    const bits = mark && l.includes(mark) ? l.split(mark).flatMap((x, i) => [i > 0 && <mark key={'m' + i}>{mark}</mark>, <span key={i}>{x}</span>]) : l;
+function marked(code: string, mark?: string | null) {
+  return code.split('\n').map((l: string, j: number) => {
+    const bits = mark && l.includes(mark) ? l.split(mark).flatMap((x: string, i: number) => [i > 0 && <mark key={'m' + i}>{mark}</mark>, <span key={i}>{x}</span>]) : l;
     const c = /^\s*#/.test(l) ? 'c' : '';
     return <span key={j} className={'pg-ln ' + c}>{bits}{'\n'}</span>;
   });
@@ -211,31 +213,35 @@ function marked(code, mark) {
 /* ---------- the signature: drag to explore. The Playground's parts (the first request, the curl and Python, the eight
    kinds, the models) lie on one endless canvas the visitor pans with a pointer or a finger, and throws with inertia.
    Each part wraps around the board, so there is no edge; tapping a phrase glides to where its token is marked. ---------- */
-const DESK = { W: 2400, H: 1200, at: {
+interface Board { W: number; H: number; at: Record<string, [number, number]> }
+const DESK: Board = { W: 2400, H: 1200, at: {
   say: [60, 64], curl: [600, 52], py: [1300, 84],
   k0: [60, 420], k1: [250, 420], k2: [440, 420], k3: [630, 420], k4: [860, 470], k5: [1050, 470], k6: [1240, 470], k7: [1430, 470],
   m0: [1880, 120], m1: [2040, 120], m2: [2200, 120], m3: [1880, 330], m4: [2040, 330], m5: [2200, 330], m6: [1880, 540], m7: [2040, 540], m8: [2200, 540],
 } };
 // phones pan sideways only (the finger's vertical stroke scrolls the page), so the small board is one long strip
-const SMALL = { W: 2000, H: 1200, at: {
+const SMALL: Board = { W: 2000, H: 1200, at: {
   say: [16, 20], curl: [360, 20], py: [980, 20],
   k0: [16, 250], k1: [166, 250], k2: [16, 410], k3: [166, 410], k4: [360, 290], k5: [510, 290], k6: [660, 290], k7: [810, 290],
   m0: [1470, 20], m1: [1610, 20], m2: [1750, 20], m3: [1470, 196], m4: [1610, 196], m5: [1750, 196], m6: [1470, 372], m7: [1610, 372], m8: [1750, 372],
 } };
-const mod = (a, n) => ((a % n) + n) % n;
+const mod = (a: number, n: number) => ((a % n) + n) % n;
 const MINI = [Chat, Completions, Decisions, Embeddings];
 
+interface Drag { id: number; x: number; y: number; sx: number; sy: number; t: number; lx: number; ly: number }
+interface Pan { x: number; y: number; vx: number; vy: number; drag: Drag | null; moved: boolean; goal: [number, number] | null; touched: boolean; raf: number; seen: boolean }
+
 function Explore() {
-  const sec = useRef(null), view = useRef(null), items = useRef({});
+  const sec = useRef<HTMLElement>(null), view = useRef<HTMLDivElement>(null), items = useRef<Record<string, HTMLElement | null>>({});
   const enter = useEnter(sec, 0.3);
   const calm = useReducedMotion();
   const [small, setSmall] = useState(false);
   const [sel, setSel] = useState(0); // 0..2 a part of the sentence, 3 the whole request in Python
-  const [hv, setHv] = useState(null);
-  const [auto, setAuto] = useState(null);
+  const [hv, setHv] = useState<number | null>(null);
+  const [auto, setAuto] = useState<number | null>(null);
   const L = small ? SMALL : DESK;
   const Lr = useRef(L); Lr.current = L; // the rAF loop reads the current board
-  const st = useRef({ x: 0, y: 0, vx: 0, vy: 0, drag: null, moved: false, goal: null, touched: false, raf: 0, seen: false });
+  const st = useRef<Pan>({ x: 0, y: 0, vx: 0, vy: 0, drag: null, moved: false, goal: null, touched: false, raf: 0, seen: false });
 
   const place = () => {
     const s = st.current, v = view.current, L = Lr.current; if (!v) return;
@@ -280,37 +286,38 @@ function Explore() {
     return () => ts.forEach(clearTimeout);
   }, [enter, calm]);
 
-  const down = (e) => {
+  const down = (e: React.PointerEvent) => {
     if (e.button > 0) return;
     const s = st.current;
     s.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: s.x, sy: s.y, t: performance.now(), lx: e.clientX, ly: e.clientY };
     s.moved = false; s.goal = null; s.vx = s.vy = 0; s.touched = true;
   };
-  const move = (e) => {
+  const move = (e: React.PointerEvent) => {
     const s = st.current, d = s.drag; if (!d || d.id !== e.pointerId) return;
     const dx = e.clientX - d.x, dy = e.pointerType === 'touch' ? 0 : e.clientY - d.y;
-    if (!s.moved && Math.hypot(dx, dy) > 6) { s.moved = true; view.current.setPointerCapture?.(e.pointerId); view.current.dataset.drag = ''; }
+    if (!s.moved && Math.hypot(dx, dy) > 6) { s.moved = true; view.current?.setPointerCapture?.(e.pointerId); if (view.current) view.current.dataset.drag = ''; }
     if (!s.moved) return;
     const now = performance.now(), dt = Math.max(8, now - d.t);
     s.vx = ((e.clientX - d.lx) / dt) * 16; s.vy = e.pointerType === 'touch' ? 0 : ((e.clientY - d.ly) / dt) * 16;
     d.t = now; d.lx = e.clientX; d.ly = e.clientY;
     s.x = d.sx + dx; s.y = d.sy + dy; place();
   };
-  const up = (e) => {
+  const up = (e: React.PointerEvent) => {
     const s = st.current; if (!s.drag || s.drag.id !== e.pointerId) return;
-    s.drag = null; delete view.current.dataset.drag; wake();
+    s.drag = null; if (view.current) delete view.current.dataset.drag; wake();
   };
-  const click = (e) => { if (st.current.moved) { e.preventDefault(); e.stopPropagation(); st.current.moved = false; } };
-  const glideTo = (k) => { // bring a part to the middle of the view
+  const click = (e: React.MouseEvent) => { if (st.current.moved) { e.preventDefault(); e.stopPropagation(); st.current.moved = false; } };
+  const glideTo = (k: string) => { // bring a part to the middle of the view
     const s = st.current, v = view.current, el = items.current[k]; if (!v || !el) return;
     const [x0, y0] = L.at[k];
     const gx = (v.clientWidth - el.offsetWidth) / 2 - x0, gy = small ? s.y : Math.min(40, (v.clientHeight - el.offsetHeight) / 2) - y0;
-    const near = (a, g, n) => g + Math.round((a - g) / n) * n; // the nearest copy of that spot on the endless board
+    const near = (a: number, g: number, n: number) => g + Math.round((a - g) / n) * n; // the nearest copy of that spot on the endless board
     s.goal = [near(s.x, gx, L.W), near(s.y, gy, L.H)]; s.touched = true; s.vx = s.vy = 0;
     if (calm) { s.x = s.goal[0]; s.y = s.goal[1]; s.goal = null; place(); } else wake();
   };
-  const key = (e) => {
-    const k = { ArrowLeft: [120, 0], ArrowRight: [-120, 0], ArrowUp: [0, 120], ArrowDown: [0, -120] }[e.key];
+  const key = (e: React.KeyboardEvent) => {
+    const arrows: Record<string, [number, number]> = { ArrowLeft: [120, 0], ArrowRight: [-120, 0], ArrowUp: [0, 120], ArrowDown: [0, -120] };
+    const k = arrows[e.key];
     if (!k || e.target !== view.current) return;
     e.preventDefault();
     const s = st.current; s.touched = true; s.goal = [(s.goal?.[0] ?? s.x) + k[0], (s.goal?.[1] ?? s.y) + k[1]];
@@ -318,10 +325,10 @@ function Explore() {
   };
 
   const show = hv ?? auto ?? sel;
-  const pick = (i) => { setHv(null); setAuto(null); setSel(i); glideTo(i === 3 ? 'py' : 'curl'); };
-  const peek = (i) => (e) => e.pointerType === 'mouse' && setHv(i);
-  const put = (k) => (el) => { items.current[k] = el; };
-  const pos = (k) => ({ transform: `translate3d(${L.at[k][0]}px, ${L.at[k][1]}px, 0)` });
+  const pick = (i: number) => { setHv(null); setAuto(null); setSel(i); glideTo(i === 3 ? 'py' : 'curl'); };
+  const peek = (i: number) => (e: React.PointerEvent) => e.pointerType === 'mouse' && setHv(i);
+  const put = (k: string) => (el: HTMLElement | null) => { items.current[k] = el; };
+  const pos = (k: string) => ({ transform: `translate3d(${L.at[k][0]}px, ${L.at[k][1]}px, 0)` });
   const tiles = small ? 36 : 60;
 
   return (
@@ -381,7 +388,7 @@ function Explore() {
 const MODELS = [['Zen', 'zen'], ['Enso', 'enso'], ['Kai', 'kai'], ['Iro', 'iro'], ['Koma', 'koma'], ['Koe', 'koe'], ['Mori', 'mori'], ['Oto', 'oto'], ['Uta', 'uta']];
 
 function Wall() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.3);
   const [paused, pause] = usePause();
   const [at, setAt] = useState(0);
   const [hand, setHand] = useState(false);
@@ -397,7 +404,7 @@ function Wall() {
         {MODELS.map(([n, m], i) => (
           <li key={m}>
             <A to={'/' + m} className={'pg-tile' + (i === at ? ' on' : '')}
-              onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setHand(true); setAt(i); } }} onFocus={() => setAt(i)}>
+              onPointerEnter={(e: React.PointerEvent) => { if (e.pointerType === 'mouse') { setHand(true); setAt(i); } }} onFocus={() => setAt(i)}>
               <Img src={`/models/${m}.webp`} alt="" w={1200} h={1500} className="pg-tile-img" data-morph />
               {i === at && live && !calm && !paused && <Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} className="pg-tile-film" />}
               <span className="pg-tile-n">{n}</span>
@@ -411,8 +418,8 @@ function Wall() {
 
 /* the hero window arrives once in CSS from first paint (so the server frame and the first client frame agree: no snap),
    then eases back a little as the hero leaves */
-function HeroStage({ children }) {
-  const ref = useRef(null);
+function HeroStage({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 30%', 'end start'] });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.96]);
@@ -424,8 +431,8 @@ function HeroStage({ children }) {
 }
 
 /* entrance 3, cover-slide: related rides up over the bottom of the canvas */
-function Covers({ children }) {
-  const ref = useRef(null);
+function Covers({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   const enter = useEnter(ref, 0.05);
   return <div ref={ref} className="pg-cover" data-enter={enter || undefined}>{children}</div>;
 }
@@ -444,8 +451,9 @@ function Room() {
   );
 }
 /* entrance 5, swing-door: the close swings in on a vertical hinge at its left edge */
-function Door({ children }) {
-  const ref = useRef(null);
+function Door({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+
   const enter = useEnter(ref, 0.2);
   return <div ref={ref} className="pg-door" data-enter={enter || undefined}>{children}</div>;
 }

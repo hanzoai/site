@@ -21,6 +21,8 @@
    Stage settle and the pinned layer stack (where the intro's token runs out on its own).
    Every word and link is Hanzo's; repository and people names are examples. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
+
 import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
 import { Code, useLive } from './Frame';
 import { LeafPaste } from './close3/Leaf';
@@ -45,10 +47,10 @@ const LOG = [
 const WAIT = [800, 1000, 1300, 900, 2000, 900, 2600];
 
 function Push() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.3);
   const [paused, pause] = usePause();
   const [t, setT] = useState(0); // 0 push, 1 401, 2 token, 3 signature checked, 4 layers, 5 pushed, 6 signed
-  const [hov, setHov] = useState(null); // a step under a fine pointer (or a tap on a phone) shows that moment
+  const [hov, setHov] = useState<number | null>(null); // a step under a fine pointer (or a tap on a phone) shows that moment
   useEffect(() => { if (calm) setT(6); }, [calm]);
   // the push runs once (about 9 s), then rests on the signed image; Replay runs it again
   useEffect(() => {
@@ -57,12 +59,12 @@ function Push() {
     return () => clearTimeout(id);
   }, [t, live, calm, paused, hov]);
   const s = hov ?? t;
-  const peek = (i) => ({
+  const peek = (i: number) => ({
     'data-step': i,
-    onPointerEnter: (e) => e.pointerType === 'mouse' && setHov(i),
+    onPointerEnter: (e: React.PointerEvent) => e.pointerType === 'mouse' && setHov(i),
     onClick: () => setHov((h) => (h === i ? null : i)),
   });
-  const st = (i) => (s >= i ? ' in' : '') + (s === i ? ' now' : '');
+  const st = (i: number) => (s >= i ? ' in' : '') + (s === i ? ' now' : '');
   const done = t >= 6 && !calm;
   return (
     <div className={'rg-push' + (done ? ' done' : '')} ref={ref} data-t={s} onPointerLeave={(e) => e.pointerType === 'mouse' && setHov(null)}>
@@ -115,8 +117,8 @@ const PEOPLE = [['ana', 'push'], ['kai', 'push'], ['lee', 'pull'], ['sam', 'revo
    token seats on the stack; 02: the org claims the top plate (it turns ink, "acme/* · push"); 03: the signature and the
    attestation dock beside the image; 04: the stack squares up for /v2/; 05: a tag slides out and storage shrinks;
    06: four people fold into one directory, one of them revoked. One short caption sits under it. */
-function Repo({ step, intro }) {
-  const on = (i) => (!intro && step === i) || undefined;
+function Repo({ step, intro }: { step: number; intro?: boolean }) {
+  const on = (i: number) => (!intro && step === i) || undefined;
   return (
     <div className="rg-rv" data-step={intro ? 'intro' : step}>
       <div className="rg-iso" aria-hidden="true">
@@ -151,8 +153,8 @@ function Repo({ step, intro }) {
 
 /* ---------- entrances: each main section arrives its own way, once, when it enters view (motion map, 7 Nov) ----------
    html.js scopes every start state, so with JS off (or before the observer fires) nothing is hidden. */
-function useEnter(amount = 0.18) {
-  const ref = useRef(null);
+function useEnter<T extends HTMLElement = HTMLElement>(amount = 0.18) {
+  const ref = useRef<T>(null);
   const [inn, setIn] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -162,15 +164,17 @@ function useEnter(amount = 0.18) {
     io.observe(el);
     return () => io.disconnect();
   }, [amount]);
-  return [ref, inn];
+  return [ref, inn] as const;
 }
 
 /* 1 tilt-3d-hover: the hero window arrives tipped back and levels toward the pointer, then keeps leaning to it */
-function TiltHero({ children }) {
-  const [ref, inn] = useEnter(0.1);
-  const move = (e) => {
+function TiltHero({ children }: { children?: ReactNode }) {
+  const [ref, inn] = useEnter<HTMLDivElement>(0.1);
+  const move = (e: React.PointerEvent) => {
     if (e.pointerType !== 'mouse') return;
-    const el = ref.current, r = el.getBoundingClientRect();
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
     el.style.setProperty('--rx', (((e.clientY - r.top) / r.height - 0.5) * -6).toFixed(2) + 'deg');
     el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 8).toFixed(2) + 'deg');
   };
@@ -202,8 +206,8 @@ const NODES = [
 ];
 
 function ZoomMap() {
-  const ref = useRef(null);
-  const [eref, inn] = useEnter(0.08);
+  const ref = useRef<HTMLElement>(null);
+  const [eref, inn] = useEnter<HTMLDivElement>(0.08);
   const calm = useReducedMotion();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const mapS = useTransform(p, [0.06, 0.55], [1, 3.4]);
@@ -222,14 +226,14 @@ function ZoomMap() {
     const id = setTimeout(() => setSel((s) => (s + 1) % FACTS.length), 4200);
     return () => clearTimeout(id);
   }, [open, held, sel, calm]);
-  const pick = (i) => { setHeld(true); setSel(i); };
-  const key = (e) => {
+  const pick = (i: number) => { setHeld(true); setSel(i); };
+  const key = (e: React.KeyboardEvent<HTMLElement>) => {
     const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
     if (!d) return;
     e.preventDefault();
     const n = (sel + d + FACTS.length) % FACTS.length;
     pick(n);
-    e.currentTarget.parentElement.children[n]?.focus();
+    (e.currentTarget.parentElement?.children[n] as HTMLElement | undefined)?.focus();
   };
   return (
     <section ref={ref} className={'rg-zm' + (open ? ' open' : '')} aria-labelledby="rg-zm-h">
@@ -272,8 +276,8 @@ function ZoomMap() {
 }
 
 /* 3 opposite-drift: the dark room's words and its terminal drift in from opposite sides as you scroll into it */
-function Drift({ children }) {
-  const ref = useRef(null);
+function Drift({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 25%'] });
   const l = useTransform(p, [0, 1], ['-140px', '0px']);
   const r = useTransform(p, [0, 1], ['140px', '0px']);
@@ -281,8 +285,8 @@ function Drift({ children }) {
 }
 
 /* 4 fold-out and 5 invert-flash: one-shot entrances on the console and the related cards */
-function Enter({ kind, className = '', children }) {
-  const [ref, inn] = useEnter(0.2);
+function Enter({ kind, className = '', children }: { kind: string; className?: string; children?: ReactNode }) {
+  const [ref, inn] = useEnter<HTMLDivElement>(0.2);
   return <div ref={ref} className={'rg-en rg-en-' + kind + ' ' + className} data-in={inn || undefined}>{children}</div>;
 }
 
@@ -292,7 +296,7 @@ const SWAP = [
   ['Someone leaves', 'a separate registry account to remember when they leave', 'one place to revoke someone'],
 ];
 
-function Swap({ gone }) {
+function Swap({ gone }: { gone: boolean }) {
   return (
     <div className={'rg-swap' + (gone ? ' on' : '')}>
       <dl className="rg-swap-t">
@@ -351,7 +355,7 @@ function RegConsole() {
     const id = setTimeout(() => setBuilt((b) => !b), 4200);
     return () => clearTimeout(id);
   }, [live, built, calm]);
-  const st = (n, s) => (n === 'checkout-web' && built ? 'Ready' : s);
+  const st = (n: string, s: string) => (n === 'checkout-web' && built ? 'Ready' : s);
   const cur = REPOS[at][0];
   const busy = st(cur, REPOS[at][1]) === 'Building';
   return (
@@ -403,7 +407,7 @@ function RegConsole() {
 /* related capabilities, each drawn as what it does to an image: Projects holds the image (a stack in its frame),
    Environments runs it three times (dev, staging, prod: three stacks), Builds makes it (source lines turning into
    layers). Hover plays the drawing; the title is the morph source like every card that opens into its page. */
-function RelArt({ to }) {
+function RelArt({ to }: { to: string }) {
   const k = to.split('/').pop();
   const n = k === 'environments' ? 3 : 1;
   return (

@@ -29,7 +29,9 @@
    wipes (components/v2/AppScenes), the request travelling the path, line-masked headlines.
    Greys only; every word and link is Hanzo's; the pages inside the windows are Hanzo's own pictures. */
 import { useEffect, useRef, useState } from 'react';
+import type { ElementType, KeyboardEvent, PointerEvent } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion } from 'motion/react';
+import type { Transition } from 'motion/react';
 import { Mark } from '../ui';
 import { A, Cta, Img } from '../kit';
 import { play } from '../../lib/sound';
@@ -38,8 +40,10 @@ import Scenes from '../v2/AppScenes';
 /* Line-masked headline, page-local so the server and the first client render match (the shared one reads the motion
    setting while rendering, which breaks hydration under reduced motion). The rise is CSS only: `now` plays at first
    paint, the others when half the heading is on screen; html.js scopes the hidden start, reduced motion shows it set. */
-function Lines({ lines, as = 'h2', className = '', now = false, delay = 0, id }) {
-  const ref = useRef(null);
+interface LinesProps { lines: string[]; as?: ElementType; className?: string; now?: boolean; delay?: number; id?: string }
+
+function Lines({ lines, as = 'h2', className = '', now = false, delay = 0, id }: LinesProps) {
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const Tag = as;
   return (
@@ -59,8 +63,8 @@ import './ExtensionPage.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/apps/browser';
 const REL = 'https://github.com/hanzoai/extension/releases/latest';
-const GLIDE = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
-const DEAL = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
+const GLIDE: Transition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
+const DEAL: Transition = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
 const POINTS = [
   ['It uses your session', 'The agent drives the browser you are already signed into, so a page behind a login is a page it can read. Nothing has to be scraped from the outside.'],
   ['No port to open', 'The extension talks to the local Hanzo daemon through a native messaging host over a Unix socket. There is no WebSocket, no localhost port, and nothing else on the machine can dial in.'],
@@ -75,7 +79,10 @@ const MORE = [
 ];
 
 // which build card is yours: read from the browser itself, in the browser only
-export function which(ua, brave) {
+type Build = 'chrome' | 'firefox' | 'edge' | 'other';
+type Win = 'chrome' | 'firefox' | 'safari';
+
+export function which(ua: string, brave: boolean): Build | null {
   if (/Edg\//.test(ua)) return 'edge';
   if (/Firefox\//.test(ua)) return 'firefox';
   if (brave || /OPR\//.test(ua)) return 'other';
@@ -84,10 +91,11 @@ export function which(ua, brave) {
   return null;
 }
 // which window of the stack is yours (Edge, Brave and Opera draw like Chrome)
-const stackOf = (ua) => (/Firefox\//.test(ua) ? 'firefox' : /Safari\//.test(ua) && !/Chrome\/|Chromium|Edg\//.test(ua) ? 'safari' : 'chrome');
+const stackOf = (ua: string): Win => (/Firefox\//.test(ua) ? 'firefox' : /Safari\//.test(ua) && !/Chrome\/|Chromium|Edg\//.test(ua) ? 'safari' : 'chrome');
 function useBrowser() {
-  const [b, setB] = useState({ build: null, win: 'chrome' });
-  useEffect(() => { const ua = navigator.userAgent; setB({ build: which(ua, !!navigator.brave), win: stackOf(ua) }); }, []);
+  const [b, setB] = useState<{ build: Build | null; win: Win }>({ build: null, win: 'chrome' });
+  // navigator.brave exists only in Brave and is in no DOM typing
+  useEffect(() => { const ua = navigator.userAgent; setB({ build: which(ua, !!(navigator as Navigator & { brave?: unknown }).brave), win: stackOf(ua) }); }, []);
   return b;
 }
 
@@ -105,7 +113,7 @@ function useBrief() {
 }
 
 /* ---------- the hero: three windows, yours in front, the panel over its page ---------- */
-const WINS = [['chrome', 'Chrome'], ['firefox', 'Firefox'], ['safari', 'Safari']];
+const WINS: [Win, string][] = [['chrome', 'Chrome'], ['firefox', 'Firefox'], ['safari', 'Safari']];
 const SLOTS = [ // front, back left, back right
   { x: '0%', y: '0%', rotate: 0, scale: 1, zIndex: 3 },
   { x: '-10%', y: '-5%', rotate: -5, scale: 0.9, zIndex: 1 },
@@ -116,10 +124,10 @@ const SLOTS = [ // front, back left, back right
    never skew it) and drawn 4px outside it; re-measured whenever the window resizes. Written to the element's style
    after mount, so the server HTML and the first client render are the same. */
 function Probe() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const el = ref.current, view = el && el.parentElement, img = view && view.querySelector('img');
-    if (!img) return;
+    if (!el || !view || !img) return;
     const fit = () => {
       const s = el.style;
       s.left = img.offsetLeft - 4 + 'px'; s.top = img.offsetTop - 4 + 'px';
@@ -134,7 +142,7 @@ function Probe() {
   return <span className="xe-probe" ref={ref} aria-hidden="true" />;
 }
 
-function Chrome({ k, open, toggle, front }) {
+function Chrome({ k, open, toggle, front }: { k: Win; open: boolean; toggle: () => void; front: boolean }) {
   // only the window in front has a live button; the ones behind draw the same icon
   const ext = front
     ? <button type="button" className={'xe-ext' + (open ? ' on' : '')} aria-pressed={open} aria-label="Hanzo Extension" onClick={toggle}><span><Mark size={13} /></span></button>
@@ -162,11 +170,11 @@ function Chrome({ k, open, toggle, front }) {
   );
 }
 
-function Stack({ mineWin }) {
-  const box = useRef(null);
+function Stack({ mineWin }: { mineWin: Win }) {
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
-  const [front, setFront] = useState('chrome');
+  const [front, setFront] = useState<Win>('chrome');
   const [open, setOpen] = useState(true);
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
@@ -176,7 +184,7 @@ function Stack({ mineWin }) {
   // the walk: five points, three browsers shuffle under "one behaviour", then the panel steps away and comes back
   useEffect(() => {
     if (mine || held || calm || !seen) return;
-    let t;
+    let t: ReturnType<typeof setTimeout>;
     if (!open) t = setTimeout(() => { setAt(0); setOpen(true); }, 1400);
     else if (at === 3) {
       const order = [mineWin, ...WINS.map((w) => w[0]).filter((w) => w !== mineWin)];
@@ -187,12 +195,12 @@ function Stack({ mineWin }) {
     return () => clearTimeout(t);
   }, [at, open, mine, held, calm, seen, mineWin]);
   const order = [front, ...WINS.map((w) => w[0]).filter((w) => w !== front)];
-  const pick = (i) => { setAt(i); setOpen(true); setMine(true); };
-  const deal = (k) => { setFront(k); setMine(true); };
+  const pick = (i: number) => { setAt(i); setOpen(true); setMine(true); };
+  const deal = (k: Win) => { setFront(k); setMine(true); };
   const moving = open && !mine && !held && seen && !calm;
   // a 2.5° tilt toward a fine pointer (mouse or pen), flat again on leave; none on touch or under reduced motion
   const rx = useMotionValue(0), ry = useMotionValue(0);
-  const tilt = (e) => {
+  const tilt = (e: PointerEvent<HTMLElement>) => {
     if (calm || e.pointerType === 'touch') return;
     const r = e.currentTarget.getBoundingClientRect();
     ry.set(((e.clientX - r.left) / r.width - 0.5) * 5);
@@ -268,7 +276,7 @@ function Stack({ mineWin }) {
   );
 }
 
-function Hero({ mineWin }) {
+function Hero({ mineWin }: { mineWin: Win }) {
   const brief = useBrief();
   return (
     <section className="xe-hero" aria-labelledby="xe-h1">
@@ -301,13 +309,13 @@ const [NMH, PORT] = POINTS[1][1].split(/(?<=socket\.) /);
 const HOP_SAY = [POINTS[4][1], POINTS[0][1], NMH, PORT, POINTS[2][1], 'The extension registers as a provider on the local fabric. Whatever can reach the fabric can then reach a tab.'];
 function How() {
   const [hot, setHot] = useState(3);
-  const path = useRef(null);
+  const path = useRef<HTMLOListElement>(null);
   // the progress line fills exactly to the lit stop's dot: measured from layout (offsets), written to a CSS variable
   useEffect(() => {
     const ol = path.current;
     if (!ol) return;
     const fit = () => {
-      const li = ol.children[hot];
+      const li = ol.children[hot] as HTMLElement | undefined; // the stops are list items
       if (!li) return;
       ol.style.setProperty('--fx', li.offsetLeft + 5 + 'px');
       ol.style.setProperty('--fy', li.offsetTop + 9 + 'px');
@@ -343,7 +351,7 @@ function How() {
 }
 
 /* ---------- three pinned chapters ---------- */
-function Tools({ on }) {
+function Tools({ on }: { on: boolean }) {
   const sats = ['documents', 'tickets', 'design files', 'mail', 'calendars', 'a tab'];
   const [hot, setHot] = useState(-1);
   return (
@@ -359,7 +367,7 @@ function Tools({ on }) {
   );
 }
 
-const Glyph = ({ k }) => (
+const Glyph = ({ k }: { k: number }) => (
   <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
     {k === 0 && <path d="M4 2.5h5.5L12 5v8.5H4zM6 7.5h4M6 10h4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />}
     {k === 1 && <><rect x="2" y="3" width="12" height="10" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m4.5 6.5 2 1.5-2 1.5M8 10h3" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></>}
@@ -368,12 +376,12 @@ const Glyph = ({ k }) => (
 );
 
 /* what the extension hands back, read out as text: the page's own words, then what it registered, then where it went */
-const READ = [
+const READ: [string, string[]][] = [
   ['page content', ['Hanzo Extension', 'Your browser, as a tool an agent can use.']],
   ['console messages', ['Connected means registered']],
   ['network requests', ['Download Extension']],
 ];
-function Text({ on }) {
+function Text({ on }: { on: boolean }) {
   return (
     <div className={'xe-vis xe-text' + (on ? ' on' : '')} aria-hidden="true">
       <ul className="xe-outs">
@@ -389,11 +397,11 @@ function Text({ on }) {
 }
 
 // sizes only beside their own build (download.json): "Safari & Others" names many browsers, so it carries no figure
-const SIZE = { chrome: '976 KB', firefox: '956 KB', safari: '310 KB', edge: null, other: null };
+const SIZE: Record<string, string | null> = { chrome: '976 KB', firefox: '956 KB', safari: '310 KB', edge: null, other: null };
 /* each browser's own build asset (download.json, v1.9.31); "Safari & Others" names many browsers, so it keeps the release page */
-const ASSET = (b) => `https://github.com/hanzoai/extension/releases/download/v1.9.31/hanzo-ai-${b}-v1.9.31.zip`;
-const HREF = { chrome: ASSET('chrome'), firefox: ASSET('firefox'), edge: ASSET('edge'), other: REL };
-function Build({ on }) {
+const ASSET = (b: string) => `https://github.com/hanzoai/extension/releases/download/v1.9.31/hanzo-ai-${b}-v1.9.31.zip`;
+const HREF: Record<string, string> = { chrome: ASSET('chrome'), firefox: ASSET('firefox'), edge: ASSET('edge'), other: REL };
+function Build({ on }: { on: boolean }) {
   return (
     <div className={'xe-vis xe-build' + (on ? ' on' : '')} aria-hidden="true">
       <span className="xe-src x-mono">hanzoai/extension</span>
@@ -410,11 +418,11 @@ function Build({ on }) {
 const CHAPTERS = [Tools, Text, Build].map((V, i) => ({
   title: MORE[i][0],
   body: <p className="av-body">{MORE[i][1]}</p>,
-  visual: (on) => <V on={on} />,
+  visual: (on: boolean) => <V on={on} />,
 }));
 
 /* ---------- Beyond: your browser's build comes first ---------- */
-const BUILDS = [
+const BUILDS: [Build, string, string, string][] = [
   ['chrome', 'Chrome', 'Full integration with Google Chrome browser with tabs context and sidebar assistance.', 'Download for Chrome'],
   ['firefox', 'Firefox', 'Fully compatible with Mozilla Firefox for privacy-conscious users and developers.', 'Download for Firefox'],
   ['edge', 'Edge', 'Enhanced experience on Microsoft Edge with optimized performance and memory profile.', 'Download for Edge'],
@@ -424,23 +432,23 @@ const BUILDS = [
 /* the build you are pointing at, as one figure: its name and its size, rolling in when it changes; under it the three
    builds' sizes as hairline bars, the one you point at in ink (Edge has no size of its own on the page, so it shows none) */
 const BAR = ['chrome', 'firefox', 'safari'];
-function Peek({ k }) {
-  const name = BUILDS.find((b) => b[0] === k)[1];
+function Peek({ k }: { k: Build }) {
+  const name = BUILDS.find((b) => b[0] === k)?.[1];
   const lit = SIZE[k] ? k : null; // only a build with its own size lights a bar
   return (
     <div className="xe-peek" aria-hidden="true">
       <span className="xe-peek-n" key={'n' + k}>{name}</span>
       <span className="xe-peek-f av-num" key={'f' + k}>{SIZE[k] || 'v1.9.31'}</span>
       <span className="xe-peek-bars">
-        {BAR.map((b) => <span key={b} className={b === lit ? 'on' : ''} style={{ '--xw': parseInt(SIZE[b], 10) / 976 }}><i /><em className="x-mono">{SIZE[b]}</em></span>)}
+        {BAR.map((b) => <span key={b} className={b === lit ? 'on' : ''} style={{ '--xw': parseInt(SIZE[b] ?? '', 10) / 976 }}><i /><em className="x-mono">{SIZE[b]}</em></span>)}
       </span>
     </div>
   );
 }
 
-function Builds({ mine }) {
-  const order = mine ? [...BUILDS].sort((a, b) => (b[0] === mine) - (a[0] === mine)) : BUILDS;
-  const [hot, setHot] = useState(null);
+function Builds({ mine }: { mine: Build | null }) {
+  const order = mine ? [...BUILDS].sort((a, b) => Number(b[0] === mine) - Number(a[0] === mine)) : BUILDS;
+  const [hot, setHot] = useState<Build | null>(null);
   const lead = mine || 'chrome'; // the one filled ask: your browser's build (Chrome when it cannot tell)
   const show = hot || lead;
   const brief = useBrief();
@@ -478,8 +486,8 @@ const USES = [
 ];
 
 /* what the agent sees, per use: a page and its console, a dashboard behind a sign-in, the requests, a form filling in */
-const T = (t, d, cls = '') => <span className={'xe-type ' + cls} style={{ '--n': t.length, '--d': d + 's' }}>{t}</span>;
-function UseRender({ i }) {
+const T = (t: string, d: number, cls = '') => <span className={'xe-type ' + cls} style={{ '--n': t.length, '--d': d + 's' }}>{t}</span>;
+function UseRender({ i }: { i: number }) {
   return (
     <div className={'xe-ur u' + i} aria-hidden="true">
       {/* 01: the page it just changed, ringed as it looks, and what came back from the console */}
@@ -510,8 +518,9 @@ function UseRender({ i }) {
 
 function Uses() {
   const [at, setAt] = useState(0);
-  const tabs = useRef([]);
-  const key = (e) => {
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const key = (e: KeyboardEvent) => {
+
     const n = USES.length;
     const go = e.key === 'ArrowRight' ? (at + 1) % n : e.key === 'ArrowLeft' ? (at + n - 1) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : -1;
     if (go < 0) return;

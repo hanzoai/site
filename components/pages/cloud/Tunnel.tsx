@@ -22,6 +22,7 @@
    switch and name builder (state). Every word and link is Hanzo's; the URL is the
    example Hanzo prints. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { Copy } from '../../ui';
 import NoJs from '../../NoJs';
 import { motion, animate, useScroll, useTransform, useMotionValue, useMotionValueEvent } from 'motion/react';
@@ -37,7 +38,7 @@ import './Tunnel.css';
 import ArtCard from './ArtCard';
 
 /* count-roll: a two-digit number whose digits roll down into place as the facts arrive (the real number is read out) */
-function Roll({ n }) {
+function Roll({ n }: { n: number }) {
   const d = String(n).padStart(2, '0');
   return (
     <span className="tn2-roll">
@@ -51,25 +52,25 @@ function Roll({ n }) {
   );
 }
 /* explode-gather: each piece starts thrown out from its place (a deterministic scatter) and collapses into it */
-const frag = (i) => ({ '--fx': ((scatter(i, 1) - 0.5) * 260).toFixed(0) + 'px', '--fy': ((scatter(i, 2) - 0.5) * 200).toFixed(0) + 'px', '--fr': ((scatter(i, 4) - 0.5) * 40).toFixed(0) + 'deg', '--fd': i * 60 + 'ms' });
+const frag = (i: number) => ({ '--fx': ((scatter(i, 1) - 0.5) * 260).toFixed(0) + 'px', '--fy': ((scatter(i, 2) - 0.5) * 200).toFixed(0) + 'px', '--fr': ((scatter(i, 4) - 0.5) * 40).toFixed(0) + 'deg', '--fd': i * 60 + 'ms' });
 
 const GH = 'https://github.com/hanzoai';
 const URL_ = 'https://wispyfox7421.share.hanzo.ai';
 const CMD = 'hanzo share 3000';
-const up = (d) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const up = (d: number) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 
 /* Hero: the command types into a text node; the URL lands as the headline's second act. */
 function Hero() {
-  const [ref, live] = useLive(0.05);
+  const [ref, live] = useLive<HTMLElement>(0.05);
   const calm = useCalm();
-  const cmd = useRef(null);
+  const cmd = useRef<HTMLSpanElement>(null);
   const [done, setDone] = useState(false);
   useEffect(() => {
     if (calm) { if (cmd.current) cmd.current.textContent = CMD; setDone(true); return; }
     if (!live || done) return;
     if (cmd.current) cmd.current.textContent = ''; // the server text is the full command (JS off); the browser types it
     let i = 0;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const step = () => { i++; if (cmd.current) cmd.current.textContent = CMD.slice(0, i); t = i >= CMD.length ? setTimeout(() => setDone(true), 350) : setTimeout(step, 85); };
     t = setTimeout(step, 85);
     return () => clearTimeout(t);
@@ -79,7 +80,7 @@ function Hero() {
   const [hold, setHold] = useState(false);
   useEffect(() => {
     if (!done || calm || !live || hold) return;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const next = () => { setHits((n) => n + 1); t = setTimeout(next, 2600); };
     t = setTimeout(next, 900);
     return () => clearTimeout(t);
@@ -117,11 +118,11 @@ const FACTS = [
 
 /* Signature: the URL opens (a wipe grows from it) and closes (the wipe shrinks back) as the scene is scrolled. */
 function Scene() {
-  const sec = useRef(null);
+  const sec = useRef<HTMLElement>(null);
   const calm = useCalm();
   const pin = false; // motion map: no pinned chapter scene on /tunnel; the room plays by itself on every width
-  const [ref, live] = useLive(0.3);
-  const [eref, ein] = useEnter(0.15);
+  const [ref, live] = useLive<HTMLDivElement>(0.3);
+  const [eref, ein] = useEnter<HTMLElement>(0.15);
   const [paused, setPaused] = useState(false);
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
   const clock = useMotionValue(0);
@@ -136,7 +137,7 @@ function Scene() {
   const [q, setQ] = useState(0);
   useEffect(() => { if (calm) setQ(60); }, [calm]);
   useMotionValueEvent(p, 'change', (v) => { const n = Math.round(v * 100); if (n !== q) setQ(n); });
-  const open = (v) => (v < 0.3 ? 0 : v < 0.42 ? (v - 0.3) / 0.12 : v < 0.78 ? 1 : v < 0.9 ? 1 - (v - 0.78) / 0.12 : 0);
+  const open = (v: number) => (v < 0.3 ? 0 : v < 0.42 ? (v - 0.3) / 0.12 : v < 0.78 ? 1 : v < 0.9 ? 1 - (v - 0.78) / 0.12 : 0);
   const clip = useTransform(p, (v) => `circle(${(calm ? 1 : open(v)) * 150}% at 22% 62%)`);
   // the café laptop types by time once the room is reached (the wipe stays on scroll)
   const [tt, setTt] = useState(0);
@@ -146,7 +147,7 @@ function Scene() {
     return () => clearTimeout(t);
   }, [pin, live, tt]);
   const typed = CMD.slice(0, Math.max(pin ? tt : 0, Math.round(Math.min(1, q / 22) * CMD.length)));
-  const sheen = (e) => {
+  const sheen = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== 'mouse') return;
     const r = e.currentTarget.getBoundingClientRect();
     e.currentTarget.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
@@ -206,14 +207,14 @@ const MODES = [['proxy', 'passes traffic through to a local port'], ['web', 'ser
 function Facts() {
   const [mode, setMode] = useState(0);
   const [at, setAt] = useState(1);
-  const list = useRef(null);
+  const list = useRef<HTMLOListElement>(null);
   const touched = useRef(false);
   const [mref, mlive] = useLive(0.6);
   const calm = useCalm();
-  const [eref, ein] = useEnter(0.12);
+  const [eref, ein] = useEnter<HTMLElement>(0.12);
   useEffect(() => {
     const items = [...(list.current?.children || [])];
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.i); }), { rootMargin: '-45% 0px -45% 0px' });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+(e.target as HTMLElement).dataset.i!); }), { rootMargin: '-45% 0px -45% 0px' });
     items.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
@@ -221,13 +222,13 @@ function Facts() {
   useEffect(() => {
     if (!mlive || calm || ran.current || touched.current) return;
     ran.current = true;
-    let k = 0, t = 0;
+    let k = 0, t: ReturnType<typeof setTimeout> | undefined;
     const next = () => { if (touched.current || ++k > 3) return; setMode(k); t = setTimeout(next, 1300); };
     t = setTimeout(next, 1300);
     return () => clearTimeout(t);
   }, [mlive, calm]);
-  const pick = (k) => { touched.current = true; setMode(k); };
-  const keys = (e) => {
+  const pick = (k: number) => { touched.current = true; setMode(k); };
+  const keys = (e: React.KeyboardEvent) => {
     const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
     if (!d) return;
     e.preventDefault();
@@ -306,17 +307,17 @@ function Name() {
   const [name, setName] = useState('');
   const [target, setTarget] = useState('3000');
   const [ref, live, calm] = useLive(0.7);
-  const typed = useRef(false);
+  const typed = useRef<boolean | 'user'>(false);
   useEffect(() => {
     if (!live || calm || typed.current) return;
     typed.current = true;
     const w = 'acme-callbacks';
-    let i = 0, t = 0;
+    let i = 0, t: ReturnType<typeof setTimeout> | undefined;
     const step = () => { i++; setName((v) => (typed.current === 'user' ? v : w.slice(0, i))); if (i < w.length && typed.current !== 'user') t = setTimeout(step, 90); };
     t = setTimeout(step, 600);
     return () => clearTimeout(t);
   }, [live, calm]);
-  const mine = (f) => (e) => { typed.current = 'user'; f(e.target.value); };
+  const mine = (f: (v: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => { typed.current = 'user'; f(e.target.value); };
   const n = name.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40);
   const t = target.trim();
   const kind = /^\d{1,5}$/.test(t) ? 'a port' : /^https?:\/\//.test(t) ? 'a full URL' : /^[\w.-]+:\d{1,5}$/.test(t) ? 'a host:port' : t ? '' : '';
@@ -385,8 +386,9 @@ function Shared() {
 }
 
 /* glitch-in: the close arrives as a short monochrome glitch (slices jump, ≤ 280 ms), then holds still */
-function Glitch({ children }) {
-  const [ref, on] = useEnter(0.2);
+function Glitch({ children }: { children?: ReactNode }) {
+  const [ref, on] = useEnter<HTMLDivElement>(0.2);
+
   return <div ref={ref} className="tn2-gl" data-in={on ? '' : undefined}>{children}</div>;
 }
 

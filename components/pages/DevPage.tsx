@@ -19,7 +19,9 @@
    Deck greys only; a status reads by its shape (+ and -, ticks), never a hue. Every word, figure and link is Hanzo's;
    only the code in the sample session is an illustration. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { ComponentProps, HTMLAttributes, PointerEvent, ReactNode, ElementType } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import type { MotionValue, Transition } from 'motion/react';
 import { useDemo, DemoCtl } from '../v2/AppDemo';
 import { EASE } from '../ui';
 import { A, Faq, Cta, CodeBlock, Tabs, TabPanel } from '../kit';
@@ -37,16 +39,16 @@ const GO = checkout(PLANS.go.id, 'dev'); // Go is the cheapest plan with Hanzo D
 const PRICED = `Get Hanzo Dev, $${PLANS.go.price}/month`;
 // Hanzo's own links end in a text arrow (→), so the kit Cta link carries it as text and drops its drawn one
 // the arrow sits in the label's own text, as Hanzo prints it ("Getting started →"); bare: Hanzo prints no arrow ("Read the docs")
-const Lk = ({ to, children, id, bare }) => <Cta to={to} kind="link" id={id} className="xdv-lk">{bare ? children : children + ' →'}</Cta>;
+const Lk = ({ to, children, id, bare }: { to: string; children: string; id: string; bare?: boolean }) => <Cta to={to} kind="link" id={id} className="xdv-lk">{bare ? children : children + ' →'}</Cta>;
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 /* the kit's demo control reads reduced motion while rendering; render it only once mounted, so the server HTML and the
    first client render agree (a control is no use before scripts anyway) */
-function Ctl(props) {
+function Ctl(props: ComponentProps<typeof DemoCtl>) {
   const [on, setOn] = useState(false);
   useEffect(() => setOn(true), []);
   return on ? <DemoCtl {...props} /> : null;
 }
-const EZ = { duration: 0.3, ease: EASE }; // state changes: 300 ms, ease-emphasis, no springs (MASTER 3.1)
+const EZ: Transition = { duration: 0.3, ease: EASE }; // state changes: 300 ms, ease-emphasis, no springs (MASTER 3.1)
 
 /* ---------- 1. hero: Dev at work ---------- */
 const INSTALL = 'curl -fsSL https://hanzo.sh | sh';
@@ -68,7 +70,7 @@ const ASK = 'Describe the change.'; // what you give Dev, in Hanzo's own words
 /* the signature (MOTION-MAP: compare): the file beside the session is a before / after slider. Before Dev's change the
    whole pane is the file as it was; when the change lands the divider sweeps to the middle by itself, and from then on
    the visitor drags it (or uses the arrow keys) to compare the file before and after the edit. */
-function Src({ after }) {
+function Src({ after }: { after?: boolean }) {
   return (
     <ol className="xdv-src x-mono">
       {FILE.map((l, i) => (
@@ -80,20 +82,20 @@ function Src({ after }) {
     </ol>
   );
 }
-function File({ stage, pre }) {
+function File({ stage, pre }: { stage: number; pre?: boolean }) {
   const [pos, setPos] = useState(50); // the divider, in % of the pane's width; the server shows it at rest, mid-way
   const [held, setHeld] = useState(false); // the visitor has taken the divider: the demo no longer moves it
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (held) return;
     if (pre || stage < 2) { setPos(100); return; } // before the change: the whole pane is the file as it was
     let raf = 0; const t0 = performance.now();
-    const step = (t) => { const k = Math.min(1, (t - t0) / 900); setPos(100 - 50 * (1 - Math.pow(1 - k, 3))); if (k < 1) raf = requestAnimationFrame(step); };
+    const step = (t: number) => { const k = Math.min(1, (t - t0) / 900); setPos(100 - 50 * (1 - Math.pow(1 - k, 3))); if (k < 1) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
   }, [stage, pre, held]);
-  const at = (x) => { const r = box.current.getBoundingClientRect(); setHeld(true); setPos(Math.max(0, Math.min(100, ((x - r.left) / r.width) * 100))); };
-  const down = (e) => {
+  const at = (x: number) => { if (!box.current) return; const r = box.current.getBoundingClientRect(); setHeld(true); setPos(Math.max(0, Math.min(100, ((x - r.left) / r.width) * 100))); };
+  const down = (e: PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     e.currentTarget.setPointerCapture(e.pointerId);
     at(e.clientX);
@@ -113,24 +115,26 @@ function File({ stage, pre }) {
   );
 }
 
+type Sleep = (ms: number) => Promise<void>;
+
 function Session() {
-  const box = useRef(null);
-  const body = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
+  const body = useRef<HTMLDivElement>(null);
   const [info, setInfo] = useState(false);
   const [live, setLive] = useState(false); // false: the server's final frame (the poster) shows
   const [stage, setStage] = useState(3);
 
   /* The session writes straight into the terminal's nodes (no React state per character); the file pane only changes
      at each step. It plays once when the terminal is in view (6 to 8 s), pauses off screen, and rests on its last frame. */
-  const demo = useDemo(box, async (sleep) => {
+  const demo = useDemo(box, async (sleep: Sleep) => {
     setLive(true); setStage(0);
     await sleep(30);
     const el = body.current;
     if (!el) return;
     el.textContent = '';
-    const add = (cls, text = '') => { const d = document.createElement('div'); d.className = 'xt ' + cls; d.textContent = text; el.appendChild(d); el.scrollTop = el.scrollHeight; return d; };
-    const put = async (node, text, ms) => { for (let i = 1; i <= text.length; i++) { node.textContent = text.slice(0, i); await sleep(ms + (i % 5) * 6); } };
-    const cmd = async (text) => {
+    const add = (cls: string, text = '') => { const d = document.createElement('div'); d.className = 'xt ' + cls; d.textContent = text; el.appendChild(d); el.scrollTop = el.scrollHeight; return d; };
+    const put = async (node: HTMLElement, text: string, ms: number) => { for (let i = 1; i <= text.length; i++) { node.textContent = text.slice(0, i); await sleep(ms + (i % 5) * 6); } };
+    const cmd = async (text: string) => {
       const d = add('p'); const pre = document.createElement('b'); pre.textContent = '$ '; const s = document.createElement('span');
       d.append(pre, s); const caret = document.createElement('i'); d.append(caret);
       await put(s, text, 22); caret.remove();
@@ -210,25 +214,26 @@ function Hero() {
 /* ---------- 2. the race: the room opens out, the figure grows as the moment, then each side replays its median ---------- */
 const MAX = 9.52;
 const DT = MAX / 20;
-const SIDES = [
+interface SideData { who: string; s: number; calls: string; dots: number[]; run: string; win?: boolean }
+const SIDES: SideData[] = [
   { who: 'Claude Code', s: 9.52, calls: '3.8', dots: [0.14, 0.38, 0.62, 0.86], run: 'coding.repair-held-devfix-claude-code' },
   { who: 'Hanzo Dev', s: 2.29, calls: '1.0', dots: [0.5], run: 'coding.repair-held-devfix-hanzo-dev-dc', win: true },
 ];
 
-function Cell({ t, k, s }) {
+function Cell({ t, k, s }: { t: MotionValue<number>; k: number; s: number }) {
   const dead = k * DT >= s;
   const o = useTransform(t, (v) => (!dead && v >= k * DT ? 1 : 0));
   return <span className={dead ? 'dead' : ''}><motion.b style={{ opacity: o }} /></span>;
 }
-function Dot({ t, at }) {
+function Dot({ t, at }: { t: MotionValue<number>; at: number }) {
   const o = useTransform(t, (v) => (v >= at ? 1 : 0.14));
   return <motion.i style={{ opacity: o }} />;
 }
 /* the clock runs in real time while that side works and stops on its own median (Hanzo's figure), never past it */
-function Side({ t, side }) {
+function Side({ t, side }: { t: MotionValue<number>; side: SideData }) {
   const { who, s, calls, dots, run, win } = side;
   const clock = useTransform(t, (v) => Math.min(v, s).toFixed(2) + ' s');
-  const st = useTransform(t, (v) => (v <= 0 ? 'ready' : v >= s ? 'done' : 'running'));
+  const st = useTransform(t, (v): string => (v <= 0 ? 'ready' : v >= s ? 'done' : 'running'));
   const glow = useTransform(t, (v) => (v >= s ? 1 : 0));
   return (
     <article className={'xdv-side' + (win ? ' win' : '')}>
@@ -248,13 +253,13 @@ function Side({ t, side }) {
 }
 
 function Race() {
-  const ref = useRef(null);
-  const board = useRef(null);
+  const ref = useRef<HTMLElement>(null);
+  const board = useRef<HTMLElement>(null);
   const calm = useCalm(); // read after mount, so the server HTML and the first render agree
   const t = useMotionValue(MAX); // the server shows the finished race (JS off); the browser sets it ready at once
   // with motion the board starts ready (0.00 s) and races when reached; with reduced motion it shows the finished race
   useEffect(() => { t.set(matchMedia('(prefers-reduced-motion: reduce)').matches ? MAX : 0); }, [calm, t]);
-  const demo = useDemo(board, async (sleep) => {
+  const demo = useDemo(board, async (sleep: Sleep) => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { t.set(MAX); return; } // calm: the finished race, never 0.00
     let v = 0;
     t.set(0);
@@ -286,7 +291,8 @@ function Race() {
           <div className="xdv-ways">
             <p className="xdv-ways-k">By how Hanzo Dev settled a task:</p>
             <ul>
-              {[['Settled by search, no model call, 24 tasks', '8.22×', '6.86–9.82×', 8.22, 6.86, 9.82], ['The model’s first edit, 4 tasks', '1.31×', '1.14–1.48×', 1.31, 1.14, 1.48]].map(([w, v, ci, x, lo, hi]) => (
+              {([['Settled by search, no model call, 24 tasks', '8.22×', '6.86–9.82×', 8.22, 6.86, 9.82], ['The model’s first edit, 4 tasks', '1.31×', '1.14–1.48×', 1.31, 1.14, 1.48]] as const).map(([w, v, ci, x, lo, hi]) => (
+
                 <li key={w}>
                   <span className="xdv-way">{w}</span>
                   <b className="x-mono">{v}</b><span className="xdv-ci-t x-mono"><span>·</span> <span>95%</span> <span>{ci}</span></span>
@@ -307,29 +313,30 @@ function Race() {
 
 /* A part whose small CSS scene plays once, the first time any of it reaches the screen ([data-play]); before that
    and under reduced motion it shows its resting (final) frame. */
-function Play({ as = 'div', className = '', children, ...r }) {
-  const ref = useRef(null);
+function Play({ as = 'div', className = '', children, ...r }: HTMLAttributes<HTMLElement> & { as?: ElementType }) {
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0 });
   const Tag = as;
   return <Tag ref={ref} className={className} data-play={seen ? '' : undefined} {...r}>{children}</Tag>;
 }
 
 /* ---------- 3. one agent, four places: each its own small UI, in Hanzo's words, on a rail you throw ---------- */
-const PLACES = [
+const PLACES: [string, string | null, string, string][] = [
+
   ['Terminal', 'dev', 'In any repository. It reads the code, makes the change and runs commands in a sandbox. Bare hanzo opens the same session.', 'term'],
   ['Web', 'hanzo.ai/dev', 'Describe an app. Dev writes it, runs it and deploys it, with the database, the sign-in and the storage already there.', 'web'],
   ['Cloud', 'dev cloud exec', 'Hand a task to Hanzo’s cloud and close the laptop. dev cloud diff shows what it did; dev cloud apply puts it in your checkout.', 'cloud'],
   ['Slack', null, 'An org admin connects the workspace in Dev’s settings, and the team talks to it from their channels.', 'slack'],
 ];
-function Scene({ g }) {
+function Scene({ g }: { g: string }) {
   if (g === 'term') return <div className="xdv-sc term x-mono"><p><b>$</b> dev</p><p className="dim">v0.7.7 · Run /help for commands</p><p className="box">┃ {ASK}</p></div>;
   if (g === 'web') return <div className="xdv-sc web"><p className="x-mono"><i /><i /><i /><em>hanzo.ai/dev</em></p><div><span className="t">Describe an app.</span><span className="c"><b /><b /><b /></span><span className="k"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 13V3M4 7l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span></div></div>;
   if (g === 'cloud') return <div className="xdv-sc cloud x-mono"><p><b>$</b> dev cloud exec</p><p><b>$</b> dev cloud diff</p><p><b>$</b> dev cloud apply</p></div>;
   return <div className="xdv-sc slack"><p className="who"><i>H</i><b>Hanzo Dev</b></p><p className="msg">{HIGHLIGHTS[1]}</p><p className="msg dim">{HIGHLIGHTS[0]}</p></div>;
 }
 function Places() {
-  const view = useRef(null);
-  const track = useRef(null);
+  const view = useRef<HTMLElement>(null);
+  const track = useRef<HTMLUListElement>(null);
   const x = useMotionValue(0);
   const [lim, setLim] = useState(0);
   const [pitch, setPitch] = useState(452); // one card and its gap
@@ -340,7 +347,7 @@ function Places() {
       if (!v || !tr) return;
       const wide = matchMedia('(min-width: 900px)').matches;
       setDrag(wide);
-      const first = tr.firstElementChild;
+      const first = tr.firstElementChild as HTMLElement | null; // the rail holds only list items
       const pt = first ? first.offsetWidth + (parseFloat(getComputedStyle(tr).columnGap) || 12) : 452;
       setPitch(pt);
       // the end rounds up to a whole card, so the last stop also lands a card's edge on the gutter
@@ -352,7 +359,7 @@ function Places() {
     return () => removeEventListener('resize', fit);
   }, [x]);
   // each step lands a card's left edge on the gutter (gap included), so no card stops cut through its words
-  const step = (d) => {
+  const step = (d: number) => {
     const at = Math.round(-x.get() / pitch);
     animate(x, -Math.min(lim, Math.max(0, (at + d) * pitch)), EZ);
   };
@@ -408,7 +415,7 @@ const PROOF = [
 ];
 const FLAGS = [['hanzo dev --ask', '# ask before each action', 'ask'], ['hanzo dev --no-sandbox', '# run unconfined, for this run only', 'open'], ['hanzo dev --project-mcp', "# also load this repository's .mcp.json", 'mcp']];
 
-function Rows({ list, at, set, label }) {
+function Rows({ list, at, set, label }: { list: string[][]; at: number; set: (i: number) => void; label: string }) {
   return (
     <div className="xdv-code">
       <div className="xdv-rows" role="group" aria-label={label}>
@@ -423,7 +430,7 @@ function Rows({ list, at, set, label }) {
   );
 }
 
-function Sheet({ n, kick, title, lede, links, children }) {
+function Sheet({ n, kick, title, lede, links, children }: { n: number; kick: string; title: string; lede?: string; links?: ReactNode; children?: ReactNode }) {
   return (
     // entrance 2 (letter-cascade): as each sheet arrives its title's letters fall into place one by one
     <In as="article" kind="letter-cascade" amount={0.3} className={'xdv-sheet zf-lift' + (n % 2 ? ' flip' : '')} style={{ '--k': n }}>
@@ -529,7 +536,7 @@ const SIGNIN = 'dev login                 # pick an account: Hanzo is the defaul
 /* Dev's latest release: app/dev/page.jsx reads it from GitHub at build; RELEASE is the last one seen (8 Nov) */
 const RELEASE = 'v0.7.10';
 
-function Setup({ release }) {
+function Setup({ release }: { release?: string }) {
   const [way, setWay] = useState(0);
   const tag = release || RELEASE;
   return (
@@ -575,7 +582,7 @@ const QA = [
   ['Can I bring a key instead of signing in?', 'Yes. dev login --with-api-key takes a Hanzo API key, hidden as it is typed or read from piped stdin.'],
   ['How is Dev different from Gen?', 'Dev is Hanzo’s coding agent. Gen is the harness that runs any coding agent, Dev included, on Hanzo’s tools and models.'],
 ];
-const READ = [
+const READ: [string, [string, string | null, string][]][] = [
   ['Start', [['Docs', 'Install, sign in, the first session.', DOCS], ['Install', 'hanzo.sh, npm or Homebrew.', '#install'], ['Hanzo CLI', 'hanzo, and the session it opens.', '/cli']]],
   ['Models', [['Enso', 'The default.', '/enso'], ['Kai', 'The controller.', '/kai'], ['Every model', null, '/models']]],
   ['Source', [['hanzoai/dev', 'Apache-2.0.', 'https://github.com/hanzoai/dev'], ['Releases', null, 'https://github.com/hanzoai/dev/releases'], ['Hanzo Gen', 'The harness for every agent.', '/gen'], ['Hanzo Kata', 'Test, repair, and the pull request.', '/kata']]],
@@ -678,7 +685,7 @@ function Close() {
   );
 }
 
-export default function DevPage({ release }) {
+export default function DevPage({ release }: { release?: string }) {
   return (
     <main className="xdv zf">
       <Hero />

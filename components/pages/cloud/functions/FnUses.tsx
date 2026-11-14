@@ -10,18 +10,19 @@
    The three points stay in the HTML (shown inline with JS off). Phones stack the tiles in one column.
    Reduced motion: nothing loops and the sheet cuts in and out. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useReducedMotion } from 'motion/react';
 import KeynoteLines from '../../../v2/KeynoteLines';
 import './FnUses.css';
 
-export const USES = [
+export const USES: [string, string, string[]][] = [
   ['API Backends', 'Build complete REST or GraphQL APIs with automatic scaling and no server management.', ['Custom middleware for authentication and validation', 'API versioning and documentation generation', 'Automatic OpenAPI schema generation']],
   ['Real-time Processing', 'Process events in real-time with automatic scaling for traffic spikes.', ['Webhook handlers for third-party services', 'Event-driven data transformation and enrichment', 'Real-time analytics processing']],
   ['AI/ML Inference', 'Deploy machine learning models for inference with built-in GPU acceleration.', ['Image and text classification', 'AI chatbots and virtual assistants', 'Real-time recommendations']],
   ['Scheduled Tasks', 'Run tasks on a schedule without maintaining a dedicated server.', ['Periodic data cleanup and maintenance', 'Scheduled reports and notifications', 'Recurring data integration and ETL processes']],
 ];
-const pad = (n) => String(n).padStart(2, '0');
-const range = (n) => Array.from({ length: n }, (_, i) => i);
+const pad = (n: number) => String(n).padStart(2, '0');
+const range = (n: number) => Array.from({ length: n }, (_, i) => i);
 
 /* ---------- the four drawings (labels are the case's own words) ---------- */
 function ApiObj() {
@@ -77,16 +78,16 @@ const OBJS = [ApiObj, StreamObj, GpuObj, CronObj];
 const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const EASE = 'cubic-bezier(.4,0,.2,1)';
 
-export default function FnUses({ children }) {
-  const sec = useRef(null);
-  const cards = useRef([]);
-  const dlg = useRef(null);
-  const box = useRef(null);
-  const from = useRef(null);
+export default function FnUses({ children }: { children?: ReactNode }) {
+  const sec = useRef<HTMLElement>(null);
+  const cards = useRef<(HTMLElement | null)[]>([]);
+  const dlg = useRef<HTMLDialogElement>(null);
+  const box = useRef<HTMLDivElement>(null);
+  const from = useRef<DOMRect | null>(null);
   const openRef = useRef(-1);
   const calm = useReducedMotion();
   const [live, setLive] = useState(false);
-  const [seen, setSeen] = useState([]);
+  const [seen, setSeen] = useState<number[]>([]);
   const [open, setOpen] = useState(-1);
   const n = USES.length;
 
@@ -96,13 +97,13 @@ export default function FnUses({ children }) {
     if (!el) return;
     const io = new IntersectionObserver(([e]) => setLive(e.isIntersecting), { threshold: 0.05 });
     io.observe(el);
-    const io2 = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { const i = cards.current.indexOf(e.target); setSeen((v) => (v.includes(i) ? v : [...v, i])); } }), { threshold: 0.2 });
+    const io2 = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { const i = cards.current.indexOf(e.target as HTMLElement); setSeen((v) => (v.includes(i) ? v : [...v, i])); } }), { threshold: 0.2 });
     cards.current.forEach((c) => c && io2.observe(c));
     return () => { io.disconnect(); io2.disconnect(); };
   }, []);
 
   // the card opens into its page: the sheet grows out of the card's own rectangle, then its words fade in
-  const show = (i) => {
+  const show = (i: number) => {
     const card = cards.current[i];
     from.current = card ? card.getBoundingClientRect() : null;
     openRef.current = i;
@@ -128,7 +129,7 @@ export default function FnUses({ children }) {
 
   const shut = () => {
     const d = dlg.current, b = box.current, i = openRef.current;
-    const done = () => { d?.close(); openRef.current = -1; setOpen(-1); cards.current[i]?.querySelector('.fn-uc-open')?.focus({ preventScroll: true }); };
+    const done = () => { d?.close(); openRef.current = -1; setOpen(-1); cards.current[i]?.querySelector<HTMLElement>('.fn-uc-open')?.focus({ preventScroll: true }); };
     const card = cards.current[i];
     if (!b || !card || calm) return done();
     const r = card.getBoundingClientRect();
@@ -149,7 +150,8 @@ export default function FnUses({ children }) {
     if (history.state && history.state.fnUse != null) history.back();
     else shut();
   };
-  const step = (k) => {
+  const step = (k: number) => {
+
     const j = (openRef.current + k + n) % n;
     openRef.current = j;
     setOpen(j);

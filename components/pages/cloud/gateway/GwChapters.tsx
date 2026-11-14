@@ -7,23 +7,32 @@
    Every chapter's words and its "01 / 06" caption are in the HTML (shown stacked with scripts off).
    Reduced motion: chapters swap without moving. */
 import { useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
 import './GwChapters.css';
 
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
-export default function GwChapters({ items, scene, label, className = '' }) {
+interface GwChaptersProps {
+  items: [string, string][];
+  scene: (at: number) => ReactNode;
+  label: string;
+  className?: string;
+}
+
+export default function GwChapters({ items, scene, label, className = '' }: GwChaptersProps) {
   const n = items.length;
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const [at, setAt] = useState(0);
-  const [peek, setPeek] = useState(null);
+  const [peek, setPeek] = useState<number | null>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
 
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
     setAt(Math.max(0, Math.min(n - 1, Math.floor(p * n * 0.9999))));
   });
 
-  const go = (i) => {
+  const go = (i: number) => {
+
     const el = ref.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + scrollY;

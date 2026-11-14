@@ -4,6 +4,7 @@
    letter-cascade (the launches heading), text-mask-film (the closing Band's line). The initial states live only under
    html.js (JS off = the server HTML, every word visible); reduced motion shows the final state at once (enter.css). */
 import { Fragment, useEffect, useRef } from 'react';
+import type { RefObject } from 'react';
 import './enter.css';
 
 // the last point the visitor clicked or moved the pointer to (viewport coordinates), for grow-from-point
@@ -12,15 +13,15 @@ let tracking = false;
 function track() {
   if (tracking || typeof window === 'undefined') return;
   tracking = true;
-  const note = (e) => { last.x = e.clientX; last.y = e.clientY; };
+  const note = (e: PointerEvent) => { last.x = e.clientX; last.y = e.clientY; };
   addEventListener('pointerdown', note, { passive: true });
   addEventListener('pointermove', note, { passive: true });
 }
 
 /* ref for an element that enters once: adds `in` when a quarter of it is on screen. For `grow`, the transform origin
    is first set to the visitor's last pointer point relative to the element (clamped to it; its top centre if none). */
-export function useEnter(kind) {
-  const ref = useRef(null);
+export function useEnter<T extends HTMLElement = HTMLElement>(kind: string) {
+  const ref = useRef<T>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -44,7 +45,7 @@ export function useEnter(kind) {
 }
 
 /* letter-cascade: the same words, each letter in its own span (words never break inside) */
-export function Letters({ text }) {
+export function Letters({ text }: { text: string }) {
   let k = 0;
   return text.split(' ').map((w, i, all) => (
     <Fragment key={i}>
@@ -55,7 +56,7 @@ export function Letters({ text }) {
 }
 
 /* text-mask-film on the kit Band's line (a shared component, so it is marked from here, not edited) */
-export function useFilm(root) {
+export function useFilm(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const h = root.current?.querySelector('.x-band h2');
     if (!h) return;

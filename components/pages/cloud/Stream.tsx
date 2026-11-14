@@ -74,8 +74,8 @@ const FIGS = [['Kafka', 'Wire protocol'], ['PubSub', 'Holds the log'], ['Statele
 
 /* Signature: the facts ride a tape that the page's scroll moves sideways; the marker reads the offset reached. */
 function Ruler() {
-  const sec = useRef(null);
-  const track = useRef(null);
+  const sec = useRef<HTMLElement>(null);
+  const track = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   const wide = useWide();
   const pin = wide && !calm;
@@ -87,7 +87,8 @@ function Ruler() {
   const [cur, setCur] = useState(0);
   useEffect(() => {
     if (pin || calm || !track.current) return;
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { setCur(+e.target.dataset.k); setSeenAt((v) => Math.max(v, +e.target.dataset.k + 1)); } }), { rootMargin: '-48% 0px -48% 0px' });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { setCur(+(e.target as HTMLElement).dataset.k!); setSeenAt((v) => Math.max(v, +(e.target as HTMLElement).dataset.k! + 1));
+ } }), { rootMargin: '-48% 0px -48% 0px' });
     track.current.querySelectorAll('.st2-rec').forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [pin, calm]);

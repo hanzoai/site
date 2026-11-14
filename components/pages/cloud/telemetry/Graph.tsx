@@ -6,40 +6,45 @@
    the graph walks the three signals in turn. Reduced motion and JS off: the settled graph, nothing moving.
    Page-local: only /telemetry imports this. */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { useCalm } from '../../../ui';
 import { PauseBtn } from '../../../v2/x-hamilton/Demo';
 
-const N = [
+type XY = [number, number];
+type Lay = 'wide' | 'phone';
+const N: [string, string, string][] = [
   ['traces', 'traces', 's'], ['metrics', 'metrics', 's'], ['logs', 'logs', 's'],
   ['grpc', 'gRPC', 'p'], ['http', 'HTTP', 'p'],
   ['in', 'OTLP in', 'n'], ['col', 'collector', 'c'], ['mem', 'memory_limiter', 'n'], ['batch', 'batch', 'n'], ['out', 'OTLP out', 'n'],
 ];
-const E = [['traces', 'in'], ['metrics', 'in'], ['logs', 'in'], ['grpc', 'in'], ['http', 'in'], ['in', 'col'], ['col', 'mem'], ['mem', 'batch'], ['batch', 'out']];
+const E: [string, string][] = [['traces', 'in'], ['metrics', 'in'], ['logs', 'in'], ['grpc', 'in'], ['http', 'in'], ['in', 'col'], ['col', 'mem'], ['mem', 'batch'], ['batch', 'out']];
 // settled places: wide (1000 × 460) and phone (400 × 640)
-const AT = {
+const AT: Record<Lay, Record<string, XY>> = {
   wide: { traces: [80, 110], metrics: [80, 230], logs: [80, 350], grpc: [270, 90], http: [270, 370], in: [300, 230], col: [500, 230], mem: [680, 140], batch: [740, 320], out: [920, 230] },
   phone: { traces: [70, 60], metrics: [200, 60], logs: [330, 60], grpc: [80, 190], http: [320, 190], in: [200, 200], col: [200, 330], mem: [110, 450], batch: [290, 450], out: [200, 575] },
 };
-const BOX = { wide: [1000, 460], phone: [400, 640] };
+const BOX: Record<Lay, XY> = { wide: [1000, 460], phone: [400, 640] };
 const STAGES = [['traces', 'metrics', 'logs'], ['grpc', 'http'], ['in'], ['col'], ['mem'], ['batch'], ['out']];
-const NAME = Object.fromEntries(N.map(([id, n]) => [id, n]));
+const NAME: Record<string, string> = Object.fromEntries(N.map(([id, n]) => [id, n]));
 const AUTO = ['traces', 'metrics', 'logs'];
 
-function lit(sel) {
+function lit(sel: string | null) {
   if (!sel) return null;
   const on = new Set([sel]);
-  const walk = (from, dir) => { E.forEach(([a, b]) => { const [x, y] = dir ? [a, b] : [b, a]; if (x === from && !on.has(y)) { on.add(y); walk(y, dir); } }); };
+  const walk = (from: string, dir: boolean) => { E.forEach(([a, b]) => { const [x, y] = dir ? [a, b] : [b, a]; if (x === from && !on.has(y)) { on.add(y); walk(y, dir); } }); };
   walk(sel, true); walk(sel, false);
   return on;
 }
 
-export default function Graph({ held, onHold }) {
+interface Sim { lay: Lay; started: boolean; p: Record<string, XY>; v: Record<string, XY> }
+
+export default function Graph({ held, onHold }: { held: boolean; onHold: () => void }) {
   const calm = useCalm();
-  const [lay, setLay] = useState('wide');
-  const [pick, setPick] = useState(null); // the visitor's node (hover, focus or tap)
+  const [lay, setLay] = useState<Lay>('wide');
+  const [pick, setPick] = useState<string | null>(null); // the visitor's node (hover, focus or tap)
   const [auto, setAuto] = useState(0);
   const [seen, setSeen] = useState(false);
-  const box = useRef(null), svg = useRef(null), nodes = useRef({}), edges = useRef([]), dots = useRef([]);
+  const box = useRef<HTMLDivElement>(null), svg = useRef<SVGSVGElement>(null), nodes = useRef<Record<string, SVGGElement | null>>({}), edges = useRef<(SVGLineElement | null)[]>([]), dots = useRef<(SVGCircleElement | null)[]>([]);
   const sel = pick || (calm ? null : AUTO[auto]);
   const on = useMemo(() => lit(sel), [sel]);
   const live = seen && !held && !calm;
@@ -52,7 +57,7 @@ export default function Graph({ held, onHold }) {
   }, []);
   useEffect(() => {
     const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { threshold: 0.2 });
-    io.observe(box.current);
+    if (box.current) io.observe(box.current);
     return () => io.disconnect();
   }, []);
   useEffect(() => { // at rest the graph walks the three signals; a visitor's node stops it
@@ -62,8 +67,8 @@ export default function Graph({ held, onHold }) {
   }, [live, pick, auto]);
 
   // physics: springs to the settled places, a little drift, nodes push apart and lean away from the pointer
-  const sim = useRef(null);
-  const ptr = useRef(null);
+  const sim = useRef<Sim | null>(null);
+  const ptr = useRef<XY | null>(null);
   useEffect(() => {
     const at = AT[lay];
     const s = sim.current = sim.current && sim.current.lay === lay ? sim.current : {
@@ -73,7 +78,7 @@ export default function Graph({ held, onHold }) {
     };
     const draw = () => {
       N.forEach(([id]) => { const g = nodes.current[id]; if (g) g.setAttribute('transform', `translate(${s.p[id][0].toFixed(1)} ${s.p[id][1].toFixed(1)})`); });
-      E.forEach(([a, b], i) => { const l = edges.current[i]; if (l) { l.setAttribute('x1', s.p[a][0]); l.setAttribute('y1', s.p[a][1]); l.setAttribute('x2', s.p[b][0]); l.setAttribute('y2', s.p[b][1]); } });
+      E.forEach(([a, b], i) => { const l = edges.current[i]; if (l) { l.setAttribute('x1', String(s.p[a][0])); l.setAttribute('y1', String(s.p[a][1])); l.setAttribute('x2', String(s.p[b][0])); l.setAttribute('y2', String(s.p[b][1])); } });
     };
     if (calm) { N.forEach(([id]) => { s.p[id] = [...at[id]]; }); draw(); return; }
     if (!seen) return;
@@ -82,7 +87,7 @@ export default function Graph({ held, onHold }) {
       N.forEach(([id], i) => { const a = i * 2.3; s.p[id] = [at[id][0] + Math.cos(a) * 160, at[id][1] + Math.sin(a) * 120]; s.v[id] = [0, 0]; });
     }
     let raf = 0, t0 = performance.now();
-    const step = (now) => {
+    const step = (now: number) => {
       const t = (now - t0) / 1000;
       if (!held) {
         N.forEach(([id], i) => {
@@ -100,8 +105,8 @@ export default function Graph({ held, onHold }) {
           if (!c) return;
           const [a, b] = E[i % E.length];
           const k = ((t * 0.9 + i * 0.33) % 1);
-          c.setAttribute('cx', s.p[a][0] + (s.p[b][0] - s.p[a][0]) * k);
-          c.setAttribute('cy', s.p[a][1] + (s.p[b][1] - s.p[a][1]) * k);
+          c.setAttribute('cx', String(s.p[a][0] + (s.p[b][0] - s.p[a][0]) * k));
+          c.setAttribute('cy', String(s.p[a][1] + (s.p[b][1] - s.p[a][1]) * k));
         });
       }
       raf = requestAnimationFrame(step);
@@ -110,7 +115,7 @@ export default function Graph({ held, onHold }) {
     return () => cancelAnimationFrame(raf);
   }, [lay, seen, held, calm]);
 
-  const move = (e) => {
+  const move = (e: React.PointerEvent) => {
     if (e.pointerType !== 'mouse' || !svg.current) return;
     const m = svg.current.getScreenCTM();
     if (!m) return;
@@ -120,13 +125,13 @@ export default function Graph({ held, onHold }) {
   const [W, H] = BOX[lay];
   const at = AT[lay];
   const fs = lay === 'phone' ? 17 : 15;
-  const caption = sel ? STAGES.map((st) => st.filter((id) => on.has(id))).filter((st) => st.length).map((st) => st.map((id) => (id === sel ? <b key={id}>{NAME[id]}</b> : <span key={id}>{NAME[id]}</span>)).reduce((acc, x, i) => (i ? [...acc, ' · ', x] : [x]), [])) : null;
+  const caption = sel && on ? STAGES.map((st) => st.filter((id) => on.has(id))).filter((st) => st.length).map((st) => st.map((id) => (id === sel ? <b key={id}>{NAME[id]}</b> : <span key={id}>{NAME[id]}</span>)).reduce<(string | ReactElement)[]>((acc, x, i) => (i ? [...acc, ' · ', x] : [x]), [])) : null;
 
   return (
     <div className="tl2-graph" ref={box} data-live={live ? '' : undefined}>
       <div className="tl2-graph-bar">
         <p className="tl2-graph-cap l2-mono" aria-live="polite">
-          {caption ? caption.reduce((acc, x, i) => (i ? [...acc, <i key={'a' + i} aria-hidden="true"> → </i>, ...x] : [...x]), []) : <span>OTLP in · collector · OTLP out</span>}
+          {caption ? caption.reduce<ReactNode[]>((acc, x, i) => (i ? [...acc, <i key={'a' + i} aria-hidden="true"> → </i>, ...x] : [...x]), []) : <span>OTLP in · collector · OTLP out</span>}
         </p>
         <PauseBtn paused={held} onClick={onHold} className="tl2-graph-pause" />
       </div>
@@ -145,7 +150,8 @@ export default function Graph({ held, onHold }) {
             tabIndex={0} role="button" aria-label={name} aria-pressed={pick === id}
             onPointerEnter={(e) => { if (e.pointerType === 'mouse') setPick(id); }}
             onFocus={() => setPick(id)} onBlur={() => setPick(null)}
-            onClick={(e) => { if (e.pointerType !== 'mouse') setPick(id); }}
+            onClick={(e: React.PointerEvent<SVGGElement>) => { if (e.pointerType !== 'mouse') setPick(id); }}
+
             onKeyDown={(e) => { if (e.key === 'Escape') setPick(null); }}>
             <circle className="hit" r="30" />
             <circle className="dot" r={kind === 'c' ? 16 : 9} />

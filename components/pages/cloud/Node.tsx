@@ -28,6 +28,7 @@
    arrival = the cut-in title, the readout's line mask, the timed wipe into the quiet room; scroll (under half) = the
    machine pinning and growing while it is the chapter stage (stacked under 900px). */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { ReactNode, Ref, RefObject } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A } from '../../kit';
 import { Paste, useLive, useFrame } from './Frame';
@@ -47,9 +48,9 @@ const HW = ['Consumer cards', 'datacenter accelerators', 'Apple Silicon'];
 const JOBS = [1, 0, 2, 4];
 const END = 3 + JOBS.length * 2 - 1; // up, joins, peer-to-peer, then four jobs lit and settled; it then rests
 const SLOTS = 8;
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 // the machine's status line is Hanzo's lede, verbatim, a phrase at a time
-const phase = (t) => (t === 0 ? '' : t === 1 ? 'joins the fabric' : t === 2 ? 'over a peer-to-peer transport' : 'serves models');
+const phase = (t: number) => (t === 0 ? '' : t === 1 ? 'joins the fabric' : t === 2 ? 'over a peer-to-peer transport' : 'serves models');
 
 const WHY = [
   ['The hardware you already have', 'Consumer cards, datacenter accelerators, or Apple Silicon. The node reports what it can serve and the cluster routes to it on that basis.'],
@@ -61,14 +62,15 @@ const WHY = [
 ];
 // every string the machine shows in the chapters is lifted verbatim from the chapter it stages
 const ASK = [['models', 'everything served across the peers your node can see'], ['route', 'names who would answer'], ['placement', 'where a model nobody serves should be loaded']];
-const DRIVE = { up: 'up starts it on the active network', join: 'join switches network and starts it', stop: 'stop signals the process this CLI started by its recorded pid' };
+type Verb = 'up' | 'join' | 'stop';
+const DRIVE: Record<Verb, string> = { up: 'up starts it on the active network', join: 'join switches network and starts it', stop: 'stop signals the process this CLI started by its recorded pid' };
 
 /* each chapter's beat: when a chapter is on the machine (and the machine is seen), its parts play out once over BEAT
    seconds on the page's one frame scheduler (Frame's useFrame), then rest. Server HTML, JS off and reduced motion all
    hold the final frame (b = BEAT); after mount it is armed at 0 until seen. Returns [b, replay, finish]. */
 const BEAT = 2.8;
-const ease = (x) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
-function useBeat(key, run, calm) {
+const ease = (x: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
+function useBeat(key: number, run: boolean, calm: boolean | null): [number, () => void, () => void] {
   const [b, setB] = useState(BEAT);
   const [n, setN] = useState(0);
   const t0 = useRef(0);
@@ -85,16 +87,16 @@ function useBeat(key, run, calm) {
   });
   return [b, useCallback(() => setN((x) => x + 1), []), useCallback(() => setB(BEAT), [])];
 }
-const autoVerb = (b) => (b < 0.3 || b >= BEAT ? null : b < 1.1 ? 'up' : b < 2 ? 'join' : 'stop');
+const autoVerb = (b: number): Verb | null => (b < 0.3 || b >= BEAT ? null : b < 1.1 ? 'up' : b < 2 ? 'join' : 'stop');
 
 /* a string keyed in a character at a time from at, at 50ms a character; the rest of it holds its room unseen */
-function Keyed({ text, b, at }) {
+function Keyed({ text, b, at }: { text: string; b: number; at: number }) {
   const n = b >= BEAT ? text.length : Math.max(0, Math.min(text.length, Math.floor((b - at) / 0.05)));
   return <>{text.slice(0, n)}<span className="nd-ghost">{text.slice(n)}</span></>;
 }
 
 /* the chapter count rolls like an odometer when the stage moves to the next chapter (Hanzo's own "01 / 06" captions) */
-function Odo({ v }) {
+function Odo({ v }: { v: string }) {
   return (
     <span className="nd-odo">
       <span className="x-sr">{v}</span>
@@ -108,7 +110,8 @@ function Odo({ v }) {
 }
 
 /* the machine's one shell: toolbar (pause first, LED, name, status or count), the command, then one readout */
-function Shell({ el, state, pauseEl, right, cmd, caret, children, className = '' }) {
+interface ShellProps { el: Ref<HTMLDivElement>; state: string; pauseEl: ReactNode; right: ReactNode; cmd: ReactNode; caret: boolean; children?: ReactNode; className?: string }
+function Shell({ el, state, pauseEl, right, cmd, caret, children, className = '' }: ShellProps) {
   return (
     <div className={'nd-mac ' + className} ref={el} data-status={state}>
       <div className="nd-mac-top">
@@ -124,8 +127,8 @@ function Shell({ el, state, pauseEl, right, cmd, caret, children, className = ''
 }
 
 /* one chapter, staged at size inside the machine: one key thing big, the rest small */
-function Read({ step, drive, b }) {
-  const R = (at, c = '') => (c ? c + ' ' : '') + 'nd-b' + (b >= at ? ' in' : '');
+function Read({ step, drive, b }: { step: number; drive: Verb; b: number }) {
+  const R = (at: number, c = '') => (c ? c + ' ' : '') + 'nd-b' + (b >= at ? ' in' : '');
   if (step === 0) return (
     <div className="nd-read" data-step={0}>
       <p className="nd-cap">reports what it can serve</p>
@@ -176,12 +179,12 @@ function Read({ step, drive, b }) {
     </div>
   );
 }
-const chapterCmd = (step, drive, b) => (step === 4 ? 'hanzo fabric ' + drive : step === 0 ? <Keyed text="hanzo fabric up" b={b} at={0.1} /> : 'hanzo fabric up');
-const chapterState = (step, drive) => (step === 4 && drive === 'stop' ? 'off' : 'on');
+const chapterCmd = (step: number, drive: Verb, b: number) => (step === 4 ? 'hanzo fabric ' + drive : step === 0 ? <Keyed text="hanzo fabric up" b={b} at={0.1} /> : 'hanzo fabric up');
+const chapterState = (step: number, drive: Verb) => (step === 4 && drive === 'stop' ? 'off' : 'on');
 
 /* ---------- the object: one machine, from the hero to chapter six ---------- */
-function Machine({ step, drive, onAuto }) {
-  const [ref, live, calm] = useLive(0.3);
+function Machine({ step, drive, onAuto }: { step: number; drive: Verb; onAuto: (v: Verb) => void }) {
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.3);
   const [paused, pause] = usePause();
   const [t, setT] = useState(END); // server, JS off, reduced motion: the final serving frame
   const [base, setBase] = useState(0); // roots already settled when the run picks up from that frame
@@ -203,7 +206,7 @@ function Machine({ step, drive, onAuto }) {
   useEffect(() => { if (auto && onAuto) onAuto(auto); }, [auto, onAuto]);
 
   const toggle = () => { if (t >= END) { setT(0); setBase(0); setExtra(0); setArmed(true); if (paused) pause(); } else pause(); };
-  const route = (i) => { setPick(i); setExtra((x) => x + 1); if (t < 3) setT(3); };
+  const route = (i: number) => { setPick(i); setExtra((x) => x + 1); if (t < 3) setT(3); };
   const job = pick >= 0 ? pick : t >= 3 && t < END && (t - 3) % 2 === 0 ? JOBS[Math.floor((t - 3) / 2) % JOBS.length] : -1;
   const [last, setLast] = useState(JOBS[JOBS.length - 1]);
   useEffect(() => { if (job >= 0) setLast(job); }, [job]);
@@ -256,8 +259,8 @@ function Machine({ step, drive, onAuto }) {
 
 /* phones (under 900px, MASTER part 11): no pin; each chapter carries its own small machine at true height, playing its
    beat once as it comes into view. Desktop hides these: the one pinned machine stages every chapter there. */
-function ChapterMac({ step, drive, onAuto }) {
-  const [ref, live, calm] = useLive(0.3);
+function ChapterMac({ step, drive, onAuto }: { step: number; drive: Verb; onAuto: (v: Verb) => void }) {
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.3);
   const [b, replay, finish] = useBeat(step, live, calm);
   const auto = step === 4 ? autoVerb(b) : null;
   useEffect(() => { if (auto && onAuto) onAuto(auto); }, [auto, onAuto]);
@@ -271,10 +274,10 @@ function ChapterMac({ step, drive, onAuto }) {
 }
 
 /* the machine leans toward a fine pointer: at most 2.5° (MASTER §3.1), eased 300ms in CSS, home on leave; no spring */
-function Lean({ children }) {
-  const ref = useRef(null);
+function Lean({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
-  const move = (e) => {
+  const move = (e: React.PointerEvent) => {
     if (calm || e.pointerType !== 'mouse' || !ref.current) return;
     const r = ref.current.getBoundingClientRect();
     const ry = ((e.clientX - r.left) / r.width - 0.5) * 5;
@@ -287,7 +290,7 @@ function Lean({ children }) {
 
 /* the stage grows 4% while it is the chapters' stage and settles back as you leave (scale 1 at the top of the page,
    so the server frame and the hydrated frame are the same; none under reduced motion or on phones) */
-function Grow({ target, children }) {
+function Grow({ target, children }: { target: RefObject<HTMLElement | null>; children?: ReactNode }) {
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target, offset: ['start start', 'end end'] });
   // the style is always the same motion value (so the server and the first client frame match); reduced motion holds it at 1
@@ -319,11 +322,11 @@ function Tenth() {
 }
 
 /* drive it: one command bar of three verbs (a single control, not three buttons); the chosen verb fills with ink */
-function Drive({ drive, setDrive }) {
+function Drive({ drive, setDrive }: { drive: Verb; setDrive: (v: Verb) => void }) {
   return (
     <div className="nd-drive" role="group" aria-label="Drive the node">
       <span className="nd-drive-p" aria-hidden="true">hanzo fabric</span>
-      {['up', 'join', 'stop'].map((c) => <button key={c} type="button" aria-pressed={drive === c} onClick={() => setDrive(c)}>{c}</button>)}
+      {(['up', 'join', 'stop'] as const).map((c) => <button key={c} type="button" aria-pressed={drive === c} onClick={() => setDrive(c)}>{c}</button>)}
     </div>
   );
 }
@@ -340,28 +343,30 @@ function Title() {
 }
 
 export default function Node() {
-  const [drive, setDrive] = useState('up');
+  const [drive, setDrive] = useState<Verb>('up');
   const [at, setAt] = useState(-1);
   const [wide, setWide] = useState(false);
-  const run = useRef(null);
+  const run = useRef<HTMLElement>(null);
   const mine = useRef(false); // once the visitor drives it, the beat never takes the wheel again
-  const byHand = useCallback((c) => { mine.current = true; setDrive(c); }, []);
-  const onAuto = useCallback((c) => { if (!mine.current) setDrive(c); }, []);
+  const byHand = useCallback((c: Verb) => { mine.current = true; setDrive(c); }, []);
+  const onAuto = useCallback((c: Verb) => { if (!mine.current) setDrive(c); }, []);
   useEffect(() => {
     const m = matchMedia('(min-width: 900px)');
     const f = () => setWide(m.matches);
     f(); m.addEventListener('change', f);
-    const els = run.current ? [...run.current.querySelectorAll('[data-at]')] : [];
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.at); }), { rootMargin: '-46% 0px -53% 0px' });
+    const els = run.current ? [...run.current.querySelectorAll<HTMLElement>('[data-at]')] : [];
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+(e.target as HTMLElement).dataset.at!); }), { rootMargin: '-46% 0px -53% 0px' });
     els.forEach((el) => io.observe(el));
     return () => { m.removeEventListener('change', f); io.disconnect(); };
   }, []);
-  const jump = (i) => {
+  const jump = (i: number) => {
     const el = run.current?.querySelector(`[data-at="${i}"]`);
     if (!el) return;
     const y = el.getBoundingClientRect().top + window.scrollY - innerHeight * 0.4;
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.__lenis ? window.__lenis.scrollTo(y, { duration: calm ? 0 : 1.2, easing: (x) => 1 - Math.pow(1 - x, 4) }) : window.scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
+    window.__lenis ? window.__lenis.scrollTo(y, { duration: calm ? 0 : 1.2, easing: (x: number) => 1 - Math.pow(1 - x, 4) }) : window.scrollTo(
+
+{ top: y, behavior: calm ? 'auto' : 'smooth' });
   };
   const step = wide ? at : -1;
   return (

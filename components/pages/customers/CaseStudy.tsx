@@ -12,32 +12,33 @@ import { A, Flap } from '../../kit';
 import Sigil from '../../Sigil';
 import { useArrival } from '../doorway';
 import './customers.css';
+import type { CaseDoc } from './csData';
 
 const FIG = /(?:[$€]\s?[\d.,]+\s?(?:[KMB]\+?|ETH)?|\b\d{1,3}(?:,\d{3})+\+?|\b\d+(?:\.\d+)?%|\b\d+(?:\.\d+)?[KM]\+?(?=\s|$|[.,;:])|\b\d+:\d+)/g;
 
-export default function CaseStudy({ doc }) {
+export default function CaseStudy({ doc }: { doc: CaseDoc }) {
   useArrival();
   const [ready, setReady] = useState(false);
   const [at, setAt] = useState(0);
-  const [mark, setMark] = useState(null);
+  const [mark, setMark] = useState<string | null>(null);
   const steps = doc.how ? doc.how.steps : [];
-  const list = useRef(null);
+  const list = useRef<HTMLOListElement>(null);
   const { scrollYProgress } = useScroll({ target: list, offset: ['start 60%', 'end 60%'] });
   const fill = useSpring(scrollYProgress, { stiffness: 140, damping: 28, restDelta: 0.001 });
   useEffect(() => {
     if (!list.current) return;
     const els = [...list.current.querySelectorAll('[data-step]')];
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.step); }), { rootMargin: '-45% 0px -45% 0px' });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+(e.target as HTMLElement).dataset.step!); }), { rootMargin: '-45% 0px -45% 0px' });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
   const figs = useMemo(() => steps.flatMap((s, i) => [...new Set(s.text.match(FIG) || [])].map((f) => ({ f: f.trim(), i }))), [steps]);
-  const go = (f) => {
+  const go = (f: { f: string; i: number }) => {
     setMark(f.f);
-    const el = list.current && list.current.querySelector(`[data-step="${f.i}"]`);
+    const el = list.current && list.current.querySelector<HTMLElement>(`[data-step="${f.i}"]`);
     if (el) (window.__lenis ? window.__lenis.scrollTo(el, { offset: -140 }) : el.scrollIntoView({ behavior: 'smooth', block: 'center' }));
   };
-  const hi = (t) => {
+  const hi = (t: string) => {
     if (!mark || !t.includes(mark)) return t;
     const [a, ...b] = t.split(mark);
     return <>{a}<mark>{mark}</mark>{b.join(mark)}</>;

@@ -22,8 +22,10 @@
    settles as you scroll; six pinned chapters over one outlined job inspector whose tabs you press; worker.ts on
    graphite in the one black room; the free tier as the one 64px figure over a quiet spec; deck greys, flat or
    outlined surfaces, tweens only. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import type { Transition } from 'motion/react';
 import { A } from '../../kit';
 import { Paste, useLive } from './Frame';
 import { Copy } from '../../ui';
@@ -36,17 +38,32 @@ import { ShrinkToCard, Iris, Scramble, Scr, CountRoll, Roll, CursorLens, Lens } 
 import './Mq.css';
 
 const GH = 'https://github.com/hanzoai';
-const EASE = [0.16, 1, 0.3, 1]; // ease-emphasis: arrivals
-const ARRIVE = { duration: 0.3, ease: EASE };
-const GLIDE = { duration: 0.4, ease: [0.4, 0, 0.2, 1] }; // ease-in-out: things that move and stay
-const QUICK = { duration: 0.15, ease: [0, 0, 0.2, 1] };
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1]; // ease-emphasis: arrivals
+const ARRIVE: Transition = { duration: 0.3, ease: EASE };
+const GLIDE: Transition = { duration: 0.4, ease: [0.4, 0, 0.2, 1] }; // ease-in-out: things that move and stay
+const QUICK: Transition = { duration: 0.15, ease: [0, 0, 0.2, 1] };
 const NAMES = ['welcome', 'invoice', 'resize', 'digest', 'sync', 'export'];
 
+type Job = { id: number; n: string; p: number; fail?: boolean; born?: number; attempt?: number; back?: boolean; ok?: boolean };
+type Running = Job & { age: number; attempt: number };
+
+type QueueEvent = [type: string, what: string];
+interface Queue {
+  t: number;
+  id: number;
+  win: number;
+  wait: Job[];
+  active: Running[];
+  done: Job[];
+  events: { k: number; e: QueueEvent }[];
+}
+type Peek = Job & { at: string };
+
 /* One tick of the queue, as a pure step: finish, retry or fail; then a worker takes the most urgent waiting job. */
-export function step(s) {
-  const t = s.t + 1, ev = [];
+export function step(s: Queue): Queue {
+  const t = s.t + 1, ev: QueueEvent[] = [];
   let id = s.id;
-  const wait = [...s.wait], done = [...s.done], active = [];
+  const wait = [...s.wait], done = [...s.done], active: Running[] = [];
   s.active.map((j) => ({ ...j, age: j.age + 1 })).forEach((j) => {
     if (j.age < 2) { active.push(j); return; }
     if (j.fail && j.attempt < 3) { ev.push(['failed', j.n + ' · attempt ' + j.attempt]); wait.unshift({ ...j, attempt: j.attempt + 1, back: true }); }
@@ -55,20 +72,20 @@ export function step(s) {
   });
   const sorted = wait.sort((x, y) => x.p - y.p); // stable: first in, first out inside one priority
   let started = 0;
-  while (active.length < 2 && sorted.length) { const j = sorted.shift(); ev.push(['progress', j.n]); active.push({ ...j, age: 0, attempt: j.attempt || 1 }); started++; }
+  while (active.length < 2 && sorted.length) { const j = sorted.shift()!; ev.push(['progress', j.n]); active.push({ ...j, age: 0, attempt: j.attempt || 1 }); started++; }
   if (sorted.length < 4) sorted.push({ id: id++, n: NAMES[t % NAMES.length], p: t % 4 === 0 ? 1 : 2, fail: t % 5 === 0, born: t });
   const win = t % 6 === 0 ? started : Math.min(6, s.win + started);
   return { t, id, win, wait: sorted, active, done: done.slice(0, 4), events: [...ev.map((e, k) => ({ k: t * 10 + k, e })), ...s.events].slice(0, 4) };
 }
-const START = { t: 0, id: 4, win: 0, wait: [0, 1, 2, 3].map((i) => ({ id: i, n: NAMES[i], p: i === 2 ? 1 : 2 })), active: [], done: [], events: [] };
-const WARM = [1, 2, 3, 4].reduce((x) => step(x), START); // the first frame already has every lane at work
+const START: Queue = { t: 0, id: 4, win: 0, wait: [0, 1, 2, 3].map((i) => ({ id: i, n: NAMES[i], p: i === 2 ? 1 : 2 })), active: [], done: [], events: [] };
+const WARM = [1, 2, 3, 4].reduce<Queue>((x) => step(x), START); // the first frame already has every lane at work
 
 /* where a job is, in the words the conveyor already uses */
-const where = (j, kind) => (kind === 'ok' ? 'completed' : kind === 'bad' ? 'failed set' : kind ? 'worker' : j.back ? 'backoff · exponential' : 'waiting');
+const where = (j: Job, kind?: string) => (kind === 'ok' ? 'completed' : kind === 'bad' ? 'failed set' : kind ? 'worker' : j.back ? 'backoff · exponential' : 'waiting');
 
 /* A ticket keeps its layoutId from lane to lane, so a move is one FLIP glide from where it was (no AnimatePresence:
    the copy it leaves goes at once, so a lane closes up while the glide runs). Only a job just added slides in. */
-function Ticket({ j, kind, t, onPeek, children }) {
+function Ticket({ j, kind, t, onPeek, children }: { j: Job; kind?: string; t?: number; onPeek: (p: Peek) => void; children?: ReactNode }) {
   return (
     <motion.div layoutId={'mq' + j.id} className={'mq-tk ' + (kind || '') + (j.p === 1 ? ' hi' : '') + (j.back ? ' back' : '')}
       onPointerEnter={(e) => e.pointerType === 'mouse' && onPeek({ ...j, at: where(j, kind) })}
@@ -80,11 +97,11 @@ function Ticket({ j, kind, t, onPeek, children }) {
 
 /* ---------- the hero object: the queue at work ---------- */
 function Conveyor() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive<HTMLDivElement>(0.3);
   const [paused, pause] = usePause();
   const run = live && !paused;
   const [s, setS] = useState(WARM);
-  const [peek, setPeek] = useState(null);
+  const [peek, setPeek] = useState<Peek | null>(null);
   useEffect(() => {
     if (!run) return;
     const t = setTimeout(() => setS(step), 1300);
@@ -155,7 +172,7 @@ const STREAM = [['completed', 'welcome'], ['progress', 'resize'], ['failed', 'sy
 /* the intro: the queue as rows of data, and the two workers that are yours */
 const ROWS = [['welcome', 'waiting', 'priority 1', ''], ['invoice', 'worker a', 'attempt 1', 'a'], ['resize', 'worker b', 'attempt 2', 'b'], ['digest', 'completed', 'attempt 1', ''], ['sync', 'failed set', 'attempts 3 / 3', '']];
 
-function Overview({ n }) {
+function Overview({ n }: { n: number }) {
   const lit = n % 2 ? 'b' : 'a';
   return (
     <div className="mq-p">
@@ -175,7 +192,7 @@ function Overview({ n }) {
   );
 }
 
-function Panel({ step, n }) {
+function Panel({ step, n }: { step: number; n: number }) {
   if (step === 0) {
     const on = n % 3;
     const down = n % 4 === 3;
@@ -268,8 +285,8 @@ function Failed() {
   );
 }
 
-function Inspector({ cur, go }) {
-  const [ref, live] = useLive(0.3);
+function Inspector({ cur, go }: { cur: number; go: (i: number) => void }) {
+  const [ref, live] = useLive<HTMLDivElement>(0.3);
   const [paused, pause] = usePause();
   const run = live && !paused;
   const [n, setN] = useState(0);
@@ -336,10 +353,10 @@ const worker = new Worker("emails", async (job) => {
 /* worker.ts, coloured the way hanzo.ai cuts it: keywords and strings picked out, the rest of each run left whole
    (so "worker = new" and "job.data.userId" read as one stretch each, as live has them) */
 const KW = /\b(import|from|const|await|async)\b|(=>)/g;
-const isKw = (w) => /^(import|from|const|await|async|=>)$/.test(w);
-function tok(l) {
+const isKw = (w: string) => /^(import|from|const|await|async|=>)$/.test(w);
+function tok(l: string) {
   if (/^\s*\/\//.test(l)) return [<span key="c" className="c">{l}</span>];
-  const out = [];
+  const out: ReactElement[] = [];
   l.split(/("[^"]*")/).forEach((p, i) => {
     if (i % 2) return out.push(<span key={i} className="s">{p}</span>);
     p.split(KW).filter(Boolean).forEach((w, j) => {
@@ -348,7 +365,7 @@ function tok(l) {
   });
   return out;
 }
-function WorkerCode({ className = '' }) {
+function WorkerCode({ className = '' }: { className?: string }) {
   return (
     <div className={'cf-code ' + className}>
       <div className="cf-code-bar"><i /><i /><i /><span className="cf-code-k">worker.ts</span><Copy text={CODE} /></div>
@@ -361,7 +378,8 @@ function WorkerCode({ className = '' }) {
 
 /* the globe's key: its shapes, named in the words this page already uses */
 const KEY = [['q', 'Queue'], ['w', 'Worker'], ['ok', 'completed'], ['back', 'backoff · exponential'], ['bad', 'failed set']];
-const pad = (i) => String(i).padStart(2, '0');
+const pad = (i: number) => String(i).padStart(2, '0');
+
 
 export default function Mq() {
   const [sel, setSel] = useState(-1);

@@ -26,6 +26,7 @@
    marks are drawn shapes, not anyone's logo.
    CTA: Try Hanzo (hero, Add sign-in and the close; one solid button per screen, the others text links). */
 import { useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, PointerEvent, RefObject } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
@@ -34,7 +35,7 @@ import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Identity.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const STAGES = [
   ['Signing in', 'A password, a passkey, or a Google or GitHub account. A second factor when the organization asks for one.'],
@@ -71,7 +72,7 @@ const THEIRS = 'id.example.com';
 /* page-local entrance trigger: sets data-in once, when the element's top passes 75% of the screen. It writes a DOM
    attribute after mount (never React state), so server and first client render always match. */
 function useIn() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -131,7 +132,7 @@ function SignCard() {
 
 /* the same hosted card in each of the three stages: 1 the ways in (lit in turn), 2 the token, 3 every app.
    The token rows and app marks arrive with the stages' entrance (CSS, keyed on the section's data-in). */
-function StageCard({ i }) {
+function StageCard({ i }: { i: number }) {
   const [ref, live] = useLive(0.4);
   const [paused, togglePause] = usePause();
   const [w, setW] = useState(0); // which way in (stage 1) or which claim (stage 2) is lit
@@ -174,7 +175,7 @@ function StageCard({ i }) {
 }
 
 /* a tile leans toward a fine pointer (2.5° at most); touch: nothing */
-function lean(e) {
+function lean(e: PointerEvent<HTMLElement>) {
   if (e.pointerType !== 'mouse') return;
   const el = e.currentTarget;
   if (el.hasAttribute('data-open')) return; // an open tile holds still so its words are sharp
@@ -183,11 +184,11 @@ function lean(e) {
   el.style.setProperty('--ry', ((x - 0.5) * 5).toFixed(2) + 'deg');
   el.style.setProperty('--rx', ((0.5 - y) * 5).toFixed(2) + 'deg');
 }
-function unlean(e) { const s = e.currentTarget.style; s.setProperty('--ry', '0deg'); s.setProperty('--rx', '0deg'); }
+function unlean(e: PointerEvent<HTMLElement>) { const s = e.currentTarget.style; s.setProperty('--ry', '0deg'); s.setProperty('--rx', '0deg'); }
 
 /* the two cards fanned behind the live one: the same hosted sign-in, before (the ways in) and after (every app). They
    slide out from behind it as the page arrives and part a little toward a fine pointer. */
-function Ghost({ k }) {
+function Ghost({ k }: { k: number }) {
   return (
     <div className="id-card ghost" aria-hidden="true">
       <p className="id-url"><i /><span className="id-host"><span className="id-host-t">{k ? THEIRS : 'hanzo.id'}</span></span></p>
@@ -206,7 +207,7 @@ function Ghost({ k }) {
     </div>
   );
 }
-function part(e) {
+function part(e: PointerEvent<HTMLElement>) {
   if (e.pointerType !== 'mouse') return;
   const r = e.currentTarget.getBoundingClientRect();
   const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
@@ -215,7 +216,7 @@ function part(e) {
   s.setProperty('--ry', (x * 5).toFixed(2) + 'deg');
   s.setProperty('--rx', (-y * 5).toFixed(2) + 'deg');
 }
-function unpart(e) { const s = e.currentTarget.style; s.setProperty('--px', '0'); s.setProperty('--ry', '0deg'); s.setProperty('--rx', '0deg'); }
+function unpart(e: PointerEvent<HTMLElement>) { const s = e.currentTarget.style; s.setProperty('--px', '0'); s.setProperty('--ry', '0deg'); s.setProperty('--rx', '0deg'); }
 
 /* The first screen, Identity's own: the title centred over a fan of hosted cards. The middle one is live (it re-hosts
    itself on a customer's hostname, then signs someone in); behind it, the same card before and after. */
@@ -273,7 +274,7 @@ const DOES = [
 const PERSON = <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><circle cx="12" cy="9" r="4" fill="currentColor" /><path d="M4.5 20c1.2-3.6 4.2-5.4 7.5-5.4s6.3 1.8 7.5 5.4" fill="currentColor" /></svg>;
 
 /* each tile's small drawing, from its own words; it plays once on arrival and again on hover */
-function Glyph({ k, paused }) {
+function Glyph({ k, paused }: { k: string; paused: boolean }) {
   if (k === 'code') return <div className="id-g-code">{[0, 1, 2, 3, 4, 5].map((i) => <i key={i} style={{ '--k': i }} />)}</div>;
   if (k === 'people') return <div className="id-g-people">{[0, 1, 2, 3, 4].map((i) => <i key={i} style={{ '--k': i }}>{PERSON}</i>)}<span>SCIM 2.0</span></div>;
   if (k === 'sso') return <div className="id-g-sso"><span style={{ '--k': 0 }}>client id</span><span style={{ '--k': 1 }}>client id</span><span style={{ '--k': 2 }}>client id</span><b>authorize</b></div>;
@@ -284,7 +285,7 @@ function Glyph({ k, paused }) {
 
 /* the append-only log, live: while it is on screen a new write lands at the foot every 2.6 s and the oldest leaves; the
    struck "edit" never arrives. Pausable; reduced motion holds three writes still. */
-function LogGlyph({ paused }) {
+function LogGlyph({ paused }: { paused: boolean }) {
   const [ref, live] = useLive(0.4);
   const [n, setN] = useState(3);
   useTick(2600, live && !paused, () => setN((v) => v + 1));
@@ -297,7 +298,7 @@ function LogGlyph({ paused }) {
 }
 
 /* a tile: its drawing and title at rest; the + opens Hanzo's sentence over the drawing, so the grid never moves */
-function Tile({ t, d, g, i }) {
+function Tile({ t, d, g, i }: { t: string; d: string; g: string; i: number }) {
   const [open, setOpen] = useState(false);
   const [paused, togglePause] = usePause(); // only the live log uses it
   const toggle = () => setOpen((o) => !o);
@@ -318,7 +319,7 @@ function Tile({ t, d, g, i }) {
 
 /* Entrance 3, typewriter: the heading types itself out with a caret. Every letter is in the server HTML; before the
    section arrives (JS on) the letters are hidden and they appear one by one; reduced motion and JS off show them all. */
-function Typed({ text }) {
+function Typed({ text }: { text: string }) {
   let n = 0;
   const words = text.split(' ');
   return (
@@ -338,7 +339,7 @@ function Typed({ text }) {
 
 function Does() {
   const sec = useIn();
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   // each drawing plays once as its tile arrives
   useEffect(() => {
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.setAttribute('data-in', ''); io.unobserve(e.target); } }), { threshold: 0.4 });
@@ -360,7 +361,7 @@ function Does() {
   );
 }
 
-const LARGE = [
+const LARGE: [string, string, string[]][] = [
   ['Where the data sits', 'An organization is a tenancy boundary, and the boundary is enforced by the code that reads the token rather than by a column somebody has to remember to filter on.', ['Enterprise security with GDPR and privacy controls', 'Self-host it, in your own region, on your own cluster', 'One Go binary, embedded SQLite by default — nothing to run beside it']],
   ['Bring the identity you already have', 'Point Identity at your own issuer and it becomes the entry point without becoming the record.', ['Federate to any OpenID Connect issuer by naming its discovery URL', 'SCIM 2.0 provisioning, so joiners and leavers arrive from your directory', 'White-labelled by hostname — your mark on your domain, never ours']],
   ['Signing up your customers', 'An organization can hold its own customers as sub-organizations, so a business you serve manages its people without any of it reaching yours.', ['Sign in with Google or GitHub, or with any issuer you add', 'A consent screen the person has to pass before an app gets a token', 'Org admins manage their own members without platform access']],
@@ -369,7 +370,7 @@ const LARGE = [
 const RUNTIMES = ['server', 'React', 'browser', 'Next.js', 'Passport'];
 
 /* each tab's drawing, made only from that tab's own words; it plays when the tab opens */
-function LargeArt({ i }) {
+function LargeArt({ i }: { i: number }) {
   if (i === 0) return (
     <div className="id-art id-art-region">
       <span className="id-art-pin">your own region</span>
@@ -415,11 +416,12 @@ function LargeArt({ i }) {
 
 /* Entrance 4, stretch-scroll: the panel arrives stretched and relaxes; while it is on screen it stretches a little
    with scroll speed (at most 6%) and relaxes when the scroll stops. Transform only; off under reduced motion. */
-function useStretch(ref) {
+function useStretch(ref: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const el = ref.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let on = false, y = scrollY, tm = 0, rest = 0;
+    let on = false, y = scrollY, tm = 0;
+    let rest: ReturnType<typeof setTimeout> | undefined;
     const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; }, { threshold: 0 });
     io.observe(el);
     const onScroll = () => {
@@ -438,7 +440,7 @@ function useStretch(ref) {
 function Large() {
   const [at, setAt] = useState(0);
   const sec = useIn();
-  const stretch = useRef(null);
+  const stretch = useRef<HTMLDivElement>(null);
   useStretch(stretch);
   return (
     <section className="v2-sec id-large" data-entrance="stretch-scroll" ref={sec}>
@@ -479,12 +481,14 @@ const WAYS = ['password', 'passkey', 'Google', 'GitHub', 'second factor'];
 const HOST = /^(?=.{1,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
 
 /* the hosted card, white-labelled: your hostname in the bar, your mark on the page, the ways in you chose */
-function Branded({ brand, small }) {
+interface Brand { host: string; name: string; on: boolean[] }
+
+function Branded({ brand, small }: { brand: Brand; small?: boolean }) {
   const { host, name, on } = brand;
   const h = host.trim().toLowerCase();
   const ok = HOST.test(h);
   const who = name.trim();
-  const has = (w) => on[WAYS.indexOf(w)];
+  const has = (w: string) => on[WAYS.indexOf(w)];
   const none = !on.slice(0, 4).some(Boolean);
   return (
     <div className={'id-card wear' + (small ? ' small' : '')} aria-hidden="true">
@@ -509,7 +513,7 @@ function Branded({ brand, small }) {
    redrawn as yours: your hostname in the bar, your mark on the page. Nothing is saved or sent. */
 /* Entrance 5, conveyor: the form's parts and the hosted card ride in from the right on a horizontal belt, one after
    another, and stop in place; the belt line runs only while they ride. */
-function Wear({ brand, set }) {
+function Wear({ brand, set }: { brand: Brand; set: (b: Brand) => void }) {
   const ok = HOST.test(brand.host.trim().toLowerCase());
   const sec = useIn();
   return (
@@ -541,22 +545,22 @@ function Wear({ brand, set }) {
    Entrance 1, line-draw: the room's rounded outline draws itself, then it fills black and opens to full width. */
 const STEPS = ['Register the app', 'set the callback', 'install the SDK'];
 const KEYICON = <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="8" cy="12" r="4.5" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="M12.5 12H21M18 12v3M21 12v2.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
-function Made({ i }) {
+function Made({ i }: { i: number }) {
   if (i === 0) return <span className="id-made-id">{KEYICON}<span className="id-made-dots">{Array.from({ length: 4 }, (_, k) => <span key={k}>••••</span>)}</span></span>;
   if (i === 1) return <span className="id-made-flow"><b>authorize</b><em>{ARROW}</em><b className="lit">callback</b></span>;
   return <span className="id-made-rt">{RUNTIMES.map((r) => <i key={r}>{r}</i>)}</span>;
 }
 function Add() {
   const sec = useIn();
-  const spot = useRef(null);
-  const btns = useRef([]);
-  const [ref, live] = useLive(0.4); // live is false under reduced motion, so the light rests on the chosen step
+  const spot = useRef<HTMLDivElement | null>(null);
+  const btns = useRef<(HTMLButtonElement | null)[]>([]);
+  const [ref, live] = useLive<HTMLDivElement>(0.4); // live is false under reduced motion, so the light rests on the chosen step
   const [step, setStep] = useState(0);
   const [held, setHeld] = useState(false);
   const [hand, setHand] = useState(false); // a pointer is driving the light
   useTick(2400, live && !held && !hand, () => setStep((s) => (s + 1) % 3));
   // the light sits on the chosen step's row unless a pointer is moving it
-  const toRow = (i) => {
+  const toRow = (i: number) => {
     const s = spot.current, r = s?.querySelectorAll('.id-spot-row')[i];
     if (!s || !r) return;
     const a = s.getBoundingClientRect(), b = r.getBoundingClientRect();
@@ -565,22 +569,24 @@ function Add() {
   };
   useEffect(() => { if (!hand) toRow(step); }, [step, hand]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { const f = () => { if (!hand) toRow(step); }; addEventListener('resize', f); return () => removeEventListener('resize', f); });
-  const rowAt = (y) => {
+  const rowAt = (y: number) => {
     const rows = [...(spot.current?.querySelectorAll('.id-spot-row') || [])];
     const k = rows.findIndex((r) => { const b = r.getBoundingClientRect(); return y >= b.top && y <= b.bottom; });
     return k;
   };
-  const place = (e) => {
-    const s = spot.current, a = s.getBoundingClientRect();
+  const place = (e: PointerEvent) => {
+    const s = spot.current;
+    if (!s) return;
+    const a = s.getBoundingClientRect();
     s.style.setProperty('--id-mx', (e.clientX - a.left).toFixed(0) + 'px');
     s.style.setProperty('--id-my', (e.clientY - a.top).toFixed(0) + 'px');
     const k = rowAt(e.clientY);
     if (k >= 0 && k !== step) setStep(k);
   };
-  const onMove = (e) => { if (e.pointerType !== 'mouse') return; setHand(true); place(e); };
-  const onDown = (e) => { if (e.pointerType === 'mouse') return; setHeld(true); place(e); };
-  const pick = (i) => { setStep(i); setHeld(true); setHand(false); };
-  const onKey = (e) => {
+  const onMove = (e: PointerEvent) => { if (e.pointerType !== 'mouse') return; setHand(true); place(e); };
+  const onDown = (e: PointerEvent) => { if (e.pointerType === 'mouse') return; setHeld(true); place(e); };
+  const pick = (i: number) => { setStep(i); setHeld(true); setHand(false); };
+  const onKey = (e: KeyboardEvent) => {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
     e.preventDefault();
     const i = (step + (e.key === 'ArrowDown' ? 1 : 2)) % 3;
@@ -624,7 +630,7 @@ function Add() {
 
 /* the close: every app in the organization, at rest. As it is reached it grows past its resting size, then settles. */
 function EndApps() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = box.current;
     if (!el) return;
@@ -642,7 +648,8 @@ function EndApps() {
 }
 
 export default function Identity() {
-  const [brand, setBrand] = useState({ host: 'hanzo.id', name: 'Hanzo', on: [true, true, true, false, true] });
+  const [brand, setBrand] = useState<Brand>({ host:
+ 'hanzo.id', name: 'Hanzo', on: [true, true, true, false, true] });
   return (
     <main className="v2 id">
       <Hero />

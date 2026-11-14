@@ -15,6 +15,7 @@
    shown, never copied, so it runs in zsh); the live tool stream; domain cards that lift, preview and morph into
    their sheet; one mover per screen; 44px Copy everywhere. Every word is Hanzo's (plus the slider's two side labels). */
 import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, CodeBlock } from '../kit';
 import { Copy } from '../ui';
@@ -29,26 +30,26 @@ import '../v2/A2.css';
 import './McpPage.css';
 
 /* a heading's lines as plain blocks (the line-mask cut-in is gone: each section's entrance does the arriving) */
-const Lines = ({ lines }) => lines.map((l, i) => <span className="a2-ln" key={i}>{l}{i < lines.length - 1 ? ' ' : null}</span>);
+const Lines = ({ lines }: { lines: string[] }) => lines.map((l, i) => <span className="a2-ln" key={i}>{l}{i < lines.length - 1 ? ' ' : null}</span>);
 
 const DOCS = 'https://docs.hanzo.ai/docs/mcp';
 const ALL = 'https://docs.hanzo.ai/docs/mcp-tools/all-tools';
 const GH = 'https://github.com/hanzoai/mcp';
 
 /* Hanzo's tool names, in the order an agent might reach for them. */
-const CALLS = [
+const CALLS: [string, string, string?][] = [
   ['fs', 'read'], ['code', 'code_search', '2ms'], ['kai', 'kai_command_guard', '6.4ms'], ['exec', 'run'], ['browser', 'navigate'],
   ['browser', 'screenshot'], ['git', 'git'], ['kai', 'kai_decide', '6.4ms'], ['fs', 'apply_patch'], ['tracker', 'tracker_update'],
   ['hanzo', 'hanzo · Deploy'], ['memory', 'memory'], ['code', 'code_context'], ['kai', 'kai_injection_screen', '6.4ms'], ['fs', 'write'],
   ['browser', 'console'], ['hanzo', 'hanzo · Sandbox'], ['fetch', 'fetch'], ['code', 'code_ask'], ['exec', 'logs'], ['hanzo', 'hanzo · KMS'],
   ['plan', 'plan'], ['fs', 'search_text'], ['tracker', 'tracker_issues'],
 ];
-const W = (i, c) => (c[2] ? (c[2] === '2ms' ? 3 : 7) : 12 + ((i * 37) % 44)); // bar width, % of the lane (drawn, not measured)
-const X = (i) => (i * 23) % 38;
+const W = (i: number, c: [string, string, string?]) => (c[2] ? (c[2] === '2ms' ? 3 : 7) : 12 + ((i * 37) % 44)); // bar width, % of the lane (drawn, not measured)
+const X = (i: number) => (i * 23) % 38;
 
 /* One call every 900 ms, by a chain of timeouts (no setInterval); it stops off screen and while paused. */
 function Stream() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.2 });
   const calm = useReducedMotion();
   const [n, setN] = useState(9);
@@ -93,7 +94,7 @@ function Stream() {
 const CLIENTS = ['Claude Desktop', 'Claude Code', 'Cursor', 'Hanzo Dev', 'Any MCP client'];
 
 function Hero() {
-  const via = useRef(null);
+  const via = useRef<HTMLDivElement>(null);
   const viaSeen = useInView(via, { once: true, amount: 0.8 });
   return (
     <section className="mcp-hero" aria-labelledby="mcp-h1">
@@ -135,7 +136,7 @@ function Hero() {
 /* A figure as one box per character. At rest each box simply holds Hanzo's character. During the count-roll entrance
    (McpPage.css, .e-arm/.e-go) each digit's text goes clear and a CSS-drawn reel of 0–9 (a ::after, so it is never in
    the page's text) rolls up through one full turn and stops on that digit; the boxes never change size. */
-function Fig({ v, d = 0 }) {
+function Fig({ v, d = 0 }: { v: string; d?: number }) {
   return (
     <span className="a2-fig mcp-fig">
       {[...v].map((c, i) => /\d/.test(c)
@@ -147,7 +148,7 @@ function Fig({ v, d = 0 }) {
 
 /* The summary line, as three figures. Entrance 3, count-roll: the digits roll into their values once. */
 function Figures() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.5 }); // the "+" signs breathe three times on arrival, then rest
   useEnter(ref, { ms: 2200, amount: 0.5 });
   return (
@@ -183,14 +184,14 @@ function Before() {
 }
 
 /* The runtime in three parts: three plain sheets, one after another (no longer pinned; nothing sticks while you scroll). */
-const PARTS = [
+const PARTS: [string, string][] = [
   ['Full-stack agent capabilities, ready out of the box', 'Core runtime (fs, exec, code, git, fetch, workspace, ui), semantic code intelligence (code_search, code_context, code_ask, code_index), Kai decision & safety guardrails (kai_decide, kai_command_guard, kai_injection_screen), browser CDP, issue tracker, and persistent memory.'],
   ['125 Hanzo Cloud services, 1,700+ typed operations', 'Through the unified hanzo router and /docs/mcp-tools catalog, agents provision sandboxes, deploy containers across 34 regions, query vector indexes, rotate KMS secrets, verify IAM policies, and inspect billing usage under one bearer key.'],
   ['Scoped permissions & Kai safety screening', 'Every shell command and external input can pass through kai_command_guard and kai_injection_screen in single-digit milliseconds. Enable or drop tool groups per environment with --enable-tools and --disable-tools.'],
 ];
 const CORE = ['fs', 'exec', 'code', 'git', 'fetch', 'workspace', 'ui', 'code_search', 'code_context', 'code_ask', 'code_index', 'kai_decide', 'kai_command_guard', 'kai_injection_screen', 'browser', 'cdp', 'tracker', 'memory'];
 
-function PartArt({ i }) {
+function PartArt({ i }: { i: number }) {
   if (i === 0) return <div className="mcp-art a0">{CORE.map((t, k) => <span key={t} className="x-mono" style={{ '--d': k * 0.35 + 's' }}>{t}</span>)}</div>;
   if (i === 1) return <div className="mcp-art a1">{Array.from({ length: 125 }).map((_, k) => <i key={k} style={{ animationDelay: ((k * 53) % 125) * 0.04 + 's' }} />)}</div>;
   return (
@@ -202,7 +203,7 @@ function PartArt({ i }) {
 }
 
 /* Only one sheet runs its art: the last one whose top has passed 60% of the screen. One mover per screen. */
-function useTopSheet(list) {
+function useTopSheet(list: RefObject<HTMLElement | null>) {
   const [on, setOn] = useState(0);
   useEffect(() => {
     const el = list.current;
@@ -226,7 +227,7 @@ function useTopSheet(list) {
 
 function Parts() {
   const [paused, setPaused] = useState(false);
-  const list = useRef(null);
+  const list = useRef<HTMLOListElement>(null);
   const on = useTopSheet(list);
   return (
     <section className="a2-sec mcp-parts" aria-label="The runtime">
@@ -252,7 +253,7 @@ function Parts() {
 }
 
 /* Six domains on a rail; each card opens into its own sheet. */
-const DOMAINS = [
+const DOMAINS: [string, string, string[]][] = [
   ['fs & exec', 'read, write, stat, list, mkdir, rm, mv, apply_patch, search_text — plus exec with run, background, ps, kill, and logs so long-running dev servers and test suites stream cleanly.', ['read', 'write', 'stat', 'list', 'mkdir', 'rm', 'mv', 'apply_patch', 'search_text', 'run', 'background', 'ps', 'kill', 'logs']],
   ['code_search, code_context, code_ask, code_index', 'AST-aware symbol resolution, call graphs, cross-repository indexing, and structural transforms. Find every caller of a symbol in 2ms without grep noise.', ['code_search', 'code_context', 'code_ask', 'code_index']],
   ['kai_decide, kai_command_guard, kai_injection_screen', '13 purpose-built Kai decision, scoring, routing, log triage, recovery, and context compaction tools running in 6.4ms at a fraction of LLM token cost.', ['kai_decide', 'kai_command_guard', 'kai_injection_screen']],
@@ -262,14 +263,14 @@ const DOMAINS = [
 ];
 
 /* A rail the mouse can drag and fling; touch and trackpads scroll it natively. */
-function useDragRail(ref) {
+function useDragRail(ref: RefObject<HTMLElement | null>) {
   const moved = useRef(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     let x0 = 0, s0 = 0, v = 0, lx = 0, lt = 0, down = false;
-    const dn = (e) => { if (e.pointerType !== 'mouse' || e.button) return; down = true; moved.current = false; x0 = lx = e.clientX; s0 = el.scrollLeft; lt = performance.now(); v = 0; el.classList.add('grab'); };
-    const mv = (e) => { if (!down) return; const dx = e.clientX - x0; if (Math.abs(dx) > 6) moved.current = true; el.scrollLeft = s0 - dx; const t = performance.now(); v = (e.clientX - lx) / Math.max(1, t - lt); lx = e.clientX; lt = t; };
+    const dn = (e: PointerEvent) => { if (e.pointerType !== 'mouse' || e.button) return; down = true; moved.current = false; x0 = lx = e.clientX; s0 = el.scrollLeft; lt = performance.now(); v = 0; el.classList.add('grab'); };
+    const mv = (e: PointerEvent) => { if (!down) return; const dx = e.clientX - x0; if (Math.abs(dx) > 6) moved.current = true; el.scrollLeft = s0 - dx; const t = performance.now(); v = (e.clientX - lx) / Math.max(1, t - lt); lx = e.clientX; lt = t; };
     const up = () => { if (!down) return; down = false; el.classList.remove('grab'); if (Math.abs(v) > 0.2) el.scrollBy({ left: -v * 320, behavior: 'smooth' }); };
     el.addEventListener('pointerdown', dn);
     addEventListener('pointermove', mv);
@@ -282,21 +283,22 @@ function useDragRail(ref) {
 function Domains() {
   const [open, setOpen] = useState(-1);
   const [paused, setPaused] = useState(false);
-  const rail = useRef(null);
+  const rail = useRef<HTMLUListElement>(null);
   const moved = useDragRail(rail);
-  const close = useRef(null);
-  const last = useRef(null);
-  const card = useRef(null);
+  const close = useRef<HTMLButtonElement>(null);
+  const last = useRef<HTMLButtonElement | null>(null);
+  const card = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (open < 0) return;
     const l = window.__lenis;
     l?.stop?.();
     const t = setTimeout(() => close.current?.focus({ preventScroll: true }), 80);
     // Escape closes; Tab stays inside the open sheet; focus returns to the card that opened it
-    const key = (e) => {
+    const key = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(-1);
       if (e.key !== 'Tab' || !card.current) return;
-      const f = [...card.current.querySelectorAll('a[href], button:not([tabindex="-1"])')];
+      const f = [...card.current.querySelectorAll<HTMLElement>('a[href], button:not([tabindex="-1"])')];
+
       if (!f.length) return;
       const a = f[0], z = f[f.length - 1];
       if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
@@ -328,7 +330,7 @@ function Domains() {
   }, []);
   const d = DOMAINS[open];
   // entrance 4, side-carousel: the six cards ride in from the right along their snapping rail, one after another
-  const sec = useRef(null);
+  const sec = useRef<HTMLElement>(null);
   useEnter(sec, { ms: 1900, amount: 0.25 });
   return (
     <section className="a2-sec mcp-doms" aria-labelledby="mcp-doms-h" ref={sec}>
@@ -404,7 +406,7 @@ const JSON_BLOCK = CONFIG.split('\n').slice(1, 9).join('\n');
 const SHELL = CONFIG.split('\n').slice(-3).map((line) => [line.replace(/^\/\/\s+/, '').split(/\s+#/)[0].trim(), line]);
 
 function Shell() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 }); // the rows light in turn once (about 4 s), then rest
   return (
     <figure ref={ref} className={'x-codeblock mcp-sh' + (seen ? ' go' : '')} data-room="dark">
@@ -423,7 +425,7 @@ function Shell() {
 
 /* The one dark room. Entrance 5, curtain-rise: the words, then each code block, rise from below behind a clip. */
 function Config() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useEnter(ref, { ms: 1700, amount: 0.3 });
   return (
     <section ref={ref} className="a2-dark a2-sec mcp-cfg" data-room="dark" aria-labelledby="mcp-cfg-h">
@@ -456,7 +458,7 @@ function Config() {
    solid shows at a time. "Deploy to Cloud" is outlined. */
 const RUN = 'npx -y hanzo mcp';
 function Typed() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLParagraphElement>(null);
   const seen = useInView(ref, { amount: 0.4 });
   const calm = useReducedMotion();
   const END = RUN.length + 6; // types once, connects, then rests on that static frame
