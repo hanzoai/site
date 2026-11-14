@@ -9,12 +9,13 @@ import { Chip, Fold, Steps, Band } from './UniversityFold';
 import Icon from './universityIcons';
 import { ASK, seatFor } from './universitySeat';
 import { FILM, UNIVERSITY_COURSES } from './universityData';
+import type { Course } from './universityData';
 import './UniversityCourse.css';
 
 const PORTAL = '/university/portal';
 
 /* a course in the list of tracks: its code and credential, title, summary, and where it is read */
-function Track({ c, here }) {
+function Track({ c, here }: { c: Course; here?: boolean }) {
   const seat = seatFor(c.planId, '/university/' + c.slug);
   return (
     <article className="xuv-card xuv-track" aria-current={here ? 'page' : undefined}>
@@ -34,7 +35,7 @@ function Track({ c, here }) {
   );
 }
 
-export default function UniversityCourse({ course: c }) {
+export default function UniversityCourse({ course: c }: { course: Course }) {
   const seat = seatFor(c.planId, '/university/' + c.slug);
   const way = seat?.href ?? ASK;
   return (

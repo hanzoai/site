@@ -5,6 +5,7 @@
    Every one renders its final state on the server and with JS off; it arms only after mount, and never under
    reduced motion (read from matchMedia inside the effect, so there is no hydration mismatch). */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, ElementType } from 'react';
 import { useReducedMotion, useScroll, useTransform } from 'motion/react';
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -19,9 +20,9 @@ export function useCalm() {
 
 /* rest (server, JS off, reduced motion) -> armed (hidden, after mount) -> go (playing) -> rest again when done,
    so the entrance's transitions never linger on later hovers */
-function useArm(amount, ms, onArm, onDone) {
-  const ref = useRef(null);
-  const [st, setSt] = useState('rest');
+function useArm<T extends HTMLElement = HTMLElement>(amount: number, ms: number, onArm?: () => void, onDone?: () => void) {
+  const ref = useRef<T>(null);
+  const [st, setSt] = useState<'rest' | 'armed' | 'go'>('rest');
   const cb = useRef({ onArm, onDone });
   cb.current = { onArm, onDone };
   useEffect(() => {
@@ -29,7 +30,7 @@ function useArm(amount, ms, onArm, onDone) {
     if (!el || reduced() || !('IntersectionObserver' in window)) return;
     cb.current.onArm?.();
     setSt('armed');
-    let tm, raf;
+    let tm: ReturnType<typeof setTimeout> | undefined, raf = 0;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       io.disconnect();
@@ -39,21 +40,21 @@ function useArm(amount, ms, onArm, onDone) {
     io.observe(el);
     return () => { io.disconnect(); clearTimeout(tm); cancelAnimationFrame(raf); };
   }, [amount, ms]);
-  return [ref, st];
+  return [ref, st] as const;
 }
 
 /* 1. shrink-to-card: as the first screen leaves, it shrinks into a rounded card on a grey tray */
-export function useShrinkCard() {
-  const ref = useRef(null);
+export function useShrinkCard<T extends HTMLElement = HTMLElement>() {
+  const ref = useRef<T>(null);
   const { mounted, calm } = useCalm();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const scale = useTransform(p, [0, 0.8], [1, 0.86], { clamp: true });
   const clipPath = useTransform(p, [0, 0.35], ['inset(0px round 0px)', 'inset(0px round 24px)'], { clamp: true });
-  return [ref, mounted && !calm ? { scale, clipPath } : undefined];
+  return [ref, mounted && !calm ? { scale, clipPath } : undefined] as const;
 }
 
 /* 2. letter-cascade: each letter falls into place, one after another */
-export function Cascade({ text, as: Tag = 'h2', className, id }) {
+export function Cascade({ text, as: Tag = 'h2', className, id }: { text: string; as?: ElementType; className?: string; id?: string }) {
   const words = text.split(' ');
   const [ref, st] = useArm(0.6, 400 + text.length * 34 + 520);
   let n = 0;
@@ -62,7 +63,7 @@ export function Cascade({ text, as: Tag = 'h2', className, id }) {
       <span aria-hidden="true">
         {words.map((w, wi) => (
           <span key={wi} className="z7-word">
-            {[...w].map((ch, ci) => <span key={ci} className="z7-ch" style={{ '--i': n++ }}>{ch}</span>)}
+            {[...w].map((ch, ci) => <span key={ci} className="z7-ch" style={{ '--i': n++ } as CSSProperties}>{ch}</span>)}
             {wi < words.length - 1 ? ' ' : ''}
           </span>
         ))}
@@ -75,9 +76,9 @@ export function Cascade({ text, as: Tag = 'h2', className, id }) {
    Moves with the individual `translate` and `rotate` properties, so each card's own hover and press `transform` stay */
 const TILT = [-7, 5, -3, 8, -5, 4];
 export const DEAL_STEP = 110, DEAL_FLY = 640;
-export function useDeal(n, { onArm, onDealt } = {}) {
-  const items = useRef([]);
-  const [offs, setOffs] = useState(null);
+export function useDeal<T extends HTMLElement = HTMLElement>(n: number, { onArm, onDealt }: { onArm?: () => void; onDealt?: () => void } = {}) {
+  const items = useRef<(HTMLElement | null)[]>([]);
+  const [offs, setOffs] = useState<number[][] | null>(null);
   const measure = () => {
     const b = ref.current; if (!b) return;
     const r = b.getBoundingClientRect();
@@ -89,30 +90,30 @@ export function useDeal(n, { onArm, onDealt } = {}) {
     }));
     onArm?.();
   };
-  const [ref, st] = useArm(0.35, (n - 1) * DEAL_STEP + DEAL_FLY + 60, measure, onDealt);
-  const item = (i) => ({
-    ref: (el) => { items.current[i] = el; },
+  const [ref, st] = useArm<T>(0.35, (n - 1) * DEAL_STEP + DEAL_FLY + 60, measure, onDealt);
+  const item = (i: number) => ({
+    ref: (el: HTMLElement | null) => { items.current[i] = el; },
     'data-deal': '',
-    style: st !== 'rest' && offs ? { '--dx': offs[i][0] + 'px', '--dy': offs[i][1] + 'px', '--dr': offs[i][2] + 'deg', '--i': i, '--z': n - i } : undefined,
+    style: st !== 'rest' && offs ? { '--dx': offs[i][0] + 'px', '--dy': offs[i][1] + 'px', '--dr': offs[i][2] + 'deg', '--i': i, '--z': n - i } as CSSProperties : undefined,
   });
   return { ref, st, item };
 }
 
 /* 4. focus-pull-scroll: as the room scrolls in, its background field softens while the words come into focus */
-export function useFocusPull() {
-  const ref = useRef(null);
+export function useFocusPull<T extends HTMLElement = HTMLElement>() {
+  const ref = useRef<T>(null);
   const { mounted, calm } = useCalm();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.95', 'start 0.4'] });
   const subject = useTransform(p, (v) => `blur(${(10 * (1 - Math.min(1, Math.max(0, v)))).toFixed(2)}px)`);
   const bg = useTransform(p, (v) => `blur(${(4 * Math.min(1, Math.max(0, v))).toFixed(2)}px)`);
   const bgScale = useTransform(p, [0, 1], [1.08, 1], { clamp: true });
   const live = mounted && !calm;
-  return [ref, live ? { filter: bg, scale: bgScale } : undefined, live ? { filter: subject } : undefined];
+  return [ref, live ? { filter: bg, scale: bgScale } : undefined, live ? { filter: subject } : undefined] as const;
 }
 
 /* 5. stack-drop: the closing layers drop from above one after another and land on each other with a small bounce */
-export function useStackDrop(n) {
+export function useStackDrop(n: number) {
   const [ref, st] = useArm(0.5, (n - 1) * 130 + 700);
-  const layer = (i) => ({ 'data-drop': '', style: { '--i': i } });
+  const layer = (i: number) => ({ 'data-drop': '', style: { '--i': i } as CSSProperties });
   return { ref, st, layer };
 }

@@ -12,12 +12,18 @@ import { useEffect, useRef } from 'react';
 import { usePaused } from '../../v2/ModelFilm';
 import { useLoop, fit } from './live';
 
-const ease = (x) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
-const W8 = (a) => `rgba(255,255,255,${a})`;
+type Ctx = CanvasRenderingContext2D;
+type Vec3 = [number, number, number];
+type DrawFn = (g: Ctx, w: number, h: number, d: number, t: number, dt: number) => void;
+interface Rig { yaw: number; a: number }
+interface Dot { p: number[]; n: number; s: number; seen: number }
+
+const ease = (x: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
+const W8 = (a: number) => `rgba(255,255,255,${a})`;
 const MONO = '"Zen Mono", ui-monospace, monospace';
 
 // rotate a point by yaw then pitch, project with a soft perspective; returns [x, y, z]
-function proj(p, yaw, pitch, cx, cy, sc) {
+function proj(p: number[], yaw: number, pitch: number, cx: number, cy: number, sc: number): Vec3 {
   const cy1 = Math.cos(yaw), sy1 = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
   const x = p[0] * cy1 - p[2] * sy1, z = p[0] * sy1 + p[2] * cy1, y = p[1];
   const y2 = y * cp - z * sp, z2 = y * sp + z * cp, k = 4 / (4 + z2);
@@ -28,10 +34,10 @@ function proj(p, yaw, pitch, cx, cy, sc) {
    rest (the chapters): the pane is never an empty black box. While its chapter is not the active one it shows the
    object's settled frame (so the pane that wipes in already holds its object); when the chapter arrives, the build
    starts part-way and draws itself in bright over a faint copy of that settled frame. */
-function Draw({ on = true, draw, rest = false, className = 'cr-art mr-art' }) {
-  const box = useRef(null), cv = useRef(null);
+function Draw({ on = true, draw, rest = false, className = 'cr-art mr-art' }: { on?: boolean; draw: DrawFn; rest?: boolean; className?: string }) {
+  const box = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null);
   const paused = usePaused();
-  const st = useRef({ t: 0, on: false, key: '', img: null, shown: '' });
+  const st = useRef<{ t: number; on: boolean; key: string; img: HTMLCanvasElement | null; shown: string }>({ t: 0, on: false, key: '', img: null, shown: '' });
   const p = useRef(paused); p.current = paused;
   const o = useRef(on); o.current = on;
   // paint the settled frame at mount and on every resize, even before the loop runs (a pane that is clipped or under
@@ -44,12 +50,13 @@ function Draw({ on = true, draw, rest = false, className = 'cr-art mr-art' }) {
       const { w, h, d } = fit(c, 1.5);
       if (w < 2 || h < 2) return;
       const g = c.getContext('2d');
+      if (!g) return;
       g.clearRect(0, 0, w, h); draw(g, w, h, d, 9, 0);
       s.shown = w + 'x' + h;
     };
     paint();
     const ro = new ResizeObserver(paint);
-    ro.observe(cv.current);
+    if (cv.current) ro.observe(cv.current);
     return () => ro.disconnect();
   }, [rest, draw]);
   useLoop(box, (t, dt, still) => {
@@ -57,23 +64,24 @@ function Draw({ on = true, draw, rest = false, className = 'cr-art mr-art' }) {
     if (!c) return;
     const { w, h, d } = fit(c, 1.5);
     const g = c.getContext('2d');
+    if (!g) return;
     if (rest && s.key !== w + 'x' + h) { // the settled frame, drawn once per size off screen
       const k = s.img || document.createElement('canvas');
       k.width = w; k.height = h;
-      const kg = k.getContext('2d'); kg.clearRect(0, 0, w, h); draw(kg, w, h, d, 9, 0);
+      const kg = k.getContext('2d'); if (!kg) return; kg.clearRect(0, 0, w, h); draw(kg, w, h, d, 9, 0);
       s.img = k; s.key = w + 'x' + h; s.shown = '';
     }
     if (o.current && !s.on) { s.on = true; s.t = rest ? 0.55 : 0; }
     if (!o.current) s.on = false;
     const frozen = still || p.current;
     if (rest && !s.on) { // resting: the settled object, redrawn only when the size changes
-      if (s.shown !== s.key) { g.clearRect(0, 0, w, h); g.drawImage(s.img, 0, 0); s.shown = s.key; }
+      if (s.shown !== s.key && s.img) { g.clearRect(0, 0, w, h); g.drawImage(s.img, 0, 0); s.shown = s.key; }
       return;
     }
     s.shown = '';
     if (!frozen && s.on) s.t += dt;
     g.clearRect(0, 0, w, h);
-    if (rest && !frozen && s.t < 3.2) { g.globalAlpha = 0.28 * (1 - ease((s.t - 2.2) / 1)); g.drawImage(s.img, 0, 0); g.globalAlpha = 1; }
+    if (rest && !frozen && s.t < 3.2 && s.img) { g.globalAlpha = 0.28 * (1 - ease((s.t - 2.2) / 1)); g.drawImage(s.img, 0, 0); g.globalAlpha = 1; }
     draw(g, w, h, d, frozen ? Math.max(s.t, 9) : s.t, frozen ? 0 : dt);
   });
   return (
@@ -85,12 +93,12 @@ function Draw({ on = true, draw, rest = false, className = 'cr-art mr-art' }) {
 
 /* 0. topology: a lat-long quad sphere; the polar rows are triangle fans (the tris) */
 const LAT = 9, LON = 22;
-function topology(state) {
+function topology(state: Rig): DrawFn {
   return (g, w, h, d, t, dt) => {
     state.yaw += dt * 0.35;
     const cx = w / 2, cy = h / 2, sc = Math.min(w, h) * 0.34, pitch = 0.42, yaw = state.yaw;
-    const pt = (i, j) => { const la = -Math.PI / 2 + (i / LAT) * Math.PI, lo = (j / LON) * Math.PI * 2; return proj([Math.cos(la) * Math.cos(lo), Math.sin(la), Math.cos(la) * Math.sin(lo)], yaw, pitch, cx, cy, sc); };
-    const seg = (a, b, alpha) => { g.strokeStyle = W8(alpha * ((a[2] + b[2]) / 2 < 0 ? 0.85 : 0.22)); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); };
+    const pt = (i: number, j: number) => { const la = -Math.PI / 2 + (i / LAT) * Math.PI, lo = (j / LON) * Math.PI * 2; return proj([Math.cos(la) * Math.cos(lo), Math.sin(la), Math.cos(la) * Math.sin(lo)], yaw, pitch, cx, cy, sc); };
+    const seg = (a: Vec3, b: Vec3, alpha: number) => { g.strokeStyle = W8(alpha * ((a[2] + b[2]) / 2 < 0 ? 0.85 : 0.22)); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); };
     g.lineWidth = d;
     for (let i = 0; i <= LAT; i++) {
       const a = ease((t - i * 0.12) / 0.7); // latitudes draw in from the south pole up
@@ -113,7 +121,7 @@ function topology(state) {
 
 /* 1. materials: six maps as six lit spheres */
 const MAPS = ['albedo', 'normal', 'roughness', 'metallic', 'ambient occlusion', 'emissive'];
-function materials(state) {
+function materials(state: Rig): DrawFn {
   return (g, w, h, d, t, dt) => {
     state.a += dt * 0.6;
     const cols = w > h * 1.1 ? 3 : 2, rows = Math.ceil(6 / cols), pad = 16 * d;
@@ -126,7 +134,7 @@ function materials(state) {
       g.save(); g.globalAlpha = q; g.translate(0, (1 - q) * 16 * d);
       g.fillStyle = '#0f0f0f'; g.beginPath(); g.roundRect(x0, y0, cw, ch, 12 * d); g.fill();
       const cx = x0 + cw / 2, cy = y0 + (ch - 36 * d) / 2, hx = cx + lx * r, hy = cy + ly * r;
-      let gr;
+      let gr: CanvasGradient;
       g.save(); g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.clip();
       if (m === 'albedo') { // flat colour, no light: two tones in a check
         g.fillStyle = '#737373'; g.fillRect(cx - r, cy - r, 2 * r, 2 * r); g.fillStyle = '#a3a3a3';
@@ -164,11 +172,11 @@ function materials(state) {
 
 /* 2. environments: rooms rising from a metric grid, seen in plan from above at an angle */
 const ROOMS = [[-3, -2, 3, 2, 0.9], [0, -2, 3, 1.5, 1.4], [-3, 0, 2, 3, 0.6], [-1, 0, 4, 3, 1.1], [1.5, -3.5, 1.5, 1.5, 2.2]];
-function environment(state) {
+function environment(state: Rig): DrawFn {
   return (g, w, h, d, t, dt) => {
     state.yaw += dt * 0.08;
     const cx = w / 2, cy = h * 0.56, sc = Math.min(w, h) * 0.4, yaw = -0.6 + Math.sin(state.yaw) * 0.25, pitch = 0.72;
-    const P = (x, y, z) => proj([x / 5, -y / 5, z / 5], yaw, pitch, cx, cy, sc); // metres to a unit plan, so the perspective stays gentle
+    const P = (x: number, y: number, z: number) => proj([x / 5, -y / 5, z / 5], yaw, pitch, cx, cy, sc); // metres to a unit plan, so the perspective stays gentle
     g.lineWidth = d;
     // the metric grid: one line a metre, every fifth heavier
     const ga = ease(t / 0.8);
@@ -201,16 +209,16 @@ function environment(state) {
 const FORMATS = ['USDZ', 'glTF', 'GLB', 'FBX', 'OBJ', '3D Gaussian splats'];
 const PHI = (1 + Math.sqrt(5)) / 2;
 const ICO = [[-1, PHI, 0], [1, PHI, 0], [-1, -PHI, 0], [1, -PHI, 0], [0, -1, PHI], [0, 1, PHI], [0, -1, -PHI], [0, 1, -PHI], [PHI, 0, -1], [PHI, 0, 1], [-PHI, 0, -1], [-PHI, 0, 1]].map((p) => p.map((x) => x / Math.hypot(1, PHI)));
-const ICO_E = [];
+const ICO_E: [number, number][] = [];
 ICO.forEach((a, i) => ICO.forEach((b, j) => { if (j > i && Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) < 1.1) ICO_E.push([i, j]); }));
-function exporter(state) {
+function exporter(state: Rig): DrawFn {
   return (g, w, h, d, t, dt) => {
     state.yaw += dt * 0.5;
     // measure the widest chip first, so every format fits whole on the pane: side by side when there is room, else
     // the solid on top and the formats in one column under it
     let fs = 15;
     g.font = `497 ${fs * d}px "Zen", system-ui, sans-serif`;
-    const chipW = (f) => Math.max(g.measureText(f).width + 32 * d, 72 * d);
+    const chipW = (f: string) => Math.max(g.measureText(f).width + 32 * d, 72 * d);
     let maxW = Math.max(...FORMATS.map(chipW));
     if (maxW > w - 32 * d) { fs = Math.max(11, (fs * (w - 32 * d)) / maxW); g.font = `497 ${fs * d}px "Zen", system-ui, sans-serif`; maxW = Math.max(...FORMATS.map(chipW)); }
     const scW = Math.min(w, h) * 0.22;
@@ -239,11 +247,12 @@ function exporter(state) {
 /* fits: a camera circles a cube, its view cone sweeping; the points it has seen gather on the cube */
 const CUBE = [[-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1], [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]].map((p) => p.map((x) => x * 0.55));
 const CUBE_E = [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]];
-function scan(state) {
+function scan(state: { cam: number; pts?: Dot[] }): DrawFn {
   if (!state.pts) {
     let a = 7; const r = () => { a = (a * 16807) % 2147483647; return a / 2147483647; };
-    state.pts = Array.from({ length: 420 }, () => { const f = Math.floor(r() * 6), u = r() * 2 - 1, v = r() * 2 - 1, ax = f >> 1, s = f & 1 ? 1 : -1, p = [0, 0, 0]; p[ax] = s; p[(ax + 1) % 3] = u; p[(ax + 2) % 3] = v; return { p: p.map((x) => x * 0.55), n: ax, s, seen: 0 }; });
+    state.pts = Array.from({ length: 420 }, (): Dot => { const f = Math.floor(r() * 6), u = r() * 2 - 1, v = r() * 2 - 1, ax = f >> 1, s = f & 1 ? 1 : -1, p = [0, 0, 0]; p[ax] = s; p[(ax + 1) % 3] = u; p[(ax + 2) % 3] = v; return { p: p.map((x) => x * 0.55), n: ax, s, seen: 0 }; });
   }
+  const pts = state.pts;
   return (g, w, h, d, t, dt) => {
     state.cam += dt * 0.5;
     const cx = w / 2, cy = h / 2, sc = Math.min(w, h) * 0.34, yaw = 0.5, pitch = 0.5;
@@ -254,7 +263,7 @@ function scan(state) {
     for (let i = 0; i <= 64; i++) { const a = (i / 64) * Math.PI * 2, p = proj([Math.cos(a) * 1.9, -0.7, Math.sin(a) * 1.9], yaw, pitch, cx, cy, sc); i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); }
     g.stroke();
     // points facing the camera are seen, and stay
-    for (const q of state.pts) {
+    for (const q of pts) {
       if (q.p[q.n] * camP[q.n] > 0 && dt) q.seen = Math.min(1, q.seen + dt * 1.2);
       if (dt === 0) q.seen = 1;
       if (q.seen <= 0) continue;
@@ -267,7 +276,7 @@ function scan(state) {
     // the view cone: the camera to the cube's silhouette
     g.strokeStyle = W8(0.35); g.fillStyle = W8(0.05);
     const c0 = Math.atan2(cy - C[1], cx - C[0]);
-    const ang = (p) => { let a = Math.atan2(p[1] - C[1], p[0] - C[0]) - c0; while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
+    const ang = (p: number[]) => { let a = Math.atan2(p[1] - C[1], p[0] - C[0]) - c0; while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
     const far = V.slice().sort((a, b) => ang(a) - ang(b));
     g.beginPath(); g.moveTo(C[0], C[1]); g.lineTo(far[0][0], far[0][1]); g.lineTo(far[far.length - 1][0], far[far.length - 1][1]); g.closePath(); g.fill(); g.stroke();
     g.fillStyle = '#fafafa'; g.beginPath(); g.arc(C[0], C[1], 4 * d, 0, Math.PI * 2); g.fill();
@@ -275,14 +284,14 @@ function scan(state) {
 }
 
 const makers = [topology, materials, environment, exporter];
-export function MoriCap({ i, on }) {
-  const s = useRef(null);
+export function MoriCap({ i, on }: { i: number; on: boolean }) {
+  const s = useRef<DrawFn | null>(null);
   if (!s.current) s.current = makers[i]({ yaw: 0.4, a: 0.8 });
   return <Draw on={on} draw={s.current} rest />;
 }
 
-export function MoriFits({ seen }) {
-  const s = useRef(null);
+export function MoriFits({ seen }: { seen: boolean }) {
+  const s = useRef<DrawFn | null>(null);
   if (!s.current) s.current = scan({ cam: 0.3 });
   return <Draw on={seen} draw={s.current} className="cr-fits-art mr-art mr-fits-art" />;
 }

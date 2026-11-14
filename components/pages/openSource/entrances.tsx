@@ -5,12 +5,13 @@
    Each plays once when its section arrives. The server renders the final state: with JS off, under reduced motion,
    or when a section is already on screen at load, nothing is hidden. Only transform, opacity and clip-path move. */
 import { useEffect, useLayoutEffect, useRef } from 'react';
+import type { CSSProperties, ElementType, ReactNode } from 'react';
 import './entrances.css';
 
 const calm = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* arm an element (data-e="wait") only if it is still below the fold, then flip it to "in" when it arrives */
-function arm(el, onIn, margin = '0px 0px -18% 0px') {
+function arm(el: HTMLElement | null, onIn?: (() => void) | null, margin = '0px 0px -18% 0px') {
   if (!el || calm()) return () => {};
   if (el.getBoundingClientRect().top < innerHeight * 0.92) return () => {};
   el.dataset.e = 'wait';
@@ -26,11 +27,12 @@ function arm(el, onIn, margin = '0px 0px -18% 0px') {
 
 /* 1. snap-sections: the section arrives as one screen and snaps up into place; if the reader lets go close to
    its top, the page settles on it, one screen at a time (once) */
-export function SnapIn({ className = '', children }) {
-  const ref = useRef(null);
+export function SnapIn({ className = '', children }: { className?: string; children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => arm(ref.current, () => {
     const el = ref.current;
-    let t = 0;
+    if (!el) return;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const settle = () => {
       clearTimeout(t);
       t = setTimeout(() => {
@@ -50,22 +52,22 @@ export function SnapIn({ className = '', children }) {
 
 /* 2. magnet-gather: the figures start scattered and are pulled together into the list */
 const SCATTER = [[-150, -70, -7], [170, 40, 6], [-90, 110, -4], [130, -90, 5], [-170, 60, 8]];
-export function Gather({ as: Tag = 'ul', className = '', items, render }) {
-  const ref = useRef(null);
+export function Gather<T>({ as: Tag = 'ul', className = '', items, render }: { as?: ElementType; className?: string; items: T[]; render: (it: T, i: number, style: CSSProperties) => ReactNode }) {
+  const ref = useRef<HTMLElement>(null);
   useLayoutEffect(() => arm(ref.current), []);
   return (
     <Tag ref={ref} className={'xe-gather ' + className}>
       {items.map((it, i) => {
         const [x, y, r] = SCATTER[i % SCATTER.length];
-        return render(it, i, { '--gx': x + 'px', '--gy': y + 'px', '--gr': r + 'deg', '--gi': i });
+        return render(it, i, { '--gx': x + 'px', '--gy': y + 'px', '--gr': r + 'deg', '--gi': i } as CSSProperties);
       })}
     </Tag>
   );
 }
 
 /* 3. scroll-tilt: the cards tip back on rotateX with the speed of the scroll and level out when it stops */
-export function Tilt({ className = '', children }) {
-  const ref = useRef(null);
+export function Tilt({ className = '', children }: { className?: string; children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || calm()) return;
@@ -90,8 +92,8 @@ export function Tilt({ className = '', children }) {
 }
 
 /* 4. letter-cascade: the heading's letters fall into place one by one (the words stay whole for wrapping and reading) */
-export function Cascade({ as: Tag = 'h2', text, className = '', id }) {
-  const ref = useRef(null);
+export function Cascade({ as: Tag = 'h2', text, className = '', id }: { as?: ElementType; text: string; className?: string; id?: string }) {
+  const ref = useRef<HTMLElement>(null);
   useLayoutEffect(() => arm(ref.current), []);
   let c = 0;
   return (
@@ -99,7 +101,7 @@ export function Cascade({ as: Tag = 'h2', text, className = '', id }) {
       <span className="x-sr">{text}</span>
       {text.split(' ').map((w, wi, all) => (
         <span key={wi} className="xe-w" aria-hidden="true">
-          {[...w].map((ch, k) => <span key={k} className="xe-l" style={{ '--c': c++ }}>{ch}</span>)}
+          {[...w].map((ch, k) => <span key={k} className="xe-l" style={{ '--c': c++ } as CSSProperties}>{ch}</span>)}
           {wi < all.length - 1 ? ' ' : ''}
         </span>
       ))}
@@ -108,8 +110,8 @@ export function Cascade({ as: Tag = 'h2', text, className = '', id }) {
 }
 
 /* 5. ripple: rings spread from the centre of the section and leave it behind them */
-export function Ripple({ as: Tag = 'section', className = '', children, ...rest }) {
-  const ref = useRef(null);
+export function Ripple({ as: Tag = 'section', className = '', children, ...rest }: { as?: ElementType; className?: string; children?: ReactNode; [attr: string]: unknown }) {
+  const ref = useRef<HTMLElement>(null);
   useLayoutEffect(() => arm(ref.current, null, '0px 0px -25% 0px'), []);
   return (
     <Tag ref={ref} className={'xe-ripple ' + className} {...rest}>

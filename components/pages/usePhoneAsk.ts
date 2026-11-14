@@ -11,10 +11,10 @@
 import { useEffect } from 'react';
 import './usePhoneAsk.css';
 
-const words = (t) => (t || '').replace(/[→↗\s]+/g, ' ').trim().toLowerCase();
-const rgb = (c) => (c.match(/[\d.]+/g) || []).map(Number);
+const words = (t?: string | null) => (t || '').replace(/[→↗\s]+/g, ' ').trim().toLowerCase();
+const rgb = (c: string) => (c.match(/[\d.]+/g) || []).map(Number);
 /* a filled button: an opaque dark fill on paper, or an opaque light fill inside a dark room */
-const solid = (el) => {
+const solid = (el: Element) => {
   const [r, g, b, a = 1] = rgb(getComputedStyle(el).backgroundColor);
   if (a < 0.6 || r === undefined) return false;
   const sum = r + g + b;
@@ -25,16 +25,16 @@ export default function usePhoneAsk() {
   useEffect(() => {
     const phone = matchMedia('(max-width: 700px)').matches;
     const H = document.documentElement;
-    let btn = null, own = null, label = '', href = '', t = 0, t2 = 0, swapped = false;
+    let btn: HTMLAnchorElement | null = null, own: HTMLElement | null = null, label = '', href = '', t = 0, t2: ReturnType<typeof setTimeout> | undefined, swapped = false;
     const find = () => {
-      btn = document.querySelector('header[data-slot=masthead] a[data-x-ask]');
-      own = document.querySelector('main [data-thumb]');
+      btn = document.querySelector<HTMLAnchorElement>('header[data-slot=masthead] a[data-x-ask]');
+      own = document.querySelector<HTMLElement>('main [data-thumb]');
       if (own) {
-        label = own.getAttribute('data-thumb') || own.textContent.trim();
+        label = own.getAttribute('data-thumb') || own.textContent?.trim() || '';
         href = own.getAttribute('href') || own.querySelector('a')?.getAttribute('href') || '';
       }
     };
-    const seen = (el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.bottom > 0 && r.top < innerHeight; };
+    const seen = (el: Element) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.bottom > 0 && r.top < innerHeight; };
     const update = () => {
       if (!btn || !own) find();
       if (!btn) return;
@@ -51,10 +51,10 @@ export default function usePhoneAsk() {
       if (past !== swapped) {
         swapped = past;
         const edge = btn.getBoundingClientRect().right; // where Hanzo's own label ends: the swapped one must end there too
-        btn.textContent = past ? label : btn.dataset.xAsk;
-        btn.setAttribute('href', past ? href : btn.dataset.xHref);
+        btn.textContent = past ? label : btn.dataset.xAsk ?? '';
+        btn.setAttribute('href', past ? href : btn.dataset.xHref ?? '');
         // a long ask must never be clipped: if it runs past the screen's 16px gutter, keep Hanzo's own label
-        if (past && (btn.getBoundingClientRect().right > Math.max(edge, innerWidth - 16) + 1 || btn.scrollWidth > btn.clientWidth + 1)) { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); }
+        if (past && (btn.getBoundingClientRect().right > Math.max(edge, innerWidth - 16) + 1 || btn.scrollWidth > btn.clientWidth + 1)) { btn.textContent = btn.dataset.xAsk ?? ''; btn.setAttribute('href', btn.dataset.xHref ?? ''); }
       }
     };
     let raf = 0; // follow the scroll as it happens (once a frame), and look again once the shared bar has settled
@@ -65,7 +65,7 @@ export default function usePhoneAsk() {
     return () => {
       clearTimeout(t); clearTimeout(t2); cancelAnimationFrame(raf); timers.forEach(clearTimeout); removeEventListener('scroll', onScroll);
       delete H.dataset.pq; delete H.dataset.pqReady;
-      if (btn && swapped) { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); }
+      if (btn && swapped) { btn.textContent = btn.dataset.xAsk ?? ''; btn.setAttribute('href', btn.dataset.xHref ?? ''); }
     };
   }, []);
 }

@@ -13,6 +13,7 @@
    The field holds 42 points because Hanzo's setup card says 42 channels enabled; only the tagged one lights.
    Every word, figure and link is Hanzo's (components/pages/slackData.js). */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, Dispatch, SetStateAction } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { A, More } from '../kit';
 import Sigil from '../Sigil';
@@ -24,7 +25,7 @@ import { HERO, SETUP, ASK, ANSWER, STEPS, SESSION, CANVAS, WINDOW, TABS, DIFF, V
 import './Tag.css';
 
 const P = 'xtg';
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 /* The server cannot know the visitor's motion setting: anything that depends on it waits for the first browser render,
    so the server HTML and the first client render match (no hydration mismatch under reduced motion). */
 function useMounted() {
@@ -32,27 +33,27 @@ function useMounted() {
   useEffect(() => setM(true), []);
   return m;
 }
-function useLive(amount = 0.2) {
-  const ref = useRef(null);
+function useLive<T extends HTMLElement = HTMLElement>(amount = 0.2) {
+  const ref = useRef<T>(null);
   const seen = useInView(ref, { amount });
   const calm = useReducedMotion();
   const mounted = useMounted();
   const still = mounted && !!calm;
-  return [ref, seen && mounted && !calm, still];
+  return [ref, seen && mounted && !calm, still] as const;
 }
-function useEvery(ms, run, fn) {
+function useEvery(ms: number, run: boolean, fn: () => void) {
   const f = useRef(fn);
   f.current = fn;
   useEffect(() => {
     if (!run) return;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const tick = () => { f.current(); t = setTimeout(tick, ms); };
     t = setTimeout(tick, ms);
     return () => clearTimeout(t);
   }, [ms, run]);
 }
 /* A section head in the v2 grammar: kicker, a line-masked headline, one sentence. */
-function Head({ kick, title, lede, id, dark, size = 'a2-headline' }) {
+function Head({ kick, title, lede, id, dark, size = 'a2-headline' }: { kick?: string; title: string; lede?: string; id?: string; dark?: boolean; size?: string }) {
   return (
     <header className={`${P}-head` + (dark ? ' dark' : '')}>
       {kick && <p className="a2-kick">{kick}</p>}
@@ -62,10 +63,11 @@ function Head({ kick, title, lede, id, dark, size = 'a2-headline' }) {
   );
 }
 // rounded: server and browser trig can differ in the last digit, which breaks hydration
-const at = (deg, r) => [+(50 + Math.cos((deg * Math.PI) / 180) * r).toFixed(2), +(50 + Math.sin((deg * Math.PI) / 180) * r).toFixed(2)];
+const at = (deg: number, r: number): [number, number] => [+(50 + Math.cos((deg * Math.PI) / 180) * r).toFixed(2), +(50 + Math.sin((deg * Math.PI) / 180) * r).toFixed(2)];
+interface MapNode { k: string; label: string; xy: [number, number]; step?: number; leaf?: number; from?: number; side?: string }
 
 /* The story in the order it happened: the mention, the six steps, and the three artifacts off the step that made them. */
-const NODES = [
+const NODES: MapNode[] = [
   { k: 'mention', label: '@Hanzo', xy: [50, 50] },
   { k: 's0', step: 0, label: STEPS[0], xy: at(-90, 29), side: 't' },
   { k: 's1', step: 1, label: STEPS[1], xy: at(-30, 29), side: 'r' },
@@ -78,10 +80,10 @@ const NODES = [
   { k: 's5', step: 5, label: STEPS[5], xy: at(210, 29), side: 'l' },
 ];
 // 41 enabled channels around the one that was tagged: 42, as the setup card says
-const NAMED = [['incident-alert', [12, 16]], ['feat-wimse-tokens', [88, 12]]];
+const NAMED: [string, [number, number]][] = [['incident-alert', [12, 16]], ['feat-wimse-tokens', [88, 12]]];
 const FIELD = Array.from({ length: 39 }, (_, k) => { const r = 47 * Math.sqrt((k + 3) / 42); const a = k * 137.508; return at(a, r); });
 
-function Moment({ n, archived, setArchived }) {
+function Moment({ n, archived, setArchived }: { n: MapNode; archived: boolean; setArchived: Dispatch<SetStateAction<boolean>> }) {
   if (n.k === 'mention') return (<><Msg m={ASK} p={P} /><Msg m={ANSWER} p={P} /><p className={`${P}-chips`}>{SETUP.chips.map((c) => <span key={c}>{c}</span>)}</p></>);
   if (n.k === 'view') return (
     <div className={`${P}-pv`}>
@@ -105,7 +107,7 @@ function Moment({ n, archived, setArchived }) {
   );
   return (
     <>
-      {SESSION[n.step].msgs.map((m, i) => <Msg key={i} m={m} p={P} />)}
+      {SESSION[n.step!].msgs.map((m, i) => <Msg key={i} m={m} p={P} />)}
       {n.step === 5 && <button type="button" className={`${P}-archive`} aria-pressed={archived} onClick={() => setArchived((v) => !v)}>{WINDOW.archive}</button>}
     </>
   );
@@ -113,7 +115,7 @@ function Moment({ n, archived, setArchived }) {
 
 /* The signature: the mention and everything it grew into, walked in order until you pick a node. */
 function MentionMap() {
-  const [ref, live, calm] = useLive(0.25);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.25);
   const [k, setK] = useState(0);
   const [mine, setMine] = useState(false);
   const [archived, setArchived] = useState(false);
@@ -129,16 +131,16 @@ function MentionMap() {
     const t = setTimeout(() => setMine(false), 9000);
     return () => clearTimeout(t);
   }, [mine, k, calm]);
-  const pick = (i) => { setK(i); setMine(true); setAgain((v) => v + 1); };
+  const pick = (i: number) => { setK(i); setMine(true); setAgain((v) => v + 1); };
   const done = cur === NODES.length - 1;
   /* the drawer is a fixed height; a moment taller than it reads itself upward (transform only), so nothing below jumps
      and short moments leave no slab of black. The overflow is measured after paint and on resize. */
-  const panel = useRef(null);
+  const panel = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const box = panel.current;
     if (!box) return;
     const fit = () => {
-      const m = box.querySelector('.xtg-m.on');
+      const m = box.querySelector<HTMLElement>('.xtg-m.on');
       const inn = m && m.firstElementChild;
       if (!inn) return;
       const o = Math.ceil(inn.scrollHeight - m.clientHeight);
@@ -149,7 +151,7 @@ function MentionMap() {
     window.addEventListener('resize', fit);
     return () => window.removeEventListener('resize', fit);
   }, [cur, again]);
-  const parent = (n, i) => (n.from !== undefined ? NODES[n.from].xy : i === 0 ? null : [50, 50]);
+  const parent = (n: MapNode, i: number): [number, number] | null => (n.from !== undefined ? NODES[n.from].xy : i === 0 ? null : [50, 50]);
   return (
     <>
       <div className={`${P}-map` + (archived ? ' archived' : '')} ref={ref}>
@@ -240,7 +242,7 @@ const DOTS = [0, 1, 2, 3, 4, 5, 6]; // seven dots light across each promise's 2.
    light in turn; pointing at one gives it the light. */
 function Channels() {
   const [ref, live] = useLive(0.15);
-  const card = useRef(null);
+  const card = useRef<HTMLDivElement>(null);
   const shown = useInView(card, { once: true, amount: 0.4 });
   const [i, setI] = useState(0);
   useEvery(2800, live, () => setI((v) => (v + 1) % 4));
@@ -254,7 +256,7 @@ function Channels() {
             <p className={`${P}-pr-f`}><span>{DIFF.file}</span><em>{DIFF.viewed}</em></p>
             <ol className={`${P}-pr-l`}>
               {DIFF.lines.map(([a, b, s, t], k) => (
-                <li key={k} className={s === '+' ? 'add' : s === '-' ? 'del' : ''} style={{ '--i': k }}><span>{a ?? ''}</span><span>{b ?? ''}</span><code><span className={`${P}-t`}>{s.trim() || ' '} {t}</span></code></li>
+                <li key={k} className={s === '+' ? 'add' : s === '-' ? 'del' : ''} style={{ '--i': k } as CSSProperties}><span>{a ?? ''}</span><span>{b ?? ''}</span><code><span className={`${P}-t`}>{s.trim() || ' '} {t}</span></code></li>
               ))}
             </ol>
             <p className={`${P}-pr-c`}><i /><span><b><span className={`${P}-t`}>{CANVAS.title}</span></b><span>{CANVAS.meta}</span></span><em><span className={`${P}-t`}>{SESSION[5].msgs[0].done}</span></em></p>
@@ -263,7 +265,7 @@ function Channels() {
         <ul className={`${P}-quad`}>
           {HERO.points.map((t, k) => (
             <li key={t} className={i === k ? 'on' : ''} onPointerEnter={() => setI(k)}>
-              <span className={`${P}-quad-n`}><span className="x-mono">{String(k + 1).padStart(2, '0')}</span><b className={`${P}-dots`} aria-hidden="true">{DOTS.map((d) => <i key={d} style={{ '--d': d }} />)}</b></span>
+              <span className={`${P}-quad-n`}><span className="x-mono">{String(k + 1).padStart(2, '0')}</span><b className={`${P}-dots`} aria-hidden="true">{DOTS.map((d) => <i key={d} style={{ '--d': d } as CSSProperties} />)}</b></span>
               <p>{t}</p>
             </li>
           ))}
@@ -288,7 +290,7 @@ function Setup() {
           <p className={`${P}-setup-s`}>{SETUP.sub}</p>
           <p className={`${P}-setup-t`}>{SETUP.title}</p>
         </div>
-        <div className={`${P}-wire`} style={{ '--n': Math.min(n, 3) }}>
+        <div className={`${P}-wire`} style={{ '--n': Math.min(n, 3) } as CSSProperties}>
           <i className={`${P}-wire-l`} aria-hidden="true"><b /></i>
           <ol>
             {SETUP.steps.map(([t, d], i) => (
@@ -312,7 +314,7 @@ function Setup() {
 }
 
 /* What each room looks like, drawn from the same channel: the mention, the canvas and diff, the federated identity. */
-function RoomArt({ k }) {
+function RoomArt({ k }: { k: number }) {
   if (k === 0) return <div className={`${P}-art t0`}><Msg m={ASK} p={P} /><Msg m={ANSWER} p={P} /></div>;
   if (k === 1) return (
     <div className={`${P}-art t1`}>
@@ -324,14 +326,14 @@ function RoomArt({ k }) {
     <div className={`${P}-art t2`}>
       <p className={`${P}-art-v`}><i>✓</i>{SETUP.verified}</p>
       <p className={`${P}-art-role`}><b>{BUILT.items[4][0]}</b><span>{SETUP.steps[2][1]}</span></p>
-      <p className={`${P}-art-tok`}>{[6, 10, 4, 13, 7, 9, 5, 11].map((w, i) => <i key={i} style={{ '--w': w, '--i': i }} />)}</p>
+      <p className={`${P}-art-tok`}>{[6, 10, 4, 13, 7, 9, 5, 11].map((w, i) => <i key={i} style={{ '--w': w, '--i': i } as CSSProperties} />)}</p>
     </div>
   );
 }
 
 /* What it is: the three rooms; the one at the middle of the screen is the one the stage beside them shows. */
 function What() {
-  const list = useRef(null);
+  const list = useRef<HTMLOListElement>(null);
   const [i, setI] = useState(0);
   const { scrollYProgress: p } = useScroll({ target: list, offset: ['start 0.7', 'end 0.45'] });
   useMotionValueEvent(p, 'change', (v) => setI(Math.min(2, Math.max(0, Math.floor(v * 3)))));
@@ -362,10 +364,10 @@ function What() {
 
 /* Six features on one numbered strip that pins while you scroll past it: the strip steps through the six and the sheet
    under it changes in place (a click takes over). Each number's ring fills as its turn runs. */
-const two = (k) => String(k + 1).padStart(2, '0');
+const two = (k: number) => String(k + 1).padStart(2, '0');
 function Built() {
-  const run = useRef(null);
-  const rail = useRef(null);
+  const run = useRef<HTMLDivElement>(null);
+  const rail = useRef<HTMLDivElement>(null);
   const [i, setI] = useState(0);
   const [mine, setMine] = useState(false);
   const calm = useReducedMotion();
@@ -376,8 +378,8 @@ function Built() {
   const fill = useTransform(p, (v) => { const x = Math.min(1, Math.max(0, v)) * n; return x >= n ? 1 : x - Math.floor(x); });
   useEffect(() => { // on the phone the strip is a pill rail: keep the lit pill in view (the rail scrolls, never the page)
     const r = rail.current;
-    const b = r && r.children[i];
-    if (!b || r.scrollWidth <= r.clientWidth) return;
+    const b = r?.children[i] as HTMLElement | undefined;
+    if (!r || !b || r.scrollWidth <= r.clientWidth) return;
     r.scrollTo({ left: Math.max(0, b.offsetLeft - 16), behavior: mounted && !calm ? 'smooth' : 'auto' });
   }, [i, mounted, calm]);
   return (
@@ -418,7 +420,7 @@ function Built() {
 
 /* Beyond: where does your message live? Hanzo's own answers, quoted with the question they answer. */
 const DM = FAQ[4][1].slice(FAQ[4][1].indexOf('Direct messages'));
-const SEE = [
+const SEE: [string, string, [string, string | null][]][] = [
   ['In a channel @Hanzo was added to, and someone tags @Hanzo', 'Reads and responds', [[FAQ[0][1], FAQ[0][0]], [FAQ[1][1], FAQ[1][0]]]],
   ['In a channel @Hanzo was added to, and nobody tags it', 'Quiet', [[BUILT.items[0][1], BUILT.items[0][0]]]],
   ['In a channel @Hanzo was never added to', 'Not read', [[HERO.safe, null]]],
@@ -480,8 +482,8 @@ function Questions() {
 /* Each product's surface, drawn from what this page already shows: the tagged thread, the workspace's channels, the
    resident bot's trace, and the side panel beside the button it fixed. Pointing at a frame lifts it; the Chrome frame
    then shows the button after the fix. */
-const TRACE = SESSION[0].msgs[0].trace.map(([k]) => k);
-function Frame({ k }) {
+const TRACE = (SESSION[0].msgs[0].trace ?? []).map(([k]) => k);
+function Frame({ k }: { k: number }) {
   if (k === 0) return (
     <span className={`${P}-frame f0`} aria-hidden="true">
       <span className={`${P}-fr-h`}># {SETUP.channel.slice(1)}</span>
@@ -499,7 +501,7 @@ function Frame({ k }) {
   if (k === 2) return (
     <span className={`${P}-frame f2`} aria-hidden="true">
       <span className={`${P}-fr-row`}><Face who="dev" p={`${P}-fr`} /><b>{PEOPLE.dev.name}</b><i className={`${P}-fr-live`} /></span>
-      <span className={`${P}-fr-tr`}>{TRACE.map((t, j) => <span key={t} style={{ '--j': j }}>{t}</span>)}</span>
+      <span className={`${P}-fr-tr`}>{TRACE.map((t, j) => <span key={t} style={{ '--j': j } as CSSProperties}>{t}</span>)}</span>
     </span>
   );
   return (

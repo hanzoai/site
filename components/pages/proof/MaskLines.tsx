@@ -5,14 +5,17 @@
    Here reduced motion is applied after hydration and JS-off styles go through the shared <NoJs>.
    Requested for the shared file in docs/build-notes/requests/research.md; delete this copy once it lands. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import NoJs from '../../NoJs';
 import '../../v2/ProofScale.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-export default function MaskLines({ as = 'h2', lines, className = '', delay = 0, amount = 0.4, id, style }) {
-  const ref = useRef(null);
+interface MaskLinesProps { as?: 'h1' | 'h2' | 'p'; lines: string[]; className?: string; delay?: number; amount?: number; id?: string; style?: CSSProperties }
+
+export default function MaskLines({ as = 'h2', lines, className = '', delay = 0, amount = 0.4, id, style }: MaskLinesProps) {
+  const ref = useRef<HTMLHeadingElement & HTMLParagraphElement>(null); // one ref for h1, h2 and p
   const seen = useInView(ref, { once: true, amount });
   const rm = useReducedMotion();
   const [reduce, setReduce] = useState(false);

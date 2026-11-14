@@ -1,5 +1,6 @@
 // Hanzo's six creative models, in their own words (hanzo.ai/<slug>, captured 7 Nov 2026)
-export const ORDER = ['iro', 'koma', 'oto', 'koe', 'uta', 'mori'];
+export type Slug = keyof typeof C;
+export const ORDER: Slug[] = ['iro', 'koma', 'oto', 'koe', 'uta', 'mori'];
 export const C = {
   iro: {
     kind: 'Image', ver: 'Iro 1', name: 'Iro', head: 'Imagine without limits.', code: 'iro-1',
@@ -93,7 +94,7 @@ export const C = {
   },
 };
 // The studio map groups each model's own "Where it fits" fields under a plain heading (the grouping is ours, the words are Hanzo's)
-export const FIELDS = [
+export const FIELDS: [field: string, uses: [slug: Slug, fit: number][]][] = [
   ['Film', [['koma', 0], ['oto', 0], ['koe', 0], ['uta', 0]]],
   ['Games', [['koma', 2], ['oto', 1], ['koe', 1], ['uta', 1], ['mori', 1]]],
   ['Advertising', [['iro', 0], ['koma', 1], ['uta', 2]]],

@@ -8,11 +8,12 @@
    aria-hidden: screen readers get the sentence once. */
 import { useEffect, useRef } from 'react';
 import { Stat } from '../../kit';
+import type { Chunk, Drawn, Figure, GistKind, Para, Piece } from './types';
 
-const say = (inl) => inl.map((k) => (typeof k === 'string' ? k : k.c !== undefined ? k.c : k.t || k.b || '')).join('');
+const say = (inl: Piece[]) => inl.map((k) => (typeof k === 'string' ? k : k.c !== undefined ? k.c : k.t || k.b || '')).join('');
 
-function figures(text) {
-  const out = [];
+function figures(text: string) {
+  const out: Figure[] = [];
   const re = /(\$?)(\d[\d,]*(?:\.\d+)?)/g;
   let m;
   while ((m = re.exec(text))) {
@@ -21,13 +22,13 @@ function figures(text) {
     if (!m[1] && /^(19|20)\d\d$/.test(m[2])) continue; // years
     const v = m[1] + m[2];
     if (out.some((f) => f.v === v)) continue;
-    const cap = (/^\s*([^.,;:()]*)/.exec(after)[1] || '').trim().split(/\s+/).filter(Boolean).slice(0, 3).join(' ');
+    const cap = (/^\s*([^.,;:()]*)/.exec(after)?.[1] || '').trim().split(/\s+/).filter(Boolean).slice(0, 3).join(' ');
     out.push({ v, cap, n: parseFloat(m[2].replace(/,/g, '')), bare: !m[1] && !m[2].includes('.') });
   }
   return out;
 }
 
-function steps(text) {
+function steps(text: string) {
   for (const s of text.split(/(?<=[.!?])\s+/)) {
     const i = s.indexOf(':');
     if (i < 0) continue;
@@ -39,8 +40,9 @@ function steps(text) {
   return null;
 }
 
-export function gist(blocks) {
-  if (!blocks.length || blocks.some(({ b }) => b.k !== 'p')) return null;
+const isPara = (c: Chunk): c is { b: Para; i: number } => c.b.k === 'p';
+export function gist(blocks: Chunk[]): GistKind | null {
+  if (!blocks.length || !blocks.every(isPara)) return null;
   const texts = blocks.map(({ b }) => say(b.inl));
   const figs = figures(texts.join(' '));
   if (figs.length >= 2) {
@@ -58,8 +60,8 @@ export function gist(blocks) {
    'collide' runs two gliders into each other on a small board with dead edges, so the debris settles, then starts again;
    'emblem' is the glider alone in its 3×3 box (the hacker emblem), turning through its four phases. */
 const GL = [[1, 0], [2, 1], [0, 2], [1, 2], [2, 2]];
-function sim(w, h, wrap) {
-  return (g) => {
+function sim(w: number, h: number, wrap: boolean) {
+  return (g: Uint8Array) => {
     const n = new Uint8Array(w * h);
     for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
       let c = 0;
@@ -74,7 +76,8 @@ function sim(w, h, wrap) {
     return n;
   };
 }
-const SHOWS = {
+interface Show { w: number; h: number; start: Uint8Array; next: (g: Uint8Array) => Uint8Array; turns: number; ms: number; crop?: number }
+const SHOWS: Record<'collide' | 'emblem', () => Show> = {
   collide: () => {
     const w = 22, h = 14, g = new Uint8Array(w * h);
     GL.forEach(([x, y]) => { g[(y + 1) * w + x + 1] = 1; g[(y + 1) * w + (w - 2 - x)] = 1; }); // one heading right, its mirror heading left
@@ -87,26 +90,27 @@ const SHOWS = {
   },
 };
 // the live cells' 3×3 box, so the emblem stays put while the glider turns
-function crop(g, w, h, k) {
+function crop(g: Uint8Array, w: number, h: number, k: number) {
   let x0 = w, y0 = h;
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (g[y * w + x]) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); }
   const out = new Uint8Array(k * k);
   for (let y = 0; y < k; y++) for (let x = 0; x < k; x++) out[y * k + x] = g[((y0 + y) % h) * w + ((x0 + x) % w)];
   return out;
 }
-function LifeShow({ kind }) {
-  const ref = useRef(null), cells = useRef([]);
-  const s = useRef(null);
+function LifeShow({ kind }: { kind: 'collide' | 'emblem' }) {
+  const ref = useRef<HTMLDivElement>(null), cells = useRef<(HTMLElement | null)[]>([]);
+  const s = useRef<Show | null>(null);
   if (!s.current) s.current = SHOWS[kind]();
   const { w, h, crop: k } = s.current;
   const cols = k || w, rows = k || h;
   useEffect(() => {
     const el = ref.current, S = s.current;
+    if (!el || !S) return;
     let g = S.start, n = 0, raf = 0, last = 0, on = false;
     const paint = () => { const v = S.crop ? crop(g, S.w, S.h, S.crop) : g; cells.current.forEach((c, i) => { if (c) c.dataset.on = v[i] ? '1' : ''; }); };
     paint();
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const loop = (t) => {
+    const loop = (t: number) => {
       if (t - last >= S.ms) { last = t; n += 1; if (S.turns && n > S.turns) { g = S.start; n = 0; } else g = S.next(g); paint(); }
       raf = requestAnimationFrame(loop);
     };
@@ -128,13 +132,13 @@ function LifeShow({ kind }) {
   );
 }
 
-export default function Gist({ g }) {
+export default function Gist({ g }: { g: GistKind }) {
   if (g.kind === 'collide' || g.kind === 'emblem') return <LifeShow kind={g.kind} />;
   return <GistDrawn g={g} />;
 }
 
-function GistDrawn({ g }) {
-  const ref = useRef(null);
+function GistDrawn({ g }: { g: Drawn }) {
+  const ref = useRef<HTMLDivElement & HTMLOListElement>(null); // one ref for the ol and the divs
   useEffect(() => {
     const el = ref.current;
     if (!el) return;

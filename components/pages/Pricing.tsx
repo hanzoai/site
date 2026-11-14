@@ -5,6 +5,7 @@
    for zero-CLS SSR and refreshed on mount so admin.hanzo.ai edits reflect immediately).
    Models (Enso, Kai, Zen) are metered per million tokens and NEVER badged as subscription plans. */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, ReactNode, RefObject } from 'react';
 import { motion, AnimatePresence, MotionConfig, useScroll, useVelocity, useTransform, useSpring } from 'motion/react';
 import { EASE, useCalm } from '../ui';
 import { A, More, Cta, Tabs, Faq, DataTable, Band } from '../kit';
@@ -14,18 +15,36 @@ import Usage, { Stack } from '../Usage';
 import './Frame.css';
 import './Pricing.css';
 import { checkout, teamCheckout } from '../../lib/plans';
+import type { Rung, Term } from '../../lib/plans';
 import useCommercePricing from '../../lib/useCommercePricing';
+import type { Diff, Group, Row } from '../../lib/useCommercePricing';
 import { QA } from './Pricing.faq';
 import { asked, chose, LIST, picked, termed, viewed } from '../../lib/funnel';
 import { press } from '../../lib/press';
 
-const PAY = (p) => checkout(p);
+type Live = ReturnType<typeof useCommercePricing>;
+/* the page's state: the usage slider's stop, the team billing term and the seat counts */
+type Bill = 'Annual' | 'Monthly';
+interface State { at: number; bill: Bill; std: number; prem: number }
+interface Setters { at: (n: number) => void; bill: (b: Bill) => void; std: (n: number) => void; prem: (n: number) => void }
+/* a plan column of the comparison, and a row of it: a label and the cells (or the column the line starts at) */
+interface Col { name: string; price: string; to: string }
+type FullRow = [string, (string | null)[] | number];
+/* what a plan card and the full list state for a plan */
+interface Offer {
+  name: string; d: string; word?: string; fig?: string | null; sub?: string | string[]; cta: string[]; note?: string | string[];
+  head?: string; items: string[]; fullItems: string[]; col?: number; ladder?: boolean; seats?: boolean; alt?: string[]; rec?: boolean;
+}
+/* a model family as the table draws it; the rows' extras (legend, extra, cta) are optional */
+type Family = Group & { legend?: string[]; extra?: string; cta?: string[] };
+
+const PAY = (p: string) => checkout(p);
 const HELP = '/buying-specialist';
 
 /* ---------- small parts ---------- */
-function Seg({ opts, val, set, id, label }) {
-  const keys = (e) => {
-    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+function Seg<T extends string>({ opts, val, set, id, label }: { opts: T[]; val: T; set: (v: T) => void; id: string; label: string }) {
+  const keys = (e: KeyboardEvent<HTMLElement>) => {
+    const k = ({ ArrowRight: 1, ArrowLeft: -1 } as Record<string, number>)[e.key];
     if (!k) return;
     e.preventDefault();
     const n = (opts.indexOf(val) + k + opts.length) % opts.length;
@@ -45,7 +64,7 @@ function Seg({ opts, val, set, id, label }) {
 }
 
 const Ck = () => <svg className="xpr-ck" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const List = ({ items }) => <ul className="xpr-list">{items.map((t) => <li key={t}><Ck />{t}</li>)}</ul>;
+const List = ({ items }: { items: string[] }) => <ul className="xpr-list">{items.map((t) => <li key={t}><Ck />{t}</li>)}</ul>;
 
 const ENT_FALLBACK = [
   'SSO (SAML 2.0 & OIDC) and SCIM provisioning through Hanzo IAM',
@@ -58,10 +77,10 @@ const ENT_FALLBACK = [
 const PAYG_INC = ['Frontier & open-source models via unified API', 'OpenAI-compatible /v1/chat/completions endpoint', 'Intelligent semantic auto-routing & fallback', 'Prompt caching discounts up to 90%', 'Sandboxed code execution, web search & tools', 'Real-time spend limits, webhooks & usage alerts'];
 const VOL_INC = ['Committed-use volume discounts starting at $5k/mo', 'Dedicated GPU clusters (H100, B200) in your cloud or VPC', 'Custom rate limits exceeding 100k+ RPM', 'Zero data retention & HIPAA / BAA compliance', '24/7 dedicated engineering Slack & priority routing'];
 const SETS = [['free', 'go', 'pro'], ['team', 'ent'], ['payg', 'vol']];
-const DEF = { at: 0, bill: 'Annual', std: 2, prem: 0 }; // `at`: the usage slider's stop, Pro
+const DEF: State = { at: 0, bill: 'Annual', std: 2, prem: 0 }; // `at`: the usage slider's stop, Pro
 const BUY = 'Chat with buying specialist';
 
-function colsOf(P, rungs) {
+function colsOf(P: Live['plans'], rungs: Rung[]): Col[] {
   return [
     { name: P.free.name, price: 'No card needed', to: '/signup' },
     { name: P.go.name, price: '$' + P.go.price, to: PAY(P.go.id) },
@@ -69,9 +88,9 @@ function colsOf(P, rungs) {
   ];
 }
 
-function fullRowsOf(P, compareDiff) {
-  const seen = new Set();
-  const dedup = (arr, startCol) =>
+function fullRowsOf(P: Live['plans'], compareDiff: Diff): FullRow[] {
+  const seen = new Set<string>();
+  const dedup = (arr: string[], startCol: number) =>
     arr
       .filter((t) => !/usage|higher limits|hanzo\.bot|hanzo\.team/i.test(t))
       .filter((t) => {
@@ -79,7 +98,7 @@ function fullRowsOf(P, compareDiff) {
         seen.add(t);
         return true;
       })
-      .map((t) => [t, startCol]);
+      .map((t): FullRow => [t, startCol]);
   return [
     ...compareDiff,
     ...dedup(P.free.features, 0),
@@ -88,7 +107,7 @@ function fullRowsOf(P, compareDiff) {
   ];
 }
 
-function Compare({ lit, cols: colDefs, rows: rowDefs }) {
+function Compare({ lit, cols: colDefs, rows: rowDefs }: { lit: number; cols: Col[]; rows: FullRow[] }) {
   const cols = [
     { key: 'line', label: <span className="x-sr">Plan line</span> },
     ...colDefs.map((c, i) => ({
@@ -103,7 +122,7 @@ function Compare({ lit, cols: colDefs, rows: rowDefs }) {
     })),
   ];
   const rows = rowDefs.map(([label, v]) => {
-    const r = { line: label };
+    const r: Record<string, ReactNode> = { line: label };
     colDefs.forEach((_, i) => {
       const cell = Array.isArray(v) ? v[i] : i >= v;
       r['c' + i] = cell === true ? <><Ck /><span className="x-sr">Included</span></> : cell || null;
@@ -113,7 +132,7 @@ function Compare({ lit, cols: colDefs, rows: rowDefs }) {
   return <DataTable caption="Compare plans" cols={cols} rows={rows} gap="Not included" className="xpr-cmp" />;
 }
 
-function CompareSheet({ lit, cols, rows }) {
+function CompareSheet({ lit, cols, rows }: { lit: number; cols: Col[]; rows: FullRow[] }) {
   const [one, setOne] = useState(Math.max(0, lit));
   useEffect(() => setOne(Math.max(0, lit)), [lit]);
   return (
@@ -124,7 +143,7 @@ function CompareSheet({ lit, cols, rows }) {
   );
 }
 
-function planOf(id, s, live) {
+function planOf(id: string, s: State, live: Live): Offer {
   const { plans: P, seats: S } = live;
   const seatRates = { Standard: [S.standard.monthAnnual, S.standard.month], Premium: [S.premium.monthAnnual, S.premium.month] };
   const entItems = S.enterprise.features.length ? S.enterprise.features : ENT_FALLBACK;
@@ -142,13 +161,14 @@ function planOf(id, s, live) {
   if (id === 'payg') return { name: 'Pay as you go', d: 'Direct metered access to all frontier models, coding agents, and tools with zero commitments.', word: 'Metered per token & second', cta: ['Get API Key', '/dev', 'pricing.api.key'], note: 'Instant access · No minimum spend', items: PAYG_INC, fullItems: PAYG_INC };
   return { name: 'Volume & Dedicated', d: 'For organizations with high-throughput inference, custom routing, or dedicated VPC deployments.', word: 'Custom rates', sub: ['Volume discounts from $5k/mo', 'Dedicated GPU clusters & custom routing SLAs'], cta: ['Contact API Sales', '/contact-sales', 'pricing.api.sales'], note: 'Dedicated VPC & 24/7 Slack support available', head: 'Everything in Pay as you go, plus:', items: VOL_INC, fullItems: VOL_INC };
 }
-const lines = (v) => [].concat(v || []);
+const lines = (v?: string | string[]) => ([] as string[]).concat(v || []);
 
-const TAB = { free: 'individual', go: 'individual', pro: 'individual', team: 'team', ent: 'team', payg: 'api', vol: 'api' };
-function sold(id, s, live) {
-  const every = s.bill === 'Annual' ? 'year' : 'month';
+const TAB: Record<string, string> = { free: 'individual', go: 'individual', pro: 'individual', team: 'team', ent: 'team', payg: 'api', vol: 'api' };
+interface Sold { slug: string; how: string; cta: string; every?: Term }
+function sold(id: string, s: State, live: Live) {
+  const every: Term = s.bill === 'Annual' ? 'year' : 'month';
   const rung = live.rungs[s.at];
-  const row = {
+  const row = ({
     free: { slug: 'free', how: 'free', cta: 'Try Hanzo' },
     go: { slug: live.plans.go.id, how: 'card', cta: 'Get ' + live.plans.go.name },
     pro: { slug: rung.id, how: 'card', cta: 'Get ' + rung.name },
@@ -156,7 +176,7 @@ function sold(id, s, live) {
     ent: { slug: 'enterprise', how: 'sales', cta: 'Get Enterprise plan', every },
     payg: { slug: 'api-payg', how: 'free', cta: 'Get API Key' },
     vol: { slug: 'api-enterprise', how: 'sales', cta: 'Contact API Sales' },
-  }[id];
+  } as Record<string, Sold>)[id];
   return { ...row, tab: TAB[id] };
 }
 
@@ -164,7 +184,7 @@ function sold(id, s, live) {
 const IN = { duration: 0.3, ease: EASE };
 
 /* the ladder card's name rolls to the next as the slider moves: up, out of a one-line window */
-function Roll({ k, children }) {
+function Roll({ k, children }: { k: string; children?: ReactNode }) {
   return (
     <span className="xpr-swap">
       <AnimatePresence mode="popLayout" initial={false}>
@@ -174,7 +194,7 @@ function Roll({ k, children }) {
   );
 }
 
-function Stepper({ label, n, set, min, max }) {
+function Stepper({ label, n, set, min, max }: { label: string; n: number; set: (n: number) => void; min: number; max: number }) {
   return (
     <div className="xpr-step" role="group" aria-label={label}>
       <button type="button" onClick={() => set(n - 1)} disabled={n <= min} aria-label={label + ' −'}>−</button>
@@ -184,14 +204,14 @@ function Stepper({ label, n, set, min, max }) {
   );
 }
 
-function Seats({ s, set, seats }) {
+function Seats({ s, set, seats }: { s: State; set: Pick<Setters, 'std' | 'prem'>; seats: Live['seats'] }) {
   const k = s.bill === 'Annual' ? 0 : 1;
   const stdRate = [seats.standard.monthAnnual, seats.standard.month];
   const premRate = [seats.premium.monthAnnual, seats.premium.month];
   const minS = seats.standard.min || 2;
   const maxS = seats.standard.max || 100;
-  const setS = (v) => set.std(Math.max(Math.max(0, minS - s.prem), Math.min(maxS - s.prem, v)));
-  const setP = (v) => set.prem(Math.max(Math.max(0, minS - s.std), Math.min(maxS - s.std, v)));
+  const setS = (v: number) => set.std(Math.max(Math.max(0, minS - s.prem), Math.min(maxS - s.prem, v)));
+  const setP = (v: number) => set.prem(Math.max(Math.max(0, minS - s.std), Math.min(maxS - s.std, v)));
   return (
     <div className="xpr-seats">
       <div>
@@ -229,7 +249,7 @@ function Trust() {
   );
 }
 
-function cardOf(id, s, live) {
+function cardOf(id: string, s: State, live: Live): Offer {
   const p = planOf(id, s, live);
   if (id === 'free') return { ...p, word: 'Free', sub: 'No card needed', items: p.fullItems };
   if (id === 'go') return { ...p, items: p.fullItems };
@@ -238,9 +258,9 @@ function cardOf(id, s, live) {
   return p;
 }
 
-function SeatPrices({ bill, seats }) {
+function SeatPrices({ bill, seats }: { bill: Bill; seats: Live['seats'] }) {
   const k = bill === 'Annual' ? 0 : 1;
-  const seatRates = { Standard: [seats.standard.monthAnnual, seats.standard.month], Premium: [seats.premium.monthAnnual, seats.premium.month] };
+  const seatRates: Record<string, number[]> = { Standard: [seats.standard.monthAnnual, seats.standard.month], Premium: [seats.premium.monthAnnual, seats.premium.month] };
   return (
     <div className="xpr-seats xpr-c-seats">
       {[['Standard seat', 'All Hanzo features, plus more usage than Pro', 'Standard', '$' + seats.standard.month], ['Premium seat', '5x more usage than standard seats', 'Premium', '$' + seats.premium.month]].map(([n, d, key, mo]) => (
@@ -255,7 +275,7 @@ function SeatPrices({ bill, seats }) {
   );
 }
 
-function Card({ id, s, set, hand, i, live }) {
+function Card({ id, s, set, hand, i, live }: { id: string; s: State; set: Setters; hand: () => void; i: number; live: Live }) {
   const p = cardOf(id, s, live);
   const sub = lines(p.sub);
   const { rungs } = live;
@@ -271,7 +291,7 @@ function Card({ id, s, set, hand, i, live }) {
       <div className="xpr-c-price">
         {p.fig ? <span className="xpr-fig"><Odometer value={p.fig} /><span className="xpr-u">USD/month</span></span> : <span className="xpr-word">{p.word}</span>}
         {sub.map((t) => <span key={t} className="xpr-c-sub">{t}</span>)}
-        {p.ladder && <Usage rungs={rungs} at={s.at} set={(k) => { hand(); set.at(k); if (k !== s.at) picked(rungs[k].id, 'individual'); }} />}
+        {p.ladder && <Usage rungs={rungs} at={s.at} set={(k: number) => { hand(); set.at(k); if (k !== s.at) picked(rungs[k].id, 'individual'); }} />}
       </div>
       <div className="xpr-c-acts">
         <Cta to={p.cta[1]} size="lg" kind={p.rec ? 'solid' : 'outline'} id={p.cta[2]} className="xpr-cta" thumb={p.rec} data-ga="">{p.cta[0]}</Cta>
@@ -287,7 +307,7 @@ function Card({ id, s, set, hand, i, live }) {
   );
 }
 
-function Plans({ tab, s, set, hand, live }) {
+function Plans({ tab, s, set, hand, live }: { tab: number; s: State; set: Setters; hand: () => void; live: Live }) {
   const calm = useCalm();
   return (
     <MotionCfg calm={calm}>
@@ -303,16 +323,16 @@ function Plans({ tab, s, set, hand, live }) {
   );
 }
 
-function useEnter(root) {
+function useEnter(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
-    const band = root.current?.querySelector('.x-band');
+    const band = root.current?.querySelector<HTMLElement>('.x-band');
     if (band && !band.dataset.enter) band.dataset.enter = 'underline-sweep';
-    const els = [...(root.current?.querySelectorAll('[data-enter]:not([data-enter="text-mask-film"]):not([data-enter="grow-from-point"])') || [])];
+    const els = [...(root.current?.querySelectorAll<HTMLElement>('[data-enter]:not([data-enter="text-mask-film"]):not([data-enter="grow-from-point"])') || [])];
     if (typeof IntersectionObserver === 'undefined') { els.forEach((el) => { el.dataset.in = ''; }); return; }
-    const timers = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting || (e.intersectionRatio < 0.25 && e.intersectionRect.height < innerHeight * 0.25)) return;
-      const el = e.target;
+      const el = e.target as HTMLElement;
       el.dataset.in = '';
       io.unobserve(el);
       timers.push(setTimeout(() => { el.dataset.done = ''; }, 2200));
@@ -322,10 +342,10 @@ function useEnter(root) {
   }, [root]);
 }
 
-const MotionCfg = ({ calm, children }) => <MotionConfig reducedMotion={calm ? 'always' : 'never'}>{children}</MotionConfig>;
+const MotionCfg = ({ calm, children }: { calm: boolean; children?: ReactNode }) => <MotionConfig reducedMotion={calm ? 'always' : 'never'}>{children}</MotionConfig>;
 
-function Index({ live }) {
-  const all = [['Personal', ['free', 'go', ...live.rungs.map((_, k) => ['pro', { ...DEF, at: k }])]], ['Team', ['team', 'ent']], ['API', ['payg', 'vol']]];
+function Index({ live }: { live: Live }) {
+  const all: [string, (string | [string, State])[]][] = [['Personal', ['free', 'go', ...live.rungs.map((_, k): [string, State] => ['pro', { ...DEF, at: k }])]], ['Team', ['team', 'ent']], ['API', ['payg', 'vol']]];
   return (
     <div className="xpr-all" hidden>
       {all.map(([t, ids]) => (
@@ -356,13 +376,13 @@ function Index({ live }) {
 }
 
 /* ---------- API: metered rates & live models ---------- */
-const BILL = [
+const BILL: [string, string, string, string[]?][] = [
   ['Model inference', 'per token, five tiers', 'Input, cached reads, cache writes, output and reasoning are metered as five disjoint tiers, at the tariff for the completion window the request asked for.', ['input', 'cache_read', 'cache_write', 'output', 'reasoning']],
   ['Computer', 'per second, while running', 'vCPU and memory on what the machine was given. Nothing to create one, nothing while it sleeps, and the boot disk is inside the allowance — so a computer waiting between turns meters nothing.'],
   ['Web tools', 'per call', 'Priced from what the provider charged, so a web call is booked after it runs. A fetch the domain policy refuses is stopped before the request and costs nothing.'],
   ['Media generation', 'what the job cost', "Billed once per finished job at its real cost; a render cannot be quoted before it runs, so it is admitted against the headroom under the agent's per-task cap instead. A job that fails is not billed."],
 ];
-const RATES = [
+const RATES: [string, string[], string][] = [
   ['Computer · vCPU', ['$0.0504/hr', '$0.000014/second'], 'Charged by the second, while running.'],
   ['Computer · memory', ['$0.0162/GiB-hr', '$0.0000045/GiB-second'], 'Charged by the second, on the memory the machine was given.'],
   ['Computer · paused', ['$0'], 'No vCPU, no memory, no storage.'],
@@ -375,7 +395,7 @@ const RATES = [
 const WINDOWS = [['immediate', 'Answers now, at the highest tariff.'], ['priority', 'Answers soon, at a lower one.'], ['loose', 'Answers eventually, at the lowest.']];
 const TOOLS = [['Web Search', 'per call', '0.002158'], ['Code Interpreter', 'per session minute', '0.03'], ['File Storage', 'per GB/month', '0.2'], ['Image Generation', 'per image', '0.04'], ['Speech-to-Text', 'per minute', '0.006'], ['Text-to-Speech', 'per 1M characters', '15'], ['Web Fetch', 'per call', '0.001079']];
 
-const clean = (v) => v && v.replace(/\d+\.\d{9,}/g, (m) => String(+(+m).toPrecision(10)));
+const clean = (v: string) => v && v.replace(/\d+\.\d{9,}/g, (m) => String(+(+m).toPrecision(10)));
 
 const MCOLS = [
   { key: 'm', label: 'Model' },
@@ -384,7 +404,7 @@ const MCOLS = [
   { key: 'w', label: 'Cache write', num: true },
   { key: 'r', label: 'Cache read', num: true },
 ];
-const cellOf = (r) => {
+const cellOf = (r: Row) => {
   const more = r.d || r.spec || r.chips.length || r.end || r.cta;
   const name = <span className="xpr-nm"><b>{r.name}</b>{r.tags.map((t) => <em key={t}>{t}</em>)}</span>;
   if (!more) return <span className="xpr-m">{name}</span>;
@@ -402,7 +422,7 @@ const cellOf = (r) => {
   );
 };
 
-function Models({ groups }) {
+function Models({ groups }: { groups: Family[] }) {
   return (
     <div className="xpr-groups">
       {groups.map((g) => (
@@ -428,7 +448,7 @@ function Models({ groups }) {
   );
 }
 
-function ApiMore({ on, groups }) {
+function ApiMore({ on, groups }: { on: boolean; groups: Family[] }) {
   const [allBill, setAllBill] = useState(false);
   return (
     <div className="xpr-api" hidden={!on}>
@@ -521,7 +541,7 @@ function ApiMore({ on, groups }) {
 }
 
 /* ---------- Compare plans ladder ---------- */
-function Ladder({ lit, cols, diff, rows }) {
+function Ladder({ lit, cols, diff, rows }: { lit: number; cols: Col[]; diff: Diff; rows: FullRow[] }) {
   // a column per plan (Free, Go and every rung sold); narrower, two rows of half as many
   const half = Math.ceil(cols.length / 2);
   return (
@@ -559,8 +579,8 @@ function Ladder({ lit, cols, diff, rows }) {
 }
 
 /* ---------- Hanzo Enso, Hanzo Kai, and Hanzo Zen per-token model pricing ---------- */
-const per = (v) => { const m = clean(v).match(/^(\$[\d.]+)\s*(\/ MTok)$/); return m ? <><b>{m[1]}</b><small>{m[2]}</small></> : <b>{clean(v)}</b>; };
-function ModelFamilies({ groups }) {
+const per = (v: string) => { const m = clean(v).match(/^(\$[\d.]+)\s*(\/ MTok)$/); return m ? <><b>{m[1]}</b><small>{m[2]}</small></> : <b>{clean(v)}</b>; };
+function ModelFamilies({ groups }: { groups: Group[] }) {
   return (
     <section className="zf-room xpr-enso" data-room="dark" aria-labelledby="xpr-enso-h">
       <div className="xpr-w xpr-enso-stack">
@@ -595,7 +615,7 @@ function ModelFamilies({ groups }) {
 
 /* ---------- header halftone ---------- */
 function Halftone() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const c = ref.current;
     if (!c) return;
@@ -603,6 +623,7 @@ function Halftone() {
       const r = c.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
       c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr);
       const g = c.getContext('2d');
+      if (!g) return;
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
       g.clearRect(0, 0, r.width, r.height);
       const small = r.width < 600;
@@ -633,7 +654,7 @@ function Halftone() {
 const TABS = ['Personal', 'Team', 'API'];
 
 export default function Pricing() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useEnter(root);
   const live = useCommercePricing();
   const cols = colsOf(live.plans, live.rungs);
@@ -647,17 +668,18 @@ export default function Pricing() {
   const [std, setStd] = useState(DEF.std);
   const [prem, setPrem] = useState(DEF.prem);
   const [placed, setPlaced] = useState(false);
-  const s = { at, bill, std, prem };
+  const s: State = { at, bill, std, prem };
   const now = useRef({ s, live });
   now.current = { s, live };
-  useEffect(() => press('.xpr-card .xpr-cta', (a) => {
-    const id = a.closest('.xpr-card').dataset.id;
+  useEffect(() => press('.xpr-card .xpr-cta', (el) => {
+    const a = el as HTMLElement; // the selector matches the card's link or button
+    const id = a.closest<HTMLElement>('.xpr-card')!.dataset.id!; // every match sits in a card that names its plan
     const cur = now.current;
-    if (a.dataset.cta === 'pricing.help') asked(sold(id, cur.s, cur.live).slug, TAB[id], a.textContent.trim());
+    if (a.dataset.cta === 'pricing.help') asked(sold(id, cur.s, cur.live).slug, TAB[id], a.textContent?.trim());
     else chose(sold(id, cur.s, cur.live));
   }), []);
-  const set = { at: setStep, bill: setBill, std: setStd, prem: setPrem };
-  const rail = useRef(null);
+  const set: Setters = { at: setStep, bill: setBill, std: setStd, prem: setPrem };
+  const rail = useRef<HTMLDivElement>(null);
   const [, setMine] = useState(false);
   const hand = useCallback(() => setMine(true), []);
   useEffect(() => {
@@ -676,7 +698,7 @@ export default function Pricing() {
     const name = ['individual', 'team', 'api'][tab];
     viewed(name, LIST[name]);
   }, [placed, tab]);
-  const pick = (i) => { setTab(i); try { history.replaceState(null, '', '#' + TABS[i].toLowerCase()); } catch { /* hash optional */ } };
+  const pick = (i: number) => { setTab(i); try { history.replaceState(null, '', '#' + TABS[i].toLowerCase()); } catch { /* hash optional */ } };
   return (
     <main ref={root} className="xpr zf">
       <section className="xpr-top zf-sec zf-plain" aria-labelledby="xpr-h1">

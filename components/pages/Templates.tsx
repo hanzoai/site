@@ -11,6 +11,7 @@
    Order: hero deck → the sideways gallery → the counts by kind → the setup room → the close.
    Motion: signature = h-gallery; the deck riffles and drags (kept); supporting = Open (sheets), magnetic. */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, Dispatch, SetStateAction } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
 import { A, Img } from '../kit';
@@ -25,7 +26,8 @@ import '../v2/x-gauss/Rhythm.css';
 import './Templates.css';
 
 // [slug, title, kind, what it is] — Hanzo's list as live hanzo.ai/templates shows it (9 Nov update: 29 templates, in live's order)
-const ALL = [
+type Template = [slug: string, title: string, kind: string, what: string];
+const ALL: Template[] = [
   ['instrument', 'Instrument', 'Portfolio', 'Monospace portfolio website with interactive 3D project cards, command palette, live experimental lab (particles, spring physics, ASCII shaders), and procedural audio.'],
   ['fernline', 'Fernline', 'AI/SaaS', 'Full-featured AI agent operations UI kit and observability console built on Next.js 16 and React 19, including both marketing pages and a multi-route operator console.'],
   ['aerva', 'Aerva', 'AI/SaaS', 'Polished AI and SaaS landing page template built with React 19, Vite, and TypeScript featuring bento feature grids, interactive pricing toggles, and customer proof sections.'],
@@ -57,11 +59,11 @@ const ALL = [
   ['loop', 'Loop', 'Web3', 'Crypto-card product site — virtual card, NFT and metaverse pages with light and dark blog.'],
 ];
 const KINDS = ['All', '3D & Shaders', 'AI/SaaS', 'App', 'Business', 'Component Library', 'E-commerce', 'Hospitality', 'Portfolio', 'SaaS', 'Web3'];
-const pad = (v) => String(v).padStart(2, '0');
+const pad = (v: number) => String(v).padStart(2, '0');
 
 /* A preview: Hanzo's own screenshot over a drawn page in greys (its name, nav, hero and blocks). If the screenshot
    fails to load, the drawn page stays, so a missing preview still reads as that site, never a broken image. */
-function Ghost({ title, kind }) {
+function Ghost({ title, kind }: { title: string; kind: string }) {
   return (
     <span className="xtp-ghost" data-k={kind} aria-hidden="true">
       <span className="xtp-ghost-nav"><b>{title}</b><i /><i /><i /></span>
@@ -70,8 +72,8 @@ function Ghost({ title, kind }) {
     </span>
   );
 }
-function Shot({ slug, title, kind, priority, alt }) {
-  const ref = useRef(null);
+function Shot({ slug, title, kind, priority, alt }: { slug: string; title: string; kind: string; priority?: boolean; alt: string }) {
+  const ref = useRef<HTMLImageElement>(null);
   const [bad, setBad] = useState(false);
   useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
   return (<>
@@ -84,7 +86,7 @@ function Shot({ slug, title, kind, priority, alt }) {
 
 const D = 'https://docs.hanzo.ai/docs/';
 // the agent strip, as hanzo.ai lists it: [name, docs, works as an MCP client]
-const AGENTS = [
+const AGENTS: [name: string, docs: string, mcp: number][] = [
   ['AI Agents CLI', 'cli/agent', 1], ['Anthropic SDK', 'guides/integrations/claude-agent-sdk', 0], ['Antigravity', 'apps/ides', 0], ['ChatGPT', 'mcp', 1], ['Claude', 'mcp', 1],
   ['Claude Code', 'coding', 0], ['Claude Cowork', 'mcp', 1], ['Claude Duet', 'mcp', 1], ['Codex', 'coding', 0], ['Cue', 'mcp', 1], ['Cursor', 'apps/ides', 0],
   ['DeepSeek', 'mcp', 1], ['Gemini', 'mcp', 1], ['Grok', 'mcp', 1], ['Grok Bot', 'mcp', 1], ['Grok Build', 'mcp', 1], ['Hanzo Dev', 'dev', 0], ['Hermes Agent', 'mcp', 1],
@@ -113,7 +115,7 @@ function Strip() {
   );
 }
 
-function Card({ t, d, onPrev, onNext, calm, narrow }) {
+function Card({ t, d, onPrev, onNext, calm, narrow }: { t: Template; d: number; onPrev: () => void; onNext: () => void; calm: boolean | null; narrow: boolean }) {
   const [slug, title, kind, what] = t;
   const front = d === 0;
   const gone = d < 0;
@@ -151,15 +153,15 @@ function Card({ t, d, onPrev, onNext, calm, narrow }) {
   );
 }
 
-function Deck({ kind, setKind, at, setAt, list, front, wall }) {
+function Deck({ kind, setKind, at, setAt, list, front, wall }: { kind: string; setKind: (k: string) => void; at: number; setAt: Dispatch<SetStateAction<number>>; list: Template[]; front: Template; wall: boolean }) {
   const [mine, setMine] = useState(false);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const calm = useReducedMotion();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.35 });
   const [narrow, setNarrow] = useState(false); // phones peek the back cards less, so the front window keeps its width
   useEffect(() => { const m = matchMedia('(max-width: 899px)'); const f = () => setNarrow(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);
-  const go = (k) => { setMine(true); setAt((k + list.length) % list.length); };
+  const go = (k: number) => { setMine(true); setAt((k + list.length) % list.length); };
   useEffect(() => {
     if (mine || calm || !(seen || wall) || paused || list.length < 2) return; // it keeps dealing while the wall is in view, so the ring walks the wall
     const t = setTimeout(() => setAt((v) => (v + 1) % list.length), 3600);
@@ -202,22 +204,22 @@ function Deck({ kind, setKind, at, setAt, list, front, wall }) {
 /* The commands type themselves character by character (32 ms a key, one rAF loop) each time the room comes into view
    or the deck changes template. Every character is in the HTML from the server: the untyped rest is drawn in
    transparent ink, so the block never changes size, JS off and reduced motion show the finished block. */
-function useTyped(total, key, seen) {
+function useTyped(total: number, key: string, seen: boolean) {
   const calm = useReducedMotion();
   const [n, setN] = useState(total);
   useEffect(() => {
     if (calm || !seen) { setN(total); return; }
-    let raf, t0;
-    const step = (t) => { t0 ??= t; const k = Math.min(total, Math.floor((t - t0) / 32)); setN(k); if (k < total) raf = requestAnimationFrame(step); };
+    let raf = 0, t0: number | undefined;
+    const step = (t: number) => { t0 ??= t; const k = Math.min(total, Math.floor((t - t0) / 32)); setN(k); if (k < total) raf = requestAnimationFrame(step); };
     setN(0); raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
   }, [key, seen, total, calm]);
   return n;
 }
 
-function Commands({ t }) {
+function Commands({ t }: { t: Template }) {
   const [slug, title] = t;
-  const term = useRef(null);
+  const term = useRef<HTMLDivElement>(null);
   const seen = useInView(term, { amount: 0.5 }); // the commands type themselves again each time the room comes into view
   // the commands only: Copy gives exactly what the block shows (the "$ " prompt is drawn, not selectable)
   const lines = [['hanzo login'], ['hanzo template list'], [`hanzo template get ${slug}`], ['hanzo dev']];
@@ -226,7 +228,7 @@ function Commands({ t }) {
   let left = n; // characters still to show, line by line; a line starts once the one before it is done
   // explode-gather: the room's five pieces start scattered and collapse into place as the room arrives
   const [room, arm, gathered] = useEntrance(0.3);
-  const eg = (i) => ({ className: 'xtp-eg', style: { '--ex': SCATTER[i][0] + 'px', '--ey': SCATTER[i][1] + 'px', '--er': SCATTER[i][2] + 'deg', '--k': i } });
+  const eg = (i: number) => ({ className: 'xtp-eg', style: { '--ex': SCATTER[i][0] + 'px', '--ey': SCATTER[i][1] + 'px', '--er': SCATTER[i][2] + 'deg', '--k': i } as CSSProperties });
   return (
     <section ref={room} className={'w2-sec xtp-cmd w2-dark' + (arm ? ' arm' : '') + (gathered ? ' in' : '')} data-room="dark" aria-labelledby="xtp-cmd-h">
       <div className="w2-wrap xtp-cmd-in">
@@ -262,9 +264,9 @@ function Commands({ t }) {
 
 /* The signature (h-gallery): all twelve as one sideways track the vertical scroll drives; each tile unfolds from its
    hinge as it arrives (fold-out) and opens into a sheet with its preview, what it is, and its commands. */
-function Shelf({ cur, onSeen }) {
-  const [root, setRoot] = useState(null);
-  const probe = useRef(null);
+function Shelf({ cur, onSeen }: { cur: string; onSeen: (here: boolean) => void }) {
+  const [root, setRoot] = useState<HTMLDivElement | null>(null);
+  const probe = useRef<HTMLDivElement>(null);
   const here = useInView(probe, { amount: 0.1 });
   useEffect(() => { onSeen(here); }, [here, onSeen]);
   useFoldOut(root);
@@ -289,7 +291,7 @@ function Shelf({ cur, onSeen }) {
 
 /* count-roll: the twelve by kind, as figures that roll into their values as the row arrives; each one re-deals the deck
    above with that kind and takes you to it. Only the page's own labels and counts. */
-function Counts({ kind, pick }) {
+function Counts({ kind, pick }: { kind: string; pick: (k: string) => void }) {
   const [ref, arm, seen] = useEntrance(0.4);
   return (
     <section ref={ref} className={'w2-sec tight xtp-counts' + (arm ? ' arm' : '') + (seen ? ' in' : '')} aria-label="Kind of template">
@@ -348,7 +350,7 @@ export default function Templates() {
 }
 
 /* shutter: two ink bars close from the top and bottom, then open on the close */
-function Band({ front }) {
+function Band({ front }: { front: Template }) {
   const [ref, arm, seen] = useEntrance(0.5);
   return (
       <section ref={ref} className={'w2-sec tight xtp-band' + (arm ? ' arm' : '') + (seen ? ' in' : '')} aria-label="Edit in Hanzo">

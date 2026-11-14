@@ -6,21 +6,23 @@
    time, every organization's commits this year and months, and the total's commits. Day cells, the past 7 days and the
    GitHub figures (stars, forks, languages, contributors) stay as the build read them. */
 import { createContext, useContext, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import SNAP from './snapshot';
+import type { ApiActivity, ApiGroup, ApiOrg, Snapshot } from './types.ts';
 
 export const API = 'https://api.hanzo.ai/v1/git/activity';
 const KEYS = ['hanzo', 'lux', 'zoo'];
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const d2 = (x) => String(x).padStart(2, '0');
-const at = (iso) => { const d = new Date(iso); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()}, ${d2(d.getUTCHours())}:${d2(d.getUTCMinutes())}`; };
-const n = (x) => Number(x).toLocaleString('en-US');
-const int = (v) => Number.isInteger(v) && v >= 0;
-const commits = (v) => `${n(v)} ${v === 1 ? 'commit this year' : 'commits this year'}`;
+const d2 = (x: number) => String(x).padStart(2, '0');
+const at = (iso: string) => { const d = new Date(iso); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()}, ${d2(d.getUTCHours())}:${d2(d.getUTCMinutes())}`; };
+const n = (x: number | string) => Number(x).toLocaleString('en-US');
+const int = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v) && v >= 0;
+const commits = (v: number) => `${n(v)} ${v === 1 ? 'commit this year' : 'commits this year'}`;
 
-export function merge(S, a) {
+export function merge(S: Snapshot, a: ApiActivity | null): Snapshot {
   if (!a || a.complete !== true || !a.read || Date.parse(a.read) <= Date.parse(S.read)) return S;
-  const groups = Object.fromEntries((a.groups || []).map((g) => [g.name, g]));
-  const orgs = Object.fromEntries((a.orgs || []).map((o) => [o.name, o]));
+  const groups: Record<string, ApiGroup> = Object.fromEntries((a.groups || []).map((g) => [g.name, g]));
+  const orgs: Record<string, ApiOrg> = Object.fromEntries((a.orgs || []).map((o) => [o.name, o]));
   const read = 'Forge listing · read ' + at(a.read);
   const eco = S.eco.map((e, i) => {
     const g = groups[KEYS[i]];
@@ -30,16 +32,17 @@ export function merge(S, a) {
     return { ...e, stats, ...(latest.length ? { commits: latest.map((c) => [c.repo, c.message, at(c.at), c.url]), read } : {}) };
   });
   const og = S.orgs.map((x) => ({ ...x, orgs: x.orgs.map((o) => { const f = orgs[o.login]; return f && int(f.commits) ? { ...o, commits: f.commits ? commits(f.commits) : '', months: f.months || o.months } : o; }) }));
-  const total = int(a.totals?.commits) ? S.total.map((t, j) => (j ? t : [n(a.totals.commits), t[1]])) : S.total;
+  const all = a.totals?.commits;
+  const total = int(all) ? S.total.map((t, j) => (j ? t : [n(all), t[1]])) : S.total;
   const hero = int(groups.hanzo?.commits) ? S.hero.map((h, j) => (j === 2 ? [n(groups.hanzo.commits), h[1]] : h)) : S.hero;
   return { ...S, eco, orgs: og, total, hero, read: a.read };
 }
 
-const Ctx = createContext(SNAP);
+const Ctx = createContext<Snapshot>(SNAP);
 export const useOSS = () => useContext(Ctx);
 
-export function OSSData({ children }) {
-  const [s, setS] = useState(SNAP);
+export function OSSData({ children }: { children?: ReactNode }) {
+  const [s, setS] = useState<Snapshot>(SNAP);
   useEffect(() => {
     if (location.origin !== 'https://hanzo.ai') return undefined;
     const ac = new AbortController();

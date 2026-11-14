@@ -20,6 +20,7 @@
    stories, stills drift under the pointer) · state (overlap pill glides, sheets rise) · scroll (the strip only).
    V2: 8/10 own layout in the family: full-bleed film under an 8/5 title row, jobs as a horizontal scrubbed strip of five framings each with its own moment of the film, sibling teams as a block of their own film stills, sheets from a row after the last job, one solid at the close, ink and tokens only. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, MouseEvent, RefObject, SyntheticEvent } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { A, Img, Film as Clip } from '../../kit';
 import { Magnetic } from '../../ui';
@@ -29,30 +30,32 @@ import { media } from '../../../lib/models';
 import { play } from '../../../lib/sound';
 import { useRouter } from 'next/navigation';
 import { openTile, prefetchTile } from './openTile';
+import type { Near, Reel, Runs as RunsData, Security, SolutionDoc } from './types';
 import FamLines from '../../v2/FamLines';
 import FamDrawer from '../../v2/FamDrawer';
 import '../../v2/fam.css';
 import './solutions.css';
 import './Solution.css';
 
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 const ARROW = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* a model's film (Hanzo's own media): the still at once, the clip only while on screen (kit Img + Film rules);
    play={false} keeps just the still; at (0–1) starts the clip at that moment of the film */
-export function Film({ slug, className = '', priority = false, play = true, at = 0 }) {
+interface FilmProps { slug: string | null | undefined; className?: string; priority?: boolean; play?: boolean; at?: number }
+export function Film({ slug, className = '', priority = false, play = true, at = 0 }: FilmProps) {
   if (!slug) return <span className={'xsl-film ' + className} aria-hidden="true" />;
   return (
     <span className={'xsl-film ' + className} aria-hidden="true">
       <Img src={media(slug, 'webp')} w={1200} h={1500} priority={priority} />
-      {play && <Clip key={slug + at} src={media(slug, 'webm')} poster={media(slug, 'webp')} w={1200} h={1500} onLoadedMetadata={(e) => { const v = e.currentTarget; if (at && v.duration) v.currentTime = v.duration * at; }} onPlaying={(e) => e.currentTarget.classList.add('on')} />}
+      {play && <Clip key={slug + at} src={media(slug, 'webm')} poster={media(slug, 'webp')} w={1200} h={1500} onLoadedMetadata={(e: SyntheticEvent<HTMLVideoElement>) => { const v = e.currentTarget; if (at && v.duration) v.currentTime = v.duration * at; }} onPlaying={(e: SyntheticEvent<HTMLVideoElement>) => e.currentTarget.classList.add('on')} />}
     </span>
   );
 }
 
 /* the jobs, playing like stories on the film: one round, then the film settles on the first job with the sound
    kit's quiet 'done' (MASTER 4.1: a demo runs once, then settles); a pointer or focus holds it */
-export function useReel(n, box, ms = 5200) {
+export function useReel(n: number, box: RefObject<Element | null>, ms = 5200) {
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   const [done, setDone] = useState(false);
@@ -74,17 +77,17 @@ export function useReel(n, box, ms = 5200) {
 /* each job's own framing of the film (where it looks, how close) and its own moment of it */
 /* the hero is the solution's own model film (as on hanzo.ai); the five jobs and the closing band each take another
    of Hanzo's nine model films, so the page never shows one picture twice */
-const FILMS = ['kai', 'enso', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
-const otherFilm = (own, k) => { const rest = FILMS.filter((f) => f !== own); return rest[(Math.max(0, FILMS.indexOf(own)) + k * 3) % rest.length]; }; // 3 is coprime with 8: six distinct films
+const FILMS: string[] = ['kai', 'enso', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
+const otherFilm = (own: string | null, k: number) => { const rest = FILMS.filter((f) => f !== own); return rest[(Math.max(0, FILMS.indexOf(own ?? '')) + k * 3) % rest.length]; }; // 3 is coprime with 8: six distinct films
 /* the films the strip and the band may use: never the hero's, never one the team cards show a screen later, so no
    picture shows twice on the page; a job with no film left takes the solution's own Sigil instead */
-const freeFilms = (own, taken) => { const out = []; for (let k = 1; k <= 8; k++) { const f = otherFilm(own, k); if (!taken.includes(f) && !out.includes(f)) out.push(f); } return out; };
+const freeFilms = (own: string | null, taken: (string | null)[]) => { const out: string[] = []; for (let k = 1; k <= 8; k++) { const f = otherFilm(own, k); if (!taken.includes(f) && !out.includes(f)) out.push(f); } return out; };
 // [where it looks, how close, mirrored, turned]: five framings that read as five different shots of one film
 const FRAMES = [['50% 50%', 1.06, 1, 0], ['40% 35%', 1.9, -1, 0], ['62% 62%', 1.4, 1, 0], ['45% 70%', 2.5, -1, 0], ['58% 40%', 1.6, 1, 0], ['50% 55%', 2.1, -1, 0]];
-function Shot({ slug, k, n, on, plain, seed }) {
+function Shot({ slug, k, n, on, plain, seed }: { slug: string | null; k: number; n: number; on: boolean; plain?: boolean; seed: string }) {
   const [p, s, f, r] = plain ? ['50% 50%', 1.04, k % 2 ? -1 : 1, 0] : FRAMES[k % FRAMES.length];
   return (
-    <div className="xs2-shot" aria-hidden="true" style={{ '--p': p, '--s': s, '--f': f, '--r': r + 'deg' }}>
+    <div className="xs2-shot" aria-hidden="true" style={{ '--p': p, '--s': s, '--f': f, '--r': r + 'deg' } as CSSProperties}>
       {slug ? <Film slug={slug} play={on} at={n > 1 ? k / n : 0} /> : <Sigil seed={seed + '#' + k} data={[k + 1, n]} className="xs2-shot-sig" />}
       <span className="xs2-shot-scrim" />
       <b className="xs2-shot-n">{pad(k + 1)}</b>
@@ -93,10 +96,10 @@ function Shot({ slug, k, n, on, plain, seed }) {
 }
 
 /* the hero: the film full-bleed under the title row, playing the jobs as stories */
-function Stories({ reel, n }) {
+function Stories({ reel, n }: { reel: Reel; n: number }) {
   // the hero is the film alone (the jobs are told once, in the strip below): its label, how many jobs follow, and the
   // products it runs on as a quiet line; a pause control first in the box stops the loop
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
   const toggle = () => {
     const next = !paused;
@@ -123,10 +126,10 @@ function Stories({ reel, n }) {
 }
 
 /* the signature: the jobs as a horizontal strip, scrubbed by scroll on desktop (pinned), swiped on phones */
-function Strip({ reel, n, films, seed }) {
-  const sec = useRef(null);
-  const track = useRef(null);
-  const rail = useRef(null);
+function Strip({ reel, n, films, seed }: { reel: Reel; n: number; films: (string | null)[]; seed: string }) {
+  const sec = useRef<HTMLElement>(null);
+  const track = useRef<HTMLOListElement>(null);
+  const rail = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const [wide, setWide] = useState(false);
   const [dist, setDist] = useState(0);
@@ -140,7 +143,7 @@ function Strip({ reel, n, films, seed }) {
   }, [calm]);
   useEffect(() => {
     if (!wide) return;
-    const m = () => { const t = track.current; if (t) setDist(Math.max(0, t.scrollWidth - t.parentElement.clientWidth)); };
+    const m = () => { const t = track.current; if (t) setDist(Math.max(0, t.scrollWidth - (t.parentElement?.clientWidth ?? 0))); };
     m();
     addEventListener('resize', m);
     return () => removeEventListener('resize', m);
@@ -156,12 +159,12 @@ function Strip({ reel, n, films, seed }) {
   useEffect(() => {
     const el = rail.current;
     if (!el || wide) return;
-    const on = () => { const w = el.firstElementChild?.firstElementChild?.offsetWidth || 1; setAt(Math.max(0, Math.min(n - 1, Math.round(el.scrollLeft / (w + 16))))); };
+    const on = () => { const w = (el.firstElementChild?.firstElementChild as HTMLElement | null | undefined)?.offsetWidth || 1; setAt(Math.max(0, Math.min(n - 1, Math.round(el.scrollLeft / (w + 16))))); };
     el.addEventListener('scroll', on, { passive: true });
     return () => el.removeEventListener('scroll', on);
   }, [wide, n]);
   return (
-    <section ref={sec} className={'xs2-strip' + (wide ? ' pin' : '')} style={{ '--n': n }} aria-label={reel.label}>
+    <section ref={sec} className={'xs2-strip' + (wide ? ' pin' : '')} style={{ '--n': n } as CSSProperties} aria-label={reel.label}>
       <noscript><style>{'.xs2-strip-v{overflow:visible!important}.xs2-track{flex-direction:column!important;transform:none!important}.xs2-panel{width:auto!important}'}</style></noscript>
       <div className="xs2-strip-pin">
         <div className="v2f-wrap xs2-strip-h">
@@ -187,14 +190,15 @@ function Strip({ reel, n, films, seed }) {
 }
 
 /* the other teams as a block of their own film stills, each opening into its page (title → the next page's h1) */
-function Teams({ cards, label }) {
+interface Card { href: string; title: string; preview: string; meta: string; film: string | null }
+function Teams({ cards, label }: { cards: Card[]; label: string }) {
   const router = useRouter();
   if (!cards.length) return null;
   return (
     <nav className={'xs2-teams' + (cards.length < 4 ? ' few' : '')} aria-label={label} data-swipe-own>
       {cards.slice(0, 6).map((c) => (
         // a team card opens into its page: its still grows from the card while that page loads, its title lands on the h1
-        <A key={c.href} to={c.href} className="xs2-team" data-no-morph onClick={(e) => openTile(e, c.href, router)} onPointerEnter={() => prefetchTile(c.href, router)} onTouchStart={() => prefetchTile(c.href, router)}>
+        <A key={c.href} to={c.href} className="xs2-team" data-no-morph onClick={(e: MouseEvent<HTMLElement>) => openTile(e, c.href, router)} onPointerEnter={() => prefetchTile(c.href, router)} onTouchStart={() => prefetchTile(c.href, router)}>
           <span className="xs2-team-f" aria-hidden="true">{c.film ? <Img src={media(c.film, 'webp')} w={1200} h={1500} /> : null}</span>
           <span className="xs2-team-m x-mono">{c.meta}</span>
           <span className="xs2-team-t" data-morph data-open-name>{c.title}</span>
@@ -205,10 +209,10 @@ function Teams({ cards, label }) {
   );
 }
 
-function Overlap({ here, me, sibs, data, seed, sig }) {
-  const [pick, setPick] = useState(sibs[0] ? sibs[0].href : null);
+function Overlap({ here, me, sibs, data, seed, sig }: { here: string[]; me: string; sibs: { href: string; label: string }[]; data: Record<string, Near>; seed: string; sig: number[] }) {
+  const [pick, setPick] = useState<string | null>(sibs[0] ? sibs[0].href : null);
   const other = sibs.find((s) => s.href === pick);
-  const theirs = other ? (data[other.href.split('/').pop()] || {}).products || [] : [];
+  const theirs = other ? (data[other.href.split('/').pop() ?? ''] || {}).products || [] : [];
   const both = here.filter((p) => theirs.includes(p));
   const mine = here.filter((p) => !theirs.includes(p));
   const only = theirs.filter((p) => !here.includes(p));
@@ -218,7 +222,7 @@ function Overlap({ here, me, sibs, data, seed, sig }) {
       <div className="xsl-ovl-pick" role="group" aria-label={me} data-swipe-own>
         {sibs.map((s) => (
           <button key={s.href} type="button" aria-pressed={s.href === pick} onClick={() => setPick(s.href)}>
-            {s.href === pick && <motion.span layoutId="xsl-ovl" className="xsl-ovl-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
+            {s.href === pick && <motion.span layoutId="xsl-ovl" className="xsl-ovl-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] as const }} />}
             <span>{s.label}</span>
           </button>
         ))}
@@ -235,7 +239,7 @@ function Overlap({ here, me, sibs, data, seed, sig }) {
 }
 
 /* what it runs on, inside its sheet: the products on one account, each a link */
-function Runs({ runs }) {
+function Runs({ runs }: { runs: RunsData }) {
   return (
     <div className="xs2-sheet">
       {runs.lede && <p className="v2f-lede">{runs.lede}</p>}
@@ -257,7 +261,7 @@ function Runs({ runs }) {
 }
 
 /* security and compliance, inside its sheet: a calm list of proof */
-function Proof({ sec }) {
+function Proof({ sec }: { sec: Security }) {
   return (
     <div className="xs2-sheet">
       <ul className="xs2-proof">
@@ -275,11 +279,11 @@ function Proof({ sec }) {
 
 /* arriving from a tile (the index or a team card), the hero keeps the picture that was clicked (openTile.js leaves its
    film in sessionStorage); the cover sits over the hero while this swaps, so the open lands on the same film */
-function useTileFilm(own) {
-  const [film, setFilm] = useState(own);
+function useTileFilm(own: string | null) {
+  const [film, setFilm] = useState<string | null>(own);
   useEffect(() => {
     try {
-      const t = JSON.parse(sessionStorage.getItem('hz-tile-film') || 'null');
+      const t = JSON.parse(sessionStorage.getItem('hz-tile-film') || 'null') as { film?: string; href?: string } | null;
       sessionStorage.removeItem('hz-tile-film');
       if (t && t.film && t.href === location.pathname.replace(/\/$/, '') && FILMS.includes(t.film)) setFilm(t.film);
     } catch { /* storage is a nicety */ }
@@ -287,16 +291,16 @@ function useTileFilm(own) {
   return film;
 }
 
-export default function Solution({ doc, data }) {
+export default function Solution({ doc, data }: { doc: SolutionDoc; data: Record<string, Near> }) {
   const heroFilm = useTileFilm(doc.reel && doc.reel.slug);
   const reel = doc.reel && { ...doc.reel, slug: heroFilm };
   const n = reel ? reel.steps.length : 0;
-  const sibLinks = doc.more ? doc.more.links.filter((l) => /^\/solutions\/[^/]+$/.test(l.href) && data[l.href.split('/').pop()]) : [];
+  const sibLinks = doc.more ? doc.more.links.filter((l) => /^\/solutions\/[^/]+$/.test(l.href) && data[l.href.split('/').pop() ?? '']) : [];
   const otherLinks = doc.more ? doc.more.links.filter((l) => !doc.sibs.some((s) => s.href === l.href)) : [];
   const here = doc.runs ? doc.runs.items.map((x) => x.name) : [];
   const me = reel ? reel.label : doc.title;
-  const cards = doc.sibs.map((s) => {
-    const l = doc.more.links.find((x) => x.href === s.href);
+  const cards: Card[] = doc.sibs.map((s) => {
+    const l = doc.more?.links.find((x) => x.href === s.href);
     return { href: s.href, title: s.title, preview: s.first, meta: l ? l.label : s.label, film: s.film };
   });
   // the strip and the band take films the hero and the team cards below do not show

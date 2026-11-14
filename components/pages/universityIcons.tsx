@@ -23,7 +23,15 @@ const P = {
   download: <path d="M12 15V3M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5" />,
 };
 
-export default function Icon({ name, size = 18, className = '' }) {
+export type IconName = keyof typeof P;
+
+interface IconProps {
+  name: IconName;
+  size?: number;
+  className?: string;
+}
+
+export default function Icon({ name, size = 18, className = '' }: IconProps) {
   return (
     <svg className={'xuv-ico ' + className} viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       {P[name]}

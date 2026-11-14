@@ -5,6 +5,7 @@
    reader presses one. Every step and its words are in the page from the first frame, stacked in one cell with the open
    one seen, so the card never moves the page; with no JS or no motion the first step is open. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { Lines } from '../ui';
 import { A, SecHead } from '../kit';
@@ -12,14 +13,19 @@ import ModelFilm, { FilmPause, usePaused } from '../v2/ModelFilm';
 import './UniversityFold.css';
 
 const BEAT = 2600; // how long a step stays under way before the next begins
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
-export function Chip({ children, tone, className = '' }) {
+export function Chip({ children, tone, className = '' }: { children?: ReactNode; tone?: string; className?: string }) {
   return <span className={'xuv-chip' + (tone ? ' ' + tone : '') + ' ' + className}>{children}</span>;
 }
 
-export function Steps({ title, steps, film }) {
-  const box = useRef(null);
+export interface Step {
+  title: string;
+  body?: string;
+}
+
+export function Steps({ title, steps, film }: { title: string; steps: Step[]; film: string }) {
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const stop = usePaused();
@@ -63,7 +69,7 @@ export function Steps({ title, steps, film }) {
 }
 
 /* The first screen. trail: [{ label, to? }]; actions: the asks (links and buttons) in order. */
-export function Fold({ trail, badge, title, lede, actions, preview }) {
+export function Fold({ trail, badge, title, lede, actions, preview }: { trail: { label: string; to?: string }[]; badge: ReactNode; title: string; lede: ReactNode; actions: ReactNode; preview?: ReactNode }) {
   return (
     <section className="xuv-fold">
       <div className={'xuv-wrap xuv-fold-grid' + (preview ? ' has-side' : '')}>
@@ -88,7 +94,7 @@ export function Fold({ trail, badge, title, lede, actions, preview }) {
 }
 
 /* A section with its head: kicker, title, lede. tone="sunk" sets it on the recessed ground. */
-export function Band({ id, kicker, title, lede, tone, narrow, center, children }) {
+export function Band({ id, kicker, title, lede, tone, narrow, center, children }: { id?: string; kicker?: string; title?: string; lede?: string; tone?: string; narrow?: boolean; center?: boolean; children?: ReactNode }) {
   return (
     <section id={id} className={'xuv-sec' + (tone ? ' ' + tone : '')}>
       <div className={'xuv-wrap' + (narrow ? ' narrow' : '')}>

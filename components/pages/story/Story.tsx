@@ -20,16 +20,19 @@
 // CTA: "The original case study (PDF)", Hanzo's label: data-cta customers.hero (thumb) and customers.close; "Every launch →" stays a text link
 // Metric: contact_sales_submit (journey level)
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, FocusEvent, RefObject } from 'react';
 import { motion, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
+import type { MotionStyle, MotionValue } from 'motion/react';
 import { useCalm } from '../../ui';
 import { A, Cta, Img } from '../../kit';
 import Sigil from '../../Sigil';
 import { useArrival } from '../doorway';
+import type { Chapter, FigureData, Gallery, How, Link, Pic as Photo, Sibling, StoryDoc } from './types';
 import './Story.css';
 
-const EM = [0.16, 1, 0.3, 1]; // the deck's ease-emphasis
-const EASE_IO = [0.4, 0, 0.2, 1]; // the deck's ease-in-out: things that move and stay
-const c01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+const EM = [0.16, 1, 0.3, 1] as const; // the deck's ease-emphasis
+const EASE_IO = [0.4, 0, 0.2, 1] as const; // the deck's ease-in-out: things that move and stay
+const c01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
 // with scripts off, everything that starts hidden or offset for its entrance is shown, and the chapters stand in a column
 const NOJS = '.xst .x-line-in,.xst-h1-s,.xst-scene-t,.xst-scene-pic img,.xst-shot{transform:none!important;opacity:1!important}'
   + '.xst-cover{clip-path:none!important}.xst-scenes{height:auto!important}.xst-stage{position:relative!important;height:auto!important;overflow:visible!important}'
@@ -37,14 +40,14 @@ const NOJS = '.xst .x-line-in,.xst-h1-s,.xst-scene-t,.xst-scene-pic img,.xst-sho
   + '.xst-scene-pic,.xst-tile .xst-pic{clip-path:none!important}';
 const calmNow = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 // a keyboard stop that lands off screen is brought into view at once (the smooth scroll would leave it below the fold)
-const reveal = (e) => {
+const reveal = (e: FocusEvent<HTMLElement>) => {
   const el = e.currentTarget, r = el.getBoundingClientRect();
   if (r.top >= 72 && r.bottom <= innerHeight - 72) return;
   const y = r.top + scrollY - innerHeight / 2 + r.height / 2;
   if (window.__lenis) window.__lenis.scrollTo(y, { immediate: true }); else window.scrollTo({ top: y, behavior: 'instant' });
 };
-const travel = (y) => { if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.2 }); else window.scrollTo({ top: y, behavior: calmNow() ? 'auto' : 'smooth' }); };
-const marked = (text, m) => {
+const travel = (y: number) => { if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.2 }); else window.scrollTo({ top: y, behavior: calmNow() ? 'auto' : 'smooth' }); };
+const marked = (text: string, m: string | null) => {
   if (!m || !text.includes(m)) return text;
   const i = text.indexOf(m);
   return <>{text.slice(0, i)}<mark className="xst-mark">{m}</mark>{text.slice(i + m.length)}</>;
@@ -52,11 +55,12 @@ const marked = (text, m) => {
 
 /* a picture (kit Img, its box reserved) over its own caption plate: if the file cannot load, the plate is what shows
    (quiet: the caption already sits under the frame, so the plate stays plain) */
-const BOX = { hero: [1920, 1080], scene: [1200, 1500], tile: [1200, 1500], shot: [1600, 1000], next: [1600, 900] };
+const BOX = { hero: [1920, 1080], scene: [1200, 1500], tile: [1200, 1500], shot: [1600, 1000], next: [1600, 900] } as const;
 const LATE = 1200; // a picture not decoded this long after it is in view counts as missing (it can still arrive later)
-function Pic({ img, className = '', priority, style, n, box = 'tile', quiet, art = true, live = true }) {
+interface PicProps { img: Photo; className?: string; priority?: boolean; style?: MotionStyle; n?: string; box?: keyof typeof BOX; quiet?: boolean; art?: boolean; live?: boolean }
+function Pic({ img, className = '', priority, style, n, box = 'tile', quiet, art = true, live = true }: PicProps) {
   const [w, h] = BOX[box];
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement>(null);
   const [bad, setBad] = useState(false);
   const [near, setNear] = useState(false);
   const calm = useCalm();
@@ -66,9 +70,9 @@ function Pic({ img, className = '', priority, style, n, box = 'tile', quiet, art
   // screen, and stands still for reduced motion or when its chapter is not on stage. If the picture arrives, it wins.
   useEffect(() => {
     const el = ref.current, i = art && el && el.querySelector('img');
-    if (!i) return;
+    if (!el || !i) return;
     const ok = () => i.complete && i.naturalWidth > 0;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const fail = () => setBad(true);
     const load = () => { clearTimeout(t); setBad(false); };
     const io = new IntersectionObserver(([e]) => {
@@ -89,25 +93,26 @@ function Pic({ img, className = '', priority, style, n, box = 'tile', quiet, art
 }
 
 /* a figure exactly as Hanzo prints it: its own characters rise into place, one after another, when it arrives */
-function Figure({ value }) {
+function Figure({ value }: { value: string }) {
   return (
     <span className="xst-fig-v" aria-label={value}>
-      {[...value].map((c, i) => <span key={i} className="xst-ch" style={{ '--k': i }} aria-hidden="true">{c}</span>)}
+      {[...value].map((c, i) => <span key={i} className="xst-ch" style={{ '--k': i } as CSSProperties} aria-hidden="true">{c}</span>)}
     </span>
   );
 }
 
 /* hide pictures that fail (the plate under them carries the caption); checks ones that failed before hydration too */
-function useMissing(root) {
+function useMissing(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
+    if (!root.current) return;
     const imgs = [...root.current.querySelectorAll('img')];
-    const miss = (i) => i.setAttribute('data-missing', '');
+    const miss = (i: HTMLImageElement) => i.setAttribute('data-missing', '');
     imgs.forEach((i) => { if (i.complete && !i.naturalWidth) miss(i); else i.addEventListener('error', () => miss(i), { once: true }); });
   }, [root]);
 }
 
-function Hero({ doc, ask }) {
-  const box = useRef(null);
+function Hero({ doc, ask }: { doc: StoryDoc; ask?: Link }) {
+  const box = useRef<HTMLElement>(null);
   const calm = useCalm(); // reduced motion: the room is simply open and nothing follows the scroll
   const [ready, setReady] = useState(false);
   const [bare, setBare] = useState(false); // the launch's picture could not load: the contour and Hanzo's caption carry the room
@@ -116,7 +121,7 @@ function Hero({ doc, ask }) {
   const settle = useTransform(p, [0, 0.55], [1, 52 / 84]);
   const nums = doc.figures.map((f) => parseFloat(f.value.replace(/[^\d.]/g, ''))).filter(Number.isFinite);
   useEffect(() => {
-    const el = box.current.querySelector('.xst-cover img');
+    const el = box.current?.querySelector<HTMLImageElement>('.xst-cover img');
     if (!el) { setBare(true); return; }
     let shown = false;
     const done = () => { shown = true; setReady(true); setBare(false); };
@@ -162,7 +167,7 @@ function Hero({ doc, ask }) {
 /* when the launch's picture cannot load, the room still holds a real object: Hanzo's lead figure on a graphite plate
    (value and label exactly as the header prints them; aria-hidden, the figures row below is the readable copy, and
    the full set lives only there, so nothing repeats back to back). It wipes open once, then its characters rise. */
-function Ledger({ figures, calm }) {
+function Ledger({ figures, calm }: { figures: FigureData[]; calm: boolean }) {
   const [first] = figures;
   return (
     <motion.div className="xst-ledger" aria-hidden="true" data-in=""
@@ -173,11 +178,11 @@ function Ledger({ figures, calm }) {
   );
 }
 
-function Figures({ doc, mark, onPress }) {
+function Figures({ doc, mark, onPress }: { doc: StoryDoc; mark: string | null; onPress: (f: FigureData) => void }) {
   // the source hint, in Hanzo's own words: the chapter's number and title, the report's heading, or (for a figure the lede
   // states) the launch's name, with an up arrow: the sentence sits just above
-  const where = (f) => (f.from.step !== undefined ? doc.how.steps[f.from.step].n + ' · ' + doc.how.steps[f.from.step].title : f.from.report ? doc.report.h2 : f.from.lede ? doc.name : null);
-  const dir = (f) => (f.from.lede ? '↑' : '↓');
+  const where = (f: FigureData) => { const from = f.from; return from?.step !== undefined && doc.how ? doc.how.steps[from.step].n + ' · ' + doc.how.steps[from.step].title : from?.report ? doc.report?.h2 : from?.lede ? doc.name : null; };
+  const dir = (f: FigureData) => (f.from?.lede ? '↑' : '↓');
   return (
     <dl className="xst-figs">
       {doc.figures.map((f) => (
@@ -187,12 +192,12 @@ function Figures({ doc, mark, onPress }) {
             {f.from && f.from.pdf ? (
               <A to={f.from.pdf} className="xst-fig-b" aria-label={f.value + ' ' + f.label}>
                 <Figure value={f.value} /><span className="xst-fig-l" aria-hidden="true">{f.label}</span>
-                <span className="xst-fig-w x-mono" aria-hidden="true"><i>↗</i>{doc.links.find((l) => l.href === f.from.pdf).label}</span>
+                <span className="xst-fig-w x-mono" aria-hidden="true"><i>↗</i>{doc.links.find((l) => l.href === f.from?.pdf)?.label}</span>
               </A>
             ) : (
               <button type="button" className="xst-fig-b" aria-pressed={mark === f.value} onClick={() => onPress(f)} disabled={!f.from}>
                 <Figure value={f.value} /><span className="xst-fig-l">{f.label}</span>
-                {where(f) && <span className={'xst-fig-w x-mono' + (f.from.lede ? ' up' : '')} aria-hidden="true"><i>{dir(f)}</i>{where(f)}</span>}
+                {where(f) && <span className={'xst-fig-w x-mono' + (f.from?.lede ? ' up' : '')} aria-hidden="true"><i>{dir(f)}</i>{where(f)}</span>}
               </button>
             )}
           </dd>
@@ -208,10 +213,11 @@ function Figures({ doc, mark, onPress }) {
    Compositions vary by chapter: a (words left, plate right), b (plate left, words right), c (a wide plate over two
    columns of words), d (a wide column of words beside a narrow portrait plate); the picture-less chapter is words only. */
 const LAYS = ['a', 'b', 'c', 'd'];
-function Scene({ s, i, n, p, mark, calm, last, live }) {
-  const t = (v) => v * (n - 1);
-  const enter = (v) => (i ? c01((t(v) - (i - 0.8)) / 0.55) : 1);
-  const leave = (v) => c01((t(v) - (i + 0.06)) / 0.14); // gone by i + 0.2, when the next wipe starts
+interface SceneProps { s: Chapter; i: number; n: number; p: MotionValue<number>; mark: string | null; calm: boolean; last: string; live: boolean }
+function Scene({ s, i, n, p, mark, calm, last, live }: SceneProps) {
+  const t = (v: number) => v * (n - 1);
+  const enter = (v: number) => (i ? c01((t(v) - (i - 0.8)) / 0.55) : 1);
+  const leave = (v: number) => c01((t(v) - (i + 0.06)) / 0.14); // gone by i + 0.2, when the next wipe starts
   const clip = useTransform(p, (v) => `inset(${((1 - enter(v)) * 100).toFixed(2)}% 0% 0% 0%)`);
   const words = useTransform(p, (v) => (1 - enter(v)) * 72 - leave(v) * 44);
   // the words arrive with their sheet: unseen until the wipe is a third of the way up, whole by the time it lands, so
@@ -232,7 +238,7 @@ function Scene({ s, i, n, p, mark, calm, last, live }) {
   );
 }
 
-function Chapters({ how, mark, box }) {
+function Chapters({ how, mark, box }: { how: How; mark: string | null; box: RefObject<HTMLDivElement | null> }) {
   const n = how.steps.length;
   const { scrollYProgress: p } = useScroll({ target: box, offset: ['start start', 'end end'] });
   const calm = useCalm();
@@ -240,7 +246,7 @@ function Chapters({ how, mark, box }) {
   useMotionValueEvent(p, 'change', (v) => setAt(Math.max(0, Math.min(n - 1, Math.floor(v * (n - 1) + 0.45)))));
   const last = how.steps[n - 1].n;
   return (
-    <div className="xst-scenes" ref={box} style={{ '--n': n }}>
+    <div className="xst-scenes" ref={box} style={{ '--n': n } as CSSProperties}>
       <div className="xst-stage">
         {how.steps.map((s, i) => <Scene key={s.n} s={s} i={i} n={n} p={p} mark={mark} calm={calm} last={last} live={i === at} />)}
       </div>
@@ -248,11 +254,11 @@ function Chapters({ how, mark, box }) {
   );
 }
 
-function Wall({ g }) {
+function Wall({ g }: { g: Gallery }) {
   return (
     <ul className="xst-wall" data-count={g.imgs.length} aria-label={g.h2}>
       {g.imgs.map((p, i) => (
-        <li key={p.src} className="xst-tile" style={{ '--i': i }}>
+        <li key={p.src} className="xst-tile" style={{ '--i': i } as CSSProperties}>
           <figure>
             <Pic img={p} quiet />
             <figcaption>{p.alt}</figcaption>
@@ -263,31 +269,36 @@ function Wall({ g }) {
   );
 }
 
-export default function Story({ doc, next }) {
+export default function Story({ doc, next }: { doc: StoryDoc; next: Sibling | null }) {
   useArrival();
-  const root = useRef(null);
-  const scenes = useRef(null);
-  const [mark, setMark] = useState(null);
+  const root = useRef<HTMLElement>(null);
+  const scenes = useRef<HTMLDivElement>(null);
+  const [mark, setMark] = useState<string | null>(null);
   const ask = doc.links[0]; // Hanzo's own first action on the page: the original case study
   useMissing(root);
   // what has arrived: figures rise, frames wipe open, phone scenes open their picture (once each)
   useEffect(() => {
+    if (!root.current) return;
     const els = [...root.current.querySelectorAll('.xst-scene, .xst-tile, .xst-shot, .xst-fig')];
     const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.setAttribute('data-in', ''); io.unobserve(e.target); } }), { rootMargin: '0px 0px -18% 0px' });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
-  const press = (f) => {
+  const press = (f: FigureData) => {
     setMark(f.value);
-    if (f.from.step !== undefined) {
+    const from = f.from;
+    if (!from) return; // the button is disabled without a source
+    if (from.step !== undefined) {
       const sec = scenes.current;
+      const el = document.getElementById('xst-step-' + from.step);
+      if (!sec || !el || !doc.how) return;
       const pinned = getComputedStyle(sec).getPropertyValue('--pinned').trim() === '1';
       const n = doc.how.steps.length;
-      const el = document.getElementById('xst-step-' + f.from.step);
-      if (pinned) travel(sec.getBoundingClientRect().top + scrollY + (f.from.step / Math.max(1, n - 1)) * (sec.offsetHeight - innerHeight) + 2);
+      if (pinned) travel(sec.getBoundingClientRect().top + scrollY + (from.step / Math.max(1, n - 1)) * (sec.offsetHeight - innerHeight) + 2);
       else travel(el.getBoundingClientRect().top + scrollY - 96);
     } else {
-      const el = document.getElementById(f.from.report ? 'xst-report' : 'xst-lede');
+      const el = document.getElementById(from.report ? 'xst-report' : 'xst-lede');
+      if (!el) return;
       travel(el.getBoundingClientRect().top + scrollY - innerHeight * 0.25);
     }
   };

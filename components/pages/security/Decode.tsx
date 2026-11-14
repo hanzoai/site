@@ -8,32 +8,35 @@
    Props: text, run (it resolves each time this turns true), hold (while run is false, show a still scramble: the term
    has not arrived yet), dur (ms, default 520), host (selector), className, as. */
 import { useEffect, useRef, useState } from 'react';
+import type { ElementType } from 'react';
 import { useReducedMotion } from 'motion/react';
 
 const UP = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 const LO = 'abcdefghijkmnopqrstuvwxyz';
 const DG = '0123456789';
-const pick = (s) => s[(Math.random() * s.length) | 0];
-const glyph = (c) => (/[A-Z]/.test(c) ? pick(UP) : /[a-z]/.test(c) ? pick(LO) : /[0-9]/.test(c) ? pick(DG) : c);
-const scramble = (t) => Array.from(t, glyph).join('');
+const pick = (s: string) => s[(Math.random() * s.length) | 0];
+const glyph = (c: string) => (/[A-Z]/.test(c) ? pick(UP) : /[a-z]/.test(c) ? pick(LO) : /[0-9]/.test(c) ? pick(DG) : c);
+const scramble = (t: string) => Array.from(t, glyph).join('');
 
-export default function Decode({ text, run = true, hold = false, dur = 520, host, className = '', as: Tag = 'span' }) {
-  const ref = useRef(null);
+interface DecodeProps { text: string; run?: boolean; hold?: boolean; dur?: number; host?: string; className?: string; as?: ElementType }
+
+export default function Decode({ text, run = true, hold = false, dur = 520, host, className = '', as: Tag = 'span' }: DecodeProps) {
+  const ref = useRef<HTMLElement>(null);
   const rm = useReducedMotion();
   const [calm, setCalm] = useState(false);
   useEffect(() => setCalm(!!rm), [rm]);
-  const [out, setOut] = useState(null); // null: the real words show; a string: the scramble drawn over them
+  const [out, setOut] = useState<string | null>(null); // null: the real words show; a string: the scramble drawn over them
   const [one, setOne] = useState(true); // the words sit on one line: keep the scramble on one line too (glyph widths vary)
   const raf = useRef(0);
-  const measure = () => { const t = ref.current?.firstChild; if (t) setOne(t.getClientRects().length <= 1); };
-  const play = (ms) => {
+  const measure = () => { const t = ref.current?.firstChild as Element | null | undefined; if (t) setOne(t.getClientRects().length <= 1); };
+  const play = (ms: number) => {
     cancelAnimationFrame(raf.current);
     measure();
     const n = text.length;
     const at = Array.from(text, (_, i) => (i / Math.max(1, n - 1)) * ms * 0.72 + Math.random() * ms * 0.28);
     const t0 = performance.now();
     let last = 0;
-    const step = (now) => {
+    const step = (now: number) => {
       const e = now - t0;
       if (e >= ms) { setOut(null); return; }
       if (now - last > 45) { // a new glyph every ~45 ms, not every frame: it reads as characters, not noise
@@ -56,9 +59,9 @@ export default function Decode({ text, run = true, hold = false, dur = 520, host
   // hover: scramble again and resolve (fine pointers only; a tap already chooses)
   useEffect(() => {
     const el = ref.current;
-    const h = host ? el?.closest(host) : el;
+    const h = host ? el?.closest<HTMLElement>(host) : el;
     if (!h || calm) return;
-    const enter = (e) => { if (e.pointerType === 'mouse' && run) play(Math.min(dur, 420)); };
+    const enter = (e: PointerEvent) => { if (e.pointerType === 'mouse' && run) play(Math.min(dur, 420)); };
     h.addEventListener('pointerenter', enter);
     return () => h.removeEventListener('pointerenter', enter);
   }, [host, calm, run, text, dur]); // eslint-disable-line react-hooks/exhaustive-deps

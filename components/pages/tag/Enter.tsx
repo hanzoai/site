@@ -5,11 +5,12 @@
    'done' on the server, with reduced motion, or for a section already scrolled past, so the server HTML is the final
    state (legible with JS off, no hydration mismatch); 'pre' while waiting below the fold; 'in' once it arrives. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { P, useMounted } from './Art';
 
-export function useArrive() {
-  const ref = useRef(null);
+export function useArrive<T extends HTMLElement = HTMLElement>() {
+  const ref = useRef<T>(null);
   const mounted = useMounted();
   const calm = useReducedMotion();
   const seen = useInView(ref, { once: true, margin: '0px 0px -22% 0px' });
@@ -18,11 +19,11 @@ export function useArrive() {
     const r = ref.current && ref.current.getBoundingClientRect();
     if (r && r.top < 0) setPast(true); // reloaded further down: it has already arrived
   }, []);
-  return [ref, !mounted || calm || past ? 'done' : seen ? 'in' : 'pre'];
+  return [ref, !mounted || calm || past ? 'done' : seen ? 'in' : 'pre'] as const;
 }
 
 /* letter-cascade: the letters fall into place one by one. Screen readers get the line as words. */
-export function Letters({ lines, id, className }) {
+export function Letters({ lines, id, className }: { lines: string[]; id?: string; className?: string }) {
   let n = 0;
   return (
     <h1 id={id} className={className}>
@@ -32,7 +33,7 @@ export function Letters({ lines, id, className }) {
           <span key={i} className={`${P}-lc-l`}>
             {l.split(' ').map((w, j, all) => (
               <span key={j}>
-                <span className={`${P}-lc-w`}>{[...w].map((c, k) => <span key={k} style={{ '--i': n++ }}>{c}</span>)}</span>
+                <span className={`${P}-lc-w`}>{[...w].map((c, k) => <span key={k} style={{ '--i': n++ } as CSSProperties}>{c}</span>)}</span>
                 {j < all.length - 1 ? ' ' : null}
               </span>
             ))}
@@ -44,19 +45,19 @@ export function Letters({ lines, id, className }) {
 }
 
 /* blinds: venetian-blind strips in the page's paper turn edge-on, one after another, and open on the dark room. */
-export function Blinds({ state, n = 9 }) {
+export function Blinds({ state, n = 9 }: { state: string; n?: number }) {
   if (state === 'done') return null;
   return (
     <div className={`${P}-blinds`} data-s={state} aria-hidden="true">
-      {Array.from({ length: n }, (_, i) => <i key={i} style={{ '--i': i }} />)}
+      {Array.from({ length: n }, (_, i) => <i key={i} style={{ '--i': i } as CSSProperties} />)}
     </div>
   );
 }
 
 /* cover-slide: the section before the rooms holds still once its foot reaches the bottom of the screen, and the rooms
    slide up over it. Its stick point is its own height above the screen's foot, measured on mount and on resize. */
-export function useStick() {
-  const ref = useRef(null);
+export function useStick<T extends HTMLElement = HTMLElement>() {
+  const ref = useRef<T>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;

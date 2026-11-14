@@ -8,9 +8,13 @@ import { usePaused } from '../../../v2/ModelFilm';
 
 const N = 900;
 
+// [x, y, alpha] for a sphere dot; [x, y, alpha, ring, angle] for a ring dot
+type Dot = [x: number, y: number, a: number, k?: number, ang?: number];
+interface Particle { hx: number; hy: number; a: number; k: number | undefined; ang: number | undefined; x: number; y: number; vx: number; vy: number }
+
 // the target picture in unit space (0..1 square): sphere dots weighted toward the light, then three rings
-function shape(rand) {
-  const pts = [];
+function shape(rand: () => number) {
+  const pts: Dot[] = [];
   const cx = 0.5, cy = 0.4, r = 0.27;
   while (pts.length < N * 0.62) {
     const a = rand() * Math.PI * 2, d = Math.sqrt(rand()) * r;
@@ -29,20 +33,21 @@ function shape(rand) {
   return pts;
 }
 
-function seeded(s) { return () => ((s = (s * 16807) % 2147483647) / 2147483647); }
+function seeded(s: number) { return () => ((s = (s * 16807) % 2147483647) / 2147483647); }
 
-export default function Swarm({ label }) {
-  const cv = useRef(null);
+export default function Swarm({ label }: { label?: string }) {
+  const cv = useRef<HTMLCanvasElement>(null);
   const paused = usePaused();
   const pausedRef = useRef(paused);
   pausedRef.current = paused;
   useEffect(() => {
     const c = cv.current;
-    const g = c.getContext('2d');
+    const g = c?.getContext('2d');
+    if (!c || !g) return;
     const rand = seeded(7);
     const home = shape(rand);
     const RINGS = [[0.34, 0.08], [0.41, 0.105], [0.47, 0.13]];
-    const P = home.map(([x, y, a, k, ang]) => ({ hx: x, hy: y, a, k, ang, x: rand(), y: rand() * 1.2 - 0.1, vx: 0, vy: 0 }));
+    const P: Particle[] = home.map(([x, y, a, k, ang]) => ({ hx: x, hy: y, a, k, ang, x: rand(), y: rand() * 1.2 - 0.1, vx: 0, vy: 0 }));
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let W = 0, H = 0, S = 0, ox = 0, oy = 0, raf = 0, on = false;
     const ptr = { x: -9, y: -9, in: false };
@@ -62,7 +67,7 @@ export default function Swarm({ label }) {
       if (!on || pausedRef.current) return;
       const px = (ptr.x - ox) / S, py = (ptr.y - oy) / S, R = 0.13;
       for (const p of P) {
-        if (p.k === undefined) continue; // the rings turn slowly, like the ripples in Zen's film
+        if (p.k === undefined || p.ang === undefined) continue; // the rings turn slowly, like the ripples in Zen's film
         p.ang += 0.0016 * (p.k + 1);
         const [rx, ry] = RINGS[p.k];
         p.hx = 0.5 + Math.cos(p.ang) * rx; p.hy = 0.74 + Math.sin(p.ang) * ry;
@@ -89,10 +94,10 @@ export default function Swarm({ label }) {
     io.observe(c);
     const ro = new ResizeObserver(() => { size(); draw(); });
     ro.observe(c);
-    const pos = (e) => { const r = c.getBoundingClientRect(); ptr.x = e.clientX - r.left; ptr.y = e.clientY - r.top; };
-    const move = (e) => { if (calm || e.pointerType === 'touch') return; pos(e); ptr.in = true; wake(); };
+    const pos = (e: PointerEvent) => { const r = c.getBoundingClientRect(); ptr.x = e.clientX - r.left; ptr.y = e.clientY - r.top; };
+    const move = (e: PointerEvent) => { if (calm || e.pointerType === 'touch') return; pos(e); ptr.in = true; wake(); };
     const leave = () => { ptr.in = false; wake(); };
-    const tap = (e) => {
+    const tap = (e: PointerEvent) => {
       if (calm) return;
       pos(e);
       const tx = (ptr.x - ox) / S, ty = (ptr.y - oy) / S;

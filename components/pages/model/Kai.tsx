@@ -6,6 +6,7 @@
    Beyond: copy the exact request you just watched resolve (verbatim from the guide) and run it yourself; the three
    question types pin as chapters, each one's answer shape playing on a real question from the guide. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import { A, More, Cta, Img, Band } from '../../kit';
@@ -88,7 +89,13 @@ const { data: decision } = await ai.postDecisions({
 console.log(decision.answers.risk.score, decision.answers.risk.probabilities)`;
 
 // Hanzo's three guide requests. The weights only draw the shape of an answer (an illustration, no figures shown).
-const CASES = [
+type Opt = [key: string, desc: string, weight: number];
+interface Choice { name: string; type: 'choice'; ins: string; opts: Opt[] }
+interface Score { name: string; type: 'score'; ins: string; levels: string[]; at: number }
+interface Noul { name: string; type: 'noul'; ins: string; p: number }
+type Question = Choice | Score | Noul;
+interface Case { tab: string; lang: string; code: string; state: string; qs: Question[] }
+const CASES: Case[] = [
   { tab: 'Support ticket', lang: 'curl', code: CURL, state: 'Customer email: Cancel my plan immediately. Your service was down during our product launch.', qs: [
     { name: 'department', type: 'choice', ins: 'Route ticket to appropriate team', opts: [['executive_escalations', 'high-value customer cancellation threats', 0.8], ['support', 'general technical inquiries', 0.14], ['billing', 'standard invoice updates', 0.06]] },
     { name: 'urgency', type: 'score', ins: 'Rate ticket urgency', levels: ['low', 'normal', 'high', 'critical'], at: 2.45 },
@@ -103,7 +110,7 @@ const CASES = [
   ] },
 ];
 
-function Answer({ q, on }) {
+function Answer({ q, on }: { q: Question; on: boolean }) {
   if (q.type === 'choice') {
     const top = Math.max(...q.opts.map((o) => o[2]));
     return (
@@ -141,7 +148,7 @@ function Answer({ q, on }) {
 }
 
 function Tree() {
-  const box = useRef(null), typed = useRef(null);
+  const box = useRef<HTMLDivElement>(null), typed = useRef<HTMLSpanElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const paused = usePaused();
@@ -156,9 +163,10 @@ function Tree() {
   // type the state into a text node, then resolve one question at a time, hold, move to the next case
   useEffect(() => {
     if (calm || paused || (!seen && !mine)) return;
-    let t;
+    let t: ReturnType<typeof setTimeout>;
     if (step === 0) {
       const el = typed.current, s = cs.state;
+      if (!el) return;
       let i = 0;
       el.textContent = '';
       t = setInterval(() => { i += 2; el.textContent = s.slice(0, i); if (i >= s.length) { clearInterval(t); setStep(1); } }, 16);
@@ -168,7 +176,7 @@ function Tree() {
     if (!mine) { t = setTimeout(() => { setC((c + 1) % CASES.length); setStep(0); }, 3400); return () => clearTimeout(t); }
   }, [paused, step, seen, calm, c, mine, total, cs.state]);
 
-  const pick = (i) => { setMine(true); setC(i); setStep(calm ? 99 : 0); };
+  const pick = (i: number) => { setMine(true); setC(i); setStep(calm ? 99 : 0); };
 
   return (
     <div className="ka-tree mb-panel" ref={box}>
@@ -188,7 +196,7 @@ function Tree() {
             return <motion.path key={c + q.name} d={`M50 0 C50 20 ${x} 20 ${x} 40`} vectorEffect="non-scaling-stroke" initial={{ pathLength: 0 }} animate={{ pathLength: step > i ? 1 : 0 }} transition={{ duration: 0.5, ease: EASE }} />;
           })}
         </svg>
-        <div className="ka-qs" style={{ '--n': total }}>
+        <div className="ka-qs" style={{ '--n': total } as CSSProperties}>
           <AnimatePresence mode="popLayout" initial={false}>
             {cs.qs.map((q, i) => (
               <motion.div key={c + q.name} className="ka-q" data-on={step > i ? '' : undefined} initial={{ opacity: 0, y: 16 }} animate={{ opacity: step > i ? 1 : 0.35, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, ease: EASE }}>
@@ -216,14 +224,14 @@ const TYPES = [
   ['noul', 'Send instructions: a yes/no question.', 'Get noul: P(true).'],
 ];
 
-const DIAMOND = poly((W, H, wide) => {
+const DIAMOND = poly((W: number, H: number, wide: boolean) => {
   const c = wide ? [W * 0.72, H * 0.5] : [W / 2, H * 0.26];
   const r = wide ? Math.min(H * 0.42, W * 0.25) : Math.min(W * 0.4, H * 0.2);
   return dense([[c[0], c[1] - r], [c[0] + r, c[1]], [c[0], c[1] + r], [c[0] - r, c[1]]], 8);
 });
 
 // a chapter's picture: Kai's film in cobalt, with one question from the guide's support-ticket request answering on it
-function TypeArt({ i, on }) {
+function TypeArt({ i, on }: { i: number; on: boolean }) {
   const q = CASES[0].qs[i];
   return (
     <div className="ka-art">
@@ -242,7 +250,7 @@ function TypeArt({ i, on }) {
 const CHAPTERS = TYPES.map(([t, send, get], i) => ({
   k: t,
   title: t,
-  art: (on) => <TypeArt i={i} on={on} />,
+  art: (on: boolean) => <TypeArt i={i} on={on} />,
   body: (
     <>
       <p>{send}</p>
@@ -252,7 +260,8 @@ const CHAPTERS = TYPES.map(([t, send, get], i) => ({
   ),
 }));
 
-const CARDS = [['Kai 1.8', 'Versioned model', 'kai-1.8', '/models/hanzo/kai-1.8', [1.8, 1024, 32768]], ['Kai', 'Default API alias', 'kai', '/models/hanzo/kai', [100, 0.021, 422]]];
+type Card = [name: string, label: string, code: string, to: string, data: number[]];
+const CARDS: Card[] = [['Kai 1.8', 'Versioned model', 'kai-1.8', '/models/hanzo/kai-1.8', [1.8, 1024, 32768]], ['Kai', 'Default API alias', 'kai', '/models/hanzo/kai', [100, 0.021, 422]]];
 
 export default function Kai() {
   return (
@@ -260,7 +269,7 @@ export default function Kai() {
       slug="kai"
       ask={{ label: 'Open Decisions', to: 'https://platform.hanzo.ai/decisions', id: 'kai.first' }}
       shape={DIAMOND}
-      aim={(W, H, wide) => (wide ? null : [-0.16 * W, -0.2 * H])}
+      aim={(W: number, H: number, wide: boolean) => (wide ? null : [-0.16 * W, -0.2 * H])}
       headClass="ka-head"
       head={
         <>

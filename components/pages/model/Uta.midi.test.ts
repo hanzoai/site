@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { midi } from './Uta.midi.ts';
 
 const f = midi([[3, 0, 2, 69], [0, 2, 1, 50]], 96);
-const hex = (a) => [...a].map((b) => b.toString(16).padStart(2, '0')).join(' ');
+const hex = (a: Iterable<number>) => [...a].map((b) => b.toString(16).padStart(2, '0')).join(' ');
 assert.equal(hex(f.slice(0, 14)), '4d 54 68 64 00 00 00 06 00 00 00 01 00 60'); // MThd, format 0, 1 track, 96 tpq
 assert.equal(hex(f.slice(14, 18)), '4d 54 72 6b');
 assert.equal((f[18] << 24 | f[19] << 16 | f[20] << 8 | f[21]), f.length - 22); // track length is right

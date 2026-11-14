@@ -7,8 +7,8 @@ import { useEffect, useRef, useState } from 'react';
 export const calmNow = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* [ref, in]: `in` turns true once the element enters view (true at once under reduced motion) */
-export function useEnter(margin = '0px 0px -18% 0px') {
-  const ref = useRef(null);
+export function useEnter<T extends HTMLElement = HTMLElement>(margin = '0px 0px -18% 0px') {
+  const ref = useRef<T>(null);
   const [on, setOn] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -18,13 +18,13 @@ export function useEnter(margin = '0px 0px -18% 0px') {
     io.observe(el);
     return () => io.disconnect();
   }, [margin]);
-  return [ref, on];
+  return [ref, on] as const;
 }
 
 /* card-deal: a list's items wait in one deck on the first item's place, then are dealt out to their own places, one
    after another. Measured in the browser (any grid or rail); items past `max` only fade. data-deal drives the CSS. */
 export function useDeal(max = 10) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLUListElement>(null);
   useEffect(() => {
     const ul = ref.current;
     if (!ul || calmNow()) return undefined;
@@ -33,7 +33,7 @@ export function useDeal(max = 10) {
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       io.disconnect();
-      const items = [...ul.children].filter((li) => !li.hidden);
+      const items = ([...ul.children] as HTMLElement[]).filter((li) => !li.hidden);
       if (!items.length) { ul.dataset.deal = 'done'; return; }
       const a = items[0].getBoundingClientRect();
       items.forEach((li, i) => {

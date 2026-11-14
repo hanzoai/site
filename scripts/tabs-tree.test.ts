@@ -2,15 +2,18 @@
 // part of the tree as it was. Usage: node scripts/tabs-tree.test.mjs
 import assert from 'node:assert';
 import { leaf, split, close, leaves } from '../components/pages/tabsTree.ts';
+import type { Layout } from '../components/pages/tabsTree.ts';
 
-let t = leaf('a', 'build');
+let t: Layout = leaf('a', 'build');
 t = split(t, 'a', 'row', leaf('b', 'work'), 's1');
 t = split(t, 'b', 'col', leaf('c', 'shell 3'), 's2');
 assert.deepEqual(leaves(t).map((l) => l.name), ['build', 'work', 'shell 3']);
+assert.ok(t.dir);
 const right = t.b;
 const t2 = close(t, 'a'); // build closes: the whole right split takes its place, untouched
 assert.equal(t2, right);
 const t3 = close(t, 'c'); // shell 3 closes: work takes its space, build is the same object
+assert.ok(t3.dir && !t3.b.dir);
 assert.equal(t3.a, t.a);
 assert.equal(t3.b.name, 'work');
 assert.equal(close(leaf('z', 'last'), 'z').id, 'z'); // the last shell stays

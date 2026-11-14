@@ -9,11 +9,19 @@ import { SITE } from '../../lib/plans';
 /* where a seat is asked for while the catalog sells the course none */
 export const ASK = '/contact-sales';
 
-const money = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 });
+const money = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 });
 
 /* the seat the catalog sells under planId, paid for and back at `back` (a hanzo.ai path), or null while it sells none */
-export function seatFor(planId, back) {
-  const row = LIVE.plans[planId];
+export interface Seat {
+  price: string;
+  credit: string;
+  href: string;
+}
+
+const PLANS: Record<string, { price: number } | undefined> = LIVE.plans;
+
+export function seatFor(planId: string, back: string): Seat | null {
+  const row = PLANS[planId];
   if (!row || !(row.price > 0)) return null;
   return {
     price: money(row.price),

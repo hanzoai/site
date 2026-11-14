@@ -12,6 +12,7 @@
    fits" draws its own booth-derived picture and Koe's wave film shows only on the stage, the map card and the model card.
    V2: 8/10 own picture per chapter (contour, two-lane clone, visemes, watermark chain) and fits; one steady solid ask (hero solid, header outlined while it shows); h1 stays visible after the settle; every hover answers; gaps closed; phone tabs one row, pause docked on the pill, ask clear of the cookie card */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, PointerEvent } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { Studio } from './Studio';
 import { Scene } from './Creative';
@@ -21,18 +22,20 @@ import { box as frame, focus } from '../../v2/Launch';
 import { useLoop, fit, rng, arrows } from './live';
 import './Koe.css';
 
-const PH = [['/h/', 0.55, 0.85, 'H'], ['/æ/', 0.85, 1.55, 'a'], ['/n/', 1.55, 1.95, 'n'], ['/z/', 1.95, 2.45, 'z'], ['/oʊ/', 2.45, 3.6, 'o']];
-const PRESETS = [
+type Phoneme = [sym: string, start: number, end: number, letter: string];
+type Preset = [name: string, speed: number, gain: number, rough: number, breath: number];
+const PH: Phoneme[] = [['/h/', 0.55, 0.85, 'H'], ['/æ/', 0.85, 1.55, 'a'], ['/n/', 1.55, 1.95, 'n'], ['/z/', 1.95, 2.45, 'z'], ['/oʊ/', 2.45, 3.6, 'o']];
+const PRESETS: Preset[] = [
   ['Cinematic Dramatic', 1.2, 1, 0.12, 0.04],
   ['Intimate Documentary', 1, 0.5, 0.05, 0.22],
   ['Gritty Character', 0.95, 0.85, 0.45, 0.08],
   ['Warm Commercial', 0.85, 0.75, 0.03, 0.02],
 ];
 const LEN = 5, BARS = 160;
-const at = (pr, k) => [0.55 + (PH[k][1] - 0.55) * pr[1], 0.55 + (PH[k][2] - 0.55) * pr[1]];
+const at = (pr: Preset, k: number) => [0.55 + (PH[k][1] - 0.55) * pr[1], 0.55 + (PH[k][2] - 0.55) * pr[1]];
 
 // the performance: one amplitude per bar across the 5 seconds
-function shape(pr, seed) {
+function shape(pr: Preset, seed: number) {
   const r = rng(seed), out = new Float32Array(BARS);
   for (let i = 0; i < BARS; i++) {
     const t = (i / BARS) * LEN;
@@ -51,14 +54,14 @@ function shape(pr, seed) {
 }
 
 function Booth() {
-  const stage = useRef(null), cv = useRef(null), sEl = useRef(null), csEl = useRef(null), lineEl = useRef(null), cells = useRef([]), letters = useRef([]);
+  const stage = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), sEl = useRef<HTMLSpanElement>(null), csEl = useRef<HTMLSpanElement>(null), lineEl = useRef<HTMLSpanElement>(null), cells = useRef<(HTMLLIElement | null)[]>([]), letters = useRef<(HTMLSpanElement | null)[]>([]);
   const [pi, setPi] = useState(0);
   const [play, setPlay] = useState(true);
   const pagePaused = usePaused(); // the stage's one Pause holds the booth too
   const S = useRef({ t: 4.3, hold: 0, k: -2 }); // Hanzo's own resting frame: hanzo.ai/koe renders 00:04.30
   const amps = useMemo(() => PRESETS.map((p, i) => shape(p, 11 + i)), []);
 
-  const mark = (t) => {
+  const mark = (t: number) => {
     const pr = PRESETS[pi];
     let k = -1;
     PH.forEach((_, j) => { const [s, e] = at(pr, j); if (t >= s && t < e) k = j; });
@@ -82,6 +85,7 @@ function Booth() {
     }
     const { w, h, d } = fit(c);
     const g = c.getContext('2d'), A = amps[pi], bw = w / BARS, mid = h / 2;
+    if (!g) return;
     g.clearRect(0, 0, w, h);
     for (let i = 0; i < BARS; i++) {
       const t = (i / BARS) * LEN, x = i * bw + bw * 0.2, bwid = Math.max(1, bw * 0.6);
@@ -99,8 +103,8 @@ function Booth() {
     mark(s.t);
   });
 
-  const seek = (e) => { const r = cv.current.getBoundingClientRect(); S.current.t = Math.max(0, Math.min(LEN, ((e.clientX - r.left) / r.width) * LEN)); S.current.hold = 0; };
-  const choose = (i) => { setPi(i); S.current.t = 0; S.current.hold = 0; S.current.k = -2; setPlay(true); };
+  const seek = (e: PointerEvent<HTMLCanvasElement>) => { if (!cv.current) return; const r = cv.current.getBoundingClientRect(); S.current.t = Math.max(0, Math.min(LEN, ((e.clientX - r.left) / r.width) * LEN)); S.current.hold = 0; };
+  const choose = (i: number) => { setPi(i); S.current.t = 0; S.current.hold = 0; S.current.k = -2; setPlay(true); };
 
   return (
     <div className="ko-booth" ref={stage}>
@@ -109,14 +113,14 @@ function Booth() {
         <p className="ko-tc mb-tnum"><span className="x-sr" ref={lineEl}>00:04.30 / 00:05.00 · TTFT: 180ms</span><span aria-hidden="true"><span>00:0</span><span ref={sEl}>4</span>.<span ref={csEl}>30</span> <span className="ko-tc-of">/ 00:05.00 · TTFT: 180ms</span></span></p>
         <button type="button" className="mb-chip" aria-pressed={play} onClick={() => setPlay(!play)}>{play ? 'Pause' : 'Play'}</button>
       </div>
-      <div className="ko-wave" role="slider" tabIndex={0} aria-label="Voice waveform: seek" aria-valuemin={0} aria-valuemax={LEN} aria-valuenow={4.3} onKeyDown={(e) => { const k = { ArrowRight: 0.25, ArrowLeft: -0.25 }[e.key]; if (k) { e.preventDefault(); S.current.t = Math.max(0, Math.min(LEN, S.current.t + k)); S.current.hold = 0; } }}>
+      <div className="ko-wave" role="slider" tabIndex={0} aria-label="Voice waveform: seek" aria-valuemin={0} aria-valuemax={LEN} aria-valuenow={4.3} onKeyDown={(e) => { const k = ({ ArrowRight: 0.25, ArrowLeft: -0.25 } as Record<string, number | undefined>)[e.key]; if (k) { e.preventDefault(); S.current.t = Math.max(0, Math.min(LEN, S.current.t + k)); S.current.hold = 0; } }}>
         <canvas ref={cv} aria-hidden="true" onPointerDown={seek} />
       </div>
       <div className="ko-script">
         <ol className="ko-ph" aria-label="Phonemes">
-          {PH.map(([p], i) => <li key={p} ref={(el) => (cells.current[i] = el)}>{p}</li>)}
+          {PH.map(([p], i) => <li key={p} ref={(el) => { cells.current[i] = el; }}>{p}</li>)}
         </ol>
-        <p className="ko-word" role="img" aria-label="Hanzo">{PH.map(([, , , l], i) => <span key={i} ref={(el) => (letters.current[i] = el)} aria-hidden="true">{l}</span>)}</p>
+        <p className="ko-word" role="img" aria-label="Hanzo">{PH.map(([, , , l], i) => <span key={i} ref={(el) => { letters.current[i] = el; }} aria-hidden="true">{l}</span>)}</p>
       </div>
       <div className="ko-presets">
         <p className="mb-mono">ACTING PRESET:</p>
@@ -131,8 +135,8 @@ function Booth() {
 // the film closes into a tall capsule on the left (a horizontal one on phones: it starts under the × close, 20 + 48 + 8,
 // and ends where Koe.css starts the headline, 47% of the stage; on short phones a slimmer pill ending at 34%, so the ask
 // clears the cookie card at 375x667); the headline sits right of it. "Koe" (the h1) rests in the band above the pill.
-const PILL = (W, H) => { const t = 76, h = H * (H < 641 ? 0.34 : 0.47) - t; return { l: 20, t, w: W - 40, h, r: h / 2 }; };
-const CAPSULE = frame((W, H, wide) => {
+const PILL = (W: number, H: number) => { const t = 76, h = H * (H < 641 ? 0.34 : 0.47) - t; return { l: 20, t, w: W - 40, h, r: h / 2 }; };
+const CAPSULE = frame((W: number, H: number, wide: boolean) => {
   if (wide) { const w = Math.min(W * 0.2, H * 0.4), h = H * 0.84; return { l: W * 0.26 - w / 2, t: (H - h) / 2, w, h, r: w / 2 }; }
   return PILL(W, H);
 });
@@ -141,13 +145,13 @@ const CAPSULE = frame((W, H, wide) => {
 // a level meter of 28 bars breathes at its foot, the booth's waveform in miniature. CSS only (transform), so the
 // page's one Pause stops it ([data-mpaused]) and reduced motion never shows it (Launch hides the layer when calm).
 const LEVELS = Array.from({ length: 28 }, (_, i) => [0.62 + ((i * 37) % 11) / 14, -((i * 53) % 17) / 13, 0.3 + (((i * 29) % 13) / 13) * 0.7]);
-function Meter(W, H, wide) {
+function Meter(W: number, H: number, wide: boolean) {
   if (wide) return null;
   const b = PILL(W, H);
   return (
-    <div className="ko-pill" style={{ left: b.l, top: b.t, width: b.w, height: b.h, borderRadius: b.r, '--pw': b.w + 'px' }}>
+    <div className="ko-pill" style={{ left: b.l, top: b.t, width: b.w, height: b.h, borderRadius: b.r, '--pw': b.w + 'px' } as CSSProperties}>
       <i className="ko-sweep" />
-      <span className="ko-meter">{LEVELS.map(([d, o, a], i) => <i key={i} style={{ animationDuration: d + 's', animationDelay: o + 's', '--a': a }} />)}</span>
+      <span className="ko-meter">{LEVELS.map(([d, o, a], i) => <i key={i} style={{ animationDuration: d + 's', animationDelay: o + 's', '--a': a } as CSSProperties} />)}</span>
     </div>
   );
 }
@@ -159,8 +163,8 @@ function Meter(W, H, wide) {
 function useStageFilm() {
   const calm = useReducedMotion();
   useEffect(() => {
-    const stage = document.querySelector('.lv-stage[data-hero="koe"]'), v = stage && stage.querySelector('video');
-    if (!v || calm || navigator.connection?.saveData) return;
+    const stage = document.querySelector('.lv-stage[data-hero="koe"]'), v = stage?.querySelector('video');
+    if (!stage || !v || calm || (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData) return;
     let shown = false, raf = 0;
     const want = () => shown && !document.hidden && !document.documentElement.hasAttribute('data-mpaused');
     const nudge = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { if (want() && v.paused && v.currentSrc) v.play().catch(() => {}); }); };
@@ -182,7 +186,7 @@ function useOneAsk() {
   useEffect(() => {
     const H = document.documentElement;
     let raf = 0;
-    const shown = (el, ok) => { if (!el || !ok(el)) return false; const r = el.getBoundingClientRect(); return r.bottom > 60 && r.top < innerHeight && r.width > 0; };
+    const shown = (el: Element | null, ok: (el: Element) => boolean) => { if (!el || !ok(el)) return false; const r = el.getBoundingClientRect(); return r.bottom > 60 && r.top < innerHeight && r.width > 0; };
     const check = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
@@ -208,7 +212,7 @@ export default function Koe() {
     <KoeCreative
       shape={CAPSULE}
       over={Meter}
-      aim={(W, H, wide) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, PILL(W, H).t + PILL(W, H).h / 2, 1.35, [20, PILL(W, H).t, W - 20, PILL(W, H).t + PILL(W, H).h]))(W, H)}
+      aim={(W: number, H: number, wide: boolean) => (wide ? focus(0.66, 0.45, W * 0.26, H * 0.5, 1.25) : focus(0.68, 0.45, W / 2, PILL(W, H).t + PILL(W, H).h / 2, 1.35, [20, PILL(W, H).t, W - 20, PILL(W, H).t + PILL(W, H).h]))(W, H)}
       headClass="ko-v2"
       demo={
         <Scene slug="koe" className="ko-scene">

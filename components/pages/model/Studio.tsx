@@ -2,10 +2,12 @@
 /* Pieces every creative model's first screen is built from: its head (kind, version, line, actions), the studio
    window its demo lives in (studio.hanzo.ai / <model>), the three spec rows, and the live glyph each model's lists
    wear (a tiny loop in that model's medium). Each model arranges them its own way. */
+import type { CSSProperties, ReactNode } from 'react';
 import { A } from '../../kit';
 import { C } from './creativeData';
+import type { Slug } from './creativeData';
 
-export function CHead({ slug, dark, split, className = '' }) {
+export function CHead({ slug, dark, split, className = '' }: { slug: Slug; dark?: boolean; split?: boolean; className?: string }) {
   const d = C[slug];
   const top = (
     <>
@@ -30,7 +32,7 @@ export function CHead({ slug, dark, split, className = '' }) {
   );
 }
 
-export function Studio({ slug, children, specs, engine, className = '' }) {
+export function Studio({ slug, children, specs, engine, className = '' }: { slug: Slug; children?: ReactNode; specs?: [string, string, string][]; engine?: string; className?: string }) {
   return (
     <figure className={'cr-studio ' + className}>
       <div className="mb-panel">
@@ -44,7 +46,7 @@ export function Studio({ slug, children, specs, engine, className = '' }) {
   );
 }
 
-export function Specs({ rows }) {
+export function Specs({ rows }: { rows: [string, string, string][] }) {
   return (
     <dl className="mb-specs">
       {rows.map(([dt, v, w]) => <div key={dt}><dt>{dt}</dt><dd>{v}</dd><dd>{w}</dd></div>)}
@@ -52,6 +54,6 @@ export function Specs({ rows }) {
   );
 }
 
-export function Glyph({ k, i = 0 }) {
-  return <span className={'cr-g cr-g-' + k} style={{ '--i': i }} aria-hidden="true"><i /><i /><i /><i /><i /></span>;
+export function Glyph({ k, i = 0 }: { k: string; i?: number }) {
+  return <span className={'cr-g cr-g-' + k} style={{ '--i': i } as CSSProperties} aria-hidden="true"><i /><i /><i /><i /><i /></span>;
 }

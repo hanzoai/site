@@ -7,21 +7,25 @@
    5 PixelResolve   the close resolves from coarse pixels to sharp, once, on entering view
    Each runs once, shows its final state under reduced motion and with JS off (no overlay is drawn before JS). */
 import { useEffect, useId, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform, useVelocity, animate, useMotionValue } from 'motion/react';
+import type { HTMLMotionProps } from 'motion/react';
 
-export function StretchScroll({ children, className = '' }) {
+interface BoxProps { children?: ReactNode; className?: string }
+
+export function StretchScroll({ children, className = '' }: BoxProps) {
   const calm = useReducedMotion();
   const { scrollY } = useScroll();
   const v = useVelocity(scrollY);
   const s = useSpring(useTransform(v, [-3000, 0, 3000], [1.14, 1, 1.14], { clamp: true }), { stiffness: 260, damping: 22 });
   const arrive = useMotionValue(calm ? 1 : 1.22);
   useEffect(() => { if (!calm) animate(arrive, 1, { duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }); }, [calm, arrive]);
-  const scaleY = useTransform([s, arrive], ([a, b]) => (calm ? 1 : a * b));
+  const scaleY = useTransform([s, arrive], ([a, b]: number[]) => (calm ? 1 : a * b));
   return <motion.div className={className} style={{ scaleY, transformOrigin: '50% 0%' }}>{children}</motion.div>;
 }
 
-export function ShrinkToCard({ children, className = '', ...rest }) {
-  const ref = useRef(null);
+export function ShrinkToCard({ children, className = '', ...rest }: HTMLMotionProps<'section'>) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['end 0.9', 'end 0.2'] });
   const scale = useTransform(scrollYProgress, [0, 1], [1, calm ? 1 : 0.86]);
@@ -34,8 +38,8 @@ export function ShrinkToCard({ children, className = '', ...rest }) {
   );
 }
 
-export function NoiseDissolve({ children, className = '', grain = [10, 38, 64] }) {
-  const ref = useRef(null), cv = useRef(null);
+export function NoiseDissolve({ children, className = '', grain = [10, 38, 64] }: BoxProps & { grain?: number[] }) {
+  const ref = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.35 });
   const calm = useReducedMotion();
   const [done, setDone] = useState(false);
@@ -44,7 +48,9 @@ export function NoiseDissolve({ children, className = '', grain = [10, 38, 64] }
     const c = cv.current; if (!c || calm) { setDone(true); return; }
     const r = c.getBoundingClientRect(), S = 4;
     c.width = Math.ceil(r.width / S); c.height = Math.ceil(r.height / S);
-    const x = c.getContext('2d'), img = x.createImageData(c.width, c.height);
+    const x = c.getContext('2d');
+    if (!x) return;
+    const img = x.createImageData(c.width, c.height);
     for (let i = 0; i < img.data.length; i += 4) { const g = grain[(Math.random() * grain.length) | 0]; img.data[i] = img.data[i + 1] = img.data[i + 2] = g; img.data[i + 3] = 255; }
     x.putImageData(img, 0, 0);
     c.dataset.t = '';
@@ -52,11 +58,13 @@ export function NoiseDissolve({ children, className = '', grain = [10, 38, 64] }
   useEffect(() => {
     if (!seen || calm) return;
     const c = cv.current; if (!c) return;
-    const x = c.getContext('2d'), n = c.width * c.height, order = new Uint32Array(n);
+    const x = c.getContext('2d');
+    if (!x) return;
+    const n = c.width * c.height, order = new Uint32Array(n);
     for (let i = 0; i < n; i++) order[i] = i;
     for (let i = n - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; const t = order[i]; order[i] = order[j]; order[j] = t; }
     let k = 0, raf = 0; const t0 = performance.now(), D = 1100;
-    const step = (t) => {
+    const step = (t: number) => {
       const want = Math.min(n, Math.round(n * Math.pow(Math.min(1, (t - t0) / D), 0.8)));
       for (; k < want; k++) { const p = order[k]; x.clearRect(p % c.width, (p / c.width) | 0, 1, 1); }
       if (k < n) raf = requestAnimationFrame(step); else setDone(true);
@@ -73,8 +81,8 @@ export function NoiseDissolve({ children, className = '', grain = [10, 38, 64] }
 }
 
 const SIZES = [36, 24, 16, 10, 6, 3];
-export function PixelResolve({ children, className = '' }) {
-  const ref = useRef(null);
+export function PixelResolve({ children, className = '' }: BoxProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const id = 'px' + useId().replace(/:/g, '');
   const seen = useInView(ref, { once: true, amount: 0.4 });
   const calm = useReducedMotion();

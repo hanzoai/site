@@ -24,6 +24,7 @@
    circles, the six partner boxes, the page tokens that overrode deck.css's greys, the hidden-only "Press & Media" and
    "Leadership" (now captions under their headings), springs, filters on photos. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { CSSProperties, PointerEvent, ReactNode } from 'react';
 import LivePause, { usePause } from '../v2/LivePause';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { Copy, Mark } from '../ui';
@@ -36,26 +37,27 @@ import '../v2/vc-type.css';
 import './company/deck.css';
 import './Press.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const KIT = '/press/hanzo-press-kit.zip';
 const MAIL = 'mailto:press@hanzo.ai';
-const PLATES = [['Logo - Dark Background', 'White logo for use on dark backgrounds', 'SVG, PNG', 'dark'], ['Logo - Light Background', 'Black logo for use on light backgrounds', 'SVG, PNG', 'light'], ['Icon Only', 'Standalone icon without wordmark', 'SVG, PNG, ICO', 'icon']];
+type PlateRow = [title: string, desc: string, fmt: string, kind: string];
+const PLATES: PlateRow[] = [['Logo - Dark Background', 'White logo for use on dark backgrounds', 'SVG, PNG', 'dark'], ['Logo - Light Background', 'Black logo for use on light backgrounds', 'SVG, PNG', 'light'], ['Icon Only', 'Standalone icon without wordmark', 'SVG, PNG, ICO', 'icon']];
 const ARROW = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const DOWN = <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 // JS off: every word visible and in place, the pinned stage laid out flat, no empty pointer card
 const NOJS = { __html: '<style>.xen{transform:none!important;opacity:1!important}.xen-belt{display:none!important}.xpe-fig span,.xpe-mail-i{transform:none!important}.xpe-card{display:none!important}.xpe-ts2{display:block!important}.xpe-copy-w{opacity:1!important;transform:none!important;pointer-events:auto!important}.xpe-face{clip-path:none!important}.xpe-partners li::before,.xpe-p-img{transform:none!important}.xpe-guide-p svg{clip-path:none!important}.xpe-caret{display:none!important}.xmg-cv{display:none}</style>' };
 
 /* A Hanzo picture that steps aside for its fallback when it cannot load (MASTER part 17). */
-function Pic({ fallback = null, ...p }) {
+function Pic({ fallback = null, ...p }: { fallback?: ReactNode; src: string; alt: string; w: number; h: number }) {
   const [bad, setBad] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLImageElement>(null);
   useLayoutEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
   if (bad) return fallback;
   return <Img ref={ref} {...p} onError={() => setBad(true)} />;
 }
 
 /* ui Copy plus a polite status line, so a screen reader hears "Copied" (MASTER part 8). */
-function CopyIt({ text, label, className }) {
+function CopyIt({ text, label, className }: { text: string; label?: string; className?: string }) {
   const [msg, setMsg] = useState('');
   return (
     <span className="xpe-copy" onClickCapture={() => { setMsg('Copied'); setTimeout(() => setMsg(''), 1600); }}>
@@ -65,7 +67,7 @@ function CopyIt({ text, label, className }) {
   );
 }
 
-function Download({ className, children, ...rest }) {
+function Download({ className, children, ...rest }: { className?: string; children?: ReactNode }) {
   const [got, setGot] = useState(false);
   return (
     <motion.a href={KIT} download className={className} {...rest} onClick={() => { setGot(true); setTimeout(() => setGot(false), 2200); }} whileTap={{ scale: 0.97 }}>
@@ -79,7 +81,7 @@ function Download({ className, children, ...rest }) {
   );
 }
 
-function Plate({ kind }) {
+function Plate({ kind }: { kind: string }) {
   return (
     <span className={'xpe-plate ' + kind} aria-hidden="true">
       <Mark size={kind === 'icon' ? 88 : 52} />
@@ -90,8 +92,8 @@ function Plate({ kind }) {
 
 /* Once a section is half in view, step a counter 0..n every `ms`, then rest at n (MASTER part 9: Time kind, ends at rest).
    Reduced motion and JS-off show the end state. Returns [step, done, ref]. */
-function useBeat(n, ms, amount = 0.5) {
-  const ref = useRef(null);
+function useBeat<T extends HTMLElement = HTMLElement>(n: number, ms: number, amount = 0.5) {
+  const ref = useRef<T>(null);
   const calm = useReducedMotion();
   const seen = useInView(ref, { once: true, amount });
   const [k, setK] = useState(n);
@@ -103,14 +105,14 @@ function useBeat(n, ms, amount = 0.5) {
     const id = setInterval(() => { i += 1; setK(i); if (i >= n) clearInterval(id); }, ms);
     return () => clearInterval(id);
   }, [seen, calm, n, ms]);
-  return [calm ? n : k, calm || k >= n, ref];
+  return [calm ? n : k, calm || k >= n, ref] as const;
 }
 
 /* Keep "10-54%"-style tokens whole: a break after their hyphen reads as broken copy. Words unchanged. */
-const keep = (t) => t.split(/(\S*\d-\d\S*)/).map((w, i) => (i % 2 ? <span key={i} className="xpe-nb">{w}</span> : w));
+const keep = (t: string) => t.split(/(\S*\d-\d\S*)/).map((w, i) => (i % 2 ? <span key={i} className="xpe-nb">{w}</span> : w));
 
 /* One kit plate, in a plain row (no pinned stage). */
-function KitPlate({ t }) {
+function KitPlate({ t }: { t: PlateRow }) {
   const [title, desc, fmt, kind] = t;
   return (
     <li className={'xpe-kitc-w ' + kind}>
@@ -165,8 +167,8 @@ const BOILER = 'Hanzo AI, Inc. is an AI technology company building the infrastr
 const FACTS = [['2016', 'Founded'], ['San Francisco, CA', 'Headquarters'], ['Hanzo AI, Inc.', 'Entity'], ['Techstars ’17', 'Backing']];
 
 /* A fact that settles into its place once, out of its own mask. */
-function Fact({ v, k, big }) {
-  const ref = useRef(null);
+function Fact({ v, k, big }: { v: string; k: string; big?: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   return <div ref={ref} className={big ? 'big' : ''}><dd className={'xpe-fig' + (seen ? ' in' : '')}><span>{v}</span></dd><dt className="vc-kick">{k}</dt></div>;
 }
@@ -201,7 +203,7 @@ const NEWS = [
 /* The news index: big headlines on the left; a still column on the right holds the story in focus (its number, date
    and summary). Focus follows the pointer, the keyboard, or, untouched, the row passing the middle of the screen. */
 function News() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const [at, setAt] = useState(0);
   const [pointing, setPointing] = useState(false);
   const rm = useReducedMotion();
@@ -210,7 +212,7 @@ function News() {
   // idle: while the card is in view and nothing holds it, it keeps walking the six stories slowly (4 s each);
   // pointer and focus hold it, the pause control stops it, reduced motion never starts it
   const [paused, pause] = usePause();
-  const cref = useRef(null);
+  const cref = useRef<HTMLElement>(null);
   const cardIn = useInView(cref, { amount: 0.5 });
   const go = useInView(box, { once: true, amount: 0.1 }); // orbit-in starts when the list's box arrives
   useEffect(() => {
@@ -219,15 +221,15 @@ function News() {
     return () => clearInterval(id);
   }, [calm, paused, cardIn]);
   useLayoutEffect(() => {
-    const rows = box.current ? [...box.current.querySelectorAll('.xpe-feed li')] : [];
+    const rows = box.current ? [...box.current.querySelectorAll<HTMLElement>('.xpe-feed li')] : [];
     const ob = new IntersectionObserver((es) => {
-      es.forEach((e) => { if (e.isIntersecting && !box.current?.dataset.hold) setAt(+e.target.dataset.i); });
+      es.forEach((e) => { if (e.isIntersecting && !box.current?.dataset.hold) setAt(Number((e.target as HTMLElement).dataset.i)); });
     }, { rootMargin: '-48% 0px -48% 0px' });
     rows.forEach((r) => ob.observe(r));
     return () => ob.disconnect();
   }, []);
-  const hold = (i) => { box.current.dataset.hold = '1'; setPointing(true); setAt(i); };
-  const free = () => { delete box.current.dataset.hold; setPointing(false); };
+  const hold = (i: number) => { if (box.current) box.current.dataset.hold = '1'; setPointing(true); setAt(i); };
+  const free = () => { if (box.current) delete box.current.dataset.hold; setPointing(false); };
   const cur = at;
   const [d, , s] = NEWS[cur];
   return (
@@ -240,7 +242,7 @@ function News() {
         <ol className={'xpe-feed' + (pointing ? ' pointing' : '')}>
           {NEWS.map(([dd, t, ss], i) => (
             <OrbitItem key={t} i={i} go={go} data-i={i} className={i === at ? 'on' : ''}>
-              <A to="/blog" className="xpe-item" onPointerEnter={(e) => { if (e.pointerType === 'mouse') hold(i); }} onFocus={() => hold(i)} onBlur={free}>
+              <A to="/blog" className="xpe-item" onPointerEnter={(e: PointerEvent<HTMLAnchorElement>) => { if (e.pointerType === 'mouse') hold(i); }} onFocus={() => hold(i)} onBlur={free}>
                 <span className="xpe-no vc-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 <span className="xpe-tt">{t}</span>
                 <span className="xpe-ts vc-num">{dd}</span>
@@ -273,7 +275,7 @@ function News() {
 /* The black room: the email cuts in by line mask, its copy button beside it, its label under it. */
 const EMAIL = 'press@hanzo.ai';
 function Contact() {
-  const [k, done, ref] = useBeat(EMAIL.length, 70);
+  const [k, done, ref] = useBeat<HTMLDivElement>(EMAIL.length, 70);
   const seen = k > 0 || done;
   return (
     <section className="xpe-contact" data-room="dark" aria-labelledby="xpe-contact-h">
@@ -303,8 +305,8 @@ function Contact() {
 const PARTNERS = [['Techstars', '/press/partners/techstars/techstars.png', 'Logo (PNG)', '/logos/partners/techstars.svg'], ['NVIDIA', '/press/partners/nvidia/nvidia.svg', 'Logo (SVG)', '/logos/partners/nvidia.svg'], ['Google Cloud', '/press/partners/googlecloud/googlecloud.svg', 'Logo (SVG)', '/logos/partners/google.svg'], ['AWS', '/press/partners/aws/aws.svg', 'Logo (SVG)', '/logos/partners/amazon.svg'], ['DigitalOcean', '/press/partners/digitalocean/digitalocean.svg', 'Logo (SVG)', '/logos/partners/digitalocean.svg'], ['Nebius', '/press/partners/nebius/nebius.svg', 'Logo (SVG)', '/logos/partners/nebius.svg']];
 
 function BrandAssets() {
-  const [k, , ref] = useBeat(PARTNERS.length, 160, 0.3);
-  const [g, , gref] = useBeat(1, 120, 0.6); // the guidelines mark draws in when its own card is in view
+  const [k, , ref] = useBeat<HTMLUListElement>(PARTNERS.length, 160, 0.3);
+  const [g, , gref] = useBeat<HTMLAnchorElement>(1, 120, 0.6); // the guidelines mark draws in when its own card is in view
   return (
     <section className="vc-sec xpe-brand" aria-labelledby="xpe-brand-h">
       <div className="vc-grid xpe-brand-g">
@@ -335,7 +337,7 @@ function BrandAssets() {
 const SOCIAL = [['Discord', 'discord.gg/XthHQQj', 'https://discord.gg/XthHQQj'], ['X (Twitter)', '@hanzoai', 'https://x.com/hanzoai'], ['GitHub', '@hanzoai', 'https://github.com/hanzoai'], ['LinkedIn', 'hanzo-ai', 'https://linkedin.com/company/hanzo-ai'], ['Facebook', '@hanzoinc', 'https://facebook.com/hanzoinc'], ['Bluesky', '@hanzoai.bsky.social', 'https://bsky.app/profile/hanzoai.bsky.social'], ['Reddit', 'r/HanzoAI', 'https://www.reddit.com/r/HanzoAI/'], ['TikTok', '@hanzoinc', 'https://www.tiktok.com/@hanzoinc'], ['Instagram', '@hanzoinc', 'https://www.instagram.com/hanzoinc']];
 
 function Social() {
-  const [k, done, ref] = useBeat(SOCIAL.length + 1, 420);
+  const [k, done, ref] = useBeat<HTMLUListElement>(SOCIAL.length + 1, 420);
   const [held, setHeld] = useState(false);
   const lit = held || done ? -1 : k - 1;
   const [hov, setHov] = useState(-1);
@@ -370,7 +372,7 @@ function Social() {
 const LEADS = [['/authors/antje-worring-portrait.jpg', 'Antje Worring', 'CEO'], ['/authors/zach-kelling-portrait.jpg', 'Zach Kelling', 'CTO']];
 
 function Team() {
-  const [k, , ref] = useBeat(LEADS.length, 260, 0.3);
+  const [k, , ref] = useBeat<HTMLUListElement>(LEADS.length, 260, 0.3);
   return (
     <section className="xpe-team" aria-labelledby="xpe-team-h">
       <div className="vc-grid xpe-team-g">
@@ -403,7 +405,7 @@ function Team() {
 
 export default function Press() {
   return (
-    <main className="vc xpe" style={{ '--acc': '#0a0a0a' }}>
+    <main className="vc xpe" style={{ '--acc': '#0a0a0a' } as CSSProperties}>
       <noscript dangerouslySetInnerHTML={NOJS} />
       <Hero />
       <Kit />

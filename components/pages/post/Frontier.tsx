@@ -7,12 +7,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { EASE } from '../../ui';
 import { A } from '../../kit';
+import type { Chart } from './types';
 
 const L = 48, R = 20, T = 18, B = 40, VW = 640, VH = 380;
 const X0 = Math.log10(0.8), X1 = Math.log10(60);
 
-export default function Frontier({ f }) {
-  const box = useRef(null);
+export default function Frontier({ f }: { f: Chart }) {
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { once: true, amount: 0.35 });
   const live = useInView(box, { amount: 0.2 });
   const order = useMemo(() => f.dots.map((d, i) => i).sort((a, b) => f.dots[a].cost - f.dots[b].cost), [f.dots]);
@@ -20,8 +21,8 @@ export default function Frontier({ f }) {
   const [held, setHeld] = useState(false);
   const y0 = Math.min(...f.y) - 1, y1 = Math.max(...f.y);
   // rounded, so the server's and the browser's floating point agree (no hydration mismatch)
-  const px = (c) => Math.round((L + ((Math.log10(c) - X0) / (X1 - X0)) * (VW - L - R)) * 100) / 100;
-  const py = (a) => Math.round((T + (1 - (a - y0) / (y1 - y0)) * (VH - T - B)) * 100) / 100;
+  const px = (c: number) => Math.round((L + ((Math.log10(c) - X0) / (X1 - X0)) * (VW - L - R)) * 100) / 100;
+  const py = (a: number) => Math.round((T + (1 - (a - y0) / (y1 - y0)) * (VH - T - B)) * 100) / 100;
   // single models nobody beats on both price and score, cheapest first
   const edge = useMemo(() => {
     let best = -1;
@@ -31,13 +32,13 @@ export default function Frontier({ f }) {
   useEffect(() => {
     if (held || !live || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let raf = 0, last = performance.now();
-    const loop = (t) => { if (t - last >= 2400) { last = t; setAt((a) => order[(order.indexOf(a) + 1) % order.length]); } raf = requestAnimationFrame(loop); };
+    const loop = (t: number) => { if (t - last >= 2400) { last = t; setAt((a) => order[(order.indexOf(a) + 1) % order.length]); } raf = requestAnimationFrame(loop); };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, [held, live, order]);
 
   const d = f.dots[at];
-  const pick = (i) => { setAt(i); setHeld(true); };
+  const pick = (i: number) => { setAt(i); setHeld(true); };
   return (
     <figure className="xbg-gpqa" ref={box} onMouseLeave={() => setHeld(false)}>
       <div className="xbg-plot">

@@ -1,33 +1,34 @@
 // The figures /open-source shows, as the page draws them: `sum` and `act` are lib/oss.mjs's combine(), the estate and
 // GitHub as hanzo-inc/app's scripts/sync-oss.ts writes them. scripts/live.mjs calls shape() and writes snapshot.js.
 import { cuts, shade } from '../../../lib/heat.ts';
+import type { Activity, Snapshot, Summary } from './types.ts';
 
-const n = (x) => Number(x).toLocaleString('en-US');
-const plural = (v, one, many) => `${n(v)} ${v === 1 ? one : many}`;
+const n = (x: number | string) => Number(x).toLocaleString('en-US');
+const plural = (v: number, one: string, many: string) => `${n(v)} ${v === 1 ? one : many}`;
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const d2 = (x) => String(x).padStart(2, '0');
-const at = (iso) => { const d = new Date(iso); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()}, ${d2(d.getUTCHours())}:${d2(d.getUTCMinutes())}`; };
-const day = (iso) => { const d = new Date(iso.length === 10 ? iso + 'T00:00:00Z' : iso); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`; };
+const d2 = (x: number) => String(x).padStart(2, '0');
+const at = (iso: string) => { const d = new Date(iso); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()}, ${d2(d.getUTCHours())}:${d2(d.getUTCMinutes())}`; };
+const day = (iso: string) => { const d = new Date(iso.length === 10 ? iso + 'T00:00:00Z' : iso); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`; };
 
 // a year of commits a day as one character a day, Sunday-first weeks ('.' before the first day); levels as Hanzo draws
 // them: 0 for a day without commits, then the quartiles of the days with commits
-export function heat(daily, from, to) {
-  const days = [];
+export function heat(daily: Record<string, number>, from: string, to: string) {
+  const days: number[] = [];
   for (let t = Date.parse(from + 'T00:00:00Z'), end = Date.parse(to + 'T00:00:00Z'); t <= end; t += 864e5) days.push(daily[new Date(t).toISOString().slice(0, 10)] || 0);
   const cut = cuts(days);
   return '.'.repeat(new Date(from + 'T00:00:00Z').getUTCDay()) + days.map((v) => shade(v, cut)).join('');
 }
 
-export function shape({ sum, act }) {
+export function shape({ sum, act }: { sum: Summary; act: Activity }): Snapshot {
   const KEYS = ['hanzo', 'lux', 'zoo'];
   const win = `Commits a day, from ${day(act.from)} to ${day(act.to)}`;
   const eco = KEYS.map((k) => {
     const g = sum.groups[k], a = act.groups[k], gh = 'https://github.com/' + g.lead;
     const tot = g.languages.reduce((s, l) => s + l.count, 0);
-    const pc = (c) => ((c / tot) * 100).toFixed(1), five = g.languages.slice(0, 5);
+    const pc = (c: number) => ((c / tot) * 100).toFixed(1), five = g.languages.slice(0, 5);
     const top = five.map((l) => [l.name, pc(l.count)]), other = pc(tot - five.reduce((s, l) => s + l.count, 0));
     return {
-      stats: [['Commits', n(g.commits.year), 'In the past year'], ['Merges', n(g.estate.merges), 'In the past year'], ['Commits', n(g.commits.week), 'In the past 7 days'],
+      stats: [['Commits', n(g.commits.year), 'In the past year'], ['Merges', n(g.estate.merges as number), 'In the past year'], ['Commits', n(g.commits.week), 'In the past 7 days'],
         [`${g.checked} organizations`, n(g.repos), 'Original repositories'], ['GitHub stars', n(g.stars), 'as GitHub counts them'], ['GitHub forks', n(g.forks), 'as GitHub counts them']],
       heat: heat(a.daily, act.from, act.to),
       window: win,
@@ -35,12 +36,15 @@ export function shape({ sum, act }) {
       read: 'Forge listing · read ' + at(sum.forge.read),
       langs: [...top, ['Other', other]],
       langCap: `The primary language of each of ${n(g.repos)} original repositories, as GitHub reads it`,
-      repos: g.top.map((r) => ({
-        name: r.repo, desc: r.description || '', lang: r.language || '', stars: n(r.stars), forks: n(r.forks),
-        av: r.faces.slice(0, 3).map((f) => f[0].toUpperCase()).join(''), more: r.faces.length > 3 ? '+' + (r.faces.length - 3) : '',
-        people: plural(r.contributors, 'contributor', 'contributors'), commits: plural(r.commits, 'commit this year', 'commits this year'),
-        pushed: 'Pushed ' + day(r.pushed), to: r.forge ?? 'https://github.com/' + r.repo, months: r.months,
-      })),
+      repos: g.top.map((r) => {
+        const faces = r.faces ?? [];
+        return {
+          name: r.repo, desc: r.description || '', lang: r.language || '', stars: n(r.stars ?? 0), forks: n(r.forks ?? 0),
+          av: faces.slice(0, 3).map((f) => f[0].toUpperCase()).join(''), more: faces.length > 3 ? '+' + (faces.length - 3) : '',
+          people: plural(r.contributors ?? 0, 'contributor', 'contributors'), commits: plural(r.commits ?? 0, 'commit this year', 'commits this year'),
+          pushed: r.pushed ? 'Pushed ' + day(r.pushed) : '', to: r.forge ?? 'https://github.com/' + r.repo, months: r.months,
+        };
+      }),
       readTo: gh,
       statTo: ['https://git.hanzo.ai/explore/repos', 'https://git.hanzo.ai/explore/repos', 'https://git.hanzo.ai/explore/repos', gh, gh, gh],
     };

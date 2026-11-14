@@ -4,14 +4,13 @@ import ProductPage from '../../../components/pages/ProductPage';
 import JsonLd from '../../../components/JsonLd';
 import { SLUGS, product } from '../../../components/pages/productsData';
 import { metaOf } from '../../../components/pages/htmltree';
+import type { Product } from '../../../components/pages/ProductsTypes';
 
 type Props = { params: Promise<{ slug: string }> };
 
 export const dynamicParams = false;
-// the part of a captured product page that counts its operations: the rows of the API table
-interface Branch { t: string; c: unknown[] }
-interface Counted { api?: { table: { c: Branch[] } } }
-const opsOf = (q: Counted) => ((q.api && q.api.table.c.find((k) => k.t === 'tbody')) || { c: [] }).c.length;
+// the rows of a captured product page's API table count its operations
+const opsOf = (q: Product) => { const body = q.api.table.c.find((k) => typeof k !== 'string' && k.t === 'tbody'); return typeof body === 'object' ? body.c.length : 0; };
 export const generateStaticParams = () => SLUGS.map((slug) => ({ slug }));
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

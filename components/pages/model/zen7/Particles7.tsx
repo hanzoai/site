@@ -9,20 +9,32 @@ import { useEffect, useRef } from 'react';
 
 const TAU = Math.PI * 2;
 
-export default function Particles7({ still }) {
-  const wrap = useRef(null);
-  const cv = useRef(null);
-  const api = useRef(null);
+// the dots (parallel typed arrays, one slot per dot) and the field's measured box and flags
+interface Field {
+  n: number;
+  x: Float32Array; y: Float32Array; vx: Float32Array; vy: Float32Array;
+  hx: Float32Array; hy: Float32Array; ph: Float32Array; dl: Float32Array;
+  W: number; H: number; cw: number; ch: number; cx: number; cy: number; r: number; R: number; dpr: number; ink: string;
+  mx: number; my: number; kx: number; ky: number; born: number; last: number; raf: number;
+  seen: boolean; vis: boolean; hidden: boolean; still: boolean; ready: boolean; gone: boolean;
+}
+
+export default function Particles7({ still }: { still: boolean }) {
+  const wrap = useRef<HTMLDivElement>(null);
+  const cv = useRef<HTMLCanvasElement>(null);
+  const api = useRef<{ setStill(v: boolean): void } | null>(null);
 
   useEffect(() => {
-    const el = wrap.current, c = cv.current;
-    const ctx = c && c.getContext('2d');
-    if (!el || !ctx) return;
+    const wrapEl = wrap.current, canvas = cv.current;
+    const ctx2d = canvas && canvas.getContext('2d');
+    if (!wrapEl || !canvas || !ctx2d) return;
+    // function declarations below do not keep the null checks above, so the checked values are named again
+    const el: HTMLDivElement = wrapEl, c: HTMLCanvasElement = canvas, ctx: CanvasRenderingContext2D = ctx2d;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const zone = el.closest('section') || el;
-    const S = {
-      n: 0, x: null, y: null, vx: null, vy: null, hx: null, hy: null, ph: null, dl: null,
-      cw: 0, ch: 0, cx: 0, cy: 0, r: 1.1, R: 96, dpr: 1, ink: '',
+    const S: Field = {
+      n: 0, x: new Float32Array(0), y: new Float32Array(0), vx: new Float32Array(0), vy: new Float32Array(0), hx: new Float32Array(0), hy: new Float32Array(0), ph: new Float32Array(0), dl: new Float32Array(0),
+      W: 0, H: 0, cw: 0, ch: 0, cx: 0, cy: 0, r: 1.1, R: 96, dpr: 1, ink: '',
       mx: -1e5, my: -1e5, kx: 0, ky: 0, born: 0, last: 0, raf: 0,
       seen: false, vis: false, hidden: document.hidden, still: false, ready: false, gone: false,
     };
@@ -46,13 +58,14 @@ export default function Particles7({ still }) {
       const o = document.createElement('canvas');
       o.width = W; o.height = H;
       const g = o.getContext('2d');
+      if (!g) return;
       const s = Math.max(W / 600, H / 700);
       g.font = `497 ${820 * s}px ${cs.fontFamily}`;
       g.textAlign = 'center'; g.textBaseline = 'alphabetic';
       g.fillText('7', W / 2, (H - 700 * s) / 2 + 640 * s);
       const img = g.getImageData(0, 0, W, H).data;
       const step = Math.max(3.3, Math.min(5.6, W / 112));
-      const hx = [], hy = [];
+      const hx: number[] = [], hy: number[] = [];
       for (let yy = step / 2, row = 0; yy < H; yy += step * 0.866, row++) {
         for (let xx = (row % 2 ? step / 2 : 0) + step / 4; xx < W; xx += step) {
           if (img[((yy | 0) * W + (xx | 0)) * 4 + 3] > 140) { hx.push(xx + P); hy.push(yy + Q); }
@@ -76,7 +89,7 @@ export default function Particles7({ still }) {
       S.kx = S.cx; S.ky = S.cy;
     }
 
-    function draw(alpha) {
+    function draw(alpha: number) {
       ctx.setTransform(S.dpr, 0, 0, S.dpr, 0, 0);
       ctx.clearRect(0, 0, S.cw, S.ch);
       const a = new Path2D(), b = new Path2D(), r = S.r;
@@ -91,7 +104,7 @@ export default function Particles7({ still }) {
       ctx.globalAlpha = 1;
     }
 
-    function frame(now) {
+    function frame(now: number) {
       S.raf = 0;
       const dt = Math.min(2, Math.max(0.25, (now - S.last) / 16.667 || 1));
       S.last = now;
@@ -128,7 +141,7 @@ export default function Particles7({ still }) {
 
     function still() { if (S.ready) draw(1); }
 
-    function burst(px, py, power = 1) {
+    function burst(px: number, py: number, power = 1) {
       if (reduce || S.still) return;
       const RB = S.R * 2.1, RB2 = RB * RB;
       for (let i = 0; i < S.n; i++) {
@@ -139,22 +152,22 @@ export default function Particles7({ still }) {
       }
     }
 
-    const local = (e) => {
+    const local = (e: PointerEvent): [number, number] => {
       const q = c.getBoundingClientRect();
       return [(e.clientX - q.left) * (S.cw / q.width), (e.clientY - q.top) * (S.ch / q.height)];
     };
-    let lift;
-    const onMove = (e) => { if (reduce) return; [S.mx, S.my] = local(e); };
+    let lift: ReturnType<typeof setTimeout> | undefined;
+    const onMove = (e: PointerEvent) => { if (reduce) return; [S.mx, S.my] = local(e); };
     const off = () => { S.mx = -1e5; S.my = -1e5; };
-    const onDown = (e) => {
+    const onDown = (e: PointerEvent) => {
       if (reduce) return;
       const [px, py] = local(e);
       if (px < -40 || py < -40 || px > S.cw + 40 || py > S.ch + 40) return;
       burst(px, py, e.pointerType === 'touch' ? 1.15 : 0.9);
       if (e.pointerType === 'touch') { S.mx = px; S.my = py; clearTimeout(lift); lift = setTimeout(off, 360); }
     };
-    const onUp = (e) => { if (e.pointerType !== 'mouse') { clearTimeout(lift); lift = setTimeout(off, 260); } };
-    const onKey = (e) => {
+    const onUp = (e: PointerEvent) => { if (e.pointerType !== 'mouse') { clearTimeout(lift); lift = setTimeout(off, 260); } };
+    const onKey = (e: KeyboardEvent) => {
       if (reduce) return;
       const k = e.key, st = 22;
       if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'ArrowUp' || k === 'ArrowDown') {
@@ -196,7 +209,7 @@ export default function Particles7({ still }) {
     };
     (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(start, start);
 
-    api.current = { setStill(v) { S.still = v; if (v) still(); loop(); } };
+    api.current = { setStill(v: boolean) { S.still = v; if (v) still(); loop(); } };
     return () => {
       alive = false; S.gone = true; loop(); clearTimeout(lift);
       io.disconnect(); ro.disconnect();

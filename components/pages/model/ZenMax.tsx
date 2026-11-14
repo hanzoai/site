@@ -21,6 +21,7 @@ V2: 8/10 particle rack (dots form the DGX rack at 9 GB a dot, scatter at the poi
 // Entrances: tilt-3d-hover, slot-roll, rack-focus, conveyor, line-draw
 // Beyond: B300 against B200 in one sheet, the rows Hanzo lists for each server side by side under their four-server totals; picking a column switches the rack
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, PointerEvent, ReactNode } from 'react';
 import { motion, useInView } from 'motion/react';
 import { EASE, Count, useCalm } from '../../ui';
 import { A, More, Cta, Film, DataTable } from '../../kit';
@@ -43,7 +44,7 @@ const REC = 'We recommend at least four 8-GPU NVIDIA Blackwell servers, B300 or 
 const FOUR = 'Four B300 servers hold 9,216 GB of GPU memory; four B200 servers hold 5,760 GB.';
 
 /* the name cuts into its mask once on load (700 ms, ease-emphasis): the only line-mask cut-in on the page */
-function Cut({ children, delay = 0 }) {
+function Cut({ children, delay = 0 }: { children?: ReactNode; delay?: number }) {
   return (
     <motion.span className="x-line" initial="h" animate="s">
       <motion.span className="x-line-in" variants={{ h: { y: '105%' }, s: { y: 0 } }} transition={{ duration: 0.7, ease: EASE, delay }}>{children}</motion.span>
@@ -54,13 +55,13 @@ function Cut({ children, delay = 0 }) {
 /* 1 The first screen, unpinned: the words (5 of 13) beside the film card (8 of 13), bottoms on one baseline.
    Entrance tilt-3d-hover: the card tips in and follows the pointer. */
 function Hero() {
-  const zone = useRef(null);
-  const card = useRef(null);
+  const zone = useRef<HTMLElement>(null);
+  const card = useRef<HTMLDivElement>(null);
   const held = useRef(false);
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
     const v = card.current?.querySelector('video');
-    const on = () => { if (held.current) v.pause(); else setPlaying(true); };
+    const on = () => { if (held.current) v?.pause(); else setPlaying(true); };
     const off = () => setPlaying(false);
     v?.addEventListener('play', on);
     v?.addEventListener('pause', off);
@@ -103,20 +104,20 @@ function Hero() {
 /* 2 The rack (the signature). The particle rack sits in the dark panel with the server switch, the count and the
    planning range; the steps beside it read the same states and set them on hover or tap. Until the visitor picks, the
    rack steps through the range by itself while it is on screen. Entrance slot-roll: the heading and step titles. */
-function Deploy({ k, setK }) {
+function Deploy({ k, setK }: { k: number; setK: (k: number) => void }) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const calm = useCalm();
   const [ref, inn] = useIn(0.2);
-  const panel = useRef(null);
+  const panel = useRef<HTMLDivElement>(null);
   const live = useInView(panel, { amount: 0.4 });
   useEffect(() => {
     if (calm || mine || !live) return;
     const t = setTimeout(() => setAt((a) => (a + 1) % 4), at === 0 ? 3200 : 2800);
     return () => clearTimeout(t);
   }, [at, calm, mine, live]);
-  const pick = (i) => { setMine(true); setAt(i); };
-  const peek = (i) => (e) => { if (e.pointerType === 'mouse') pick(i); };
+  const pick = (i: number) => { setMine(true); setAt(i); };
+  const peek = (i: number) => (e: PointerEvent) => { if (e.pointerType === 'mouse') pick(i); };
   const plan = Math.max(0, at - 1);
   const label = `${DGX[k].name}: ${at ? PLAN[at - 1][0] : FOUR}`;
   return (
@@ -162,13 +163,13 @@ function Deploy({ k, setK }) {
 
 /* 3 Beyond: the sheet. Entrance rack-focus: figures, sheet and sources pull into focus one after another. The two
    four-server totals sit over their columns; picking a column switches the rack above and tints that column. */
-function Spec({ k, setK }) {
+function Spec({ k, setK }: { k: number; setK: (k: number) => void }) {
   const [open, setOpen] = useState(false);
   const [peek, setPeek] = useState(-1); // the column under a mouse previews its figure (ZenMax.css tints its cells)
   const [ref, inn] = useIn(0.2);
-  const figs = useRef(null);
+  const figs = useRef<HTMLDivElement>(null);
   const seen = useInView(figs, { once: true, margin: '0px 0px -40% 0px' });
-  const hover = (i) => ({ onPointerEnter: (e) => { if (e.pointerType === 'mouse') setPeek(i); }, onPointerLeave: () => setPeek(-1) });
+  const hover = (i: number) => ({ onPointerEnter: (e: PointerEvent) => { if (e.pointerType === 'mouse') setPeek(i); }, onPointerLeave: () => setPeek(-1) });
   const cols = [
     { key: 'row', label: '' },
     ...DGX.map((d, i) => ({ key: 'd' + i, subject: k === i, label: <button type="button" className="zx-col" aria-pressed={k === i} onClick={() => setK(i)} {...hover(i)}>{d.name}</button> })),
@@ -177,22 +178,22 @@ function Spec({ k, setK }) {
   return (
     <section className="zx-spec" ref={ref} data-in={inn}>
       <div className="zx-w">
-        <div className="zx-figs zx-rf" style={{ '--i': 0 }} ref={figs} data-seen={seen || undefined} aria-hidden="true">
+        <div className="zx-figs zx-rf" style={{ '--i': 0 } as CSSProperties} ref={figs} data-seen={seen || undefined} aria-hidden="true">
           <span />
           {DGX.map((d, i) => <span key={d.name} className="zx-fig" data-on={k === i || undefined} data-peek={(peek === i && k !== i) || undefined}><span>{d.total.toLocaleString('en-US')} GB</span></span>)}
         </div>
-        <div className="zx-rf" style={{ '--i': 1 }}><DataTable caption={FOUR} cols={cols} rows={rows} className="zx-sheet" /></div>
-        <div className="zx-srcs zx-rf" style={{ '--i': 2 }}>
+        <div className="zx-rf" style={{ '--i': 1 } as CSSProperties}><DataTable caption={FOUR} cols={cols} rows={rows} className="zx-sheet" /></div>
+        <div className="zx-srcs zx-rf" style={{ '--i': 2 } as CSSProperties}>
           <span />
           {DGX.map((d) => <More key={d.name} to={d.doc[1]}>{d.doc[0]}</More>)}
         </div>
-        <div className="zx-drawer zx-rf" style={{ '--i': 3 }}>
+        <div className="zx-drawer zx-rf" style={{ '--i': 3 } as CSSProperties}>
           <button type="button" className="zx-drawer-b" aria-expanded={open} aria-controls="zx-around" onClick={() => setOpen((o) => !o)}>
             <span id="zx-ar-h">Around the servers</span>
             <i aria-hidden="true" data-open={open || undefined} />
           </button>
           <div id="zx-around" role="region" aria-labelledby="zx-ar-h" className="zx-drawer-p" hidden={!open}>
-            <ul>{AROUND.map((x, i) => <li key={x} style={{ '--i': i }}>{x}</li>)}</ul>
+            <ul>{AROUND.map((x, i) => <li key={x} style={{ '--i': i } as CSSProperties}>{x}</li>)}</ul>
           </div>
         </div>
       </div>
@@ -205,7 +206,7 @@ function Spec({ k, setK }) {
    configuration. 03 Long context: a long bar fills under it. 04 Tools and code: the lit configuration opens a terminal
    line with a blinking caret. Shapes only, no words (aria-hidden); ZenMax.css moves it on transform, opacity and clip-path. */
 const LANES = [88, 144, 200, 256, 312];
-function Router({ at, seen }) {
+function Router({ at, seen }: { at: number; seen?: boolean }) {
   return (
     <div className="zx-rt" data-at={at} data-seen={seen || undefined} aria-hidden="true">
       <svg className="zx-rt-l zx-rt-fan" viewBox="0 0 640 440">
@@ -249,15 +250,15 @@ function Promises() {
     const t = setTimeout(() => setAt((a) => (a + 1) % FEATS.length), 2600);
     return () => clearTimeout(t);
   }, [at, calm, mine, live]);
-  const set = (i) => { setMine(true); setAt(i); };
-  const peek = (i) => (e) => { if (e.pointerType === 'mouse') set(i); };
+  const set = (i: number) => { setMine(true); setAt(i); };
+  const peek = (i: number) => (e: PointerEvent) => { if (e.pointerType === 'mouse') set(i); };
   return (
     <section className="zx-prom" ref={ref} data-in={inn}>
       <div className="zx-w zx-prom-g">
-        <div className="zx-prom-art zx-belt" style={{ '--i': 0 }}><Router at={at} seen={inn} /></div>
+        <div className="zx-prom-art zx-belt" style={{ '--i': 0 } as CSSProperties}><Router at={at} seen={inn} /></div>
         <ol className="zx-prom-l">
           {FEATS.map(([t, x], i) => (
-            <li key={t} className="zx-belt" style={{ '--i': i + 1 }} tabIndex={0} data-on={at === i || undefined} onPointerEnter={peek(i)} onFocus={() => set(i)} onClick={() => set(i)}>
+            <li key={t} className="zx-belt" style={{ '--i': i + 1 } as CSSProperties} tabIndex={0} data-on={at === i || undefined} onPointerEnter={peek(i)} onFocus={() => set(i)} onClick={() => set(i)}>
               <h2><span className="zx-idx" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span>{t}</span></h2>
               <p>{x}</p>
             </li>

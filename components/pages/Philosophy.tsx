@@ -20,6 +20,7 @@
    explorer), invert-flash (the explorer's chosen pattern, after the fold), side-carousel (each category's rows), typewriter (the close's
    statement); each plays once, none scroll-linked. Every entrance moves boxes only: the text in the page is always whole. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, Dispatch, KeyboardEvent, SetStateAction } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
 import SceneWipe from './proof/SceneWipe';
@@ -28,23 +29,25 @@ import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import '../v2/DetailSheet.css';
 import { GROUPS, PATTERNS, CHAPTERS, PATH, word, hebrew, chapterOf, hebrewLocale } from './philosophy/patterns';
+import type { PatternRow } from './philosophy/patterns';
 import './Philosophy.css';
 import { useEnter } from './philosophy/enter';
 import './philosophy/enter.css';
 
-const pad = (n) => String(n).padStart(2, '0');
-const title = (p) => `${p[3]} — ${p[4]}`; // "The Creative — Origination", as Hanzo prints it
-const groupOf = (p) => GROUPS[p[2] - 1];
-const hexOf = (ls) => PATTERNS.findIndex((p) => p[1].every((v, k) => v === ls[k]));
+const pad = (n: number) => String(n).padStart(2, '0');
+const title = (p: PatternRow) => `${p[3]} — ${p[4]}`; // "The Creative — Origination", as Hanzo prints it
+const groupOf = (p: PatternRow) => GROUPS[p[2] - 1];
+const hexOf = (ls: number[]) => PATTERNS.findIndex((p) => p[1].every((v, k) => v === ls[k]));
 const APPS = ['AI research', 'Scientific experimentation', 'Organizational improvement'];
 const TABS = ['All', ...GROUPS.map((g) => g[1])];
 const HE_TABS = ['הכל', ...CHAPTERS.map((c) => c.hebrew)];
 
 /* Six lines, bottom to top. A whole line is one stroke; an open line parts in the middle (each half scales, transform only).
    press(i): the lines become buttons that change themselves. */
-function Hexa({ ls, size = 80, drawn = 6, press, className = '' }) {
+interface HexaProps { ls: number[]; size?: number; drawn?: number; press?: (i: number) => void; className?: string }
+function Hexa({ ls, size = 80, drawn = 6, press, className = '' }: HexaProps) {
   return (
-    <span className={'xph-hx ' + className} style={{ '--w': size + 'px' }} aria-hidden={press ? undefined : true} role={press ? 'group' : undefined} aria-label={press ? 'The hexagram, line by line' : undefined}>
+    <span className={'xph-hx ' + className} style={{ '--w': size + 'px' } as CSSProperties} aria-hidden={press ? undefined : true} role={press ? 'group' : undefined} aria-label={press ? 'The hexagram, line by line' : undefined}>
       {ls.map((y, i) => {
         const cls = 'xph-hl ' + (y ? 'yang' : 'yin') + (i < drawn ? '' : ' off');
         return press
@@ -56,12 +59,12 @@ function Hexa({ ls, size = 80, drawn = 6, press, className = '' }) {
 }
 
 /* ---------- hero: one hexagram walking the sixty-four; press a line to change it ---------- */
-function Hero({ he }) {
+function Hero({ he }: { he: boolean }) {
   const [i, setI] = useState(0);
   const [held, setHeld] = useState(0); // the time of the visitor's last change: the walk waits for them
   const [steps, setSteps] = useState(0);
   const calm = useReducedMotion();
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const live = useInView(ref, { amount: 0.3 });
   useEffect(() => {
     if (calm || !live) return;
@@ -83,7 +86,7 @@ function Hero({ he }) {
   useEffect(() => {
     if (he) setI(PATH[0] - 1);
   }, [he]);
-  const press = (k) => {
+  const press = (k: number) => {
     const ls = PATTERNS[i][1].map((x, j) => (j === k ? 1 - x : x));
     setI(hexOf(ls));
     setHeld(Date.now());
@@ -105,7 +108,7 @@ function Hero({ he }) {
           </div>
         </div>
         {/* the h1 cuts in on CSS from first paint, so arrival never waits for hydration (same mask and easing as MaskLines) */}
-        <h1 id="xph-h1" className="pf-display xph-h1"><span className="pf-mask-l"><span className="pf-mask-in xph-cut">The Zen</span> </span><span className="pf-mask-l"><span className="pf-mask-in xph-cut" style={{ '--d': '60ms' }}>of Hanzo</span></span></h1>
+        <h1 id="xph-h1" className="pf-display xph-h1"><span className="pf-mask-l"><span className="pf-mask-in xph-cut">The Zen</span> </span><span className="pf-mask-l"><span className="pf-mask-in xph-cut" style={{ '--d': '60ms' } as CSSProperties}>of Hanzo</span></span></h1>
         <div className="pf-grid xph-hero-foot">
           <div className="xph-hero-a">
             <p className="pf-mono xph-cap">Hanzo / Philosophy</p>
@@ -138,7 +141,7 @@ function Intro() {
 }
 
 /* ---------- one pattern, read three ways (the explorer's panel and the sheet) ---------- */
-function Detail({ p, as: H = 'h3', size = 80, he = false }) {
+function Detail({ p, as: H = 'h3', size = 80, he = false }: { p: PatternRow; as?: 'h2' | 'h3'; size?: number; he?: boolean }) {
   const g = groupOf(p);
   const ch = chapterOf(p[0]);
   const w = word(p[0]);
@@ -165,15 +168,17 @@ function Detail({ p, as: H = 'h3', size = 80, he = false }) {
 }
 
 /* ---------- explore the patterns: filter by category, pick a number, read its applications ---------- */
-function Explorer({ tab, setTab, at, setAt, he, toggleHe }) {
+interface ExplorerProps { tab: number; setTab: (n: number) => void; at: number; setAt: (i: number) => void; he: boolean; toggleHe: (next: boolean) => void }
+function Explorer({ tab, setTab, at, setAt, he, toggleHe }: ExplorerProps) {
   const tabs = he ? HE_TABS : TABS;
   // on a phone the panel sits under the index: a pick brings it into view
-  const pick = (i) => {
+  const pick = (i: number) => {
     setAt(i);
     if (matchMedia('(max-width: 900px)').matches) document.getElementById('xph-ex-d')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   };
-  const keys = (e) => {
-    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+  const keys = (e: KeyboardEvent<HTMLDivElement>) => {
+    const dir: Record<string, number | undefined> = { ArrowRight: 1, ArrowLeft: -1 };
+    const k = dir[e.key];
     if (!k) return;
     const n = (tab + k + tabs.length) % tabs.length;
     setTab(n);
@@ -248,18 +253,18 @@ function Explorer({ tab, setTab, at, setAt, he, toggleHe }) {
 
 /* One sheet for all sixty-four (the kit's DetailSheet look), opened by a row's "See applications"; the arrows or ← → step
    to its neighbours in King Wen order. A native <dialog> (showModal: fixed, backdrop, focus trapped, Esc closes). */
-function PatternSheet({ sel, setSel, he }) {
+function PatternSheet({ sel, setSel, he }: { sel: number | null; setSel: Dispatch<SetStateAction<number | null>>; he: boolean }) {
   const open = sel !== null;
   const [shown, setShown] = useState(false);
-  const dlg = useRef(null);
-  const close = useRef(null);
-  const back = useRef(null);
+  const dlg = useRef<HTMLDialogElement>(null);
+  const close = useRef<HTMLButtonElement>(null);
+  const back = useRef<Element | null>(null);
   useEffect(() => {
     const d = dlg.current;
     if (!d) return;
     if (!open) {
       setShown(false);
-      const t = setTimeout(() => { if (d.open) d.close(); const b = back.current; b?.focus?.({ preventScroll: true }); }, 420);
+      const t = setTimeout(() => { if (d.open) d.close(); const b = back.current as HTMLElement | null; b?.focus?.({ preventScroll: true }); }, 420);
       return () => clearTimeout(t);
     }
     back.current = back.current && d.open ? back.current : document.activeElement;
@@ -270,9 +275,9 @@ function PatternSheet({ sel, setSel, he }) {
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
     const t = setTimeout(() => close.current?.focus({ preventScroll: true }), 60);
-    const key = (e) => {
-      if (e.key === 'ArrowRight') setSel((s) => (s + 1) % 64);
-      else if (e.key === 'ArrowLeft') setSel((s) => (s + 63) % 64);
+    const key = (e: globalThis.KeyboardEvent) => {
+      if (e.key === 'ArrowRight') setSel((s) => ((s ?? 0) + 1) % 64);
+      else if (e.key === 'ArrowLeft') setSel((s) => ((s ?? 0) + 63) % 64);
     };
     addEventListener('keydown', key);
     return () => { cancelAnimationFrame(raf); clearTimeout(t); removeEventListener('keydown', key); l?.start(); document.documentElement.style.overflow = prev; };
@@ -286,8 +291,8 @@ function PatternSheet({ sel, setSel, he }) {
         <div className="pf-sheet-top">
           <span className="pf-mono xph-sheet-n" aria-hidden="true">{pad(p[0])} / 64</span>
           <div className="xph-sheet-nav">
-            <button type="button" className="pf-sheet-x" onClick={() => setSel((s) => (s + 63) % 64)} aria-label="Previous pattern"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
-            <button type="button" className="pf-sheet-x" onClick={() => setSel((s) => (s + 1) % 64)} aria-label="Next pattern"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+            <button type="button" className="pf-sheet-x" onClick={() => setSel((s) => ((s ?? 0) + 63) % 64)} aria-label="Previous pattern"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
+            <button type="button" className="pf-sheet-x" onClick={() => setSel((s) => ((s ?? 0) + 1) % 64)} aria-label="Next pattern"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
             <button ref={close} type="button" className="pf-sheet-x" onClick={() => setSel(null)} aria-label="Close"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg></button>
           </div>
         </div>
@@ -298,7 +303,7 @@ function PatternSheet({ sel, setSel, he }) {
 }
 
 /* ---------- the eight categories, in King Wen or Ana BeKoach order: quiet ledgers whose every pattern opens in the sheet ---------- */
-function Categories({ tab, open, he }) {
+function Categories({ tab, open, he }: { tab: number; open: (i: number) => void; he: boolean }) {
   const sections = he
     ? CHAPTERS.map((c) => ({
         key: c.hebrew,
@@ -396,12 +401,12 @@ function Close() {
 export default function Philosophy() {
   const [tab, setTab] = useState(0); // 0 = All, 1-8 = a category
   const [at, setAt] = useState(0); // the pattern index (0..63) in the explorer
-  const [sel, setSel] = useState(null); // the pattern index in the sheet
+  const [sel, setSel] = useState<number | null>(null); // the pattern index in the sheet
   const [he, setHe] = useState(false);
 
   useEffect(() => {
-    const sync = (e) => {
-      const code = e?.detail || document.documentElement.dataset.lang || localStorage.getItem('hz-lang') || '';
+    const sync = (e?: Event) => {
+      const code = (e as CustomEvent<string> | undefined)?.detail || document.documentElement.dataset.lang || localStorage.getItem('hz-lang') || '';
       const q = new URLSearchParams(location.search).get('lang') || '';
       const isHe = hebrewLocale(q || code) || location.hash === '#ana-bekoach';
       setHe((prev) => {
@@ -419,7 +424,7 @@ export default function Philosophy() {
     };
   }, []);
 
-  const toggleHe = (next) => {
+  const toggleHe = (next: boolean) => {
     setHe(next);
     setTab(0);
     setAt(next ? PATH[0] - 1 : 0);
@@ -431,7 +436,7 @@ export default function Philosophy() {
     } catch {}
   };
 
-  const pickTab = (n) => {
+  const pickTab = (n: number) => {
     setTab(n);
     if (!n) return;
     if (he) {

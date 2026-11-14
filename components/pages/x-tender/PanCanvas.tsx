@@ -18,38 +18,72 @@
    Motion: one rAF loop, alive only while something glides, stopped off screen. Reduced motion: no inertia, no glides,
    no hint nudge (jumps instead). Server and first client render are identical (the world sits at 0,0 until mounted). */
 import { useEffect, useImperativeHandle, useRef } from 'react';
+import type { ReactNode, Ref } from 'react';
 import { useCalm } from '../../ui';
+
+/* what the page gets from the canvas's ref */
+export interface PanHandle { to(id: string): void; reset(): void }
+
+interface PanProps {
+  ref?: Ref<PanHandle>;
+  label: string;
+  className?: string;
+  bar?: ReactNode;
+  onFocus?: (id: string | null | undefined) => void;
+  children?: ReactNode;
+  resetLabel?: string;
+  hint?: boolean;
+}
+
+interface PanItem { id: string | undefined; el: HTMLElement; x: number; y: number; w: number; h: number; cx: number; cy: number }
+interface Tween { fx: number; fy: number; tx: number; ty: number; ms: number; t0: number; done?: () => void }
+interface Down { id: number; sx: number; sy: number; x: number; y: number; t: number; lx: number; ly: number; on: boolean }
+interface PanState {
+  x: number; y: number; vx: number; vy: number;
+  b: { x0: number; x1: number; y0: number; y1: number };
+  vw: number; vh: number;
+  items: PanItem[];
+  lit: string | null | undefined;
+  raf: number;
+  mode: 'tween' | 'coast' | 'drag' | null;
+  tw: Tween | null;
+  seen: boolean; touched: boolean;
+  home: { x: number; y: number };
+  ready: boolean;
+  goItem?: (id: string | undefined) => void;
+  goHome?: () => void;
+}
 
 const FRICTION = 325; // ms: the inertia's time constant
 const EDGE = 0.35; // how far past an edge a drag still follows
-const EIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2); // ease-in-out, things that move and stay
+const EIO = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2); // ease-in-out, things that move and stay
 
 const Hand = () => <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M10 2.5v15M2.5 10h15M10 2.5 7.6 4.9M10 2.5l2.4 2.4M10 17.5l-2.4-2.4M10 17.5l2.4-2.4M2.5 10l2.4-2.4M2.5 10l2.4 2.4M17.5 10l-2.4-2.4M17.5 10l-2.4 2.4" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Home = () => <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M4.2 8.2A6.2 6.2 0 1 1 4 12.4M4 3.8v4.6h4.6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-export default function PanCanvas({ ref, label, className = '', bar, onFocus, children, resetLabel = 'Reset the view', hint = true }) {
-  const view = useRef(null);
-  const world = useRef(null);
+export default function PanCanvas({ ref, label, className = '', bar, onFocus, children, resetLabel = 'Reset the view', hint = true }: PanProps) {
+  const view = useRef<HTMLDivElement>(null);
+  const world = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   const calmRef = useRef(calm);
   calmRef.current = calm;
   const focusCb = useRef(onFocus);
   focusCb.current = onFocus;
-  const S = useRef(null);
+  const S = useRef<PanState | null>(null);
   if (!S.current) S.current = { x: 0, y: 0, vx: 0, vy: 0, b: { x0: 0, x1: 0, y0: 0, y1: 0 }, vw: 0, vh: 0, items: [], lit: null, raf: 0, mode: null, tw: null, seen: false, touched: false, home: { x: 0, y: 0 }, ready: false };
 
-  useImperativeHandle(ref, () => ({ to: (id) => S.current.goItem?.(id), reset: () => S.current.goHome?.() }), []);
+  useImperativeHandle(ref, () => ({ to: (id: string) => S.current?.goItem?.(id), reset: () => S.current?.goHome?.() }), []);
 
   useEffect(() => {
     const s = S.current, v = view.current, w = world.current;
-    if (!v || !w) return undefined;
-    const clampX = (x) => Math.min(s.b.x1, Math.max(s.b.x0, x));
-    const clampY = (y) => Math.min(s.b.y1, Math.max(s.b.y0, y));
-    const soft = (p, lo, hi) => (p > hi ? hi + (p - hi) * EDGE : p < lo ? lo + (p - lo) * EDGE : p);
+    if (!s || !v || !w) return undefined;
+    const clampX = (x: number) => Math.min(s.b.x1, Math.max(s.b.x0, x));
+    const clampY = (y: number) => Math.min(s.b.y1, Math.max(s.b.y0, y));
+    const soft = (p: number, lo: number, hi: number) => (p > hi ? hi + (p - hi) * EDGE : p < lo ? lo + (p - lo) * EDGE : p);
 
     const lightNearest = () => {
       const cx = s.vw / 2 - s.x, cy = s.vh / 2 - s.y;
-      let best = null, bd = Infinity;
+      let best = null as string | null | undefined, bd = Infinity;
       s.items.forEach((it) => { const d = (it.cx - cx) ** 2 + (it.cy - cy) ** 2; if (d < bd) { bd = d; best = it.id; } });
       if (best !== s.lit) { s.lit = best; focusCb.current?.(best); }
     };
@@ -62,10 +96,10 @@ export default function PanCanvas({ ref, label, className = '', bar, onFocus, ch
     const measure = () => {
       s.vw = v.clientWidth; s.vh = v.clientHeight;
       const W = w.offsetWidth, H = w.offsetHeight;
-      s.b = W <= s.vw ? { x0: (s.vw - W) / 2, x1: (s.vw - W) / 2 } : { x0: s.vw - W, x1: 0 };
+      s.b = W <= s.vw ? { ...s.b, x0: (s.vw - W) / 2, x1: (s.vw - W) / 2 } : { ...s.b, x0: s.vw - W, x1: 0 };
       Object.assign(s.b, H <= s.vh ? { y0: (s.vh - H) / 2, y1: (s.vh - H) / 2 } : { y0: s.vh - H, y1: 0 });
       const wr = w.getBoundingClientRect();
-      s.items = [...w.querySelectorAll('[data-pan-item]')].map((el) => {
+      s.items = [...w.querySelectorAll<HTMLElement>('[data-pan-item]')].map((el): PanItem => {
         const r = el.getBoundingClientRect();
         return { id: el.dataset.panItem, el, x: r.left - wr.left, y: r.top - wr.top, w: r.width, h: r.height, cx: r.left - wr.left + r.width / 2, cy: r.top - wr.top + r.height / 2 };
       });
@@ -77,10 +111,10 @@ export default function PanCanvas({ ref, label, className = '', bar, onFocus, ch
 
     const stop = () => { cancelAnimationFrame(s.raf); s.raf = 0; s.mode = null; s.tw = null; };
     let last = 0;
-    const frame = (now) => {
+    const frame = (now: number) => {
       const dt = Math.min(48, now - (last || now)); last = now;
       if (s.mode === 'tween') {
-        const t = s.tw, k = Math.min(1, (now - t.t0) / t.ms), e = EIO(k);
+        const t = s.tw!, k = Math.min(1, (now - t.t0) / t.ms), e = EIO(k); // a tween always has its record
         s.x = t.fx + (t.tx - t.fx) * e; s.y = t.fy + (t.ty - t.fy) * e;
         apply();
         if (k >= 1) { const done = t.done; stop(); done?.(); return; }
@@ -94,7 +128,7 @@ export default function PanCanvas({ ref, label, className = '', bar, onFocus, ch
       s.raf = requestAnimationFrame(frame);
     };
     const run = () => { if (!s.raf && s.seen) { last = 0; s.raf = requestAnimationFrame(frame); } };
-    const glide = (tx, ty, ms = 600, done) => {
+    const glide = (tx: number, ty: number, ms = 600, done?: () => void) => {
       tx = clampX(tx); ty = clampY(ty);
       if (calmRef.current || !s.seen) { stop(); s.x = tx; s.y = ty; apply(); done?.(); return; }
       cancelAnimationFrame(s.raf); s.raf = 0;
@@ -111,16 +145,16 @@ export default function PanCanvas({ ref, label, className = '', bar, onFocus, ch
     s.goHome = () => { s.touched = true; glide(s.home.x, s.home.y, 700); };
 
     /* drag: a 6px threshold so a tap is still a click, then the world follows the hand; letting go coasts */
-    let down = null;
-    const onDown = (e) => {
+    let down: Down | null = null;
+    const onDown = (e: PointerEvent) => {
       if (e.button !== 0 && e.pointerType === 'mouse') return;
-      if (e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+      if ((e.target as Element).closest('input, textarea, select, [contenteditable="true"]')) return;
       down = { id: e.pointerId, sx: e.clientX, sy: e.clientY, x: s.x, y: s.y, t: performance.now(), lx: e.clientX, ly: e.clientY, on: false };
       addEventListener('pointermove', onMove);
       addEventListener('pointerup', onUp);
       addEventListener('pointercancel', onUp);
     };
-    const onMove = (e) => {
+    const onMove = (e: PointerEvent) => {
       if (!down || e.pointerId !== down.id) return;
       const dx = e.clientX - down.sx, dy = e.clientY - down.sy;
       if (!down.on) {
@@ -137,7 +171,7 @@ export default function PanCanvas({ ref, label, className = '', bar, onFocus, ch
       s.x = soft(down.x + dx, s.b.x0, s.b.x1); s.y = soft(down.y + dy, s.b.y0, s.b.y1);
       apply();
     };
-    const onUp = (e) => {
+    const onUp = (e: PointerEvent) => {
       if (!down || e.pointerId !== down.id) return;
       removeEventListener('pointermove', onMove); removeEventListener('pointerup', onUp); removeEventListener('pointercancel', onUp);
       const was = down.on, held = performance.now() - down.t > 90; down = null;
@@ -149,31 +183,32 @@ export default function PanCanvas({ ref, label, className = '', bar, onFocus, ch
       else { s.mode = null; s.vx = s.vy = 0; settle(); }
     };
     let eat = false;
-    const onClick = (e) => { if (eat) { e.preventDefault(); e.stopPropagation(); eat = false; } };
+    const onClick = (e: MouseEvent) => { if (eat) { e.preventDefault(); e.stopPropagation(); eat = false; } };
 
     /* keys: arrows pan (Shift: a screen), Home goes back; only when the canvas itself, or a non-text item in it, has focus */
-    const onKey = (e) => {
-      if (e.target.closest('input, textarea, select')) return;
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.target as Element).closest('input, textarea, select')) return;
       const step = e.shiftKey ? Math.round(s.vw * 0.8) : 160;
-      const d = { ArrowLeft: [step, 0], ArrowRight: [-step, 0], ArrowUp: [0, step], ArrowDown: [0, -step] }[e.key];
+      const d = ({ ArrowLeft: [step, 0], ArrowRight: [-step, 0], ArrowUp: [0, step], ArrowDown: [0, -step] } as Record<string, [number, number] | undefined>)[e.key];
       if (d) {
         const tx = clampX((s.tw?.tx ?? s.x) + d[0]), ty = clampY((s.tw?.ty ?? s.y) + d[1]);
         if (tx === s.x && ty === s.y && !s.tw) return; // at the edge: let the page have the key
         e.preventDefault(); s.touched = true; glide(tx, ty, 300);
-      } else if (e.key === 'Home') { e.preventDefault(); s.goHome(); }
+      } else if (e.key === 'Home') { e.preventDefault(); s.goHome?.(); }
     };
     /* Tab into an item that is off view: glide it in */
-    const onFocusIn = (e) => {
+    const onFocusIn = (e: FocusEvent) => {
       if (e.target === v) return;
-      const el = e.target.closest('[data-pan-item]');
+      const target = e.target as Element;
+      const el = target.closest<HTMLElement>('[data-pan-item]');
       if (!el) return;
-      const r = e.target.getBoundingClientRect(), vr = v.getBoundingClientRect();
+      const r = target.getBoundingClientRect(), vr = v.getBoundingClientRect();
       if (r.left >= vr.left + 8 && r.right <= vr.right - 8 && r.top >= vr.top + 8 && r.bottom <= vr.bottom - 8) return;
-      s.goItem(el.dataset.panItem);
+      s.goItem?.(el.dataset.panItem);
     };
     const onScroll = () => { if (v.scrollLeft || v.scrollTop) { v.scrollLeft = 0; v.scrollTop = 0; } };
     /* a sideways swipe on a trackpad (or Shift+wheel) pans; an up/down wheel still scrolls the page */
-    const onWheel = (e) => {
+    const onWheel = (e: WheelEvent) => {
       const dx = e.deltaX || (e.shiftKey ? e.deltaY : 0);
       if (!dx || Math.abs(dx) < Math.abs(e.shiftKey ? 0 : e.deltaY)) return;
       const tx = clampX(s.x - dx);
@@ -218,7 +253,7 @@ export default function PanCanvas({ ref, label, className = '', bar, onFocus, ch
         {bar}
         <span className="xt-pan-tools">
           <span className="xt-pan-hand" aria-hidden="true"><Hand /></span>
-          <button type="button" className="xt-pan-reset" onClick={() => S.current.goHome?.()} aria-label={resetLabel}><Home /></button>
+          <button type="button" className="xt-pan-reset" onClick={() => S.current?.goHome?.()} aria-label={resetLabel}><Home /></button>
         </span>
       </div>
       <div ref={view} className="xt-pan-view" tabIndex={0} role="region" aria-roledescription="canvas" aria-label={label + ': drag to explore, or use the arrow keys'} style={{ position: 'relative', overflow: 'hidden', touchAction: 'none' }}>

@@ -1,13 +1,14 @@
 /* One Go module, at the address its import path has. It answers two callers with one page: the go tool reads the
    go-import tag in the head (app/[...mod]/page.jsx), and a person who followed an import out of a stack trace lands
    somewhere that says what the module is and where to read it. Words are hanzo-inc/app's. */
+import type { ComponentType } from 'react';
 import { CodeBlock } from '../kit';
 import { UNREFERENCED, modulePathOf, repoOf } from '../../lib/modules';
 import './Module.css';
 
 /* The command is the path the module declares: Go accepts a module only under the path its own go.mod names, and
    pkg.go.dev files it there. Any other path fetches the repo and then fails. */
-export default function Module({ name }) {
+export default function Module({ name }: { name: string }) {
   const repo = repoOf(name);
   const path = modulePathOf(name);
   const About = ABOUT[name];
@@ -31,7 +32,7 @@ export default function Module({ name }) {
 }
 
 /* What a module is, where it has more to say than its name. */
-const ABOUT = { ci: Ci };
+const ABOUT: Partial<Record<string, ComponentType>> = { ci: Ci };
 
 /* hanzo.ai/ci is Hanzo CI, the pipeline every Hanzo repo imports. */
 function Ci() {

@@ -12,17 +12,21 @@
      Page Up/Down jump a film, Home/End.
    - Reduced motion: the posters (each film's still) stand in, no seeking; the playhead and captions still follow. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, KeyboardEvent, PointerEvent } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
 import { scrollToY } from '../../../lib/scroll';
 
 const FPS = 30;
-const FRAMES = { koma: 180, iro: 240, koe: 180 }; // measured from /public/models/*.webm (ffprobe)
-const pad = (n) => String(n).padStart(2, '0');
-const tcode = (f) => `00:00:${pad(Math.floor(f / FPS))}:${pad(f % FPS)}`;
+const FRAMES: Record<string, number> = { koma: 180, iro: 240, koe: 180 }; // measured from /public/models/*.webm (ffprobe)
+const pad = (n: number) => String(n).padStart(2, '0');
+const tcode = (f: number) => `00:00:${pad(Math.floor(f / FPS))}:${pad(f % FPS)}`;
 
-export default function FilmScrub({ pillars }) {
-  const ref = useRef(null);
-  const vids = useRef([]), tc = useRef(null), ph = useRef(null), rule = useRef(null), frame = useRef(null);
+/* a pillar of the reel: title, sentence, film slug, (unused here), camera move */
+export type Pillar = [string, string, string, number, string];
+
+export default function FilmScrub({ pillars }: { pillars: Pillar[] }) {
+  const ref = useRef<HTMLElement>(null);
+  const vids = useRef<(HTMLVideoElement | null)[]>([]), tc = useRef<HTMLSpanElement>(null), ph = useRef<HTMLSpanElement>(null), rule = useRef<HTMLDivElement>(null), frame = useRef<HTMLDivElement>(null);
   const [on, setOn] = useState(0);
   const N = pillars.map(([, , slug]) => FRAMES[slug] || 180);
   const START = N.map((_, i) => N.slice(0, i).reduce((a, b) => a + b, 0));
@@ -30,7 +34,7 @@ export default function FilmScrub({ pillars }) {
   const st = useRef({ target: 0, shown: 0, k: 0, raf: 0, live: false, calm: false, near: false, f: -1 });
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
 
-  const which = (f) => { let k = 0; while (k < N.length - 1 && f >= START[k + 1]) k++; return k; };
+  const which = (f: number) => { let k = 0; while (k < N.length - 1 && f >= START[k + 1]) k++; return k; };
   // one frame: ease toward the scroll's time, seek the film once its last seek has decoded, write the HUD
   const step = () => {
     const s = st.current;
@@ -67,6 +71,7 @@ export default function FilmScrub({ pillars }) {
 
   useEffect(() => { // after mount: reduced motion, on-screen state, when to fetch the films
     const s = st.current, el = ref.current;
+    if (!el) return;
     const mq = matchMedia('(prefers-reduced-motion: reduce)');
     const rm = () => { s.calm = mq.matches; if (s.calm && frame.current) frame.current.style.transform = 'none'; s.target = Math.min(1, Math.max(0, p.get())) * (TOTAL - 1); s.f = -1; kick(); };
     rm();
@@ -93,21 +98,23 @@ export default function FilmScrub({ pillars }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // the ruler drives the page: a frame f lives at one scroll position, so grabbing the playhead just scrolls there
-  const toFrame = (f) => {
+  const toFrame = (f: number) => {
     const el = ref.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + scrollY, range = el.offsetHeight - innerHeight;
     scrollToY(top + (Math.min(TOTAL - 1, Math.max(0, f)) / (TOTAL - 1)) * range, { immediate: true });
   };
-  const fromX = (x) => { const r = rule.current.getBoundingClientRect(); return Math.round(((x - r.left) / r.width) * (TOTAL - 1)); };
+  // only the ruler's own handlers call fromX, so the ruler is mounted
+  const fromX = (x: number) => { const r = rule.current!.getBoundingClientRect(); return Math.round(((x - r.left) / r.width) * (TOTAL - 1)); };
   const drag = useRef(false);
-  const down = (e) => { e.currentTarget.setPointerCapture?.(e.pointerId); drag.current = true; toFrame(fromX(e.clientX)); };
-  const move = (e) => { if (drag.current) toFrame(fromX(e.clientX)); };
+  const down = (e: PointerEvent<HTMLDivElement>) => { e.currentTarget.setPointerCapture?.(e.pointerId); drag.current = true; toFrame(fromX(e.clientX)); };
+  const move = (e: PointerEvent<HTMLDivElement>) => { if (drag.current) toFrame(fromX(e.clientX)); };
   const up = () => { drag.current = false; };
-  const key = (e) => {
+  const key = (e: KeyboardEvent) => {
     const f = Math.max(0, st.current.f), k = which(f);
-    const n = { ArrowRight: f + (e.shiftKey ? 1 : 10), ArrowUp: f + (e.shiftKey ? 1 : 10), ArrowLeft: f - (e.shiftKey ? 1 : 10), ArrowDown: f - (e.shiftKey ? 1 : 10),
-      PageDown: START[Math.min(N.length - 1, k + 1)], PageUp: k > 0 && f === START[k] ? START[k - 1] : START[k], Home: 0, End: TOTAL - 1 }[e.key];
+    const steps: Record<string, number | undefined> = { ArrowRight: f + (e.shiftKey ? 1 : 10), ArrowUp: f + (e.shiftKey ? 1 : 10), ArrowLeft: f - (e.shiftKey ? 1 : 10), ArrowDown: f - (e.shiftKey ? 1 : 10),
+      PageDown: START[Math.min(N.length - 1, k + 1)], PageUp: k > 0 && f === START[k] ? START[k - 1] : START[k], Home: 0, End: TOTAL - 1 };
+    const n = steps[e.key];
     if (n === undefined) return;
     e.preventDefault();
     toFrame(n);
@@ -137,7 +144,7 @@ export default function FilmScrub({ pillars }) {
               <span className="xst-rule-segs" aria-hidden="true">
                 {pillars.map(([t, , , , rig], i) => (
                   <span key={t} className={'xst-rule-seg' + (i === on ? ' on' : '') + (i < on ? ' done' : '')} style={{ flexGrow: N[i] }}>
-                    <i style={{ '--n': N[i] / FPS }} /><em className="x-mono">{rig}</em>
+                    <i style={{ '--n': N[i] / FPS } as CSSProperties} /><em className="x-mono">{rig}</em>
                   </span>
                 ))}
               </span>

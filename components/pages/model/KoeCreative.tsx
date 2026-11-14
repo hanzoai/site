@@ -10,6 +10,7 @@
    own words, on Hanzo's black model cards; it tours the fields by itself and each card opens its model with the
    card-to-page transition. */
 import { useEffect, useRef, useState } from 'react';
+import type { ComponentProps, PointerEvent, ReactNode } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
 import { More, Cta, Img, Film, Band } from '../../kit';
@@ -19,6 +20,7 @@ import Chapters from '../../v2/x-cray/Chapters';
 import ModelCards from './ModelCards';
 import { usePaused } from '../../v2/ModelFilm';
 import { C, ORDER, FIELDS } from './creativeData';
+import type { Slug } from './creativeData';
 import { Glyph } from './Studio';
 import { arrows } from './live';
 import KoePanel from './KoePanels';
@@ -41,7 +43,7 @@ function Head() {
   );
 }
 
-function Caps({ flip }) {
+function Caps({ flip }: { flip?: boolean }) {
   const d = C[SLUG];
   return (
     <Chapters
@@ -52,13 +54,13 @@ function Caps({ flip }) {
       head={<><h2 id={'cr-caps-' + SLUG} className="cr-caps-h">What {d.name} does</h2><p className="lv-side cr-caps-side">Capabilities</p></>}
       items={d.caps.map(([t, x], i) => ({
         k: d.kind, rail: t, title: t, body: <p>{x}</p>,
-        art: (on) => <div className="cr-art ko-art" data-k={i}><KoePanel k={i} on={on} /><Glyph k={SLUG} i={i} /></div>,
+        art: (on: boolean) => <div className="cr-art ko-art" data-k={i}><KoePanel k={i} on={on} /><Glyph k={SLUG} i={i} /></div>,
       }))}
     />
   );
 }
 
-function Fits({ flip }) {
+function Fits({ flip }: { flip?: boolean }) {
   const d = C[SLUG];
   return (
     <section className="lv-sec cr-fits ko-fits" aria-labelledby={'cr-fits-' + SLUG}>
@@ -86,7 +88,7 @@ function Fits({ flip }) {
 }
 
 // the model card's pointer tilt (SPEC.md: up to 3°, flat on leave, none on touch or under reduced motion)
-function tilt(e) {
+function tilt(e: PointerEvent<HTMLAnchorElement>) {
   if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const el = e.currentTarget, r = el.getBoundingClientRect();
   const x = ((e.clientX - r.left) / r.width) * 2 - 1, y = ((e.clientY - r.top) / r.height) * 2 - 1;
@@ -95,14 +97,14 @@ function tilt(e) {
 
 function Map() {
   const slug = SLUG;
-  const box = useRef(null), tabs = useRef(null);
+  const box = useRef<HTMLElement>(null), tabs = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
   const opener = useOpener();
   const first = Math.max(0, FIELDS.findIndex(([, l]) => l.some(([s]) => s === slug)));
   const [f, setF] = useState(first);
   const [mine, setMine] = useState(false);
-  const [play, setPlay] = useState(null);
+  const [play, setPlay] = useState<Slug | null>(null);
   const paused = usePaused();
   useEffect(() => {
     if (!seen || mine || calm || paused) return;
@@ -111,7 +113,7 @@ function Map() {
   }, [seen, mine, calm, paused]);
   // phones: the tab row scrolls sideways; keep the chosen field in view as the tour moves on
   useEffect(() => {
-    const row = tabs.current, el = row && row.children[f];
+    const row = tabs.current, el = row?.children[f] as HTMLElement | undefined;
     if (!row || !el || row.scrollWidth <= row.clientWidth + 1) return;
     row.scrollTo({ left: Math.max(0, el.offsetLeft - (row.clientWidth - el.offsetWidth) / 2), behavior: calm ? 'auto' : 'smooth' });
   }, [f, calm]);
@@ -150,7 +152,7 @@ function Map() {
                     onPointerEnter={() => setPlay(s)}
                     onPointerLeave={() => setPlay((p) => (p === s ? null : p))}
                     onFocus={() => setPlay(s)}
-                    onClick={(e) => { if (here) { e.preventDefault(); return; } opener.open(e, { el: e.currentTarget, src: film(s, 'webp'), href: '/' + s, key: s }); }}
+                    onClick={(e) => { if (here) { e.preventDefault(); return; } opener?.open(e, { el: e.currentTarget, src: film(s, 'webp'), href: '/' + s, key: s }); }}
                   >
                     <span className="cr-mc-media" aria-hidden="true">
                       <Img src={film(s, 'webp')} w={1200} h={1500} />
@@ -177,7 +179,9 @@ function Map() {
 }
 
 // as Creative's default export, for Koe only: shape, aim, over, pos as Launch; demo is the booth Scene
-export default function KoeCreative({ shape, aim, over, pos, headClass, demo, flip }) {
+type LaunchProps = ComponentProps<typeof Launch>;
+interface KoeCreativeProps { shape: LaunchProps['shape']; aim: LaunchProps['aim']; over?: LaunchProps['over']; pos?: LaunchProps['pos']; headClass?: string; demo: ReactNode; flip?: boolean }
+export default function KoeCreative({ shape, aim, over, pos, headClass, demo, flip }: KoeCreativeProps) {
   const d = C[SLUG];
   return (
     <Launch slug={SLUG} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + SLUG, id: SLUG + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head />}>

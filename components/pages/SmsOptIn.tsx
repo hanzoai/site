@@ -9,6 +9,7 @@
    number has ten digits. It sends exactly what hanzo.ai sends: POST https://api.hanzo.ai/v1/notify/consent
    {phone, consent, channel, source, consentText}. */
 import { useEffect, useState } from 'react';
+import type { ChangeEvent, CSSProperties, FormEvent } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE, Mark } from '../ui';
 import { A, Cta, Field, Tick } from '../kit';
@@ -17,7 +18,7 @@ import '../v2/ProgramScale.css';
 import './SmsOptIn.css';
 
 // the consent paragraph, word for word, in the parts the chips light
-const PARTS = [
+const PARTS: [kind: string | null, words: string][] = [
   [null, 'I agree to receive text messages (SMS) from Hanzo AI at the number provided, '],
   ['What', 'including one-time passcodes and two-factor authentication, account and security alerts, and transactional notifications.'],
   ['How often', ' Message frequency varies.'],
@@ -30,7 +31,7 @@ const KINDS = ['Two-factor authentication codes', 'Account and security alerts',
 
 /* The phone's clock is the visitor's own time, its colon ticking each second (it is a real phone, not a picture). */
 function Clock() {
-  const [t, setT] = useState(null);
+  const [t, setT] = useState<Date | null>(null);
   useEffect(() => { const f = () => setT(new Date()); f(); const id = setInterval(f, 1000); return () => clearInterval(id); }, []);
   if (!t) return <span>9:41</span>;
   const h = t.getHours() % 12 || 12, m = String(t.getMinutes()).padStart(2, '0');
@@ -38,14 +39,14 @@ function Clock() {
 }
 
 /* how the phone shows a typed US number (display only; the request sends exactly what was typed) */
-function show(v) {
+function show(v: string) {
   const s = v.trim();
   const d = s.replace(/\D/g, '');
   if (/^1?\d{10}$/.test(d) && !/[a-z]/i.test(s)) { const n = d.slice(-10); return '+1 (' + n.slice(0, 3) + ') ' + n.slice(3, 6) + '-' + n.slice(6); }
   return s;
 }
 
-function Handset({ phone, lit, done, failed }) {
+function Handset({ phone, lit, done, failed }: { phone: string; lit: string | null; done: boolean; failed: boolean }) {
   return (
     <div className="xsm-phone" aria-hidden="true">
       <div className="xsm-screen">
@@ -53,7 +54,7 @@ function Handset({ phone, lit, done, failed }) {
         <div className={'xsm-to' + (lit === 'Cost' ? ' lit' : '') + (failed ? ' fail' : '')}><span className="x-mono">To</span><b>{show(phone) || '+1 (555) 000-0000'}</b></div>
         <div className={'xsm-from' + (lit === 'What' || lit === 'Purchases' ? ' lit' : '')}><span className="xsm-av"><Mark size={12} /></span>Hanzo AI</div>
         <ul className={'xsm-msgs' + (done ? ' done' : '') + (lit === 'What' || lit === 'How often' ? ' lit' : '')}>
-          {KINDS.map((k, i) => <li key={k} style={{ '--i': i }}>{k}</li>)}
+          {KINDS.map((k, i) => <li key={k} style={{ '--i': i } as CSSProperties}>{k}</li>)}
           <AnimatePresence>{done && <motion.li className="xsm-ok" initial={{ opacity: 0, y: 14, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>You&apos;re opted in</motion.li>}</AnimatePresence>
         </ul>
         <div className={'xsm-keys' + (lit === 'How to stop' ? ' lit' : '')}><span>STOP</span><span>HELP</span></div>
@@ -65,9 +66,9 @@ function Handset({ phone, lit, done, failed }) {
 export default function SmsOptIn() {
   const [phone, setPhone] = useState('');
   const [agree, setAgree] = useState(false);
-  const [state, setState] = useState('idle'); // idle | submitting | done; a refused send returns to idle with the number kept
-  const [failed, setFailed] = useState(false);
-  const [lit, setLit] = useState(null);
+  const [state, setState] = useState<'idle' | 'submitting' | 'done'>('idle'); // idle | submitting | done; a refused send returns to idle with the number kept
+  const [failed, setFailed] = useState<string | false>(false);
+  const [lit, setLit] = useState<string | null>(null);
   // once, after the texts land, the consent reads itself in parts (each part lights its words and the phone), then rests;
   // any touch of the form stops it
   const [tour, setTour] = useState(true);
@@ -81,7 +82,7 @@ export default function SmsOptIn() {
   }, [tour, calm]);
   const stopTour = () => { if (tour) { setTour(false); setLit(null); } };
   const ready = agree && phone.replace(/[^0-9]/g, '').length >= 10;
-  const submit = async (e) => {
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!ready) return;
     setState('submitting'); setFailed(false);
@@ -97,7 +98,7 @@ export default function SmsOptIn() {
     else {
       setState('idle'); setFailed(why);
       setTimeout(() => {
-        document.querySelector('.xsm-form [name="phone"]')?.focus({ preventScroll: true });
+        document.querySelector<HTMLInputElement>('.xsm-form [name="phone"]')?.focus({ preventScroll: true });
         // the reason is on screen: if it landed under the fold, the page moves just enough to show it
         const r = document.querySelector('.xsm-err')?.getBoundingClientRect();
         if (r && r.bottom > innerHeight - 16) window.scrollTo({ top: scrollY + r.bottom - innerHeight + 32, behavior: 'smooth' });
@@ -127,7 +128,7 @@ export default function SmsOptIn() {
                 </motion.div>
               ) : (
                 <motion.form key="form" onPointerDown={stopTour} onFocus={stopTour} onSubmit={submit} id="sms" className="xsm-form" exit={{ opacity: 0, y: -10, transition: { duration: 0.15 } }} data-thumb="Yes, sign me up!" data-href="#sms">
-                  <Field className="xsm-f" label="Mobile phone number" name="phone" type="tel" autoComplete="tel" aria-required="true" aria-invalid={failed ? 'true' : undefined} placeholder="+1 (555) 000-0000" value={phone} onChange={(e) => { setPhone(e.target.value); setFailed(false); }} />
+                  <Field className="xsm-f" label="Mobile phone number" name="phone" type="tel" autoComplete="tel" aria-required="true" aria-invalid={failed ? 'true' : undefined} placeholder="+1 (555) 000-0000" value={phone} onChange={(e: ChangeEvent<HTMLInputElement>) => { setPhone(e.target.value); setFailed(false); }} />
                   <div className="xsm-parts" role="group" aria-label="Read the consent in parts">
                     {PARTS.filter((p) => p[0]).map(([k]) => (
                       <button key={k} type="button" aria-pressed={lit === k} onClick={() => { setTour(false); setLit(k); }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setLit(k); }} onPointerLeave={(e) => { if (e.pointerType === 'mouse') setLit(null); }} onFocus={(e) => { if (e.target.matches(':focus-visible')) setLit(k); }} onBlur={(e) => { if (e.target.matches(':focus-visible')) setLit(null); }}>{k}</button>

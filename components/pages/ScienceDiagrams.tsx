@@ -2,7 +2,7 @@
    dark. Each is Hanzo's own drawing; the walkthrough's lattice, wave and vorticity move with its progress (0 to 100). */
 
 /** The walkthrough's picture for a discipline id; `progress` moves the parts that move. */
-export function Demo({ id, progress }) {
+export function Demo({ id, progress }: { id: string; progress: number }) {
   switch (id) {
     case 'ai':
       return (
@@ -186,7 +186,7 @@ export function Demo({ id, progress }) {
 }
 
 /** The first figure of the workbench: the cross-species embedding; from v3 the labels are larger. */
-export function Umap({ figVersion }) {
+export function Umap({ figVersion }: { figVersion: number }) {
   return (
     <svg viewBox="0 0 520 260" width="100%" height="100%" role="img" aria-label="Cross-species UMAP embedding">
       {/* Dense multi-cluster point cloud */}

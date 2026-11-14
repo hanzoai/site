@@ -12,6 +12,7 @@
    studio.hanzo.ai. No accent: deck greys only; the tally light is silver (#d4d4d4). Every word, figure and link is Hanzo's; the pairing of stills
    to camera moves is a demo, not a claim. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { CSSProperties, KeyboardEvent, MouseEvent, PointerEvent, ReactNode } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, Go, More } from '../kit';
 import { scrollToEl } from '../../lib/scroll';
@@ -21,8 +22,10 @@ import A2Paste from '../v2/A2Paste';
 import '../v2/A2.css';
 import './Studio.css';
 import { PLANS } from '../../lib/plans';
+import type { Opener } from './ModelsStudioTypes';
+import type { Pillar } from './studio/FilmScrub';
 
-const NAME = { iro: 'Iro', koma: 'Koma', mori: 'Mori', oto: 'Oto', koe: 'Koe', uta: 'Uta' };
+const NAME: Record<string, string> = { iro: 'Iro', koma: 'Koma', mori: 'Mori', oto: 'Oto', koe: 'Koe', uta: 'Uta' };
 // five shots, one per camera move; the stills are the models' own pictures, titled from Hanzo's library
 const SHOTS = [
   { rig: 'Dolly In', img: 'koma', title: 'The drift', actor: 'KAI-01' },
@@ -34,7 +37,7 @@ const SHOTS = [
 const SHOT = 4; // seconds a shot
 const LEN = SHOTS.length * SHOT;
 // each move as a transform of the still, p = 0..1 through the shot
-const MOVE = [
+const MOVE: ((p: number) => string)[] = [
   (p) => `scale(${1.04 + 0.18 * p})`,
   (p) => `translate3d(0, ${7 - 14 * p}%, 0) scale(1.18)`,
   (p) => `scale(${1.34 - 0.3 * p})`,
@@ -43,7 +46,7 @@ const MOVE = [
 ];
 const TRACKS = [['Koma', 'video'], ['Oto', 'foley'], ['Koe', 'voice'], ['Uta', 'score']];
 const MODELS = ['Iro', 'Koma', 'Mori', 'Oto', 'Koe', 'Uta'];
-const LIB = [
+const LIB: [string, string, number][] = [
   ['koe', 'Slower sign', 4], ['koe', 'The shop sign', 4], ['oto', 'Tin roof', 3],
   ['mori', 'Paper lantern', 2], ['koma', 'The drift', 0], ['iro', 'Friday street', 1],
 ];
@@ -52,17 +55,17 @@ const SPECS = [
   'Character & world continuity lock across every shot — face seed, wardrobe, lighting & Koe voice print',
   'Multi-shot NLE timeline sequencer with frame-chained Koma 2.0 video, Oto foley, Uta score & Node Graph pipeline',
 ];
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 // bring one item of a horizontal rail to its centre by scrolling the rail itself (never the page)
-const follow = (rail, el, smooth) => {
+const follow = (rail: HTMLElement | null, el: Element | null | undefined, smooth: boolean) => {
   if (!rail || !el || rail.scrollWidth <= rail.clientWidth + 1) return;
   const r = rail.getBoundingClientRect(), b = el.getBoundingClientRect();
   rail.scrollTo({ left: rail.scrollLeft + (b.left + b.width / 2) - (r.left + r.width / 2), behavior: smooth ? 'smooth' : 'auto' });
 };
-const wave = (k, n) => Array.from({ length: n }, (_, i) => 22 + ((i * 37 + k * 23) % 61)); // a fixed waveform per clip
+const wave = (k: number, n: number) => Array.from({ length: n }, (_, i) => 22 + ((i * 37 + k * 23) % 61)); // a fixed waveform per clip
 
 function Cinema() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const live = useInView(box, { amount: 0.2 });
   const calm = useReducedMotion();
   const [shot, setShot] = useState(0);
@@ -70,8 +73,8 @@ function Cinema() {
   const [grabbed, setGrabbed] = useState(false);
   const [model, setModel] = useState(1);
   const t = useRef(0), cur = useRef(0), sec = useRef(-1), drag = useRef(false);
-  const imgs = useRef([]), lanes = useRef(null), ph = useRef(null), tc = useRef(null), bar = useRef(null), ret = useRef(null);
-  const lib = useRef(null), inLib = useRef(false);
+  const imgs = useRef<(HTMLImageElement | null)[]>([]), lanes = useRef<HTMLDivElement>(null), ph = useRef<HTMLDivElement>(null), tc = useRef(null), bar = useRef<HTMLElement>(null), ret = useRef<HTMLSpanElement>(null);
+  const lib = useRef<HTMLUListElement>(null), inLib = useRef(false);
   useEffect(() => { // the library rail follows the shot on the monitor (left alone while the pointer is in it)
     if (inLib.current) return;
     follow(lib.current, lib.current?.querySelector('[aria-pressed="true"]')?.parentElement, !calm);
@@ -85,7 +88,7 @@ function Cinema() {
     if (ret.current) ret.current.style.transform = k === 2 ? `scale(${0.82 + 0.3 * p})` : 'scale(1)'; // the zolly's subject holds while the world stretches
     if (ph.current) ph.current.style.transform = `translate3d(${(T / LEN) * 100}%, 0, 0)`;
     if (bar.current) bar.current.style.transform = `scaleX(${p})`;
-    if (lanes.current && Math.floor(T) !== sec.current) { sec.current = Math.floor(T); lanes.current.setAttribute('aria-valuenow', sec.current); lanes.current.setAttribute('aria-valuetext', `${sec.current} seconds, shot ${k + 1}, ${SHOTS[k].rig}`); }
+    if (lanes.current && Math.floor(T) !== sec.current) { sec.current = Math.floor(T); lanes.current.setAttribute('aria-valuenow', String(sec.current)); lanes.current.setAttribute('aria-valuetext', `${sec.current} seconds, shot ${k + 1}, ${SHOTS[k].rig}`); }
     if (k !== cur.current) { cur.current = k; setShot(k); }
   };
   useLayoutEffect(() => { if (calm) { t.current = SHOT * 0.6; setPlaying(false); } paint(); }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -94,19 +97,20 @@ function Cinema() {
   useEffect(() => { // the film runs on one animation-frame loop while it is on screen
     if (!live || !playing) return;
     let raf = 0, last = performance.now();
-    const loop = (now) => { const dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now; t.current = (t.current + dt) % LEN; paint(); raf = requestAnimationFrame(loop); };
+    const loop = (now: number) => { const dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now; t.current = (t.current + dt) % LEN; paint(); raf = requestAnimationFrame(loop); };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, [live, playing]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const go = (k) => { t.current = k * SHOT + (calm ? SHOT * 0.6 : 0.001); paint(); if (!calm) setPlaying(true); };
-  const seek = (e) => { const r = lanes.current.getBoundingClientRect(); t.current = Math.min(0.9999, Math.max(0, (e.clientX - r.left) / r.width)) * LEN; paint(); };
-  const grab = (e) => { e.currentTarget.setPointerCapture?.(e.pointerId); drag.current = true; setPlaying(false); setGrabbed(true); seek(e); };
-  const key = (e) => {
-    const d = { ArrowRight: 0.5, ArrowLeft: -0.5, PageUp: SHOT, PageDown: -SHOT }[e.key];
+  const go = (k: number) => { t.current = k * SHOT + (calm ? SHOT * 0.6 : 0.001); paint(); if (!calm) setPlaying(true); };
+  const seek = (e: PointerEvent<HTMLDivElement>) => { const l = lanes.current; if (!l) return; const r = l.getBoundingClientRect(); t.current = Math.min(0.9999, Math.max(0, (e.clientX - r.left) / r.width)) * LEN; paint(); };
+  const grab = (e: PointerEvent<HTMLDivElement>) => { e.currentTarget.setPointerCapture?.(e.pointerId); drag.current = true; setPlaying(false); setGrabbed(true); seek(e); };
+  const key = (e: KeyboardEvent) => {
+    const steps: Record<string, number | undefined> = { ArrowRight: 0.5, ArrowLeft: -0.5, PageUp: SHOT, PageDown: -SHOT };
+    const d = steps[e.key];
     if (d === undefined && e.key !== 'Home' && e.key !== 'End') return;
     e.preventDefault();
-    t.current = e.key === 'Home' ? 0 : e.key === 'End' ? LEN - 0.01 : Math.min(LEN - 0.01, Math.max(0, t.current + d));
+    t.current = e.key === 'Home' ? 0 : e.key === 'End' ? LEN - 0.01 : Math.min(LEN - 0.01, Math.max(0, t.current + (d ?? 0)));
     setPlaying(false); setGrabbed(true); paint();
   };
   const s = SHOTS[shot];
@@ -212,12 +216,12 @@ function Cinema() {
 
 // "Open Studio" is Hanzo's own label for the page you are on, so it never reloads it: it takes you into the cutting
 // room (the monitor) instead. The href stays /studio so the link survives with JavaScript off.
-function jump(e) {
+function jump(e: MouseEvent<HTMLElement>) {
   const el = document.getElementById('xst-cinema');
   if (!el) return;
   e.preventDefault();
   scrollToEl(el, { offset: -84, duration: 0.9 }); // reduced motion jumps (lib/scroll)
-  el.querySelector('.xst-lanes')?.focus({ preventScroll: true });
+  el.querySelector<HTMLElement>('.xst-lanes')?.focus({ preventScroll: true });
 }
 
 function Hero() {
@@ -249,13 +253,13 @@ function Hero() {
 }
 
 // Beyond: the two tools in Hanzo's own sentence, sorted by what you are making
-const MAKE = [
+const MAKE: [string, number][] = [
   ['Everyday visuals', 0], ['Decks', 0], ['Docs', 0], ['Interactive apps', 0],
   ['AI film direction', 1], ['Camera rigs', 1], ['Multi-shot timelines', 1], ['Node-graph VFX', 1],
 ];
 
 function Which() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const live = useInView(ref, { amount: 0.4 });
   const calm = useReducedMotion();
   const [at, setAt] = useState(4);
@@ -273,10 +277,10 @@ function Which() {
         {MAKE.map(([t, s], i) => <button key={t} type="button" role="radio" aria-checked={at === i} className={s ? 's' : 'd'} onClick={() => { setAt(i); setMine(true); }}>{t}</button>)}
       </div>
       <div className="xst-ans">
-        {[
+        {([
           ['Hanzo Design', 'builds everyday visuals, decks, docs, and interactive apps inside your workspace.', <Go key="d" to="/design">Open Hanzo Design</Go>],
           ['Hanzo Studio', 'is a full cinema production suite built for directors, filmmakers, and VFX teams.', <Go key="s" to="https://studio.hanzo.ai">Launch studio.hanzo.ai</Go>],
-        ].map(([h, d, go], i) => (
+        ] satisfies [string, string, ReactNode][]).map(([h, d, go], i) => (
           <div key={h} className={'xst-ans-c' + (side === i ? ' on' : '')} aria-hidden={side !== i} inert={side !== i}><b><span className="xst-m"><span>{h}</span></span></b><p>{d}</p>{go}</div>
         ))}
       </div>
@@ -302,7 +306,7 @@ function What() {
 /* The reel: one cinema screen in a dark room. The curtain and the letterbox open as you arrive (CSS, scroll-driven);
    its camera-move list stands beside it, and each move runs on its still (a CSS keyframe per move) before the next
    one rolls. Pick one and it holds. Every pillar's sentence stays in the page (folded under its title). */
-const PILLARS = [
+const PILLARS: Pillar[] = [
   ['Cinema Camera & Lens Rig', 'Control physical 6-DoF camera trajectories (Dolly In/Out, Crane Rise, Vertigo Zolly, Crash Zoom, Whip Pan, 360° Orbit, Bullet-Time), 14mm–135mm prime & anamorphic 2.39:1 lenses, T-Stop aperture bokeh, and volumetric lighting.', 'koma', 0, 'Dolly In'],
   ['Character & World Consistency Lock', 'Lock Actor ID identity embeddings, wardrobe, reference stills, and Koe voice profiles so your cast and environment stay frame-accurate across every angle and cut.', 'iro', 1, 'Crane Rise'],
   ['Multi-Shot Timeline & Node Graph', 'Chain shots directly with last-frame conditioning (ConcatVideo), layer Oto foley and Uta musical scores on a multi-track timeline, or drop into the full Comfy-compatible Node Graph pipeline.', 'koe', 4, '360° Orbit'],
@@ -313,7 +317,7 @@ const REST = ['scale(1.47)', 'translate3d(0, 0, 0) scale(1.32)', 'translate3d(-1
 const ROLL = 6500; // ms a move runs before the next one rolls
 
 function Reel() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const live = useInView(ref, { amount: 0.45 });
   const calm = useReducedMotion();
   const [on, setOn] = useState(0);
@@ -353,7 +357,7 @@ function Reel() {
   );
 }
 
-const CAPS = [
+const CAPS: [string, string, string][] = [
   ['Koma 2.0 Camera Motion Control', 'Direct exact camera paths, focal lengths (14mm to 135mm Anamorphic), shutter angles, and depth-of-field rack focus before rendering.', 'Koma 2.0'],
   ['Persistent Actor & Set Vault', 'Upload character sheets or lock generated seeds once; reference @KAI-01 or @SORA-02 in any shot to preserve face, costume, and voice.', '@KAI-01'],
   ['Frame-Chained Storyboard Sequencer', 'Cut multi-shot scenes on a real timeline with automatic boundary frame matching, lip-sync dialogue, and OpenTimelineIO / MP4 master export.', 'OpenTimelineIO'],
@@ -364,17 +368,17 @@ const CAPS = [
 
 /* The capabilities as one node graph a render pass walks through: six small nodes wired on one canvas, and the node
    the pass is on opens its sentence in the one pane beside it (one in, one out). Positions are % of the canvas. */
-const NODE = [[0, 22], [0, 72], [26, 47], [52, 20], [52, 74], [78, 47]];
-const WIRE = [[0, 2], [1, 2], [2, 3], [2, 4], [3, 5], [4, 5]];
+const NODE: [number, number][] = [[0, 22], [0, 72], [26, 47], [52, 20], [52, 74], [78, 47]];
+const WIRE: [number, number][] = [[0, 2], [1, 2], [2, 3], [2, 4], [3, 5], [4, 5]];
 const NW = 22; // node width, % of the canvas
-const wire = ([a, b]) => {
+const wire = ([a, b]: [number, number]) => {
   const [x1, y1] = [NODE[a][0] + NW, NODE[a][1]], [x2, y2] = NODE[b];
   return `M${x1} ${y1} C${x1 + 2.6} ${y1} ${x2 - 2.6} ${y2} ${x2} ${y2}`;
 };
 
 function Graph() {
-  const ref = useRef(null);
-  const tabs = useRef([]);
+  const ref = useRef<HTMLElement>(null);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const live = useInView(ref, { amount: 0.3 });
   const calm = useReducedMotion();
   const [at, setAt] = useState(0);
@@ -389,9 +393,10 @@ function Graph() {
   const prev = useRef(lit);
   const jumpy = Math.abs(lit - prev.current) > 1; // a long jump (06 back to 01) cuts instead of flying across the wires
   useEffect(() => { prev.current = lit; }, [lit]);
-  const pick = (i) => { setAt(i); setHov(-1); setMine(true); };
-  const key = (e, i) => {
-    const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+  const pick = (i: number) => { setAt(i); setHov(-1); setMine(true); };
+  const key = (e: KeyboardEvent, i: number) => {
+    const steps: Record<string, number | undefined> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    const d = steps[e.key];
     const n = e.key === 'Home' ? 0 : e.key === 'End' ? CAPS.length - 1 : d === undefined ? -1 : (i + d + CAPS.length) % CAPS.length;
     if (n < 0) return;
     e.preventDefault(); pick(n); tabs.current[n]?.focus();
@@ -415,7 +420,7 @@ function Graph() {
                 key={h} type="button" role="tab" id={'xst-cap-' + i} aria-selected={i === lit} aria-controls="xst-cap-pane" tabIndex={i === lit ? 0 : -1}
                 ref={(el) => { tabs.current[i] = el; }}
                 className={'xst-node' + (i === lit ? ' on' : '') + (i < lit ? ' done' : '')}
-                style={{ '--x': NODE[i][0] / 100, '--y': NODE[i][1] / 100 }}
+                style={{ '--x': NODE[i][0] / 100, '--y': NODE[i][1] / 100 } as CSSProperties}
                 onPointerEnter={(e) => e.pointerType === 'mouse' && setHov(i)} onClick={() => pick(i)} onKeyDown={(e) => key(e, i)}
               >
                 {i === lit && <motion.span layoutId="xst-node-ring" className="xst-node-ring" aria-hidden="true" transition={{ duration: calm || jumpy ? 0 : 0.4, ease: [0.4, 0, 0.2, 1] }} />}
@@ -446,7 +451,7 @@ function Graph() {
   );
 }
 
-const BIN = [
+const BIN: [string, string, string][] = [
   ['iro', 'Image generation and visual understanding.', 'Images'],
   ['koma', 'Video generation and world simulation.', 'Video'],
   ['oto', 'Sound generation and audio understanding.', 'Audio'],
@@ -457,15 +462,15 @@ const BIN = [
 
 /* The six creative models on a film strip: one frame plays; each opens into its model page. */
 function Strip() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const live = useInView(ref, { amount: 0.3 });
   const calm = useReducedMotion();
-  const opener = useOpener();
-  const boxes = useRef([]);
+  const opener = useOpener() as Opener | null; // Opener.tsx makes its context from null
+  const boxes = useRef<(HTMLSpanElement | null)[]>([]);
   const [on, setOn] = useState(0);
   const [held, setHeld] = useState(false);
   const [ready, setReady] = useState(false); // the server cannot know reduced motion: films join after hydration
-  const rail = useRef(null);
+  const rail = useRef<HTMLUListElement>(null);
   useEffect(() => setReady(true), []);
   useEffect(() => {
     if (!live || held || calm) return;

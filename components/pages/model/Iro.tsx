@@ -5,7 +5,9 @@
    or reframe it at 16:9, 1:1 or 21:9. (The picture is Hanzo's own Iro illustration, not Iro's output.)
    Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
 import { useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import type { MotionStyle } from 'motion/react';
 import { EASE } from '../../ui';
 import { Img } from '../../kit';
 import { Studio, Glyph } from './Studio';
@@ -15,14 +17,17 @@ import { useLoop, rng } from './live';
 import usePhoneAsk from '../usePhoneAsk';
 import './Iro.css';
 
-const ASPECTS = [['16:9', 16 / 9], ['1:1', 1], ['21:9', 21 / 9]];
+const ASPECTS: [label: string, ratio: number][] = [['16:9', 16 / 9], ['1:1', 1], ['21:9', 21 / 9]];
 // each aspect fits inside the frame (88% wide, the frame's height less room for the tags), sized in CSS from --r
-const box = (r) => ({ '--r': r });
+const box = (r: number) => ({ '--r': r } as MotionStyle);
 const W = 240; // working width in pixels: the noise is computed here and the canvas scales it up
 const STEPS = 50;
 
+// the flow's working set: the picture at five levels of detail, a noise field, and where the run is
+interface Run { levels: Uint8ClampedArray[] | null; noise: Float32Array | null; seed: number; step: number; drawn: number; t: number; hold: number; img: HTMLImageElement | null }
+
 function Canvas() {
-  const wrap = useRef(null), cv = useRef(null), stepEl = useRef(null), lineEl = useRef(null), range = useRef(null);
+  const wrap = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement | null>(null), stepEl = useRef<HTMLSpanElement>(null), lineEl = useRef<HTMLSpanElement>(null), range = useRef<HTMLInputElement>(null);
   const [a, setA] = useState(1);
   const aNow = useRef(1);
   aNow.current = a; // an exiting canvas (old aspect) must never take the ref back
@@ -30,7 +35,7 @@ function Canvas() {
   const [done, setDone] = useState(false);
   const calm = useReducedMotion();
   // the server paints Hanzo's own resting frame (hanzo.ai/iro renders STEP 38/50); the run starts once the picture is in
-  const S = useRef({ levels: null, noise: null, seed: 7, step: 3, drawn: -1, t: 0, hold: 0, img: null });
+  const S = useRef<Run>({ levels: null, noise: null, seed: 7, step: 3, drawn: -1, t: 0, hold: 0, img: null });
 
   // build the working set for an aspect: the picture at five levels of detail, and a noise field
   const prep = () => {
@@ -39,15 +44,16 @@ function Canvas() {
     const r = ASPECTS[aNow.current][1], w = W, h = Math.round(W / r);
     const sh = img.width / r, sy = (img.height - sh) / 2; // crop the centre band, as object-fit: cover does
     const c = document.createElement('canvas'), g = c.getContext('2d', { willReadFrequently: true });
+    if (!g) return;
     c.width = w; c.height = h;
     s.levels = [24, 12, 6, 3, 1].map((div) => {
       const t = document.createElement('canvas'); t.width = Math.max(2, Math.round(w / div)); t.height = Math.max(2, Math.round(h / div));
-      t.getContext('2d').drawImage(img, 0, sy, img.width, sh, 0, 0, t.width, t.height);
+      t.getContext('2d')?.drawImage(img, 0, sy, img.width, sh, 0, 0, t.width, t.height);
       g.imageSmoothingEnabled = true; g.clearRect(0, 0, w, h); g.drawImage(t, 0, 0, w, h);
       return g.getImageData(0, 0, w, h).data.slice();
     });
     reseed(false);
-    const c2 = cv.current; c2.width = w; c2.height = h;
+    const c2 = cv.current; if (c2) { c2.width = w; c2.height = h; }
     s.drawn = -1;
   };
   const reseed = (restart = true) => {
@@ -56,11 +62,13 @@ function Canvas() {
     for (let i = 0; i < s.noise.length; i++) s.noise[i] = (r() + r() + r() - 1.5) * 1.15; // roughly normal
     if (restart) { s.t = 0; s.hold = 0; s.drawn = -1; setDone(false); }
   };
-  const draw = (step) => {
+  const draw = (step: number) => {
     const s = S.current;
-    if (!s.levels || s.drawn === step) return;
+    if (!s.levels || !s.noise || s.drawn === step) return;
     s.drawn = step;
-    const c = cv.current, g = c.getContext('2d'), out = g.createImageData(c.width, c.height), o = out.data;
+    const c = cv.current, g = c?.getContext('2d');
+    if (!c || !g) return;
+    const out = g.createImageData(c.width, c.height), o = out.data;
     const t = step / STEPS, f = Math.min(3.999, t * 4.4), k = Math.floor(f), fr = f - k, A = s.levels[k], B = s.levels[k + 1], N = s.noise;
     for (let i = 0; i < o.length; i += 4) {
       for (let ch = 0; ch < 3; ch++) {
@@ -97,14 +105,14 @@ function Canvas() {
     draw(s.step);
   });
 
-  const scrub = (v) => { const s = S.current; setPlay(false); s.step = v; s.t = v / STEPS; setDone(v === STEPS); draw(v); };
+  const scrub = (v: number) => { const s = S.current; setPlay(false); s.step = v; s.t = v / STEPS; setDone(v === STEPS); draw(v); };
 
   return (
     <div className="ir-stage" ref={wrap}>
       <div className="ir-frame">
         <AnimatePresence initial={false}>
           <motion.div key={a} className="ir-pic" style={box(ASPECTS[a][1])} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.02 }} transition={{ duration: 0.6, ease: EASE }}>
-            <canvas data-a={a} ref={(el) => { if (el && +el.dataset.a === aNow.current) cv.current = el; }} aria-label="An image resolving from noise, step by step" role="img" />
+            <canvas data-a={a} ref={(el) => { if (el && Number(el.dataset.a) === aNow.current) cv.current = el; }} aria-label="An image resolving from noise, step by step" role="img" />
             <Img src={film('iro', 'webp')} w={1200} h={1500} data-on={done ? '' : undefined} />
           </motion.div>
         </AnimatePresence>
@@ -116,7 +124,7 @@ function Canvas() {
         <button type="button" className="mb-chip ir-play" aria-pressed={play} onClick={() => { const s = S.current; if (s.step >= STEPS) { reseed(); s.step = 1; } setPlay(!play); }}>{play ? 'Pause' : 'Play'}</button>
         <label className="ir-range">
           <span className="x-sr">Step</span>
-          <input ref={range} type="range" min="1" max={STEPS} defaultValue="38" onInput={(e) => scrub(+e.target.value)} />
+          <input ref={range} type="range" min="1" max={STEPS} defaultValue="38" onInput={(e: FormEvent<HTMLInputElement>) => scrub(+e.currentTarget.value)} />
         </label>
         <button type="button" className="mb-chip" onClick={() => { reseed(); S.current.step = 1; setPlay(true); }}>New seed</button>
         <div className="mb-chips ir-asp" role="group" aria-label="Aspect">
@@ -131,8 +139,8 @@ function Canvas() {
 /* a still of the same flow at one step: each chapter (and the fits tile) shows the picture part-made, so the page shows
    the image being made instead of one finished picture over and over; it runs up to its step while read */
 const GW = 360, GH = 450;
-function Grain({ step, on, seed }) {
-  const cv = useRef(null);
+function Grain({ step, on, seed }: { step: number; on: boolean; seed: number }) {
+  const cv = useRef<HTMLCanvasElement>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const img = new Image();
@@ -143,11 +151,12 @@ function Grain({ step, on, seed }) {
       if (dead || !c) return;
       c.width = GW; c.height = GH;
       const g = c.getContext('2d', { willReadFrequently: true }), tmp = document.createElement('canvas'), r = rng(seed);
+      if (!g) return;
       const N = new Float32Array(GW * GH).map(() => (r() + r() + r() - 1.5) * 1.15);
-      const paint = (k) => {
+      const paint = (k: number) => {
         const t = k / STEPS, div = Math.max(1, Math.round(1 + 23 * (1 - t) ** 2)); // coarse shapes first, detail last
         tmp.width = Math.ceil(GW / div); tmp.height = Math.ceil(GH / div);
-        tmp.getContext('2d').drawImage(img, 0, 0, tmp.width, tmp.height);
+        tmp.getContext('2d')?.drawImage(img, 0, 0, tmp.width, tmp.height);
         g.imageSmoothingEnabled = true; g.drawImage(tmp, 0, 0, GW, GH);
         const d = g.getImageData(0, 0, GW, GH), o = d.data;
         for (let i = 0; i < o.length; i += 4) { const n = (1 - t) * (128 + N[i >> 2] * 80); o[i] = t * o[i] + n; o[i + 1] = t * o[i + 1] + n; o[i + 2] = t * o[i + 2] + n; }
@@ -155,7 +164,7 @@ function Grain({ step, on, seed }) {
       };
       if (calm || !on) { paint(step); return; }
       const t0 = performance.now();
-      const run = (now) => { const p = Math.min(1, (now - t0) / 1600); paint(Math.max(1, Math.round(step * (1 - (1 - p) ** 3)))); if (p < 1 && !dead) raf = requestAnimationFrame(run); };
+      const run = (now: number) => { const p = Math.min(1, (now - t0) / 1600); paint(Math.max(1, Math.round(step * (1 - (1 - p) ** 3)))); if (p < 1 && !dead) raf = requestAnimationFrame(run); };
       raf = requestAnimationFrame(run);
     }).catch(() => {});
     return () => { dead = true; cancelAnimationFrame(raf); };
@@ -167,13 +176,13 @@ const CAP_STEPS = [26, 34, 42, 50];
 // the film settles into a square canvas beside the headline
 // (on a phone the square sits just above the headline block (about 270px tall at the foot of the screen, 320px on a 320px-wide phone), so no
 // band of empty paper opens between them; the camera lands Iro's subject in the square wherever it sits)
-const sq = (W, H, wide) => {
+const sq = (W: number, H: number, wide: boolean) => {
   if (wide) { const z = Math.min(H * 0.76, W * 0.4); return { l: W * 0.7 - z / 2, t: (H - z) / 2, w: z, h: z, r: 16 }; }
   const head = W < 360 ? 320 : 270, z = Math.min(W * 0.84, H * 0.46, H - head - 88);
   return { l: (W - z) / 2, t: Math.max(64, H - head - 24 - z), w: z, h: z, r: 16 };
 };
 const SQUARE = frame(sq);
-const aimAt = (W, H, wide) => {
+const aimAt = (W: number, H: number, wide: boolean) => {
   if (wide) return null;
   const q = sq(W, H, false);
   return focus(0.62, 0.55, q.l + q.w / 2, q.t + q.h / 2, 1.14, [q.l, q.t, q.l + q.w, q.t + q.h])(W, H);

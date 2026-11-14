@@ -6,6 +6,7 @@
    Beyond: the GPQA Diamond explorer. Pick any model (or let it tour) and see it beside Enso's three tiers in
    Hanzo's own figures and words, with every result in a table you can re-sort by score or by cost. */
 import { useEffect, useRef, useState } from 'react';
+import type { PointerEvent } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, More, Cta, Img, Stat, DataTable, Band } from '../../kit';
@@ -24,8 +25,8 @@ import { PLANS, checkout } from '../../../lib/plans';
    it all); start states live only under html.js in Enso.css; reduced motion jumps straight to data-in. */
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const EMPH = 'cubic-bezier(.16, 1, .3, 1)';
-function useEnter(play, margin = '0px 0px -16% 0px') {
-  const ref = useRef(null);
+function useEnter<T extends HTMLElement = HTMLElement>(play: ((el: T) => void) | null, margin = '0px 0px -16% 0px') {
+  const ref = useRef<T>(null);
   const fn = useRef(play);
   fn.current = play;
   useEffect(() => {
@@ -44,8 +45,8 @@ function useEnter(play, margin = '0px 0px -16% 0px') {
   return ref;
 }
 // word-shuffle: each word starts in another word's place and swaps back into its own
-function shuffle(el) {
-  const ws = [...el.querySelectorAll('.eo-w')];
+function shuffle(el: HTMLElement) {
+  const ws = [...el.querySelectorAll<HTMLElement>('.eo-w')];
   if (ws.length < 2) return;
   const at = ws.map((w) => [w.offsetLeft, w.offsetTop]);
   const order = ws.map((_, i) => (i * 3 + 2) % ws.length); // a fixed derangement for 6 words
@@ -67,12 +68,15 @@ function shuffle(el) {
    A cloud of ink dots drifts, then assembles into the ensō (the same open brush stroke as Enso's mark) when the section
    comes into view, breathes, and scatters away from the cursor or a finger. One canvas, one rAF (useLoop: only while on
    screen and the tab is visible), stops with the page pause; reduced motion draws the finished ring once. */
+// one ink dot of the ring: its home in the cloud, its place on the stroke, and where it is now
+interface Dot { u: number; off: number; hx: number; hy: number; ph: number; sz: number; al: number; lag: number; vx: number; vy: number; x: number; y: number }
+
 function Form() {
-  const box = useRef(null), cv = useRef(null), dots = useRef(null), ptr = useRef(null), at = useRef(-1);
+  const box = useRef<HTMLElement>(null), cv = useRef<HTMLCanvasElement>(null), dots = useRef<Dot[] | null>(null), ptr = useRef<[number, number] | null>(null), at = useRef(-1);
   const seen = useInView(box, { once: true, amount: 0.3 });
   const paused = usePaused();
-  const home = (p, w, h, t) => [p.hx * w + Math.sin(t * 0.4 + p.ph) * 18, p.hy * h + Math.cos(t * 0.33 + p.ph) * 18];
-  const target = (p, w, h, t, still) => {
+  const home = (p: Dot, w: number, h: number, t: number): [number, number] => [p.hx * w + Math.sin(t * 0.4 + p.ph) * 18, p.hy * h + Math.cos(t * 0.33 + p.ph) * 18];
+  const target = (p: Dot, w: number, h: number, t: number, still: boolean): [number, number] => {
     const s = Math.min(w, h), b = still ? 1 : 1 + Math.sin(t * 0.9) * 0.012;
     const r = s * 0.36 * b + p.off * s * 0.075 * (0.4 + 0.6 * Math.sin(Math.PI * p.u));
     const a = -Math.PI / 2 + p.u * Math.PI * 2 * 0.875;
@@ -86,13 +90,14 @@ function Form() {
     if (!dots.current) {
       const R = rng(42), n = w < 520 ? 800 : 1500;
       dots.current = Array.from({ length: n }, (_, i) => {
-        const p = { u: R(), off: R() - 0.5, hx: R(), hy: R(), ph: R() * 6.28, sz: 1.3 + R() * 1.7, al: 0.45 + R() * 0.55, lag: R() * 0.9, vx: 0, vy: 0 };
+        const p: Dot = { u: R(), off: R() - 0.5, hx: R(), hy: R(), ph: R() * 6.28, sz: 1.3 + R() * 1.7, al: 0.45 + R() * 0.55, lag: R() * 0.9, vx: 0, vy: 0, x: 0, y: 0 };
         if (i % 9 === 0) p.off *= 3.2; // a few stray specks off the stroke, as a brush leaves
         [p.x, p.y] = [p.hx * w, p.hy * h];
         return p;
       });
     }
     const P = dots.current, g = c.getContext('2d');
+    if (!g) return;
     if (still) { // reduced motion: the finished ring
       P.forEach((p) => { [p.x, p.y] = target(p, w, h, 0, true); });
     } else if (!paused) {
@@ -116,7 +121,7 @@ function Form() {
     for (const p of P) { g.globalAlpha = p.al; const s = p.sz * d; g.fillRect(p.x * d - s / 2, p.y * d - s / 2, s, s); }
     g.globalAlpha = 1;
   });
-  const move = (e) => { const r = cv.current.getBoundingClientRect(); ptr.current = [e.clientX - r.left, e.clientY - r.top]; };
+  const move = (e: PointerEvent<HTMLCanvasElement>) => { const r = e.currentTarget.getBoundingClientRect(); ptr.current = [e.clientX - r.left, e.clientY - r.top]; };
   return (
     <section className="eo-form eo-s" ref={box} aria-labelledby="eo-spec-h">
       <div className="x-wrap">
@@ -132,7 +137,7 @@ function Form() {
 
 /* GA item 17: the way to buy. Enso ships in every plan; Go ($8/month, "access to every model", /pricing) goes straight to its card checkout. */
 const GO = checkout(PLANS.go.id);
-const Plan = ({ slot }) => <Cta to={GO} kind="link" id={'enso.go-' + slot} className="eo-go">{`Every model through Enso, Go is $${PLANS.go.price}/month`}</Cta>;
+const Plan = ({ slot }: { slot: string }) => <Cta to={GO} kind="link" id={'enso.go-' + slot} className="eo-go">{`Every model through Enso, Go is $${PLANS.go.price}/month`}</Cta>;
 
 const TIERS = [
   { name: 'Enso Flash', code: 'enso-flash', inp: '$0.33', out: '$1.65', ctx: true, axis: 0, why: 'at volume', wb: 'https://platform.hanzo.ai/workbench?model=enso-flash', desc: 'For chat, extraction, classification and simple agent steps at volume.' },
@@ -141,15 +146,18 @@ const TIERS = [
 ];
 const AXES = ['cost', 'speed', 'quality'];
 // Hanzo's own task words from each tier, in the order the board sends them by itself
-const TASKS = [['chat', 0], ['coding', 1], ['research', 2], ['extraction', 0], ['code review', 1], ['security review', 2], ['classification', 0], ['agents', 1], ['long autonomous runs', 2], ['simple agent steps', 0]];
+const TASKS: [task: string, tier: number][] = [['chat', 0], ['coding', 1], ['research', 2], ['extraction', 0], ['code review', 1], ['security review', 2], ['classification', 0], ['agents', 1], ['long autonomous runs', 2], ['simple agent steps', 0]];
 
-const bez = (p, t) => { const u = 1 - t; return [0, 1].map((k) => u * u * u * p[0][k] + 3 * u * u * t * p[1][k] + 3 * u * t * t * p[2][k] + t * t * t * p[3][k]); };
-const ease = (t) => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 3);
+const bez = (p: number[][], t: number) => { const u = 1 - t; return [0, 1].map((k) => u * u * u * p[0][k] + 3 * u * u * t * p[1][k] + 3 * u * t * t * p[2][k] + t * t * t * p[3][k]); };
+const ease = (t: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 3);
+
+interface Pulse { id: number; tier: number; task: string; age: number; lit: boolean }
+interface Routed { id: number; task: string; tier: number; done: boolean }
 
 function Switchboard() {
-  const board = useRef(null), cv = useRef(null), queue = useRef(null), node = useRef(null), lanes = useRef([]);
-  const geom = useRef(null), pulses = useRef([]), clock = useRef({ next: 0.6, i: 0, hold: 0 }), uid = useRef(3);
-  const [log, setLog] = useState([{ id: 2, task: 'research', tier: 2, done: true }, { id: 1, task: 'coding', tier: 1, done: true }, { id: 0, task: 'chat', tier: 0, done: true }]);
+  const board = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), queue = useRef<HTMLUListElement>(null), node = useRef<HTMLDivElement>(null), lanes = useRef<HTMLLIElement[]>([]);
+  const geom = useRef<{ inP: number[][]; outP: number[][][] } | null>(null), pulses = useRef<Pulse[]>([]), clock = useRef({ next: 0.6, i: 0, hold: 0 }), uid = useRef(3);
+  const [log, setLog] = useState<Routed[]>([{ id: 2, task: 'research', tier: 2, done: true }, { id: 1, task: 'coding', tier: 1, done: true }, { id: 0, task: 'chat', tier: 0, done: true }]);
   const [axis, setAxis] = useState(-1);
   const [hit, setHit] = useState(-1);
   const [last, setLast] = useState(['chat', 'coding', 'research']);
@@ -159,7 +167,7 @@ function Switchboard() {
   const measure = () => {
     const b = board.current?.getBoundingClientRect();
     if (!b || !node.current || !queue.current) return;
-    const rel = (el) => { const r = el.getBoundingClientRect(); return { l: r.left - b.left, t: r.top - b.top, r: r.right - b.left, b: r.bottom - b.top, w: r.width, h: r.height }; };
+    const rel = (el: HTMLElement) => { const r = el.getBoundingClientRect(); return { l: r.left - b.left, t: r.top - b.top, r: r.right - b.left, b: r.bottom - b.top, w: r.width, h: r.height }; };
     const q = rel(queue.current), n = rel(node.current), L = lanes.current.map(rel);
     const cx = n.l + n.w / 2, cy = n.t + n.h / 2, R = n.w / 2;
     const wide = b.width > 860;
@@ -178,13 +186,14 @@ function Switchboard() {
 
   useEffect(() => {
     measure();
-    const ro = new ResizeObserver(measure);
     const el = board.current;
+    if (!el) return;
+    const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const send = (k, byHand) => {
+  const send = (k: number, byHand?: boolean) => {
     const [task, tier] = TASKS[k];
     const id = uid.current++;
     pulses.current.push({ id, tier, task, age: 0, lit: false });
@@ -198,9 +207,10 @@ function Switchboard() {
     if (!c || !geom.current) return;
     const { w, h, d } = fit(c);
     const g = c.getContext('2d');
+    if (!g) return;
     g.clearRect(0, 0, w, h);
     g.lineWidth = 1.25 * d;
-    const curve = (p, a) => { g.strokeStyle = `rgba(255,255,255,${a})`; g.beginPath(); g.moveTo(p[0][0] * d, p[0][1] * d); g.bezierCurveTo(p[1][0] * d, p[1][1] * d, p[2][0] * d, p[2][1] * d, p[3][0] * d, p[3][1] * d); g.stroke(); };
+    const curve = (p: number[][], a: number) => { g.strokeStyle = `rgba(255,255,255,${a})`; g.beginPath(); g.moveTo(p[0][0] * d, p[0][1] * d); g.bezierCurveTo(p[1][0] * d, p[1][1] * d, p[2][0] * d, p[2][1] * d, p[3][0] * d, p[3][1] * d); g.stroke(); };
     const { inP, outP } = geom.current;
     curve(inP, 0.16);
     outP.forEach((p, i) => curve(p, i === hit ? 0.42 : 0.13));
@@ -209,7 +219,7 @@ function Switchboard() {
     ck.hold = Math.max(0, ck.hold - dt);
     ck.next -= dt;
     if (ck.next <= 0) { ck.next = 1.7; if (!ck.hold) { send(ck.i % TASKS.length); ck.i++; } }
-    const comet = (p, at) => {
+    const comet = (p: number[][], at: number) => {
       for (let k = 9; k >= 0; k--) {
         const [x, y] = bez(p, Math.max(0, at - k * 0.022));
         g.fillStyle = `rgba(255,255,255,${(1 - k / 10) * (k ? 0.35 : 1)})`;
@@ -256,7 +266,7 @@ function Switchboard() {
       </div>
       <ol className="eo-lanes" aria-label="All Enso models">
         {TIERS.map((tr, i) => (
-          <li key={tr.code} className="eo-lane" ref={(el) => (lanes.current[i] = el)} data-hit={hit === i ? '' : undefined}>
+          <li key={tr.code} className="eo-lane" ref={(el) => { if (el) lanes.current[i] = el; }} data-hit={hit === i ? '' : undefined}>
             <div className="eo-lane-top">
               <b>{tr.name}</b>
               <code>{tr.code}</code>
@@ -279,7 +289,8 @@ function Switchboard() {
 
 // GPQA Diamond: Hanzo's figures and Hanzo's own sentence for each model, verbatim
 const SINGLE = ', a single model tested on the same 198 GPQA Diamond questions, $';
-const GPQA = [
+type Result = [model: string, score: number, cost: number, note: string, source?: string];
+const GPQA: Result[] = [
   ['DeepSeek V4 Pro', 76.3, 1.05, 'DeepSeek V4 Pro 0423 76.3%' + SINGLE + '1.05 per 1,000 of them'],
   ['Sonnet 5', 77.8, 42.91, 'Claude Sonnet 5 77.8%' + SINGLE + '42.91 per 1,000 of them'],
   ['Fable 5', 82.8, 14.95, 'Claude Fable 5 82.8%' + SINGLE + '14.95 per 1,000 of them'],
@@ -301,17 +312,17 @@ const GPQA = [
 const ENSO = GPQA.filter((g) => g[0].startsWith('Enso'));
 const OTHERS = GPQA.filter((g) => !g[0].startsWith('Enso'));
 const LX = [Math.log10(0.8), Math.log10(60)];
-const px = (c) => Math.round((70 + ((Math.log10(c) - LX[0]) / (LX[1] - LX[0])) * 900) * 100) / 100; // rounded: server and browser maths agree
-const py = (s) => Math.round((540 - ((s - 75) / 25) * 500) * 100) / 100;
-const money = (c) => '$' + (c < 1 ? c.toFixed(3) : c.toFixed(2));
+const px = (c: number) => Math.round((70 + ((Math.log10(c) - LX[0]) / (LX[1] - LX[0])) * 900) * 100) / 100; // rounded: server and browser maths agree
+const py = (s: number) => Math.round((540 - ((s - 75) / 25) * 500) * 100) / 100;
+const money = (c: number) => '$' + (c < 1 ? c.toFixed(3) : c.toFixed(2));
 
 function Gpqa() {
-  const box = useRef(null), plot = useRef(null);
+  const box = useRef<HTMLElement>(null), plot = useRef<HTMLDivElement>(null);
   const seen = useInView(plot, { amount: 0.35 }); // the plot, not the whole (tall) section, so the tour starts when the chart is in view
   const once = useInView(box, { once: true, amount: 0.25 });
   const [sel, setSel] = useState(OTHERS.findIndex((g) => g[0] === 'Opus 5.5'));
   const [mine, setMine] = useState(false);
-  const [sort, setSort] = useState('score');
+  const [sort, setSort] = useState<'score' | 'cost'>('score');
   const calm = useReducedMotion();
   const paused = usePaused();
   useEffect(() => {
@@ -319,12 +330,13 @@ function Gpqa() {
     const t = setInterval(() => setSel((s) => (s + 1) % OTHERS.length), 2600);
     return () => clearInterval(t);
   }, [seen, mine, calm, paused]);
-  const pick = (i) => { setSel(i); setMine(true); };
+  const pick = (i: number) => { setSel(i); setMine(true); };
   // every result sits in a drawer under the chart: closed it is hidden="until-found" (find-in-page and #eo-results open it)
-  const drawer = useRef(null);
+  const drawer = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   useEffect(() => {
     const el = drawer.current;
+    if (!el) return;
     const show = () => setOpen(true);
     const byHash = () => { if (location.hash === '#eo-results') show(); };
     byHash();
@@ -335,12 +347,13 @@ function Gpqa() {
   // React writes hidden as a boolean, so the drawer sets "until-found" itself; the server sends it open (JS off reads every row)
   useEffect(() => {
     const el = drawer.current;
+    if (!el) return;
     if (open) el.removeAttribute('hidden'); else el.setAttribute('hidden', 'until-found');
   }, [open]);
   const m = OTHERS[sel];
   const rows = [...GPQA].sort(sort === 'score' ? (a, b) => b[1] - a[1] : (a, b) => a[2] - b[2]);
   const frontier = ENSO.map((g) => `${px(g[2])},${py(g[1])}`).join(' ');
-  const head = useEnter(shuffle, '0px 0px -8% 0px');
+  const head = useEnter<HTMLHeadingElement>(shuffle, '0px 0px -8% 0px');
   return (
     <section className="eo-gpqa eo-s" ref={box} aria-labelledby="eo-gpqa-h">
       <div className="x-wrap eo-gq">
@@ -442,10 +455,11 @@ function Gpqa() {
 /* The hero's Enso: Hanzo's film inside the ensō, at the size of a feature, not a takeover. It is the opener's landing
    (data-hero, then data-ready once the poster decodes); the one pause beside it stops every film and demo on the page. */
 function Feature() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    const img = box.current.querySelector('img');
+    const img = box.current?.querySelector('img');
+    if (!img) return;
     const done = () => setReady(true);
     if (img.complete && img.naturalWidth > 0) done();
     else if (img.complete) img.decode().then(done, done);
@@ -497,7 +511,7 @@ function Prices() {
 /* order, each section one frame and a direct child of <main>: hero with the price band → the ring forms → the dark room
    (opens like a curtain) → the model bento (tilts in) → the Pareto chart on its stage, title beside it → the band */
 export default function Enso() {
-  const band = useEnter(null, '0px 0px -10% 0px');
+  const band = useEnter<HTMLDivElement>(null, '0px 0px -10% 0px');
   return (
     <main className="x-model lv eo" data-cursor="">
       <section className="eo-hero eo-s" aria-labelledby="eo-h">

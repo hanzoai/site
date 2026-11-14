@@ -11,17 +11,21 @@ import { Mark } from '../../ui';
 
 const MARK = ['M22.21 67V44.6369H0V67H22.21Z', 'M66.7038 22.3184H22.2534L0.0878906 44.6367H44.4634L66.7038 22.3184Z', 'M22.21 0H0V22.3184H22.21V0Z', 'M66.7198 0H44.5098V22.3184H66.7198V0Z', 'M66.7198 44.6369H44.5098V67H66.7198V44.6369Z'];
 
-export default function MagnetGrid({ className = '', label }) {
-  const wrap = useRef(null);
-  const cv = useRef(null);
+interface Dot { hx: number; hy: number; x: number; y: number; m: boolean; b?: number }
+interface Ripple { x: number; y: number; t0: number }
+
+export default function MagnetGrid({ className = '' }: { className?: string; label?: string }) {
+  const wrap = useRef<HTMLDivElement>(null);
+  const cv = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const box = wrap.current, c = cv.current;
     if (!box || !c) return undefined;
     const ctx = c.getContext('2d');
+    if (!ctx) return undefined;
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let W = 0, H = 0, dpr = 1, dots = [], raf = 0, seen = false, last = 0;
+    let W = 0, H = 0, dpr = 1, dots: Dot[] = [], raf = 0, seen = false, last = 0;
     const ptr = { x: -1e4, y: -1e4, on: false };
-    const rip = [];
+    const rip: Ripple[] = [];
     const build = () => {
       const r = box.getBoundingClientRect();
       W = r.width; H = r.height; dpr = Math.min(2, devicePixelRatio || 1);
@@ -29,7 +33,7 @@ export default function MagnetGrid({ className = '', label }) {
       const gap = W < 480 ? 13 : 16;
       const S = Math.min(W, H) * 0.56, ox = (W - S) / 2, oy = (H - S) / 2, k = S / 67;
       const paths = MARK.map((d) => new Path2D(d));
-      const hit = (x, y) => { const mx = (x - ox) / k, my = (y - oy) / k; return paths.some((p) => ctx.isPointInPath(p, mx, my)); };
+      const hit = (x: number, y: number) => { const mx = (x - ox) / k, my = (y - oy) / k; return paths.some((p) => ctx.isPointInPath(p, mx, my)); };
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       dots = [];
       for (let y = gap / 2; y < H; y += gap) for (let x = gap / 2; x < W; x += gap) {
@@ -49,7 +53,7 @@ export default function MagnetGrid({ className = '', label }) {
         ctx.beginPath(); ctx.arc(d.x, d.y, s + bulge, 0, 6.2832); ctx.fill();
       }
     };
-    const step = (t) => {
+    const step = (t: number) => {
       raf = 0;
       const R = Math.max(110, Math.min(W, H) * 0.36);
       let moving = false;
@@ -73,14 +77,14 @@ export default function MagnetGrid({ className = '', label }) {
       if (seen && (moving || rip.length || ptr.on && t - last < 600)) raf = requestAnimationFrame(step);
     };
     const kick = () => { if (!raf && seen && !calm) raf = requestAnimationFrame(step); };
-    const at = (e) => { const r = c.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
-    const move = (e) => { [ptr.x, ptr.y] = at(e); ptr.on = true; last = performance.now(); kick(); };
+    const at = (e: PointerEvent): [number, number] => { const r = c.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    const move = (e: PointerEvent) => { [ptr.x, ptr.y] = at(e); ptr.on = true; last = performance.now(); kick(); };
     const leave = () => { ptr.on = false; kick(); };
-    const down = (e) => { const [x, y] = at(e); rip.push({ x, y, t0: performance.now() }); if (rip.length > 4) rip.shift(); if (e.pointerType !== 'mouse') { ptr.x = x; ptr.y = y; ptr.on = true; last = performance.now(); setTimeout(leave, 500); } kick(); };
+    const down = (e: PointerEvent) => { const [x, y] = at(e); rip.push({ x, y, t0: performance.now() }); if (rip.length > 4) rip.shift(); if (e.pointerType !== 'mouse') { ptr.x = x; ptr.y = y; ptr.on = true; last = performance.now(); setTimeout(leave, 500); } kick(); };
     tint(); build(); draw();
     const mo = new MutationObserver(() => { tint(); draw(); }); // the page switched light/dark
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    let arrived = false, idle = 0, idles = 0;
+    let arrived = false, idle: ReturnType<typeof setTimeout> | 0 = 0, idles = 0;
     const breathe = () => {
       idle = 0;
       if (idles >= 3) return;

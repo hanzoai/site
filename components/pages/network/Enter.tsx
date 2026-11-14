@@ -6,18 +6,19 @@
    grow-from-point grows from the point the visitor last clicked or pointed at (the middle of the screen if none).
    <Typed text on /> types a line with a caret once `on` is true; the full words stay in the HTML and hold the layout. */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { ElementType, HTMLAttributes, ReactNode, RefObject } from 'react';
 
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
-const last = { x: null, y: null, on: false };
+const last: { x: number | null; y: number | null; on: boolean } = { x: null, y: null, on: false };
 function track() {
   if (last.on || typeof window === 'undefined') return;
   last.on = true;
-  const f = (e) => { last.x = e.clientX; last.y = e.clientY; };
+  const f = (e: PointerEvent) => { last.x = e.clientX; last.y = e.clientY; };
   addEventListener('pointermove', f, { passive: true });
   addEventListener('pointerdown', f, { passive: true });
 }
 
-export function useEnter(ref, threshold = 0.2) {
+export function useEnter(ref: RefObject<HTMLElement | null>, threshold = 0.2) {
   const [st, setSt] = useState('rest');
   useIso(() => {
     const el = ref.current;
@@ -41,14 +42,29 @@ export function useEnter(ref, threshold = 0.2) {
   return st;
 }
 
-export function Enter({ kind, as: Tag = 'div', className = '', threshold, children, ...rest }) {
-  const ref = useRef(null);
+interface EnterProps extends HTMLAttributes<HTMLElement> {
+  kind: string;
+  as?: ElementType;
+  threshold?: number;
+  children?: ReactNode;
+}
+
+export function Enter({ kind, as: Tag = 'div', className = '', threshold, children, ...rest }: EnterProps) {
+  const ref = useRef<HTMLElement>(null);
   const st = useEnter(ref, threshold);
   return <Tag ref={ref} className={`nw-en nw-en-${kind} ${className}`} data-kind={kind} data-enter={st} {...rest}>{children}</Tag>;
 }
 
 // types `text` once `on` turns true (about 45ms a letter); before that the line is empty but holds its size
-export function Typed({ text, on, as: Tag = 'span', className = '', id }) {
+interface TypedProps {
+  text: string;
+  on?: boolean;
+  as?: ElementType;
+  className?: string;
+  id?: string;
+}
+
+export function Typed({ text, on, as: Tag = 'span', className = '', id }: TypedProps) {
   const [n, setN] = useState(text.length);
   const [armed, setArmed] = useState(false);
   useIso(() => {

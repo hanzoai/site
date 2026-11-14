@@ -7,7 +7,31 @@ export const CATEGORIES = ['All', ...PRODUCTS];
 
 export const STORAGE_KEY = 'hanzo.hosted.reviews.v1';
 
-export const REVIEWS = [
+export interface Review {
+  id: string;
+  author: string;
+  role: string;
+  company: string;
+  product: string;
+  rating: number;
+  title: string;
+  body: string;
+  date: string;
+  verified: boolean;
+}
+
+/** What the form holds while a visitor writes. */
+export interface Draft {
+  name: string;
+  role: string;
+  company: string;
+  product: string;
+  rating: number;
+  title: string;
+  body: string;
+}
+
+export const REVIEWS: Review[] = [
   {
     id: 'rev-damon',
     author: 'Jay Giraud',
@@ -122,7 +146,7 @@ export const REVIEWS = [
 export const API = 'https://api.hanzo.ai';
 
 /** The sales lead hanzo.ai files for a review (POST /v1/marketing/leads, hanzo-inc/app reviews/page.tsx). */
-export const lead = (e) => ({
+export const lead = (e: Review) => ({
   program: 'hanzo_review',
   name: e.author,
   role: e.role,
@@ -135,7 +159,7 @@ export const lead = (e) => ({
 });
 
 /** The same review as a response to the hanzo.review-submit form (POST /v1/form/public/hanzo.review-submit/responses). */
-export const response = (e, now = Date.now()) => ({
+export const response = (e: Review, now = Date.now()) => ({
   token: `rv_${now}`,
   answers: [
     { field: 'name', text: e.author },
@@ -150,9 +174,9 @@ export const response = (e, now = Date.now()) => ({
 });
 
 /** The reviews a visitor kept in this browser, read from what localStorage holds; anything that is not a list is nothing. */
-export function kept(raw) {
+export function kept(raw: string | null): Review[] {
   try {
-    const parsed = raw ? JSON.parse(raw) : [];
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
@@ -160,7 +184,7 @@ export function kept(raw) {
 }
 
 /** The review a visitor's answers make: a name, a headline and a review are needed; a role and a company default as hanzo.ai defaults them. Null where one is missing. */
-export function entry({ name, role, company, product, rating, title, body }, now = Date.now()) {
+export function entry({ name, role, company, product, rating, title, body }: Draft, now = Date.now()): Review | null {
   if (!name.trim() || !title.trim() || !body.trim()) return null;
   return {
     id: `user-${now}`,
@@ -177,7 +201,7 @@ export function entry({ name, role, company, product, rating, title, body }, now
 }
 
 /** What a category shows: every review, the visitor's first, or only the ones of that product. */
-export const visible = (mine, category) => {
+export const visible = (mine: Review[], category: string): Review[] => {
   const all = [...mine, ...REVIEWS];
   return category === 'All' ? all : all.filter((r) => r.product === category);
 };

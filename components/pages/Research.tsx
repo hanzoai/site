@@ -19,8 +19,10 @@
    Entrances (MOTION-MAP, research/enter.js + enter.css, in order): split-merge (hero, CSS from first paint), focus-pull
    (dark room), scramble (the glance's counts), domino (papers rows), diagonal-wipe (specifications, standards); each once, none scroll-linked. */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import type { MotionValue, Transition } from 'motion/react';
 import { A, More } from '../kit';
 import SceneWipe from './proof/SceneWipe';
 import LivePause, { usePause } from '../v2/LivePause';
@@ -31,8 +33,12 @@ import './Research.css';
 import { useEnter } from './research/enter';
 import './research/enter.css';
 
-const EASE = [0.16, 1, 0.3, 1];
-const P = (t, date, sub, slug) => ({ kind: 'Papers', t, date, sub, to: `https://papers.hanzo.ai/${slug}/` });
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+interface Item { kind: string; t: string; date?: string; sub: string; to: string }
+interface Paper extends Item { date: string }
+interface Sheet { it: Item; from: HTMLElement; lid: string }
+type OpenFn = (it: Item, from: HTMLElement, lid: string) => void;
+const P = (t: string, date: string, sub: string, slug: string): Paper => ({ kind: 'Papers', t, date, sub, to: `https://papers.hanzo.ai/${slug}/` });
 const PAPERS = [
   P('Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention', 'Nov 2026', 'Distilled & Native Latent Sparse Attention (D-LSA / N-LSA) on 27B Dense Transformers', 'zen6-latent-sparse-attention'),
   P('Kai: Calibrated Discrete Decision Intelligence for Autonomous Agent Loops', 'Oct 2026', 'Factorized Discrete Choice, Calibrated Distributions, and Deterministic Policy Governance', 'kai-decision-model'),
@@ -55,7 +61,7 @@ const PAPERS = [
   P('Hanzo Network Whitepaper', 'Oct 2024', 'L1 Blockchain for Decentralized AI Compute', 'network-whitepaper'),
 ];
 const HIP = 'https://hips.hanzo.ai/docs/';
-const S = (kind, t, sub, slug) => ({ kind, t, sub, to: slug ? HIP + slug : 'https://hips.hanzo.ai' });
+const S = (kind: string, t: string, sub: string, slug?: string): Item => ({ kind, t, sub, to: slug ? HIP + slug : 'https://hips.hanzo.ai' });
 const SPECS = [
   S('Specifications', 'All HIPs', 'The specification index.'),
   S('Specifications', 'HIP-0000', 'The architecture framework.', 'hip-0000-hanzo-ai-architecture-framework'),
@@ -72,21 +78,21 @@ const STANDARDS = [
   S('Standards', 'HIP-0019', 'Tensor operations.', 'hip-0019-tensor-operations-standard'),
   S('Standards', 'HIP-1105', 'The benchmark arena.', 'hip-1105-benchmark-measurement-arena'),
 ];
-const GROUPS = [
+const GROUPS: [string, string, Item[]][] = [
   ['Papers', 'Each one links to its page on papers.hanzo.ai, where the PDF and the LaTeX live.', PAPERS],
   ['Specifications', 'HIPs. The index is hips.hanzo.ai. These are the ones the families are written against.', SPECS],
   ['Standards', 'The standards the runtime, the gateway, and the benchmark arena are built to.', STANDARDS],
 ];
 const MON = 'JanFebMarAprMayJunJulAugSepOctNovDec';
-const when = (d) => +d.slice(4) * 12 + MON.indexOf(d.slice(0, 3)) / 3; // 'Nov 2026' -> a sortable number, no Date parsing
-const MONTHS = [...new Set(PAPERS.map((p) => p.date))].sort((a, b) => when(b) - when(a)).map((m) => [m, PAPERS.filter((p) => p.date === m).length]);
+const when = (d: string) => +d.slice(4) * 12 + MON.indexOf(d.slice(0, 3)) / 3; // 'Nov 2026' -> a sortable number, no Date parsing
+const MONTHS = [...new Set(PAPERS.map((p) => p.date))].sort((a, b) => when(b) - when(a)).map((m): [string, number] => [m, PAPERS.filter((p) => p.date === m).length]);
 const PEAK = Math.max(...MONTHS.map((m) => m[1]));
-const key = (x) => 'xrs-' + x.to.replace(/^https:\/\//, '').replace(/[^a-z0-9]+/gi, '-');
-const pad = (n) => String(n).padStart(2, '0');
+const key = (x: Item) => 'xrs-' + x.to.replace(/^https:\/\//, '').replace(/[^a-z0-9]+/gi, '-');
+const pad = (n: number) => String(n).padStart(2, '0');
 const LINES = [100, 92, 97, 88, 95, 76, 99, 90, 84];
 
 /* A title page, typeset: the hero deck and the reader use the same sheet. */
-function Sheet({ x, lg }) {
+function Sheet({ x, lg }: { x: Item; lg?: boolean }) {
   const hip = x.kind !== 'Papers';
   return (
     <div className={'xrs-sheet' + (hip ? ' hip' : '') + (lg ? ' lg' : '')}>
@@ -100,7 +106,7 @@ function Sheet({ x, lg }) {
 }
 
 /* the small sheet on each row: what lifts off and opens */
-const Mini = ({ x }) => (
+const Mini = ({ x }: { x: Item }) => (
   <span className={'xrs-mini' + (x.kind !== 'Papers' ? ' hip' : '')} aria-hidden="true">
     <i className="b" /><i className="t" /><i className="t s" /><i /><i /><i /><i />
   </span>
@@ -109,16 +115,17 @@ const Mini = ({ x }) => (
 /* ---------- hero: the six newest title pages spread as a desk; one lifts at a time; press one and it opens ---------- */
 const FEATURED = PAPERS.slice(0, 6);
 // where each sheet lies on the desk (% of the desk) and its tilt; the lower left stays clear for the headline
-const OPEN = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // Morph: 600 ms in-out
+const OPEN: Transition = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // Morph: 600 ms in-out
 const LAY = [
   { x: 24, y: 2, r: -3 }, { x: 46, y: 12, r: 4 }, { x: 67, y: 3, r: -5 },
   { x: 56, y: 34, r: 5 }, { x: 0, y: 6, r: 5 }, { x: 14, y: 30, r: -4 },
 ];
 
-function DeskSheet({ x, i, on, lay, hidden, pick, hold, open }) {
+interface DeskSheetProps { x: Item; i: number; on: boolean; lay: { x: number; y: number; r: number }; hidden: boolean; pick: (i: number) => void; hold: (i: number | null) => void; open: OpenFn }
+function DeskSheet({ x, i, on, lay, hidden, pick, hold, open }: DeskSheetProps) {
   const lid = 'desk-' + key(x);
   return (
-    <div className="xrs-desk-s" data-on={on} style={{ '--x': lay.x + '%', '--y': lay.y + '%', '--r': lay.r + 'deg', zIndex: on ? 20 : 10 - i }}
+    <div className="xrs-desk-s" data-on={on} style={{ '--x': lay.x + '%', '--y': lay.y + '%', '--r': lay.r + 'deg', zIndex: on ? 20 : 10 - i } as CSSProperties}
       onPointerEnter={(e) => { if (e.pointerType === 'mouse') hold(i); }} onPointerLeave={(e) => { if (e.pointerType === 'mouse') hold(null); }}>
       <button type="button" className="xrs-desk-b" onFocus={() => pick(i)} onClick={(e) => open(x, e.currentTarget, lid)} aria-haspopup="dialog" aria-label={`Open the title page: ${x.t}`}>
         {hidden ? <span className="xrs-desk-ghost" /> : <motion.span layoutId={lid} className="xrs-desk-p" style={{ borderRadius: 8 }} transition={OPEN} aria-hidden="true"><Sheet x={x} /></motion.span>}
@@ -127,8 +134,8 @@ function DeskSheet({ x, i, on, lay, hidden, pick, hold, open }) {
   );
 }
 
-function Hero({ open, openLid }) {
-  const ref = useRef(null);
+function Hero({ open, openLid }: { open: OpenFn; openLid: string | null }) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   const live = useInView(ref, { amount: 0.2 });
   const [top, setTop] = useState(0);
@@ -148,9 +155,9 @@ function Hero({ open, openLid }) {
     const t = setTimeout(() => { setTop((v) => (v + 1) % n); setDealt(true); }, dealt ? 1600 : 900); // the first lift within a second, then one every 1.6 s (each lift moves for 0.5 s)
     return () => clearTimeout(t);
   }, [top, mine, held, calm, live, dealt, paused, n]);
-  const hold = (i) => { if (i === null) { setHeld(false); return; } setHeld(true); setTop(i); };
-  const go = (d) => { setMine(true); setTop((v) => (v + d + n) % n); };
-  const pick = (i) => { setMine(true); setTop(i); }; // a keyboard visitor takes the desk over
+  const hold = (i: number | null) => { if (i === null) { setHeld(false); return; } setHeld(true); setTop(i); };
+  const go = (d: number) => { setMine(true); setTop((v) => (v + d + n) % n); };
+  const pick = (i: number) => { setMine(true); setTop(i); }; // a keyboard visitor takes the desk over
   return (
     <section ref={ref} className="xrs-hero" aria-labelledby="xrs-h1">
       <div className="xrs-desk">
@@ -159,7 +166,7 @@ function Hero({ open, openLid }) {
       <div className="pf-wrap pf-grid xrs-hero-g">
         <div className="xrs-hero-c">
           {/* the h1 cuts in on CSS from first paint, so the headline never waits for hydration (same mask and easing as MaskLines) */}
-          <h1 id="xrs-h1" className="pf-display xrs-h1"><span className="pf-mask-l"><span className="pf-mask-in xrs-cut">Work we</span> </span><span className="pf-mask-l"><span className="pf-mask-in xrs-cut" style={{ '--d': '60ms' }}>publish</span></span></h1>
+          <h1 id="xrs-h1" className="pf-display xrs-h1"><span className="pf-mask-l"><span className="pf-mask-in xrs-cut">Work we</span> </span><span className="pf-mask-l"><span className="pf-mask-in xrs-cut" style={{ '--d': '60ms' } as CSSProperties}>publish</span></span></h1>
           <div className="xrs-hero-row">
             <p className="pf-mono xrs-cap-h">Research</p>
             <p className="pf-lede xrs-lede">Hanzo builds infrastructure that has to hold up under audit, regulation and adversaries.</p>
@@ -194,7 +201,7 @@ function Hero({ open, openLid }) {
 }
 
 /* ---------- the library at a glance, and when it came out ---------- */
-function Glance({ mon, pickMonth }) {
+function Glance({ mon, pickMonth }: { mon: string | null; pickMonth: (m: string | null) => void }) {
   return (
     <section className="pf-sec xrs-glance" aria-label="The library at a glance">
       <div className="pf-wrap pf-grid xrs-glance-g">
@@ -223,20 +230,20 @@ function Glance({ mon, pickMonth }) {
 }
 
 /* ---------- the index: a rail of kinds, an editorial list that re-flows, rows that open ---------- */
-function Library({ mon, setMon, open, openKey }) {
+function Library({ mon, setMon, open, openKey }: { mon: string | null; setMon: (m: string | null) => void; open: (it: Item, from: HTMLElement) => void; openKey: string | null }) {
   const [kind, setKind] = useState('All');
   const [q, setQ] = useState('');
   const t = q.trim().toLowerCase();
-  const match = (it) => (!mon || it.date === mon) && (!t || (it.t + ' ' + it.sub + ' ' + (it.date || '')).toLowerCase().includes(t));
+  const match = (it: Item) => (!mon || it.date === mon) && (!t || (it.t + ' ' + it.sub + ' ' + (it.date || '')).toLowerCase().includes(t));
   const counts = useMemo(() => Object.fromEntries(GROUPS.map(([k, , l]) => [k, l.filter((it) => it.t !== 'All HIPs' && match(it)).length])), [t, mon]); // eslint-disable-line react-hooks/exhaustive-deps
   const [all, setAll] = useState(false); // the papers index opens on the newest six; Show all opens the rest
   const folded = !all && !t && !mon;
   const [now, setNow] = useState(PAPERS[0].date); // the month you are reading, shown in the rail
-  const listRef = useRef(null);
+  const listRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = listRef.current;
     if (!el) return;
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && e.target.dataset.d) setNow(e.target.dataset.d); }), { rootMargin: '-45% 0px -50% 0px' });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { const d = (e.target as HTMLElement).dataset.d; if (e.isIntersecting && d) setNow(d); }), { rootMargin: '-45% 0px -50% 0px' });
     el.querySelectorAll('li[data-d]').forEach((li) => io.observe(li));
     return () => io.disconnect();
   }, [all, kind, t, mon]);
@@ -314,15 +321,15 @@ function Library({ mon, setMon, open, openKey }) {
 }
 
 /* the open title page: the row's sheet grows into it (shared layoutId), in a portal over the page */
-function Reader({ it, lid, close }) {
-  const btn = useRef(null);
+function Reader({ it, lid, close }: { it: Item; lid: string; close: () => void }) {
+  const btn = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     const l = window.__lenis;
     l?.stop();
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
     const t = setTimeout(() => btn.current?.focus(), 80);
-    const k = (e) => { if (e.key === 'Escape') close(); };
+    const k = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
     addEventListener('keydown', k);
     return () => { clearTimeout(t); removeEventListener('keydown', k); l?.start(); document.documentElement.style.overflow = prev; };
   }, [close]);
@@ -350,13 +357,13 @@ function Reader({ it, lid, close }) {
    back and they dim again. ---------- */
 const OPEN_A = 'The systems described in these papers are open source. The cloud, the gateway, the agent runtime and the infrastructure around them are developed in the open at';
 const OPEN_B = ', and the platform pays the open-source authors whose work runs on it.';
-function Word({ p, a, b, calm, children }) {
+function Word({ p, a, b, calm, children }: { p: MotionValue<number>; a: number; b: number; calm: boolean; children?: ReactNode }) {
   const o = useTransform(p, [a, b], [0.22, 1]);
   // the same span on server and client; reduced motion only sets it fully visible (no different markup, no mismatch)
   return <motion.span className="xrs-w" style={{ opacity: calm ? 1 : o }}>{children}</motion.span>;
 }
 function Open() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLParagraphElement>(null);
   const rm = useReducedMotion();
   const [calm, setCalm] = useState(false); // the server cannot know the setting: apply it after hydration, so markup matches
   useEffect(() => setCalm(!!rm), [rm]);
@@ -364,7 +371,7 @@ function Open() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.88', 'end 0.58'] });
   const a = OPEN_A.split(' '), b = OPEN_B.slice(2).split(' ');
   const n = a.length + 1 + b.length;
-  const W = (i, child) => <Word key={i} p={scrollYProgress} a={(i / n) * 0.94} b={((i + 2) / n) * 0.94} calm={calm}>{child}</Word>;
+  const W = (i: number, child: ReactNode) => <Word key={i} p={scrollYProgress} a={(i / n) * 0.94} b={((i + 2) / n) * 0.94} calm={calm}>{child}</Word>;
   const link = <A to="https://github.com/hanzoai">github.com/hanzoai</A>;
   return (
     <SceneWipe className="xrs-open" label="Open source">
@@ -390,9 +397,9 @@ function Open() {
 
 export default function Research() {
   useEnter('.xrs');
-  const [mon, setMon] = useState(null);
-  const [open, setOpen] = useState(null); // { it, from, lid }
-  const pickMonth = (m) => {
+  const [mon, setMon] = useState<string | null>(null);
+  const [open, setOpen] = useState<Sheet | null>(null);
+  const pickMonth = (m: string | null) => {
     setMon(m);
     const el = document.getElementById('papers');
     if (m && el) { const y = el.getBoundingClientRect().top + scrollY - 40; window.__lenis ? window.__lenis.scrollTo(y) : scrollTo({ top: y, behavior: 'smooth' }); }

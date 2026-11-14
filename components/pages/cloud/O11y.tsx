@@ -207,7 +207,7 @@ function Pane({ i, on }: { i: number; on: boolean }) {
 
 // 4. sticky-stack: each part is a card that sticks under the header and the next one stacks over it
 function Card({ i, t, d }: { i: number; t: string; d: string }) {
-  const [ref, inn] = useEnter(0.35);
+  const [ref, inn] = useEnter<HTMLLIElement>(0.35);
   return (
     <li className="ob-card" ref={ref} style={{ '--i': i }}>
       <div className="ob-card-t">

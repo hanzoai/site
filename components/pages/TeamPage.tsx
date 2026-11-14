@@ -16,7 +16,9 @@
    rooms, the forked Btn buttons (now the kit's Cta), the springs.
    Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, ReactNode, RefObject } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import type { TargetAndTransition } from 'motion/react';
 import { Copy } from '../ui';
 import { A, Cta } from '../kit';
 import Sigil from '../Sigil';
@@ -27,34 +29,35 @@ import '../v2/vc-type.css';
 import './company/deck.css';
 import './TeamPage.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const Lk = ({ to, children, className = '' }) => <A to={to} className={'x-arrow ' + className}><span>{children}</span><Arrow /></A>;
+const Lk = ({ to, children, className = '' }: { to: string; children?: ReactNode; className?: string }) => <A to={to} className={'x-arrow ' + className}><span>{children}</span><Arrow /></A>;
 const ASK = ['Create your team', 'https://hanzo.team/start'];
 // Hanzo's agent portraits (/agents/*.png, as live shows them), drawn over a grey disc with the initial: if one can't load, the disc stands in
-const INI = { data: 'D', vi: 'V', sci: 'S', dev: 'D', des: 'D', doc: 'D', su: 'S', sal: 'S', opera: 'O', cyber: 'C', mark: 'M', fin: 'F', law: 'L' };
-const Face = ({ n, size = 28 }) => (
+const INI: Record<string, string> = { data: 'D', vi: 'V', sci: 'S', dev: 'D', des: 'D', doc: 'D', su: 'S', sal: 'S', opera: 'O', cyber: 'C', mark: 'M', fin: 'F', law: 'L' };
+const Face = ({ n, size = 28 }: { n: string; size?: number }) => (
   <span className="xtm-face" style={{ width: size, height: size, '--img': `url(https://hanzo.ai/agents/${n}.png)` }} data-i={INI[n] || n[0].toUpperCase()} aria-hidden="true" />
 );
 // JS off: the hero's words, asks and the canvas show in their final state (the stage keeps no transform)
 const NOJS = { __html: '<style>.xtm-cur{display:none!important}.xtm-hero-r,.xtm-stage-in{opacity:1!important;transform:none!important}.xtm-chap{height:auto!important}.xtm-chap-st{position:static!important;height:auto!important}.xtm-chap-g{display:block!important}.xtm-chap-s{display:grid!important;padding:48px 0}.xtm-chap-s *{opacity:1!important;transform:none!important}.xtm-panels{display:block!important}.xtm-panel{grid-area:auto!important;margin-bottom:12px}.xtm-panel[aria-hidden=true]{visibility:visible!important;display:block!important}</style>' };
-const arrowKeys = (n, set) => (e) => {
+const arrowKeys = (n: number, set: (j: number) => void) => (e: KeyboardEvent<HTMLElement>) => {
   const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
   if (!d) return;
   e.preventDefault();
-  const tabs = [...e.currentTarget.querySelectorAll('[role=tab]')];
-  const j = (tabs.indexOf(document.activeElement) + d + n) % n;
+  const tabs = [...e.currentTarget.querySelectorAll<HTMLElement>('[role=tab]')];
+  const j = (tabs.indexOf(document.activeElement as HTMLElement) + d + n) % n;
   tabs[j].focus(); set(j);
 };
 
 /* ---------- 1. the shared canvas (signature) ---------- */
-const sleepFor = (ms, live) => new Promise((ok, no) => setTimeout(() => (live.on ? ok() : no('stop')), ms));
+interface Run { on: boolean }
+const sleepFor = (ms: number, live: Run) => new Promise<void>((ok, no) => setTimeout(() => (live.on ? ok() : no('stop')), ms));
 // layout position inside the board, so the hero's tilt and scale never skew where a cursor lands
-const offs = (el, root) => { let x = 0, y = 0; while (el && el !== root) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; } return [x, y]; };
+const offs = (el: HTMLElement | null, root: Element): [number, number] => { let x = 0, y = 0; while (el && el !== root) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent as HTMLElement | null; } return [x, y]; };
 
-function useCursor(x0, y0) {
+function useCursor(x0: number, y0: number) {
   const x = useMotionValue(x0), y = useMotionValue(y0);
-  const go = (tx, ty, calm) => {
+  const go = (tx: number, ty: number, calm: boolean | null) => {
     if (calm) { x.set(tx); y.set(ty); return; }
     animate(x, tx, { duration: 0.9, ease: [0.4, 0, 0.2, 1] }); // MASTER 3.1: no springs; things that move and stay ease in-out
     animate(y, ty, { duration: 0.9, ease: [0.4, 0, 0.2, 1] });
@@ -62,7 +65,7 @@ function useCursor(x0, y0) {
   return { x, y, go };
 }
 
-function Cursor({ c, name, tone, agent }) {
+function Cursor({ c, name, tone, agent }: { c: ReturnType<typeof useCursor>; name: string; tone: string; agent?: boolean }) {
   return (
     <motion.div className={'xtm-cur ' + tone} style={{ x: c.x, y: c.y }} aria-hidden="true">
       <svg viewBox="0 0 16 20" width="18" height="22"><path d="M1 1l13 8.5-6 1.4-3.2 6.2z" /></svg>
@@ -74,16 +77,18 @@ function Cursor({ c, name, tone, agent }) {
 const COLS = ['Backlog', 'Doing', 'Done'];
 const CREW = [['vi', 'Vi'], ['opera', 'Opera'], ['mana', 'Mana'], ['dev', 'Dev'], ['des', 'Des'], ['fin', 'Fin'], ['huma', 'Huma'], ['mark', 'Mark'], ['sal', 'Sal'], ['sci', 'Sci'], ['su', 'Su'], ['cyber', 'Cyber']];
 // Hanzo's tracker board, as live hanzo.ai/team shows it (9 Nov): four columns, two cards each, every card's owner an agent
-const TRACK = [
+/* a card of the board: id, tag, title, progress (%), owner */
+type Card = [string, string, string, number, string];
+const TRACK: [string, string, Card[]][] = [
   ['BACKLOG – 7', 'todo', [['CRM-1', 'Devops', 'Set up cluster monitoring & telemetry', 12, 'opera'], ['CRM-2', 'Research', 'Analyze and cluster search queries', 35, 'sci']]],
   ['TO DO – 6', 'todo', [['CRM-8', 'Sales', 'Sales planning & enterprise deal desk', 20, 'rev'], ['CRM-11', 'Backend', 'Deduplicate contacts on CRM import', 40, 'dev']]],
   ['IN PROGRESS – 3', 'doing', [['CRM-15', 'QA', 'Conduct custdev interview w/ client', 90, 'sal'], ['CRM-16', 'Feature', 'Add view-resource for MVP Deal Screen', 65, 'des']]],
   ['DONE – 3', 'done', [['CRM-17', 'Backend', 'Ship seat-count billing reconciliation', 100, 'rev'], ['CRM-19', 'Feature', 'Cut first release of the deal screen', 100, 'dev']]],
 ];
-const CARDS = TRACK.flatMap(([, , cards], c) => cards.map((k) => [...k, c]));
-const NAME = { opera: 'Opera', sci: 'Sci', rev: 'Rev', dev: 'Dev', sal: 'Sal', des: 'Des' };
+const CARDS = TRACK.flatMap(([, , cards], c) => cards.map((k): [...Card, number] => [...k, c]));
+const NAME: Record<string, string> = { opera: 'Opera', sci: 'Sci', rev: 'Rev', dev: 'Dev', sal: 'Sal', des: 'Des' };
 const TABS = ['Tracker Board', '23 AI Teammates', 'Virtual Office'];
-const Ring = ({ v, size = 12 }) => {
+const Ring = ({ v, size = 12 }: { v: number; size?: number }) => {
   const r = size / 2 - 1.5, c = 2 * Math.PI * r;
   return (
     <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size} aria-hidden="true" className="xtm-ring">
@@ -97,12 +102,12 @@ const Ring = ({ v, size = 12 }) => {
    progress counts up to Hanzo's figure; each landing syncs to the phone strip below ("Web + Mobile synced" answers).
    Plays once when first seen after the curtain, then the cursor breathes; Pause / Replay; a click on a card sends the
    cursor there. SSR and JS off show the finished board with Hanzo's figures. */
-function Canvas({ ok }) {
-  const box = useRef(null), board = useRef(null), scroller = useRef(null), cards = useRef([]);
+function Canvas({ ok }: { ok: boolean }) {
+  const box = useRef<HTMLDivElement>(null), board = useRef<HTMLDivElement>(null), scroller = useRef<HTMLDivElement>(null), cards = useRef<(HTMLButtonElement | null)[]>([]);
   const seen = useInView(box, { amount: 0.25 });
   const calm = useReducedMotion();
   const [phase, setPhase] = useState('rest');
-  const liveRef = useRef(null);
+  const liveRef = useRef<Run | null>(null);
   const [at, setAt] = useState(-1); // the card being worked
   const [shown, setShown] = useState(() => CARDS.map((k) => k[3]));
   const [sync, setSync] = useState(0);
@@ -110,11 +115,11 @@ function Canvas({ ok }) {
   const agent = useCursor(40, 40);
   const [run, setRun] = useState(0);
   const played = useRef(false);
-  const count = (i, live) => new Promise((done) => {
+  const count = (i: number, live: Run) => new Promise<void>((done) => {
     const to = CARDS[i][3];
     if (calm) { setShown((s) => s.map((v, j) => (j === i ? to : v))); done(); return; }
     const t0 = performance.now();
-    const step = (t) => {
+    const step = (t: number) => {
       if (!live.on) { done(); return; }
       const k = Math.min(1, (t - t0) / 700), e = 1 - Math.pow(1 - k, 3);
       setShown((s) => s.map((v, j) => (j === i ? Math.round(to * e) : v)));
@@ -122,14 +127,14 @@ function Canvas({ ok }) {
     };
     requestAnimationFrame(step);
   });
-  const land = async (i, live, sleep) => {
+  const land = async (i: number, live: Run, sleep: (ms: number) => Promise<void>) => {
     const el = cards.current[i], sc = scroller.current;
     if (!el || !board.current) return;
     // on a phone the board scrolls sideways: bring the card's column into view inside the window (never the page)
     if (sc && sc.scrollWidth > sc.clientWidth + 2) sc.scrollTo({ left: Math.max(0, el.offsetLeft - 12), behavior: calm ? 'auto' : 'smooth' });
     const [x, y] = offs(el, board.current);
     setWho(CARDS[i][4]);
-    const ft = el.querySelector('.xtm-tk-ft'); // the footer's empty middle: the label hangs into blank space, never over words
+    const ft = el.querySelector<HTMLElement>('.xtm-tk-ft'); // the footer's empty middle: the label hangs into blank space, never over words
     agent.go(Math.min(x + el.offsetWidth * 0.36, board.current.scrollWidth - 76), y + (ft ? ft.offsetTop + 6 : el.offsetHeight * 0.7), calm);
     await sleep(900);
     setAt(i);
@@ -142,7 +147,7 @@ function Canvas({ ok }) {
     played.current = true;
     const live = { on: true };
     liveRef.current = live;
-    const sleep = (ms) => sleepFor(calm ? 0 : ms, live);
+    const sleep = (ms: number) => sleepFor(calm ? 0 : ms, live);
     (async () => {
       try {
         setPhase(calm ? 'rest' : 'story');
@@ -160,13 +165,13 @@ function Canvas({ ok }) {
     if (liveRef.current) liveRef.current.on = false; // pause: the finished board, at rest
     finish(); setPhase('rest');
   };
-  const pick = (i) => {
+  const pick = (i: number) => {
     if (liveRef.current) liveRef.current.on = false;
     finish();
     const live = { on: true };
     liveRef.current = live;
     setPhase('story');
-    land(i, live, (ms) => sleepFor(calm ? 0 : ms, live)).then(() => { if (live.on) { setAt(-1); setPhase(calm ? 'rest' : 'drift'); } }).catch(() => {});
+    land(i, live, (ms: number) => sleepFor(calm ? 0 : ms, live)).then(() => { if (live.on) { setAt(-1); setPhase(calm ? 'rest' : 'drift'); } }).catch(() => {});
   };
 
   const activeIdx = at >= 0 ? at : 4;
@@ -258,7 +263,7 @@ function Canvas({ ok }) {
 }
 
 function Hero() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const ok = useArrived();
   // the same transform on server and client (no reduced-motion branch here: CSS removes it under reduced motion)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
@@ -334,13 +339,14 @@ const VIS = [<SceneChannels key="c" />, <SceneMates key="m" />, <SceneOrgs key="
 /* Pinned chapters (page-local): the words pin left while the product picture changes right. The outgoing headline
    slides out of its mask before the next one rises, so two headlines never share the frame. Stacked under 900px, under
    reduced motion and with JS off. Focus inside a chapter scrolls the page to it. */
-function Chapters({ label, items }) {
-  const ref = useRef(null);
+interface ChapterItem { key: string; title: ReactNode; body: ReactNode; visual: ReactNode }
+function Chapters({ label, items }: { label: string; items: ChapterItem[] }) {
+  const ref = useRef<HTMLElement>(null);
   const n = items.length;
   const [at, setAt] = useState(0);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => setAt(Math.min(n - 1, Math.max(0, Math.floor(p * n * 0.999)))));
-  const go = (i) => {
+  const go = (i: number) => {
     const el = ref.current;
     if (!el || innerWidth <= 899) return;
     const y = el.getBoundingClientRect().top + scrollY + (el.offsetHeight - innerHeight) * ((i + 0.5) / n);
@@ -395,7 +401,7 @@ function What() {
 }
 
 /* ---------- 3. together ---------- */
-const TOGETHER = [
+const TOGETHER: [string, string, [string, string]][] = [
   ['Coding', 'A bug report becomes a pull request; a person reviews it, the checks pass, and it ships, all in the channel.', ['vi', 'dev']],
   ['Support', 'An agent drafts the reply, a person makes it warmer, and it goes out.', ['su', 'vi']],
   ['Email', 'The inbox is sorted and the replies are drafted in your voice. You approve them as a batch.', ['su', 'vi']],
@@ -404,18 +410,18 @@ const TOGETHER = [
   ['Science & R&D Ops', 'Run LillyMol MedChem screens, targets + crew Slurm DAGs, pytest-wdl proteomics, and admiral/brms.mmrm clinical tables right from #research.', ['vi', 'sci']],
 ];
 /* the work being handed over: the row crossing the middle of the screen sends its relay from one face to the other */
-function useMid(box, sel) {
+function useMid(box: RefObject<HTMLElement | null>, sel: string) {
   const [mid, setMid] = useState(-1);
   useEffect(() => {
     if (!box.current || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setMid(+e.target.dataset.k); }), { rootMargin: '-42% 0px -42% 0px' });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setMid(Number((e.target as HTMLElement).dataset.k)); }), { rootMargin: '-42% 0px -42% 0px' });
     box.current.querySelectorAll(sel).forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [box, sel]);
   return mid;
 }
 /* a scripted run while the section is in view and untouched: steps through n states every ms, once or looping */
-function useRun(box, n, ms, loop, wideOnly = false) {
+function useRun(box: RefObject<HTMLElement | null>, n: number, ms: number, loop: boolean, wideOnly = false) {
   const seen = useInView(box, { amount: 0.15 });
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
@@ -427,11 +433,11 @@ function useRun(box, n, ms, loop, wideOnly = false) {
     const t = setTimeout(() => setAt((v) => (v + 1) % n), ms);
     return () => clearTimeout(t);
   }, [seen, mine, at, n, ms, loop, wideOnly]);
-  return [at, (v) => { setMine(true); setAt(v); }];
+  return [at, (v: number) => { setMine(true); setAt(v); }] as const;
 }
 
 function Together() {
-  const box = useRef(null);
+  const box = useRef<HTMLUListElement>(null);
   const mid = useMid(box, 'li');
   // a pointer or a tap holds a handoff on the stage; otherwise the row crossing the middle of the screen takes it
   const [held, setHeld] = useState(-1);
@@ -478,9 +484,9 @@ const ROOMS = [
   ['Agents', 'Dedicated AI teammates configured with your repos, docs, and permissions.', 'agents'],
 ];
 // each miniature is drawn from words already on this page, and makes one small move when it arrives (once)
-const once = (on, from, to, delay = 0.3) => ({ initial: from, whileInView: to, viewport: { once: true, amount: 0.6 }, transition: { duration: 0.6, ease: EASE, delay } });
+const once = (on: boolean, from: TargetAndTransition, to: TargetAndTransition, delay = 0.3) => ({ initial: from, whileInView: to, viewport: { once: true, amount: 0.6 }, transition: { duration: 0.6, ease: EASE, delay } });
 const FileI = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 1.5h5l3 3v10H4z" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" /></svg>;
-const Pic = ({ g }) => {
+const Pic = ({ g }: { g: string }) => {
   if (g === 'board') return (
     <div className="xtm-pic board" aria-hidden="true">
       {COLS.map((c, i) => <div key={c} className="xtm-mc" style={{ gridColumn: i + 1 }}><span className="x-mono">{c}</span></div>)}
@@ -542,16 +548,17 @@ function Rooms() {
 }
 
 /* ---------- 5. ten workflows: the one dark room ---------- */
-const FLOWS = [
+const FLOWS: [string, string, string[]][] = [
   ['bugfix', 'Engineering', ['dev', 'sci']], ['security', 'Security', ['cyber', 'dev']], ['launch', 'Launch', ['mark', 'des']], ['support', 'Support', ['su', 'doc']],
   ['ops', 'Ops', ['opera', 'cyber']], ['research', 'Research', ['sci', 'data']], ['deals', 'Sales', ['sal', 'des']], ['finance', 'Finance', ['fin', 'data']], ['legal', 'Legal', ['law', 'cyber']], ['growth', 'Growth', ['mark', 'sci']],
 ];
-const MATE_OF = { security: ['cyber', 'Cyber', 'Security, audits'], launch: ['mark', 'Mark', 'Launch, growth'], support: ['su', 'Su', 'Triage, replies'], ops: ['opera', 'Opera', 'Deploys, infra'], growth: ['mark', 'Mark', 'Launch, growth'] };
+const MATE_OF: Record<string, string[]> = { security: ['cyber', 'Cyber', 'Security, audits'], launch: ['mark', 'Mark', 'Launch, growth'], support: ['su', 'Su', 'Triage, replies'], ops: ['opera', 'Opera', 'Deploys, infra'], growth: ['mark', 'Mark', 'Launch, growth'] };
 const Check = () => <svg className="xtm-ok" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="10" cy="10" r="9" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M6 10.4l2.6 2.6L14.2 7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 // the cases Hanzo writes out in full (live hanzo.ai/team, 8 Nov): #bugfix (01) and #security (02)
 // PR numbers kept out of the source as literals so the colour scanner never reads them as hexes (the words are Hanzo's)
 const PR1 = '#' + 418, PR2 = '#' + 421;
-const CASES = {
+interface CaseData { cat: string; no: string; title: string; d: string; ask: [string, string, string, ReactNode]; a: string[]; b: string[]; steps: string[]; tools: string[]; run: string[] }
+const CASES: Record<string, CaseData> = {
   bugfix: { cat: 'Engineering & QA', no: '01', title: 'E2E Bug Reproduction, Patch & Verification',
     d: 'A human drops a one-line bug report in #bugfix. @Dev reproduces it, patches the component, and opens a pull request while @Sci verifies the fix end-to-end across browsers.',
     ask: ['ZM', 'Zoe Maxwell', '10:14 AM', <>Checkout button is unresponsive on mobile Safari when Apple Pay sheet closes — <em>@Dev</em> can we patch this before noon?</>],
@@ -568,7 +575,7 @@ const CASES = {
     tools: ['Hanzo KMS', 'WIMSE IAM', 'Trivy SBOM', 'GitHub'], run: ['#security', 'Cyber', 'Dev'] },
 };
 
-function Case({ k }) {
+function Case({ k }: { k: string }) {
   const c = CASES[k];
   return (
     <div className="xtm-case">
@@ -598,7 +605,7 @@ function Case({ k }) {
 
 function Flows() {
   const n = FLOWS.length;
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   // the channel list walks itself while the room is in view (one channel every 2.6 s) until you pick one
   const [at, setAt] = useRun(box, n, 2600, true, true);
   return (
@@ -652,18 +659,18 @@ function Flows() {
 
 /* ---------- 6. the code channel: a wide product window, stepped by hand ---------- */
 const STEP6 = ['1. Code trace', '2. Loop in design', '3. Decision', '4. Canvas summary', '5. E2E verify', '6. Session complete'];
-const DIFF = [['12', '12', '', '.cta-button {'], ['13', '13', '', 'display: inline-flex;'], ['14', '14', '', 'align-items: center;'], ['15', '', 'del', `- color: #${'e5e7eb'};`], ['16', '', 'del', `- background: #${'ec4899'};`], ['', '15', 'add', `+ color: #${'1a1a1a'};`], ['', '16', 'add', `+ background: #${'f472b6'};`], ['', '17', 'add', '+ font-weight: 600;'], ['17', '18', '', 'border-radius: 8px;'], ['18', '19', '', '}']];
+const DIFF: [string, string, string, string][] = [['12', '12', '', '.cta-button {'], ['13', '13', '', 'display: inline-flex;'], ['14', '14', '', 'align-items: center;'], ['15', '', 'del', `- color: #${'e5e7eb'};`], ['16', '', 'del', `- background: #${'ec4899'};`], ['', '15', 'add', `+ color: #${'1a1a1a'};`], ['', '16', 'add', `+ background: #${'f472b6'};`], ['', '17', 'add', '+ font-weight: 600;'], ['17', '18', '', 'border-radius: 8px;'], ['18', '19', '', '}']];
 
 function Channel() {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   // the session plays once when the window is reached (step 1 → 6, 1.6 s each), then rests complete; a press takes over
   const [r, setR] = useRun(box, 6, 1600, false);
   const [hyd, setHyd] = useState(false);
   useEffect(() => setHyd(true), []);
   const s = hyd ? r + 1 : 6; // the server and JS-off render the finished session
-  const setS = (v) => setR(v - 1);
-  const show = (k) => (s >= k ? ' on' : '');
-  const [pick, setPick] = useState(null); // the artifact tab: the session turns to View once Sci verifies, a press holds a tab
+  const setS = (v: number) => setR(v - 1);
+  const show = (k: number) => (s >= k ? ' on' : '');
+  const [pick, setPick] = useState<string | null>(null); // the artifact tab: the session turns to View once Sci verifies, a press holds a tab
   const tab = pick || (s >= 5 ? 'View' : 'Code');
   return (
     <section className="vc-sec xtm-code" aria-label="CODE CHANNELS &amp; ARTIFACTS" ref={box}>
@@ -777,12 +784,12 @@ function Channel() {
 
 /* ---------- 7. leadership ---------- */
 // the networks are marks with an accessible name, as on hanzo.ai (no visible word is added)
-const ICON = {
+const ICON: Record<string, ReactNode> = {
   X: <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>,
   GitHub: <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.3-3.4-1.3-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.4 1.1 2.9.8.1-.7.4-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.8 1a9.6 9.6 0 0 1 5 0c2-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2z" /></svg>,
   LinkedIn: <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3zM9.5 9.5h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.2c0-1.2 0-2.9-1.8-2.9s-2 1.4-2 2.8V21h-4z" /></svg>,
 };
-const PEOPLE = [
+const PEOPLE: [string, string, string, string, string, string, [string, string][], string][] = [
   ['Antje Worring', 'Chief Executive Officer & Co-Founder', 'Leads Hanzo’s corporate strategy, enterprise partnerships, and sovereign AI deployment. Builds the business around the platform.', '/authors/antje-worring-portrait.jpg', 'antjeworr.ing', 'https://antjeworr.ing', [['X', 'https://x.com/antjeworring'], ['GitHub', 'https://github.com/zooqueen'], ['LinkedIn', 'https://www.linkedin.com/in/antje-worring/']], 'AW'],
   ['Zach Kelling', 'Chief Technology Officer & Founder', 'Architect of Hanzo’s sovereign AI cloud, high-performance C/CUDA/Metal engine runtimes, and distributed agentic frameworks. Long-time open-source author.', '/authors/zach-kelling-portrait.jpg', 'zeekay.io', 'https://zeekay.io', [['X', 'https://x.com/zeekay'], ['GitHub', 'https://github.com/zeekay'], ['LinkedIn', 'https://www.linkedin.com/in/zeekay/']], 'ZK'],
 ];

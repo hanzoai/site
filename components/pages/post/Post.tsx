@@ -17,6 +17,7 @@
 // Signature: the reading thread: a rail whose chapter numeral hands over as you read and a spine that fills, each chapter a knot
 // Beyond: minutes left: the post's own read time counting down as you read, with a jump to any chapter
 import { Fragment, useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, PointerEvent as ReactPointerEvent, RefObject } from 'react';
 import { motion, AnimatePresence, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
 import { A, Cta, CodeBlock, Film as KitFilm, Img, Stat, Tabs, TabPanel } from '../../kit';
@@ -27,20 +28,21 @@ import Gist, { gist } from './Gist';
 import Life from './Life';
 import Frontier from './Frontier';
 import './Post.css';
+import type { Block as PostBlock, Chapter, CodeTab, CtaBlock, Doc, Link, Piece, SourcesBlock } from './types';
 
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 const FILMS = ['enso', 'kai', 'zen', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta'];
-const film = (slug, ext) => '/models/' + slug + '.' + ext;
-const Film = ({ slug, className }) => <KitFilm src={film(slug, 'webm')} poster={film(slug, 'webp')} w={1200} h={1500} className={className} />;
+const film = (slug: string, ext: string) => '/models/' + slug + '.' + ext;
+const Film = ({ slug, className }: { slug: string; className?: string }) => <KitFilm src={film(slug, 'webm')} poster={film(slug, 'webp')} w={1200} h={1500} className={className} />;
 
-const go = (id) => {
+const go = (id: string) => {
   const el = document.getElementById(id);
   if (!el) return;
   if (window.__lenis) window.__lenis.scrollTo(el, { offset: -120 }); else el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
   el.focus({ preventScroll: true });
 };
 
-function Inline({ inl }) {
+function Inline({ inl }: { inl: Piece[] }) {
   return inl.map((k, i) => {
     if (typeof k === 'string') return k;
     if (k.c !== undefined) return <code key={i} className="xbg-c"><span>{k.c}</span></code>; // the span keeps it a plain text leaf (copy check)
@@ -51,9 +53,9 @@ function Inline({ inl }) {
 }
 
 /* code: the kit CodeBlock, inside kit Tabs when the post gives one sample in two languages */
-function Code({ tabs, id }) {
+function Code({ tabs, id }: { tabs: CodeTab[]; id: string }) {
   const [at, setAt] = useState(0);
-  const src = (t) => t.lines.map((l) => l.map((x) => x[1]).join('')).join('\n');
+  const src = (t: CodeTab) => t.lines.map((l) => l.map((x) => x[1]).join('')).join('\n');
   if (tabs.length === 1) return <div className="xbg-code"><CodeBlock code={src(tabs[0])} label={tabs[0].lang} /></div>;
   return (
     <div className="xbg-code">
@@ -65,7 +67,7 @@ function Code({ tabs, id }) {
 
 /* role · name · note, asymmetric: the first part leads, large, with its own Hanzo film playing; the rest follow as a
    list beside it, each with its film's still (or its Sigil when it has no film) as a small mark */
-function Parts({ cards }) {
+function Parts({ cards }: { cards: string[][] }) {
   return (
     <ul className="xbg-parts" style={{ '--rest': Math.max(1, cards.length - 1) }}>
       {cards.map(([role, name, note], i) => (
@@ -82,7 +84,7 @@ function Parts({ cards }) {
   );
 }
 
-function Block({ b, i, doc, next }) {
+function Block({ b, i, doc, next }: { b: PostBlock; i: number; doc: Doc; next?: PostBlock }) {
   if (b.k === 'p') return <p className="xbg-p"><Inline inl={b.inl} /></p>;
   if (b.k === 'code') return <Code tabs={b.tabs} id={'xbg-code-' + i} />;
   if (b.k === 'parts') return <Parts cards={b.cards} />;
@@ -93,7 +95,7 @@ function Block({ b, i, doc, next }) {
 
 /* the title, word by word out of a mask, once (700 ms, 55 ms apart). A CSS animation, so it runs from first paint
    instead of waiting for hydration; reduced motion shows it at rest. */
-function Title({ text }) {
+function Title({ text }: { text: string }) {
   const words = text.split(' ');
   return (
     <h1 id="xbg-h1" className="xbg-h1" data-morph-target>
@@ -119,9 +121,9 @@ const OWN_ASKS = 'main.xbg [data-cta="blog-post.hero"], main.xbg [data-cta="blog
 function useQuietHeader() {
   useEffect(() => {
     const H = document.documentElement;
-    const asks = [...document.querySelectorAll(OWN_ASKS)];
+    const asks = [...document.querySelectorAll<HTMLElement>(OWN_ASKS)];
     if (!asks.length || typeof IntersectionObserver === 'undefined') return;
-    const vis = new Set();
+    const vis = new Set<Element>();
     // the hero ask fades out as the pinned plate opens (data-gone): faded counts as gone
     const apply = () => {
       const on = [...vis].some((el) => !el.closest('[data-gone="true"]'));
@@ -140,8 +142,8 @@ function useQuietHeader() {
 /* Screen one, plain (no pinned scene): the title, breadcrumb, lede and the post's ask on the 5, and on the 8 the post's
    own film (or its Sigil) in a card that swings in like a pendulum from first paint (entrance 1, pure CSS so it never
    waits for hydration). A figures post (Kai) puts the card on the left. Phones stack the parts. */
-function Hero({ doc, nums, ask, alt }) {
-  const art = useRef(null);
+function Hero({ doc, nums, ask, alt }: { doc: Doc; nums: number[]; ask: Link | null; alt: boolean }) {
+  const art = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
   const toggle = () => {
     const v = art.current?.querySelector('video');
@@ -181,7 +183,7 @@ function Hero({ doc, nums, ask, alt }) {
 
 /* The post's plate, a plain black section after the reading (no pinned room): its products or figures, which ripple in
    by distance from the pointer (entrance 3, grid-wave); figures count up once (kit Stat). */
-function Plate({ doc }) {
+function Plate({ doc }: { doc: Doc }) {
   if (!doc.facts.length) return null;
   const figs = doc.facts.some((c) => /\d/.test(c[1]));
   return (
@@ -203,12 +205,12 @@ function Plate({ doc }) {
 }
 
 /* the reading thread: the chapter numeral, the spine and its knots, the minutes left; a reading bar on phones */
-function Thread({ doc, chapters, body, ask }) {
+function Thread({ doc, chapters, body, ask }: { doc: Doc; chapters: Chapter[]; body: RefObject<HTMLElement | null>; ask: Link | null }) {
   const [at, setAt] = useState(0);
   const [open, setOpen] = useState(false);
-  const left = useRef(null), leftP = useRef(null), leftS = useRef(null);
+  const left = useRef<HTMLSpanElement>(null), leftP = useRef<HTMLSpanElement>(null), leftS = useRef<HTMLSpanElement>(null);
   const { scrollYProgress: fill } = useScroll({ target: body, offset: ['start 40%', 'end 85%'] });
-  const say = (v) => { const m = Math.ceil(doc.minutes * (1 - v) - 0.05); return v > 0.985 ? 'Finished' : (m < 1 ? 'Under a minute' : m + ' min') + ' left'; };
+  const say = (v: number) => { const m = Math.ceil(doc.minutes * (1 - v) - 0.05); return v > 0.985 ? 'Finished' : (m < 1 ? 'Under a minute' : m + ' min') + ' left'; };
   // the chapter you are in: the last heading above 60% of the screen, read on every scroll (not only while the body's
   // progress moves, which stops near the end and left the counter one chapter behind); finished means the last chapter
   const done = useRef(false);
@@ -236,30 +238,30 @@ function Thread({ doc, chapters, body, ask }) {
      Keyboard: the thumb is a slider; arrows, Home and End move by chapter. */
   const [drag, setDrag] = useState(false);
   const thumbY = useTransform(fill, (v) => v * 100 + '%');
-  const scrub = (axis) => ({
-    onPointerDown: (e) => {
+  const scrub = (axis: 'x' | 'y') => ({
+    onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
       const el = e.currentTarget;
       el.setPointerCapture?.(e.pointerId);
       setDrag(true);
-      const to = (ev) => {
+      const to = (ev: { clientX: number; clientY: number }) => {
         const r = el.getBoundingClientRect();
         const v = Math.min(1, Math.max(0, axis === 'y' ? (ev.clientY - r.top) / r.height : (ev.clientX - r.left) / r.width));
-        const b = body.current.getBoundingClientRect();
+        const b = body.current!.getBoundingClientRect(); // the article is mounted while its rail is dragged
         const A = b.top + scrollY - innerHeight * 0.4, B = b.bottom + scrollY - innerHeight * 0.85;
         const y = A + v * (B - A);
         if (window.__lenis) window.__lenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y);
       };
       to(e);
-      const move = (ev) => to(ev);
+      const move = (ev: PointerEvent) => to(ev);
       const up = () => { setDrag(false); el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
       el.addEventListener('pointermove', move);
       el.addEventListener('pointerup', up);
       el.addEventListener('pointercancel', up);
     },
   });
-  const key = (e) => {
+  const key = (e: KeyboardEvent<HTMLElement>) => {
     const n = chapters.length - 1;
-    const j = { ArrowDown: at + 1, ArrowRight: at + 1, ArrowUp: at - 1, ArrowLeft: at - 1, Home: 0, End: n }[e.key];
+    const j = ({ ArrowDown: at + 1, ArrowRight: at + 1, ArrowUp: at - 1, ArrowLeft: at - 1, Home: 0, End: n } as Record<string, number>)[e.key];
     if (j === undefined) return;
     e.preventDefault();
     const k = Math.min(n, Math.max(0, j));
@@ -267,7 +269,7 @@ function Thread({ doc, chapters, body, ask }) {
     e.currentTarget.focus({ preventScroll: true });
   };
   const slider = { role: 'slider', tabIndex: 0, 'aria-label': 'Chapters', 'aria-valuemin': 1, 'aria-valuemax': chapters.length, 'aria-valuenow': at + 1, 'aria-valuetext': chapters[at] ? pad(at + 1) + ' ' + chapters[at].h.text : '', onKeyDown: key };
-  const list = (tap) => (
+  const list = (tap: boolean) => (
     <ol className="xbg-knots">
       {chapters.map((c, i) => (
         <li key={c.h.id} data-on={i === at || undefined} data-past={i < at || undefined}>
@@ -321,6 +323,9 @@ function Thread({ doc, chapters, body, ask }) {
   );
 }
 
+/* the block before body[i] is the Game of Life figure */
+const afterLife = (doc: Doc, i: number) => { const p = doc.body[i - 1]; return !!p && p.k === 'figure' && p.kind === 'life'; };
+
 const Chevron = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* The newsletter, in Hanzo's own words (content/live/newsletter.json): the second way to stay with Hanzo after a post */
@@ -330,7 +335,7 @@ const Tick = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="
 /* The end of every post: a dark room that opens like a curtain as you arrive (scroll-driven, CSS only), lit from above
    through a halftone. On the left the post's own closing line and its product links, the first as the one solid ask;
    on the right, beside it, the newsletter. Every word is Hanzo's: the post's closing block and the newsletter page. */
-function Close({ doc, cta }) {
+function Close({ doc, cta }: { doc: Doc; cta: CtaBlock }) {
   const words = cta.label.split(' ');
   const [first, ...rest] = cta.links;
   return (
@@ -368,7 +373,7 @@ function Close({ doc, cta }) {
 }
 
 /* the close: the sources and the other posts as cards that open into their page, in one frame; then the dark room */
-function End({ doc, cta, sources }) {
+function End({ doc, cta, sources }: { doc: Doc; cta: CtaBlock | null; sources: SourcesBlock | null }) {
   return (
     <>
       <section className={'xbg-end' + (sources ? ' src' : '')} aria-label={doc.back.label} data-ask-hide>
@@ -402,11 +407,11 @@ function End({ doc, cta, sources }) {
   );
 }
 
-export default function Post({ doc }) {
-  const body = useRef(null);
+export default function Post({ doc }: { doc: Doc }) {
+  const body = useRef<HTMLElement>(null);
   // chapters: each h2 and what follows it; the closing actions and sources move to the end
-  const chapters = [];
-  let cta = null, sources = null;
+  const chapters: Chapter[] = [];
+  let cta = null as CtaBlock | null, sources = null as SourcesBlock | null;
   doc.body.forEach((b, i) => {
     if (b.k === 'h2') chapters.push({ h: b, blocks: [] });
     else if (b.k === 'cta') cta = b;
@@ -417,8 +422,8 @@ export default function Post({ doc }) {
   // a post that holds the Game of Life gives its other text-only chapters the board's own moves: the collision, then
   // the glider alone as the emblem (after the chapter's first paragraph)
   if (doc.body.some((b) => b.k === 'figure' && b.kind === 'life')) {
-    const kinds = ['collide', 'emblem'];
-    chapters.forEach((c) => { if (!c.gist && c.blocks.length && c.blocks.every(({ b }) => b.k === 'p') && kinds.length) c.gist = { kind: kinds.shift(), after: 0 }; });
+    const kinds: ('collide' | 'emblem')[] = ['collide', 'emblem'];
+    chapters.forEach((c) => { if (!c.gist && c.blocks.length && c.blocks.every(({ b }) => b.k === 'p') && kinds.length) c.gist = { kind: kinds.shift()!, after: 0 }; });
   }
   const nums = [doc.minutes, doc.title.length];
   const ask = cta && cta.links[0];
@@ -443,7 +448,7 @@ export default function Post({ doc }) {
                   <span className="xbg-num x-mono" aria-hidden="true">{pad(n + 1)}</span>
                   <h2 id={c.h.id} tabIndex={-1} className="xbg-h2" data-knot data-enter="typewriter">{c.h.text}</h2>
                 </header>
-                {c.blocks.map(({ b, i }, k) => (doc.body[i - 1] && doc.body[i - 1].k === 'figure' && doc.body[i - 1].kind === 'life' && b.k === 'p' ? null : (
+                {c.blocks.map(({ b, i }, k) => (afterLife(doc, i) && b.k === 'p' ? null : (
                   <Fragment key={i}>
                     <Block b={b} i={i} doc={doc} next={doc.body[i + 1]} />
                     {c.gist && c.gist.after === k && <Gist g={c.gist} />}

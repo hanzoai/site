@@ -9,11 +9,13 @@
    what happened: it appears only once Hanzo has taken the review, which is also kept in this browser (localStorage, the
    key hanzo.ai uses) and shown first; a review Hanzo did not take stays in the form with the reason. */
 import { useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, FormEvent, ReactNode, SVGProps } from 'react';
 import { Cta, Field } from '../kit';
 import { API, CATEGORIES, PRODUCTS, STORAGE_KEY, entry, kept, lead, response, visible } from './Reviews.data';
+import type { Draft, Review } from './Reviews.data';
 import './Reviews.css';
 
-const Icon = ({ d, size = 16, fill, ...rest }) => (
+const Icon = ({ d, size = 16, fill, ...rest }: Omit<SVGProps<SVGSVGElement>, 'd'> & { d: string | string[]; size?: number }) => (
   <svg viewBox="0 0 24 24" width={size} height={size} fill={fill || 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...rest}>
     {(Array.isArray(d) ? d : [d]).map((p) => <path key={p} d={p} />)}
   </svg>
@@ -23,7 +25,7 @@ const WRITE = ['M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z', 
 const CHECK = 'M20 6 9 17l-5-5';
 const STAR = 'M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z';
 
-function Stars({ count, size = 15 }) {
+function Stars({ count, size = 15 }: { count: number; size?: number }) {
   return (
     <span className="xrv-stars" role="img" aria-label={`${count} out of 5 stars`}>
       {[1, 2, 3, 4, 5].map((i) => <Icon key={i} d={STAR} size={size} className={i <= count ? 'on' : ''} fill={i <= count ? 'currentColor' : 'none'} />)}
@@ -31,19 +33,19 @@ function Stars({ count, size = 15 }) {
   );
 }
 
-const Pill = ({ on, onClick, children }) => (
+const Pill = ({ on, onClick, children }: { on: boolean; onClick: () => void; children?: ReactNode }) => (
   <button type="button" className="xrv-pill" aria-pressed={on} onClick={onClick}>{children}</button>
 );
 
 export default function Reviews() {
   const [category, setCategory] = useState('All');
-  const [mine, setMine] = useState([]);
+  const [mine, setMine] = useState<Review[]>([]);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ name: '', role: '', company: '', product: 'Hanzo Dev', rating: 5, title: '', body: '' });
-  const [said, setSaid] = useState(null); // the thanks, or what is missing: { ok, text }
+  const [form, setForm] = useState<Draft>({ name: '', role: '', company: '', product: 'Hanzo Dev', rating: 5, title: '', body: '' });
+  const [said, setSaid] = useState<{ ok: boolean; text: string } | null>(null); // the thanks, or what is missing: { ok, text }
   const [sending, setSending] = useState(false);
-  const box = useRef(null);
-  const field = (k) => ({ value: form[k], onChange: (e) => setForm((f) => ({ ...f, [k]: e.target.value })) });
+  const box = useRef<HTMLFormElement>(null);
+  const field = (k: 'name' | 'role' | 'company' | 'title' | 'body') => ({ value: form[k], onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm((f) => ({ ...f, [k]: e.target.value })) });
 
   useEffect(() => {
     try { setMine(kept(window.localStorage.getItem(STORAGE_KEY))); } catch {}
@@ -60,8 +62,8 @@ export default function Reviews() {
     box.current?.querySelector('input')?.focus({ preventScroll: true });
   }, [open]);
 
-  const post = (path, body) => fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.ok, () => false);
-  const submit = async (e) => {
+  const post = (path: string, body: unknown) => fetch(API + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.ok, () => false);
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (sending) return;
     const made = entry(form);

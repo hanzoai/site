@@ -8,12 +8,13 @@
    Every word, link and picture is Hanzo's (components/pages/productsIndexData.js reads it from the captured page). */
 import { Rise } from '../ui';
 import { A, Cta } from '../kit';
+import type { ProductsIndex as Index } from './ProductsTypes.ts';
 import './ProductsIndex.css';
 
-function Layers({ title, layers }) {
+function Layers({ title, layers }: { title: string; layers: Index['layers'] }) {
   const rail = layers[layers.length - 1];
   const rows = layers.slice(0, -1);
-  const row = (l, k) => (
+  const row = (l: Index['layers'][number], k?: string) => (
     <A to={l.href} className={'xpi-row' + (k === 'rail' ? ' rail' : '')}>
       <b>{l.name}</b>
       <span>{l.line}</span>
@@ -33,7 +34,7 @@ function Layers({ title, layers }) {
   );
 }
 
-export default function ProductsIndex({ d }) {
+export default function ProductsIndex({ d }: { d: Index }) {
   return (
     <div className="xpi">
       <section className="xpi-hero">
