@@ -4,8 +4,8 @@
    reduced motion and the server HTML show the final state. Page-local. */
 import { useEffect, useRef, useState } from 'react';
 
-export function useEnter(amount = 0.25) {
-  const ref = useRef(null);
+export function useEnter<T extends HTMLElement = HTMLDivElement>(amount = 0.25) {
+  const ref = useRef<T>(null);
   const [inn, setIn] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -14,5 +14,5 @@ export function useEnter(amount = 0.25) {
     io.observe(el);
     return () => io.disconnect();
   }, [amount]);
-  return [ref, inn ? '' : undefined];
+  return [ref, inn ? '' : undefined] as const;
 }

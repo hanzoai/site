@@ -668,7 +668,7 @@ function Model({ n }: { n: string[] }) {
   return (
     <li>
       <a href={'/' + slug} ref={box} className="dz-model" data-cursor="" data-cta={'design-model-' + slug}
-        onClick={(e) => opener.open(e, { el: box.current, src: `/models/${slug}.webp`, href: '/' + slug, key: slug })}>
+        onClick={(e) => { if (opener && box.current) opener.open(e, { el: box.current, src: `/models/${slug}.webp`, href: '/' + slug, key: slug }); }}>
         <span className="dz-model-m">
           <Film src={`/models/${slug}.webm`} poster={`/models/${slug}.webp`} w={1200} h={1500} />
         </span>

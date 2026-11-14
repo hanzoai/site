@@ -184,7 +184,7 @@ function GraphRoom() {
 }
 
 /* 3. The six facts. Entrance: text-mask-film (a signal film plays through the heading's letters, then it settles). */
-function FilmHead({ text, inn }: { text: string; inn?: boolean }) {
+function FilmHead({ text, inn }: { text: string; inn?: string }) {
   // the film: rows of dashes running through the letters at different speeds (transform only)
   const rows = Array.from({ length: 7 });
   return (
@@ -322,7 +322,7 @@ export default function Telemetry() {
   const [phone, setPhone] = useState(false);
   const [at, setAt] = useState(0);
   useEffect(() => { const m = matchMedia('(max-width: 900px)'); const s = () => setPhone(m.matches); s(); m.addEventListener('change', s); return () => m.removeEventListener('change', s); }, []);
-  const hold = useMemo(() => [held, () => setHeld((h) => !h)], [held]);
+  const hold = useMemo<[boolean, () => void]>(() => [held, () => setHeld((h) => !h)], [held]);
   return (
     <Hold.Provider value={hold}>
     <main id="main" className="l2-page tl2">
