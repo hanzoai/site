@@ -68,7 +68,7 @@ function Session({ onDone, paused, runKey }: SessionProps) {
       else await wait(350);
       for (let i = 0; i < SESSION.length && alive; i++) {
         setN(i + 1);
-        const el = rows.current[i], txt = SESSION[i][1];
+        const el = rows.current[i]!, txt = SESSION[i][1];
         if (i < 2) {
           await wait(i ? 380 : 60);
           for (let k = 1; k <= txt.length && alive; k++) { el.textContent = txt.slice(0, k); await wait(i ? 38 + (k % 5) * 6 : 95); }
@@ -89,7 +89,7 @@ function Session({ onDone, paused, runKey }: SessionProps) {
           <span className="cli-p" aria-hidden={i > 1 ? 'true' : undefined}>{p}</span>
           <span className="cli-tx">
             <span className="cli-ghost" aria-hidden="true">{t}</span>
-            <span className="cli-typed"><span ref={(el) => (rows.current[i] = el)}>{t}</span>{((i === n - 1 && i < 2) || (i === SESSION.length - 1 && n > SESSION.length)) && <span className="cli-caret" aria-hidden="true" />}</span>
+            <span className="cli-typed"><span ref={(el) => { rows.current[i] = el; }}>{t}</span>{((i === n - 1 && i < 2) || (i === SESSION.length - 1 && n > SESSION.length)) && <span className="cli-caret" aria-hidden="true" />}</span>
           </span>
           {i === 2 && <span className={'cli-spin' + (n === 3 ? ' on' : '')} ref={spin} aria-hidden="true">{SPIN[0]}</span>}
         </li>
@@ -473,7 +473,7 @@ function Roll({ value, go }: RollProps) {
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => { cancelAnimationFrame(raf); el.textContent = b; };
+    return () => { cancelAnimationFrame(raf); el.textContent = String(b); };
   }, [value, go, calm]);
   return <span ref={ref} className="cli-roll">{value}</span>;
 }

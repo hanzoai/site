@@ -29,6 +29,7 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent, useInView } fr
 import { EASE } from '../../ui';
 import { A, Cta } from '../../kit';
 import { scrollToY } from '../../../lib/scroll';
+import type { Bezier } from '../../../lib/motion';
 import { useDemo, PauseBtn } from '../../v2/x-hamilton/Demo';
 import '../../v2/x-hamilton/Launch.css';
 import './Automations.css';
@@ -127,7 +128,7 @@ const BY_SLUG: Record<string, App> = Object.fromEntries(APPS.map((a): [string, A
 const STAGES = CATS.map((c, i) => (i === 0 ? APPS.filter((a) => a[3]) : APPS.filter((a) => a[2] === c)));
 const LAST = STAGES.length; // index of the "Not here?" panel
 const ROLE = ['a change in it starts a run', 'read from it', 'write to it'];
-const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EMPH: Bezier = [0.16, 1, 0.3, 1];
 const K = 0.8; // px of vertical scroll per px the track travels
 /* the track rests on each panel for the first part of its share of the scroll, then glides to the next, so a panel is
    read whole (one in, one out) instead of two halves sliding past; HOLD is that resting share. */

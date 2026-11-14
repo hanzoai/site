@@ -89,7 +89,7 @@ function useSplit() {
 interface StreamsProps {
   shown: boolean[];
   done: boolean;
-  still: boolean | React.JSX.Element;
+  still: boolean;
 }
 function Streams({ shown, done, still }: StreamsProps) {
   const s = useSplit();
@@ -330,7 +330,7 @@ function SaySection() {
 interface CardProps {
   i: number;
   n: number;
-  paused: boolean | React.JSX.Element;
+  paused: boolean;
 }
 function Card({ i, n, paused }: CardProps) {
   const [ref, live] = useLive<HTMLElement>(0.5);

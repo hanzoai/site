@@ -103,7 +103,7 @@ function Query() {
 
 /* which of n steps a chapter is on: from the scroll through it on desktop (p); on phones it steps once through by
    itself while seen, then rests (a step a second at most, so it ends inside 5 s) */
-function useStepOf(p: MotionValue<number> | undefined, n: number, on: boolean) {
+function useStepOf(p: MotionValue<number> | null | undefined, n: number, on: boolean) {
   const [k, setK] = useState(0);
   const calm = useCalm();
   useEffect(() => {
@@ -251,24 +251,25 @@ function Fact({ i, t, d }: FactProps) {
 }
 function Facts() {
   const track = useRef<HTMLOListElement>(null);
-  const drag = useRef<{ x: number; l: number; moved: boolean; } | null | null>(null);
+  const drag = useRef<{ x: number; l: number; moved: boolean } | null>(null);
   const [at, setAt] = useState(0);
   const [ends, setEnds] = useState([true, false]);
+  const first = (el: HTMLElement) => el.firstElementChild as HTMLElement | null; // the rail's children are its cards
   const read = () => {
     const el = track.current;
     if (!el) return;
-    const w = el.firstElementChild?.offsetWidth || 1;
+    const w = first(el)?.offsetWidth || 1;
     setAt(Math.min(DOES.length - 1, Math.round(el.scrollLeft / (w + 24))));
     setEnds([el.scrollLeft < 8, el.scrollLeft > el.scrollWidth - el.clientWidth - 8]);
   };
   const step = (d: number) => {
-    const el = track.current;
-    const w = el.firstElementChild.offsetWidth + 24;
+    const el = track.current!;
+    const w = first(el)!.offsetWidth + 24;
     el.scrollBy({ left: d * w, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
   const down = (e: React.PointerEvent<HTMLOListElement>) => {
     if (e.pointerType !== 'mouse' || e.button !== 0) return;
-    const el = track.current;
+    const el = track.current!;
     drag.current = { x: e.clientX, l: el.scrollLeft, moved: false };
     el.setAttribute('data-drag', '');
   };
@@ -283,9 +284,9 @@ function Facts() {
     const g = drag.current;
     if (!g) return;
     drag.current = null;
-    const el = track.current;
+    const el = track.current!;
     el.removeAttribute('data-drag');
-    const w = el.firstElementChild.offsetWidth + 24;
+    const w = first(el)!.offsetWidth + 24;
     el.scrollTo({ left: Math.round(el.scrollLeft / w) * w, behavior: 'smooth' });
   };
   return (
@@ -349,7 +350,7 @@ function Explode() {
   }, [scrub, calm, hand, seen, st]);
   const go = (i: number) => {
     if (!scrub) { setSt(i); setHand(true); return; }
-    const el = run.current;
+    const el = run.current!;
     const top = el.getBoundingClientRect().top + window.scrollY;
     scrollToY(top + ((el.offsetHeight - window.innerHeight) * (i + 0.6)) / 4);
   };
@@ -407,7 +408,7 @@ const INDUSTRIES = ['Web and app analytics', 'E-commerce and finance', 'Time ser
 /* the twelve industries as a wall the scan passes over: one row at a time is read (in order while seen, or the row
    under the pointer), its blocks light the way the hero's column files do */
 function Who() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive<HTMLOListElement>(0.3);
   const [at, setAt] = useState(0);
   const [hot, setHot] = useState(-1);
   useEffect(() => {

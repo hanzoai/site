@@ -9,7 +9,16 @@ import { Rise, Copy } from '../../../ui';
 import '../Frame.css';
 import './Leaf.css';
 
-export function LeafCode({ tabs, title, light, mark, className = '' }) {
+/* a tab of code: its file or verb, and the code */
+interface Tab { k: string; code: string }
+interface LeafCodeProps {
+  tabs: Tab[];
+  title: string;
+  light?: boolean;
+  mark?: string;
+  className?: string;
+}
+export function LeafCode({ tabs, title, light, mark, className = '' }: LeafCodeProps) {
   const [at] = useState(0);
   const cur = tabs[at];
   return (

@@ -27,13 +27,13 @@ import { A, More, Cta, Img, DataTable } from '../../kit';
 import { useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
 import BizLines from '../../v2/BizLines';
+import type { Bezier } from '../../../lib/motion';
 import './Jin.css';
 
 const DOCS = 'https://docs.hanzo.ai';
 const GH = 'https://github.com/hanzoai';
 const IMG = '/models/zen.webp';
 // deck motion (MASTER §3.1): ease-in-out for things that move and stay, ease-out to follow, no springs
-type Bezier = [number, number, number, number];
 const MOVE: { duration: number; ease: Bezier } = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
 const FOLLOW: { duration: number; ease: Bezier } = { duration: 0.3, ease: [0, 0, 0.2, 1] };
 const two = (n: number) => String(n).padStart(2, '0');

@@ -325,7 +325,7 @@ interface TileProps {
   i: number;
   cue: boolean;
   onOpen: (i: number) => void;
-  onPeek: (i: number) => void;
+  onPeek: (i: number | null) => void;
 }
 function Tile({ p, i, cue, onOpen, onPeek }: TileProps) {
   const [t, k, d, l, to] = p;

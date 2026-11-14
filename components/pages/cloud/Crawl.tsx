@@ -142,7 +142,8 @@ const BEATS = [
 ];
 
 // the example site, in a 400 x 300 box: [x, y, parent, path, when in the spread 0..1, minor]
-const SITE = [
+/* a page of the site: x, y, the index of the page it links from (-1 for the root), its path, when it is found, minor */
+const SITE: [number, number, number, string, number, number?][] = [
   [200, 34, -1, 'example.com', 0],
   // spaced so no two labels touch at 1470 or 375 (each pair's centres are wider apart than half their labels)
   [80, 104, 0, '/docs', 0.08], [200, 108, 0, '/blog', 0.14], [322, 104, 0, '/pricing', 0.2],
@@ -240,13 +241,13 @@ function Scene() {
   }, [k, wide, seen, mine, calm, hold]);
 
   // the stage leans toward a fine pointer, 2.5 degrees at most (none on touch or under reduced motion)
-  const lean = (e) => {
+  const lean = (e: React.PointerEvent<HTMLDivElement>) => {
     if (calm || e.pointerType !== 'mouse') return;
     const el = e.currentTarget, r = el.getBoundingClientRect();
     el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
     el.style.setProperty('--rx', (((e.clientY - r.top) / r.height - 0.5) * -5).toFixed(2) + 'deg');
   };
-  const unlean = (e) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
+  const unlean = (e: React.PointerEvent<HTMLDivElement>) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
   const go = (i: number) => {
     if (!wide) { setMine(true); setK(i); return; }
     const el = run.current;
@@ -345,7 +346,7 @@ function Step({ k, t, d }: StepProps) {
 }
 
 /* ---------- Beyond: which plan covers it (three stops, Hanzo's three allowances, nothing in between) ---------- */
-const PLANS = [
+const PLANS: [string, string, string[], string, string][] = [
   ['Build', '$49', ['50,000 pages/month', '5 concurrent crawlers', 'JavaScript rendering', 'Markdown + structured output', 'REST API access'], 'Read the docs', DOCS],
   ['Scale', '$499', ['500,000 pages/month', '25 concurrent crawlers', 'Priority JS rendering', 'LLM-based extraction', 'Direct Search + Vector integration'], 'Read the docs', DOCS],
   ['Enterprise', 'Custom', ['Unlimited pages', 'Unlimited concurrent crawlers', 'Dedicated rendering pool', 'Custom extraction schemas', 'Dedicated support + SLA'], 'Contact Sales', '/contact-sales'],

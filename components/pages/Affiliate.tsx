@@ -197,7 +197,7 @@ interface DiagramProps {
   play: boolean;
 }
 function Diagram({ k, play }: DiagramProps) {
-  const T = { duration: 1.1, ease: [0.76, 0, 0.24, 1] };
+  const T = { duration: 1.1, ease: [0.76, 0, 0.24, 1] as [number, number, number, number] };
   const run = (d: number) => (play ? { pathLength: 1, opacity: 1, transition: { ...T, delay: d } } : { pathLength: 1, opacity: 1, transition: { duration: 0 } });
   const from = { pathLength: 0, opacity: 0 };
   return (

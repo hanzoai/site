@@ -26,7 +26,7 @@ import { cloneElement, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Flap from './commerce/Flap';
 import { useEnter } from './commerce/Entrances';
-import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
+import { EASE_OUT_EXPO as EASE, type Bezier } from '../../../lib/motion';
 import { A, More, Cta } from '../../kit';
 import { useLive } from '../cloud/Frame';
 import BizLines from '../../v2/BizLines';
@@ -199,7 +199,7 @@ function Rail() {
     const t = setTimeout(() => { first.current = false; if (held) setHeld(false); else setAt((a) => (a + 1) % 5); }, wait);
     return () => clearTimeout(t);
   }, [at, live, held, paused]);
-  const glide: { duration: number; ease: [number, number, number, number] } = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
+  const glide: { duration: number; ease: Bezier } = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
   return (
     <div className="cm-band" ref={ref}>
       <div className="bz-wrap cm-band-in">

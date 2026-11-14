@@ -11,6 +11,7 @@ import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useMotionValue, useTransform, useInView } from 'motion/react';
 import { useCalm } from '../../../ui';
+import type { Bezier } from '../../../../lib/motion';
 
 const W = 2200;
 const H = 1240;
@@ -65,7 +66,7 @@ export default function Canvas() {
   };
   const go = (tx: number, ty: number, b: Box = box) => {
     const c = lim(b);
-    const opt: { duration: number; ease?: [number, number, number, number] } = calm ? { duration: 0 } : { duration: 0.5, ease: [0.16, 1, 0.3, 1] };
+    const opt: { duration: number; ease?: Bezier } = calm ? { duration: 0 } : { duration: 0.5, ease: [0.16, 1, 0.3, 1] };
     animate(x, clamp(tx, c.left), opt);
     animate(y, clamp(ty, c.top), opt);
   };

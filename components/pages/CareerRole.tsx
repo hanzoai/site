@@ -139,7 +139,7 @@ function Steps({ f, role }: StepsProps) {
                 <span>{f.file.label}</span>
                 <input ref={file} type="file" aria-label={f.file.label} accept={f.file.accept} />
                 <small><span>{f.file.hint}</span></small>
-                <label className="xcj-opt"><input type="checkbox" name="news" aria-label={f.check} /><span>{f.check}</span></label>
+                <label className="xcj-opt"><input type="checkbox" name="news" aria-label={f.check ?? undefined} /><span>{f.check}</span></label>
               </div>
             )}
           </fieldset>
@@ -349,7 +349,7 @@ export default function CareerRole({ role, no, peers = [] }: CareerRoleProps) {
                 <i><u style={{ transform: `scaleX(${marks.size / total})` }} /></i>
               </p>
             )}
-            <p className="xcj-note">{role.form.note.text} <a href={role.form.note.href}>{role.form.note.mail}</a></p>
+            {role.form.note && <p className="xcj-note">{role.form.note.text} <a href={role.form.note.href}>{role.form.note.mail}</a></p>}
             <div className="xcj-apply-s" aria-hidden="true"><Sigil seed={'/careers/' + role.slug + '/apply'} data={[role.form.fields.length, total]} /></div>
           </div>
           <div className="xcj-apply-r"><Steps f={role.form} role={role} /></div>

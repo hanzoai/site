@@ -9,7 +9,7 @@ const ABC = " abcdefghijklmnopqrstuvwxyz{}/'ABCDEFGHIJKLMNOPQRSTUVWXYZ.012345678
 interface CellProps {
   ch: string;
   i: number;
-  calm: boolean;
+  calm: boolean | null;
 }
 function Cell({ ch, i, calm }: CellProps) {
   const [c, setC] = useState(ch);
@@ -33,7 +33,7 @@ function Cell({ ch, i, calm }: CellProps) {
 interface FlapProps {
   text: string;
   len: number;
-  calm: boolean;
+  calm: boolean | null;
   className?: string;
 }
 export default function Flap({ text, len, calm, className = '' }: FlapProps) {

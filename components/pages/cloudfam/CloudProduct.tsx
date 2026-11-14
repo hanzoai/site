@@ -36,6 +36,7 @@ import StageSettle from '../../v2/StageSettle';
 import useCalm from '../../v2/useCalm';
 import RowsOpen, { useMounted } from './RowsOpen';
 import { ENTRANCES, Enter, Letters } from './entrances';
+import type { Kind as Entrance } from './entrances';
 import './cloudfam.css';
 import './entrances.css';
 import type { Endpoint, Figure, Glyph, Kin, Link, Local, Pair, Preview, Product, Sibling, Story, Surface } from './types';
@@ -335,7 +336,7 @@ function Boot({ boot }: BootProps) {
 interface FinderProps {
   pairs: Pair[];
   here: string;
-  e: string;
+  e: Entrance;
 }
 function Finder({ pairs, here, e }: FinderProps) {
   const [q, setQ] = useState('');
@@ -404,7 +405,7 @@ function Finder({ pairs, here, e }: FinderProps) {
 /* Hanzo's genesis line, a quiet strip: its two sentences move from Air to Book weight once */
 interface MottoProps {
   text: string;
-  e: string;
+  e: Entrance;
 }
 function Motto({ text, e }: MottoProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -448,7 +449,7 @@ const Route = ({ ship }: RouteProps) => {
 /* the endpoint: the Paste and ship prompt on the left, its route as the object on the right */
 interface ShipProps {
   ship: Endpoint;
-  e: string;
+  e: Entrance;
 }
 function Ship({ ship: s, e }: ShipProps) {
   return (
@@ -475,7 +476,7 @@ function Ship({ ship: s, e }: ShipProps) {
 interface FamilyProps {
   doc: Product;
   previews: Record<string, Preview>;
-  e: string;
+  e: Entrance;
 }
 function Family({ doc, previews, e }: FamilyProps) {
   const win = doc.window;
@@ -556,7 +557,7 @@ interface RelatedProps {
   rel: Kin;
   cards: Record<string, Glyph>;
   previews: Record<string, Preview>;
-  e: string;
+  e: Entrance;
 }
 function Related({ rel, cards, previews, e }: RelatedProps) {
   const [at, setAt] = useState(0);
@@ -606,7 +607,7 @@ function Related({ rel, cards, previews, e }: RelatedProps) {
    prove them (the figure's own line, and the commands and output up to the one whose time it is) */
 interface BootHeadProps {
   boot: Story;
-  e: string;
+  e: Entrance;
 }
 function BootHead({ boot, e }: BootHeadProps) {
   return (
@@ -702,7 +703,7 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, pre
   const fig = isLocal ? null : figureOf(doc);
   // the sections after the hero, in this group's order, each with its entrance in the map's order (on /cloud/local
   // the hero's terminal takes the first); the closing Band takes the next one when there are fewer than five
-  const SEC: Record<string, (e: string) => ReactNode> = {
+  const SEC: Record<string, (e: Entrance) => ReactNode> = {
     family: (e) => prod && <Family doc={prod} previews={previews} e={e} />,
     ship: (e) => prod && prod.ship && <Ship ship={prod.ship} e={e} />,
     finder: (e) => <Finder pairs={pairs} here={doc.slug} e={e} />,

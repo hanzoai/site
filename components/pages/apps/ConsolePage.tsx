@@ -28,7 +28,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView } from 'motion/react';
 import { useCalm } from '../../ui';
 import { useRouter } from 'next/navigation';
-import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
+import { EASE_OUT_EXPO as EASE, type Bezier } from '../../../lib/motion';
 import { A, More } from '../../kit';
 import BizAsk from '../../v2/BizAsk';
 import { href } from '../../../lib/route';
@@ -47,7 +47,7 @@ const GH = 'https://github.com/hanzoai';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
 const TEAM = 'https://hanzo.team/';
 const ARRIVE = { duration: 0.3, ease: EASE }; // deck: no springs; arrivals take ease-emphasis at 300ms
-const GLIDE: { duration: number; ease: [number, number, number, number] } = { duration: 0.3, ease: [0.4, 0, 0.2, 1] }; // things that move and stay
+const GLIDE: { duration: number; ease: Bezier } = { duration: 0.3, ease: [0.4, 0, 0.2, 1] }; // things that move and stay
 
 /* the sidebar: Hanzo's products, as the console shows them */
 const SIDE: [string, string, string?][] = [['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Search', '/search', 'Retrieval & answers'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']];
@@ -513,7 +513,7 @@ function Find() {
     const k = (e: KeyboardEvent) => {
       if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
       const a = document.activeElement;
-      if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.isContentEditable)) return;
+      if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || (a instanceof HTMLElement && a.isContentEditable))) return;
       e.preventDefault();
       focusFind();
     };

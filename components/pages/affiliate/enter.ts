@@ -29,7 +29,7 @@ export function useEntrances(root: React.RefObject<HTMLElement | null>) {
 
     // depth-parallax and focus-pull, scroll-linked once they have arrived: the hero's three layers drift at their own
     // speeds as you scroll, and the hero (now the background) goes soft while the link band rises into focus
-    const hero = main.querySelector('[data-enter="depth"]');
+    const hero = main.querySelector<HTMLElement>('[data-enter="depth"]');
     let raf = 0;
     const paint = () => {
       raf = 0;

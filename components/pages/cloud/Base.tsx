@@ -50,8 +50,8 @@ const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 /* Entrances (MOTION-MAP rule 7): each main section arrives its own way, once, when it first comes into view. The
    server HTML is the final state; after mount a section below the fold is armed (data-arm: its start state, set in
    Base.css per entrance) and data-in plays it back to rest. Reduced motion and JS off: nothing is armed. */
-function useEntrance() {
-  const ref = useRef(null);
+function useEntrance<T extends HTMLElement = HTMLElement>() {
+  const ref = useRef<T>(null);
   const calm = useCalm();
   useEffect(() => {
     const el = ref.current;
@@ -137,7 +137,9 @@ const PILLARS = [
 ];
 
 /* the map's layout, in its own units: [x, y, w, h] per part. Wide is landscape, narrow is portrait (phones). */
-const MAP = {
+/* a part's box: [x, y, w, h] */
+interface Layout { W: number; H: number; n: Record<string, number[]> }
+const MAP: { wide: Layout; narrow: Layout } = {
   wide: { W: 1200, H: 700, n: { coll: [470, 20, 260, 214], admin: [30, 50, 330, 220], data: [840, 40, 330, 200], bin: [480, 290, 240, 160], iam: [30, 440, 330, 190], live: [840, 400, 330, 250], file: [470, 520, 260, 150] } },
   narrow: { W: 600, H: 1080, n: { coll: [160, 10, 280, 214], admin: [10, 270, 280, 200], data: [310, 270, 280, 200], bin: [180, 510, 240, 160], iam: [10, 710, 280, 180], live: [310, 710, 280, 230], file: [160, 950, 280, 120] } },
 };
@@ -175,8 +177,8 @@ function ZoomMap({ name, setName }: ZoomMapProps) {
     map.current.style.transform = `translate3d(${fx - g.fc[0] * s}px, ${fy - g.fc[1] * s}px, 0) scale(${s})`;
     if (calm) return;
     const o = clamp((v - 0.6) / 0.1);
-    if (say.current) { say.current.style.opacity = o; say.current.toggleAttribute('data-on', o > 0.5); }
-    if (say0.current) say0.current.style.opacity = 1 - clamp(v / 0.2);
+    if (say.current) { say.current.style.opacity = String(o); say.current.toggleAttribute('data-on', o > 0.5); }
+    if (say0.current) say0.current.style.opacity = String(1 - clamp(v / 0.2));
   }, [calm]);
 
   // measure the stage and work out the two cameras: the whole map, and the collection filling the screen
@@ -297,7 +299,7 @@ interface PilRowProps {
   children: ReactNode;
 }
 function PilRow({ children }: PilRowProps) {
-  const ent = useEntrance();
+  const ent = useEntrance<HTMLDivElement>();
   return <div className="kn-grid bs-pil-r" ref={ent}>{children}</div>;
 }
 interface PillarsProps {
@@ -347,7 +349,7 @@ function Pillars({ coll }: PillarsProps) {
 }
 
 /* the capability cards' art: small, still drawings of each idea */
-const Art = {
+const Art: Record<string, () => React.JSX.Element> = {
   schema: () => (
     <div className="bs-art a-schema"><div className="bs-art-card"><b>schema</b>{[60, 44, 52].map((w, i) => <i key={i} style={{ width: w + '%' }} />)}</div><span className="bs-art-arr" /><code>/records</code></div>
   ),
@@ -367,7 +369,7 @@ const Art = {
     <div className="bs-art a-fn"><div className="bs-art-box"><b>function</b><span>read a record</span><span>read a list</span></div><p>{['network', 'filesystem', 'shell'].map((x) => <s key={x}>{x}</s>)}</p></div>
   ),
 };
-const CAPS = [
+const CAPS: [string, string, string][] = [
   ['schema', 'The schema is the API', 'Define a collection and its records are addressable the same second, with an admin UI to browse and edit them. Nothing is scaffolded into your repo, so there is nothing to regenerate when the schema moves.'],
   ['stream', 'One stream, no polling', 'Subscribe over server-sent events and records arrive as they change. A browser cannot put a header on that request, so the stream is opened with a short-lived grant minted on an ordinary authenticated call — your access token never travels in a URL.'],
   ['rules', 'Rules run before the count', 'An access rule is a predicate on the collection, folded into the query ahead of paging and ahead of the count — so a row you may not read is not counted either. With nobody signed in, a rule naming the caller matches nothing.'],
@@ -383,15 +385,15 @@ function Caps() {
   // each card's drawing acts out its idea once as the card comes 60% into view, then rests (hover replays it)
   useEffect(() => {
     if (calm || !box.current || typeof IntersectionObserver === 'undefined') return;
-    const timers = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting) return;
       io.unobserve(e.target);
-      const el = e.target;
+      const el = e.target as HTMLElement;
       timers.push(setTimeout(() => { el.dataset.play = ''; }, 120));
       timers.push(setTimeout(() => { delete el.dataset.play; }, 1500));
     }), { threshold: 0.6 });
-    box.current.querySelectorAll('.kno-card').forEach((c) => io.observe(c));
+    box.current.querySelectorAll<HTMLElement>('.kno-card').forEach((c) => io.observe(c));
     return () => { io.disconnect(); timers.forEach(clearTimeout); };
   }, [calm]);
   return (
@@ -538,7 +540,7 @@ const REL = [['Base docs →', DOCS], ['Datastore', '/datastore', 'Analytical co
 export default function Base() {
   const [name, setName] = useState('posts');
   const coll = name || 'posts';
-  const closeEnt = useEntrance();
+  const closeEnt = useEntrance<HTMLDivElement>();
   useOwnAsk();
   return (
     <main className="kn bs">

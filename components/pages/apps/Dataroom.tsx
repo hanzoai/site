@@ -69,6 +69,12 @@ const PauseI = ({ held }: PauseIProps) => (held
   ? <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 
+interface FeedItem {
+  id: string;
+  b: string;
+  t: string;
+  hot?: boolean;
+}
 function Live() {
   const [ref, seen] = useLive<HTMLDivElement>(0.25);
   const calm = useCalm(); // hydration-safe: false on the server and first paint, then the visitor's setting
@@ -87,11 +93,12 @@ function Live() {
   const far = s === 0 ? 0 : Math.min(s, PAGES);
   const views = visit * (PAGES + 1) + far + (twice ? 1 : 0); // page views: one per page read, the re-read too
   const o = s === 0 ? 0 : Math.max(0, Math.min(7, (cur < 0 ? BACK : cur) - 1));
-  const feed = [
+  const visits: (false | FeedItem)[] = [
     twice && { id: 'b' + visit, b: 'came back', t: 're-read page 7', hot: true },
     s >= 1 && { id: 'r' + visit, b: 'page ' + far, t: s <= PAGES ? 'reading now' : 'how far they got' },
     { id: 'o' + visit, b: 'verified email', t: 'opened the link' },
-  ].filter(Boolean);
+  ];
+  const feed = visits.filter((e): e is FeedItem => !!e);
   return (
     <div className="dr-live bz-obj" ref={ref}>
       <div className="dr-live-bar">
@@ -182,10 +189,10 @@ const STEPS = [
   ['See what they read', 'Time spent on each page, how far they got, and whether they came back.'],
   ['Change your mind', 'Access can change after the link has gone, which an emailed PDF never allowed.'],
 ];
-const TREE = [['Deck.pdf', 0], ['Financials', 1], ['Legal', 1], ['NDA.pdf', 0]];
+const TREE: [string, number][] = [['Deck.pdf', 0], ['Financials', 1], ['Legal', 1], ['NDA.pdf', 0]];
 const GATES = ['A password', 'A verified email', 'An NDA to accept', 'An expiry date', 'Downloads off'];
 
-function Room({ at }) {
+function Room({ at }: { at: number }) {
   const on = (i: number) => 'dr-sc' + (at === i ? ' on' : '');
   return (
     <div className="dr-room bz-obj">
@@ -308,7 +315,7 @@ function Files() {
 
 /* Beyond, the one dark room: the link's settings, and what the person opening it meets. */
 const SETS = [['password', 'A password'], ['email', 'A verified email'], ['nda', 'An NDA to accept'], ['expiry', 'An expiry date'], ['nodl', 'Downloads off'], ['wm', 'Watermark']];
-const GATE = { password: ['Enter the password', 'Unlock'], email: ['Enter the code sent to your email', 'Verify'], nda: ['Accept the NDA', 'Accept'] };
+const GATE: Record<string, [string, string]> = { password: ['Enter the password', 'Unlock'], email: ['Enter the code sent to your email', 'Verify'], nda: ['Accept the NDA', 'Accept'] };
 
 interface GateProps {
   k: string;
@@ -331,9 +338,9 @@ function Gate({ k, mail, i, go }: GateProps) {
 }
 
 function Ten() {
-  const [on, setOn] = useState({ email: true, nda: true, nodl: true, wm: true });
+  const [on, setOn] = useState<Record<string, boolean>>({ email: true, nda: true, nodl: true, wm: true });
   const [mail, setMail] = useState('');
-  const [past, setPast] = useState([]);
+  const [past, setPast] = useState<string[]>([]);
   const me = mail.trim() || 'you@example.com';
   const flip = (k: string) => { setOn((o) => ({ ...o, [k]: !o[k] })); if (GATE[k]) setPast([]); };
   const gates = ['password', 'email', 'nda'].filter((k) => on[k] && !past.includes(k));
@@ -381,7 +388,9 @@ function Ten() {
   );
 }
 
-const PLANS = [
+/* a plan: name, price, blurb, [call to action, link], features */
+type Plan = [string, string, string, [string, string], string[]];
+const PLANS: Plan[] = [
   ['Free', '$0', 'Get started with document sharing and analytics.', ['Get on GitHub', 'https://github.com/hanzoai/'], ['1 team member', '50 links', '50 documents', 'Unlimited visitors', 'Page-by-page analytics', 'Community support']],
   ['Pro', '$25', 'For professionals who need branding and more capacity.', ['Contact Sales', '/contact-sales'], ['Unlimited links', '100 documents', 'Large file uploads', 'Custom branding', 'Video support', 'Folder organization']],
   ['Business', '$59', 'For teams that need custom domains and advanced access controls.', ['Contact Sales', '/contact-sales'], ['Everything in Pro', '3 team members', '1,000 documents', 'Custom domain', 'Email verification', 'Allow/block lists', 'Screenshot protection', 'Webhooks']],

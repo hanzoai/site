@@ -31,7 +31,7 @@ import './Engine.css';
 const VERBS = ['run', 'serve', 'bench'];
 
 /* which of n steps a chapter is on: from the scroll through it on desktop (p), or by itself while seen on phones */
-function useStepOf(p: MotionValue<number> | undefined, n: number, on: boolean) {
+function useStepOf(p: MotionValue<number> | null | undefined, n: number, on: boolean) {
   const [k, setK] = useState(0);
   const calm = useCalm();
   useEffect(() => {

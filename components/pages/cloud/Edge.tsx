@@ -98,8 +98,14 @@ const SAID = ['Where it runs', 'There is no request', 'After that, offline'];
 const KINDS = [['macOS', 'Apple Silicon and Intel'], ['Linux', 'x86 and ARM'], ['WebAssembly', 'modern browsers']];
 const rnd = (i: number) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 
+/* a machine in the field: its home, where it gathers, where it is now, its kind, how lit it is, how far from the top centre */
+interface Pt { hx: number; hy: number; gx: number; gy: number; x: number; y: number; k: number; lit: number; f: number }
+/* a prompt answered where it landed: the machine and the moment */
+interface Ring { p: Pt; b: number }
+interface Dots { pts: Pt[]; w: number; h: number; dpr: number; rings: Ring[]; t0: number; mode: number; last: number; ink: string; inkAt: number; kind?: number }
+
 function useField(canvas: React.RefObject<HTMLCanvasElement | null>, wrap: React.RefObject<HTMLDivElement | null>) {
-  const st = useRef({ pts: [], w: 0, h: 0, dpr: 1, rings: [], t0: 0, mode: 0, last: 0, ink: '10, 10, 10', inkAt: 0 });
+  const st = useRef<Dots>({ pts: [], w: 0, h: 0, dpr: 1, rings: [], t0: 0, mode: 0, last: 0, ink: '10, 10, 10', inkAt: 0 });
   useEffect(() => {
     const el = wrap.current, cv = canvas.current;
     if (!el || !cv) return;
@@ -112,7 +118,7 @@ function useField(canvas: React.RefObject<HTMLCanvasElement | null>, wrap: React
       const gap = r.width < 600 ? 26 : 34;
       const cols = Math.floor((r.width - 40) / gap), rows = Math.floor((r.height - 40) / gap);
       const ox = (r.width - (cols - 1) * gap) / 2, oy = (r.height - (rows - 1) * gap) / 2;
-      const pts = [];
+      const pts: Pt[] = [];
       for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
         const i = y * cols + x;
         const hx = ox + x * gap + (rnd(i) - 0.5) * gap * 0.5, hy = oy + y * gap + (rnd(i + 99) - 0.5) * gap * 0.5;
@@ -141,7 +147,7 @@ function useField(canvas: React.RefObject<HTMLCanvasElement | null>, wrap: React
 }
 
 /* one frame of the field, ink on white: a lit machine is darker and larger, a ring is ink fading out */
-function draw(s, cv: never, t: number, mode: number, calm: boolean) {
+function draw(s: Dots, cv: HTMLCanvasElement, t: number, mode: number, calm: boolean) {
   const c = cv.getContext('2d');
   if (!c) return;
   const { w, h, dpr, pts } = s;
@@ -316,7 +322,7 @@ function useEscReturn(sel: string) {
   useEffect(() => {
     const k = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
-      const c = document.querySelector(sel + ' .kno-card[aria-expanded="true"]');
+      const c = document.querySelector<HTMLElement>(sel + ' .kno-card[aria-expanded="true"]');
       if (c) setTimeout(() => c.focus({ preventScroll: true }), 80);
     };
     window.addEventListener('keydown', k);
@@ -326,7 +332,7 @@ function useEscReturn(sel: string) {
 
 function Yours() {
   const [at, setAt] = useState(0);
-  const btns = useRef([]);
+  const btns = useRef<(HTMLButtonElement | null)[]>([]);
   const [name, uses, model, line] = YOURS[at];
   const key = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
     const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
@@ -369,7 +375,7 @@ function Yours() {
 }
 
 /* ---------- when to reach for it: the dark room ---------- */
-const WHEN = [
+const WHEN: [string, string, string[]][] = [
   ['Apps that work with no signal', 'The model is a file on disk, so the feature does not stop existing when the connection does.', ['A desktop app that drafts and summarizes without a round trip', 'Field tools on a laptop, on a site with no coverage', 'Anything that has to keep working on a plane']],
   ['Text that cannot leave the building', 'Some prompts are a legal problem the moment they cross a network boundary. This is the answer to those.', ['Clinical and legal text processed on the workstation that holds it', 'On-premise deployments with no egress at all', 'Personal data handled on the device it belongs to']],
   ['Inside the browser tab', 'The WebAssembly build runs the model in the page, with nothing behind it — so a visitor costs you bandwidth once and compute never.', ['A demo that does not bill per visitor', 'An assistant inside a web app you already ship', 'Classification done client-side, before anything is uploaded']],
@@ -406,11 +412,11 @@ function Room({ children, className = '' }: RoomProps) {
    of the screen, or the one you point at). */
 function When() {
   const [at, setAt] = useState(0);
-  const items = useRef([]);
+  const items = useRef<(HTMLLIElement | null)[]>([]);
   const calm = useCalm();
   useEffect(() => {
-    const els = items.current.filter(Boolean);
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.i); }), { rootMargin: '-45% 0px -45% 0px' });
+    const els = items.current.filter((el): el is HTMLLIElement => !!el);
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(Number((e.target as HTMLElement).dataset.i)); }), { rootMargin: '-45% 0px -45% 0px' });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);

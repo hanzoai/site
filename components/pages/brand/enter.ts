@@ -12,7 +12,7 @@ import type React from 'react';
 import { useEffect } from 'react';
 import './enter.css';
 
-function trail(sec: Element) {
+function trail(sec: HTMLElement) {
   const layer = document.createElement('div');
   layer.className = 'xbr-trail';
   layer.setAttribute('aria-hidden', 'true');
@@ -45,8 +45,8 @@ function trail(sec: Element) {
   return () => { sec.removeEventListener('pointermove', move); layer.remove(); };
 }
 
-function stretch(sec: Element) {
-  const el = sec.querySelector<HTMLElement>('[data-stretch]') || (sec as HTMLElement); // a section is an HTML element
+function stretch(sec: HTMLElement) {
+  const el = sec.querySelector<HTMLElement>('[data-stretch]') || sec;
   let y = scrollY, s = 0, raf = 0, seen = true;
   const io = new IntersectionObserver(([en]) => { seen = en.isIntersecting; }, { threshold: 0 });
   io.observe(sec);
@@ -74,7 +74,7 @@ export default function useEnter(root: React.RefObject<HTMLElement | null>) {
       for (const en of list) {
         // 25% of the section, or (for a section taller than four screens) half the screen filled by it
         if (!en.isIntersecting || (en.intersectionRatio < 0.25 && en.intersectionRect.height < innerHeight * 0.5)) continue;
-        const s = en.target;
+        const s = en.target as HTMLElement; // what is observed is a section
         io.unobserve(s);
         s.classList.add('in');
         const k = s.getAttribute('data-enter');

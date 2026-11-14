@@ -348,8 +348,8 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden=
 function Reports() {
   const grid = useRef<HTMLDivElement>(null);
   const [q, setQ] = useState(-1);
-  const ask = REPORTS.flatMap((r, i) => r.ask.map((t) => [t, i]));
-  const open = (k: number, i: string | number) => { setQ(k); grid.current?.querySelectorAll<HTMLElement>('.kno-card')[i]?.click(); };
+  const ask = REPORTS.flatMap((r, i) => r.ask.map((t): [string, number] => [t, i]));
+  const open = (k: number, i: number) => { setQ(k); grid.current?.querySelectorAll<HTMLElement>('.kno-card')[i]?.click(); };
   const [en, on] = useEnter(0.12);
   // idle: while the cards are seen and nobody points at them, each one plays its picture in turn, one round, then rests
   const seen = useInView(grid, { amount: 0.3 });
@@ -404,7 +404,7 @@ function Reports() {
 /* ---------- the signature: from a visit to a number, built by the scroll ---------- */
 
 /* progress for a chapter picture: the scroll through it on desktop (p); on phones it builds once when seen */
-function useBuild(p: MotionValue<number> | undefined, on: boolean) {
+function useBuild(p: MotionValue<number> | null | undefined, on: boolean) {
   const calm = useReducedMotion();
   // the first render matches the server's (empty) picture; reduced motion completes it right after, never by scroll
   const own = useMotionValue(0);

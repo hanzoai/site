@@ -33,7 +33,22 @@ function Pull({ children, calm }: PullProps) {
   return <span ref={ref} className="lx-close-pull" onPointerMove={move} onPointerLeave={leave}>{children}</span>;
 }
 
-export default function Close({ name, tag, seed, data = [], ask, cta, repo = ['hanzoai', 'https://github.com/hanzoai'], stars, license = 'Apache-2.0', deploy = 'https://platform.hanzo.ai/deploy', self, children, className = '' }) {
+interface CloseProps {
+  name: string;
+  tag?: string;
+  seed: string;
+  data?: number[];
+  ask?: [string, string];
+  cta: string;
+  repo?: [string, string];
+  stars?: string;
+  license?: string;
+  deploy?: string;
+  self?: string;
+  children?: ReactNode;
+  className?: string;
+}
+export default function Close({ name, tag, seed, data = [], ask, cta, repo = ['hanzoai', 'https://github.com/hanzoai'], stars, license = 'Apache-2.0', deploy = 'https://platform.hanzo.ai/deploy', self, children, className = '' }: CloseProps) {
   const [label, to] = ask || ['Deploy to Cloud', deploy];
   const deployIsAsk = to === deploy;
   const ref = useRef<HTMLElement>(null);

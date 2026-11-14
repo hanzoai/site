@@ -107,7 +107,7 @@ function Zone() {
 /* ---------- chapters: one capability per screen ---------- */
 /* which of n steps a chapter is on: from the scroll through it on desktop (p); on phones it steps through once while
    seen and rests on the last step (no loop) */
-function useStepOf(p: MotionValue<number> | undefined, n: number, on: boolean) {
+function useStepOf(p: MotionValue<number> | null | undefined, n: number, on: boolean) {
   const [k, setK] = useState(0);
   const calm = useCalm();
   useEffect(() => {
@@ -253,7 +253,7 @@ const FEATS = [
 ];
 
 /* ---------- the graphite room: where Hanzo DNS sits ---------- */
-const COLS = [
+const COLS: [string, string[]][] = [
   ['Your Applications', ['CI/CD', 'CLI', 'REST API']],
   ['Hanzo DNS Control Plane', ['Record Manager', 'DNSSEC Engine', 'Parallel Query', 'Audit Log']],
   ['DNS Providers', ['Cloudflare', 'Route53', 'CoreDNS', 'GoDaddy', 'DigitalOcean', '+ More']],
@@ -304,7 +304,11 @@ const USES = [
 
 /* each use case is a scene the page already draws, small: the CLI writing records, the providers round one API, many
    zones lighting a few at a time. They play while the row is seen (reduced motion: their last frame). */
-function UseArt({ k, on }) {
+interface UseArtProps {
+  k: number;
+  on: boolean;
+}
+function UseArt({ k, on }: UseArtProps) {
   if (k === 0) return (
     <span className="dn-ua dn-ua-cli" data-on={on ? '' : undefined}>
       <span className="dn-ua-cmd"><b>$</b><i /></span>
@@ -346,14 +350,15 @@ function Use({ i, t, d }: UseProps) {
 }
 
 /* ---------- pricing, with Beyond: what do you need? ---------- */
-const PLANS = [
+/* name, what it is for, what it covers, the ask, whether it is the popular one, whether it bills monthly */
+const PLANS: [string, string, string[], string, boolean?, boolean?][] = [
   ['Starter', 'Usage-based pricing for getting started', ['Up to 5 zones', '2 DNS providers', 'CLI and API access', 'Volume-based query pricing'], 'Talk to us', false, false],
   ['Pro', 'For teams managing production DNS', ['Unlimited zones', 'All DNS providers', 'DNSSEC management', 'Audit logging', 'Priority support'], 'Talk to us', true, true],
   ['Team', 'For teams with shared DNS management', ['Everything in Pro', 'Team collaboration', 'Role-based access', 'Shared audit log', 'Priority support'], 'Talk to us', false, true],
   ['Enterprise', 'For organizations with advanced needs', ['Everything in Team', 'Edge DNS (CoreDNS)', 'Custom plugins', 'SLA guarantee', 'Dedicated support'], 'Contact Sales', false, true],
 ];
 // each need is a line from a plan's own list, word for word; the number is the first plan (index into PLANS) that carries it
-const NEEDS = [['Unlimited zones', 1], ['All DNS providers', 1], ['DNSSEC management', 1], ['Audit logging', 1], ['Team collaboration', 2], ['Role-based access', 2], ['Edge DNS (CoreDNS)', 3], ['Custom plugins', 3], ['SLA guarantee', 3]];
+const NEEDS: [string, number][] = [['Unlimited zones', 1], ['All DNS providers', 1], ['DNSSEC management', 1], ['Audit logging', 1], ['Team collaboration', 2], ['Role-based access', 2], ['Edge DNS (CoreDNS)', 3], ['Custom plugins', 3], ['SLA guarantee', 3]];
 const Down = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 function Pricing() {

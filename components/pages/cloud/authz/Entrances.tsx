@@ -16,7 +16,7 @@ interface EnterProps extends HTMLAttributes<HTMLElement> {
   amount?: number;
 }
 export default function Enter({ kind, as: Tag = 'div', className = '', children, amount = 0.25, ...rest }: EnterProps) {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [inn, setIn] = useState(false);
   useEffect(() => {
     const el = ref.current;

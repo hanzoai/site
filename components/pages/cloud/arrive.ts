@@ -11,16 +11,17 @@ export function useArrivals(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const main = root.current;
     if (!main || typeof IntersectionObserver === 'undefined' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const els = [...main.querySelectorAll('[data-enter]')].filter((el) => el.getBoundingClientRect().top > innerHeight * 0.85);
+    const els = [...main.querySelectorAll<HTMLElement>('[data-enter]')].filter((el) => el.getBoundingClientRect().top > innerHeight * 0.85);
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting) return;
-      const r = e.target.getBoundingClientRect();
-      e.target.style.setProperty('--hz-ox', (((+document.documentElement.dataset.hzPx || innerWidth / 2) - r.left) / r.width * 100).toFixed(1) + '%');
-      e.target.setAttribute('data-in', '');
+      const t = e.target as HTMLElement;
+      const r = t.getBoundingClientRect();
+      t.style.setProperty('--hz-ox', (((+(document.documentElement.dataset.hzPx ?? 0) || innerWidth / 2) - r.left) / r.width * 100).toFixed(1) + '%');
+      t.setAttribute('data-in', '');
       io.unobserve(e.target);
     }), { rootMargin: '0px 0px -15% 0px' });
     els.forEach((el) => { el.setAttribute('data-arm', ''); io.observe(el); });
-    const down = (e: PointerEvent) => { document.documentElement.dataset.hzPx = e.clientX; };
+    const down = (e: PointerEvent) => { document.documentElement.dataset.hzPx = String(e.clientX); };
     addEventListener('pointerdown', down, { passive: true });
     return () => { io.disconnect(); removeEventListener('pointerdown', down); };
   }, [root]);

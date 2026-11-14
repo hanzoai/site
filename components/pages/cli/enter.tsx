@@ -61,8 +61,9 @@ export function Trail({ host, run }: TrailProps) {
         last = t;
       }
       if (target) {
+        const head = target;
         pts.forEach((pt, i) => {
-          const lead = i === 0 ? target : pts[i - 1];
+          const lead = i === 0 ? head : pts[i - 1];
           const k = i === 0 ? 0.5 : 0.42;
           pt.x += (lead.x - pt.x) * k; pt.y += (lead.y - pt.y) * k;
           dots[i].style.transform = `translate3d(${pt.x}px, ${pt.y}px, 0)`;

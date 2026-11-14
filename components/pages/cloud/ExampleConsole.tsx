@@ -7,19 +7,20 @@
    The building project finishes its build once while it is seen, then rests (reduced motion: built from the start).
    Usage: <ExampleConsole name="Authz" api="/v1/authz" side={[['Authz', '/authz'], ['IAM', '/iam'], …]} /> */
 import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { A } from '../../kit';
 import './ExampleConsole.css';
 
-const ROWS = (cap: string) => [['gateway', 'Ready', cap], ['payments-api', 'Ready'], ['checkout-web', 'Building', 'A build is running from the last commit on main.'], ['docs-site', 'Ready', 'Static, published by the same pipeline as the rest.']];
+const ROWS = (cap: ReactNode): [string, string, ReactNode?][] => [['gateway', 'Ready', cap], ['payments-api', 'Ready'], ['checkout-web', 'Building', 'A build is running from the last commit on main.'], ['docs-site', 'Ready', 'Static, published by the same pipeline as the rest.']];
 const ICONS = ['M8 2v4M8 6 4 10M8 6l4 4M4 10v4M12 10v4', 'M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13', 'M3 3h3v3H3zM10 10h3v3h-3zM6 4.5h3.5v5.5', 'M2.5 3h11v4h-11zM2.5 9h11v4h-11z', 'M8 2 2.5 5v6L8 14l5.5-3V5zM2.5 5 8 8l5.5-3M8 8v6', 'M2 12l4-4 3 3 5-6', 'M5 2.5h6M3.5 6h9M2 9.5h12v4H2z', 'M8 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM2.5 14c.8-2.6 3-4 5.5-4s4.7 1.4 5.5 4'];
 
 interface ExampleConsoleProps {
   name: string;
   side: string[][];
   api: string;
-  cap?: string | React.JSX.Element;
+  cap?: ReactNode;
   className?: string;
 }
 export default function ExampleConsole({ name, side, api, cap = 'Every request enters here, so the limiter does too.', className = '' }: ExampleConsoleProps) {
@@ -39,7 +40,7 @@ export default function ExampleConsole({ name, side, api, cap = 'Every request e
   const move = (i: number) => {
     const n = (i + rows.length) % rows.length;
     setAt(n);
-    list.current?.children[n]?.focus();
+    (list.current?.children[n] as HTMLElement | undefined)?.focus();
   };
   const key = (e: React.KeyboardEvent<HTMLLIElement>, i: number) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); move(i + 1); }

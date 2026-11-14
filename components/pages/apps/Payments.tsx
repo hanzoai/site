@@ -207,7 +207,7 @@ interface PhoneProps {
   onHold: (() => void) | null;
   amt?: number;
 }
-function Phone({ at, live, big, held, onHold, amt = 2000 }: PhoneProps) {
+function Phone({ at, live, big, held = false, onHold, amt = 2000 }: PhoneProps) {
   const calm = useReducedMotion();
   const [ok, setOk] = useState(false);
   useEffect(() => {

@@ -28,7 +28,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { useEnter, useGrowFromPoint, useVelocitySkew, useLens } from './gui/GuiMotion';
 import { A, Cta } from '../../kit';
 import BizLines from '../../v2/BizLines';
-import { EASE_OUT_EXPO } from '../../../lib/motion';
+import { EASE_OUT_EXPO, type Bezier } from '../../../lib/motion';
 import { Code, useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
 import BizOpen from '../../v2/BizOpen';
@@ -36,7 +36,6 @@ import './Gui.css';
 
 const GH = 'https://github.com/hanzoai/gui';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
-type Bezier = [number, number, number, number];
 const SPR: { duration: number; ease: Bezier } = { duration: 0.4, ease: [0.4, 0, 0.2, 1] }; // deck: no springs; the frames move and stay (ease-in-out, slow)
 // colours swap fast (150 ms, ease-out) while shape and padding take the slow 400 ms, so "Hello, Hanzo" never sits
 // grey on grey halfway between the light and the ink ($8) state
@@ -160,7 +159,7 @@ interface BarProps {
   setHold?: (v: boolean) => void;
   off?: boolean;
 }
-function Bar({ v, hold, setHold, off }: BarProps) {
+function Bar({ v, hold = false, setHold, off }: BarProps) {
   return (
     <div className="gu-code">
       <p className="x-mono" aria-live="polite">
@@ -519,14 +518,14 @@ function CardDev({ k }: CardDevProps) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const card = el.closest('.gu-plat');
+    const card = el.closest<HTMLElement>('.gu-plat');
     if (!card) return;
     const on = () => setWake(true), off = () => setWake(false);
     card.addEventListener('focus', on); card.addEventListener('blur', off);
     const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
     if (!fine) return () => { card.removeEventListener('focus', on); card.removeEventListener('blur', off); };
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const move = (e: Event) => {
+    const move = (e: PointerEvent) => {
       if (calm) return;
       const r = card.getBoundingClientRect();
       const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;

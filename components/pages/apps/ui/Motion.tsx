@@ -206,7 +206,7 @@ interface InProps {
   children: ReactNode;
 }
 export function In({ as: T = 'div', className = '', amount = 0.2, children, ...rest }: InProps) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement & HTMLOListElement>(null); // one box that is whichever of the two tags it is drawn as
   const on = useIn(ref, amount);
   return <T ref={ref} className={className} data-in={on ? '' : undefined} {...rest}>{children}</T>;
 }

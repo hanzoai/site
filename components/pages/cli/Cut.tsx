@@ -9,12 +9,12 @@ import { useInView } from 'motion/react';
 
 interface CutProps {
   lines: string[];
-  as?: string;
+  as?: 'h1' | 'h2' | 'h3';
   className?: string;
   id: string;
 }
 export default function Cut({ lines, as = 'h2', className = '', id }: CutProps) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLHeadingElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const Tag = as;
   return (

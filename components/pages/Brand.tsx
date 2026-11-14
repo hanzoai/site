@@ -58,8 +58,8 @@ interface PieceProps {
 function Piece({ d, i, open, mx, my }: PieceProps) {
   const part = useMotionValue(0);
   useEffect(() => { const c = animate(part, open ? 1 : 0, { ...PART, delay: (open ? i : 4 - i) * 0.06 }); return () => c.stop(); }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
-  const x = useTransform([part, mx], ([o, m]) => o * FROM[i][0] * 0.6 + m * DEPTH[i]);
-  const y = useTransform([part, my], ([o, m]) => o * FROM[i][1] * 0.6 + m * DEPTH[i]);
+  const x = useTransform([part, mx], ([o, m]: number[]) => o * FROM[i][0] * 0.6 + m * DEPTH[i]);
+  const y = useTransform([part, my], ([o, m]: number[]) => o * FROM[i][1] * 0.6 + m * DEPTH[i]);
   return <motion.path d={d} className="xbr-piece" style={{ x, y }} />;
 }
 
