@@ -103,7 +103,11 @@ function Keys() {
 
 const PANELS = [Library, OpenNode, Steps, Agents, Publish, Keys];
 
-export default function FlowPanel({ at, compact = false }) {
+interface FlowPanelProps {
+  at: number;
+  compact?: boolean;
+}
+export default function FlowPanel({ at, compact = false }: FlowPanelProps) {
   const P = PANELS[at] || Library;
   // keyed by chapter, so each panel plays once as its chapter arrives
   return <div key={at} className={'flp-board' + (compact ? ' compact' : '')}><P /></div>;

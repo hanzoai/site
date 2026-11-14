@@ -19,6 +19,7 @@ import { A, Cta } from '../kit';
 import { play } from '../../lib/sound';
 import Lines from './cli/Cut';
 import Compare from './cli/Compare';
+import type { Tree } from './cli/Compare';
 import { Enter, Trail } from './cli/enter';
 import './cli/enter.css';
 import '../v2/AppType.css';
@@ -41,7 +42,7 @@ function Session({ onDone, paused, runKey }: SessionProps) {
   const box = useRef<HTMLUListElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
-  const rows = useRef([]);
+  const rows = useRef<(HTMLSpanElement | null)[]>([]);
   const spin = useRef<HTMLSpanElement>(null);
   const hold = useRef(paused);
   hold.current = paused;
@@ -55,7 +56,7 @@ function Session({ onDone, paused, runKey }: SessionProps) {
     if (calm) { fill(); setN(SESSION.length + 1); setLive(true); return; }
     if (!seen || ran.current === runKey) return;
     ran.current = runKey;
-    let alive = true, t = 0;
+    let alive = true, t: ReturnType<typeof setTimeout> | 0 = 0;
     const sleep = (ms: number) => new Promise((r) => { t = setTimeout(r, ms); });
     const wait = async (ms: number) => { await sleep(ms); while (alive && hold.current) await sleep(150); };
     const run = async () => {
@@ -173,7 +174,7 @@ function Paste() {
 }
 
 /* ---------- the resource tree: open a resource like a folder; the command it prints fills the pane ---------- */
-const TREE = [
+const TREE: Tree = [
   ['auth', [['login', 'hanzo auth login', 'Sign in. Interactive picker, or name a provider.'], ['show', 'hanzo auth show', 'hanzo auth show says which one is answering right now.']]],
   ['usage', [['summary', 'hanzo usage summary', 'What did that cost, and what is left']]],
   ['billing', [['balance', 'hanzo billing balance', 'What did that cost, and what is left']]],
@@ -198,7 +199,7 @@ function Print({ cmd, desc }: PrintProps) {
     const el = ref.current;
     if (!el) return;
     if (calm) { el.textContent = cmd; return; }
-    let i = 0, t = 0;
+    let i = 0, t: ReturnType<typeof setTimeout> | 0 = 0;
     el.textContent = '';
     const step = () => { el.textContent = cmd.slice(0, ++i); if (i < cmd.length) t = setTimeout(step, 26); };
     t = setTimeout(step, 90);
@@ -242,7 +243,7 @@ function Tree() {
     const t = setTimeout(() => {
       const nk = k + 1, [r, c] = TOUR[nk];
       setK(nk); setSel([r, c]);
-      const ul = pane.current, li = ul?.querySelectorAll(':scope > li')[r];
+      const ul = pane.current, li = ul?.querySelectorAll<HTMLElement>(':scope > li')[r];
       if (ul && li) ul.scrollTo({ top: Math.max(0, li.offsetTop - 12), behavior: 'smooth' }); // the pane scrolls, never the page
     }, 3800);
     return () => clearTimeout(t);
@@ -451,20 +452,24 @@ function Block({ b, i, added, last }: BlockProps) {
 
 /* the script's line count rolls to its value: from 0 as the window arrives (in step with the blocks wiping in), then from the old
    count to the new one each time a block is added or removed. The true value is in the HTML; tabular numerals, fixed ch width. */
-function Roll({ value, go }) {
+interface RollProps {
+  value: number;
+  go: boolean;
+}
+function Roll({ value, go }: RollProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const from = useRef(null);
+  const from = useRef<number | null>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (calm || !go) { el.textContent = value; if (go) from.current = value; return; }
+    if (calm || !go) { el.textContent = String(value); if (go) from.current = value; return; }
     const a = from.current ?? 0, b = value, t0 = performance.now(), dur = a === 0 ? 900 : 400;
     from.current = b;
     let raf = 0;
     const tick = (t: number) => {
       const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(a + (b - a) * e);
+      el.textContent = String(Math.round(a + (b - a) * e));
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -564,7 +569,7 @@ function Band() {
     const t = setTimeout(() => setAt((a) => (a + 1) % PLACES.length), 2400);
     return () => clearTimeout(t);
   }, [seen, calm, at]);
-  const host = useRef(null);
+  const host = useRef<HTMLElement>(null);
   const [run, setRun] = useState(false);
   return (
     // entrance 5, cursor-trail: a trail of carets sweeps across once and uncovers the band, then follows a fine pointer

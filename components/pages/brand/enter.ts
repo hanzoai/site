@@ -35,7 +35,7 @@ function trail(sec: Element) {
   };
   requestAnimationFrame(sweep);
   let last = 0;
-  const move = (ev) => {
+  const move = (ev: PointerEvent) => {
     if (ev.pointerType !== 'mouse' && ev.pointerType !== 'pen') return;
     const now = performance.now(); if (now - last < 28) return; last = now;
     const b = sec.getBoundingClientRect();
@@ -46,7 +46,7 @@ function trail(sec: Element) {
 }
 
 function stretch(sec: Element) {
-  const el = sec.querySelector('[data-stretch]') || sec;
+  const el = sec.querySelector<HTMLElement>('[data-stretch]') || (sec as HTMLElement); // a section is an HTML element
   let y = scrollY, s = 0, raf = 0, seen = true;
   const io = new IntersectionObserver(([en]) => { seen = en.isIntersecting; }, { threshold: 0 });
   io.observe(sec);
@@ -67,9 +67,9 @@ export default function useEnter(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const el = root.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-    const secs = [...el.querySelectorAll('[data-enter]')];
+    const secs = [...el.querySelectorAll<HTMLElement>('[data-enter]')];
     el.classList.add('xbr-armed');
-    const undo = [];
+    const undo: (() => void)[] = [];
     const io = new IntersectionObserver((list) => {
       for (const en of list) {
         // 25% of the section, or (for a section taller than four screens) half the screen filled by it

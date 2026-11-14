@@ -7,8 +7,10 @@
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 
+/* a resource and its leaves: [name, [leaf, command, line][]] */
+export type Tree = [string, string[][]][];
 interface CompareProps {
-  tree: (string | string[][])[][];
+  tree: Tree;
   labelledBy: string;
   go: boolean;
 }
@@ -49,7 +51,7 @@ export default function Compare({ tree, labelledBy, go }: CompareProps) {
   };
   const down = (e: React.PointerEvent<HTMLDivElement>) => {
     // a mouse may grab anywhere; a finger only by the handle, so a vertical scroll over the panel never moves the divider
-    if (e.pointerType !== 'mouse' && !e.target.closest?.('.cli-cmp-h')) return;
+    if (e.pointerType !== 'mouse' && !(e.target as Element).closest?.('.cli-cmp-h')) return;
     mine.current = true; setUsed(true); drag.current = true; setHeld(true);
     e.currentTarget.setPointerCapture?.(e.pointerId);
     at(e.clientX);

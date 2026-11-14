@@ -9,8 +9,8 @@ import { motion, useScroll, useTransform, useVelocity } from 'motion/react';
 
 /* rest (final state, server and JS off) → armed (hidden, waiting below the fold) → play (the entrance runs once) */
 export function useArm(amount = 0.25) {
-  const ref = useRef(null);
-  const [s, setS] = useState('rest');
+  const ref = useRef<HTMLDivElement>(null);
+  const [s, setS] = useState<'rest' | 'armed' | 'play'>('rest');
   useEffect(() => {
     const el = ref.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -20,7 +20,7 @@ export function useArm(amount = 0.25) {
     io.observe(el);
     return () => io.disconnect();
   }, [amount]);
-  return [ref, s];
+  return [ref, s] as const;
 }
 
 /* 1 · velocity-skew: rises in leaning, then leans with the speed of the scroll and straightens when it stops */
@@ -65,11 +65,11 @@ interface TrailProps {
 }
 export function Trail({ children }: TrailProps) {
   const [ref, s] = useArm(0.2);
-  const dots = useRef([]);
+  const dots = useRef<(HTMLElement | null)[]>([]);
   const N = 10;
   useEffect(() => {
     const el = ref.current; if (!el) return;
-    el.querySelectorAll('.zp-packets > li').forEach((li, i) => li.style.setProperty('--i', i));
+    el.querySelectorAll<HTMLElement>('.zp-packets > li').forEach((li, i) => li.style.setProperty('--i', String(i)));
   }, [ref]);
   useEffect(() => {
     const el = ref.current; if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -89,7 +89,7 @@ export function Trail({ children }: TrailProps) {
     const kick = () => { shown = true; if (!raf) raf = requestAnimationFrame(draw); };
     if (sweep) kick();
     const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-    const move = (e) => { const r = el.getBoundingClientRect(); tx = e.clientX - r.left; ty = e.clientY - r.top; until = performance.now() + 450; kick(); };
+    const move = (e: PointerEvent) => { const r = el.getBoundingClientRect(); tx = e.clientX - r.left; ty = e.clientY - r.top; until = performance.now() + 450; kick(); };
     if (fine) el.addEventListener('pointermove', move);
     return () => { cancelAnimationFrame(raf); el.removeEventListener('pointermove', move); };
   }, [s, ref]);

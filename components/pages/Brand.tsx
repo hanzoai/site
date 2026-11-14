@@ -24,6 +24,7 @@
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import { Cta } from '../kit';
 import MaskLines from './company/MaskLines';
 import useArrived from './company/useArrived';
@@ -33,10 +34,11 @@ import '../v2/vc-type.css';
 import './company/deck.css';
 import './Brand.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 // MASTER 3.1: no springs, no overshoot. Arrivals use ease-emphasis; things the hand moves settle in 300 ms.
 const SOFT = { duration: 0.3, ease: EASE };
-const PART = { duration: 0.9, ease: [0.4, 0, 0.2, 1] }; // the build: things that move and stay (ease-in-out)
+const IN_OUT: [number, number, number, number] = [0.4, 0, 0.2, 1];
+const PART = { duration: 0.9, ease: IN_OUT }; // the build: things that move and stay (ease-in-out)
 // JS off: the hero is already whole in the server HTML (the dot field is a CSS background); Pause needs JS, so it hides
 const NOJS = { __html: '<style>.xbr-pause{display:none!important}</style>' };
 
@@ -46,7 +48,14 @@ const DEPTH = [3.2, 1.2, 3.2, 3.2, 3.2]; // how far each piece leans toward the 
 
 /* One piece of the mark. It is whole in the server HTML (first frame). After paint it parts along its construction
    lines to show the build and closes again (staggered), then leans toward the pointer (300 ms, ease-emphasis). */
-function Piece({ d, i, open, mx, my }) {
+interface PieceProps {
+  d: string;
+  i: number;
+  open: boolean;
+  mx: MotionValue<number>;
+  my: MotionValue<number>;
+}
+function Piece({ d, i, open, mx, my }: PieceProps) {
   const part = useMotionValue(0);
   useEffect(() => { const c = animate(part, open ? 1 : 0, { ...PART, delay: (open ? i : 4 - i) * 0.06 }); return () => c.stop(); }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
   const x = useTransform([part, mx], ([o, m]) => o * FROM[i][0] * 0.6 + m * DEPTH[i]);
@@ -55,7 +64,12 @@ function Piece({ d, i, open, mx, my }) {
 }
 
 /* The construction, drawn full-bleed on the hero's stage. */
-function Drawing({ mx, my, stage }) {
+interface DrawingProps {
+  mx: MotionValue<number>;
+  my: MotionValue<number>;
+  stage: React.RefObject<HTMLElement | null>;
+}
+function Drawing({ mx, my, stage }: DrawingProps) {
   const ref = useRef<HTMLDivElement>(null);
   const live = useInView(ref, { amount: 0.3 });
   const calm = useReducedMotion();
@@ -126,7 +140,7 @@ function Hero() {
   // the pointer anywhere in the hero pulls the pieces toward it (fine pointers only), settling in 300 ms (no spring)
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const to = (mv, v: number) => animate(mv, v, SOFT);
+  const to = (mv: MotionValue<number>, v: number) => animate(mv, v, SOFT);
   const lean = (e: React.PointerEvent<HTMLElement>) => {
     if (calm || (e.pointerType !== 'mouse' && e.pointerType !== 'pen')) return;
     const art = e.currentTarget.querySelector('.xbr-dr svg');
@@ -199,15 +213,15 @@ function Principles() {
 // Copy only ticks when the clipboard really took the text; a blocked clipboard leaves the copy icon as it was.
 function useCopy(text: string) {
   const [ok, setOk] = useState(false);
-  const t = useRef(0);
+  const t = useRef<ReturnType<typeof setTimeout> | 0>(0);
   const go = async () => {
     try { await navigator.clipboard.writeText(text); } catch { return; }
     setOk(true); clearTimeout(t.current); t.current = setTimeout(() => setOk(false), 1400);
   };
-  return [ok, go];
+  return [ok, go] as const;
 }
 interface CopyIconProps {
-  ok: boolean | (() => Promise<void>);
+  ok: boolean;
 }
 const CopyIcon = ({ ok }: CopyIconProps) => (ok
   ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><motion.path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }} /></svg>
@@ -317,7 +331,7 @@ function Colour() {
 }
 
 /* ---------- type: the signature. The weight sweeps once when the specimen is on screen; the slider makes it yours. ---------- */
-const SCALE = [['Heading 1', 'Large page titles, hero sections', 56], ['Heading 2', 'Section titles, major divisions', 40], ['Heading 3', 'Subsection headings, feature headings', 30], ['Heading 4', 'Card titles, minor section headings', 22], ['Body Large', 'Featured paragraphs, pull quotes', 19], ['Body', 'Primary body text', 16], ['Caption', 'Supporting text, metadata, labels', 13]];
+const SCALE: [string, string, number][] = [['Heading 1', 'Large page titles, hero sections', 56], ['Heading 2', 'Section titles, major divisions', 40], ['Heading 3', 'Subsection headings, feature headings', 30], ['Heading 4', 'Card titles, minor section headings', 22], ['Body Large', 'Featured paragraphs, pull quotes', 19], ['Body', 'Primary body text', 16], ['Caption', 'Supporting text, metadata, labels', 13]];
 
 function Type() {
   const w = useMotionValue(560);

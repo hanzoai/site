@@ -19,6 +19,7 @@ import { scrollToEl } from '../../lib/scroll';
 import { A, Cta } from '../kit';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { P, r2, usd, BRIEF, written } from './BuyingSpecialist.data';
+import type { Message, Quote } from './BuyingSpecialist.data';
 import { useEnter, useRollIn } from './buying-specialist/enter';
 import '../v2/ProgramScale.css';
 import './BuyingSpecialist.css';
@@ -38,8 +39,8 @@ const PROMISES = [
 const ASK = ['We have a team of 10 developers', 'Explain Standard vs Premium seats', 'Looking for dedicated VPC & HIPAA', 'Compare Team vs Enterprise'];
 
 /* A small, safe markdown: paragraphs, headings, lists, bold, emphasis, code and http(s) or on-site links only. */
-function inline(t: string | boolean) {
-  const out = []; let at = 0;
+function inline(t: string) {
+  const out: React.ReactNode[] = []; let at = 0;
   for (const m of t.matchAll(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)|\*\*(.*?)\*\*|\*(.*?)\*|`(.*?)`|\b(cal\.com\/hanzo)\b/g)) {
     if (m.index > at) out.push(t.slice(at, m.index));
     const [, lt, lh, b, em, code, cal] = m;
@@ -50,9 +51,12 @@ function inline(t: string | boolean) {
   return out;
 }
 /* Line by line: '#' lines become headings, runs of '-' or '1.' lines become lists, the rest paragraphs. */
-function Md({ text }) {
-  const out = [];
-  let para = [], list = null;
+interface MdProps {
+  text: string;
+}
+function Md({ text }: MdProps) {
+  const out: React.ReactNode[] = [];
+  let para: string[] = [], list: [boolean, string][] | null = null;
   const flush = () => {
     if (para.length) { out.push(<p key={out.length}>{inline(para.join(' '))}</p>); para = []; }
     if (list) { out.push(<ul key={out.length}>{list.map(([sub, t], j) => <li key={j} className={sub ? 'sub' : ''}>{inline(t)}</li>)}</ul>); list = null; }
@@ -71,7 +75,10 @@ function Md({ text }) {
 }
 
 /* A price that rolls: the new figure rises into place as the old one leaves. */
-function Roll({ v }) {
+interface RollProps {
+  v: string | number;
+}
+function Roll({ v }: RollProps) {
   return (
     <span className="xbs-roll">
       <AnimatePresence mode="popLayout" initial={false}>
@@ -160,12 +167,16 @@ function Sheet({ seats: target, setSeats, mine, plan, stamp, onSettle }: SheetPr
 /* The six promises around one object: a dark sheet beside the ledger that changes with the promise you are on
    (scroll, hover or focus picks it). Each scene is a small render of this page's own interface (the quote card, the
    chat, the composer) in its own words and Hanzo's prices. */
-function Scene({ i, seats }) {
+interface SceneProps {
+  i: number;
+  seats: number;
+}
+function Scene({ i, seats }: SceneProps) {
   const yr = seats * P.std, mo = seats * P.stdMo;
   const grid = (fill: number, cls = '') => (
     <div className={'xbs-sg ' + cls}>{Array.from({ length: 40 }, (_, k) => <i key={k} className={k < fill ? 's' : ''} style={{ '--k': k }} />)}</div>
   );
-  const ai = (text: React.JSX.Element, extra: React.JSX.Element) => (
+  const ai = (text: React.JSX.Element, extra?: React.JSX.Element) => (
     <div className="xbs-mai"><span className="xbs-av dk">✦</span><div className="xbs-mans"><p className="xbs-mb">{text}</p>{extra}</div></div>
   );
   if (i === 0) return (<>
@@ -204,7 +215,7 @@ function Scene({ i, seats }) {
 
 /* The six promises as three plain sections of two (no pinned stage): each promise with its own small card of the
    page's interface. Each pair enters its own way (enter.js): rack-focus, swing-door, tile-flip. */
-const PAIRS = [['rack-focus', 0], ['swing-door', 2], ['tile-flip', 4]];
+const PAIRS = [['rack-focus', 0], ['swing-door', 2], ['tile-flip', 4]] as const;
 interface PromisesProps {
   seats: number;
 }
@@ -290,11 +301,11 @@ function Dock({ seats, plan }: DockProps) {
 
 export default function BuyingSpecialist() {
   const [name, setName] = useState('there');
-  const [msgs, setMsgs] = useState([]);
+  const [msgs, setMsgs] = useState<Message[]>([]);
   const [busy, setBusy] = useState(false);
   const [val, setVal] = useState('');
   const [seats, setSeats] = useState(10);
-  const [plan, setPlan] = useState('team');
+  const [plan, setPlan] = useState<'team' | 'ent'>('team');
   const cycle = useRef(0);
   const ask = useRef<HTMLInputElement>(null);
   const [own, setOwn] = useState(false);
@@ -356,15 +367,15 @@ export default function BuyingSpecialist() {
     return () => clearTimeout(t);
   }, [seats, own, calm, seen]);
 
-  const file = (q: string, a: string, quote: { plan: string; seats: number; monthlyTotal: null; annualTotal: number; savings: null; checkoutUrl: string; } | { plan: string; seats: number; monthlyTotal: number; annualTotal: number; savings: number; checkoutUrl: string; } | undefined, list) => {
+  const file = (q: string, a: string, quote: Quote | undefined, list: Message[]) => {
     const transcript = [...list, { role: 'user', content: q }, { role: 'assistant', content: a }].map((m) => `${m.role === 'user' ? 'Visitor' : 'Buying Specialist'}: ${m.content}`).join('\n\n');
-    const answers = [{ field: 'message', text: q }, { field: 'transcript', text: transcript }];
+    const answers: { field: string; text?: string; number?: number }[] = [{ field: 'message', text: q }, { field: 'transcript', text: transcript }];
     if (quote?.plan) answers.push({ field: 'plan', text: quote.plan });
     if (typeof quote?.seats === 'number') answers.push({ field: 'seats', number: quote.seats });
     fetch(FORM, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers, hidden: { program: 'chat', source: 'hanzo.ai/buying-specialist' } }) }).catch(() => {});
   };
 
-  const send = async (text: string) => {
+  const send = async (text?: string) => {
     const q = (text || val.trim() || 'Hi! Can you help me find the right plan for my team?').slice(0, 2000);
     if (busy) return;
     setVal('');

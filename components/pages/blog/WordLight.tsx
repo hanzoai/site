@@ -9,12 +9,18 @@
 import type React from 'react';
 import { Fragment, useState } from 'react';
 
-export default function WordLight({ text, lead, className = '', label }) {
+interface WordLightProps {
+  text: string;
+  lead?: React.ReactNode;
+  className?: string;
+  label?: string;
+}
+export default function WordLight({ text, lead, className = '', label }: WordLightProps) {
   const words = text.split(' ');
   const [upto, setUpto] = useState<number | null>(null);
   const [run, setRun] = useState(0);
   const replay = () => { setUpto(null); setRun((r) => r + 1); };
-  const at = (e: React.PointerEvent<HTMLParagraphElement>) => { const w = e.target.closest?.('.xbl-w'); if (w) setUpto(+w.dataset.i); };
+  const at = (e: React.PointerEvent<HTMLParagraphElement>) => { const w = (e.target as Element).closest?.<HTMLElement>('.xbl-w'); if (w) setUpto(Number(w.dataset.i)); };
   const key = (e: React.KeyboardEvent<HTMLParagraphElement>) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     e.preventDefault();
@@ -27,7 +33,7 @@ export default function WordLight({ text, lead, className = '', label }) {
       aria-label={label}
       onPointerMove={(e) => { if (e.pointerType === 'mouse') at(e); }}
       onPointerLeave={(e) => { if (e.pointerType === 'mouse' && upto != null) replay(); }}
-      onClick={(e) => { if (e.nativeEvent.pointerType !== 'mouse') replay(); }}
+      onClick={(e) => { if ((e.nativeEvent as PointerEvent).pointerType !== 'mouse') replay(); }}
       onFocus={(e) => { if (upto == null && e.target.matches(':focus-visible')) setRun((r) => r + 1); }}
       onKeyDown={key}
     >

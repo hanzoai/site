@@ -41,7 +41,15 @@ const two = (n: number) => String(n).padStart(2, '0');
 // the example company: inputs only; everything shown is computed from them
 // the example company: the starting inputs; the pre-money, the raise, the pool and the exit price are the calculator's
 const FOUND = 8_000_000, SAFE = 500_000, CAP = 8_000_000, DISC = 0.2;
-const START = { pre: 12_000_000, raise: 2_000_000, pool: 1_000_000, exit: 6_000_000 };
+interface Round {
+  pre: number;
+  raise: number;
+  pool: number;
+  exit: number;
+}
+const START: Round = { pre: 12_000_000, raise: 2_000_000, pool: 1_000_000, exit: 6_000_000 };
+/* a holder: name, shares, share of the fully diluted total, class */
+type Row = [string, number, number, string];
 function model(pre: number, raise = START.raise, pool = START.pool) {
   const preSh = FOUND + pool;
   const price = pre / preSh;
@@ -49,7 +57,8 @@ function model(pre: number, raise = START.raise, pool = START.pool) {
   const safeSh = SAFE / safePrice;
   const newSh = raise / price;
   const total = preSh + safeSh + newSh;
-  return { price, byCap: CAP / preSh <= price * (1 - DISC), safeSh, newSh, total, rows: [['Founders', FOUND, 'Common'], ['Option pool', pool, 'ISO and NSO'], ['SAFE', safeSh, 'converts'], ['New investor', newSh, 'Preferred']].map(([n, s, k]) => [n, s, s / total, k]) };
+  const held: [string, number, string][] = [['Founders', FOUND, 'Common'], ['Option pool', pool, 'ISO and NSO'], ['SAFE', safeSh, 'converts'], ['New investor', newSh, 'Preferred']];
+  return { price, byCap: CAP / preSh <= price * (1 - DISC), safeSh, newSh, total, rows: held.map(([n, s, k]): Row => [n, s, s / total, k]) };
 }
 const USD = (v: number) => '$' + (v >= 1e6 ? (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + 'M' : Math.round(v).toLocaleString('en-US'));
 const PCT = (v: number) => (v * 100).toFixed(1) + '%';
@@ -65,7 +74,11 @@ const STEPS = [
 ];
 
 /* A figure whose characters roll to their new value one by one (transform and opacity only). */
-function Roll({ text, className = '' }) {
+interface RollProps {
+  text: string;
+  className?: string;
+}
+function Roll({ text, className = '' }: RollProps) {
   return (
     <span className={'ct-roll ' + className}>
       <span className="x-sr">{text}</span>
@@ -81,9 +94,13 @@ function Roll({ text, className = '' }) {
 }
 
 /* The ownership bar: each holder a segment, moved and sized by transform only. */
-function Bar({ rows, lit }) {
+interface HoldersProps {
+  rows: Row[];
+  lit?: number[];
+}
+function Bar({ rows, lit }: HoldersProps) {
   let x = 0;
-  const segs = rows.map(([n, , p], i) => { const st = x; x += p; return [n, st, p, i]; });
+  const segs = rows.map(([n, , p], i): [string, number, number, number] => { const st = x; x += p; return [n, st, p, i]; });
   return (
     <div className="ct-bar" aria-hidden="true">
       {segs.map(([n, st, p, i]) => <i key={n} className={'ct-seg ct-s' + i + (lit && !lit.includes(i) ? ' off' : '')} style={{ transform: `translateX(${st * 100}%) scaleX(${p})` }} />)}
@@ -92,7 +109,7 @@ function Bar({ rows, lit }) {
   );
 }
 
-function Table({ rows, lit }) {
+function Table({ rows, lit }: HoldersProps) {
   return (
     <table className="ct-table">
       <thead><tr><th>Holder</th><th className="ct-k">Class</th><th className="ct-n">Shares</th><th>Fully diluted</th></tr></thead>
@@ -107,12 +124,25 @@ function Table({ rows, lit }) {
   );
 }
 
-const PauseIcon = ({ on }) => (on
+const PauseIcon = ({ on }: { on: boolean }) => (on
   ? <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 
 /* One calculator input: a native range with its label, its value and a value text for screen readers. */
-function Dial({ id, label, value, min, max, step, fmt, text, onChange, big, children }) {
+interface DialProps {
+  id: string;
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  fmt: (v: number) => string;
+  text: string;
+  onChange: (v: number) => void;
+  big?: boolean;
+  children?: ReactNode;
+}
+function Dial({ id, label, value, min, max, step, fmt, text, onChange, big, children }: DialProps) {
   return (
     <div className={'ct-slide ct-dial' + (big ? ' big' : '')}>
       <div className="ct-dial-k">
@@ -125,8 +155,14 @@ function Dial({ id, label, value, min, max, step, fmt, text, onChange, big, chil
   );
 }
 
-function Hero({ c, set, mine, setMine }) {
-  const [ref, live, calm] = useLive(0.3);
+interface HeroProps {
+  c: Round;
+  set: (k: keyof Round, v: number) => void;
+  mine: boolean;
+  setMine: (v: boolean) => void;
+}
+function Hero({ c, set, mine, setMine }: HeroProps) {
+  const [ref, live, calm] = useLive<HTMLElement>(0.3);
   const dir = useRef(1);
   const ran = useRef(false);
   const pre = c.pre;
@@ -141,7 +177,7 @@ function Hero({ c, set, mine, setMine }) {
     }, ran.current ? 1300 : 450);
     return () => clearTimeout(t);
   }, [pre, live, mine, set]);
-  const hand = (k: string) => (v) => { setMine(true); set(k, v); };
+  const hand = (k: keyof Round) => (v: number) => { setMine(true); set(k, v); };
   const m = model(c.pre, c.raise, c.pool);
   return (
     <section className="ct-hero" ref={ref} aria-labelledby="ct-h1">
@@ -180,7 +216,7 @@ function Hero({ c, set, mine, setMine }) {
 
 /* The six instruments as a live ledger: each row carries the figure it is about, re-planned by the calculator. */
 interface LedgerProps {
-  c: { pre: number; raise: number; pool: number; exit: number; };
+  c: Round;
 }
 function Ledger({ c }: LedgerProps) {
   const m = model(c.pre, c.raise, c.pool);
@@ -231,7 +267,7 @@ const num = (i: number) => (i < 4 ? '1' : '2') + '.' + ((i % 4) + 1 + (i >= 8 ? 
 
 /* The ten clauses as a term sheet: the page shows their titles; the sheet holds every word. */
 function TermSheet() {
-  const [ref, e] = useEnter(0.2); // entrance 3: inertia-drag (thrown in, then the sheet itself can be dragged and thrown)
+  const [ref, e] = useEnter<HTMLDivElement>(0.2); // entrance 3: inertia-drag (thrown in, then the sheet itself can be dragged and thrown)
   return (
     <section className="bz-sec ct-ts" aria-labelledby="ct-ts-h">
       <div className="bz-wrap bz-grid">
@@ -264,8 +300,8 @@ function TermSheet() {
 }
 
 /* Beyond: the waterfall at an exit price, preferences paid first (1x, non-participating, as an example). */
-function payout(exit, rows: (string | number)[][], raise) {
-  const pref = { 2: SAFE, 3: raise };
+function payout(exit: number, rows: Row[], raise: number) {
+  const pref: Record<number, number> = { 2: SAFE, 3: raise };
   let conv = new Set([0, 1, 2, 3]);
   for (let k = 0; k < 3; k++) {
     const prefPaid = [2, 3].filter((i) => !conv.has(i)).reduce((a, i) => a + Math.min(pref[i], exit), 0);
@@ -283,7 +319,7 @@ function payout(exit, rows: (string | number)[][], raise) {
   return rows.map((r, i) => (conv.has(i) ? (r[1] / sh) * rest : Math.min(pref[i], exit) * scale));
 }
 
-function Waterfall({ c, set }) {
+function Waterfall({ c, set }: Pick<HeroProps, 'c' | 'set'>) {
   const { pre, exit } = c;
   const setExit = (v: number) => set('exit', v);
   const [act, setAct] = useState(false);
@@ -321,7 +357,9 @@ function Waterfall({ c, set }) {
   );
 }
 
-const PLANS = [
+/* a plan: name, price, price suffix, blurb, [call to action, link], features */
+type Plan = [string, string, string, string, [string, string], string[]];
+const PLANS: Plan[] = [
   ['Community', 'Free', '', 'Self-host and own your data. Full source code on GitHub.', ['Get on GitHub', 'https://github.com/hanzoai/'], ['Unlimited stakeholders', 'Share classes & options', 'SAFEs & convertible notes', 'Vesting schedules', 'Basic reporting', 'Community support']],
   ['Startup', '$50', '/mo', 'For early-stage startups managing their first cap table.', ['Contact Sales', '/contact-sales'], ['Everything in Community', 'Managed cloud hosting', 'E-signing for grants', 'Waterfall analysis', '409A valuation tracking', 'Email support', 'Up to 25 stakeholders']],
   ['Growth', '$150', '/mo', 'For growing companies with complex equity structures.', ['Contact Sales', '/contact-sales'], ['Everything in Startup', 'Advanced equity plans', 'Board consent workflows', 'Data room integration', 'Custom branding', 'SSO / SAML', 'Priority support']],
@@ -378,7 +416,7 @@ const Gh = () => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentCo
 /* The fork, drawn: upstream captableinc/captable runs on top, hanzoai/captable branches off it and sends work back
    (Hanzo's "we contribute back"). The two lines draw in once, when the drawing is on screen. */
 function Fork() {
-  const [ref, live, calm] = useLive(0.5);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.5);
   const [seen, setSeen] = useState(false);
   useEffect(() => { if (live || calm) setSeen(true); }, [live, calm]);
   const up = [40, 120, 200, 280, 360, 440];
@@ -471,8 +509,8 @@ function useOneSolidOnPhone() {
 export default function Captable() {
   useOneSolidOnPhone();
   // the calculator: one state for the whole page; every section reads it, so any input re-plans everything at once
-  const [c, setC] = useState(START);
-  const set = useCallback((k, v) => setC((o) => (o[k] === v ? o : { ...o, [k]: v })), []);
+  const [c, setC] = useState<Round>(START);
+  const set = useCallback((k: keyof Round, v: number) => setC((o) => (o[k] === v ? o : { ...o, [k]: v })), []);
   const [mine, setMine] = useState(false);
   return (
     <main className="bz ct">

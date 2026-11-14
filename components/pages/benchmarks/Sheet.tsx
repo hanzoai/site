@@ -45,7 +45,7 @@ export default function Sheet({ label, kicker, title, children, ghost = false, w
     const key = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setOpen(false); return; }
       if (e.key !== 'Tab' || !panel.current) return;
-      const f = [...panel.current.querySelectorAll(FOCUSABLE)].filter((n) => n.offsetParent !== null);
+      const f = [...panel.current.querySelectorAll<HTMLElement>(FOCUSABLE)].filter((n) => n.offsetParent !== null);
       if (!f.length) return;
       const a = document.activeElement;
       if (e.shiftKey && (a === f[0] || !panel.current.contains(a))) { e.preventDefault(); f[f.length - 1].focus({ preventScroll: true }); }

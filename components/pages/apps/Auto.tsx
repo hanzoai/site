@@ -20,7 +20,7 @@
    swap into place) · 2 rack-focus (the drag canvas pulls into focus from a blur) · 3 scroll-tilt (the connectors tilt back
    on rotateX, lean with scroll speed and level out) · 4 iris (the property index opens through a circular clip from its
    centre) · 5 stack-drop (the closing band's layers drop and stack onto each other). All in auto/Entrances.jsx + Auto.css. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import { motion, AnimatePresence, useSpring } from 'motion/react';
 import { EASE } from '../../ui';
 import { Cta } from '../../kit';
@@ -86,7 +86,7 @@ function useLean() {
   const [fine, setFine] = useState(false);
   useEffect(() => { setFine(matchMedia('(pointer: fine) and (prefers-reduced-motion: no-preference)').matches); }, []);
   if (!fine) return {};
-  const onPointerMove = (e) => {
+  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
     ry.set(((e.clientX - r.left) / r.width - 0.5) * 3);
     rx.set((0.5 - (e.clientY - r.top) / r.height) * 2);
@@ -182,7 +182,7 @@ const PROPS = [
 /* The six properties as an index: closed lines rest small; the open one grows, and its live object sits beside its title. */
 function Index() {
   const [open, setOpen] = useState(0);
-  const [ref, live, calm, paused, toggle] = useDemo(0.2);
+  const [ref, live, calm, paused, toggle] = useDemo<HTMLOListElement>(0.2);
   return (
     <Enter as="section" kind="iris" className="l2-sec au2-idx" threshold={0.12}>
       <div className="l2-wrap">

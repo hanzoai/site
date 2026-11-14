@@ -4,10 +4,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { AI_ROW, AI_DEFAULTS, COV_CYCLE, FTE, REF_D, REF_E, ROWS, VENDORS, WEIGHT, aiSaving, dollars, initial, model, money, nextCov } from './Calculator.data.ts';
+import type { Gpu, Listed, Model, Served } from './calculator/types.ts';
+import type { State } from './Calculator.data.ts';
 import { HOURS, bought, cost, even, gpus, labs, ours, billed, percent, rate, saves, totals, usd, millions, day, amount } from './calculator/savings.ts';
 import { readPricing, readSummary, readServed } from './calculator/sources.ts';
 
-const at = (over = {}) => model({ ...initial(), ...over });
+const at = (over: Partial<State> = {}) => model({ ...initial(), ...over });
 
 test('the reference deployment reproduces the analyst figures exactly', () => {
   const m = at();
@@ -37,7 +39,9 @@ test('the reference deployment reproduces the analyst figures exactly', () => {
 test('the software total is the rows at their weights', () => {
   const raw = ROWS.reduce((s, r) => s + r.k, 0);
   assert.equal(raw, 617);
-  assert.equal(raw - ROWS.find((r) => r.name === 'Vector store').k * (1 - WEIGHT.partial), 613);
+  const vector = ROWS.find((r) => r.name === 'Vector store');
+  assert.ok(vector);
+  assert.equal(raw - vector.k * (1 - WEIGHT.partial), 613);
   assert.equal(ROWS[AI_ROW].name, 'LLM inference & routing');
   assert.ok(ROWS.every((r) => VENDORS.some(([, c]) => c === ROWS.indexOf(r)))); // every line has a vendor that maps to it
   assert.ok(VENDORS.every(([, c]) => c >= 0 && c < ROWS.length));
@@ -117,6 +121,7 @@ test('token arithmetic: list, spend to tokens, GPUs and where they break even', 
   assert.equal(HOURS, 730);
   assert.equal(cost({ input: 500, output: 50 }, { input: 4, output: 20 }), 3000);
   const t = bought(5000, 0.1, { input: 4, output: 20 });
+  assert.ok(t);
   assert.ok(Math.abs(cost(t, { input: 4, output: 20 }) - 5000) < 1e-9);
   assert.ok(Math.abs(t.output / (t.input + t.output) - 0.1) < 1e-12);
   assert.equal(bought(100, 0.5, { input: 0, output: 0 }), null);
@@ -126,6 +131,7 @@ test('token arithmetic: list, spend to tokens, GPUs and where they break even', 
   assert.equal(saves(10, 0), null);
   assert.equal(percent(0.4987), '50%');
   const e = even(2540.4, { input: 500, output: 50 }, 3000);
+  assert.ok(e);
   assert.equal(millions(e.millions), '465.7 million');
   assert.equal(Math.round(e.perSecond), 177);
   assert.equal(even(1, { input: 0, output: 0 }, 0), null);
@@ -140,7 +146,7 @@ test('token arithmetic: list, spend to tokens, GPUs and where they break even', 
   assert.equal(amount('12.5'), 12.5);
 });
 
-const doc = {
+const doc: { hanzoModels: Model[]; thirdPartyModels: Listed[]; gpu: Gpu[] } = {
   hanzoModels: [
     { name: 'enso', fullName: 'Enso', family: 'enso', pricing: { input: 0.33, output: 1.65 } },
     { name: 'enso-flash', family: 'enso', pricing: { input: 0.1, output: 0.5 } },
@@ -172,13 +178,14 @@ test('the three monthly figures for the example the page opens with', () => {
   const mine = ours(doc)[0];
   const rows = [{ model: 'a/high', mTokIn: 500, mTokOut: 50, spend: 5000, share: 10 }];
   const team = { name: 'Team', priceMonthly: 25, maxMembers: 100 };
-  const served = [{ id: 'a/high', pricing: { input_per_million: 4.2, output_per_million: 21 } }];
+  const served: Served[] = [{ id: 'a/high', pricing: { input_per_million: 4.2, output_per_million: 21 } }];
   const t = totals({ rows, mode: 'tokens', choices, mine, team, people: 50, count: 1, hour: 3.48, served });
   assert.equal(t.listed, 3000);
   assert.ok(Math.abs(t.onCloud - (500 * 0.33 + 50 * 1.65)) < 1e-9);
   assert.equal(t.seats, 1250);
   assert.equal(usd(t.cloud), '$1,498');
   assert.equal(usd(t.fleet), '$2,540');
+  assert.ok(t.kept !== null);
   assert.equal(usd(t.kept), '$3,150'); // the same tokens at the rates Hanzo bills the lab's model
   assert.equal(totals({ rows, mode: 'tokens', choices, mine, team, people: 50, count: 1, hour: 3.48, served: null }).kept, null);
   assert.equal(totals({ rows, mode: 'tokens', choices, mine, team, people: 101, count: 1, hour: 3.48, served }).seats, null); // past Team's members
@@ -189,7 +196,7 @@ test('the three monthly figures for the example the page opens with', () => {
 });
 
 // ---- the readers, against the shapes the API answers ----
-const get = (map) => async (url: string) => {
+const get = (map: Record<string, unknown>) => async (url: string) => {
   if (!(url in map)) throw new Error('404 ' + url);
   return map[url];
 };

@@ -24,6 +24,12 @@ const FIGS = [['Go', 'One process'], ['SQLite', 'Per replica'], ['/v1', 'Flows a
 /* the blocks, for the minimap: [left, top, width, height] */
 const BLOCKS = [[180, 110, 420, 150], [200, 320, 160, 200], [560, 360, 974, 116], [300, 590, 640, 340], [1640, 120, 470, 330], [1640, 600, 460, 150], [1100, 880, 520, 250], [1700, 860, 330, 230]];
 
+interface Box {
+  w: number;
+  h: number;
+  s: number;
+}
+
 const Tick = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.4 6.6 11.4 12.5 5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 interface RunProps {
@@ -48,18 +54,18 @@ export default function Canvas() {
   const calm = useCalm();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const [box, setBox] = useState({ w: 0, h: 0, s: 1 });
+  const [box, setBox] = useState<Box>({ w: 0, h: 0, s: 1 });
   const [moved, setMoved] = useState(false);
 
-  const lim = (b: { w: number; h: number; s: number; } | { w: number; h: number; s: number; } | { w: number; h: number; s: number; }) => ({ left: Math.min(0, b.w - W * b.s), right: 0, top: Math.min(0, b.h - H * b.s), bottom: 0 });
+  const lim = (b: Box) => ({ left: Math.min(0, b.w - W * b.s), right: 0, top: Math.min(0, b.h - H * b.s), bottom: 0 });
   const clamp = (v: number, lo: number) => Math.min(0, Math.max(lo, v));
-  const home = (b: { w: number; h: number; s: number; } | { w: number; h: number; s: number; }) => {
+  const home = (b: Box) => {
     const h = b.w < 700 ? HOME_PHONE : HOME;
     return { x: clamp(b.w / 2 - h.x * b.s, lim(b).left), y: clamp(b.h / 2 - h.y * b.s, lim(b).top) };
   };
-  const go = (tx, ty, b = box) => {
+  const go = (tx: number, ty: number, b: Box = box) => {
     const c = lim(b);
-    const opt = calm ? { duration: 0 } : { duration: 0.5, ease: [0.16, 1, 0.3, 1] };
+    const opt: { duration: number; ease?: [number, number, number, number] } = calm ? { duration: 0 } : { duration: 0.5, ease: [0.16, 1, 0.3, 1] };
     animate(x, clamp(tx, c.left), opt);
     animate(y, clamp(ty, c.top), opt);
   };

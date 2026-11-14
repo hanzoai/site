@@ -3,12 +3,11 @@
    Each is drawn differently in treasury/motion.css; this file only arms them. The server and JS-off render is the final
    state. After hydration a section still below the fold is armed (data-enter="wait") and plays (data-enter="go") when
    a quarter of it is on screen. Reduced motion never arms. A section already on screen at load is left as it is. */
-import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 
-export function useEnter(amount = 0.25) {
-  const ref = useRef(null);
-  const [st, setSt] = useState(undefined);
+export function useEnter<T extends HTMLElement = HTMLElement>(amount = 0.25) {
+  const ref = useRef<T>(null);
+  const [st, setSt] = useState<'wait' | 'go' | undefined>(undefined);
   useEffect(() => {
     const el = ref.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -18,7 +17,7 @@ export function useEnter(amount = 0.25) {
     io.observe(el);
     return () => io.disconnect();
   }, [amount]);
-  return [ref, st];
+  return [ref, st] as const;
 }
 
 /* scramble: the statement's characters arrive as noise and decode, left to right, in about a second. The real words
@@ -27,7 +26,7 @@ const NOISE = '#%&*+=/<>0123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 interface ScrambleProps {
   lines: string[];
   className: string;
-  go?: React.RefObject<null>;
+  go?: 'wait' | 'go';
 }
 export function Scramble({ lines, className, go }: ScrambleProps) {
   const text = lines.join(' ');
@@ -36,7 +35,7 @@ export function Scramble({ lines, className, go }: ScrambleProps) {
     if (go !== 'wait' && go !== 'go') return;
     if (go === 'wait') { setOut(text.replace(/\S/g, '·')); return; }
     const t0 = performance.now(), dur = 1100;
-    let raf;
+    let raf = 0;
     const tick = (t: number) => {
       const k = Math.min(1, (t - t0) / dur);
       const n = Math.floor(k * text.length);

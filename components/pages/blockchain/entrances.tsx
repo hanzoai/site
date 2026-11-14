@@ -7,7 +7,7 @@
    Rules every entrance keeps: the server HTML is the final frame (JS off shows everything); a section is only set to
    its starting frame after hydration and only when it is still below the screen; reduced motion never arms; only
    transform, opacity, clip-path, mask and filter move, so nothing shifts the layout. */
-import type { ReactNode } from 'react';
+import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
 
 /* the last place the visitor pointed or touched (for grow-from-point and grid-wave) */
@@ -20,9 +20,9 @@ if (typeof window !== 'undefined' && !window.__bceTrack) {
 }
 
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-const below = (el: never) => el.getBoundingClientRect().top > innerHeight * 0.9;
+const below = (el: Element) => el.getBoundingClientRect().top > innerHeight * 0.9;
 /* ~30% of the screen covered by the section (tall sections), or 30% of the section seen (short ones) */
-function onArrive(el: never, go: (() => void) | (() => void) | (() => void) | (() => void) | (() => void) | (() => void)) {
+function onArrive(el: HTMLElement, go: () => void) {
   const h = Math.max(1, el.offsetHeight);
   const io = new IntersectionObserver(([e]) => {
     if (!e.isIntersecting) return;
@@ -32,20 +32,20 @@ function onArrive(el: never, go: (() => void) | (() => void) | (() => void) | ((
   io.observe(el);
   return () => io.disconnect();
 }
-const later = (fn: (() => void) | (() => void) | (() => void) | (() => void) | (() => void), ms: number) => { const t = setTimeout(fn, ms); return () => clearTimeout(t); };
+const later = (fn: () => void, ms: number) => { const t = setTimeout(fn, ms); return () => clearTimeout(t); };
 
 /* ---------- scramble: characters scramble and decode into the text (left to right) ---------- */
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=<>/$';
 const rnd = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
 const garble = (s: string, upto: number) => s.split('').map((ch, i) => (i < upto || /\s|[.,:;()'’-]/.test(ch) ? ch : rnd())).join('');
-function scramble(el: never, sel) {
-  const nodes = [];
-  el.querySelectorAll(sel).forEach((t: Node) => {
+function scramble(el: HTMLElement, sel: string) {
+  const nodes: { n: Node; s: string }[] = [];
+  el.querySelectorAll(sel).forEach((t) => {
     const w = document.createTreeWalker(t, NodeFilter.SHOW_TEXT);
-    for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue.trim()) nodes.push({ n, s: n.nodeValue });
+    for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue && n.nodeValue.trim()) nodes.push({ n, s: n.nodeValue });
   });
   if (!nodes.length) return null;
-  const hold = [...el.querySelectorAll(sel)].map((t) => [t, t.style.minHeight]);
+  const hold = [...el.querySelectorAll<HTMLElement>(sel)].map((t): [HTMLElement, string] => [t, t.style.minHeight]);
   hold.forEach(([t]) => { t.style.minHeight = t.offsetHeight + 'px'; }); // the garbled line may wrap differently: hold the height
   nodes.forEach((o) => { o.n.nodeValue = garble(o.s, 0); });
   let raf = 0;
@@ -72,12 +72,17 @@ function scramble(el: never, sel) {
 /* ---------- the generic section entrance ---------- */
 /* fx: 'scramble' | 'accordion' | 'grid-wave' | 'grow-from-point' | 'diagonal-wipe' | 'stretch-scroll' | 'opposite-drift'
    pick: the selector of the parts that move (scramble: the text; accordion: the rows; grid-wave: the cells) */
-export function Enter({ fx, pick, as: Tag = 'div', className = '', children, ...rest }) {
-  const ref = useRef(null);
+interface EnterProps extends HTMLAttributes<HTMLElement> {
+  fx: string;
+  pick?: string;
+  as?: ElementType;
+}
+export function Enter({ fx, pick, as: Tag = 'div', className = '', children, ...rest }: EnterProps) {
+  const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || calm()) return;
-    const offs = [];
+    const offs: (() => void)[] = [];
     const set = (s: string) => { el.dataset.st = s; };
 
     if (fx === 'opposite-drift' || fx === 'stretch-scroll') return scrolled(el, fx);
@@ -91,10 +96,10 @@ export function Enter({ fx, pick, as: Tag = 'div', className = '', children, ...
     }
     set('armed');
     if (fx === 'accordion') {
-      el.querySelectorAll(pick).forEach((r, k) => { r.style.setProperty('--k', k); r.dataset.fold = k % 2 ? 'b' : 'a'; });
+      el.querySelectorAll<HTMLElement>(pick!).forEach((r, k) => { r.style.setProperty('--k', String(k)); r.dataset.fold = k % 2 ? 'b' : 'a'; });
     }
     if (fx === 'grid-wave') {
-      const cells = [...el.querySelectorAll(pick)];
+      const cells = [...el.querySelectorAll<HTMLElement>(pick!)];
       offs.push(onArrive(el, () => {
         const r = el.getBoundingClientRect();
         const inside = last.x >= 0 && last.y >= 0;
@@ -130,10 +135,10 @@ export function Enter({ fx, pick, as: Tag = 'div', className = '', children, ...
      the scroll, and meet when the section is a third of the way up the screen;
    - stretch-scroll: the section is drawn out vertically by the speed of the scroll (and by how far it still has to
      come), and relaxes to its true shape as the scroll slows. */
-function scrolled(el: never, fx: string) {
+function scrolled(el: HTMLElement, fx: string) {
   const top0 = el.getBoundingClientRect().top;
   if (top0 < innerHeight * 0.4) return; // already in place
-  const parts = fx === 'opposite-drift' ? [...el.querySelectorAll('[data-drift]')] : [el.querySelector('[data-stretch]') || el];
+  const parts = fx === 'opposite-drift' ? [...el.querySelectorAll<HTMLElement>('[data-drift]')] : [el.querySelector<HTMLElement>('[data-stretch]') || el];
   let raf = 0, lastY = scrollY, lastT = performance.now(), v = 0, s = 1, done = false;
   const clear = () => parts.forEach((p) => { p.style.transform = ''; p.style.opacity = ''; p.style.transformOrigin = ''; });
   const frame = () => {
@@ -147,7 +152,7 @@ function scrolled(el: never, fx: string) {
     lastY = scrollY; lastT = now;
     if (fx === 'opposite-drift') {
       const e = p * p * (3 - 2 * p);
-      parts.forEach((q) => { const d = +q.dataset.drift || 0; q.style.transform = e ? `translate3d(${d * e * 22}vw, 0, 0)` : ''; q.style.opacity = e ? String(1 - e * 0.65) : ''; });
+      parts.forEach((q) => { const d = Number(q.dataset.drift) || 0; q.style.transform = e ? `translate3d(${d * e * 22}vw, 0, 0)` : ''; q.style.opacity = e ? String(1 - e * 0.65) : ''; });
       if (p === 0) { done = true; clear(); return; }
     } else {
       const want = 1 + Math.min(0.32, v * 0.12 + p * 0.22);
@@ -166,12 +171,19 @@ function scrolled(el: never, fx: string) {
 /* ---------- text-mask-film: a film plays through the letters of a headline ---------- */
 /* The headline is real ink text. Over it sits an aria-hidden copy whose letters are windows onto a grey film (Hanzo's
    own clip, desaturated): while the film plays the words are made of it; then the copy fades and the ink stays. */
-export function FilmHead({ as: Tag = 'h2', id, className = '', text, src = '/learn/zen-720.webm' }) {
+interface FilmHeadProps {
+  as?: ElementType;
+  id?: string;
+  className?: string;
+  text: string;
+  src?: string;
+}
+export function FilmHead({ as: Tag = 'h2', id, className = '', text, src = '/learn/zen-720.webm' }: FilmHeadProps) {
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = box.current;
     if (!el || calm() || !below(el)) return;
-    const v = el.querySelector('video');
+    const v = el.querySelector('video')!; // drawn below, inside the box
     el.dataset.st = 'armed';
     v.src = src;
     const offs = [onArrive(el, () => {
@@ -207,12 +219,12 @@ export function Lens({ children, className = '', zoom = 1.7 }: LensProps) {
   useEffect(() => {
     const el = box.current;
     if (!el || calm()) return;
-    const lens = el.querySelector('.bce-lens');
+    const lens = el.querySelector<HTMLElement>('.bce-lens')!; // drawn below, inside the box
     const show = (x: number, y: number) => { el.style.setProperty('--lx', x + 'px'); el.style.setProperty('--ly', y + 'px'); el.style.setProperty('--bw', el.offsetWidth + 'px'); };
     const at = (e: PointerEvent) => { const r = el.getBoundingClientRect(); show(e.clientX - r.left, e.clientY - r.top); };
     const on = (e: PointerEvent) => { if (el.dataset.st === 'play') return; at(e); lens.dataset.on = ''; };
     const off = () => { if (el.dataset.st !== 'play') delete lens.dataset.on; };
-    let tm = 0;
+    let tm: ReturnType<typeof setTimeout> | undefined;
     const up = (e: PointerEvent) => { if (e.pointerType !== 'mouse') { clearTimeout(tm); tm = setTimeout(off, 700); } };
     el.addEventListener('pointermove', on);
     el.addEventListener('pointerdown', on);

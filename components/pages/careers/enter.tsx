@@ -6,8 +6,8 @@
 import { useEffect, useRef } from 'react';
 import './enter.css';
 
-export function useEnter(margin = '0px 0px -18% 0px') {
-  const ref = useRef(null);
+export function useEnter<T extends HTMLElement = HTMLDivElement>(margin = '0px 0px -18% 0px') {
+  const ref = useRef<T>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;

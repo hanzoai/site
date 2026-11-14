@@ -33,7 +33,7 @@ import KeynoteLines from '../../v2/KeynoteLines';
 import './Edge.css';
 
 const pad = (n: number) => String(n).padStart(2, '0');
-const EMPH = [0.16, 1, 0.3, 1];
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const Off = () => (
   <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" className="eg-off-i"><path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0" /><circle cx="12" cy="19" r="1.3" /><path d="M3 3l18 18" className="cut" /></svg>

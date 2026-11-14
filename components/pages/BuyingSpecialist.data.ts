@@ -31,7 +31,11 @@ export const BRIEF = (name: string) => [
 ].join('\n');
 
 /* Hanzo's own written answers: used for the quote card, and as the answer when the endpoint cannot be reached. */
-export function written(q: string, name: string) {
+/** The quote a written answer files on the sheet. */
+export interface Quote { plan: string; seats: number; monthlyTotal: number | null; annualTotal: number; savings: number | null; checkoutUrl: string }
+/** One line of the conversation; an answer may carry the quote it proposed. */
+export interface Message { role: 'user' | 'assistant'; content: string; quote?: Quote }
+export function written(q: string, name: string): { content: string; quote?: Quote } {
   const o = q.toLowerCase();
   const sm = r2(P.std / 12), pm = r2(P.prem / 12), em = r2(P.ent / 12);
   const w = o.match(/\b(\d+)\s*(people|developers?|engineers?|members?|seats?|devs?|users?)?\b/);

@@ -19,6 +19,7 @@
    inertia) · state (the deck, Built For's gliding bar, the chain answer, Show all) · scroll (the deck, the h1 settle).
    V2: 8/10 the ask beside a 52px headline and this product's own capability deck turning in the hero (its contour per card), the key card as a proof room after it, the exchange's console and pinned deck at 25svh a card, chips that drive the chain finder, real controls (hover and press on every one, plain language list, GitHub as a link), no inner scroll on phones, resting sizes, tokens only, no springs or setInterval. */
 import { useEffect, useRef, useState } from 'react';
+import type { BandBlock, Cover, GetBlock, ItemsBlock, Link, Product, Sample } from './types';
 import { useScroll, useMotionValueEvent, useReducedMotion, useInView } from 'motion/react';
 import { Copy, Magnetic } from '../../ui';
 import Sigil from '../../Sigil';
@@ -33,10 +34,14 @@ import '../../v2/fam.css';
 import './blockchain.css';
 import './BlockPage.css';
 
-const GO = { 'Try Hanzo': '/signup', 'View Documentation': 'https://docs.hanzo.ai', 'View Pricing': '/pricing?tab=blockchain' };
-const MODE = { bundler: 'merge', oracle: 'tick' }; // how each member acts itself out in the hero (KeyStage)
+const GO: Record<string, string> = { 'Try Hanzo': '/signup', 'View Documentation': 'https://docs.hanzo.ai', 'View Pricing': '/pricing?tab=blockchain' };
+const MODE: Record<string, string> = { bundler: 'merge', oracle: 'tick' }; // how each member acts itself out in the hero (KeyStage)
 
-export function Stream({ chains, label }) {
+interface StreamProps {
+  chains: string[];
+  label: string;
+}
+export function Stream({ chains, label }: StreamProps) {
   if (!chains.length) return null;
   const row = (k: string) => chains.map((c) => <li key={k + c} aria-hidden={k ? true : undefined}><i className="xb2-blk" aria-hidden="true" /><b>{c}</b></li>);
   return (
@@ -50,7 +55,12 @@ export function Stream({ chains, label }) {
    not drawn as tabs). Long samples rest at 18 lines (14 on a phone) under a fade, with "Show all" to open the rest;
    lines wrap instead of running off the card. Copy always copies the whole sample. */
 const CAP = 18;
-export function Code({ file, code, langs }) {
+interface CodeProps {
+  file: string | null;
+  code: Sample;
+  langs: string[];
+}
+export function Code({ file, code, langs }: CodeProps) {
   const [open, setOpen] = useState(false);
   const long = code.lines.length > CAP;
   return (
@@ -77,7 +87,7 @@ export function Code({ file, code, langs }) {
 /* this product's own code, typed in once when it reaches the screen: every line is in the HTML from the start (and
    copies whole); the lines light up one after another by class, through refs, never a re-render per line. Reduced
    motion and no-JS show it whole. */
-function Typed({ file, code, langs }) {
+function Typed({ file, code, langs }: CodeProps) {
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = box.current;
@@ -88,7 +98,7 @@ function Typed({ file, code, langs }) {
     const r = el.getBoundingClientRect();
     if (r.top < innerHeight && r.bottom > 0) return; // already on screen: leave it whole
     el.classList.add('xb2-type');
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       io.disconnect();
@@ -97,7 +107,7 @@ function Typed({ file, code, langs }) {
         if (k >= lines.length) { el.classList.add('done'); play('done'); return; }
         lines[k].classList.add('on');
         k++;
-        t = setTimeout(step, lines[k - 1].textContent.trim() ? 60 : 20);
+        t = setTimeout(step, lines[k - 1].textContent!.trim() ? 60 : 20);
       };
       step();
     }, { threshold: 0.3 });
@@ -112,7 +122,11 @@ function Typed({ file, code, langs }) {
    capability at a time; as you scroll the top card lifts away and the next one comes forward (state changes eased at
    300–500 ms, not a scrub). Marks under the words show where you are, preview a title under the pointer or focus,
    and jump to any card. Phones swipe the same cards one at a time. */
-function Deck({ b, seed }) {
+interface DeckProps {
+  b: ItemsBlock;
+  seed: string;
+}
+function Deck({ b, seed }: DeckProps) {
   const sec = useRef<HTMLElement>(null);
   const rail = useRef<HTMLUListElement>(null);
   const n = b.items.length;
@@ -128,13 +142,13 @@ function Deck({ b, seed }) {
   useEffect(() => {
     const el = rail.current;
     if (!el) return;
-    const on = () => { if (matchMedia('(max-width: 900px)').matches) setAt(Math.round(el.scrollLeft / Math.max(1, el.firstElementChild ? el.firstElementChild.offsetWidth + 12 : 1))); };
+    const on = () => { const first = el.firstElementChild; if (matchMedia('(max-width: 900px)').matches) setAt(Math.round(el.scrollLeft / Math.max(1, first instanceof HTMLElement ? first.offsetWidth + 12 : 1))); };
     el.addEventListener('scroll', on, { passive: true });
     return () => el.removeEventListener('scroll', on);
   }, []);
   const jump = (k: number) => {
-    if (matchMedia('(max-width: 900px)').matches) { const el = rail.current; const c = el && el.children[k]; c && el.scrollTo({ left: c.offsetLeft - el.offsetLeft, behavior: 'smooth' }); return; }
-    const el = sec.current;
+    if (matchMedia('(max-width: 900px)').matches) { const el = rail.current; const c = el && el.children[k]; if (el && c instanceof HTMLElement) el.scrollTo({ left: c.offsetLeft - el.offsetLeft, behavior: 'smooth' }); return; }
+    const el = sec.current!;
     const top = el.getBoundingClientRect().top + scrollY + ((el.offsetHeight - innerHeight) * (k + 0.5)) / n;
     window.__lenis ? window.__lenis.scrollTo(top, { duration: 1 }) : scrollTo({ top, behavior: 'smooth' });
   };
@@ -174,7 +188,10 @@ function Deck({ b, seed }) {
 }
 
 /* products with their bullets (the exchange): big tiles */
-function Tiles({ b }) {
+interface TilesProps {
+  b: ItemsBlock;
+}
+function Tiles({ b }: TilesProps) {
   return (
     <section className="v2f-sec xb2-tiles">
       <div className="v2f-wrap">
@@ -199,7 +216,11 @@ function Tiles({ b }) {
 
 /* a product line without a key card (the exchange): its products become the hero object, a console that walks
    through them by itself (pausing when touched); every product's words stay in the page, the others hidden */
-function Console({ b, seed }) {
+interface ConsoleProps {
+  b: ItemsBlock;
+  seed: string;
+}
+function Console({ b, seed }: ConsoleProps) {
   const calm = useReducedMotion();
   const box = useRef<HTMLDivElement>(null);
   const [at, setAt] = useState(0);
@@ -251,7 +272,11 @@ function Console({ b, seed }) {
 
 /* the one ending: the Band in the page's own words, with "Get <product>" (its chips, GitHub, Deploy to Cloud) folded
    in as its last row */
-function Band({ b, get }) {
+interface BandProps {
+  b: Pick<BandBlock, 'title' | 'lede' | 'links' | 'buttons'>;
+  get?: GetBlock;
+}
+function Band({ b, get }: BandProps) {
   return (
     <section className="xb2-band xb3-band" data-room="dark" data-ask-hide>
       <div className="v2f-wrap v2f-grid xb2-band-g">
@@ -277,29 +302,35 @@ function Band({ b, get }) {
 
 const Arrow = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-export default function BlockPage({ doc, all }) {
-  const h = doc.hero;
+interface BlockPageProps {
+  doc: Product;
+  all: Cover[];
+}
+export default function BlockPage({ doc, all }: BlockPageProps) {
+  const h = doc.hero!; // every product page opens with a hero section
   const key = doc.key;
   const chains = doc.chains;
   // the hero's four features repeat the first capabilities word for word on most pages: show them once
-  const capText = new Set(doc.blocks.filter((b) => b.items).flatMap((b) => b.items.map((it) => it.title + '|' + it.text)));
+  const capText = new Set(doc.blocks.flatMap((b) => ('items' in b ? b.items.map((it) => it.title + '|' + it.text) : [])));
   const feats = h.features.filter((f) => !capText.has(f.title + '|' + f.text));
   // no key card: the first list of products with their bullets becomes the hero object
   const conAt = key ? -1 : doc.blocks.findIndex((b) => b.kind === 'items' && b.items.some((it) => it.bullets.length));
   const deckAt = doc.blocks.findIndex((b) => b.kind === 'items' && b.items.length >= 6 && !b.items.some((it) => it.bullets.length));
   // the lane's stations: the product's own first capabilities (the hero's features, else the deck's first cards)
-  const stations = (h.features.length ? h.features : deckAt >= 0 ? doc.blocks[deckAt].items : []).map((f) => f.title);
+  const con = doc.blocks[conAt];
+  const deck = doc.blocks[deckAt];
+  const stations = (h.features.length ? h.features : deck && deck.kind === 'items' ? deck.items : []).map((f) => f.title);
   // the ask sits beside the headline: the hero's own actions, or the key card's two moved up
-  const askOf = (list, from: string) => (list.length > 0 && (
+  const askOf = (list: Link[], from: string) => (list.length > 0 && (
     <div className="xb2-acts">{list.map((a, i) => (i ? <A key={a.label} to={a.href} className="x-arrow xb2-ask2" data-cta={from + '-second'}><span>{a.label}</span><Arrow /></A>
       : <Magnetic key={a.label} strength={0.25}><A to={a.href} className="v2f-btn solid" data-thumb={a.label} data-cta={from}>{a.label}</A></Magnetic>))}</div>
   ));
-  const keyActs = key ? key.actions.map((t: string | number) => ({ label: t, href: GO[t] || '/signup' })) : [];
+  const keyActs = key ? key.actions.map((t) => ({ label: t, href: GO[t] || '/signup' })) : [];
   const heroActs = h.actions.length ? askOf(h.actions, 'blockchain.hero') : askOf(keyActs, 'blockchain.key');
   // the products after this one, in the family's order, as cards that open into their page
   const at = all.findIndex((p) => p.slug === doc.slug);
   const next = (at < 0 ? all : [...all.slice(at + 1), ...all.slice(0, at)]).slice(0, 6).map((p) => ({ href: p.href, title: p.name, preview: p.claim, meta: p.chains.slice(0, 3).join(' · '), seed: p.href, data: [p.chains.length] }));
-  const get = doc.blocks.find((b) => b.kind === 'get');
+  const get = doc.blocks.find((b): b is GetBlock => b.kind === 'get');
   const hasBand = doc.blocks.some((b) => b.kind === 'band');
   const rail = next.length > 0 && (
     <section className="v2f-sec tight xb2-next" aria-label={h.back ? h.back.text : 'Web3'}>
@@ -322,7 +353,7 @@ export default function BlockPage({ doc, all }) {
               </p>
             )}
           </div>
-          {conAt >= 0 && <div className="xb2-hero-o"><Console b={doc.blocks[conAt]} seed={doc.route} /></div>}
+          {con && con.kind === 'items' && <div className="xb2-hero-o"><Console b={con} seed={doc.route} /></div>}
           {key && (
             <div className="xb2-hero-o">
               <KeyStage k={key} chains={chains} seed={doc.route} stations={stations} mode={MODE[doc.slug] || 'pass'}

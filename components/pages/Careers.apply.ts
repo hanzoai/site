@@ -5,16 +5,23 @@
 export const API = 'https://api.hanzo.ai';
 
 /* the form's questions, by the label Hanzo prints, and the part of the lead each one is */
-const FIELDS = {
+/* the parts of the lead the form's answers fill */
+export type Answers = Partial<Record<'name' | 'email' | 'github' | 'linkedin' | 'resume' | 'location' | 'notes', string>>;
+/* the role applied for */
+export interface Opening { title: string; department: string; location: string; slug: string }
+/* a resume as the form holds it: a File, or anything with a name and a size */
+export interface Resume { name: string; size: number }
+
+const FIELDS: Record<string, string> = {
   'Full Name': 'name', 'Email Address': 'email', 'GitHub / Portfolio URL': 'github', 'LinkedIn / Personal Site': 'linkedin',
   'Resume link': 'resume', 'Location / Timezone': 'location', 'Background & Notes': 'notes',
 };
-const TYPES = {
+const TYPES: Record<string, string> = {
   pdf: 'application/pdf',
   doc: 'application/msword',
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 };
-const typeOf = (f: { name: string; size: number; } | { name: string; size: number; } | { name: string; size: number; } | { name: string; size: number; }) => TYPES[f.name.split('.').pop()?.toLowerCase() ?? ''];
+const typeOf = (f: Resume) => TYPES[f.name.split('.').pop()?.toLowerCase() ?? ''];
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /* an address as https: one typed without a scheme gets https://, and cloud drops any other */
@@ -24,7 +31,7 @@ const https = (u: string) => {
 };
 
 /* why a file cannot be a resume, or '' when it can */
-export function resumeProblem(f: { name: string; size: number; } | { name: string; size: number; } | { name: string; size: number; } | { name: string; size: number; }) {
+export function resumeProblem(f: Resume) {
   if (!typeOf(f)) return 'A resume is a PDF, DOC or DOCX file.';
   if (f.size > 10 * 1024 * 1024) return 'A resume is at most 10 MB.';
   return '';
@@ -34,15 +41,16 @@ export function resumeProblem(f: { name: string; size: number; } | { name: strin
 export const answers = (pairs: string[][]) => Object.fromEntries(pairs.filter(([label]) => FIELDS[label]).map(([label, v]) => [FIELDS[label], String(v ?? '')]));
 
 /* what is wrong with the answers, in Hanzo's sentence, or '' */
-export function problem(a, file: null) {
-  if (!(a.name || '').trim() || !(a.email || '').trim() || !(a.notes || '').trim()) return 'Please fill in your name, email, and background note.';
-  if (!EMAIL.test(a.email.trim())) return 'Please enter a valid email address.';
+export function problem(a: Answers, file?: Resume | null) {
+  const email = (a.email || '').trim();
+  if (!(a.name || '').trim() || !email || !(a.notes || '').trim()) return 'Please fill in your name, email, and background note.';
+  if (!EMAIL.test(email)) return 'Please enter a valid email address.';
   return file ? resumeProblem(file) : '';
 }
 
 /* the candidate lead: what the person wrote, their resume and their links, for the role (title, department, location, slug) */
-export function lead(role, a, { resumeFile = '', consent = false } = {}) {
-  const get = (k: string) => (a[k] || '').trim();
+export function lead(role: Opening, a: Answers, { resumeFile = '', consent = false }: { resumeFile?: string; consent?: boolean } = {}) {
+  const get = (k: keyof Answers) => (a[k] || '').trim();
   return {
     name: get('name'),
     email: get('email'),
@@ -60,11 +68,11 @@ export function lead(role, a, { resumeFile = '', consent = false } = {}) {
 }
 
 /* upload the resume and answer the key the application names */
-export async function uploadResume(f: never) {
+export async function uploadResume(f: File) {
   const type = typeOf(f);
   const r = await fetch(`${API}/v1/marketing/leads/resume`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: f.name, type, size: f.size }) });
   if (!r.ok) throw new Error(`resume form HTTP ${r.status}`);
-  const form = await r.json();
+  const form: { url: string; key: string; fields: Record<string, string> } = await r.json();
   const body = new FormData();
   for (const [k, v] of Object.entries(form.fields)) body.append(k, v);
   body.append('file', new Blob([f], { type }), f.name);
@@ -74,7 +82,7 @@ export async function uploadResume(f: never) {
 }
 
 /* file the application: its resume first, then the lead. Resolves { ok } or { error } in Hanzo's sentence. */
-export async function send(role, a, file: null, consent: boolean) {
+export async function send(role: Opening, a: Answers, file: File | null, consent: boolean) {
   let resumeFile = '';
   try {
     if (file) resumeFile = await uploadResume(file);

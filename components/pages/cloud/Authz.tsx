@@ -36,7 +36,7 @@ import './Authz.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/projects/hanzoai/authz';
 const GH = 'https://github.com/hanzoai/authz';
-const MOVE = [0.4, 0, 0.2, 1];
+const MOVE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 
 /* Hanzo's example path, one level per row: each location prefixes the ones under it */
 const LOC = ['acme', 'acme/prod', 'acme/prod/web', 'the app or site under that'];

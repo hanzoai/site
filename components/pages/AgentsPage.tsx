@@ -49,6 +49,8 @@ const CALLS = [
   ['GET /v1/pricing'],
 ];
 const split = (c: string) => { const at = c.indexOf(' '); return [c.slice(0, at), c.slice(at + 1)]; };
+// useDemo's clock: resolves after ms of time spent playing (see components/v2/AppDemo.tsx)
+type Sleep = (ms: number) => Promise<void>;
 const RM = '(prefers-reduced-motion: reduce)';
 const still = () => typeof matchMedia === 'function' && matchMedia(RM).matches;
 
@@ -105,7 +107,7 @@ function Run() {
   const [done, setDone] = useState(-1);
   const [cur, setCur] = useState({ j: 0, k: 0 });
   const from = useRef(0);
-  const demo = useDemo(box, async (sleep) => {
+  const demo = useDemo(box, async (sleep: Sleep) => {
     const f = from.current;
     from.current = 0;
     setDone(f - 1); setAt(f); setCur({ j: 0, k: 0 });
@@ -221,7 +223,7 @@ function Install() {
   const [writing, setWriting] = useState(false);
   // the server HTML has every line; a moving browser rewinds them before they are reached (this sits below the fold)
   useEffect(() => { if (!still()) { setK(0); setShown(0); } }, []);
-  useDemo(ref, async (sleep) => {
+  useDemo(ref, async (sleep: Sleep) => {
     setK(0); setShown(0); setWriting(true);
     await sleep(300);
     for (let i = 1; i <= cmd.length; i++) { setK(i); await sleep(i === 3 || i === 6 || i === 9 ? 140 : 70); }
@@ -294,9 +296,9 @@ function Script() {
   }, [lines]);
   const calm = useCalm();
   const [view, setView] = useState(0);
-  const [band, setBand] = useState(null);
+  const [band, setBand] = useState<{ y: number; h: number } | null>(null);
   const code = useRef<HTMLDivElement>(null);
-  const rows = useRef([]);
+  const rows = useRef<(HTMLSpanElement | null)[]>([]);
   const [va, vb] = chunks[view];
 
   useEffect(() => {
@@ -327,7 +329,7 @@ function Script() {
   useEffect(() => {
     if (!seen || calm) { if (calm) setTyp({ j: 99, k: 0 }); return; }
     const calls = CALLS[view];
-    let j = 0, k = 0, t;
+    let j = 0, k = 0, t: ReturnType<typeof setTimeout> | undefined;
     const tick = () => {
       k += 3;
       if (k >= split(calls[j])[1].length) { j += 1; k = 0; if (j >= calls.length) { setTyp({ j: 99, k: 0 }); return; } setTyp({ j, k }); t = setTimeout(tick, 160); return; }
@@ -342,7 +344,7 @@ function Script() {
   const index = useRef<HTMLOListElement>(null);
   useEffect(() => {
     const ol = index.current, li = ol?.children[view];
-    if (!ol || !li || ol.scrollWidth <= ol.clientWidth) return;
+    if (!ol || !(li instanceof HTMLElement) || ol.scrollWidth <= ol.clientWidth) return;
     ol.scrollTo({ left: Math.max(0, li.offsetLeft - 16), behavior: calm ? 'auto' : 'smooth' });
   }, [view, calm]);
 
@@ -375,7 +377,7 @@ function Script() {
             <i className="agt-band" style={band ? { transform: `translateY(${band.y}px)`, height: band.h, opacity: 1 } : { opacity: 0 }} aria-hidden="true" />
             <pre><code>
               {lines.map((l, i) => (
-                <span key={i} ref={(el) => (rows.current[i] = el)} className={'agt-ln agx-v' + (i >= va && i <= vb ? ' cur' : '')} style={ven(i + 4, 26, 24)}>
+                <span key={i} ref={(el) => { rows.current[i] = el; }} className={'agt-ln agx-v' + (i >= va && i <= vb ? ' cur' : '')} style={ven(i + 4, 26, 24)}>
                   <span className="agt-num" aria-hidden="true">{i + 1}</span>
                   <span className="agt-src">{l ? hl(l) : ' '}</span>
                   {'\n'}
@@ -410,7 +412,7 @@ function Prompt() {
   const follow = useRef(true);
   const [n, setN] = useState(PROMPT.length);
   useEffect(() => { if (!still()) setN(0); }, []);
-  const demo = useDemo(paper, async (sleep) => {
+  const demo = useDemo(paper, async (sleep: Sleep) => {
     follow.current = true;
     setN(0);
     if (body.current) body.current.scrollTop = 0;

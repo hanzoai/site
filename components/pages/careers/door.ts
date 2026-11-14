@@ -7,13 +7,16 @@
    Idempotent: React's dev double effect and a cancelled animation never remove the cover early; a failsafe clears it.
    Reduced motion: a plain route change (a cut). Also lifts any shared doorway cover ([data-door]) the same safe way. */
 import { useEffect } from 'react';
+import type React from 'react';
 import { play } from '../../../lib/sound';
 
 const OPEN = 'cubic-bezier(.76,0,.24,1)';
 const EM = 'cubic-bezier(.16,1,.3,1)';
-const KEEP = ['fontFamily', 'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight', 'color'];
+const KEEP = ['fontFamily', 'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight', 'color'] as const;
+/* the sheet's growth, read by the role page that lands on it */
+const GROW = new WeakMap<Element, Promise<unknown>>();
 
-function ghost(src: Element, box: HTMLDivElement) {
+function ghost(src: Element | null, box: HTMLDivElement) {
   if (!src) return null;
   const r = src.getBoundingClientRect();
   const cs = getComputedStyle(src);
@@ -26,7 +29,7 @@ function ghost(src: Element, box: HTMLDivElement) {
 }
 
 // el: the sheet whose rectangle grows; it must hold .xcb-sheet-t and .xcb-sheet-no
-export function openSheet(e, href, router, el) {
+export function openSheet(e: React.MouseEvent, href: string, router: { push(href: string): void }, el: Element | null) {
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
   if (matchMedia('(prefers-reduced-motion: reduce)').matches || !el) { router.push(href); return; }
@@ -42,25 +45,25 @@ export function openSheet(e, href, router, el) {
   if (n) { n.setAttribute('data-n', ''); n.style.width = 'auto'; n.style.color = 'var(--ink)'; }
   document.body.appendChild(d);
   const a = d.animate([{ clipPath: from }, { clipPath: 'inset(0px 0px 0px 0px round 0px)' }], { duration: 600, easing: OPEN, fill: 'forwards' });
-  d._grow = a.finished.catch(() => {});
+  GROW.set(d, a.finished.catch(() => {}));
   router.push(href);
   setTimeout(() => d.isConnected && d.remove(), 6000); // failsafe
 }
 
-function fly(g, to: Element | null, dur: number) {
+function fly(g: HTMLElement | null, to: Element | null, dur: number) {
   if (!g || !to) return null;
   const a = g.getBoundingClientRect(), b = to.getBoundingClientRect();
   const s = (parseFloat(getComputedStyle(to).fontSize) || 1) / (parseFloat(g.style.fontSize) || 1);
   return g.animate([{ transform: 'none' }, { transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${s})` }], { duration: dur, easing: EM, fill: 'forwards' }).finished.catch(() => {});
 }
 
-async function land(d: Element) {
-  await d._grow;
-  const h1 = document.querySelector('main h1');
-  const no = document.querySelector('.xcj-no');
-  const hide = [h1, no].filter(Boolean);
+async function land(d: HTMLElement) {
+  await GROW.get(d);
+  const h1 = document.querySelector<HTMLElement>('main h1');
+  const no = document.querySelector<HTMLElement>('.xcj-no');
+  const hide = [h1, no].filter((x): x is HTMLElement => !!x);
   hide.forEach((x) => { x.style.visibility = 'hidden'; });
-  await Promise.all([fly(d.querySelector('[data-t]'), h1, 500), fly(d.querySelector('[data-n]'), no, 500)]);
+  await Promise.all([fly(d.querySelector<HTMLElement>('[data-t]'), h1, 500), fly(d.querySelector<HTMLElement>('[data-n]'), no, 500)]);
   hide.forEach((x) => { x.style.visibility = ''; });
   const out = d.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, easing: 'cubic-bezier(0,0,.2,1)', fill: 'forwards' });
   out.finished.then(() => d.remove(), () => d.remove());
@@ -68,13 +71,13 @@ async function land(d: Element) {
 
 export function useSheetLanding() {
   useEffect(() => {
-    document.querySelectorAll('[data-xcdoor]').forEach((d) => {
+    document.querySelectorAll<HTMLElement>('[data-xcdoor]').forEach((d) => {
       if (d.dataset.landing) return; // already landing (dev runs effects twice)
       d.dataset.landing = '1';
       land(d);
     });
     // a shared doorway cover from another page: lift it once, never twice, never early
-    document.querySelectorAll('[data-door]').forEach((d) => {
+    document.querySelectorAll<HTMLElement>('[data-door]').forEach((d) => {
       if (d.dataset.landing) return;
       d.dataset.landing = '1';
       d.getAnimations().forEach((a) => a.cancel());

@@ -9,14 +9,14 @@
    The pre-entrance state exists only under html.js (server CSS keeps everything visible with scripts off), and reduced
    motion shows every section in place at once. Only transform, opacity, clip-path and filter move: nothing reflows. */
 import type React from 'react';
-import type { ReactNode } from 'react';
+import type { ElementType, HTMLAttributes } from 'react';
 import { useEffect, useRef } from 'react';
 import './entrances.css';
 
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* mark the element [data-in] once it is `amount` on screen (at once for reduced motion); before() runs first */
-export function useEnter(ref: React.RefObject<HTMLDivElement | null> | React.RefObject<null>, amount = 0.3, before) {
+export function useEnter(ref: React.RefObject<HTMLElement | null>, amount = 0.3, before?: (el: HTMLElement) => void) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -36,8 +36,13 @@ export function useEnter(ref: React.RefObject<HTMLDivElement | null> | React.Ref
 }
 
 /* a section that enters one way: kind is the entrance's name in the map */
-export function Enter({ as: Tag = 'section', kind, className = '', children, amount = 0.3, ...rest }) {
-  const ref = useRef(null);
+interface EnterProps extends HTMLAttributes<HTMLElement> {
+  as?: ElementType;
+  kind: string;
+  amount?: number;
+}
+export function Enter({ as: Tag = 'section', kind, className = '', children, amount = 0.3, ...rest }: EnterProps) {
+  const ref = useRef<HTMLElement>(null);
   useEnter(ref, amount);
   return (
     <Tag ref={ref} data-enter={kind} className={className} {...rest}>
@@ -49,29 +54,29 @@ export function Enter({ as: Tag = 'section', kind, className = '', children, amo
 
 /* venetian-type: the words of the title are grouped into the lines they actually wrap to; every line (and every block
    after the title: crumb, lede, ask) takes the opposite side to the one before */
-interface VenetianProps {
-  className?: string;
-  children?: ReactNode;
-  [key: string]: unknown;
-}
+type VenetianProps = HTMLAttributes<HTMLDivElement>;
 export function Venetian({ className = '', children, ...rest }: VenetianProps) {
   const ref = useRef<HTMLDivElement>(null);
   useEnter(ref, 0.3, (el) => {
-    const words = [...el.querySelectorAll('.xbe-w')];
-    let top = null, k = -1;
-    words.forEach((w) => { if (w.offsetTop !== top) { top = w.offsetTop; k += 1; } w.style.setProperty('--k', k); w.style.setProperty('--x', (k % 2 ? 72 : -72) + 'px'); });
-    [...el.querySelectorAll('.xbe-vl')].forEach((b) => { k += 1; b.style.setProperty('--k', k); b.style.setProperty('--x', (k % 2 ? 72 : -72) + 'px'); });
+    const words = [...el.querySelectorAll<HTMLElement>('.xbe-w')];
+    let top: number | null = null, k = -1;
+    words.forEach((w) => { if (w.offsetTop !== top) { top = w.offsetTop; k += 1; } w.style.setProperty('--k', String(k)); w.style.setProperty('--x', (k % 2 ? 72 : -72) + 'px'); });
+    [...el.querySelectorAll<HTMLElement>('.xbe-vl')].forEach((b) => { k += 1; b.style.setProperty('--k', String(k)); b.style.setProperty('--x', (k % 2 ? 72 : -72) + 'px'); });
   });
   return <div ref={ref} data-enter="venetian-type" className={'xbe-vt ' + className} {...rest}>{children}</div>;
 }
 /* a heading's words as the lines venetian-type moves (the words themselves are the text: nothing is duplicated) */
-export function VWords({ text }) {
+export function VWords({ text }: { text?: string }) {
   const words = String(text || '').split(/\s+/).filter(Boolean);
   return words.map((w, i) => <span key={i}><span className="xbe-w">{w}</span>{i < words.length - 1 ? ' ' : ''}</span>);
 }
 
 /* slot-roll: each word is a reel; two blurred copies ride above it and the reel rolls down until the word lands */
-export function Slot({ text, as: Tag = 'span', className = '', ...rest }) {
+interface SlotProps extends HTMLAttributes<HTMLElement> {
+  text: string;
+  as?: ElementType;
+}
+export function Slot({ text, as: Tag = 'span', className = '', ...rest }: SlotProps) {
   const words = String(text || '').split(/\s+/).filter(Boolean);
   return (
     <Tag className={'xbe-slot ' + className} {...rest}>

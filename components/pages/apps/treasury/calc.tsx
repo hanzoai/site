@@ -6,14 +6,24 @@
    Sliders are page-drawn (no browser control): pointer, touch (horizontal drag; vertical still scrolls) and keyboard
    (arrows, Page Up/Down, Home/End), role="slider" with value text. The labels are Hanzo's own account names. */
 import type React from 'react';
-import type { ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { createContext, useContext, useMemo, useRef, useState } from 'react';
 
 export const fmt = (v: number) => v.toLocaleString('en-US');
 export const DEF = { a: 10000, p0: 90, p1: 5 };
-const Ctx = createContext(null);
 
-export function split({ a, p0, p1 }) {
+interface Split {
+  a: number;
+  p0: number;
+  p1: number;
+}
+export interface Calc extends Split {
+  parts: [number, number, number];
+  set: (k: keyof Split, x: number) => void;
+}
+const Ctx = createContext<Calc | null>(null);
+
+export function split({ a, p0, p1 }: Split): [number, number, number] {
   const m = Math.round((a * p0) / 100);
   const f = Math.round((a * p1) / 100);
   return [m, f, a - m - f]; // remaining: whatever is left, so the three always meet the amount
@@ -23,10 +33,10 @@ interface CalcProviderProps {
   children: ReactNode;
 }
 export function CalcProvider({ children }: CalcProviderProps) {
-  const [s, setS] = useState(DEF);
+  const [s, setS] = useState<Split>(DEF);
   const v = useMemo(() => {
     const parts = split(s);
-    return { ...s, parts, set: (k, x) => setS((o) => {
+    return { ...s, parts, set: (k: keyof Split, x: number) => setS((o) => {
       const n = { ...o, [k]: x };
       if (n.p0 + n.p1 > 100) { if (k === 'p0') n.p1 = 100 - n.p0; else n.p0 = 100 - n.p1; }
       return n;
@@ -34,9 +44,19 @@ export function CalcProvider({ children }: CalcProviderProps) {
   }, [s]);
   return <Ctx.Provider value={v}>{children}</Ctx.Provider>;
 }
-export const useCalc = () => useContext(Ctx) || { ...DEF, parts: split(DEF), set: () => {} };
+export const useCalc = (): Calc => useContext(Ctx) || { ...DEF, parts: split(DEF), set: () => {} };
 
-function Slider({ label, value, min, max, step, onChange, show, big }) {
+interface SliderProps {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (v: number) => void;
+  show: (v: number) => string;
+  big?: boolean;
+}
+function Slider({ label, value, min, max, step, onChange, show, big }: SliderProps) {
   const tr = useRef<HTMLDivElement>(null);
   const drag = useRef(false);
   const f = (value - min) / (max - min);
@@ -69,7 +89,10 @@ function Slider({ label, value, min, max, step, onChange, show, big }) {
 const ACC = ['@merchants:042', '@fees:processing', '@platform:revenue'];
 
 /* The calculator panel: three sliders on the left, the transaction they write on the right. */
-export function Calculator({ Postings }) {
+interface CalculatorProps {
+  Postings: ComponentType<{ on: boolean }>;
+}
+export function Calculator({ Postings }: CalculatorProps) {
   const c = useCalc();
   const [m, f, r] = c.parts;
   return (
@@ -77,8 +100,8 @@ export function Calculator({ Postings }) {
       <div className="tc-in">
         <p className="tc-code x-mono" aria-live="polite">send [USD/2 {c.a}] (</p>
         <Slider big label="source = @users:001" value={c.a} min={1000} max={100000} step={500} onChange={(x) => c.set('a', x)} show={fmt} />
-        <Slider label={ACC[0]} value={c.p0} min={0} max={100} step={1} onChange={(x) => c.set('p0', x)} show={(x: string) => x + '%'} />
-        <Slider label={ACC[1]} value={c.p1} min={0} max={100} step={1} onChange={(x) => c.set('p1', x)} show={(x: string) => x + '%'} />
+        <Slider label={ACC[0]} value={c.p0} min={0} max={100} step={1} onChange={(x) => c.set('p0', x)} show={(x) => x + '%'} />
+        <Slider label={ACC[1]} value={c.p1} min={0} max={100} step={1} onChange={(x) => c.set('p1', x)} show={(x) => x + '%'} />
         <div className="tc-rem"><span className="x-mono">remaining to {ACC[2]}</span><b className="x-mono">{fmt(r)}</b></div>
         <div className="tc-bar" aria-hidden="true">
           {[m, f, r].map((v, i) => <i key={i} style={{ flexGrow: Math.max(v, 0.0001) }} />)}

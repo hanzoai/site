@@ -62,7 +62,7 @@ function useTick(ms: number, run, fn: () => void) {
   f.current = fn;
   useEffect(() => {
     if (!run) return;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | 0 = 0;
     const next = () => { t = setTimeout(() => { f.current(); next(); }, ms); };
     next();
     return () => clearTimeout(t);
@@ -101,7 +101,7 @@ function Flap({ ch, d = 0, kick = 0 }) {
     if (ch === shown.current) return;
     const path = route(shown.current, ch, calm);
     let i = 0;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | 0 = 0;
     const go = () => {
       const c = path[i++];
       setS((v) => ({ cur: c, prev: v.cur, n: v.n + 1 }));

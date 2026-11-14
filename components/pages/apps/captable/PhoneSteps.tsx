@@ -2,16 +2,22 @@
 /* Phone chapters for /captable (<= 900px): one compact table pins under the header and the six chapters scroll
    under it. The chapter crossing the reading line lights its rows in the one table (01 / 06 … 06 / 06), so one
    object changes instead of six copies of it stacking. Every word stays in the HTML. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
-const two = (n) => String(n).padStart(2, '0');
+const two = (n: number) => String(n).padStart(2, '0');
 
-export default function PhoneSteps({ items, stage, label, children }) {
+interface PhoneStepsProps {
+  items: { t: ReactNode; d?: ReactNode }[];
+  stage: (at: number) => ReactNode;
+  label: string;
+  children?: ReactNode;
+}
+export default function PhoneSteps({ items, stage, label, children }: PhoneStepsProps) {
   const ref = useRef<HTMLElement>(null);
   const [at, setAt] = useState(0);
   useEffect(() => {
     const els = [...ref.current!.querySelectorAll('[data-pch]')];
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(+e.target.dataset.pch)), { rootMargin: '-58% 0px -40% 0px' });
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(Number((e.target as HTMLElement).dataset.pch))), { rootMargin: '-58% 0px -40% 0px' });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [items.length]);

@@ -12,11 +12,11 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 const calmNow = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-const below = (el: HTMLElement | HTMLLIElement) => el.getBoundingClientRect().top > innerHeight * 0.92;
+const below = (el: HTMLElement) => el.getBoundingClientRect().top > innerHeight * 0.92;
 
 /* 'off' -> nothing happens; 'armed' -> set down in its start pose (it is below the screen); 'go' -> it entered, plays once */
-export function useEntrance(ref: React.RefObject<HTMLElement | null> | React.RefObject<HTMLLIElement | null>, inset = '-22%') {
-  const [s, setS] = useState('off');
+export function useEntrance(ref: React.RefObject<HTMLElement | null>, inset = '-22%') {
+  const [s, setS] = useState<'off' | 'armed' | 'go'>('off');
   useIso(() => {
     const el = ref.current;
     if (!el || calmNow() || !below(el)) return;
@@ -42,7 +42,7 @@ export function useSkew(ref: React.RefObject<HTMLElement | null>) {
       y = scrollY; t = now;
     };
     addEventListener('scroll', onScroll, { passive: true });
-    const els = [...root.querySelectorAll('[data-skew]')];
+    const els = [...root.querySelectorAll<HTMLElement>('[data-skew]')];
     const clamp = (n: number) => Math.max(-9, Math.min(9, n));
     const run = () => {
       const start = performance.now();
@@ -73,7 +73,7 @@ export function useShuffle(ref: React.RefObject<HTMLElement | null>, groups: str
   useIso(() => {
     const root = ref.current;
     if (!root || calmNow() || !below(root)) return;
-    const sets = groups.map((sel) => [...root.querySelectorAll(sel)]).filter((g) => g.length > 1);
+    const sets = groups.map((sel) => [...root.querySelectorAll<HTMLElement>(sel)]).filter((g) => g.length > 1);
     const place = () => sets.forEach((g) => {
       const r = g.map((el) => el.getBoundingClientRect());
       const n = g.length, off = Math.ceil(n / 2);
@@ -85,7 +85,7 @@ export function useShuffle(ref: React.RefObject<HTMLElement | null>, groups: str
       });
     });
     place();
-    const timers = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       io.disconnect();

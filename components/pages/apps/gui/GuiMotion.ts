@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 const calm = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* last point the visitor clicked or pointed at, in page coordinates (grow-from-point grows from it) */
-const last = { x: null, y: null };
+const last: { x: number | null; y: number | null } = { x: null, y: null };
 if (typeof window !== 'undefined') {
   const keep = (e: PointerEvent) => { last.x = e.pageX; last.y = e.pageY; };
   addEventListener('pointerdown', keep, { passive: true });
@@ -17,7 +17,7 @@ if (typeof window !== 'undefined') {
 }
 
 /* arms the section and plays its entrance once it is a quarter of the way into the screen */
-export function useEnter(ref: React.RefObject<HTMLDivElement | null> | React.RefObject<HTMLElement | null> | React.RefObject<HTMLOListElement | null>, onIn) {
+export function useEnter<T extends HTMLElement>(ref: React.RefObject<T | null>, onIn?: (el: T) => void) {
   useEffect(() => {
     const el = ref.current;
     if (!el || calm()) return;

@@ -12,10 +12,12 @@
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useReducedMotion, useTransform, useMotionValue, useMotionValueEvent } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import { A, Cta } from '../kit';
 import { Count } from '../ui';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { SEARCH, REPOS, CONTRIBUTING, useBounties, SAY } from './Bounty.github';
+import type { BountyState } from './Bounty.github';
 import { SNAP } from './Bounty.snapshot';
 import { useEnter } from './bounty/enter';
 import './bounty/enter.css';
@@ -23,13 +25,13 @@ import '../v2/ProgramScale.css';
 import './Bounty.css';
 
 const EASE = [0.16, 1, 0.3, 1];
-const n = (v) => v.toLocaleString('en-US');
+const n = (v: number) => v.toLocaleString('en-US');
 
 /* The live window: open bounties straight from GitHub, the build snapshot until it answers (or when it does not).
    Once the list is in, the newest bounty arrives at the top and the count ticks up by one; then a quiet reader walks
    the rows (paused under the pointer, off screen and under reduced motion). */
 interface OpenProps {
-  st: { kind: string; };
+  st: BountyState;
 }
 function Open({ st }: OpenProps) {
   const live = st.kind === 'ready';
@@ -127,12 +129,12 @@ function useHoldHeaderAsk() {
     if (!hero || !head) return;
     const label = hero.textContent.trim();
     const to = hero.getAttribute('href');
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const fix = () => {
       const btn = head.querySelector('a[data-x-ask]');
       if (!btn || !mq.matches || hero.getBoundingClientRect().bottom >= 60) return;
       if (btn.textContent !== label) btn.textContent = label;
-      if (btn.getAttribute('href') !== to) btn.setAttribute('href', to);
+      if (to !== null && btn.getAttribute('href') !== to) btn.setAttribute('href', to);
       if (btn.getAttribute('data-cta') !== 'header-ask') btn.setAttribute('data-cta', 'header-ask');
     };
     const soon = () => { clearTimeout(t); t = setTimeout(fix, 120); };
@@ -144,7 +146,7 @@ function useHoldHeaderAsk() {
 }
 
 interface HeroProps {
-  st: { kind: string; };
+  st: BountyState;
 }
 function Hero({ st }: HeroProps) {
   useOneSolidOnPhone();
@@ -171,18 +173,20 @@ function Hero({ st }: HeroProps) {
   );
 }
 
-const WAYS = [
+type Way = [title: string, pts: number, credit: string | null, desc: string];
+const WAYS = ([
   ['Verified bug report', 50, '+$20 AI credits', 'Report a reproducible bug in Hanzo Dev, Cloud, Console, or SDKs. Earn +50 bounty points and up to $20 in AI credits.'],
   ['Merged bounty pull request', 100, '+$20 AI credits', 'Ship a merged pull request fixing an open GitHub issue labelled bounty. Earn +100 to +500 points and AI credits.'],
   ['Qualified referral', 20, '+$5 AI credits', 'Invite a builder who activates a paid plan or trial. Earn +20 leaderboard points and $5 in AI credits.'],
   ['100K tokens processed', 1, null, 'Every 100,000 tokens processed across Hanzo Cloud models automatically adds +1 point to your global standing.'],
-];
+] satisfies Way[]);
 
-const STAND = [
+type Stand = [who: string, role: string, line: string, pts: number, up: string | null];
+const STAND = ([
   ['Zach Kelling (@zeekay)', 'Founding Maintainer · #1 Fleet', '1 bugs reported · +450 bounty pts · 106,039,884 tokens (Global #1)', 1510, null],
   ['zlatan mioslav (@valerypetrov)', 'Bug Hunter · Top 10', '3 bugs reported · +150 bounty pts · +$20 AI credits · 4,252,634 tokens (Global #7)', 192, '▲ +5 ranks'],
   ['Antje Worring (@zooqueen)', 'Core Contributor', '0 bugs reported · +200 bounty pts · 5,212,081 tokens (Global #3)', 252, null],
-];
+] satisfies Stand[]);
 
 /* The four ways to earn, as tiles you can count on: a stepper on each adds to the total by Hanzo's own rates, and the
    marker on the line sits against the standings Hanzo lists. */
@@ -206,7 +210,7 @@ function Rewards() {
   const credits = bugs * 20 + prs * 20 + refs * 5;
   const set = (i: number, x: number) => { setMine(true); setV((o) => o.map((y, j) => (j === i ? Math.max(0, Math.min(i === 3 ? 1000 : 99, x)) : y))); };
   const MAX = 1700;
-  const pos = (p: string | number | null) => Math.min(100, (p / MAX) * 100) + '%';
+  const pos = (p: number) => Math.min(100, (p / MAX) * 100) + '%';
   return (
     <section className="xp-sec xbo-rewards" aria-labelledby="xbo-rw" ref={box}>
       <div className="xp-wrap">
@@ -324,7 +328,8 @@ function Standings() {
   );
 }
 
-const ORGS = [
+type Org = [handle: string, badge: string, req: string, tokens: number];
+const ORGS = ([
   ['@hanzo', 'Core Fleet', '2,152 requests', 106039884],
   ['@lux', 'Power Builder', '162 requests', 6361400],
   ['@zoo', 'Power Builder', '874 requests', 5212081],
@@ -335,11 +340,16 @@ const ORGS = [
   ['@BDTung', '1M+ Club', '65 requests', 1963129],
   ['@venuswhispers', 'Active Builder', '340 requests', 590242],
   ['@Aeonaby', 'Active Builder', '79 requests', 521279],
-];
+] satisfies Org[]);
 const LOG = (t: number) => Math.log10(t) - 5; // 100K tokens sits at the left edge; @hanzo's 106M at the right
 const TOP = LOG(ORGS[0][3]);
 
-function Lane({ p, i, org }) {
+interface LaneProps {
+  p: MotionValue<number>;
+  i: number;
+  org: Org;
+}
+function Lane({ p, i, org }: LaneProps) {
   const [h, badge, req, t] = org;
   const to = LOG(t) / TOP;
   const scaleX = useTransform(p, [0.05 + i * 0.035, 0.55 + i * 0.03], [0, 1], { clamp: true });
@@ -354,7 +364,7 @@ function Lane({ p, i, org }) {
 }
 
 /* @hanzo's figure counts with the race; the server and no-JS page carry the real figure. */
-function Tally({ p, to }) {
+function Tally({ p, to }: { p: MotionValue<number>; to: number }) {
   const ref = useRef<HTMLSpanElement>(null);
   const v = useTransform(p, [0.05, 0.55], [0, to], { clamp: true });
   useMotionValueEvent(v, 'change', (x: number) => { if (ref.current) ref.current.textContent = n(Math.round(x)); });
@@ -418,19 +428,19 @@ function Glyph() {
    Keyboard: every choice and arrow is a button; ← → move between steps when the flow has focus. Touch: swipe. JS off:
    every step is shown in order. Reduced motion: steps change without the slide. */
 interface TakeProps {
-  st: { kind: string; };
+  st: BountyState;
 }
 function Take({ st }: TakeProps) {
   const issues = ((st.kind === 'ready' && st.open.items.length) ? st.open.items : SNAP.items).slice(0, 3);
   const [q, setQ] = useState(0);
-  const [pick, setPick] = useState(null);
+  const [pick, setPick] = useState<number | null>(null);
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   const it = pick != null ? issues[pick] || issues[0] : null;
   const last = TAKE.length; // the 4th screen is "Propose a bounty"
   const go = (i: number) => setQ(Math.max(0, Math.min(last, i)));
-  const choose = (i) => { setPick(i); setTimeout(() => setQ((x) => (x === 0 ? 1 : x)), 420); };
-  const sx = useRef<number | null | null>(null);
+  const choose = (i: number) => { setPick(i); setTimeout(() => setQ((x) => (x === 0 ? 1 : x)), 420); };
+  const sx = useRef<number | null>(null);
   const onDown = (e: React.PointerEvent<HTMLDivElement>) => { sx.current = e.clientX; };
   const onUp = (e: React.PointerEvent<HTMLDivElement>) => {
     if (sx.current == null) return;
@@ -438,7 +448,7 @@ function Take({ st }: TakeProps) {
     if (Math.abs(dx) > 56) go(q + (dx < 0 ? (q === 0 && !it ? 0 : 1) : -1));
   };
   const onKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.target.closest('a')) return;
+    if (e.target instanceof Element && e.target.closest('a')) return;
     if (e.key === 'ArrowRight' && !(q === 0 && !it)) { e.preventDefault(); go(q + 1); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); go(q - 1); }
   };

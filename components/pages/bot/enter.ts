@@ -18,22 +18,22 @@ export default function useEntrances(ref: React.RefObject<HTMLElement | null>) {
     addEventListener('pointermove', at, { passive: true });
     addEventListener('pointerdown', at, { passive: true });
 
-    const items = [...main.querySelectorAll('[data-enter]')];
+    const items = [...main.querySelectorAll<HTMLElement>('[data-enter]')];
     // stagger indexes that do not depend on the pointer
     for (const el of items) {
       const kind = el.dataset.enter;
       if (kind === 'tile-flip') {
-        const tiles = [...el.querySelectorAll('[data-tile]')];
-        const cols = Math.max(1, Math.round(el.querySelector('[data-tiles]')?.offsetWidth / (tiles[0]?.offsetWidth || 1)) || 5);
+        const tiles = [...el.querySelectorAll<HTMLElement>('[data-tile]')];
+        const cols = Math.max(1, Math.round((el.querySelector<HTMLElement>('[data-tiles]')?.offsetWidth ?? 0) / (tiles[0]?.offsetWidth || 1)) || 5);
         tiles.forEach((t, i) => t.style.setProperty('--k', String((i % cols) + Math.floor(i / cols))));
       }
     }
-    const play = (el: Element) => {
+    const play = (el: HTMLElement) => {
       const kind = el.dataset.enter;
       const r = el.getBoundingClientRect();
       if (kind === 'grid-wave') {
         // each cell starts in turn by its distance from the pointer (or the middle of the screen)
-        const cells = [...el.querySelectorAll('[data-cell]')].filter((c) => c.offsetParent);
+        const cells = [...el.querySelectorAll<HTMLElement>('[data-cell]')].filter((c) => c.offsetParent);
         const ds = cells.map((c) => { const b = c.getBoundingClientRect(); return Math.hypot(b.left + b.width / 2 - px, b.top + b.height / 2 - py); });
         const min = Math.min(...ds);
         cells.forEach((c, i) => c.style.setProperty('--d', Math.round((ds[i] - min) * 0.9) + 'ms'));
@@ -48,7 +48,7 @@ export default function useEntrances(ref: React.RefObject<HTMLElement | null>) {
     };
     main.classList.add('bt-en');
     const io = new IntersectionObserver((es) => {
-      for (const e of es) if (e.isIntersecting) { io.unobserve(e.target); play(e.target); }
+      for (const e of es) if (e.isIntersecting) { io.unobserve(e.target); play(e.target as HTMLElement); }
     }, { threshold: 0.25 });
     // anything already on screen when this runs simply shows (no flash of a start state)
     for (const el of items) {

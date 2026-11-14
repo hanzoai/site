@@ -11,7 +11,7 @@ const calmNow = () => typeof matchMedia === 'function' && matchMedia('(prefers-r
 
 /* scroll-tilt: the section starts tilted back on rotateX; each frame it levels out over ~900 ms (or as it scrolls fully in,
    whichever is sooner), while scroll speed adds a lean in the direction of travel; it settles at 0 and stops. */
-function tilt(el: never) {
+function tilt(el: HTMLElement) {
   let raf = 0;
   let last = scrollY;
   let cur = 14;
@@ -34,15 +34,14 @@ function tilt(el: never) {
 }
 
 interface EnterProps {
-  as?: string;
+  as?: 'div' | 'section';
   kind: string;
   className?: string;
   threshold?: number;
   children: ReactNode;
-  [key: string]: unknown;
 }
 export function Enter({ as: Tag = 'div', kind, className = '', threshold = 0.2, children, ...rest }: EnterProps) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || calmNow()) return;

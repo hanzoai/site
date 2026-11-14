@@ -10,14 +10,19 @@
    The figures (HA, <50ms, 100+) count up once when the card arrives; the server prints the true value.
    Reduced motion and JS off show the settled frame. */
 import { useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import Sigil from '../../Sigil';
+import type { Key } from './types';
 
 const R = 2.6; // seconds a run
 const HITS = [0.06, 0.24, 0.42, 0.6]; // when the block reaches each station within a run (see xb3-hop)
 
 /* a figure that counts up once, from 0 to Hanzo's own value (prefix and suffix kept, e.g. "<50ms", "100+") */
-function Count({ v }) {
-  const ref = useRef(null);
+interface CountProps {
+  v: string;
+}
+function Count({ v }: CountProps) {
+  const ref = useRef<HTMLElement>(null);
   const m = /^([^0-9]*)([0-9][0-9,]*)(.*)$/.exec(v || '');
   useEffect(() => {
     const el = ref.current;
@@ -37,7 +42,12 @@ function Count({ v }) {
   return <dd className="v2f-num" ref={ref} style={{ minWidth: String(v).length + 'ch' }}>{v}</dd>;
 }
 
-function Flow({ stations, chains, mode }) {
+interface FlowProps {
+  stations: string[];
+  chains: string[];
+  mode: string;
+}
+function Flow({ stations, chains, mode }: FlowProps) {
   const st = stations.slice(0, 4);
   // three runs land on three of the product's chains; the last lands on its first chain
   const land = chains.length > 2 ? [chains[1], chains[2], chains[0]] : chains.length === 2 ? [chains[1], chains[0], chains[0]] : [chains[0], chains[0], chains[0]];
@@ -63,7 +73,15 @@ function Flow({ stations, chains, mode }) {
   );
 }
 
-export default function KeyStage({ k, chains, seed, stations, mode, stream }) {
+interface KeyStageProps {
+  k: Key;
+  chains: string[];
+  seed: string;
+  stations: string[];
+  mode: string;
+  stream: ReactNode;
+}
+export default function KeyStage({ k, chains, seed, stations, mode, stream }: KeyStageProps) {
   return (
     <aside className="xb2-key xb3-key">
       <Sigil seed={seed} data={[chains.length, ...k.stats.map(([v]) => parseFloat(String(v).replace(/[^\d.]/g, ''))).filter((x: number) => x > 0)]} className="xb2-key-sig" />

@@ -5,7 +5,8 @@ const RUN = 'https://api.hanzo.ai/v1/research/runs?org=hanzo&id=';
 export const runUrl = (id: string) => RUN + id;
 
 /* GPQA Diamond, 198 questions: accuracy against $ per 1,000 questions. kind: router | single | reported */
-export const GPQA = [
+type GpqaRow = [name: string, acc: number, cost: number, kind: string, aria: string, src?: string];
+export const GPQA = ([
   ['DeepSeek V4 Pro', 76.3, 1.05, 'single', 'DeepSeek V4 Pro 0423 76.3%, a single model tested on the same 198 GPQA Diamond questions, $1.05 per 1,000 of them'],
   ['Sonnet 5', 77.8, 42.91, 'single', 'Claude Sonnet 5 77.8%, a single model tested on the same 198 GPQA Diamond questions, $42.91 per 1,000 of them'],
   ['Fable 5', 82.8, 14.95, 'single', 'Claude Fable 5 82.8%, a single model tested on the same 198 GPQA Diamond questions, $14.95 per 1,000 of them'],
@@ -23,10 +24,11 @@ export const GPQA = [
   ['Enso Flash', 95.5, 3.26, 'router', 'Enso Flash at $3.26 per 1,000, its cost on new questions: 95.5% · questions it has seen'],
   ['Enso', 96.5, 10.03, 'router', 'Enso at $10.03 per 1,000, its cost on new questions: 96.5% · questions it has seen'],
   ['Enso Ultra', 98.0, 14.76, 'router', 'Enso Ultra at $14.76 per 1,000, its cost on new questions: 98.0% · questions it has seen'],
-].map(([name, acc, cost, kind, aria, src]) => ({ name, acc, cost, kind, aria, src }));
+] satisfies GpqaRow[]).map(([name, acc, cost, kind, aria, src]) => ({ name, acc, cost, kind, aria, src }));
 
 /* The 12 runs of the frontier board: [system, accuracy, cost $, tag, date, pareto] */
-export const RUNS = [
+type RunRow = [sys: string, acc: string, cost: string, tag: string, date: string, pareto: boolean];
+export const RUNS = ([
   ['enso', '92.9%', '$5.58', 'frontier', '2026-07-19', true],
   ['gpt-5.6-sol', '91.9%', '$4.08', 'frontier', '2026-07-19', true],
   ['opus-5.5', '90.9%', '$3.78', 'fill', '2026-10-16', true],
@@ -39,10 +41,11 @@ export const RUNS = [
   ['claude-5-sonnet', '77.8%', '$5.66', 'frontier', '2026-07-19', false],
   ['deepseek-v4-pro', '74.2%', '$0.203', 'frontier', '2026-07-19', false],
   ['gpt-4o', '54.5%', '$1.58', 'frontier', '2026-07-19', false],
-].map(([sys, acc, cost, tag, date, pareto]) => ({ sys, acc, cost, tag, date, pareto, a: parseFloat(acc), c: parseFloat(cost.slice(1)) }));
+] satisfies RunRow[]).map(([sys, acc, cost, tag, date, pareto]) => ({ sys, acc, cost, tag, date, pareto, a: parseFloat(acc), c: parseFloat(cost.slice(1)) }));
 
 /* Every system on GPQA Diamond: [system, correct, run cost, tag, date] — accuracy is correct / 198 */
-export const SYSTEMS = [
+type SystemRow = [sys: string, n: number, cost: string, tag: string, date: string];
+export const SYSTEMS = ([
   ['enso', 184, '$5.58', 'frontier', '2026-07-19'],
   ['enso-ultra', 184, '$20.20', 'frontier', '2026-07-19'],
   ['gpt-5.6-sol', 182, '$4.08', 'frontier', '2026-07-19'],
@@ -56,7 +59,7 @@ export const SYSTEMS = [
   ['claude-5-sonnet', 154, '$5.66', 'frontier', '2026-07-19'],
   ['deepseek-v4-pro', 147, '$0.203', 'frontier', '2026-07-19'],
   ['gpt-4o', 108, '$1.58', 'frontier', '2026-07-19'],
-].map(([sys, n, cost, tag, date]) => ({ sys, n, cost, tag, date, acc: ((n / 198) * 100).toFixed(1) + '%', c: parseFloat(cost.slice(1)), run: runUrl(`enso.gpqa_diamond-test-${tag}-${sys}`) }));
+] satisfies SystemRow[]).map(([sys, n, cost, tag, date]) => ({ sys, n, cost, tag, date, acc: ((n / 198) * 100).toFixed(1) + '%', c: parseFloat(cost.slice(1)), run: runUrl(`enso.gpqa_diamond-test-${tag}-${sys}`) }));
 
 const HF = 'https://huggingface.co/datasets/';
 const TREE = 'https://github.com/hanzoai/benchmarks/tree/main/decision';
@@ -91,7 +94,8 @@ export const COST_LINKS = [
 ];
 
 /* Kai against Jev, suite by suite: accuracy (Hanzo's strings and lead) and calibration error (ECE, from the same runs) */
-export const BOARD = [
+type BoardRow = [t: string, kai: string, jev: string, lead: string, ke: number, je: number];
+export const BOARD = ([
   ['AG News', '93.8%', '86.0%', '+7.8 pp', 0.0221, 0.1023],
   ['DAIR Emotion', '92.3%', '60.3%', '+32.0 pp', 0.033, 0.2795],
   ['Banking77', '88.0%', '83.5%', '+4.5 pp', 0.0936, 0.0729],
@@ -103,7 +107,7 @@ export const BOARD = [
   ['Model routing', '99.8%', '97.7%', '+2.0 pp', 0.0023, 0.0138],
   ['Typed decisions', '74.6%', '73.6%', '+1.0 pp', 0.1398, 0.0472],
   ['MASSIVE, 51 languages', '90.7%', '89.0%', '+1.7 pp', 0.0635, 0.0638],
-].map(([t, kai, jev, lead, ke, je]) => ({ t, kai, jev, lead, ke, je, k: parseFloat(kai), j: parseFloat(jev), l: parseFloat(lead) }));
+] satisfies BoardRow[]).map(([t, kai, jev, lead, ke, je]) => ({ t, kai, jev, lead, ke, je, k: parseFloat(kai), j: parseFloat(jev), l: parseFloat(lead) }));
 
 export const YESNO = [
   ['A question and its paraphrase, mean |Δp| over 20 pairs', '0.124', '0.151'],

@@ -22,11 +22,14 @@
    The role pages (/careers/<slug>) are CareerRole.jsx; this index has its own CareersBoard.css. */
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useInView, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import type { MotionValue } from 'motion/react';
+import type React from 'react';
 import { useRouter } from 'next/navigation';
 import { A, Cta } from '../kit';
 import Sigil from '../Sigil';
 import MaskLines from './careers/MaskLines'; // careers' own variant; main's v2/MaskLines differs
 import { openSheet, useSheetLanding } from './careers/door';
+import type { Board } from './careersData';
 import { Roll, useEnter } from './careers/enter';
 import { href as hrefOf } from '../../lib/route';
 import { play } from '../../lib/sound';
@@ -34,12 +37,17 @@ import '../v2/vc-type.css';
 import './company/deck.css';
 import './CareersBoard.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 // JS off: the hero is legible; the hiring steps read as a plain list (only one step per row, no counter, no bars)
 const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;transform:none!important}.xcb-hire-stage{display:block!important;overflow:visible!important}.xcb-hire-s{transform:none!important;margin-top:20px}.xcb-hire-n,.xcb-hire-t,.xcb-hire-h .vc-num{display:none!important}</style>' };
 
+type Leaf = Board['pos']['leaves'][number];
+
 /* How we hire: the four steps slide through a mask by themselves (never two titles at once); tap a step to hold it. */
-function Hire({ how }) {
+interface HireProps {
+  how: Board['how'];
+}
+function Hire({ how }: HireProps) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const box = useRef<HTMLDivElement>(null);
@@ -85,7 +93,11 @@ function Hire({ how }) {
 }
 
 /* Copy the role's direct link. An icon only: a link glyph that turns into a drawn tick (the words live in aria). */
-function CopyDirect({ id, title }) {
+interface CopyDirectProps {
+  id: string;
+  title: string;
+}
+function CopyDirect({ id, title }: CopyDirectProps) {
   const [ok, setOk] = useState(false);
   return (
     <button type="button" className={'xcb-cp' + (ok ? ' ok' : '')} aria-label={ok ? 'Link copied' : 'Copy direct link to ' + title}
@@ -106,9 +118,13 @@ function CopyDirect({ id, title }) {
 // skills as Hanzo's role descriptions write them; a chip is shown only if some role asks for it
 const SKILLS = ['transformers', 'RLHF', 'distributed', 'LLVM', 'MLIR', 'compilers', 'Model Context Protocol', 'agents', 'zero-knowledge', 'cryptography', 'Go/Rust', 'developer tools', 'data visualization'];
 const stem = (t: string) => t.toLowerCase().replace(/s$/, ''); // "agents" also finds "agent infrastructure"
-const asks = (r, k) => (r.title + ' ' + r.desc).toLowerCase().includes(stem(k));
+const asks = (r: { title: string; desc: string }, k: string) => (r.title + ' ' + r.desc).toLowerCase().includes(stem(k));
 const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
-function Marked({ text, know }) {
+interface MarkedProps {
+  text: string;
+  know: string[];
+}
+function Marked({ text, know }: MarkedProps) {
   if (!know.length) return text;
   const re = new RegExp('(' + know.map((k: string) => esc(stem(k)) + '\\w*').join('|') + ')', 'gi');
   return text.split(re).map((p, i) => (i % 2 ? <mark key={i}>{p}</mark> : p));
@@ -118,9 +134,17 @@ function Marked({ text, know }) {
 /* The sheet opens into its page: the whole sheet grows to fill the screen in its own white, carrying its title and
    numeral, which then land on the role page's h1 and numeral (careers/door.js). The site Morph is skipped here
    (data-no-morph): it times out today (docs/build-notes/requests/careers.md). */
-const open = (e, to, router, el: null) => openSheet(e, hrefOf(to), router, el || e.currentTarget.closest('.xcb-sheet-in'));
+const open = (e: React.MouseEvent, to: string, router: ReturnType<typeof useRouter>, el?: HTMLElement | null) => openSheet(e, hrefOf(to), router, el || e.currentTarget.closest('.xcb-sheet-in'));
 
-function Sheet({ r, i, n, know, progress, on }) {
+interface SheetProps {
+  r: Leaf;
+  i: number;
+  n: number;
+  know: string[];
+  progress: MotionValue<number>;
+  on: boolean;
+}
+function Sheet({ r, i, n, know, progress, on }: SheetProps) {
   const router = useRouter();
   const card = useRef<HTMLDivElement>(null);
   const [where, kind, team] = r.chips;
@@ -147,7 +171,13 @@ function Sheet({ r, i, n, know, progress, on }) {
   );
 }
 
-function Deck({ roles, know, dont, dontA }) {
+interface DeckProps {
+  roles: Leaf[];
+  know: string[];
+  dont: string;
+  dontA: Board['pos']['dontA'];
+}
+function Deck({ roles, know, dont, dontA }: DeckProps) {
   const router = useRouter();
   const ref = useRef<HTMLUListElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
@@ -173,13 +203,16 @@ function Deck({ roles, know, dont, dontA }) {
    Sigil field and numeral to the perk being lit, or to the one you point at, tap or focus. Server HTML, JS off and
    reduced motion show every word lit. */
 const split = (t: string) => t.split(/(\s+)/);
-function Perks({ perks }) {
+interface PerksProps {
+  perks: Board['perks'];
+}
+function Perks({ perks }: PerksProps) {
   const list = useRef<HTMLOListElement>(null);
   const calm = useReducedMotion();
   const counts = perks.items.map(([pt, pp]) => split(pt + ' ' + pp).filter((w: string) => w.trim()).length);
   const total = counts.reduce((a, b) => a + b, 0);
   const [lit, setLit] = useState(total);
-  const [hover, setHover] = useState(null);
+  const [hover, setHover] = useState<number | null>(null);
   const { scrollYProgress } = useScroll({ target: list, offset: ['start 78%', 'end 55%'] });
   const read = (v: number) => setLit(calm ? total : Math.round(Math.min(1, Math.max(0, v)) * total));
   useMotionValueEvent(scrollYProgress, 'change', read);
@@ -217,7 +250,10 @@ function Perks({ perks }) {
 
 const fig = (t: string) => /^([\d,]+\+)\s+(.*)$/.exec(t);
 
-export default function Careers({ d }) {
+interface CareersProps {
+  d: Board;
+}
+export default function Careers({ d }: CareersProps) {
   useSheetLanding();
   const roles = d.pos.leaves;
   const [pick, setPick] = useState<string | null>(null); // one skill at a time: the ink pill glides to it
@@ -324,7 +360,7 @@ export default function Careers({ d }) {
           {[intA, intB].map((l, k) => (
             <article key={l.title} className={'xcb-panel ' + (k ? 'b' : 'a')}>
               {k === 0 && <span className="xcb-panel-sig" aria-hidden="true"><Sigil seed={'careers/' + l.title} data={[l.desc.length]} /></span>}
-              {l.perks.filter(fig).map((p) => { const m = fig(p); return <p key={p} className="xcb-fig"><Roll text={m[1]} className="vc-num" /><span>{m[2]}</span></p>; })}
+              {l.perks.filter(fig).map((p) => { const m = fig(p)!; return <p key={p} className="xcb-fig"><Roll text={m[1]} className="vc-num" /><span>{m[2]}</span></p>; })}
               <h3 className="vc-title">{l.title}</h3>
               <ul className="xcb-panel-p">{l.perks.filter((p: string) => !fig(p)).map((p) => <li key={p}>{p}</li>)}</ul>
               <p className="vc-body">{l.desc}</p>

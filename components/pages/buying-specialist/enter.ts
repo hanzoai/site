@@ -27,12 +27,12 @@ export function useEnter(rootRef: React.RefObject<HTMLElement | null>) {
 
 /* count-roll: the figure starts at zero and rolls to its value in ~10 steps over 700 ms once the element is 25% in
    view; afterwards it simply follows the value. Server HTML and reduced motion show the value itself. */
-export function useRollIn(ref, value: number) {
+export function useRollIn(ref: React.RefObject<Element | null>, value: number) {
   const [p, setP] = useState<number | null>(null); // null = done (show the value)
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches || typeof IntersectionObserver === 'undefined' || !ref.current) return;
     setP(0);
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | 0 = 0;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       io.disconnect();

@@ -22,17 +22,24 @@ import Chat from './bot/Chat';
 import useEntrances from './bot/enter';
 import useCalm from '../v2/useCalm';
 import { WORKFLOWS, TOOLS } from './Bot.data';
+import type { FaceProps } from './bot/types';
 import { play } from '../../lib/sound';
 import '../v2/AppType.css';
 import './Bot.css';
 import { PLANS as PLAN, FLOOR, checkout, usd } from '../../lib/plans';
+import type { Derived } from '../../lib/plans';
 import useCommercePricing from '../../lib/useCommercePricing';
 
 const CREW = [['dev', 'Dev', 'Software'], ['qa', 'Qa', 'Quality'], ['cyber', 'Cyber', 'Security'], ['des', 'Des', 'Designer'], ['mark', 'Mark', 'Marketing'], ['su', 'Su', 'Support'], ['doc', 'Doc', 'Docs'], ['opera', 'Opera', 'Operations'], ['sci', 'Sci', 'Research'], ['data', 'Data', 'Analytics'], ['sal', 'Sal', 'Sales'], ['fin', 'Fin', 'Finance'], ['law', 'Law', 'Legal']];
 
 /* A picture that steps aside if it cannot load (the drawn version underneath stays). */
-function Pic({ src, alt = '', className = '' }) {
-  const ref = useRef(null);
+interface PicProps {
+  src: string;
+  alt?: string;
+  className?: string;
+}
+function Pic({ src, alt = '', className = '' }: PicProps) {
+  const ref = useRef<HTMLImageElement>(null);
   const [bad, setBad] = useState(false);
   const [ok, setOk] = useState(false); // shown only once it has really loaded, so a blocked picture never flashes a broken icon
   useEffect(() => { const i = ref.current; if (i && i.complete) (i.naturalWidth ? setOk(true) : setBad(true)); }, [src]);
@@ -40,12 +47,7 @@ function Pic({ src, alt = '', className = '' }) {
 }
 
 /* A bot's face: Hanzo's memoji for that bot, over a little drawn screen with two eyes that shows if the picture can't load. */
-const memoji = (id: string | boolean) => `https://hanzo.ai/memoji/${id === 'qa' ? 'sci' : id}.svg`;
-interface FaceProps {
-  k?: string;
-  size?: number;
-  id: string | boolean;
-}
+const memoji = (id: string) => `https://hanzo.ai/memoji/${id === 'qa' ? 'sci' : id}.svg`;
 function Face({ k = '', size, id }: FaceProps) {
   return <span className={'bt-face ' + k + (id ? ' has-id' : '')} style={size ? { '--s': size + 'px' } : undefined} aria-hidden="true"><i /><i />{id && <Pic src={memoji(id)} className="bt-face-img" />}</span>;
 }
@@ -57,7 +59,8 @@ const FIRST = 4200; // the server's finished case holds cleanly on first paint b
 const CYCLE = BEAT.reduce((a, b) => a + b, 0) + HOLD;
 const R = 12;
 
-function route(pts) {
+type Point = [x: number, y: number];
+function route(pts: Point[]) {
   let d = `M${pts[0][0]} ${pts[0][1]}`;
   for (let i = 1; i < pts.length - 1; i++) {
     const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], [x2, y2] = pts[i + 1];
@@ -67,9 +70,14 @@ function route(pts) {
   const l = pts[pts.length - 1];
   return d + ` L${l[0]} ${l[1]}`;
 }
-const off = (el, root: never) => { let x = 0, y = 0, e = el; while (e && e !== root) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return { x, y, w: el.offsetWidth, h: el.offsetHeight }; };
+const off = (el: HTMLElement, root: HTMLElement) => { let x = 0, y = 0, e: HTMLElement | null = el; while (e && e !== root) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent instanceof HTMLElement ? e.offsetParent : null; } return { x, y, w: el.offsetWidth, h: el.offsetHeight }; };
 
-function Packet({ pts, dur, v }) {
+interface PacketProps {
+  pts: Point[];
+  dur: number;
+  v?: boolean;
+}
+function Packet({ pts, dur, v }: PacketProps) {
   const len = pts.slice(1).map((p, i) => Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]));
   const tot = len.reduce((a, b) => a + b, 0) || 1;
   let s = 0;
@@ -81,13 +89,21 @@ function Packet({ pts, dur, v }) {
   );
 }
 
+/* the chart's own pixels: its size, where the ask leaves from, and each bot's column (x, top and bottom of its face) */
+interface Geometry {
+  W: number;
+  H: number;
+  hx: number;
+  hy: number;
+  ns: { x: number; top: number; bot: number }[];
+}
 function Org() {
   const [at, setAt] = useState(0);
   const [b, setB] = useState(5); // the server paints the finished handoff; the demo carries on from it, never wipes it
   const [first, setFirst] = useState(true); // the first case is the server's: it stays, then the next case plays
   const [mine, setMine] = useState(false);
   const [paused, setPaused] = useState(false);
-  const [g, setG] = useState(null);
+  const [g, setG] = useState<Geometry | null>(null);
   const box = useRef<HTMLDivElement>(null), chart = useRef<HTMLDivElement>(null), ask = useRef<HTMLDivElement>(null), row = useRef<HTMLOListElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useCalm(); // false on the server and the first client render, so both match
@@ -107,8 +123,9 @@ function Org() {
     const c = chart.current; if (!c) return;
     const m = () => {
       if (innerWidth <= 900) return setG(null);
-      const a = off(ask.current, c);
-      const ns = [...row.current!.children].map((n) => { const f = off(n.querySelector('.bt-face'), c), q = off(n, c); return { x: f.x + f.w / 2, top: f.y, bot: q.y + q.h }; });
+      const a = off(ask.current!, c);
+      const lis = [...row.current!.children] as HTMLElement[]; // an <ol>'s children are its <li>s
+      const ns = lis.map((n) => { const f = off(n.querySelector<HTMLElement>('.bt-face')!, c), q = off(n, c); return { x: f.x + f.w / 2, top: f.y, bot: q.y + q.h }; });
       setG({ W: c.offsetWidth, H: c.offsetHeight, hx: a.x + a.w / 2, hy: a.y + a.h + 6, ns });
     };
     m();
@@ -120,10 +137,10 @@ function Org() {
   const key = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
     const n = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!n) return;
     const j = (i + n + WORKFLOWS.length) % WORKFLOWS.length; pick(j);
-    e.currentTarget.parentElement.parentElement.children[j]?.querySelector('button')?.focus();
+    e.currentTarget.parentElement?.parentElement?.children[j]?.querySelector('button')?.focus();
   };
 
-  let wires = null, r1 = null, r2 = null;
+  let wires = '', r1: Point[] = [], r2: Point[] = [];
   if (g) {
     const bus = g.ns[0].top - 30, P = g.ns[pi], V = g.ns[vi];
     const lane = Math.max(P.bot, V.bot) + 16;
@@ -296,7 +313,7 @@ function Hero() {
 
 /* ---------- the ten workflows, in one drawer; and what every bot has ---------- */
 interface CaseProps {
-  w: { id: string; num: string; channel: string; category: string; title: string; summary: string; human: { initials: string; name: string; time: string; before: string; mention: string; after: string; }; primary: { id: string; name: string; role: string; time: string; reply: string; codeOrArtifact: string; artifactKind: string; }; verifier: { id: string; name: string; role: string; time: string; reply: string; badge: string; }; tools: string[]; steps: string[]; };
+  w: (typeof WORKFLOWS)[number];
 }
 function Case({ w }: CaseProps) {
   return (
@@ -355,7 +372,10 @@ function Cases() {
 }
 
 /* ---------- five chapters, each with its own live product UI, filled with Hanzo's own lines ---------- */
-function Sandbox({ on }) {
+interface OnProps {
+  on: boolean;
+}
+function Sandbox({ on }: OnProps) {
   return (
     <div className={'bt-vis bt-box' + (on ? ' on' : '')} aria-hidden="true">
       <div className="bt-win">
@@ -393,7 +413,7 @@ const JOBS = [
 ];
 const JOB_FACE = ['su', 'sal', 'sci', 'dev', 'fin', 'opera'];
 
-function Board({ on }) {
+function Board({ on }: OnProps) {
   return (
     <div className={'bt-vis bt-board' + (on ? ' on' : '')} aria-hidden="true">
       <ul>
@@ -421,7 +441,7 @@ function Msg({ on, children, cls = '', face }: MsgProps) {
 }
 
 /* Hanzo's sample thread: Mark asks Des for a header, then asks you before it ships. */
-function Thread({ on }) {
+function Thread({ on }: OnProps) {
   const calm = useReducedMotion();
   const [b, setB] = useState(7);
   const [pick, setPick] = useState<string | null>(null);
@@ -441,7 +461,7 @@ function Thread({ on }) {
         <div className="bt-search">Search</div>
         <p className="bt-side-h">Teammates <span className="x-mono"><i className="bt-live" aria-hidden="true" />{desOn ? '2 working' : '1 working'}</span></p>
         <ul className="bt-mates">
-          {[['mark', 'Mark', true], ['des', 'Des', desOn]].map(([id, n, w]) => (
+          {([['mark', 'Mark', true], ['des', 'Des', desOn]] satisfies [string, string, boolean][]).map(([id, n, w]) => (
             <li key={id} className={w ? 'on' : ''}><Face k={w ? (id === 'des' ? 'v' : 'p') : ''} size={30} id={id} /><span><b>{n}</b><span>{w ? 'Working' : ' '}</span></span></li>
           ))}
         </ul>
@@ -470,7 +490,7 @@ function Thread({ on }) {
   );
 }
 
-function Routines({ on }) {
+function Routines({ on }: OnProps) {
   const [sw, setSw] = useState([true, true]);
   const list = [['Daily #hanzo-marketing update', 'Weekdays around 9:00 AM'], ['Answer #hanzo-marketing mentions', 'When @mentioned']];
   return (
@@ -538,7 +558,7 @@ const MEMO = [
   ['-', 'Write the launch post for crypto top-ups, and ask Des for a header.'],
 ];
 
-function Memory({ on }) {
+function Memory({ on }: OnProps) {
   return (
     <div className={'bt-vis bt-mem' + (on ? ' on' : '')} aria-hidden="true">
       <div className="bt-mem-file">
@@ -554,7 +574,7 @@ function Memory({ on }) {
 
 interface ItemsProps {
   lede?: string;
-  items: string[][] | string[][];
+  items: string[][];
   link?: string;
   to?: string;
 }
@@ -566,7 +586,13 @@ const Items = ({ lede, items, link, to }: ItemsProps) => (
   </div>
 );
 
-const CHAPTERS = [
+interface ChapterData {
+  kick: string;
+  title: string;
+  body: ReactNode;
+  visual: (on: boolean) => ReactNode;
+}
+const CHAPTERS: ChapterData[] = [
   { kick: 'What a bot is', title: 'A teammate with its own computer', body: <Items lede="Not a chat window. A bot has a computer of its own and works while you do something else." items={[['Its own computer', 'Each bot runs in its own sandbox with a browser, a terminal and your apps. Nothing it does touches your machine unless you let it.'], ['Works where you work', 'Sign it in once. It uses the same tools and websites you do, including the ones that are hard to automate.'], ['Comes back when it is done', 'Give it a task and go do something else. It returns with finished work and asks only when it needs your say.']]} />, visual: (on) => <Sandbox on={on} /> },
   { kick: 'Give each bot a job', title: 'One bot per job', body: <Items items={JOBS} />, visual: (on) => <Board on={on} /> },
   { kick: 'Work with many at once', title: 'Bots that hand work to each other', body: <Items items={[['One gateway, many bots', 'Each bot has its own workspace, sign-ins and history, and each message goes to the bot it is meant for.'], ['Sub-agents', 'A bot can start background runs that work in parallel and post what they found back in the chat that asked.'], ['Bots message bots', 'One bot can read another’s session and send it a message, so a handoff needs no copy and paste.']]} link="How multi-agent works" to="https://docs.hanzo.bot/docs/concepts/multi-agent" />, visual: (on) => <Thread on={on} /> },
@@ -576,7 +602,7 @@ const CHAPTERS = [
 
 /* Five plain sections (no pin): words on one side, the live picture on the other, alternating. Each picture runs only
    while it is on screen. They enter with the page's `ripple` (components/pages/bot/enter.css). */
-function Chapter({ it, i }) {
+function Chapter({ it, i }: { it: ChapterData; i: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const on = useInView(ref, { amount: 0.4 });
   return (
@@ -622,6 +648,9 @@ function Ask() {
 /* ---------- the tools it signs in to, and where you talk to it ---------- */
 const CHANNELS = ['Desktop', 'iPhone', 'WhatsApp', 'Telegram', 'Slack', 'Discord', 'iMessage', 'Signal', 'Web chat'];
 
+/* Bot.data.ts infers each row of TOOLS as (string | string[][])[]: a kind and its [file, name] marks */
+const TOOL_KINDS = TOOLS as unknown as [kind: string, tools: [file: string, name: string][]][];
+
 function Tools() {
   const [cat, setCat] = useState(0);
   return (
@@ -635,11 +664,11 @@ function Tools() {
         </div>
         <div className="bt-tools-r" data-enter="grid-wave">
           <div className="bt-cats" role="tablist" aria-label="Kinds of tools">
-            {TOOLS.map(([c], i) => (
+            {TOOL_KINDS.map(([c], i) => (
               <button key={c} type="button" role="tab" aria-selected={i === cat} aria-controls={'bt-tc' + i} id={'bt-tt' + i} onClick={() => setCat(i)}>{c}</button>
             ))}
           </div>
-          {TOOLS.map(([c, list], i) => (
+          {TOOL_KINDS.map(([c, list], i) => (
             <ul key={c} id={'bt-tc' + i} role="tabpanel" aria-labelledby={'bt-tt' + i} className="bt-names" hidden={i !== cat}>
               {list.map(([f, n]) => <li key={f} data-cell=""><span className="bt-logo"><b aria-hidden="true">{n.replace(/[^A-Za-z0-9]/g, '').slice(0, 1)}</b><Pic src={`https://hanzo.ai/connectors/${f}.png`} alt={n} /></span><span>{n}</span><i aria-hidden="true">✓</i></li>)}
             </ul>
@@ -674,7 +703,7 @@ interface TermCopyProps {
 }
 function TermCopy({ text }: TermCopyProps) {
   const [ok, setOk] = useState(false);
-  const t = useRef(0);
+  const t = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => () => clearTimeout(t.current), []);
   const go = async () => {
     if (!(await copyText(text))) return;
@@ -780,7 +809,8 @@ function Install() {
 
 /* ---------- pricing: every paid plan from Go upward includes unlimited bots on hanzo.bot ---------- */
 const PERKS = ['Early access to new models and features', 'Train custom models on your data', 'Hanzo Engine to run models on your own hardware', 'Dedicated support'];
-const botPlansOf = (P) => [
+type PlanRow = [name: string, price: string, mult: string, lines: string[], id: string, perks: boolean];
+const botPlansOf = (P: Derived['plans']): PlanRow[] => [
   [P.go.name, '$' + P.go.price, '1x', ['Usage included on every model', 'Priority inference and priority support'], P.go.id, false],
   [P.pro.name, '$' + P.pro.price, '3x', ['3x more usage than Go', '3x higher limits than Go', ...(P.pro.hasTeam ? ['Hanzo Team (hanzo.team) workspace included'] : [])], P.pro.id, true],
   [P.dev.name, '$' + P.dev.price, '5x', ['5x more usage than Go', '5x higher limits than Go', ...(P.dev.hasTeam ? ['Hanzo Team (hanzo.team) workspace included'] : [])], P.dev.id, true],
@@ -793,7 +823,7 @@ const FEATS = [
   ['Independent Markdown Memory', 'Private workspace memory files (MEMORY.md) so multiple bots never pollute each other’s context.'],
   ['Parallel Schedules & Cron', 'Run background jobs simultaneously across unlimited bots without hitting single-bot queues.'],
 ];
-const whyOf = (P, F) => [
+const whyOf = (P: Derived['plans'], F: Derived['floor']) => [
   ['Compute Floor', `Why a ${usd(F.bot)}/mo entry floor?`, 'Not a chat window. A resident cloud computer.', `Standard chat models terminate compute as soon as tokens finish streaming. A resident Hanzo Bot lives in an active cloud sandbox with its own Chromium browser, bash terminal, isolated filesystem, and scheduled cron jobs. The ${usd(F.bot)}/month floor unlocks hanzo.bot with unlimited bots.`],
   ['Token Economics', 'Routine work at 1/5th the token cost', 'Intelligent routing through Enso & Kai.', 'Up to 90% of a resident bot’s daily work consists of triaging inboxes, summarizing documents, parsing receipts, and scraping pages. Rather than burning expensive frontier reasoning on routine tasks, Hanzo Bot routes routine loops through Enso Flash & Kai at a fraction of frontier token cost.'],
   ['Frontier Autonomy', `Ultra tier for massive workloads (${usd(P.ultra.price)}/mo)`, 'Unlimited usage across every model, 25x higher rate limits.', `When your bots need deep multi-hour research, autonomous software engineering, or multi-step strategic analysis, the Ultra tier (${usd(P.ultra.price)}/mo) includes unlimited usage across every model with 25x higher rate limits than Go and priority queue access.`],

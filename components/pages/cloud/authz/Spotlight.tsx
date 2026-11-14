@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionTemplate, useMotionValue, useReducedMotion } from 'motion/react';
 import './Spotlight.css';
 
-const MOVE = [0.4, 0, 0.2, 1];
+const MOVE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 const pad = (n: number) => String(n).padStart(2, '0');
 
 interface TileProps {
@@ -101,7 +101,7 @@ export default function Spotlight({ rules, decisions, children }: SpotlightProps
   }, [ready, seen, mine, calm, wide, at]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!ready || wide || mine) return;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | 0 = 0;
     const f = () => {
       clearTimeout(t);
       t = setTimeout(() => {

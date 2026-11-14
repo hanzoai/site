@@ -16,8 +16,12 @@ import Sigil from '../../Sigil';
 import { A } from '../../kit';
 import FamLines from '../../v2/FamLines';
 import { ui } from '../../v2/famUi';
+import type { ChainsBlock, Cover, ItemsBlock } from './types';
 
-export function Picks({ b }) {
+interface PicksProps {
+  b: ItemsBlock;
+}
+export function Picks({ b }: PicksProps) {
   const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.5 });
   const calm = useReducedMotion();
@@ -30,7 +34,7 @@ export function Picks({ b }) {
     const t = setTimeout(() => { const nx = at + 1; if (nx >= n) { setWalked(true); setAt(0); } else setAt(nx); }, 2600);
     return () => clearTimeout(t);
   }, [seen, mine, walked, calm, n, at]);
-  const pick = (k) => { setMine(true); setAt(k); };
+  const pick = (k: number) => { setMine(true); setAt(k); };
   return (
     <section className="v2f-sec xb3-picks" ref={box}>
       <div className="v2f-wrap v2f-grid">
@@ -65,7 +69,13 @@ export function Picks({ b }) {
   );
 }
 
-export function Chains({ b, all, self, seed }) {
+interface ChainsProps {
+  b: ChainsBlock;
+  all: Cover[];
+  self: string;
+  seed: string;
+}
+export function Chains({ b, all, self, seed }: ChainsProps) {
   const [pick, setPick] = useState(b.chains[0]);
   const [open, setOpen] = useState(false);
   const every = useMemo(() => [...new Set(all.flatMap((p) => p.chains))], [all]);
@@ -83,7 +93,7 @@ export function Chains({ b, all, self, seed }) {
   }, [open]);
   const yes = b.chains.includes(pick);
   const others = all.filter((p) => p.slug !== self && p.chains.includes(pick));
-  const choose = (c) => setPick(c); // aria-pressed: the sound kit ticks by itself
+  const choose = (c: string) => setPick(c); // aria-pressed: the sound kit ticks by itself
   return (
     <section className="v2f-sec xb3-chains">
       <div className="v2f-wrap v2f-grid">
@@ -126,10 +136,10 @@ export function TiltRail({ children }: TiltRailProps) {
   useEffect(() => {
     const el = ref.current;
     if (!el || !matchMedia('(pointer: fine), (pointer: none)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let last = null;
-    const flat = (c) => { if (c) { c.style.removeProperty('--rx'); c.style.removeProperty('--ry'); } };
+    let last: HTMLElement | null = null;
+    const flat = (c: HTMLElement | null) => { if (c) { c.style.removeProperty('--rx'); c.style.removeProperty('--ry'); } };
     const move = (e: PointerEvent) => {
-      const c = e.target.closest && e.target.closest('.v2f-next-c');
+      const c = e.target instanceof Element ? e.target.closest<HTMLElement>('.v2f-next-c') : null;
       if (c !== last) { flat(last); last = c; }
       if (!c) return;
       const r = c.getBoundingClientRect();

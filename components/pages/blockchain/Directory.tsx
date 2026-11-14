@@ -16,6 +16,7 @@
    V2: 8/10 no eyebrow, ink only, the live count as the one figure (it starts large and settles as you scroll), sticky filters with a legend that lights its mark in every card, cards that open into a sheet above the header, list rows reaching the phone's first screen, the Web3 products as a closing rail. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup, useReducedMotion } from 'motion/react';
+import type { Transition } from 'motion/react';
 import Sigil from '../../Sigil';
 import FamLines from '../../v2/FamLines';
 import FamGrow from '../../v2/FamGrow';
@@ -24,18 +25,19 @@ import { ui } from '../../v2/famUi';
 import '../../v2/fam.css';
 import './blockchain.css';
 import './BlockPage.css';
+import type { Card, Cover, Listing } from './types';
 
-const KIND = { All: () => true, L1s: (k: string) => k === 'L1', L2s: (k: string) => k === 'L2', Rollups: (k: string) => /ROLLUP/i.test(k), 'Lux Ecosystem': (k: string) => /Lux/i.test(k), Cosmos: (k: string) => /COSMOS/i.test(k), Other: (k: string) => /OTHER/i.test(k) };
-const SPRING = { duration: 0.3, ease: [0.16, 1, 0.3, 1] }; // MASTER 3.1: ease-emphasis 300 ms, no springs
+const KIND: Record<string, (k: string) => boolean> = { All: () => true, L1s: (k: string) => k === 'L1', L2s: (k: string) => k === 'L2', Rollups: (k: string) => /ROLLUP/i.test(k), 'Lux Ecosystem': (k: string) => /Lux/i.test(k), Cosmos: (k: string) => /COSMOS/i.test(k), Other: (k: string) => /OTHER/i.test(k) };
+const SPRING: Transition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] }; // MASTER 3.1: ease-emphasis 300 ms, no springs
 
 interface SheetProps {
-  c: never;
+  c: Card;
   onClose: () => void;
 }
 function Sheet({ c, onClose }: SheetProps) {
   const x = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    const back = document.activeElement;
+    const back = document.activeElement as HTMLElement | null; // focus() lives on HTMLElement; the opener is a button
     x.current && x.current.focus({ preventScroll: true });
     const key = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     addEventListener('keydown', key);
@@ -67,15 +69,19 @@ function Sheet({ c, onClose }: SheetProps) {
   );
 }
 
-export default function Directory({ doc, all = [] }) {
+interface DirectoryProps {
+  doc: Listing;
+  all?: Cover[];
+}
+export default function Directory({ doc, all = [] }: DirectoryProps) {
   const [q, setQ] = useState('');
   const [kind, setKind] = useState(doc.filters[0] || 'All');
-  const [prod, setProd] = useState(null);
-  const [peek, setPeek] = useState(null); // a legend name under the pointer lights its mark in every card
-  const [open, setOpen] = useState(null);
+  const [prod, setProd] = useState<string | null>(null);
+  const [peek, setPeek] = useState<string | null>(null); // a legend name under the pointer lights its mark in every card
+  const [open, setOpen] = useState<string | null>(null);
   const calm = useReducedMotion();
   const t = q.trim().toLowerCase();
-  const fit = (c) => (KIND[kind] || KIND.All)(c.kind) && (!t || (c.name + ' ' + (c.id || '') + ' ' + c.kind).toLowerCase().includes(t)) && (!prod || c.marks.some((m) => m.p === prod && m.on));
+  const fit = (c: Card) => (KIND[kind] || KIND.All)(c.kind) && (!t || (c.name + ' ' + (c.id || '') + ' ' + c.kind).toLowerCase().includes(t)) && (!prod || c.marks.some((m) => m.p === prod && m.on));
   const n = doc.cards.filter(fit).length;
   const card = open && doc.cards.find((c) => c.name === open);
   return (

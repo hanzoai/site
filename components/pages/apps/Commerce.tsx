@@ -272,7 +272,7 @@ interface BoardProps {
 }
 function Board({ proc }: BoardProps) {
   const [ref, live, calm] = useLive(0.3);
-  const tilt = useEnter('tilt');
+  const tilt = useEnter<HTMLDivElement>('tilt');
   const [rows, setRows] = useState([0, 1, 2, 3]);
   const [last, setLast] = useState(2);
   const [paused, setPaused] = useState(false);

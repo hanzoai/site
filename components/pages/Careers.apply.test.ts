@@ -32,8 +32,9 @@ test('the candidate lead: the role, the person, an https link for each address a
 });
 
 test('the application goes to the gateway; a refusal is Hanzo\'s sentence', async () => {
-  const seen = [];
-  globalThis.fetch = async (url, init) => { seen.push([url, init.method, JSON.parse(init.body).source]); return { ok: false, status: 503 }; };
+  const seen: [string, string | undefined, string][] = [];
+  // a test double: answers only the fields of a Response the code under test reads
+  globalThis.fetch = (async (url: string, init: RequestInit) => { seen.push([url, init.method, JSON.parse(init.body as string).source]); return { ok: false, status: 503 }; }) as unknown as typeof fetch;
   const r = await send(role, answers(pairs), null, false);
   assert.deepEqual(seen, [['https://api.hanzo.ai/v1/marketing/leads', 'POST', 'hanzo.ai/careers/compiler-engineer']]);
   assert.equal(r.error, 'Your application did not reach us. Please try again, or email it to careers@hanzo.ai.');

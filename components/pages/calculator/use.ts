@@ -4,6 +4,8 @@
 // which is the state the export prerenders, then `ready` or `unreachable`.
 import { useEffect, useState } from 'react';
 import { readPricing, readSummary, readServed } from './sources.ts';
+import type { Get } from './sources.ts';
+import type { Reading } from './types.ts';
 
 const PATIENCE = 15000;
 const get = async (url: string | URL | Request) => {
@@ -11,16 +13,18 @@ const get = async (url: string | URL | Request) => {
   if (!r.ok) throw new Error(`${r.status} from ${url}`);
   return r.json();
 };
-const pending = new Map();
-const once = (reader) => {
-  let got = pending.get(reader);
+type Reader<T> = (get: Get) => Promise<T>;
+// one promise per reader, each reader's own kind
+const pending = new Map<Reader<unknown>, Promise<unknown>>();
+const once = <T,>(reader: Reader<T>): Promise<T> => {
+  let got = pending.get(reader) as Promise<T> | undefined;
   if (!got) pending.set(reader, (got = reader(get)));
   return got;
 };
 
 /** Where a read stands: { state: 'loading' }, { state: 'ready', data } or { state: 'unreachable', error }. */
-function useReading(reader) {
-  const [now, setNow] = useState({ state: 'loading' });
+function useReading<T>(reader: Reader<T>): Reading<T> {
+  const [now, setNow] = useState<Reading<T>>({ state: 'loading' });
   useEffect(() => {
     let open = true;
     once(reader).then((data) => open && setNow({ state: 'ready', data }), (error) => open && setNow({ state: 'unreachable', error }));

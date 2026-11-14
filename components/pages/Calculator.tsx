@@ -9,6 +9,7 @@
    Copy: every label, note and disclaimer is hanzo.ai's own, word for word. */
 import type { ReactNode } from 'react';
 import { useState } from 'react';
+import type { Cov, Evidence, State } from './Calculator.data';
 import Savings from './calculator/Savings';
 import { useModels } from './calculator/use';
 import {
@@ -37,7 +38,7 @@ interface H2Props {
 const H2 = ({ children }: H2Props) => <h2 className="xc-h2">{children}</h2>;
 interface CardProps {
   accent?: boolean;
-  as?: string;
+  as?: 'div' | 'section';
   children: ReactNode;
 }
 const Card = ({ accent, as: Tag = 'div', children }: CardProps) => <Tag className={'xc-card' + (accent ? ' accent' : '')}>{children}</Tag>;
@@ -47,7 +48,12 @@ interface ControlsProps {
 const Controls = ({ children }: ControlsProps) => <div className="xc-controls">{children}</div>;
 
 /** A control's caption, in small caps; `shows` is its value at the right. */
-function Caption({ id, shows, children }) {
+interface CaptionProps {
+  id: string;
+  shows?: ReactNode;
+  children: ReactNode;
+}
+function Caption({ id, shows, children }: CaptionProps) {
   return (
     <label className="xc-cap" htmlFor={id}>
       <span>{children}</span>
@@ -57,7 +63,17 @@ function Caption({ id, shows, children }) {
 }
 
 /** A slider in a card, its caption above it. */
-function Range({ id, label, shows, min, max, step, value, onChange }) {
+interface RangeProps {
+  id: string;
+  label: string;
+  shows: ReactNode;
+  min: number;
+  max: number;
+  step: number;
+  value: number;
+  onChange: (value: number) => void;
+}
+function Range({ id, label, shows, min, max, step, value, onChange }: RangeProps) {
   return (
     <Card>
       <Caption id={id} shows={shows}>{label}</Caption>
@@ -67,7 +83,17 @@ function Range({ id, label, shows, min, max, step, value, onChange }) {
 }
 
 /** A number field; `narrow` for a price cell in the table. */
-function Field({ id, label, min, step, value, placeholder, narrow, onChange }) {
+interface FieldProps {
+  id: string;
+  label?: string;
+  min: number;
+  step?: number;
+  value: number | string;
+  placeholder?: string;
+  narrow?: boolean;
+  onChange: (value: number) => void;
+}
+function Field({ id, label, min, step, value, placeholder, narrow, onChange }: FieldProps) {
   return (
     <input
       id={id}
@@ -126,9 +152,15 @@ const Toggle = ({ pressed, onPress, children }: ToggleProps) => (
 );
 
 /** A grade: a word in an outline, in its grade's ink; a button where the grade can be changed. */
-const COV_INK = { full: 'save', partial: 'warn', experimental: 'cost', roadmap: 'grey' };
-const EV_INK = { verified: 'save', gap: 'cost', internal: 'grey', repo: 'grey', attested: 'warn' };
-function Chip({ ink, title, onPress, children }) {
+const COV_INK: Record<Cov, string> = { full: 'save', partial: 'warn', experimental: 'cost', roadmap: 'grey' };
+const EV_INK: Record<Evidence, string> = { verified: 'save', gap: 'cost', internal: 'grey', repo: 'grey', attested: 'warn' };
+interface ChipProps {
+  ink: string;
+  title?: string;
+  onPress?: () => void;
+  children: ReactNode;
+}
+function Chip({ ink, title, onPress, children }: ChipProps) {
   const cls = 'xc-chip ' + ink;
   return onPress
     ? <button type="button" className={cls} title={title} onClick={onPress}>{children}</button>
@@ -150,7 +182,7 @@ const BASE = model(initial()).software;
 
 export default function Calculator() {
   const [s, setS] = useState(initial);
-  const up = (patch) => setS((x) => ({ ...x, ...patch }));
+  const up = (patch: Partial<State>) => setS((x) => ({ ...x, ...patch }));
   const [aiOpen, setAiOpen] = useState(false);
   const models = useModels();
   const m = model(s);

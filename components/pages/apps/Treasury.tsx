@@ -24,7 +24,7 @@ import { useLive, useEvery } from '../cloud/Frame';
 import LineMask from '../../v2/x-gauss/LineMask';
 import NoJs from '../../v2/x-gauss/NoJs';
 import { usePause } from '../../v2/x-gauss/Pause';
-import { CalcProvider, Calculator, useCalc } from './treasury/calc';
+import { CalcProvider, Calculator, useCalc, type Calc } from './treasury/calc';
 import { useEnter, Scramble, Pixels } from './treasury/enter';
 import '../../v2/Scale.css';
 import '../../v2/x-gauss/Rhythm.css';
@@ -119,7 +119,7 @@ function Streams({ shown, done, still }: StreamsProps) {
   );
 }
 /* the editor's lines carry the calculator's figures (the server paints Hanzo's own: 10000, 90%, 5%) */
-function codeLine(t: string, l: string, c: { parts: number[]; set: () => void; a: number; p0: number; p1: number; }) {
+function codeLine(t: string, l: string, c: Calc) {
   if (t === 's') return `send [USD/2 ${c.a}] (`;
   if (t === 'd0') return `    ${(c.p0 + '%').padEnd(4)}to @merchants:042`;
   if (t === 'd1') return `    ${(c.p1 + '%').padEnd(4)}to @fees:processing`;
@@ -181,12 +181,15 @@ const PARTS = [
 
 /* Chapter visuals: the same ledger, drawn for each part. Only the split's own figures appear. While a chapter is in
    view its rows are read in turn, one lit at a time, so the card is never a still table. */
-function useRow(on, n: number, ms = 1300) {
+function useRow(on: boolean, n: number, ms = 1300) {
   const [r, setR] = useState(0);
   useEvery(ms, on, () => setR((v) => (v + 1) % n));
   return r;
 }
-function Postings({ on }) {
+interface OnProps {
+  on: boolean;
+}
+function Postings({ on }: OnProps) {
   const r = useRow(on, 3);
   const s = useCalc();
   return (
@@ -198,7 +201,7 @@ function Postings({ on }) {
     </div>
   );
 }
-function Recon({ on }) {
+function Recon({ on }: OnProps) {
   const r = useRow(on, 3);
   return (
     <div className="ts-v" aria-hidden="true">
@@ -210,7 +213,7 @@ function Recon({ on }) {
     </div>
   );
 }
-function Balances({ on }) {
+function Balances({ on }: OnProps) {
   const r = useRow(on, 3);
   const s = useCalc();
   return (
@@ -224,7 +227,13 @@ function Balances({ on }) {
 /* Chapter 04, the Beyond: the 10,000 travels from @users:001 into the hold, then on to @merchants:042 (or back). */
 const SPOTS = ['@users:001', 'held', '@merchants:042'];
 // the wallet's states, from the calculator's split (Hanzo's 10,000 / 9,000 / 500 / 500 by default)
-const states = ({ a, parts: [m, f, r] }) => {
+type WalletState = 'idle' | 'held' | 'paid' | 'back';
+interface WalletView {
+  at: number;
+  coin: string;
+  log: string[];
+}
+const states = ({ a, parts: [m, f, r] }: Calc): Record<WalletState, WalletView> => {
   const A = fmt(a), take = '@users:001 → held · ' + A;
   return {
     idle: { at: 0, coin: A, log: [] },
@@ -233,17 +242,17 @@ const states = ({ a, parts: [m, f, r] }) => {
     back: { at: 0, coin: A, log: [take, 'held → @users:001 · ' + A] },
   };
 };
-const AUTO = ['idle', 'held', 'paid', 'idle', 'held', 'back'];
+const AUTO: WalletState[] = ['idle', 'held', 'paid', 'idle', 'held', 'back'];
 interface IcoProps {
   d: string;
 }
 const Ico = ({ d }: IcoProps) => <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d={d} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-function Wallet({ on }) {
-  const [s, setS] = useState('held');
+function Wallet({ on }: OnProps) {
+  const [s, setS] = useState<WalletState>('held');
   const [mine, setMine] = useState(false);
   const [i, setI] = useState(1);
   useEvery(2400, on && !mine, () => { const n = (i + 1) % AUTO.length; setI(n); setS(AUTO[n]); });
-  const go = (x: string) => { setMine(true); setS(x); };
+  const go = (x: WalletState) => { setMine(true); setS(x); };
   const v = states(useCalc())[s];
   return (
     <div className="ts-v ts-hv">
@@ -264,7 +273,7 @@ function Wallet({ on }) {
     </div>
   );
 }
-function Flow({ on }) {
+function Flow({ on }: OnProps) {
   const [k, setK] = useState(0);
   useEvery(900, on, () => setK((v) => (v + 1) % 5));
   return (
@@ -341,8 +350,8 @@ function PartsCarousel() {
   const [at, setAt] = useState(0);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const ids = [0, 1, 2, 4];
-  const step = (k: number) => { const el = tr.current; const c = el.children[0]; if (c) el.scrollBy({ left: k * (c.getBoundingClientRect().width + 12), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); };
-  const onScroll = () => { const el = tr.current; const c = el.children[0]; if (c) setAt(Math.min(3, Math.round(el.scrollLeft / (c.getBoundingClientRect().width + 12)))); };
+  const step = (k: number) => { const el = tr.current!; const c = el.children[0]; if (c) el.scrollBy({ left: k * (c.getBoundingClientRect().width + 12), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); };
+  const onScroll = () => { const el = tr.current!; const c = el.children[0]; if (c) setAt(Math.min(3, Math.round(el.scrollLeft / (c.getBoundingClientRect().width + 12)))); };
   return (
     <section ref={ref} data-enter={st} className="ts-car ten-car" aria-label="What it is made of">
       <div className="w2-wrap ts-car-top">

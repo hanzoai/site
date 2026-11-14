@@ -3,27 +3,39 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { load, find, findAll, textOf, tag, isN } from '../htmltree';
+import type { Branch, Child, Meta } from '../htmltree';
 import { codeOf } from '../models/modelsData';
+import type { Anchor, Button, Card, ChainsBlock, Chip, Cover, Item, Kind, Listing, Of, Overview, Para, Product, Row, Span } from './types';
 
 const ROOT = process.cwd();
-let IDX;
-const idx = () => (IDX ||= JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'pages.json'), 'utf8')));
-export const metaOf = (route: string) => idx()[route];
+let IDX: Record<string, Meta> | undefined;
+const idx = (): Record<string, Meta> => (IDX ||= JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'pages.json'), 'utf8')));
+export const metaOf = (route: string): Meta | undefined => idx()[route];
 export const SLUGS = () => Object.keys(idx()).filter((p) => /^\/blockchain\/[^/]+$/.test(p)).map((p) => p.split('/')[2]);
 const clean = (s: string) => (s || '').replace(/\s+/g, ' ').trim();
 const raw = (rel: string) => fs.readFileSync(path.join(ROOT, 'content', 'pages', rel + '.html'), 'utf8');
 
-function sections(root) {
-  const out = [];
-  const walk = (n) => { if (!isN(n)) return; if (n.t === 'section') { out.push(n); return; } n.c.forEach(walk); };
+/* narrow a flowed row to one kind, or to one kind with a slot, a link or a name that matches */
+const is = <K extends Kind>(k: K) => (x: Row): x is Of<K> => x.k === k;
+const anchor = (slot: string) => (x: Row): x is Anchor => x.k === 'a' && x.slot === slot;
+const toward = (re: RegExp) => (x: Row): x is Anchor => x.k === 'a' && re.test(x.href);
+const button = (slot: string) => (x: Row): x is Button => x.k === 'button' && x.slot === slot;
+const para = (re: RegExp) => (x: Row): x is Para => x.k === 'p' && re.test(x.text);
+const ask = (x: Row): x is Button | Anchor => x.k === 'button' || (x.k === 'a' && x.slot === 'action');
+const pill = (x: Row): x is Chip | Span => x.k === 'chip' || x.k === 'span';
+const named = (x: Row): x is Span => x.k === 'span' && /\.\w{1,4}$/.test(x.text);
+
+function sections(root: Branch) {
+  const out: Branch[] = [];
+  const walk = (n: Child) => { if (!isN(n)) return; if (n.t === 'section') { out.push(n); return; } n.c.forEach(walk); };
   walk(root);
   return out;
 }
-const slotted = (n) => n.c.some((k) => isN(k) && ((k.a && k.a['data-slot']) || slotted(k)));
+const slotted = (n: Branch): boolean => n.c.some((k) => isN(k) && ((k.a && k.a['data-slot']) || slotted(k)));
 /* a section's words in reading order: headings, paragraphs, items, links, buttons, chips, code */
-function flow(sec) {
-  const out = [];
-  const walk = (n) => {
+function flow(sec: Branch) {
+  const out: Row[] = [];
+  const walk = (n: Child) => {
     if (!isN(n)) return;
     const s = n.a && n.a['data-slot'];
     if (n.t === 'pre') { out.push({ k: 'pre', code: codeOf(n) }); return; }
@@ -40,8 +52,8 @@ function flow(sec) {
   return out;
 }
 /* h3 + its sentence + its bullets + its link, as items */
-const items = (f) => {
-  const out = [];
+const items = (f: Row[]) => {
+  const out: Item[] = [];
   f.forEach((x) => {
     if (x.k === 'h3') out.push({ title: x.text, text: '', bullets: [], link: null });
     else if (out.length && x.k === 'p' && !out[out.length - 1].text) out[out.length - 1].text = x.text;
@@ -50,65 +62,70 @@ const items = (f) => {
   });
   return out;
 };
-const head = (f) => { const h3 = f.findIndex((x) => x.k === 'h3'); const pre = h3 < 0 ? f : f.slice(0, h3); return { title: (f.find((x) => x.k === 'h2') || {}).text || '', lede: (pre.find((x) => x.k === 'p') || {}).text || '' }; };
+const head = (f: Row[]) => { const h3 = f.findIndex((x) => x.k === 'h3'); const pre = h3 < 0 ? f : f.slice(0, h3); return { title: f.find(is('h2'))?.text || '', lede: pre.find(is('p'))?.text || '' }; };
 
-export function productDoc(slug: string) {
+export function productDoc(slug: string): Product | Listing {
+  return slug === 'directory' ? directoryDoc() : product(slug);
+}
+
+function product(slug: string): Product {
   const rel = 'blockchain/' + slug;
-  if (slug === 'directory') return directoryDoc();
   const secs = sections(load(rel)).map(flow);
-  const doc = { slug, route: '/' + rel, kind: 'product', i: SLUGS().indexOf(slug), blocks: [] };
+  const doc: Product = { slug, route: '/' + rel, kind: 'product', i: SLUGS().indexOf(slug), blocks: [], chains: [] };
   secs.forEach((f, i) => {
-    const h2 = (f.find((x) => x.k === 'h2') || {}).text || '';
+    const h2 = f.find(is('h2'))?.text || '';
     if (i === 0) {
       const cut = f.findIndex((x) => x.k === 'h2');
       const top = cut < 0 ? f : f.slice(0, cut), key = cut < 0 ? [] : f.slice(cut);
-      const h1 = top.find((x) => x.k === 'h1');
-      const ps = top.filter((x) => x.k === 'p');
+      const h1 = top.find(is('h1'));
+      const h1At = h1 ? top.indexOf(h1) : -1;
+      const ps = top.filter(is('p'));
       doc.hero = {
-        chip: (top.find((x) => x.k === 'chip') || top.find((x) => x.k === 'span' && top.indexOf(x) < top.indexOf(h1)) || {}).text || '',
-        title: h1 ? h1.text : '', claim: (ps.find((p) => p.slot === 'claim') || ps[0] || {}).text || '',
-        lede: (ps.find((p) => p.slot === 'lede') || ps[1] || {}).text || '',
-        features: items(top), back: top.find((x) => x.k === 'a' && x.slot === 'more') || null,
-        actions: top.filter((x) => x.k === 'a' && x.slot === 'action').map((a) => ({ label: a.text, href: a.href })),
+        chip: (top.find(is('chip')) || top.find((x): x is Span => x.k === 'span' && top.indexOf(x) < h1At))?.text || '',
+        title: h1 ? h1.text : '', claim: (ps.find((p) => p.slot === 'claim') || ps[0])?.text || '',
+        lede: (ps.find((p) => p.slot === 'lede') || ps[1])?.text || '',
+        features: items(top), back: top.find(anchor('more')) || null,
+        actions: top.filter(anchor('action')).map((a) => ({ label: a.text, href: a.href })),
       };
       if (key.length) {
-        const sp = key.filter((x) => x.k === 'span');
-        const tIdx = key.findIndex((x) => x.k === 'p' && /^Trusted/.test(x.text));
+        const sp = key.filter(is('span'));
+        const trust = key.find(para(/^Trusted/));
         doc.key = {
-          title: key[0].text, sub: (key.find((x) => x.k === 'p') || {}).text || '',
-          stats: sp.reduce((a, s, k) => (k % 2 ? (a[a.length - 1].push(s.text), a) : [...a, [s.text]]), []),
-          actions: key.filter((x) => x.k === 'button' || (x.k === 'a' && x.slot === 'action')).map((b) => b.text),
-          note: (key.find((x) => x.k === 'p' && /credit card/i.test(x.text)) || {}).text || '',
-          trusted: tIdx >= 0 ? { label: key[tIdx].text, tags: key.slice(tIdx + 1).filter((x) => x.k === 'chip').map((x) => x.text) } : null,
+          title: h2, sub: key.find(is('p'))?.text || '',
+          stats: sp.reduce<string[][]>((a, s, k) => (k % 2 ? (a[a.length - 1].push(s.text), a) : [...a, [s.text]]), []),
+          actions: key.filter(ask).map((b) => b.text),
+          note: key.find(para(/credit card/i))?.text || '',
+          trusted: trust ? { label: trust.text, tags: key.slice(key.indexOf(trust) + 1).filter(is('chip')).map((x) => x.text) } : null,
         };
       }
       return;
     }
-    const pre = f.find((x) => x.k === 'pre');
+    const pre = f.find(is('pre'));
     if (pre) {
-      const langs = f.filter((x) => x.k === 'button' && x.slot === 'more').map((b) => b.text);
-      const file = f.filter((x) => x.k === 'span' && /\.\w{1,4}$/.test(x.text)).map((x) => x.text)[0] || null;
+      const langs = f.filter(button('more')).map((b) => b.text);
+      const file = f.filter(named).map((x) => x.text)[0] || null;
       doc.blocks.push({ kind: 'code', ...head(f), langs, file, code: pre.code, items: items(f) });
-    } else if (/^Supported Chains/.test(h2)) doc.blocks.push({ kind: 'chains', title: h2, chains: f.filter((x) => x.k === 'chip' || x.k === 'span').map((x) => x.text) });
+    } else if (/^Supported Chains/.test(h2)) doc.blocks.push({ kind: 'chains', title: h2, chains: f.filter(pill).map((x) => x.text) });
     else if (f.some((x) => x.k === 'h3')) doc.blocks.push({ kind: 'items', ...head(f), items: items(f), cols: f.some((x) => x.k === 'li') ? 'wide' : '' });
-    else if (/^Get /.test(h2)) doc.blocks.push({ kind: 'get', title: h2, text: (f.find((x) => x.k === 'p') || {}).text || '', chips: f.filter((x) => x.k === 'chip' && !/github/.test(x.href || '')).map((x) => x.text), github: f.find((x) => x.k === 'a' && /github/.test(x.href)) || null, deploy: f.find((x) => x.k === 'a' && /deploy/.test(x.href)) || null });
-    else doc.blocks.push({ kind: 'band', ...head(f), links: f.filter((x) => x.k === 'a').map((a) => ({ label: a.text, href: a.href })), buttons: f.filter((x) => x.k === 'button').map((b) => b.text) });
+    else if (/^Get /.test(h2)) doc.blocks.push({ kind: 'get', title: h2, text: f.find(is('p'))?.text || '', chips: f.filter(is('chip')).map((x) => x.text), github: f.find(toward(/github/)) || null, deploy: f.find(toward(/deploy/)) || null });
+    else doc.blocks.push({ kind: 'band', ...head(f), links: f.filter(is('a')).map((a) => ({ label: a.text, href: a.href })), buttons: f.filter(is('button')).map((b) => b.text) });
   });
-  const chains = doc.blocks.find((b) => b.kind === 'chains');
+  const chains = doc.blocks.find((b): b is ChainsBlock => b.kind === 'chains');
   doc.chains = chains ? chains.chains : [];
   return doc;
 }
 
 /* the directory: filters, the product legend, and each chain with the products hanzo.ai marks it for */
-export function directoryDoc() {
+export function directoryDoc(): Listing {
   const rel = 'blockchain/directory';
   const html = raw(rel);
   const f = flow(sections(load(rel))[0] || load(rel));
   const all = flow(load(rel));
-  const h1 = all.find((x) => x.k === 'h1');
-  const legendAt = all.findIndex((x) => x.text === 'Hanzo Products:');
-  const legend = all.slice(legendAt + 1).filter((x) => x.k === 'span').map((x) => x.text).slice(0, 10);
-  const cards = [];
+  const h1 = all.find(is('h1'));
+  const h1At = h1 ? all.indexOf(h1) : -1;
+  const legendAt = all.findIndex((x) => x.k !== 'pre' && x.text === 'Hanzo Products:');
+  const legend = all.slice(legendAt + 1).filter(is('span')).map((x) => x.text).slice(0, 10);
+  const cards: Card[] = [];
   const parts = html.split(/<h3[^>]*>/).slice(1);
   for (const p of parts) {
     const name = clean(p.slice(0, p.indexOf('<')).replace(/&amp;/g, '&'));
@@ -119,47 +136,48 @@ export function directoryDoc() {
   }
   return {
     slug: 'directory', route: '/' + rel, kind: 'directory', i: SLUGS().indexOf('directory'),
-    label: (all.find((x) => x.k === 'span' && all.indexOf(x) < all.indexOf(h1)) || {}).text || 'Chain Resource Directory',
-    title: h1 ? h1.text : '', lede: (all.find((x) => x.k === 'p') || {}).text || '',
+    label: all.find((x): x is Span => x.k === 'span' && all.indexOf(x) < h1At)?.text || 'Chain Resource Directory',
+    title: h1 ? h1.text : '', lede: all.find(is('p'))?.text || '',
     search: (/placeholder="([^"]*)"/.exec(html) || [])[1] || null,
-    filters: all.filter((x) => x.k === 'button' && x.slot === 'action').map((b) => b.text),
+    filters: all.filter(button('action')).map((b) => b.text),
     legendLabel: 'Hanzo Products:', legend, cards, unused: f.length,
   };
 }
 
-export function overviewDoc() {
+export function overviewDoc(): Overview {
   const secs = sections(load('blockchain')).map(flow);
   const [hero, ...rest0] = secs;
-  const plain = (f) => !f.some((x) => x.k === 'h2');
+  const plain = (f: Row[]) => !f.some((x) => x.k === 'h2');
   const extras = rest0.filter(plain);
   const rest = rest0.filter((f) => !plain(f));
-  const h1 = hero.find((x) => x.k === 'h1');
-  const out = {
-    chip: (hero.find((x) => x.k === 'chip') || {}).text || '',
-    title: h1 ? h1.parts : [], lede: (hero.find((x) => x.k === 'p') || {}).text || '',
-    actions: hero.filter((x) => x.k === 'button' || (x.k === 'a' && x.slot === 'action')).map((b) => b.text),
-    note: (hero.filter((x) => x.k === 'p').slice(-1)[0] || {}).text || '',
-    cats: hero.filter((x) => x.k === 'span').map((x) => x.text),
-    facts: extras.flatMap((f) => f.filter((x) => x.k === 'span').map((x) => x.text)).reduce((a, t, k) => (k % 3 ? (a[a.length - 1].push(t), a) : [...a, [t]]), []),
+  const h1 = hero.find(is('h1'));
+  const out: Overview = {
+    chip: hero.find(is('chip'))?.text || '',
+    title: h1 ? h1.parts : [], lede: hero.find(is('p'))?.text || '',
+    actions: hero.filter(ask).map((b) => b.text),
+    note: hero.filter(is('p')).slice(-1)[0]?.text || '',
+    cats: hero.filter(is('span')).map((x) => x.text),
+    facts: extras.flatMap((f) => f.filter(is('span')).map((x) => x.text)).reduce<string[][]>((a, t, k) => (k % 3 ? (a[a.length - 1].push(t), a) : [...a, [t]]), []),
     blocks: [],
   };
   for (const f of rest) {
-    const h2 = f.find((x) => x.k === 'h2');
+    const h2 = f.find(is('h2'));
     const t = h2 ? h2.text : '';
-    if (f.some((x) => x.k === 'a' && /^\/blockchain\//.test(x.href || '')) && f.filter((x) => x.k === 'a').length > 6) {
-      out.blocks.push({ kind: 'pieces', ...head(f), cards: f.filter((x) => x.k === 'a').map((a) => ({ href: a.href, name: a.parts[0] || a.text, text: a.parts[1] || '', cta: a.parts[2] || '' })) });
+    const pre = f.find(is('pre'));
+    if (f.some((x) => x.k === 'a' && /^\/blockchain\//.test(x.href || '')) && f.filter(is('a')).length > 6) {
+      out.blocks.push({ kind: 'pieces', ...head(f), cards: f.filter(is('a')).map((a) => ({ href: a.href, name: a.parts[0] || a.text, text: a.parts[1] || '', cta: a.parts[2] || '' })) });
     } else if (f.some((x) => x.k === 'button' && x.parts.length > 1)) {
-      out.blocks.push({ kind: 'groups', ...head(f), groups: f.filter((x) => x.k === 'button').map((b) => ({ title: b.parts[0], text: b.parts[1] || '' })) });
-    } else if (f.some((x) => x.k === 'pre')) {
-      out.blocks.push({ kind: 'agent', chip: (f.find((x) => x.k === 'chip') || {}).text || '', title: h2 ? h2.parts : [], lede: (f.find((x) => x.k === 'p') || {}).text || '', bullets: f.filter((x) => x.k === 'li').map((x) => x.text), file: (f.find((x) => x.k === 'span' && /\.\w{1,4}$/.test(x.text)) || {}).text || null, code: f.find((x) => x.k === 'pre').code });
-    } else if (/chains/i.test(t) && f.filter((x) => x.k === 'span' || x.k === 'chip').length > 8) {
-      out.blocks.push({ kind: 'chains', ...head(f), chains: f.filter((x) => x.k === 'span' || x.k === 'chip').map((x) => x.text) });
+      out.blocks.push({ kind: 'groups', ...head(f), groups: f.filter(is('button')).map((b) => ({ title: b.parts[0], text: b.parts[1] || '' })) });
+    } else if (pre) {
+      out.blocks.push({ kind: 'agent', chip: f.find(is('chip'))?.text || '', title: h2 ? h2.parts : [], lede: f.find(is('p'))?.text || '', bullets: f.filter(is('li')).map((x) => x.text), file: f.find(named)?.text || null, code: pre.code });
+    } else if (/chains/i.test(t) && f.filter(pill).length > 8) {
+      out.blocks.push({ kind: 'chains', ...head(f), chains: f.filter(pill).map((x) => x.text) });
     } else {
-      out.blocks.push({ kind: 'band', ...head(f), buttons: f.filter((x) => x.k === 'button' || (x.k === 'a' && x.slot === 'action')).map((b) => b.text), links: f.filter((x) => x.k === 'a' && x.slot !== 'action').map((a) => ({ label: a.text, href: a.href })), points: f.filter((x) => x.k === 'span').map((x) => x.text) });
+      out.blocks.push({ kind: 'band', ...head(f), buttons: f.filter(ask).map((b) => b.text), links: f.filter((x): x is Anchor => x.k === 'a' && x.slot !== 'action').map((a) => ({ label: a.text, href: a.href })), points: f.filter(is('span')).map((x) => x.text) });
     }
   }
   return out;
 }
 
 /* every product's supported chains, for "which products run on my chain" */
-export const coverage = () => SLUGS().filter((s) => s !== 'directory').map((s) => { const d = productDoc(s); return { slug: s, href: d.route, name: d.hero ? d.hero.title : s, chains: d.chains, i: d.i, claim: d.hero ? d.hero.claim : '' }; }).filter((p) => p.chains.length);
+export const coverage = (): Cover[] => SLUGS().filter((s) => s !== 'directory').map((s) => { const d = product(s); return { slug: s, href: d.route, name: d.hero ? d.hero.title : s, chains: d.chains, i: d.i, claim: d.hero ? d.hero.claim : '' }; }).filter((p) => p.chains.length);

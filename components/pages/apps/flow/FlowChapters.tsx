@@ -8,12 +8,19 @@
    chapter stays in the HTML; with scripts off the phone list simply stacks.
    The heading leads each chapter; its "01 / 06" caption sits under it.
    Reduced motion: every chapter at full ink, no transitions; the stage still follows the chapter you read. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, useScroll, useMotionValueEvent, useReducedMotion } from 'motion/react';
 
 const two = (n: number) => String(n).padStart(2, '0');
 
-export default function FlowChapters({ items, label, stage, mini, children }) {
+interface FlowChaptersProps {
+  items: { t: ReactNode; d: ReactNode }[];
+  label: string;
+  stage: (at: number) => ReactNode;
+  mini: (at: number) => ReactNode;
+  children?: ReactNode;
+}
+export default function FlowChapters({ items, label, stage, mini, children }: FlowChaptersProps) {
   const ref = useRef<HTMLElement>(null);
   const run = useRef<HTMLDivElement>(null);
   const phone = useRef(false);
@@ -33,7 +40,7 @@ export default function FlowChapters({ items, label, stage, mini, children }) {
     mq.addEventListener('change', sync);
     // desktop: the chapter crossing the middle of the screen is the one in focus
     const els = [...ref.current!.querySelectorAll('[data-ch]')];
-    const io = new IntersectionObserver((es) => es.forEach((e) => !phone.current && e.isIntersecting && setAt(+e.target.dataset.ch)), { rootMargin: '-45% 0px -45% 0px' });
+    const io = new IntersectionObserver((es) => es.forEach((e) => !phone.current && e.isIntersecting && setAt(Number((e.target as HTMLElement).dataset.ch))), { rootMargin: '-45% 0px -45% 0px' });
     els.forEach((el) => io.observe(el));
     return () => { io.disconnect(); mq.removeEventListener('change', sync); };
   }, [n]);

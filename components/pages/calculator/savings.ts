@@ -5,13 +5,15 @@
 /** The hours in a month: 8,760 a year over twelve. */
 export const HOURS = (365 * 24) / 12;
 
-export const NO_TOKENS = { input: 0, output: 0 };
+import type { Listed, Model, PriceList, Rates, Served, Seat, Usage } from './types.ts';
+
+export const NO_TOKENS: Rates = { input: 0, output: 0 };
 
 /** What tokens (millions a month) cost at a rate (dollars per million), in dollars. */
-export const cost = (t, r) => t.input * r.input + t.output * r.output;
+export const cost = (t: Rates, r: Rates) => t.input * r.input + t.output * r.output;
 
 /** The tokens a monthly spend buys at a rate, given the share of tokens that are output (0 to 1). Null where the rate prices nothing. */
-export function bought(spend, share: number, r) {
+export function bought(spend: number, share: number, r: Rates) {
   const each = (1 - share) * r.input + share * r.output;
   if (!(each > 0) || !(spend >= 0)) return null;
   const total = spend / each;
@@ -19,13 +21,13 @@ export function bought(spend, share: number, r) {
 }
 
 /** What GPUs on all month cost: how many, at an hourly rate each. */
-export const gpus = (count, hourly) => count * hourly * HOURS;
+export const gpus = (count: number, hourly: number) => count * hourly * HOURS;
 
 /** One minus `of` over `against`: what `of` saves against `against`. Null when `against` is nothing. */
 export const saves = (of: number, against: number) => (against > 0 ? 1 - of / against : null);
 
 /** Where GPUs on all month cost what the same tokens cost at list: the monthly tokens, in millions, at the usage's own mix of input and output, and that as tokens a second around the clock. Null when the usage prices nothing. */
-export function even(monthly: number, usage, listed) {
+export function even(monthly: number, usage: Rates, listed: number) {
   const total = usage.input + usage.output;
   if (!(total > 0) || !(listed > 0)) return null;
   const millions = monthly / (listed / total);
@@ -33,7 +35,7 @@ export function even(monthly: number, usage, listed) {
 }
 
 /** Dollars: a whole amount bare, whole above a hundred, and to the cent below. */
-export const usd = (v) => `$${v.toLocaleString('en-US', v >= 100 || Number.isInteger(v) ? { maximumFractionDigits: 0 } : { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+export const usd = (v: number) => `$${v.toLocaleString('en-US', v >= 100 || Number.isInteger(v) ? { maximumFractionDigits: 0 } : { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 /** A rate as the price list states it: every digit it gives. */
 export const rate = (v: number) => `$${v}`;
@@ -56,29 +58,29 @@ export const amount = (v: string) => {
 /* A lab's model the calculator can price: paid, with both rates, at its list price, and itself. A `:batch` row is the
    same model discounted, and a `~` row ("~anthropic/claude-opus-latest") is an alias of whichever model is the lab's
    latest; both repeat a row that is already offered. */
-const priced = (m) => !m.isFree && m.pricing.input > 0 && m.pricing.output > 0 && !m.id.endsWith(':batch') && !m.id.startsWith('~');
+const priced = (m: Listed) => !m.isFree && m.pricing.input > 0 && m.pricing.output > 0 && !m.id.endsWith(':batch') && !m.id.startsWith('~');
 
 /* The models a reader picks from: every model of the labs the price list prices. The list's featured ones lead,
    dearest first, and the page opens on the first of them; every other follows under its lab, A to Z. What is
    offered is not curated, so a lab's new model is here the day the price list lists it. */
-export function labs(doc) {
+export function labs(doc: Pick<PriceList, 'thirdPartyModels'>) {
   const paid = doc.thirdPartyModels.filter(priced);
   const featured = paid.filter((m) => m.featured).sort((a, b) => b.pricing.output - a.pricing.output || a.name.localeCompare(b.name));
   const rest = paid.filter((m) => !m.featured);
   const byLab = [...new Set(rest.map((m) => m.provider))]
     .sort((a, b) => a.localeCompare(b))
-    .map((p) => [p, rest.filter((m) => m.provider === p).sort((a, b) => a.name.localeCompare(b.name))]);
+    .map((p): [string, Listed[]] => [p, rest.filter((m) => m.provider === p).sort((a, b) => a.name.localeCompare(b.name))]);
   return { featured, byLab, all: [...featured, ...byLab.flatMap(([, ms]) => ms)] };
 }
 
 /** Ours to move the tokens to: the Enso models the price list prices. */
-export const ours = (doc) => doc.hanzoModels.filter((m) => m.family === 'enso' && m.pricing?.input != null && m.pricing.output != null && !m.name.includes('/'));
+export const ours = (doc: Pick<PriceList, 'hanzoModels'>) => doc.hanzoModels.filter((m) => m.family === 'enso' && m.pricing?.input != null && m.pricing.output != null && !m.name.includes('/'));
 
 /** A model's rates, dollars per million tokens. */
-export const at = (m) => ({ input: m.pricing?.input ?? 0, output: m.pricing?.output ?? 0 });
+export const at = (m: Pick<Model, 'pricing'>): Rates => ({ input: m.pricing?.input ?? 0, output: m.pricing?.output ?? 0 });
 
 /** What Hanzo bills a provider's model at, from the model list, where it lists it. */
-export function billed(served, id) {
+export function billed(served: Served[] | null | undefined, id: string) {
   const p = served?.find((s) => s.id === id)?.pricing;
   return p?.input_per_million != null && p.output_per_million != null ? { input: p.input_per_million, output: p.output_per_million } : null;
 }
@@ -86,7 +88,18 @@ export function billed(served, id) {
 /* The three monthly figures for the reader's use. `rows` are { model, mTokIn, mTokOut, spend, share } (model = an id of
    `choices`), `mode` is 'tokens' or 'spend', `mine` the Enso model chosen, `team` the Team seat (or null), `people`
    the reader's headcount, `fleet` the GPU bill. */
-export function totals({ rows, mode, choices, mine, team, people, count, hour, served }) {
+interface TotalsInput {
+  rows: Usage[];
+  mode: 'tokens' | 'spend';
+  choices: Listed[];
+  mine: Model;
+  team: Seat | null;
+  people: number;
+  count: number;
+  hour: number;
+  served: Served[] | null;
+}
+export function totals({ rows, mode, choices, mine, team, people, count, hour, served }: TotalsInput) {
   const usage = rows.map((r) => {
     const m = choices.find((c) => c.id === r.model) ?? choices[0];
     const tokens = mode === 'tokens' ? { input: r.mTokIn, output: r.mTokOut } : bought(r.spend, Math.min(100, r.share) / 100, at(m)) ?? NO_TOKENS;
@@ -99,6 +112,7 @@ export function totals({ rows, mode, choices, mine, team, people, count, hour, s
   const cloud = onCloud + (seats ?? 0);
   const fleet = gpus(count, hour);
   const point = even(fleet, total, listed);
-  const kept = usage.every((u) => billed(served, u.m.id)) ? usage.reduce((s, u) => s + cost(u.tokens, billed(served, u.m.id)), 0) : null;
+  const rates = usage.map((u) => billed(served, u.m.id)).filter((r): r is Rates => r !== null);
+  const kept = rates.length === usage.length ? usage.reduce((s, u, i) => s + cost(u.tokens, rates[i]), 0) : null;
   return { usage, total, listed, onCloud, seats, cloud, fleet, point, kept };
 }

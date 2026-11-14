@@ -22,7 +22,7 @@ Round 3 (review 7/10): chapters 1-6 are one pinned stage on desktop (texts scrol
 import type React from 'react';
 import type { ReactNode } from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, useMotionValue, useTransform, animate, useInView, useReducedMotion } from 'motion/react';
+import { motion, useMotionValue, useTransform, animate, useInView, useReducedMotion, type MotionValue } from 'motion/react';
 import { A, More, Cta, Img, DataTable } from '../../kit';
 import { useLive } from '../cloud/Frame';
 import BizPaste from '../../v2/BizPaste';
@@ -33,12 +33,13 @@ const DOCS = 'https://docs.hanzo.ai';
 const GH = 'https://github.com/hanzoai';
 const IMG = '/models/zen.webp';
 // deck motion (MASTER §3.1): ease-in-out for things that move and stay, ease-out to follow, no springs
-const MOVE = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
-const FOLLOW = { duration: 0.3, ease: [0, 0, 0.2, 1] };
+type Bezier = [number, number, number, number];
+const MOVE: { duration: number; ease: Bezier } = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
+const FOLLOW: { duration: number; ease: Bezier } = { duration: 0.3, ease: [0, 0, 0.2, 1] };
 const two = (n: number) => String(n).padStart(2, '0');
 // a shift of the image (in % of its frame) moves its embedding through a fixed linear map: an illustration of a learned one
 const cl = (v: number) => Math.max(-44, Math.min(44, v));
-const emb = (x, y) => [cl(x * 2 + y * 0.7), cl(y * 1.9 - x * 0.6)];
+const emb = (x: number, y: number): [number, number] => [cl(x * 2 + y * 0.7), cl(y * 1.9 - x * 0.6)];
 const pct = (v: number) => v + '%';
 // other images' embeddings, fixed (a seeded scatter)
 const r2 = (v: number) => Math.round(v * 100) / 100;
@@ -47,7 +48,19 @@ const useIso = typeof window === 'undefined' ? () => {} : useLayoutEffect;
 const LOSSES = ['Huber', 'cycle-consistency', 'VICReg'];
 
 /* The embedding space: other embeddings, where z started (dashed), where it is (ink) and the predictor's guess (ring). */
-function Space({ ex, ey, px, py, guess, back, landed, out, home, children }) {
+interface SpaceProps {
+  ex: MotionValue<string>;
+  ey: MotionValue<string>;
+  px: string | MotionValue<string>;
+  py: string | MotionValue<string>;
+  guess: boolean;
+  back: boolean;
+  landed: boolean;
+  out: boolean;
+  home: string;
+  children?: ReactNode;
+}
+function Space({ ex, ey, px, py, guess, back, landed, out, home, children }: SpaceProps) {
   return (
     <div className="jn-space" aria-hidden="true">
       <i className="jn-ax x" /><i className="jn-ax y" />
@@ -98,7 +111,7 @@ const ReplayI = () => <svg viewBox="0 0 12 12" width="12" height="12" aria-hidde
    same button then replays it. */
 const PASSES = 2;
 function Figure1() {
-  const [ref, seen, calm] = useLive(0.3);
+  const [ref, seen, calm] = useLive<HTMLElement>(0.3);
   const [held, setHeld] = useState(false);
   const [done, setDone] = useState(false);
   const live = seen && !held && !done;
@@ -112,13 +125,14 @@ function Figure1() {
     if (!live) return;
     const [sx, sy] = SHIFTS[k % 4];
     const last = k % PASSES === PASSES - 1;
-    const ts = [
+    const steps: [number, () => void][] = [
       [600, () => { setPh(1); animate(ix, sx, MOVE); animate(iy, sy, MOVE); }],
       [1500, () => setPh(2)],
       [2900, () => { setPh(3); animate(ix, 0, MOVE); animate(iy, 0, MOVE); }],
       [3800, () => setPh(4)],
       [last ? 4700 : 5300, () => { if (last) setDone(true); else { setPh(0); setK((v) => v + 1); } }],
-    ].map(([t, f]) => setTimeout(f, t));
+    ];
+    const ts = steps.map(([t, f]) => setTimeout(f, t));
     return () => ts.forEach(clearTimeout);
   }, [k, live, ix, iy]);
   const press = () => {
@@ -207,8 +221,8 @@ interface KProps {
   children: ReactNode;
 }
 const K = ({ k = '', children }: KProps) => <g data-k={k}>{children}</g>;
-const grid = (x0: number, y0: number, s: number, f: ((i: number) => "fa" | "sk") | ((i: number) => "sk" | "fz") | (() => string)) => Array.from({ length: 16 }).map((_, i) => <rect key={i} x={x0 + (i % 4) * s + 2} y={y0 + Math.floor(i / 4) * s + 2} width={s - 4} height={s - 4} rx="3" className={f(i)} />);
-const seeded = (n: number, cx: string | number, cy: string | number, r: number, s: string | number) => Array.from({ length: n }, (_, i) => { const a = (i * 2.39996 + s) % 6.2832, d = r * Math.sqrt(((i * 7 + s * 13) % n) / n + 0.08); return [r2(cx + Math.cos(a) * d), r2(cy + Math.sin(a) * d * 0.8)]; });
+const grid = (x0: number, y0: number, s: number, f: (i: number) => string) => Array.from({ length: 16 }).map((_, i) => <rect key={i} x={x0 + (i % 4) * s + 2} y={y0 + Math.floor(i / 4) * s + 2} width={s - 4} height={s - 4} rx="3" className={f(i)} />);
+const seeded = (n: number, cx: number, cy: number, r: number, s: number) => Array.from({ length: n }, (_, i) => { const a = (i * 2.39996 + s) % 6.2832, d = r * Math.sqrt(((i * 7 + s * 13) % n) / n + 0.08); return [r2(cx + Math.cos(a) * d), r2(cy + Math.sin(a) * d * 0.8)]; });
 const TRIP3 = 'M402 246 C 340 300, 140 300, 78 246';
 const LOOP4 = 'M454 96 C 497.5 84, 517 130.5, 502 160.5 C 487 192, 430 192, 418 154.5 C 409 123, 427 100.5, 445 96';
 
@@ -240,7 +254,7 @@ const FIGS = [
   </svg>,
   <svg key="f3" viewBox="0 0 480 320" className="jn-svg" aria-hidden="true">
     <Ar id="jn-a3" />
-    {[[20, 0, 0, ''], [190, 16, -10, 'a'], [360, 0, 0, 'c']].map(([x, dx, dy, k], i) => (
+    {([[20, 0, 0, ''], [190, 16, -10, 'a'], [360, 0, 0, 'c']] as const).map(([x, dx, dy, k], i) => (
       <K key={i} k={k}>
         <rect x={x} y="30" width="100" height="100" rx="10" className="sk" />
         <circle cx={x + 50 + dx} cy={80 + dy} r="22" className={i === 1 ? 'fk' : 'fg'} />
@@ -307,7 +321,7 @@ const FIGS = [
   <svg key="f6" viewBox="0 0 480 320" className="jn-svg" aria-hidden="true">
     {/* the clusters start bunched at the middle and separate by class when drawn in */}
     <K k="a">
-      {[[120, 120, 0, 'fk'], [250, 90, 3, 'fg'], [170, 230, 5, 'fl'], [300, 210, 7, 'fo']].map(([cx, cy, s, c]) => (
+      {([[120, 120, 0, 'fk'], [250, 90, 3, 'fg'], [170, 230, 5, 'fl'], [300, 210, 7, 'fo']] as const).map(([cx, cy, s, c]) => (
         <g key={c} className="jn-clu" style={{ '--x': (210 - cx) * 0.8 + 'px', '--y': (165 - cy) * 0.8 + 'px' }}>
           {seeded(16, cx, cy, 48, s).map(([x, y], i) => <circle key={c + i} cx={x} cy={y} r="5" className={c} />)}
         </g>
@@ -340,7 +354,9 @@ const FIGS = [
   </svg>,
 ];
 
-const SECS = [
+/* a chapter: title, headline lines, text, the figure's lettered parts */
+type Sec = [string, string[], string, string[]];
+const SECS: Sec[] = [
   ['I-JEPA', ['I-JEPA'], 'A clean implementation of the image variant: a context encoder, a target encoder that is its moving average, and a predictor that has to guess the target embeddings. Both a ViT and an energy-transformer backbone.', ['context encoder', 'target encoder, its moving average', 'predictor', 'target embeddings']],
   ['Saccade JEPA', ['Saccade', 'JEPA'], 'Ours. Eyes jitter constantly and the brain predicts what the jitter will do to the scene, so the model shifts an image, predicts how its embedding moves, and shifts back to check it lands where it started.', ['shift the image', 'predict how its embedding moves', 'shift back', 'lands where it started']],
   ['Three losses at once', ['Three losses', 'at once'], 'Huber loss on the prediction, a cycle-consistency term that punishes drift on the round trip, and the invariance and covariance parts of VICReg to stop the representation collapsing.', ['Huber loss on the prediction', 'cycle-consistency: drift on the round trip', 'VICReg: invariance and covariance']],
@@ -358,7 +374,7 @@ const run = (i: number) => (i < BREAK ? ' ra' : ' rb');
    time a chapter crosses the line; stacked (phone, or the break-out chapter) a figure draws in once at 60% visible.
    The server HTML is the finished drawing; JS off, reduced motion and a figure already on screen show it as is. */
 function useDraw(staged: boolean | undefined, on: boolean | undefined) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const prep = useRef<boolean | null>(null);
   const [armed, setArmed] = useState(false);
   const [seen, setSeen] = useState(false);
@@ -369,13 +385,13 @@ function useDraw(staged: boolean | undefined, on: boolean | undefined) {
       prep.current = !matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (prep.current) {
         let s = 0, f = 0;
-        el.querySelectorAll('svg .sk, svg .sa, svg .sg').forEach((n) => {
+        el.querySelectorAll<SVGElement>('svg .sk, svg .sa, svg .sg').forEach((n) => {
           if (n.closest('marker') || n.classList.contains('dash') || n.hasAttribute('stroke-dasharray')) return;
           n.setAttribute('pathLength', '1');
           n.classList.add('jn-dw');
           n.style.transitionDelay = Math.min(s++, 12) * 50 + 'ms';
         });
-        el.querySelectorAll('svg .fk, svg .fa, svg .fg, svg .fl, svg .fz, svg .fo').forEach((n) => { n.style.transitionDelay = 320 + Math.min(f++, 40) * 20 + 'ms'; });
+        el.querySelectorAll<SVGElement>('svg .fk, svg .fa, svg .fg, svg .fl, svg .fz, svg .fo').forEach((n) => { n.style.transitionDelay = 320 + Math.min(f++, 40) * 20 + 'ms'; });
       }
     }
     if (!prep.current) return;
@@ -389,22 +405,22 @@ function useDraw(staged: boolean | undefined, on: boolean | undefined) {
   const drawn = staged ? on : seen;
   useEffect(() => {
     if (!armed || !drawn) return;
-    const t = setTimeout(() => ref.current?.querySelectorAll('animateMotion').forEach((a) => a.beginElement && a.beginElement()), 900);
+    const t = setTimeout(() => ref.current?.querySelectorAll<SVGAnimationElement>('animateMotion').forEach((a) => a.beginElement && a.beginElement()), 900);
     return () => clearTimeout(t);
   }, [armed, drawn]);
-  return [ref, armed ? ' armed' + (drawn ? ' drawn' : '') : ''];
+  return [ref, armed ? ' armed' + (drawn ? ' drawn' : '') : ''] as const;
 }
 
 interface FigProps {
   i: number;
-  keys: string | string[];
+  keys: string[];
   plate?: boolean;
   staged?: boolean;
   on?: boolean;
 }
 function Fig({ i, keys, plate, staged, on }: FigProps) {
   const [ref, st] = useDraw(plate && staged, on);
-  const [hot, setHot] = useState(null);
+  const [hot, setHot] = useState<string | null>(null);
   // left alone, a drawn figure walks itself through its lettered parts (a, b, c...), one at a time, then rests whole
   const [walk, setWalk] = useState(-1);
   const seen = useInView(ref, { amount: 0.4 });
@@ -416,7 +432,7 @@ function Fig({ i, keys, plate, staged, on }: FigProps) {
     return () => clearTimeout(t);
   }, [live, walk, keys.length]);
   const lit = walk >= 0 && walk < keys.length ? 'abcd'[walk] : null;
-  const over = (e: React.PointerEvent<HTMLDivElement>) => { const g = e.target.closest?.('[data-k]'); setHot(g && g.dataset.k ? g.dataset.k : null); };
+  const over = (e: React.PointerEvent<HTMLDivElement>) => { const g = (e.target as Element).closest?.<SVGElement>('[data-k]'); setHot(g && g.dataset.k ? g.dataset.k : null); };
   return (
     <figure
       ref={ref} data-fig={i} data-hot={hot || undefined} data-walk={lit || undefined}
@@ -454,10 +470,10 @@ function Paper() {
     return () => mq.removeEventListener('change', f);
   }, []);
   useEffect(() => {
-    const root = ref.current;
+    const root = ref.current!;
     const secs = [...root.querySelectorAll('[data-sec]')];
-    const figs = secs.map((_, i) => root.querySelector(`[data-fig="${i}"]`));
-    const scrubs = figs.map((f) => { const p = f?.querySelector('[data-scrub]'), d = f?.querySelector('.jn-scrub'); return p && d ? [p, d, p.getTotalLength()] : null; });
+    const figs = secs.map((_, i) => root.querySelector<HTMLElement>(`[data-fig="${i}"]`));
+    const scrubs = figs.map((f): [SVGPathElement, Element, number] | null => { const p = f?.querySelector<SVGPathElement>('[data-scrub]'), d = f?.querySelector('.jn-scrub'); return p && d ? [p, d, p.getTotalLength()] : null; });
     let raf = 0;
     const tick = () => {
       raf = 0;
@@ -538,6 +554,11 @@ function Trace({ hist }: TraceProps) {
 }
 
 /* Beyond, the one dark plate: drag the image yourself; the predictor follows, and on release the image shifts back. */
+type Phase = 'rest' | 'out' | 'back' | 'landed';
+interface Trail {
+  out: number[][];
+  back: number[][];
+}
 function Yours() {
   const box = useRef<HTMLDivElement>(null);
   const ix = useMotionValue(0), iy = useMotionValue(0);
@@ -547,11 +568,11 @@ function Yours() {
   // the predictor's guess follows the embedding a beat behind (a tween each time it moves; no spring)
   const pxn = useMotionValue(0), pyn = useMotionValue(0);
   useEffect(() => { const a = exn.on('change', (v) => animate(pxn, v, FOLLOW)); const b = eyn.on('change', (v) => animate(pyn, v, FOLLOW)); return () => { a(); b(); }; }, [exn, eyn, pxn, pyn]);
-  const [state, setState] = useState('rest');
-  const [hist, setHist] = useState(() => Array.from({ length: N }, () => REST));
-  const [trail, setTrail] = useState({ out: [], back: [] });
+  const [state, setState] = useState<Phase>('rest');
+  const [hist, setHist] = useState<number[][]>(() => Array.from({ length: N }, () => REST));
+  const [trail, setTrail] = useState<Trail>({ out: [], back: [] });
   const last = useRef(0);
-  const mode = useRef('rest');
+  const mode = useRef<Phase>('rest');
   useEffect(() => {
     const tick = () => {
       const now = performance.now();
@@ -572,7 +593,7 @@ function Yours() {
   }, [exn, eyn, pxn, pyn]);
   const start = () => { W.current = box.current?.offsetWidth || 400; mode.current = 'out'; setState('out'); setTrail({ out: [[0, 0]], back: [] }); };
   const end = () => { mode.current = 'back'; setState('back'); };
-  const nudge = (ev) => {
+  const nudge = (ev: React.KeyboardEvent<HTMLSpanElement>) => {
     const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[ev.key];
     if (!d) return;
     touched.current = true;
@@ -588,7 +609,7 @@ function Yours() {
   const shown = useInView(box, { once: true, amount: 0.6 });
   useEffect(() => {
     if (!shown || calm || touched.current) return;
-    let t2 = 0;
+    let t2: ReturnType<typeof setTimeout> | undefined;
     const t1 = setTimeout(() => {
       if (touched.current) return;
       start();
@@ -597,7 +618,7 @@ function Yours() {
     }, 700);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [shown, calm]); // eslint-disable-line react-hooks/exhaustive-deps
-  const line = (pts) => pts.map(([x, y]) => `${x},${y}`).join(' ');
+  const line = (pts: number[][]) => pts.map(([x, y]) => `${x},${y}`).join(' ');
   return (
     <section className="bz-sec jn-try" data-room="dark" aria-labelledby="jn-try-h">
       <div className="bz-wrap bz-grid">
@@ -738,23 +759,23 @@ function usePhoneAsk() {
     const start = () => {
       off();
       const main = document.querySelector('main');
-      const btn = document.querySelector('header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href="https://hanzo.ai/signup"]');
+      const btn = document.querySelector<HTMLAnchorElement>('header[data-slot=masthead] a[data-x-ask], header[data-slot=masthead] a[href="https://hanzo.ai/signup"]');
       if (!mq.matches || !main || !btn) { main?.removeAttribute('data-ask'); return; }
       main.setAttribute('data-ask', 'off');
-      if (!btn.dataset.xAsk) { btn.dataset.xAsk = btn.textContent; btn.dataset.xHref = btn.getAttribute('href'); }
+      if (!btn.dataset.xAsk) { btn.dataset.xAsk = btn.textContent!; btn.dataset.xHref = btn.getAttribute('href')!; }
       const asks = [...document.querySelectorAll('main [data-cta="jin.hero"], main [data-cta="jin.close"]')];
-      const seen = new Map();
+      const seen = new Map<Element, boolean>();
       const set = () => {
         const any = [...seen.values()].some(Boolean);
-        btn.textContent = any ? btn.dataset.xAsk : 'Read the docs';
-        btn.setAttribute('href', any ? btn.dataset.xHref : DOCS);
+        btn.textContent = any ? btn.dataset.xAsk! : 'Read the docs';
+        btn.setAttribute('href', any ? btn.dataset.xHref! : DOCS);
         if (any) { btn.removeAttribute('data-cta'); H.dataset.ask = 'quiet'; } else { btn.setAttribute('data-cta', 'header-ask'); delete H.dataset.ask; }
       };
       const io = new IntersectionObserver((es) => { es.forEach((e) => seen.set(e.target, e.isIntersecting)); set(); });
       asks.forEach((a) => io.observe(a));
       off = () => {
         io.disconnect();
-        btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); btn.removeAttribute('data-cta');
+        btn.textContent = btn.dataset.xAsk!; btn.setAttribute('href', btn.dataset.xHref!); btn.removeAttribute('data-cta');
         delete H.dataset.ask;
       };
     };

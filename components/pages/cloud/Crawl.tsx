@@ -42,7 +42,7 @@ import './Crawl.css';
 const DOCS = 'https://docs.hanzo.ai/docs/openapi/crawl/';
 const GH = 'https://github.com/hanzoai';
 const pad = (n: number) => String(n).padStart(2, '0');
-const MOVE = [0.4, 0, 0.2, 1];
+const MOVE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 
 interface PauseIconProps {
   on: boolean;

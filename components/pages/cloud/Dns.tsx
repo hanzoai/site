@@ -47,7 +47,7 @@ function useTick(ms: number, run, fn: () => void) {
   f.current = fn;
   useEffect(() => {
     if (!run) return;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | 0 = 0;
     const next = () => { t = setTimeout(() => { f.current(); next(); }, ms); };
     next();
     return () => clearTimeout(t);

@@ -7,10 +7,10 @@ import type React from 'react';
 import { useEffect } from 'react';
 
 // the typewriter needs each line's width and length, measured once on the client
-function measureType(el: Element) {
+function measureType(el: HTMLElement) {
   let at = 0;
-  el.querySelectorAll('.xbo-tw').forEach((line) => {
-    const inner = line.firstElementChild;
+  el.querySelectorAll<HTMLElement>('.xbo-tw').forEach((line) => {
+    const inner = line.firstElementChild as HTMLElement | null;
     if (!inner) return;
     const n = Math.max(1, inner.textContent.length);
     const dur = n * 55;
@@ -27,14 +27,14 @@ export function useEnter(root: React.RefObject<HTMLElement | null>) {
     const main = root.current;
     if (!main || typeof IntersectionObserver === 'undefined') return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const els = [...main.querySelectorAll('[data-enter]')];
+    const els = [...main.querySelectorAll<HTMLElement>('[data-enter]')];
     els.filter((el) => el.dataset.enter === 'typewriter').forEach(measureType);
     main.classList.add('xbe');
-    const timers = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     const io = new IntersectionObserver((list) => {
       list.forEach((e) => {
         if (!e.isIntersecting) return;
-        const el = e.target;
+        const el = e.target as HTMLElement;
         io.unobserve(el);
         el.classList.add('in');
         // blinds drop their mask once open, so nothing stays masked

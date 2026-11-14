@@ -265,7 +265,9 @@ const WHAT = [
   { title: 'Zero-trust admin controls', body: 'Organization owners toggle extension access, block password manager interaction, and enforce domain allowlists or blocklists across every seat.' },
 ];
 // [command, [[tag, text, kind]]]: tags are the real CDP domains the side panel uses; texts are the page's own example
-const CMDS = [
+type Out = [tag: string, text: string, kind?: string];
+type Cmd = [command: string, out: Out[]];
+const CMDS = ([
   ['Click element & capture network trace', [
     ['Input.dispatchMouseEvent', 'button[data-testid="submit-order"]'],
     ['ok', 'Navigates pages'], ['ok', 'fills forms'], ['ok', 'clicks controls'], ['ok', 'extracts structured data'],
@@ -283,7 +285,7 @@ const CMDS = [
     ['ok', 'toggle extension access'], ['ok', 'block password manager interaction'], ['ok', 'enforce domain allowlists or blocklists'],
     ['policy', 'Enterprise Chrome policy verified: DOM write allowed on staging.acme.inc', 'hi'],
   ]],
-];
+] satisfies Cmd[]);
 
 function Terminal() {
   const box = useRef<HTMLElement>(null);
@@ -294,16 +296,16 @@ function Terminal() {
   const [typing, setTyping] = useState(-1); // characters of the command typed so far (-1: typed in full)
   const [auto, setAuto] = useState(true); // plays the three once, until the visitor picks
   const [busy, setBusy] = useState(false);
-  const timers = useRef([]);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const started = useRef(false);
   const stop = () => { timers.current.forEach(clearTimeout); timers.current = []; };
-  const run = (i, chain: boolean) => {
+  const run = (i: number, chain: boolean) => {
     stop();
     setAt(i);
     if (calm) { setTyping(-1); setShown(CMDS[i][1].length); setBusy(false); return; }
     const cmd = CMDS[i][0];
     let t = 0;
-    const at_ = (ms: number, fn: (() => void) | (() => void) | (() => void) | (() => void) | (() => void) | (() => void)) => timers.current.push(setTimeout(fn, (t += ms)));
+    const at_ = (ms: number, fn: () => void) => timers.current.push(setTimeout(fn, (t += ms)));
     setBusy(true); setShown(0); setTyping(0);
     for (let k = 1; k <= cmd.length; k++) at_(k === 1 ? 160 : 22, () => setTyping(k));
     at_(240, () => setTyping(-1));
@@ -371,12 +373,13 @@ function Terminal() {
 /* ---------- capabilities: hairline rows; the row you point at (or tap) shows its own small product render ----------
    The two governance capabilities ("Wildcard site allowlists & blocklists", "Password manager guardrails") are said once,
    in the black room below, where the tester lets you try them. */
-const CAPS = [
+type Cap = [title: string, desc: string, render: 'dom' | 'qa' | 'tabs' | 'hand'];
+const CAPS = ([
   ['Live DOM & CSS inspection', 'Select any element on staging or production to inspect computed tokens, contrast ratios, and component props, then generate the exact patch.', 'dom'],
   ['Visual QA & bug reproduction', 'Ask Hanzo in Chrome to reproduce a reported bug, capture the failing network request, and post a Canvas summary to your code channel.', 'qa'],
   ['Cross-tab synthesis', 'Compare specifications in one tab against a live deployment or pull request in another and flag every discrepancy.', 'tabs'],
   ['Direct handoff to Hanzo Bot & Team', 'Start a task in your Chrome side panel and hand long-running background execution to a cloud resident bot or Slack code channel.', 'hand'],
-];
+] satisfies Cap[]);
 const IconLock = () => <svg viewBox="0 0 40 40" width="28" height="28" aria-hidden="true"><rect x="10" y="17" width="20" height="14" rx="3" /><path d="M14 17v-4a6 6 0 0 1 12 0v4" /></svg>;
 const IconOk = () => <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
@@ -422,7 +425,7 @@ const RENDER = {
 function Caps() {
   const [on, setOn] = useState(0);
   const pick = (i: number) => () => setOn(i);
-  const hover = (i: number) => (e) => { if (e.pointerType === 'mouse') setOn(i); };
+  const hover = (i: number) => (e: React.PointerEvent) => { if (e.pointerType === 'mouse') setOn(i); };
   return (
     <section className="av-sec xch-caps-sec" aria-labelledby="xch-caps-h" data-enter="orbit-in">
       <div className="av-wrap">
@@ -461,7 +464,11 @@ function Caps() {
 /* ---------- act two, the black room: governance, and the Beyond policy tester ---------- */
 const ALLOW = ['*.acme.inc', 'github.com/acme/*'];
 // Chrome-style wildcard patterns from Hanzo's own example policy. Returns which pattern let the address in, and what its * stood for.
-export function allowed(input: string, mode: string) {
+export type Verdict =
+  | { ok: false; by: null; star: '' }
+  | { ok: true; by: null; star: '' }
+  | { ok: true; by: string; star: string; host: string; path: string; where: 'host' | 'path' };
+export function allowed(input: string, mode: string): Verdict | null {
   if (mode === 'all') return { ok: true, by: null, star: '' };
   const u = input.trim().toLowerCase().replace(/^[a-z]+:\/\//, '');
   if (!u) return null;
@@ -473,7 +480,7 @@ export function allowed(input: string, mode: string) {
     const hostOk = ph.startsWith('*.') ? host.endsWith(ph.slice(1)) && host.length > ph.length - 1 : host === ph;
     const pathOk = !pp || (pp.endsWith('*') ? path.startsWith(pp.slice(0, -1)) : path === pp);
     if (hostOk && pathOk) {
-      const star = ph.startsWith('*.') ? host.slice(0, host.length - ph.length + 1) : path.slice(pp.length - 1);
+      const star = ph.startsWith('*.') ? host.slice(0, host.length - ph.length + 1) : pp ? path.slice(pp.length - 1) : '';
       return { ok: true, by: p, star, host, path, where: ph.startsWith('*.') ? 'host' : 'path' };
     }
   }
@@ -483,11 +490,11 @@ const TRY = ['staging.acme.inc/checkout', 'github.com/acme/web', 'github.com/han
 
 interface MarkedProps {
   v: string;
-  res: { ok: boolean; by: null; star: string; host?: undefined; path?: undefined; where?: undefined; } | { ok: boolean; by: string; star: string; host: string; path: string; where: string; } | null;
+  res: Verdict | null;
 }
 function Marked({ v, res }: MarkedProps) {
   const u = v.trim().replace(/^[a-z]+:\/\//i, '');
-  if (!res || !res.ok || !res.star) return <span>{u || ' '}</span>;
+  if (!res || !res.ok || !res.star || res.by === null) return <span>{u || ' '}</span>;
   const i = res.where === 'host' ? 0 : u.toLowerCase().indexOf(res.path) + res.path.length - res.star.length;
   return <span>{u.slice(0, i)}<mark>{u.slice(i, i + res.star.length)}</mark>{u.slice(i + res.star.length)}</span>;
 }
@@ -604,7 +611,7 @@ function Surfaces() {
   }, [seen, calm, auto]);
   const on = pick >= 0 ? pick : auto;
   const choose = (i: number) => () => setPick(i);
-  const hover = (i: number) => (e) => { if (e.pointerType === 'mouse') setPick(i); };
+  const hover = (i: number) => (e: React.PointerEvent) => { if (e.pointerType === 'mouse') setPick(i); };
   return (
     <section className="av-sec xch-surf" aria-labelledby="xch-surf-h" data-enter="cover-slide">
       <div className="av-wrap">
@@ -696,12 +703,12 @@ function Close() {
    reduced motion (CSS). scroll-tilt also leans the black room with the scroll's speed (max 5°) and levels out. */
 function useEntrances() {
   useEffect(() => {
-    const els = [...document.querySelectorAll('.xch [data-enter]')];
+    const els = [...document.querySelectorAll<HTMLElement>('.xch [data-enter]')];
     if (!('IntersectionObserver' in window)) { els.forEach((el) => { el.dataset.in = ''; }); return undefined; }
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.dataset.in = ''; io.unobserve(e.target); } }), { threshold: 0.12 });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { (e.target as HTMLElement).dataset.in = ''; io.unobserve(e.target); } }), { threshold: 0.12 });
     els.forEach((el) => io.observe(el));
-    const room = document.querySelector('.xch [data-enter="scroll-tilt"] > .av-wrap');
-    let last = scrollY, lastT = performance.now(), rest = 0;
+    const room = document.querySelector<HTMLElement>('.xch [data-enter="scroll-tilt"] > .av-wrap');
+    let last = scrollY, lastT = performance.now(), rest: ReturnType<typeof setTimeout> | undefined;
     const onScroll = () => {
       if (!room || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const r = room.getBoundingClientRect();

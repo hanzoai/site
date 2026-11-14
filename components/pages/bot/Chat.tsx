@@ -9,6 +9,7 @@ import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'motion/react';
 import useCalm from '../../v2/useCalm';
+import type { FaceProps } from './types';
 import { play } from '../../../lib/sound';
 import './Chat.css';
 

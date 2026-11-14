@@ -4,10 +4,17 @@
    visitor gets no hydration mismatch. Reduced motion is read after mount (and enforced in Zap.css under
    prefers-reduced-motion). The shared file renders `none` on a calm client and the server's transform on the server;
    that bug is logged in docs/build-notes/requests/zap.md. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 
-export default function Settle({ children, from = 1.14, lift = 80, span, className = '' }) {
+interface SettleProps {
+  children?: ReactNode;
+  from?: number;
+  lift?: number;
+  span?: number;
+  className?: string;
+}
+export default function Settle({ children, from = 1.14, lift = 80, span, className = '' }: SettleProps) {
   const ref = useRef<HTMLDivElement>(null);
   const rm = useReducedMotion();
   const [calm, setCalm] = useState(false);

@@ -8,12 +8,12 @@
      grow-from-point .agx-g     grows out of the point the visitor last clicked or pointed at
      stretch-scroll  .agx-st    lands stretched and relaxes; after that it stretches with scroll speed and relaxes again
    The hidden first state lives only under html.js and no-preference motion: JS off and reduced motion read it whole. */
-import type { ReactNode } from 'react';
+import type { ElementType, HTMLAttributes } from 'react';
 import { useEffect, useRef } from 'react';
 import './entrances.css';
 
 const RM = '(prefers-reduced-motion: reduce)';
-let last = null;
+let last: { x: number; y: number } | null = null;
 let bound = false;
 function track() {
   if (bound || typeof window === 'undefined') return;
@@ -24,7 +24,7 @@ function track() {
 }
 
 // after the landing: the row stretches with scroll speed and relaxes when the scroll stops
-function stretch(el: never) {
+function stretch(el: HTMLElement) {
   let y = scrollY, t = performance.now(), want = 1, s = 1, raf = 0;
   const frame = () => {
     s += (want - s) * 0.22;
@@ -43,20 +43,17 @@ function stretch(el: never) {
   return () => { removeEventListener('scroll', on); cancelAnimationFrame(raf); };
 }
 
-interface EnterProps {
-  as?: string;
+interface EnterProps extends HTMLAttributes<HTMLElement> {
+  as?: ElementType;
   move: string;
-  className?: string;
-  children: ReactNode;
-  [key: string]: unknown;
 }
 export function Enter({ as: T = 'div', move, className = '', children, ...rest }: EnterProps) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     if (move === 'grow-from-point') track();
-    let off = () => {}, timer = 0;
+    let off = () => {}, timer: ReturnType<typeof setTimeout> | undefined;
     const io = new IntersectionObserver((es) => {
       if (!es.some((e) => e.isIntersecting)) return;
       io.disconnect();
