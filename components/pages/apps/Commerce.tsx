@@ -39,7 +39,7 @@ const GH = 'https://github.com/hanzoai';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
 const two = (n: number) => String(n).padStart(2, '0');
 
-const STOPS = [
+const STOPS: [string, string, string][] = [
   ['Product and variant', 'A product holds the description; a variant holds the size, the colour and the price.', '/variant/{id}'],
   ['Cart', 'A cart is a real object with its own id, so someone can leave and come back.', '/cart/{id}'],
   ['Authorize', 'Hold the money when the order is placed.', '/checkout/authorize'],
@@ -47,7 +47,9 @@ const STOPS = [
   ['Refund or return', 'A return is a first-class object rather than a note in a support ticket.', '/return/{id}'],
 ];
 
-const EP = {
+/* an endpoint: path, what it does */
+type Endpoint = [string, string];
+const EP: Record<string, Endpoint[]> = {
   Commerce: [
     ['/cart', 'List all carts for the current session/user'],
     ['/cart/{id}', 'Get details for a specific cart'],
@@ -134,12 +136,14 @@ const EP = {
   ],
 };
 const GROUPS = Object.keys(EP);
-const FIND = Object.fromEntries(GROUPS.flatMap((g) => EP[g].map(([p, d]) => [p, [g, p, d]])));
-const eps = (paths: string | string[]) => paths.map((p: string | number) => FIND[p]);
+/* an endpoint with the group it belongs to: group, path, what it does */
+type Found = [string, string, string];
+const FIND: Record<string, Found> = Object.fromEntries(GROUPS.flatMap((g) => EP[g].map(([p, d]): [string, Found] => [p, [g, p, d]])));
+const eps = (paths: string[]) => paths.map((p) => FIND[p]);
 /* a path may only break after a slash, never inside a word ("/order/{id}/capture") */
 const brk = (s: string, k = '') => s.split(/(?<=\/)/).flatMap((x, i) => (i ? [<wbr key={k + 'w' + i} />, x] : [x]));
 // an endpoint is one run of text (copy checks read it whole); CSS lets it wrap anywhere on narrow screens
-const P = ({ p }) => <span>{p}</span>;
+const P = ({ p }: { p: string }) => <span>{p}</span>;
 
 /* What the order card shows at each stop: the shape changes, the endpoint is the real one. */
 const Lock = () => <svg viewBox="0 0 24 24" width="1.4em" height="1.4em" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.4" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" fill="none" stroke="currentColor" strokeWidth="1.7" /></svg>;
@@ -183,7 +187,7 @@ const PauseIcon = ({ on }: PauseIconProps) => (on
 
 /* The signature: the order rides the rail by itself while it is on screen. */
 function Rail() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.3);
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -195,7 +199,7 @@ function Rail() {
     const t = setTimeout(() => { first.current = false; if (held) setHeld(false); else setAt((a) => (a + 1) % 5); }, wait);
     return () => clearTimeout(t);
   }, [at, live, held, paused]);
-  const glide = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
+  const glide: { duration: number; ease: [number, number, number, number] } = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
   return (
     <div className="cm-band" ref={ref}>
       <div className="bz-wrap cm-band-in">
@@ -271,7 +275,7 @@ interface BoardProps {
   proc: string;
 }
 function Board({ proc }: BoardProps) {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive<HTMLElement>(0.3);
   const tilt = useEnter<HTMLDivElement>('tilt');
   const [rows, setRows] = useState([0, 1, 2, 3]);
   const [last, setLast] = useState(2);
@@ -322,7 +326,7 @@ function Board({ proc }: BoardProps) {
   );
 }
 
-const NOUNS = [
+const NOUNS: [string, string, string[]][] = [
   ['Carts', 'A cart is a real object with its own id, so someone can leave and come back, and you can look at what they left in it.', ['/cart', '/cart/{id}', '/cart/{id}/set', '/cart/{id}/discard']],
   ['Products and variants', 'A product holds the description; a variant holds the size, the colour and the price. Stock is tracked on the variant, which is the thing people actually buy.', ['/product', '/product/{id}', '/variant', '/variant/{id}', '/collection', '/collection/{id}', '/review', '/review/{id}']],
   ['Authorize and capture', 'Two steps, not one. Hold the money when the order is placed and take it when the box ships, which is what your accountant and your customer both expect.', ['/checkout/authorize', '/checkout/capture/{id}', '/checkout/charge', '/order/{id}/capture']],
@@ -335,7 +339,7 @@ const NOUNS = [
   ['Your data, per tenant', "Each organisation's records live in its own store. Isolation is a file boundary rather than a WHERE clause somebody has to remember to write.", ['/organization/{id}', '/organization/{id}/integrations', '/user/{id}', '/account']],
 ];
 
-const EpList = ({ list, group }) => (
+const EpList = ({ list, group }: { list: Found[]; group?: boolean }) => (
   <ul className="cm-eps">
     {/* the group is named once where a run of it starts, not on every row */}
     {list.map(([g, p, d], i) => <li key={g + p}><code><P p={p} /></code><span>{d}</span>{group && <em className="x-mono">{i && list[i - 1][0] === g ? '' : g}</em>}</li>)}
@@ -345,7 +349,7 @@ const EpList = ({ list, group }) => (
 /* The ten nouns as a type index: point at one and its detail previews; open it and it becomes its endpoints. */
 function Nouns() {
   const [pv, setPv] = useState(0);
-  const over = (e: React.FocusEvent<HTMLDivElement, Element>) => { const li = e.target.closest?.('li'); if (li?.parentNode?.classList.contains('cm-index')) setPv([...li.parentNode.children].indexOf(li)); };
+  const over = (e: React.SyntheticEvent<HTMLDivElement>) => { const li = (e.target as Element).closest?.('li'); if (li?.parentElement?.classList.contains('cm-index')) setPv([...li.parentElement.children].indexOf(li)); };
   const [t, d, p] = NOUNS[pv];
   return (
     <section ref={useEnter('cover')} className="bz-sec cm-nouns" aria-labelledby="cm-nouns-h">
@@ -390,7 +394,7 @@ function Nouns() {
 }
 
 /* Beyond, the one dark room: type, and every group's matching endpoints answer at once. */
-function Mark({ text, q }) {
+function Mark({ text, q }: { text: string; q: string }) {
   const i = q ? text.toLowerCase().indexOf(q) : -1;
   if (i < 0) return brk(text);
   return <>{brk(text.slice(0, i), 'a')}<mark>{brk(text.slice(i, i + q.length), 'b')}</mark>{brk(text.slice(i + q.length), 'c')}</>;
@@ -400,7 +404,7 @@ const TRY = ['refund', 'cart', 'affiliate', 'store'];
 function Find() {
   const [q, setQ] = useState('refund');
   const s = q.trim().toLowerCase();
-  const res = GROUPS.map((g) => [g, s ? EP[g].filter(([p, d]) => (p + ' ' + d).toLowerCase().includes(s)) : EP[g]]);
+  const res = GROUPS.map((g): [string, Endpoint[]] => [g, s ? EP[g].filter(([p, d]) => (p + ' ' + d).toLowerCase().includes(s)) : EP[g]]);
   const n = res.reduce((a, [, l]) => a + l.length, 0);
   return (
     <section ref={useEnter('ripple')} className="bz-sec cm-find" data-room="dark" aria-labelledby="cm-find-h">
@@ -425,7 +429,7 @@ function Find() {
               <div className="cm-grp-h">
                 <b className="bz-fig">{l.length}</b>
                 <BizSheet label={g} title={`Hanzo ${g} API Endpoints`} btnClass="cm-grp-btn">
-                  <EpList list={EP[g].map(([p, d]) => [g, p, d])} />
+                  <EpList list={EP[g].map(([p, d]): Found => [g, p, d])} />
                 </BizSheet>
               </div>
               {s && l.length > 0 && (
@@ -442,7 +446,7 @@ function Find() {
   );
 }
 
-const INTEG = [
+const INTEG: [string, string[]][] = [
   ['Payment Gateways', ['Stripe', 'PayPal', 'Adyen', 'Square', 'Braintree', 'Klarna', 'Affirm', 'Apple Pay']],
   ['Marketing & CRM', ['Mailchimp', 'Klaviyo', 'HubSpot', 'Salesforce', 'Segment', 'Meta Pixel', 'Google Analytics', 'Customer.io']],
   ['Shipping & Fulfillment', ['ShipStation', 'ShipBob', 'EasyPost', 'FedEx', 'UPS', 'USPS', 'DHL', 'AfterShip']],
@@ -469,7 +473,7 @@ function Money({ pick, setPick }: MoneyProps) {
       <div className="bz-wrap bz-grid">
         <div className="cm-money-l">
           {/* word-shuffle: each word starts where another one ends up, then swaps into place */}
-          <h2 id="cm-money-h" className="bz-headline cm-shuf">{[['Who', 2], ['takes', 3], ['the', 0], ['money', 1]].map(([w, to], i) => <span key={w} style={{ '--dx': (to - i) * 2.6 + 'em', '--i': i }}>{w}{i < 3 ? ' ' : ''}</span>)}</h2>
+          <h2 id="cm-money-h" className="bz-headline cm-shuf">{([['Who', 2], ['takes', 3], ['the', 0], ['money', 1]] as const).map(([w, to], i) => <span key={w} style={{ '--dx': (to - i) * 2.6 + 'em', '--i': i }}>{w}{i < 3 ? ' ' : ''}</span>)}</h2>
           <p className="bz-body">The processor is a setting, not an architecture. Each one gets its own webhook endpoint, so adding a second — or leaving the first — is a change here rather than a change in your checkout.</p>
         </div>
         <div className="cm-set bz-obj">
@@ -639,7 +643,7 @@ function useQuietAtClose() {
     const H = document.documentElement;
     const el = document.querySelector('[data-cta="commerce.close"]');
     if (!el) return;
-    let on = false, mine = false, t = 0;
+    let on = false, mine = false, t: ReturnType<typeof setTimeout> | undefined;
     const apply = () => { if (on) { H.dataset.ask = 'quiet'; mine = true; } else if (mine) { delete H.dataset.ask; mine = false; } };
     const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; apply(); });
     io.observe(el);

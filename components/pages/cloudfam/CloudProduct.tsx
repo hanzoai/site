@@ -141,7 +141,7 @@ function Console({ doc, w, v, fig, previews, sigil }: ConsoleProps) {
   const google = doc.meta.find((m) => m.k === 'Google Cloud')?.v;
   // the shared example project (services, or the CLI deploying it) is never the hero: it opens from its own note
   const hasEx = !!(w.rows.length || w.lines.length);
-  const body: 'turns' | 'lines' | 'feats' | 'bare' = w.turns.length ? 'turns' : doc.features.length && v !== 'path' ? 'feats' : 'bare';
+  const body: string = w.turns.length ? 'turns' : doc.features.length && v !== 'path' ? 'feats' : 'bare';
   const n = body === 'turns' ? w.turns.length : body === 'lines' ? w.lines.length : body === 'feats' ? doc.features.length : google ? 3 : 2;
   // the session, played once: turns and lines arrive, lines are then searched one by one, features and the terminal light in turn
   const tl = useMemo(() => {
@@ -302,7 +302,8 @@ function Boot({ boot }: BootProps) {
       for (let i = 0; i < boot.lines.length && live(); i++) {
         const l = boot.lines[i];
         setShown(i + 1);
-        if (l.cmd && refs.current[i] && l.text) await typing(refs.current[i], null, l.text, 30, live);
+        const el = refs.current[i];
+        if (l.cmd && el && l.text) await typing(el, null, l.text, 30, live);
         await wait(l.cmd ? 260 : 420);
       }
     })();
@@ -684,28 +685,37 @@ const ORDER: Record<string, string[]> = {
   local: ['boothead', 'bootrows'],
 };
 
-export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, previews = {} }) {
+interface CloudProductProps {
+  doc: Product | Local;
+  pairs: Pair[];
+  group: string;
+  sigil: Glyph;
+  cards?: Record<string, Glyph>;
+  previews?: Record<string, Preview>;
+}
+export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, previews = {} }: CloudProductProps) {
   const isLocal = doc.kind === 'local';
+  const prod = doc.kind === 'product' ? doc : null;
   const ask = isLocal ? doc.boot.actions[doc.boot.actions.length - 1] : doc.actions[0];
   const v = VARIANT[group] || 'stage';
   const rest = isLocal ? doc.boot.actions.filter((a) => a !== ask) : doc.actions.slice(1);
   const fig = isLocal ? null : figureOf(doc);
   // the sections after the hero, in this group's order, each with its entrance in the map's order (on /cloud/local
   // the hero's terminal takes the first); the closing Band takes the next one when there are fewer than five
-  const SEC = {
-    family: (e) => <Family doc={doc} previews={previews} e={e} />,
-    ship: (e) => doc.ship && <Ship doc={doc} e={e} />,
+  const SEC: Record<string, (e: string) => ReactNode> = {
+    family: (e) => prod && <Family doc={prod} previews={previews} e={e} />,
+    ship: (e) => prod && prod.ship && <Ship ship={prod.ship} e={e} />,
     finder: (e) => <Finder pairs={pairs} here={doc.slug} e={e} />,
-    related: (e) => <Related rel={doc.related} cards={cards} previews={previews} e={e} />,
-    motto: (e) => <Motto text={doc.motto} e={e} />,
-    boothead: (e) => <BootHead boot={doc.boot} e={e} />,
-    bootrows: (e) => <BootRows boot={doc.boot} e={e} />,
+    related: (e) => prod && prod.related && <Related rel={prod.related} cards={cards} previews={previews} e={e} />,
+    motto: (e) => prod && <Motto text={prod.motto} e={e} />,
+    boothead: (e) => doc.kind === 'local' && <BootHead boot={doc.boot} e={e} />,
+    bootrows: (e) => doc.kind === 'local' && <BootRows boot={doc.boot} e={e} />,
   };
-  const has = {
-    family: !!(doc.window && doc.window.siblings.length > 1), ship: !!doc.ship, finder: pairs.some((p) => p.slug === doc.slug),
-    related: !!doc.related, motto: !!doc.motto, boothead: isLocal, bootrows: isLocal,
+  const has: Record<string, boolean> = {
+    family: !!(prod && prod.window && prod.window.siblings.length > 1), ship: !!(prod && prod.ship), finder: pairs.some((p) => p.slug === doc.slug),
+    related: !!(prod && prod.related), motto: !!(prod && prod.motto), boothead: isLocal, bootrows: isLocal,
   };
-  const secs = ORDER[isLocal ? 'local' : v].filter((k: string | number) => has[k]);
+  const secs = ORDER[isLocal ? 'local' : v].filter((k) => has[k]);
   const E = isLocal ? ENTRANCES.slice(1) : ENTRANCES;
   const bandE = E[secs.length] && E[secs.length] !== 'letter-cascade' ? E[secs.length] : undefined;
   return (
@@ -719,25 +729,25 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, pre
             <div className="xcf-head-r">
               {doc.lede && <p className="xcf-lede">{doc.lede}</p>}
               <Acts list={isLocal ? [ask, ...rest] : doc.actions} slug={doc.slug} />
-              {!!(doc.crumb && doc.crumb.length) && (
+              {!!(prod && prod.crumb.length) && prod && (
                 <nav className="xcf-crumb" aria-label="Breadcrumb">
-                  {doc.crumb.map((c, i) => <span key={i}>{i > 0 && <i aria-hidden="true">/</i>}{c.href ? <A to={c.href} className="x-link">{c.label}</A> : <span>{c.label}</span>}</span>)}
+                  {prod.crumb.map((c, i) => <span key={i}>{i > 0 && <i aria-hidden="true">/</i>}{c.href ? <A to={c.href} className="x-link">{c.label}</A> : <span>{c.label}</span>}</span>)}
                 </nav>
               )}
               {isLocal && <Chip label={doc.label} />}
             </div>
           </div>
         </div>
-        {v === 'path' && doc.window && (
+        {v === 'path' && prod && prod.window && (
           <div className="xcf-wrap xcf-path-w">
-            <p className="xcf-path-hero" aria-hidden="true"><span className="xcf-mask"><span>{doc.window.host[0]}</span></span><span className="xcf-mask b"><span>{doc.window.host[1]}</span></span><i className="xcf-pulse" /></p>
-            {fig && <Fig fig={fig} sibs={doc.window.siblings} peek={null} label={doc.label} />}
+            <p className="xcf-path-hero" aria-hidden="true"><span className="xcf-mask"><span>{prod.window.host[0]}</span></span><span className="xcf-mask b"><span>{prod.window.host[1]}</span></span><i className="xcf-pulse" /></p>
+            {fig && <Fig fig={fig} sibs={prod.window.siblings} peek={null} label={doc.label} />}
           </div>
         )}
         <div className="xcf-wrap xcf-stage-w">
-          {v === 'path' && <Facts doc={doc} />}
+          {v === 'path' && prod && <Facts doc={prod} />}
           <StageSettle className="xcf-stage" over={560} from={POSE[v]}>
-            {isLocal ? <Enter as="div" kind={ENTRANCES[0]}><Boot boot={doc.boot} /></Enter> : doc.window && <Console doc={doc} v={v} fig={fig} previews={previews} sigil={sigil} />}
+            {isLocal ? <Enter as="div" kind={ENTRANCES[0]}><Boot boot={doc.boot} /></Enter> : doc.window && <Console doc={doc} w={doc.window} v={v} fig={fig} previews={previews} sigil={sigil} />}
           </StageSettle>
         </div>
         {!isLocal && v !== 'path' && <div className="xcf-wrap"><Facts doc={doc} /></div>}
@@ -753,7 +763,7 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, pre
         to={ask.href}
         note={(
           <span className="xcf-band-n">
-            {doc.window && <code className="xcf-band-host">{doc.window.host.map((h, i) => <span key={i} className={i ? 'xcf-path' : ''}>{h}</span>)}<i className="xcf-pulse" aria-hidden="true" /></code>}
+            {prod && prod.window && <code className="xcf-band-host">{prod.window.host.map((h, i) => <span key={i} className={i ? 'xcf-path' : ''}>{h}</span>)}<i className="xcf-pulse" aria-hidden="true" /></code>}
             {rest.map((a) => <A key={a.href} to={a.href} className="x-link xcf-band-l">{a.label}<Arrow /></A>)}
           </span>
         )}

@@ -34,11 +34,16 @@ import '../../v2/x-gauss/Rhythm.css';
 import './Zap.css';
 
 // the example message: field, its offset in the buffer (bytes, 8-aligned after the 16-byte header), its length in words
-const FIELDS = [['struct', 16, 2], ['list', 32, 3], ['text', 56, 2], ['bytes', 72, 2]];
+const FIELDS: [string, number, number][] = [['struct', 16, 2], ['list', 32, 3], ['text', 56, 2], ['bytes', 72, 2]];
 const JSON_TXT = '{"struct":{"a":1,"b":2},"list":[1,2,3],"text":"hello","bytes":"aGk="}';
 const POINTS = [['No parse', 'Read it where it landed.'], ['A 16-byte header', 'The whole header is sixteen bytes.'], ['Go · Rust · TS', 'One wire, three readers.'], ['MCP · A2A · ACP', 'All run on ZAP.']];
 
-function Wire({ pick, auto, live }) {
+interface WireProps {
+  pick: number;
+  auto: ReactNode;
+  live: boolean;
+}
+function Wire({ pick, auto, live }: WireProps) {
   const f = FIELDS[pick];
   const target = JSON_TXT.indexOf('"' + f[0] + '"');
   const seen = useRef<HTMLSpanElement>(null), cur = useRef<HTMLSpanElement>(null), rest = useRef<HTMLSpanElement>(null), count = useRef<HTMLSpanElement>(null);
@@ -52,7 +57,7 @@ function Wire({ pick, auto, live }) {
       rest.current!.textContent = JSON_TXT.slice(i + len);
       count.current!.textContent = i + (i === 1 ? ' character walked' : ' characters walked');
     };
-    let i = 0, t = 0;
+    let i = 0, t: ReturnType<typeof setTimeout> | undefined;
     // walks again from the start while it is seen: the parser pays this on every message
     const step = () => { i = Math.min(target, i + 1); draw(i); if (i < target) t = setTimeout(step, 22); else if (live) t = setTimeout(() => { i = 0; draw(0); t = setTimeout(step, 300); }, 1400); };
     draw(0);
@@ -90,7 +95,7 @@ function Wire({ pick, auto, live }) {
 
 /* Steps that run while seen; a choice holds its step, then the walk takes over again after 8 s untouched, so the
    points and the wire never stop for good after one tap (page-local; the shared useSteps holds forever). */
-function useStepsBack(n: number, ms: number, live, back = 8000) {
+function useStepsBack(n: number, ms: number, live: boolean, back = 8000) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(0);
   useEffect(() => {
@@ -98,17 +103,17 @@ function useStepsBack(n: number, ms: number, live, back = 8000) {
     const t = setTimeout(() => { if (mine) setMine(0); else setAt((v) => (v + 1) % n); }, mine ? back : ms);
     return () => clearTimeout(t);
   }, [at, live, mine, n, ms, back]);
-  return [at, (i) => { setAt(i); setMine((k) => k + 1); }, !!mine];
+  return [at, (i: number) => { setAt(i); setMine((k) => k + 1); }, !!mine] as const;
 }
 
 function Hero() {
-  const [ref, live0] = useLive(0.25);
+  const [ref, live0] = useLive<HTMLDivElement>(0.25);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const live = live0 && !paused;
   const [pick, setPick] = useState(2);
   const [mine, setMine] = useState(false);
   // the four points keep stepping while they are seen, even once the wire has scrolled away (phone)
-  const [ptsRef, ptsLive] = useLive(0.4);
+  const [ptsRef, ptsLive] = useLive<HTMLOListElement>(0.4);
   const [at, choose, chosen] = useStepsBack(4, 3600, ptsLive && !paused);
   useEvery(2800, live && !mine, () => setPick((p) => (p + 1) % FIELDS.length));
   // a chosen field holds for 8 s untouched, then the reader goes back to asking for fields by itself
@@ -136,7 +141,7 @@ function Hero() {
             <Wire pick={pick} live={live} auto={(
               <div className="zp-pick" role="radiogroup" aria-label="Read a field">
                 <span className="x-mono">Read a field</span>
-                {FIELDS.map(([t], i) => <button key={t} type="button" role="radio" aria-checked={pick === i} tabIndex={pick === i ? 0 : -1} onClick={() => { setMine(true); setPick(i); }} onKeyDown={(e) => { const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!d) return; e.preventDefault(); const n = (i + d + FIELDS.length) % FIELDS.length; setMine(true); setPick(n); e.currentTarget.parentElement.querySelectorAll('button')[n]?.focus(); }} className="x-mono">{t}</button>)}
+                {FIELDS.map(([t], i) => <button key={t} type="button" role="radio" aria-checked={pick === i} tabIndex={pick === i ? 0 : -1} onClick={() => { setMine(true); setPick(i); }} onKeyDown={(e) => { const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key]; if (!d) return; e.preventDefault(); const n = (i + d + FIELDS.length) % FIELDS.length; setMine(true); setPick(n); e.currentTarget.parentElement!.querySelectorAll('button')[n]?.focus(); }} className="x-mono">{t}</button>)}
                 <span className="zp-pause">{pauseBtn}</span>
               </div>
             )} />
@@ -188,10 +193,10 @@ function Why() {
     return () => ul.removeEventListener('scroll', f);
   }, []);
   useEffect(() => { track.current?.querySelectorAll('.zp-packets > li').forEach((li, i) => li.classList.toggle('on', i === on)); }, [on]);
-  const pick = (e: React.PointerEvent<HTMLDivElement>) => { const li = e.target.closest?.('.zp-packets > li'); if (!li) return; const i = [...li.parentElement.children].indexOf(li); if (i >= 0) { setOn(i); setMine(true); } };
+  const pick = (e: React.SyntheticEvent<HTMLDivElement>) => { const li = (e.target as Element).closest?.('.zp-packets > li'); if (!li) return; const i = [...li.parentElement!.children].indexOf(li); if (i >= 0) { setOn(i); setMine(true); } };
   // on the grid (desktop) the packets land in turn by themselves while the grid is on screen, so it is never a still
   // wall; pointing at, focusing or swiping to one hands it over (and the walk resumes after the pointer leaves)
-  const [wref, live] = useLive(0.35);
+  const [wref, live] = useLive<HTMLElement>(0.35);
   const [mine, setMine] = useState(false);
   const grid = () => { const ul = track.current?.querySelector('ul'); return ul && ul.scrollWidth <= ul.clientWidth + 2; };
   useEvery(1800, live && !mine, () => { if (grid()) setOn((v) => (v + 1) % WHY.length); });
@@ -248,7 +253,7 @@ const ASCII = `┌────────────────────�
 └─────────────────────────────────────────────────────────────────┘`;
 
 function Running() {
-  const [ref, live0] = useLive(0.3);
+  const [ref, live0] = useLive<HTMLElement>(0.3);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const live = live0 && !paused;
   const lines = TERM.split('\n');
@@ -280,7 +285,7 @@ function Running() {
 const SERVERS = ['github', 'slack', 'db'];
 
 /* A drawn slider (no browser control): drag the track, or arrows / Page keys / Home / End. */
-function Slide({ n, set }) {
+function Slide({ n, set }: { n: number; set: (v: number) => void }) {
   const tr = useRef<HTMLDivElement>(null);
   const [press, setPress] = useState(false); // pointer capture drops :active, so the press is a state
   const clamp = (v: number) => Math.max(1, Math.min(100, v));
@@ -303,7 +308,17 @@ function Slide({ n, set }) {
 /* Sidecars or one daemon: the processes each topology starts, for as many agents and servers as you say. The calculator
    (the signature): the slider sets the agents, the server keys set which of the terminal's three servers run, and the
    diagram, both topologies and the N:1 / 1:M / 0 figures re-plan at once. */
-function Fleet({ n, setN, srv, setSrv, setMine, live, paused, pauseBtn }) {
+interface FleetProps {
+  n: number;
+  setN: (v: number) => void;
+  srv: string[];
+  setSrv: React.Dispatch<React.SetStateAction<string[]>>;
+  setMine: (v: boolean) => void;
+  live: boolean;
+  paused: boolean;
+  pauseBtn: ReactNode;
+}
+function Fleet({ n, setN, srv, setSrv, setMine, live, paused, pauseBtn }: FleetProps) {
   const m = srv.length;
   const side = n * m;
   const box = (k: number, cls: string) => Array.from({ length: k }).map((_, i) => <i key={i} className={cls} style={{ '--s': i % 3 }} />);
@@ -351,7 +366,7 @@ function Fleet({ n, setN, srv, setSrv, setMine, live, paused, pauseBtn }) {
 
 /* the diagram's wires draw themselves in the first time they are seen, agents to gateway, then gateway to servers.
    A clip wipes them downwards as whole strokes, so every line meets its box (no dash pattern on a stretched path). */
-function Wires({ d, late, seen }) {
+function Wires({ d, late, seen }: { d: string[]; late?: boolean; seen: boolean }) {
   return (
     <svg className={'zp-dia-l' + (seen ? ' on' : '') + (late ? ' late' : '')} viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
       {d.map((p) => <path key={p} d={p} />)}
@@ -360,11 +375,11 @@ function Wires({ d, late, seen }) {
 }
 
 /* Hanzo's gateway diagram, drawn: the same words as the ASCII (kept in the HTML, hidden, for the record). */
-function Diagram({ n = 4, srv = SERVERS }) {
+function Diagram({ n = 4, srv = SERVERS }: { n?: number; srv?: string[] }) {
   const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
   // the calculator re-plans it: the agent boxes light up to the count you set, and a server you switch off goes quiet
-  const off = { GitHub: !srv.includes('github'), Slack: !srv.includes('slack') };
+  const off: Record<string, boolean> = { GitHub: !srv.includes('github'), Slack: !srv.includes('slack') };
   return (
     <figure className="zp-dia" ref={ref}>
       <div className="zp-dia-swarm">
@@ -390,7 +405,7 @@ function Built() {
   // the scale moment: N:1 and 1:M arrive at hero size, hold, then settle to figure size (the 0 stays medium, MASTER part 5)
   const stats = useRef<HTMLUListElement>(null);
   const seen = useInView(stats, { once: true, amount: 0.6 });
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive<HTMLElement>(0.3);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const [n, setN] = useState(4);
   const [srv, setSrv] = useState(SERVERS);
@@ -455,7 +470,7 @@ const Row = ({ to, children }: RowProps) => <A to={to} className="zp-row"><span>
 /* The close: one black band holds the protocol and the way to get it, as quiet rows; the only solid stays above. The
    address types itself in when the band arrives and its cursor keeps time while it is on screen. */
 function Band() {
-  const [ref, live] = useLive(0.4);
+  const [ref, live] = useLive<HTMLDivElement>(0.4);
   const [seen, setSeen] = useState(false);
   useEffect(() => { if (live) setSeen(true); }, [live]);
   return (

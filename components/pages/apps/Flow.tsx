@@ -105,7 +105,7 @@ interface GraphProps {
   s: number;
   lit?: number;
   pulse?: boolean;
-  pick: (k: number) => void;
+  pick?: (k: number) => void;
   upto?: number;
   cls?: string;
 }

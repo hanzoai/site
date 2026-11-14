@@ -2,7 +2,9 @@
 import type { Branch } from '../htmltree';
 
 /* one block of a page in reading order: a bare string of text (s), or an element (n) of kind t */
-export interface Block { t: string; n?: Branch; s?: string }
+export interface TextBlock { t: 'text'; s: string; n?: undefined }
+export interface TagBlock { t: string; n: Branch; s?: undefined }
+export type Block = TextBlock | TagBlock;
 
 /* a table as rows of strings */
 export interface Grid { head: string[]; rows: string[][] }
@@ -58,7 +60,7 @@ export interface BenchDoc {
 }
 
 /* a sibling card under the page: where it goes and how it is drawn */
-export interface Card { href: string; title: string; seed: string; dir?: string; hidden?: string }
+export interface Card { href: string; title: string; seed: string; dir?: 'prev' | 'next'; hidden?: string }
 
 /* a sibling's own line and headline figure, for the hover preview and contour */
 export interface Peek { lede: string; figure: string; data: number[] }

@@ -4,20 +4,19 @@
    close). Each plays once, in CSS (Entrances.css), when its section is first a quarter seen: the wrapper gets
    data-in. The final state is the written state; the start state applies only under html.js and before data-in, and
    never under reduced motion, so JS-off and server HTML show every section standing. */
-import type { ReactNode } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import './Entrances.css';
 
-interface EnterProps {
+interface EnterProps extends HTMLAttributes<HTMLElement> {
   kind: string;
-  as?: string;
+  as?: 'div' | 'section';
   className?: string;
   children: ReactNode;
   amount?: number;
-  [key: string]: unknown;
 }
 export default function Enter({ kind, as: Tag = 'div', className = '', children, amount = 0.25, ...rest }: EnterProps) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const [inn, setIn] = useState(false);
   useEffect(() => {
     const el = ref.current;

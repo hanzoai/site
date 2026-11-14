@@ -14,7 +14,7 @@ import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import './Motion.css';
 
-export function useIn(ref: React.RefObject<HTMLDivElement | null> | React.RefObject<null> | React.RefObject<HTMLElement | null>, amount = 0.2) {
+export function useIn(ref: React.RefObject<HTMLElement | null>, amount = 0.2) {
   const [on, setOn] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -38,14 +38,14 @@ export function MagnetGrid() {
   useEffect(() => {
     const grid = box.current;
     if (!grid || matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-    const tiles = [...grid.querySelectorAll('.ux-t')];
+    const tiles = [...grid.querySelectorAll<HTMLElement>('.ux-t')];
     const st = tiles.map(() => ({ x: 0, y: 0, s: 1, cx: 0, cy: 0 }));
     const measure = () => {
       const g = grid.getBoundingClientRect();
       tiles.forEach((t, i) => { const r = t.getBoundingClientRect(); st[i].cx = r.left - g.left + r.width / 2 - st[i].x; st[i].cy = r.top - g.top + r.height / 2 - st[i].y; });
     };
-    let ptr = null, last = 0, raf = 0, seen = false;
-    const ripples = [];
+    let ptr: { x: number; y: number } | null = null, last = 0, raf = 0, seen = false;
+    const ripples: { x: number; y: number; t: number }[] = [];
     const fine = matchMedia('(pointer: fine)').matches;
     const tick = (now: number) => {
       raf = 0;
@@ -134,28 +134,33 @@ export function Curl({ children }: CurlProps) {
 interface TrailProps {
   children: ReactNode;
 }
+/* the strip's box, with the hook the entrance uses to drive the trail */
+interface TrailBox extends HTMLDivElement {
+  __trail?: (x: number, y: number, show: boolean) => void;
+}
 export function Trail({ children }: TrailProps) {
-  const ref = useRef<HTMLDivElement>(null), inner = useRef<HTMLDivElement>(null), dots = useRef([]);
+  const ref = useRef<TrailBox>(null), inner = useRef<HTMLDivElement>(null), dots = useRef<(HTMLElement | null)[]>([]);
   const on = useIn(ref, 0.35);
   const [fine, setFine] = useState(false);
   useEffect(() => { setFine(matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches); }, []);
   // the trail: N dots, each easing toward the one ahead of it
   useEffect(() => {
     if (!fine) return undefined;
-    const el = ref.current;
+    const el = ref.current!;
     const P = dots.current.map(() => ({ x: -40, y: -40 }));
-    let target = null, raf = 0, still = 0;
+    let target: { x: number; y: number; on: boolean } | null = null, raf = 0, still = 0;
     const tick = () => {
       raf = 0;
       if (!target) return;
+      const tg = target;
       let moving = false;
       P.forEach((p, i) => {
-        const lead = i === 0 ? target : P[i - 1];
+        const lead = i === 0 ? tg : P[i - 1];
         const nx = p.x + (lead.x - p.x) * 0.38, ny = p.y + (lead.y - p.y) * 0.38;
         if (Math.abs(nx - p.x) + Math.abs(ny - p.y) > 0.2) moving = true;
         p.x = nx; p.y = ny;
         const d = dots.current[i];
-        if (d) { d.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) scale(${(1 - i / P.length).toFixed(2)})`; d.style.opacity = target.on ? String(0.55 - i * 0.045) : '0'; }
+        if (d) { d.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) scale(${(1 - i / P.length).toFixed(2)})`; d.style.opacity = tg.on ? String(0.55 - i * 0.045) : '0'; }
       });
       still = moving ? 0 : still + 1;
       if (still < 20) raf = requestAnimationFrame(tick);
@@ -171,7 +176,7 @@ export function Trail({ children }: TrailProps) {
   // the entrance: a cursor sweeps once across the strip, uncovering it as it goes
   useEffect(() => {
     if (!on || !fine) return undefined;
-    const el = ref.current, inn = inner.current;
+    const el = ref.current!, inn = inner.current!;
     const r = el.getBoundingClientRect();
     const t0 = performance.now(), D = 1100;
     let raf = 0;
@@ -195,14 +200,13 @@ export function Trail({ children }: TrailProps) {
 
 /* magnet-gather and zoom-through are CSS on [data-in]; this marks a block when it arrives */
 interface InProps {
-  as?: string;
+  as?: 'div' | 'ol';
   className?: string;
   amount?: number;
   children: ReactNode;
-  [key: string]: unknown;
 }
 export function In({ as: T = 'div', className = '', amount = 0.2, children, ...rest }: InProps) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const on = useIn(ref, amount);
   return <T ref={ref} className={className} data-in={on ? '' : undefined} {...rest}>{children}</T>;
 }

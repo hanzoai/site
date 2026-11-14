@@ -59,7 +59,7 @@ function product(root: Branch, slug: string): Product {
     const inNav = new Set(findAll(win, tag('nav')).flatMap((v) => findAll(v, tag('a'))));
     const out = findAll(win, (n) => n.t === 'a' && n.a && n.a.href && !inNav.has(n));
     doc.window = {
-      title: title ? title.c.filter((c) => !isN(c)).map(clean).filter(Boolean) : [doc.name],
+      title: title ? title.c.filter((c): c is string => !isN(c)).map(clean).filter(Boolean) : [doc.name],
       siblings: [...inNav].map((a) => ({ label: txt(a), href: attr(a).href, current: attr(a)['aria-current'] === 'page' })),
       // three kinds of example on hanzo.ai: a project's services, a conversation with the agent, or a CLI session
       rows: findAll(win, slot('surface-row')).map((b) => { const name = txt(find(b, slot('surface-name'))); return { name, state: txt(findAll(b, (n) => n.t === 'span' && n.a && n.a['data-slot'] === 'text').pop()), note: ROW_NOTE[name] || '' }; }),

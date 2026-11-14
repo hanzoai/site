@@ -43,8 +43,8 @@ const STATE = ['sent', 'opened', 'signed'];
 
 /* The page's entrances: once, when the section first enters the viewport, it gets data-in and its CSS entrance plays
    (Sign.css, "entrances"). onIn runs once at that moment for an entrance that needs a script (the noise dissolve). */
-function useEnter(onIn) {
-  const ref = useRef(null);
+function useEnter<T extends HTMLElement = HTMLElement>(onIn?: (el: T) => void) {
+  const ref = useRef<T>(null);
   const f = useRef(onIn);
   f.current = onIn;
   useEffect(() => {
@@ -65,8 +65,8 @@ function useEnter(onIn) {
 
 /* Entrance 4: the section dissolves in out of grey noise. An SVG filter thresholds fractal noise into an alpha mask;
    its offset animates (SMIL, in the filter itself) from all-grain to solid in 600 ms, then the filter comes off. */
-function dissolve(el) {
-  const a = document.getElementById('sg-noise-a');
+function dissolve(el: HTMLElement) {
+  const a = document.querySelector<SVGAnimationElement>('#sg-noise-a');
   if (!a || typeof a.beginElement !== 'function') return;
   el.style.filter = 'url(#sg-noise)';
   a.beginElement();
@@ -102,7 +102,7 @@ function Page({ at }: PageProps) {
 }
 
 /* Who has it: three recipients, their states moving as the page goes out. */
-function Track({ at, run }) {
+function Track({ at, run }: { at: number; run: boolean }) {
   const [m, setM] = useState(0); // in "Watch it move" the three recipients advance one by one
   useEvery(900, run && at === 3, () => setM((v) => (v + 1) % 7));
   return (
@@ -119,7 +119,7 @@ function Track({ at, run }) {
    (each stamp lands in turn); the five steps sit under it as one row, and picking one takes the desk there and holds it
    a while before it plays on. Reduced motion: the signed, stamped final page. */
 function Opening() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.3);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const [step, setStep] = useState(0);
   const [picked, setPicked] = useState(false);
@@ -129,7 +129,7 @@ function Opening() {
     return () => clearTimeout(t);
   }, [step, live, paused, picked]);
   const at = calm ? 4 : step;
-  const stepsRef = useEnter();
+  const stepsRef = useEnter<HTMLDivElement>();
   const pick = (i: number) => { setStep(i); setPicked(true); };
   return (
     <section className="sg-hero" aria-labelledby="sg-h1" data-morph-target>
@@ -189,7 +189,7 @@ const LANGS = ['German', 'English', 'Spanish', 'French', 'Italian', 'Japanese', 
 
 /* Five people, one deal: their states move until one is left holding it up. */
 function Five() {
-  const [ref, live] = useLive(0.4);
+  const [ref, live] = useLive<HTMLDivElement>(0.4);
   const [paused, pauseBtn] = usePause({ right: 12, top: 12 });
   const [k, setK] = useState(3);
   useEvery(1200, live && !paused, () => setK((v) => (v + 1) % 9));
@@ -204,7 +204,7 @@ function Five() {
 }
 
 function Langs() {
-  const [ref, live] = useLive(0.4);
+  const [ref, live] = useLive<HTMLDivElement>(0.4);
   const [paused, pauseBtn] = usePause({ right: 0, top: 0 });
   const [i, setI] = useState(1);
   useEvery(1300, live && !paused, () => setI((v) => (v + 1) % LANGS.length));
@@ -254,17 +254,17 @@ function Parts() {
 /* Beyond: a signing pad. Draw, press Sign, and the "Signed" line stamps onto the pad with the time. Nothing is sent. */
 function Pad() {
   const cv = useRef<HTMLCanvasElement>(null);
-  const last = useRef<number[] | null | null>(null);
+  const last = useRef<[number, number] | null>(null);
   const [ink, setInk] = useState(false);
   const [done, setDone] = useState<string | null>(null);
   const padRef = useRef<HTMLDivElement>(null);
   const padSeen = useInView(padRef, { once: true, amount: 0.6 });
   const secRef = useEnter();
-  const pt = (e: React.PointerEvent<HTMLCanvasElement>) => { const r = cv.current!.getBoundingClientRect(); return [(e.clientX - r.left) * (cv.current!.width / r.width), (e.clientY - r.top) * (cv.current!.height / r.height)]; };
+  const pt = (e: React.PointerEvent<HTMLCanvasElement>): [number, number] => { const r = cv.current!.getBoundingClientRect(); return [(e.clientX - r.left) * (cv.current!.width / r.width), (e.clientY - r.top) * (cv.current!.height / r.height)]; };
   const down = (e: React.PointerEvent<HTMLCanvasElement>) => { if (done) return; cv.current!.setPointerCapture(e.pointerId); last.current = pt(e); };
   const move = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!last.current) return;
-    const c = cv.current!.getContext('2d');
+    const c = cv.current!.getContext('2d')!;
     const p = pt(e);
     c.lineWidth = 4; c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = '#1d1d1f';
     c.beginPath(); c.moveTo(...last.current); c.lineTo(...p); c.stroke();
@@ -275,12 +275,12 @@ function Pad() {
   const key = (e: React.KeyboardEvent<HTMLCanvasElement>) => {
     if (done || (e.key !== 'Enter' && e.key !== ' ')) return;
     e.preventDefault();
-    const c = cv.current!.getContext('2d');
+    const c = cv.current!.getContext('2d')!;
     c.save(); c.translate(260, 40); c.scale(4.2, 4.2);
     c.lineWidth = 1; c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = '#1d1d1f';
     c.stroke(new Path2D(INK)); c.restore(); setInk(true);
   };
-  const clear = () => { cv.current!.getContext('2d').clearRect(0, 0, cv.current!.width, cv.current!.height); setInk(false); setDone(null); };
+  const clear = () => { cv.current!.getContext('2d')!.clearRect(0, 0, cv.current!.width, cv.current!.height); setInk(false); setDone(null); };
   const sign = () => setDone(new Date().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }));
   return (
     <section className="w2-sec sg-try sg-focus" ref={secRef}>
@@ -310,7 +310,9 @@ function Pad() {
   );
 }
 
-const PLANS = [
+/* a plan: name, price, price suffix, blurb, [call to action, link], features */
+type Plan = [string, string, string, string, [string, string], string[]];
+const PLANS: Plan[] = [
   ['Community', 'Free', '', 'Self-host and own your data. Full source code on GitHub.', ['Get on GitHub', 'https://github.com/hanzoai/'], ['Unlimited documents', 'All field types', 'Templates', 'API access', 'Email notifications', 'Community support']],
   ['Starter', '$30', '/mo', 'For individuals and small teams getting started with e-signing.', ['Contact Sales', '/contact-sales'], ['Everything in Community', 'Managed cloud hosting', 'Custom branding', 'Priority email support', 'Signing certificates', '5 team members']],
   ['Business', '$50', '/mo', 'For growing teams that need advanced features and integrations.', ['Contact Sales', '/contact-sales'], ['Everything in Starter', 'Unlimited team members', 'Custom domain', 'Advanced templates', 'Webhooks', 'SAML SSO', 'Audit logs', 'Priority support']],
@@ -338,13 +340,13 @@ function Cost() {
   const [run, setRun] = useState(1); // 0 run it yourself, 1 we run it (the default: the hosted plans, Community stays legible)
   const plansRef = useRef<HTMLDivElement>(null);
   const seen = useInView(plansRef, { once: true, amount: 0.4 }); // the prices flip in once, the first time they are reached
-  const wrapRef = useEnter(dissolve);
+  const wrapRef = useEnter<HTMLDivElement>(dissolve);
   // on phones the plans are a sideways rail: the toggle brings the plans it means into view
   const toPlan = (k: number) => {
     const rail = plansRef.current;
     if (!rail || rail.scrollWidth <= rail.clientWidth + 1) return;
-    const card = rail.children[k];
-    rail.scrollTo({ left: card.offsetLeft - rail.firstElementChild.offsetLeft, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    const cards = rail.children as HTMLCollectionOf<HTMLElement>;
+    rail.scrollTo({ left: cards[k].offsetLeft - cards[0].offsetLeft, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
   return (
     <section className="w2-sec sg-cost">

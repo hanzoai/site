@@ -24,6 +24,7 @@ import type React from 'react';
 import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import { A, Cta } from '../../kit';
 import { useCalm } from '../../ui';
 import KeynoteStage, { useStagePause } from './SafeStage';
@@ -36,14 +37,14 @@ import { scrollToY } from '../../../lib/scroll';
 import './Dashboards.css';
 
 /* [ref, live]: live while the element is on screen and motion is allowed */
-function useSeen(amount = 0.25) {
-  const ref = useRef(null);
+function useSeen<T extends HTMLElement = HTMLDivElement>(amount = 0.25) {
+  const ref = useRef<T>(null);
   const seen = useInView(ref, { amount });
   const calm = useCalm();
-  return [ref, seen && !calm];
+  return [ref, seen && !calm] as const;
 }
 /* steps through n every ms while run; choosing one by hand stops the cycle (timeouts, no setInterval) */
-function useCycle(n: number, ms: number, run) {
+function useCycle(n: number, ms: number, run: boolean) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   useEffect(() => {
@@ -51,13 +52,13 @@ function useCycle(n: number, ms: number, run) {
     const t = setTimeout(() => setAt((v) => (v + 1) % n), ms);
     return () => clearTimeout(t);
   }, [at, run, mine, n, ms]);
-  return [at, (i) => { setAt(i); setMine(true); }];
+  return [at, (i: number) => { setAt(i); setMine(true); }] as const;
 }
 
 /* ---------- drawing in real pixels (even strokes, exact line lengths) ---------- */
 function useBox(w0 = 600, h0 = 300) {
-  const ref = useRef(null);
-  const [box, setBox] = useState([w0, h0]);
+  const ref = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState<[number, number]>([w0, h0]);
   useEffect(() => {
     const el = ref.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
@@ -65,9 +66,9 @@ function useBox(w0 = 600, h0 = 300) {
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
-  return [ref, box];
+  return [ref, box] as const;
 }
-const px = (P: number[][], [w, h]) => P.map(([x, y]) => [+(x / 100 * w).toFixed(1), +(y / 100 * h).toFixed(1)]);
+const px = (P: number[][], [w, h]: readonly [number, number]) => P.map(([x, y]) => [+(x / 100 * w).toFixed(1), +(y / 100 * h).toFixed(1)]);
 function curve(P: number[][]) {
   let d = `M${P[0][0]} ${P[0][1]}`;
   const f = (v: number) => +v.toFixed(1);
@@ -86,7 +87,14 @@ const SCORE = [0.2, 0.35, 0.6, 1, 0.7];
 
 /* a widget's picture. kind: line | bars | alert | score. th: the alert line (% from the top) for a monitor.
    draw: the line draws itself (CSS, so it runs at first paint without the script) */
-function Chart({ kind, th = 42, draw = true, className = '' }) {
+type ChartKind = 'line' | 'bars' | 'alert' | 'score';
+interface ChartProps {
+  kind: ChartKind;
+  th?: number;
+  draw?: boolean;
+  className?: string;
+}
+function Chart({ kind, th = 42, draw = true, className = '' }: ChartProps) {
   const [box, wh] = useBox();
   if (kind === 'bars' || kind === 'score') {
     const V = kind === 'bars' ? BARS.map((v) => v / 100) : SCORE;
@@ -114,13 +122,13 @@ function Chart({ kind, th = 42, draw = true, className = '' }) {
 
 /* ---------- the hero: a saved query, and the widget it draws ---------- */
 // [kind, select, group by, picture]
-const DEFS = [['widget', 'latency', 'model', 'line'], ['widget', 'traces', 'route', 'bars'], ['monitor', 'error rate', 'service', 'alert'], ['score config', 'rating', 'evaluator', 'score']];
+const DEFS: [string, string, string, ChartKind][] = [['widget', 'latency', 'model', 'line'], ['widget', 'traces', 'route', 'bars'], ['monitor', 'error rate', 'service', 'alert'], ['score config', 'rating', 'evaluator', 'score']];
 
 function Saved() {
   const [ref, live] = useSeen(0.3);
   const paused = useStagePause();
   const [at, choose] = useCycle(DEFS.length, 3800, live && !paused);
-  const tabs = useRef([]);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const [peek, setPeek] = useState(-1); // a hovered tab shows a ghost of its picture behind the current one
   const [kind, sel, grp, pic] = DEFS[at];
   const key = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
@@ -212,7 +220,14 @@ const PANELS = [
   ),
 ];
 
-function Fly({ p, k, on, calm, children }) {
+interface FlyProps {
+  p: MotionValue<number>;
+  k: number;
+  on: boolean;
+  calm: boolean | null;
+  children: ReactNode;
+}
+function Fly({ p, k, on, calm, children }: FlyProps) {
   // panel 1 is already in its slot when the run pins (never an empty board); the other five land through the run
   const a = k ? 0.02 + (k - 1) * 0.17 : -1, b = k ? a + 0.13 : -0.5;
   const t = useTransform(p, [a, b], [0, 1], { clamp: true });
@@ -320,7 +335,7 @@ function Watch() {
   const [th, setTh] = useState(42);
   const plot = useRef<HTMLDivElement>(null);
   const held = useRef(false);
-  const radios = useRef([]);
+  const radios = useRef<(HTMLButtonElement | null)[]>([]);
   const to = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = plot.current!.getBoundingClientRect();
     setTh(Math.round(Math.min(88, Math.max(12, ((e.clientY - r.top) / r.height) * 100))));

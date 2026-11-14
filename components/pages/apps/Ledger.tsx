@@ -140,7 +140,8 @@ function Book() {
   const hot = new Set(ptTx ? touched(ptTx) : pt?.acct != null ? [pt.acct] : lastTx && !fr.bad ? touched(lastTx) : []);
   const lit = (t: Tx) => (pt?.tx === t.id) || (pt?.acct != null && touched(t).includes(pt.acct));
   useEffect(() => { if (pt?.tx && !ptTx) setPt(null); }, [pt, ptTx]);
-  const ptAcctTx = pt?.acct != null ? fr.j.filter((t) => touched(t).includes(pt.acct)) : [];
+  const acct = pt?.acct;
+  const ptAcctTx = acct != null ? fr.j.filter((t) => touched(t).includes(acct)) : [];
   const read = ptTx ? 'tx ' + ptTx.id + ' · ' + [...new Set(touched(ptTx))].map((i) => '@' + ACC[i]).join(' · ') + ' · Σ 0'
     : pt?.acct != null ? '@' + ACC[pt.acct] + ' · ' + fmt(fr.b[pt.acct]) + (ptAcctTx.length ? ' · ' + ptAcctTx.map((t) => 'tx ' + t.id).join(', ') : '') : null;
   const note = read || fr.n;

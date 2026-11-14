@@ -70,7 +70,7 @@ const PauseI = ({ held }: PauseIProps) => (held
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 
 function Live() {
-  const [ref, seen] = useLive(0.25);
+  const [ref, seen] = useLive<HTMLDivElement>(0.25);
   const calm = useCalm(); // hydration-safe: false on the server and first paint, then the visitor's setting
   const [held, setHeld] = useState(false);
   const live = seen && !held;
@@ -394,7 +394,7 @@ const PLANS = [
 function Plans() {
   const [at, setAt] = useState(0);
   const mine = useRef(false);
-  const [ref, live] = useLive(0.45);
+  const [ref, live] = useLive<HTMLDivElement>(0.45);
   useEffect(() => {
     if (!live || mine.current) return undefined;
     const ts = [1, 2, 3, 2].map((k, i) => setTimeout(() => { if (!mine.current) setAt(k); }, 1400 + i * 1700));

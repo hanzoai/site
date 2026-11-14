@@ -10,8 +10,8 @@ export function useEnter(rootSel: string) {
   useEffect(() => {
     const root = document.querySelector(rootSel);
     if (!root) return;
-    const els = [...root.querySelectorAll('[data-enter]')];
-    const timers = [];
+    const els = [...root.querySelectorAll<HTMLElement>('[data-enter]')];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     if (typeof IntersectionObserver === 'undefined') { els.forEach((el) => { el.dataset.in = ''; }); return; }
     const io = new IntersectionObserver((es) => {
       es.forEach((e) => {
@@ -19,6 +19,7 @@ export function useEnter(rootSel: string) {
         const h = e.intersectionRect.height;
         if (e.intersectionRatio >= 0.25 || h >= innerHeight * 0.25) {
           const el = e.target;
+          if (!(el instanceof HTMLElement)) return;
           el.dataset.in = '';
           io.unobserve(el);
           // once played, later content (a filtered row, say) appears at once, not through the entrance again

@@ -9,6 +9,7 @@
    Every card's words are in the server HTML; with JS off the stack shows its first card, all six titles are in the
    index, and every card's words stay in the document. */
 import type React from 'react';
+import type { ReactNode, Ref } from 'react';
 import { memo, useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { ui } from '../../v2/famUi';
@@ -23,7 +24,19 @@ const Arrow = ({ d }: ArrowProps) => (
   <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d={d < 0 ? 'M10 3 5 8l5 5' : 'm6 3 5 5-5 5'} fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
 );
 
-const Face = memo(function Face({ it, i, n }) {
+export interface StackItem {
+  key: string;
+  title: string;
+  body: string;
+  icon: ReactNode;
+  art: ReactNode;
+}
+interface FaceProps {
+  it: StackItem;
+  i: number;
+  n: number;
+}
+const Face = memo(function Face({ it, i, n }: FaceProps) {
   return (
     <div className="cht-card-txt">
       <span className="cht-card-ico" aria-hidden="true">{it.icon}</span>
@@ -33,21 +46,43 @@ const Face = memo(function Face({ it, i, n }) {
     </div>
   );
 });
-const Art = memo(function Art({ art, play }) {
+interface ArtProps {
+  art: ReactNode;
+  play: boolean;
+}
+const Art = memo(function Art({ art, play }: ArtProps) {
   return <div className="cht-card-art" aria-hidden="true" data-play={play ? '' : undefined}><div className="cht-card-art-in">{art}</div></div>;
 });
 
-export default function CardStack({ items, label, id, enter }) {
+/* the top card while a finger or mouse holds it: where it started, how far it has moved, the last few x positions */
+interface Drag {
+  i: number;
+  x0: number;
+  y0: number;
+  dx: number;
+  dy: number;
+  axis: 'x' | null;
+  id: number;
+  hist: [number, number][];
+  touch: boolean;
+}
+interface CardStackProps {
+  items: StackItem[];
+  label: string;
+  id: string;
+  enter?: Ref<HTMLDivElement>;
+}
+export default function CardStack({ items, label, id, enter }: CardStackProps) {
   const n = items.length;
   const [order, setOrder] = useState(() => items.map((_, i) => i));
-  const [fly, setFly] = useState(null); // { i, dir }: a card off to one side (leaving, or about to come back)
+  const [fly, setFly] = useState<{ i: number; dir: number } | null>(null); // { i, dir }: a card off to one side (leaving, or about to come back)
   const [snap, setSnap] = useState(-1); // a card moved without a transition this frame
   const [seen, setSeen] = useState(false);
   const [held, setHeld] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const tilt = useRef<HTMLDivElement>(null);
-  const inner = useRef([]);
-  const drag = useRef(null);
+  const inner = useRef<(HTMLDivElement | null)[]>([]);
+  const drag = useRef<Drag | null>(null);
   const busy = useRef(false);
   const top = order[0];
 
@@ -63,7 +98,7 @@ export default function CardStack({ items, label, id, enter }) {
     return () => io.disconnect();
   }, []);
 
-  const frames = (f: (() => void) | (() => void)) => requestAnimationFrame(() => requestAnimationFrame(f));
+  const frames = (f: () => void) => requestAnimationFrame(() => requestAnimationFrame(f));
   const lean = (rx: number, ry: number) => { const t = tilt.current; if (t) { t.style.setProperty('--rx', rx.toFixed(2) + 'deg'); t.style.setProperty('--ry', ry.toFixed(2) + 'deg'); } };
 
   const next = (dir = -1) => {
@@ -87,7 +122,7 @@ export default function CardStack({ items, label, id, enter }) {
     setOrder((o) => [o[n - 1], ...o.slice(0, -1)]);
     frames(() => { setSnap(-1); setFly(null); setTimeout(() => { busy.current = false; }, OUT); });
   };
-  const goTo = (k) => {
+  const goTo = (k: number) => {
     if (k === top || busy.current) return;
     setOrder((o) => { const p = o.indexOf(k); return [...o.slice(p), ...o.slice(0, p)]; });
   };
@@ -98,7 +133,7 @@ export default function CardStack({ items, label, id, enter }) {
   };
 
   /* drag: the top card follows the pointer (the inner layer, so React's own transform on the card is untouched) */
-  const down = (e: React.PointerEvent<HTMLDivElement>, i) => {
+  const down = (e: React.PointerEvent<HTMLDivElement>, i: number) => {
     if (i !== top || busy.current || (e.pointerType === 'mouse' && e.button !== 0)) return;
     drag.current = { i, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, axis: null, id: e.pointerId, hist: [[e.timeStamp, e.clientX]], touch: e.pointerType !== 'mouse' };
   };

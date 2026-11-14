@@ -36,22 +36,31 @@ import './Gui.css';
 
 const GH = 'https://github.com/hanzoai/gui';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
-const SPR = { duration: 0.4, ease: [0.4, 0, 0.2, 1] }; // deck: no springs; the frames move and stay (ease-in-out, slow)
+type Bezier = [number, number, number, number];
+const SPR: { duration: number; ease: Bezier } = { duration: 0.4, ease: [0.4, 0, 0.2, 1] }; // deck: no springs; the frames move and stay (ease-in-out, slow)
 // colours swap fast (150 ms, ease-out) while shape and padding take the slow 400 ms, so "Hello, Hanzo" never sits
 // grey on grey halfway between the light and the ink ($8) state
-const INK = { duration: 0.15, ease: [0, 0, 0.2, 1] };
+const INK: { duration: number; ease: Bezier } = { duration: 0.15, ease: [0, 0, 0.2, 1] };
 const SHAPE = { ...SPR, backgroundColor: INK, color: INK };
 const ARRIVE = { duration: 0.3, ease: EASE_OUT_EXPO };
 
 /* the tokens the shorthands accept: only the two Hanzo's own code uses ($4 and $8), no invented names */
-const SPACE = { $4: 16, $8: 28 };
-const BG = { $4: '#ffffff', $8: '#0a0a0a' };
+const SPACE: Record<string, number> = { $4: 16, $8: 28 };
+const BG: Record<string, string> = { $4: '#ffffff', $8: '#0a0a0a' };
 const INKY = '$8';
-const ROUND = { $4: 10, $8: 24 };
-const TOK = { p: SPACE, bg: BG, rounded: ROUND };
-const PRESETS = [{ p: '$4', bg: '$4', rounded: '$4' }, { p: '$8', bg: '$4', rounded: '$8' }, { p: '$4', bg: '$8', rounded: '$8' }];
-const PLAT = [['iOS', 'Native', 'ios'], ['Android', 'Native', 'android'], ['Web', 'Atomic CSS', 'web'], ['Desktop', 'macOS · Win · Linux', 'desk']];
-const OK = (k: string, val) => TOK[k][val] !== undefined;
+const ROUND: Record<string, number> = { $4: 10, $8: 24 };
+const TOK: Record<string, Record<string, number | string>> = { p: SPACE, bg: BG, rounded: ROUND };
+/* the three shorthands a Welcome takes, each holding a token name */
+const PROP_KEYS = ['p', 'bg', 'rounded'] as const;
+type PropKey = (typeof PROP_KEYS)[number];
+interface Preset {
+  p: string;
+  bg: string;
+  rounded: string;
+}
+const PRESETS: Preset[] = [{ p: '$4', bg: '$4', rounded: '$4' }, { p: '$8', bg: '$4', rounded: '$8' }, { p: '$4', bg: '$8', rounded: '$8' }];
+const PLAT: [string, string, string][] = [['iOS', 'Native', 'ios'], ['Android', 'Native', 'android'], ['Web', 'Atomic CSS', 'web'], ['Desktop', 'macOS · Win · Linux', 'desk']];
+const OK = (k: string, val: string) => TOK[k][val] !== undefined;
 
 /* The hero row settles as you scroll (from 1.03, lifted 20px, to its place over 700px). Page-local so the server and
    the client render the same style; reduced motion pins it in place from CSS. */
@@ -69,7 +78,7 @@ function Settle({ children, className = '' }: SettleProps) {
 /* Hanzo's Welcome component: a YStack with a Text and a Button. parts outlines the primitives it is made of;
    delay lets the four frames take a new state one after another (a wave across the platforms). */
 interface WelcomeProps {
-  v: { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; };
+  v: Preset;
   parts?: boolean;
   delay?: number;
 }
@@ -87,13 +96,13 @@ function Welcome({ v, parts, delay = 0 }: WelcomeProps) {
 
 /* The same component once the compiler has been through it: the props it was given, flattened to one rule. */
 interface FlatProps {
-  v: { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; };
+  v: Preset;
 }
 function Flat({ v }: FlatProps) {
   return (
     <div className="gu-flat x-mono" aria-hidden="true">
       <span className="gu-flat-t">{'<YStack'}</span>
-      {['p', 'bg', 'rounded'].map((k) => <span key={k}>{k}="{v[k]}"</span>)}
+      {PROP_KEYS.map((k) => <span key={k}>{k}="{v[k]}"</span>)}
       <span className="gu-flat-t">{'/>'}</span>
     </div>
   );
@@ -102,7 +111,7 @@ function Flat({ v }: FlatProps) {
 /* One device frame, drawn the way its platform draws it. */
 interface DevProps {
   k: string;
-  v: { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; };
+  v: Preset;
   parts?: boolean;
   tag?: string | null;
   flat?: boolean;
@@ -125,7 +134,7 @@ function Dev({ k, v, parts, tag, flat, delay, children }: DevProps) {
 
 /* The four, in step. step (-1 the opening, 0 to 4 the chapters) picks the state the one object is in. */
 interface FourProps {
-  v: { p: string; bg: string; rounded: string; };
+  v: Preset;
   step?: number;
   cls?: string;
 }
@@ -142,15 +151,21 @@ function Four({ v, step = -1, cls = '' }: FourProps) {
   );
 }
 
-const PauseIco = ({ on }) => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{on ? <path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /> : <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" fill="currentColor" />}</svg>;
+const PauseIco = ({ on }: { on: boolean }) => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{on ? <path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /> : <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" fill="currentColor" />}</svg>;
 
 /* The code bar: the props the four frames are rendering right now. */
-function Bar({ v, hold, setHold, off }) {
+interface BarProps {
+  v: Preset;
+  hold?: boolean;
+  setHold?: (v: boolean) => void;
+  off?: boolean;
+}
+function Bar({ v, hold, setHold, off }: BarProps) {
   return (
     <div className="gu-code">
       <p className="x-mono" aria-live="polite">
         <span className="gu-code-t">{'<YStack'}</span>
-        {['p', 'bg', 'rounded'].map((k) => (
+        {PROP_KEYS.map((k) => (
           <span key={k} className="gu-code-p">{k}=<span className="gu-code-v"><AnimatePresence mode="popLayout" initial={false}><motion.b key={v[k]} initial={{ y: '100%', opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: '-100%', opacity: 0 }} transition={ARRIVE}>"{v[k]}"</motion.b></AnimatePresence></span></span>
         ))}
         <span className="gu-code-t">{'/>'}</span>
@@ -163,7 +178,7 @@ function Bar({ v, hold, setHold, off }) {
 }
 
 /* Cycles the presets (or a given list of them) while on and on screen. */
-function useCycle(on, ms = 2600, list = PRESETS, first = ms) {
+function useCycle<T>(on: boolean, ms: number, list: T[], first = ms) {
   const [i, setI] = useState(0);
   const n = useRef(0); // how many changes so far: the first comes sooner (first), then every ms
   useEffect(() => {
@@ -195,7 +210,7 @@ function Pull({ children }: PullProps) {
    (the first change lands at ~0.8 s). Not pinned: the stage scrolls away with the hero. */
 function Hero() {
   const [hold, setHold] = useState(false);
-  const [seen, live] = useLive(0.15);
+  const [seen, live] = useLive<HTMLDivElement>(0.15);
   const v = useCycle(live && !hold, 2600, PRESETS, 800);
   return (
     <section className="gu-hero" aria-labelledby="gu-h1">
@@ -232,7 +247,7 @@ const PRIMS_USED = ['YStack', 'Text', 'Button'];
    03 compile-time CSS: the flat rule the compiler emits; 04 primitives: the card in its parts, the kit's primitives under
    it; 05 animated: the props change by themselves while it is on screen. */
 /* Hanzo's own Welcome source, quoted from the page's install block (CODE, below) */
-const SRC = [
+const SRC: [string, string][] = [
   ['k', 'export function Welcome() {'],
   ['', '  return ('],
   ['t', '    <YStack space="$4" padding="$4">'],
@@ -248,12 +263,12 @@ const SRC = [
    window is on screen: iOS, Android, Web, Desktop). Mouse and touch drag the divider anywhere in the window; the
    handle is a slider (arrow keys 5%, Home/End). On arrival it glides once to show it moves; reduced motion rests at 50%. */
 function Compare() {
-  const box = useRef<HTMLDivElement | null | null>(null);
+  const box = useRef<HTMLDivElement | null>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const [x, setX] = useState(50);
   const [p, setP] = useState(0);
   const touched = useRef(false);
-  const [seen, live] = useLive(0.3);
+  const [seen, live] = useLive<HTMLDivElement>(0.3);
   useEnter(wrap);
   useEffect(() => {
     if (!live) return;
@@ -307,7 +322,7 @@ function Compare() {
 }
 
 /* Each chapter's own object: what the one component turns into for that idea. */
-function ChapterObj({ i, live }) {
+function ChapterObj({ i, live }: { i: number; live: boolean }) {
   const wave = useCycle(live && i === 4, 1500, WAVE);
   // 01 lights each platform in turn as the one source reaches it; 03 the compiler re-emits the rule as the props change
   const lit = useCycle(live && i === 0, 1200, PLAT);
@@ -330,7 +345,7 @@ interface ChapterProps {
   d: string;
 }
 function Chapter({ i, t, d }: ChapterProps) {
-  const [ref, live] = useLive(0.4);
+  const [ref, live] = useLive<HTMLLIElement>(0.4);
   return (
     <li ref={ref} className="gu-ch" style={{ '--i': i }}>
       <div className="gu-ch-copy">
@@ -364,14 +379,14 @@ function Build() {
 /* Beyond, in the one dark room: the shorthands are the API. Tokens set all four; a drifted value fails the typecheck. */
 function Editor() {
   const [v, setV] = useState(PRESETS[0]);
-  const [draft, setDraft] = useState<{} | {}>({});
-  const set = (k: string, val: string) => {
+  const [draft, setDraft] = useState<Partial<Record<PropKey, string>>>({});
+  const set = (k: PropKey, val: string) => {
     setDraft((d) => ({ ...d, [k]: val }));
     if (OK(k, val)) setV((o) => ({ ...o, [k]: val }));
   };
   // a chip sets the token and clears anything typed: the field only ever holds what the visitor typed
-  const pick = (k: string, val: string) => { setDraft((d) => ({ ...d, [k]: undefined })); setV((o) => ({ ...o, [k]: val })); };
-  const bad = Object.entries(draft).filter(([k, val]) => !OK(k, val));
+  const pick = (k: PropKey, val: string) => { setDraft((d) => ({ ...d, [k]: undefined })); setV((o) => ({ ...o, [k]: val })); };
+  const bad = Object.entries(draft).filter(([k, val]) => val !== undefined && !OK(k, val));
   const room = useRef<HTMLElement>(null);
   useEnter(room);
   return (
@@ -383,7 +398,7 @@ function Editor() {
       <div className="bz-wrap bz-grid gu-api-obj">
         <div className="gu-ed">
           <p className="gu-ed-k x-mono"><span>{'<YStack'}</span><span className="gu-ed-n">06 / 06</span></p>
-          {['p', 'bg', 'rounded'].map((k) => (
+          {PROP_KEYS.map((k) => (
             <div key={k} className="gu-prop">
               <label className="x-mono" id={'gu-lb-' + k} htmlFor={'gu-in-' + k}>{k}=</label>
               <div className="gu-opts" role="radiogroup" aria-labelledby={'gu-lb-' + k}>
@@ -431,10 +446,10 @@ export function Welcome() {
 const PRIMS = ['Stack', 'XStack', 'YStack', 'Text', 'Button', 'Sheet', 'Dialog'];
 /* an opened platform carries only words that are about that platform: the web gets Hanzo's atomic-CSS sentence (its
    own sub-label); the phones and the desktop carry their name and Hanzo's sub-label alone */
-const PANEL = { web: 2 };
+const PANEL: Record<string, number> = { web: 2 };
 interface PlatScreenProps {
   k: string;
-  v: { p: string; bg: string; rounded: string; };
+  v: Preset;
   wake?: boolean;
 }
 function PlatScreen({ k, v, wake }: PlatScreenProps) {
@@ -465,8 +480,8 @@ interface PlatLiveProps {
   k: string;
 }
 function PlatLive({ k }: PlatLiveProps) {
-  const [ref, live] = useLive(0.3);
-  const v = useCycle(live, 2200);
+  const [ref, live] = useLive<HTMLDivElement>(0.3);
+  const v = useCycle(live, 2200, PRESETS);
   return <div ref={ref} className={'gu-pp-dev gu-pp-' + k}><Bar v={v} /><PlatScreen k={k} v={v} /></div>;
 }
 
@@ -478,10 +493,10 @@ function useBackCloses(ref: React.RefObject<HTMLElement | null>) {
     if (!box) return;
     let ours = false;
     const layer = () => box.querySelector('.bz-open-layer');
-    const pop = () => { if (!ours) return; ours = false; layer()?.querySelector('.bz-open-x')?.click(); };
+    const pop = () => { if (!ours) return; ours = false; layer()?.querySelector<HTMLElement>('.bz-open-x')?.click(); };
     // while a card flies to its sheet and back, its own content is hidden and fades back once it has landed,
     // so nothing inside it is stretched by the morph (a crossfade, not a counter-scale)
-    let t;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const mo = new MutationObserver(() => {
       const open = !!layer();
       if (open && !ours) { ours = true; clearTimeout(t); box.classList.add('gu-morph'); history.pushState({ guOpen: 1 }, ''); }
@@ -502,14 +517,16 @@ function CardDev({ k }: CardDevProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const [wake, setWake] = useState(false);
   useEffect(() => {
-    const el = ref.current, card = el && el.closest('.gu-plat');
+    const el = ref.current;
+    if (!el) return;
+    const card = el.closest('.gu-plat');
     if (!card) return;
     const on = () => setWake(true), off = () => setWake(false);
     card.addEventListener('focus', on); card.addEventListener('blur', off);
     const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
     if (!fine) return () => { card.removeEventListener('focus', on); card.removeEventListener('blur', off); };
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const move = (e) => {
+    const move = (e: Event) => {
       if (calm) return;
       const r = card.getBoundingClientRect();
       const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
@@ -550,7 +567,7 @@ function Ship() {
           id: k,
           className: 'gu-plat-' + k,
           /* the sub-label and, on hover or focus, the props the woken device has just taken share one line */
-          card: <><CardDev k={k} /><span className="gu-plat-t"><b>{t}</b><span className="gu-plat-sw"><span className="gu-plat-s">{s}</span><span className="gu-plat-p x-mono" aria-hidden="true">{['p', 'bg', 'rounded'].map((p) => <span key={p}>{p}="{PRESETS[1][p]}"</span>)}</span></span></span></>,
+          card: <><CardDev k={k} /><span className="gu-plat-t"><b>{t}</b><span className="gu-plat-sw"><span className="gu-plat-s">{s}</span><span className="gu-plat-p x-mono" aria-hidden="true">{PROP_KEYS.map((p) => <span key={p}>{p}="{PRESETS[1][p]}"</span>)}</span></span></span></>,
           panel: (
             <div className="gu-pp">
               <PlatLive k={k} />

@@ -41,21 +41,25 @@ const MOVE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 /* Hanzo's example path, one level per row: each location prefixes the ones under it */
 const LOC = ['acme', 'acme/prod', 'acme/prod/web', 'the app or site under that'];
 /* callers, and the location their grant sits at */
-const WHO = [['org-wide member', 0], ['workspace member', 1], ['agent, delegated', 2], ['invite-only project', 3]];
+const WHO: [string, number][] = [['org-wide member', 0], ['workspace member', 1], ['agent, delegated', 2], ['invite-only project', 3]];
 /* the requests that arrive by themselves: [caller, target] */
-const SCRIPT = [[1, 2], [1, 0], [0, 3], [2, 1], [3, 3], [2, 2]];
+const SCRIPT: [number, number][] = [[1, 2], [1, 0], [0, 3], [2, 1], [3, 3], [2, 2]];
 const EVERY = 4600; // ms per request; the CSS fill in the request bar runs the same time
 const HOP = 0.4;
-const covers = (g: string | number, t: number) => t >= g;
+const covers = (g: number, t: number) => t >= g;
 
 /* where each node sits inside the graph, from layout (offsets ignore the Stage's scale) */
+/* a node's box inside the graph, and the graph's own */
+interface Rect { x: number; y: number; w: number; h: number }
+interface Geo { W: number; H: number; who: Rect[]; loc: Rect[] }
+
 function useGeo(box: React.RefObject<HTMLDivElement | null>) {
-  const [geo, setGeo] = useState(null);
+  const [geo, setGeo] = useState<Geo | null>(null);
   useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
-    const pos = (n: Element) => { let x = 0, y = 0, e = n; while (e && e !== el) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return { x, y, w: n.offsetWidth, h: n.offsetHeight }; };
-    const read = () => setGeo({ W: el.offsetWidth, H: el.offsetHeight, who: [...el.querySelectorAll('[data-who]')].map(pos), loc: [...el.querySelectorAll('[data-loc]')].map(pos) });
+    const pos = (n: HTMLElement) => { let x = 0, y = 0, e: HTMLElement | null = n; while (e && e !== el) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent as HTMLElement | null; /* an element's offset parent is one */ } return { x, y, w: n.offsetWidth, h: n.offsetHeight }; };
+    const read = () => setGeo({ W: el.offsetWidth, H: el.offsetHeight, who: [...el.querySelectorAll<HTMLElement>('[data-who]')].map(pos), loc: [...el.querySelectorAll<HTMLElement>('[data-loc]')].map(pos) });
     read();
     const ro = new ResizeObserver(read);
     ro.observe(el);
@@ -64,13 +68,13 @@ function useGeo(box: React.RefObject<HTMLDivElement | null>) {
   }, [box]);
   return geo;
 }
-const whoPath = (G: never, i: number, g: string | number) => {
+const whoPath = (G: Geo, i: number, g: number) => {
   const a = G.who[i], b = G.loc[g];
   if (!a || !b) return '';
   const ax = a.x + a.w, ay = a.y + a.h / 2, bx = b.x, by = b.y + b.h / 2, dx = (bx - ax) / 2;
   return `M${ax} ${ay} C${ax + dx} ${ay} ${bx - dx} ${by} ${bx} ${by}`;
 };
-const treePath = (G: never, i, j) => {
+const treePath = (G: Geo, i: number, j: number) => {
   const a = G.loc[i], b = G.loc[j];
   if (!a || !b) return '';
   const x = a.x + Math.max(8, Math.min(24, b.x - a.x - 14));
@@ -85,7 +89,7 @@ function Check() {
   const [calm, setCalm] = useState(false); // read after mount, so the first render (delays) matches the server's HTML
   useEffect(() => setCalm(!!reduce), [reduce]);
   const paused = useStagePause();
-  const [mine, setMine] = useState(null);
+  const [mine, setMine] = useState<[number, number] | null>(null);
   const [step] = useSteps(SCRIPT.length, EVERY, live && !mine && !paused);
   const [w, t] = mine || SCRIPT[step];
   const g = WHO[w][1];
@@ -97,9 +101,9 @@ function Check() {
   const d = (i: number) => (calm ? 0 : i * HOP);
   const land = d(3 + walk);
   const lit = (i: number) => ok && i >= g && i <= t;
-  const pick = (nw, nt) => setMine([nw, nt]);
+  const pick = (nw: number, nt: number) => setMine([nw, nt]);
   /* the last answer stays on the panel, in the quiet grey, while the next check walks; the new one cuts in over it */
-  const prev = useRef({ key, ok, before: null });
+  const prev = useRef<{ key: string; ok: boolean; before: boolean | null }>({ key, ok, before: null });
   if (prev.current.key !== key) prev.current = { key, ok, before: prev.current.ok };
   const before = prev.current.before;
   /* hovering a request mark names it in the bar (pointer only; the bar's own label returns on leave) */

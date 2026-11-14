@@ -7,6 +7,7 @@ const asks = [{ id: 'builds' }, { id: 'cadence' }, { id: 'blurb' }, { id: 'compa
 
 test('a program\'s answers go to its own form, one field per answered question', () => {
   const sent = filing('research', asks, { builds: ['Web apps', 'AI agents'], cadence: 'Every day', blurb: '  ', company: ' Acme ' }, 1794000000000);
+  assert.ok(sent);
   assert.equal(sent.url, 'https://api.hanzo.ai/v1/form/public/hanzo.research-apply/responses');
   assert.deepEqual(sent.body, {
     token: 'b_1794000000000',
@@ -16,7 +17,7 @@ test('a program\'s answers go to its own form, one field per answered question',
 });
 
 test('an answer is cut at 2,000 characters, and nothing answered sends nothing', () => {
-  assert.equal(filing('beta', asks, { blurb: 'x'.repeat(2500) }).body.answers[0].text.length, 2000);
+  assert.equal(filing('beta', asks, { blurb: 'x'.repeat(2500) })?.body.answers[0].text.length, 2000);
   assert.equal(filing('partner', asks, { builds: [], blurb: ' ' }), null);
   assert.equal(said(undefined), '');
 });

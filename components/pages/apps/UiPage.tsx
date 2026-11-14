@@ -31,17 +31,31 @@ import './UiPage.css';
 import ArtCard from '../cloud/ArtCard';
 
 const GH = 'https://github.com/hanzoai/ui';
-const ACCENTS = [['graphite', '#404040'], ['steel', '#525252'], ['silver', '#737373']]; // deck greys: the board never shows a second ink pill beside the ask
+const ACCENTS: [string, string][] = [['graphite', '#404040'], ['steel', '#525252'], ['silver', '#737373']]; // deck greys: the board never shows a second ink pill beside the ask
 const SCRIPT = ['menu', 'idle', 'dialog', 'idle', 'retune', 'idle'];
 
-function Board({ tok, setTok, mine, setMine, paused, hold }) {
-  const [ref, live] = useLive(0.3);
+/* the design tokens the hero board is tuned by: accent (index into ACCENTS), radius in px, density */
+interface Tok {
+  a: number;
+  r: number;
+  d: number;
+}
+interface BoardProps {
+  tok: Tok;
+  setTok: React.Dispatch<React.SetStateAction<Tok>>;
+  mine: boolean;
+  setMine: (v: boolean) => void;
+  paused: boolean;
+  hold: boolean;
+}
+function Board({ tok, setTok, mine, setMine, paused, hold }: BoardProps) {
+  const [ref, live] = useLive<HTMLDivElement>(0.3);
   const [k, setK] = useState(0);
   const [menu, setMenu] = useState(false);
   const [dlg, setDlg] = useState(false);
   const [own, setOwn] = useState<string | null>(null); // 'menu' | 'dialog' only when the visitor opened it; the script never takes focus
   const [focus, setFocus] = useState(0);
-  const ship = useRef<HTMLButtonElement>(null), opts = useRef<HTMLButtonElement>(null), box = useRef<HTMLDivElement>(null), items = useRef([]);
+  const ship = useRef<HTMLButtonElement>(null), opts = useRef<HTMLButtonElement>(null), box = useRef<HTMLDivElement>(null), items = useRef<(HTMLElement | null)[]>([]);
   const run = live && !mine && !paused && !hold; // the script holds while focus is on the board
   // the board wakes inside the first second: its first real act (the menu opens, the ring lands on Options) about
   // 600 ms after it is first seen, then the 1.5 s rhythm takes over
@@ -117,15 +131,21 @@ function Board({ tok, setTok, mine, setMine, paused, hold }) {
   );
 }
 
-function Tokens({ tok, setTok, setMine, pauseBtn }) {
-  const set = (p) => { setMine(true); setTok((t) => ({ ...t, ...p })); };
+interface TokensProps {
+  tok: Tok;
+  setTok: React.Dispatch<React.SetStateAction<Tok>>;
+  setMine: (v: boolean) => void;
+  pauseBtn: ReactNode;
+}
+function Tokens({ tok, setTok, setMine, pauseBtn }: TokensProps) {
+  const set = (p: Partial<Tok>) => { setMine(true); setTok((t) => ({ ...t, ...p })); };
   const swKey = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
     if (!d) return;
     e.preventDefault();
     const n = (tok.a + d + ACCENTS.length) % ACCENTS.length;
     set({ a: n });
-    e.currentTarget.parentElement.querySelectorAll('button')[n]?.focus();
+    e.currentTarget.parentElement!.querySelectorAll('button')[n]?.focus();
   };
   const [hov, setHov] = useState<number | null>(null); // the swatch under the pointer or focus names its token
   const shownSw = ACCENTS[hov ?? tok.a];
@@ -169,10 +189,10 @@ function Stage({ children, from = 1, lift = 10 }: StageProps) {
 }
 
 function Hero() {
-  const [tok, setTok] = useState({ a: 0, r: 14, d: 1 });
+  const [tok, setTok] = useState<Tok>({ a: 0, r: 14, d: 1 });
   const [mine, setMineRaw] = useState(false);
   const [poke, setPoke] = useState(0);
-  const setMine = (v) => { setMineRaw(v); setPoke((n) => n + 1); };
+  const setMine = (v: boolean) => { setMineRaw(v); setPoke((n) => n + 1); };
   // focus on the stage holds the board's script, so a keyboard visitor is never interrupted (a click already makes it theirs)
   const stage = useRef<HTMLDivElement>(null);
   const [hold, setHold] = useState(false);
@@ -216,7 +236,12 @@ const PROPS = [
 /* The chapters act on one real board (the same object, changing), not on drawings of it. Desktop: the board sticks
    on the left while the six chapters scroll past on the right; the chapter in the middle of the screen drives it.
    Phone: the board sits on top and the chapters are a swipe rail under it (scroll-snap, 16% peek). */
-const SHOW_TOK = [{ r: 14, a: 0, n: 'graphite' }, { r: 4, a: 1, n: 'steel' }, { r: 22, a: 2, n: 'silver' }];
+interface ShowTok {
+  r: number;
+  a: number;
+  n: string;
+}
+const SHOW_TOK: ShowTok[] = [{ r: 14, a: 0, n: 'graphite' }, { r: 4, a: 1, n: 'steel' }, { r: 22, a: 2, n: 'silver' }];
 const APPS = ['chat', 'console', 'cloud'];
 
 const PRODUCTS = ['chat.hanzo.ai', 'platform.hanzo.ai', 'every Hanzo dashboard'];
@@ -229,7 +254,16 @@ const SHEET = 45; // cells of the one atomic stylesheet
    The close shows the hero board itself, settled small with its tokens at rest, one product row lit at a time. */
 const STOPS = [['Ship it', '.button'], ['Options ▾', '<DropdownMenu />'], ['Field', '.field'], ['Panel', '.panel']];
 
-function Body({ at, t, tok, app, menu, dlg, ring }) {
+interface BodyProps {
+  at: number;
+  t: number;
+  tok: ShowTok;
+  app: string;
+  menu: boolean;
+  dlg: boolean;
+  ring: number;
+}
+function Body({ at, t, tok, app, menu, dlg, ring }: BodyProps) {
   // 01: the two real components open side by side, named; the class-only parts sit as one quiet row
   if (at === 0) return (
     <div className="uc-v uc-pair">
@@ -317,7 +351,7 @@ function Body({ at, t, tok, app, menu, dlg, ring }) {
   return null;
 }
 
-function ShowBoard({ at, run, bare }) {
+function ShowBoard({ at, run, bare }: { at: number; run: boolean; bare?: boolean }) {
   const [t, setT] = useState(0);
   useEffect(() => setT(0), [at]);
   useEvery(at === 1 ? 700 : 1400, run, () => setT((v) => v + 1));
@@ -362,10 +396,10 @@ interface CardProps {
   i: number;
   t: string;
   d: string;
-  paused: boolean | React.JSX.Element;
+  paused: boolean;
 }
 function Card({ i, t, d, paused }: CardProps) {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive<HTMLLIElement>(0.3);
   const [gx, gy, gr] = SCATTER[i];
   return (
     <li ref={ref} className="uc-ch ux-card" style={{ '--i': i, '--gx': gx + 'px', '--gy': gy + 'px', '--gr': gr + 'deg' }}>
@@ -414,7 +448,7 @@ const SHELL = 'npx @hanzo/ui init\nnpx @hanzo/ui add button dialog dropdown-menu
 const RET = LINES.findIndex((l) => l.includes('return <Button>'));
 
 function Init() {
-  const [ref, live, calm] = useLive(0.4);
+  const [ref, live, calm] = useLive<HTMLElement>(0.4);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const [k, setK] = useState(LINES.length); // the HTML carries every line; it types once when first seen
   const [ran, setRan] = useState(false);
@@ -432,7 +466,7 @@ function Init() {
     return () => { cancelAnimationFrame(raf); setSec(60); };
   }, [live, calm]);
   const [sent, setSent] = useState(false);
-  const sentT = useRef(0);
+  const sentT = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const ship = () => { setSent(true); clearTimeout(sentT.current); sentT.current = setTimeout(() => setSent(false), 1800); };
   useEffect(() => () => clearTimeout(sentT.current), []);
   return (
@@ -462,7 +496,7 @@ function Init() {
 /* The close: the paste prompt and the Get UI strip come first as quiet proof (on paper), then the page ends on one
    band, its line and its one ask beside the hero board settled small, then the footer. */
 function Stop() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive<HTMLElement>(0.3);
   return (
     <section className="w2-sec ui-stop" ref={ref}>
       <div className="w2-wrap">

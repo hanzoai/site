@@ -10,6 +10,7 @@ import type React from 'react';
 import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionTemplate, useMotionValue, useReducedMotion } from 'motion/react';
+import type { AnimationPlaybackControls } from 'motion/react';
 import './Spotlight.css';
 
 const MOVE: [number, number, number, number] = [0.4, 0, 0.2, 1];
@@ -56,18 +57,18 @@ export default function Spotlight({ rules, decisions, children }: SpotlightProps
   const x = useMotionValue(-999);
   const y = useMotionValue(-999);
   const mask = useMotionTemplate`radial-gradient(circle at ${x}px ${y}px, #000 0px, #000 ${r * 0.5}px, transparent ${r}px)`;
-  const runs = useRef([]);
+  const runs = useRef<AnimationPlaybackControls[]>([]);
 
   const stage = useRef<HTMLOListElement>(null); // the lit grid: the light's coordinates are in its box
-  const tiles = () => [...(stage.current?.querySelectorAll('.az-sp-t') || [])];
+  const tiles = () => [...(stage.current?.querySelectorAll<HTMLElement>('.az-sp-t') || [])];
   const center = (i: number) => { const el = tiles()[i]; return el ? [el.offsetLeft + el.offsetWidth / 2, el.offsetTop + el.offsetHeight / 2] : null; };
   const stop = () => { runs.current.forEach((c) => c.stop()); runs.current = []; };
-  const glide = (tx, ty, d = 1.1) => {
+  const glide = (tx: number, ty: number, d = 1.1) => {
     stop();
     if (calm) { x.set(tx); y.set(ty); return; }
     runs.current = [animate(x, tx, { duration: d, ease: MOVE }), animate(y, ty, { duration: d, ease: MOVE })];
   };
-  const aim = (i: number, d: number) => { const c = center(i); if (c) { setAt(i); glide(c[0], c[1], d); } };
+  const aim = (i: number, d?: number) => { const c = center(i); if (c) { setAt(i); glide(c[0], c[1], d); } };
   const nearest = (px: number, py: number) => {
     let best = 0, bd = Infinity;
     tiles().forEach((el, i) => {

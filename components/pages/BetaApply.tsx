@@ -31,14 +31,36 @@ import { mirror, uuidv7, visit } from '@hanzo/event';
 import { press } from '../../lib/press';
 import { track } from '../../lib/track';
 import { filing, said } from './BetaApply.send';
+import type { Answer, Answers } from './BetaApply.send';
 
 /* hanzo.ai's own definitions, word for word */
 const SPEND = ['$0–$20', '$21–$100', '$101–$200', '$201–$1,000', '$1,001+'];
-const ABOUT = [
+/* one question: a line, a pick of many, a pick of one, or a long answer; `to` is the autocomplete it asks for */
+interface Question {
+  id: string;
+  q: string;
+  kind: 'line' | 'many' | 'one' | 'long';
+  options?: string[];
+  to?: string;
+}
+interface Program {
+  name: string;
+  gets: string;
+  film: string;
+  asks: Question[];
+}
+/* this browser's copy of an application */
+interface Saved {
+  program: string;
+  step: number;
+  got: Answers;
+  filed: boolean;
+}
+const ABOUT: Question[] = [
   { id: 'company', q: 'Where do you work?', kind: 'line', to: 'company' },
   { id: 'role', q: 'What is your role?', kind: 'line', to: 'role' },
 ];
-const PROGRAMS = {
+const PROGRAMS: Record<string, Program> = {
   beta: {
     name: 'Beta access', gets: 'New releases before they ship.', film: 'enso',
     asks: [
@@ -76,17 +98,20 @@ const PROGRAMS = {
 };
 const KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const STORE = 'hz-beta-apply'; // this browser only: { program, step, got, filed }
-const EASE = [0.16, 1, 0.3, 1];
-const answered = (a, v) => (a.kind === 'many' ? Array.isArray(v) && v.length > 0 : said(v) !== '');
-const read = () => { try { return JSON.parse(localStorage.getItem(STORE) || 'null'); } catch { return null; } };
-const keep = (v: { program: string; step: number; got: {}; filed: boolean; } | { program: string; step: number; got: {}; filed: boolean; }) => { try { localStorage.setItem(STORE, JSON.stringify(v)); } catch { /* private window: the form still works */ } };
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const answered = (a: Question, v: Answer) => (a.kind === 'many' ? Array.isArray(v) && v.length > 0 : said(v) !== '');
+const read = (): Saved | null => { try { return JSON.parse(localStorage.getItem(STORE) || 'null'); } catch { return null; } };
+const keep = (v: Saved) => { try { localStorage.setItem(STORE, JSON.stringify(v)); } catch { /* private window: the form still works */ } };
 
 const ArrowR = ({ s = 15 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const ArrowL = () => <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Check = () => <svg className="xba-check" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* calls on(parent element) once, when its step mounts (the focus that follows a step) */
-function Mount({ on }) {
+interface MountProps {
+  on: (parent: HTMLElement | null | undefined) => void;
+}
+function Mount({ on }: MountProps) {
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => { on(ref.current?.parentElement); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return <span ref={ref} hidden />;
@@ -109,7 +134,11 @@ function Bars({ done, total }: BarsProps) {
 /* The paid way past the line (Zack's GA list, 8 Nov): no waitlist, straight to the Go checkout. Words are Hanzo's own
    ("Skip the wait, go paid" from /beta, "Go is $8/month, every model" from the home page); the price is lib/plans.js.
    On the pass it is the fast lane at the foot of the ticket; on a phone (no pass) it sits under the progress bars. */
-function Paid({ program, where }) {
+interface PaidProps {
+  program: string;
+  where: string;
+}
+function Paid({ program, where }: PaidProps) {
   return (
     <a href={checkoutAbs(PLANS.go.id, 'beta')} className={'xba-paid ' + where} data-cta={`beta.${program}.go-paid`}>
       <span className="xba-paid-t">Skip the wait, go paid</span>
@@ -120,8 +149,17 @@ function Paid({ program, where }) {
 }
 
 /* The pass: the film, the pass's name and promise, and a line for every answer (a tap goes back to its question). */
-function Pass({ p, program, asks, got, at, go, open }) {
-  const lines = asks.map((a, i) => [a, i]).filter(([a]) => answered(a, got[a.id]));
+interface PassProps {
+  p: Program;
+  program: string;
+  asks: Question[];
+  got: Answers;
+  at: number;
+  go: (i: number) => void;
+  open: boolean;
+}
+function Pass({ p, program, asks, got, at, go, open }: PassProps) {
+  const lines = asks.map((a, i): [Question, number] => [a, i]).filter(([a]) => answered(a, got[a.id]));
   return (
     <aside className="xba-pass" data-room="dark" aria-label={p.name}>
       <motion.div layout="position" className="xba-pass-m" transition={{ duration: 0.45, ease: EASE }}>
@@ -135,7 +173,8 @@ function Pass({ p, program, asks, got, at, go, open }) {
         <AnimatePresence initial={false}>
           {lines.map(([a, i]) => {
             const v = got[a.id];
-            const keys = a.options && (Array.isArray(v) ? v : [v]).map((o) => KEYS[a.options.indexOf(o)]).filter(Boolean).join(' ');
+            const opts = a.options;
+            const keys = opts && (Array.isArray(v) ? v : [v ?? '']).map((o) => KEYS[opts.indexOf(o)]).filter(Boolean).join(' ');
             return (
               <motion.li key={a.id} layout="position" initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -14 }} transition={{ duration: 0.35, ease: EASE }}>
                 <button type="button" className={'xba-line' + (i === at && open ? ' on' : '')} aria-label={a.q} onClick={() => go(i)} data-sound="tick">
@@ -162,14 +201,14 @@ function Apply({ program }: ApplyProps) {
   const router = useRouter();
   const calm = useReducedMotion();
   const [step, setStep] = useState(0);
-  const [got, setGot] = useState({});
+  const [got, setGot] = useState<Answers>({});
   const [dir, setDir] = useState(1);
   const [gate, setGate] = useState(false); // hanzo.ai's signed-out next step, after "Submit application"
   const [filed, setFiled] = useState(false);
   const [busy, setBusy] = useState(false);
   const [trap, setTrap] = useState(''); // the honeypot ("Leave this empty")
   const [ready, setReady] = useState(false);
-  const timer = useRef(0);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const gateH = useRef<HTMLHeadingElement>(null);
 
   // resume this browser's application to the same programme (a filed one opens at its first question, as on hanzo.ai)
@@ -188,7 +227,7 @@ function Apply({ program }: ApplyProps) {
 
   const ask = gate ? null : asks[step];
   // Open App is a page of this site: its press is read where the page transition reads it
-  const here = useRef({});
+  const here = useRef({ step: 0 });
   here.current = { step };
   useEffect(() => press('.xba-app', () => track('beta_continue_with_plan', { program, step: here.current.step + 1, total_steps: n })), [program, n]);
   // one view per question a reader reaches (a repaint of the same one is not a new view)
@@ -205,11 +244,11 @@ function Apply({ program }: ApplyProps) {
   // each step: back to the top, and focus on the answer (hanzo.ai's #beta-answer) once the new step has mounted
   const moved = useRef(false); // arriving: no ring on the first option before anyone acts
   useEffect(() => { if (moved.current) window.scrollTo({ top: 0 }); }, [step, gate]);
-  const land = (el) => { if (el && moved.current) setTimeout(() => (gate ? gateH.current : el.querySelector('#beta-answer'))?.focus({ preventScroll: true }), 30); };
+  const land = (el: HTMLElement | null | undefined) => { if (el && moved.current) setTimeout(() => (gate ? gateH.current : el.querySelector<HTMLElement>('#beta-answer'))?.focus({ preventScroll: true }), 30); };
   useEffect(() => () => clearTimeout(timer.current), []);
 
-  const to = (i) => { clearTimeout(timer.current); moved.current = true; setDir(i >= step ? 1 : -1); setStep(i); };
-  const set = (id, v) => setGot((g) => ({ ...g, [id]: v }));
+  const to = (i: number) => { clearTimeout(timer.current); moved.current = true; setDir(i >= step ? 1 : -1); setStep(i); };
+  const set = (id: string, v: Answer) => setGot((g) => ({ ...g, [id]: v }));
   const exit = () => {
     const nav = performance.getEntriesByType?.('navigation')[0];
     const landed = nav ? new URL(nav.name).pathname.replace(/\/$/, '') : '';
@@ -233,7 +272,8 @@ function Apply({ program }: ApplyProps) {
       if (!trap) {
         track('beta_submitted', { program });
         // no lead is filed from here, so the ad tags hear the application under an id of its own
-        mirror('beta_applied', { program, offer: 'none' }, uuidv7(), visit().tags);
+        const tags = visit().tags; // the library types the record's values as unknown; this one is a string
+        mirror('beta_applied', { program, offer: 'none' }, uuidv7(), typeof tags === 'string' ? tags : undefined);
       }
       setDir(1);
       moved.current = true;
@@ -241,7 +281,7 @@ function Apply({ program }: ApplyProps) {
     }, 420);
   };
   const next = () => (last ? submit() : to(step + 1));
-  const pick = (a, o) => {
+  const pick = (a: Question, o: string) => {
     track('beta_option_picked', { program, question_id: a.id, option: o });
     if (a.kind === 'one') {
       set(a.id, o);
@@ -249,7 +289,8 @@ function Apply({ program }: ApplyProps) {
       timer.current = setTimeout(() => { moved.current = true; setDir(1); setStep((s) => (s === asks.indexOf(a) && s < n - 1 ? s + 1 : s)); }, 260);
       return;
     }
-    const cur = Array.isArray(got[a.id]) ? got[a.id] : [];
+    const was = got[a.id];
+    const cur = Array.isArray(was) ? was : [];
     set(a.id, cur.includes(o) ? cur.filter((x) => x !== o) : [...cur, o]);
   };
   const edit = () => { moved.current = true; setGate(false); setFiled(false); setDir(-1); setStep(n - 1); };
@@ -273,7 +314,7 @@ function Apply({ program }: ApplyProps) {
       if (e.key === 'Escape') { e.preventDefault(); back(); return; }
       if (e.key === 'Enter') {
         if (ask?.kind === 'long' && e.shiftKey) return; // a new line
-        const ctl = e.target.closest?.('a, button');
+        const ctl = e.target instanceof Element ? e.target.closest('a, button') : null;
         if (ctl && !ctl.classList.contains('xba-opt')) return; // a focused Back, Skip, Open App or link does its own thing
         e.preventDefault();
         if (has || (last && enough)) next();
@@ -302,7 +343,7 @@ function Apply({ program }: ApplyProps) {
       <div className="xp-wrap xba-in">
         <Pass p={p} program={program} asks={asks} got={got} at={step} open={!gate} go={(i) => { setGate(false); to(i); }} />
         <section className="xba-form" aria-label="Apply to the Hanzo beta">
-          {gate ? (
+          {gate || !ask ? (
             <motion.div key="gate" className="xba-gate" {...slide}><Mount on={land} />
               <h1 ref={gateH} tabIndex={-1} className="xba-q">Log in or create an account to save your application.</h1>
               <p className="xba-gate-p">A Pro plan is not required — you can continue free. Log in or create a free account to save your application and see your place in line.</p>

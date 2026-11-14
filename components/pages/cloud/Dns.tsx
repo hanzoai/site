@@ -21,6 +21,8 @@
    Beyond: "What do you need?" - press the needs you have (unlimited zones, DNSSEC, role-based access, Edge DNS...) and
    the lightest plan whose own list covers them becomes the ink tile while the plans that fall short step back.
    Every word and link is Hanzo's; names and addresses in the zone are documentation examples (example.com, 192.0.2.0/24). */
+import type { MotionValue } from 'motion/react';
+import type { SceneProps } from './scene';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useTransform } from 'motion/react';
 import { EASE, useCalm } from '../../ui';
@@ -35,14 +37,14 @@ import './Dns.css';
 const PROVIDERS = ['Cloudflare', 'Route53', 'CoreDNS', 'GoDaddy', 'DigitalOcean'];
 
 /* [ref, live, calm]: live while the element is on screen and motion is allowed */
-function useSeen(amount = 0.25) {
-  const ref = useRef(null);
+function useSeen<T extends HTMLElement = HTMLDivElement>(amount = 0.25) {
+  const ref = useRef<T>(null);
   const seen = useInView(ref, { amount });
   const calm = useCalm();
-  return [ref, seen && !calm, calm];
+  return [ref, seen && !calm, calm] as const;
 }
 /* calls fn every ms while run is true: a chain of timeouts (no setInterval), the latest fn each time */
-function useTick(ms: number, run, fn: () => void) {
+function useTick(ms: number, run: boolean, fn: () => void) {
   const f = useRef(fn);
   f.current = fn;
   useEffect(() => {
@@ -105,7 +107,7 @@ function Zone() {
 /* ---------- chapters: one capability per screen ---------- */
 /* which of n steps a chapter is on: from the scroll through it on desktop (p); on phones it steps through once while
    seen and rests on the last step (no loop) */
-function useStepOf(p, n: number, on) {
+function useStepOf(p: MotionValue<number> | undefined, n: number, on: boolean) {
   const [k, setK] = useState(0);
   const calm = useCalm();
   useEffect(() => {
@@ -125,7 +127,7 @@ function useStepOf(p, n: number, on) {
 }
 
 /* 01: five providers round one API, lit one by one */
-function ProvidersScene({ p, on }) {
+function ProvidersScene({ p, on }: SceneProps) {
   const k = useStepOf(p, PROVIDERS.length, on);
   const calm = useCalm();
   return (
@@ -150,7 +152,7 @@ function ProvidersScene({ p, on }) {
 
 /* 02: one query to every provider at once, merged into one view */
 const LAT = [0.42, 0.7, 0.3, 0.86, 0.56];
-function ParallelScene({ p, on }) {
+function ParallelScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 3, on);
   return (
     <div className="kn-obj dn-sc dn-sc-par" data-k={k}>
@@ -179,7 +181,7 @@ const CLI = [
   ['# Ask the control plane whether it is answering', 'hanzo dns health'],
 ];
 const CLI_CODE = CLI.map(([c, x]) => c + '\n' + x).join('\n');
-function CliScene({ p, on }) {
+function CliScene({ p, on }: SceneProps) {
   const k = useStepOf(p, CLI.length, on);
   return (
     <div className="dn-sc dn-sc-cli" data-k={k}>
@@ -189,7 +191,7 @@ function CliScene({ p, on }) {
 }
 
 /* 04: the REST API inside a pipeline */
-function ApiScene({ p, on }) {
+function ApiScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 4, on);
   const S = [['CI/CD', 'pipelines'], ['REST API', '/v1/dns'], ['Record Manager', 'Hanzo DNS Control Plane'], ['example.com', 'infrastructure code']];
   return (
@@ -203,7 +205,7 @@ function ApiScene({ p, on }) {
 }
 
 /* 05: DNSSEC, the signing key turning on its rotation schedule (scrubbed by the scroll; on phones it turns once) */
-function DnssecScene({ p, on }) {
+function DnssecScene({ p, on }: SceneProps) {
   const calm = useCalm();
   const zero = useMotionValue(0);
   const turn = useTransform(p || zero, [0, 1], [0, 300]);
@@ -226,7 +228,7 @@ function DnssecScene({ p, on }) {
 }
 
 /* 06: CoreDNS at the edge, Hanzo plugins stacked on it */
-function EdgeScene({ p, on }) {
+function EdgeScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 4, on);
   return (
     <div className="kn-obj dn-sc dn-sc-edge">

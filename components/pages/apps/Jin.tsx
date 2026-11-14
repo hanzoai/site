@@ -116,8 +116,8 @@ function Figure1() {
   const [done, setDone] = useState(false);
   const live = seen && !held && !done;
   const ix = useMotionValue(0), iy = useMotionValue(0);
-  const ex = useTransform([ix, iy], ([x, y]) => pct(emb(x, y)[0]));
-  const ey = useTransform([ix, iy], ([x, y]) => pct(emb(x, y)[1]));
+  const ex = useTransform<number, string>([ix, iy], ([x, y]) => pct(emb(x, y)[0]));
+  const ey = useTransform<number, string>([ix, iy], ([x, y]) => pct(emb(x, y)[1]));
   const [ph, setPh] = useState(0);
   const [k, setK] = useState(0);
   useEffect(() => { if (calm) { ix.set(SHIFTS[0][0]); iy.set(SHIFTS[0][1]); setPh(2); } }, [calm, ix, iy]);
@@ -563,7 +563,7 @@ function Yours() {
   const box = useRef<HTMLDivElement>(null);
   const ix = useMotionValue(0), iy = useMotionValue(0);
   const W = useRef(400);
-  const e = useTransform([ix, iy], ([x, y]) => emb((x / W.current) * 140, (y / W.current) * 140));
+  const e = useTransform<number, [number, number]>([ix, iy], ([x, y]) => emb((x / W.current) * 140, (y / W.current) * 140));
   const exn = useTransform(e, (v) => v[0]), eyn = useTransform(e, (v) => v[1]);
   // the predictor's guess follows the embedding a beat behind (a tween each time it moves; no spring)
   const pxn = useMotionValue(0), pyn = useMotionValue(0);

@@ -23,6 +23,7 @@ V2: 8/10 on the deck: h1 52, headings 26, figures 64; one phone runs the checkou
 */
 // Signature: a live calculator, "Move a percentage first": amount, payments, the split and the soft-decline share reprice every figure on the page at once, from Hanzo's own figures and the visitor's inputs.
 import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState, Fragment } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
@@ -56,8 +57,8 @@ const Check = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden=
    entrance plays (Payments.css, "entrances"); only under html.js, so with JS off nothing is ever hidden. Reduced
    motion (or no IntersectionObserver) sets data-in at once, and the CSS keeps every final state there. */
 const still = () => typeof IntersectionObserver === 'undefined' || matchMedia('(prefers-reduced-motion: reduce)').matches;
-function useEnter(threshold = 0.15, onIn: undefined) {
-  const ref = useRef(null);
+function useEnter<T extends HTMLElement = HTMLElement>(threshold = 0.15, onIn?: (el: T) => void) {
+  const ref = useRef<T>(null);
   const f = useRef(onIn);
   f.current = onIn;
   useEffect(() => {
@@ -75,14 +76,14 @@ function useEnter(threshold = 0.15, onIn: undefined) {
    relaxes to 1 by the time the room's top reaches 55% of the screen. Set on the client only, so the server render
    and JS off are the final state; nothing under reduced motion. */
 function useStretch() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || still()) return undefined;
     let raf = 0;
     const set = () => {
       raf = 0;
-      const top = el.parentElement.getBoundingClientRect().top, h = innerHeight;
+      const top = el.parentElement!.getBoundingClientRect().top, h = innerHeight;
       const p = Math.min(1, Math.max(0, (h - top) / (h * 0.45)));
       const e = 1 - (1 - p) * (1 - p) * (1 - p);
       el.style.transform = p >= 1 ? '' : `scaleY(${(1 + 0.12 * (1 - e)).toFixed(4)})`;
@@ -101,18 +102,18 @@ function useStretch() {
    real text in order (server, JS off, screen readers); only transforms move, measured on the client. */
 const SHUF = [3, 5, 0, 6, 1, 7, 2, 4];
 interface ShuffleProps {
-  as?: string;
+  as?: 'h1' | 'h2' | 'h3';
   text: string;
   id: string;
   className: string;
 }
 function Shuffle({ as: Tag = 'h2', text, id, className }: ShuffleProps) {
   const words = text.split(' ');
-  const ref = useRef(null);
+  const ref = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || still()) return undefined;
-    const ws = [...el.querySelectorAll('.pay-w')];
+    const ws = [...el.querySelectorAll<HTMLElement>('.pay-w')];
     if (el.getBoundingClientRect().top < innerHeight * 0.85) return undefined; // already on screen: leave it be
     const place = () => {
       const r = ws.map((w) => w.getBoundingClientRect());
@@ -141,7 +142,7 @@ function Shuffle({ as: Tag = 'h2', text, id, className }: ShuffleProps) {
 }
 
 /* What the phone's screen shows at each of the four steps. */
-function Screen({ at, live }) {
+function Screen({ at, live }: { at: number; live: boolean }) {
   const [m, setM] = useState(0);
   const [picked, setPicked] = useState(true);
   useEffect(() => {
@@ -191,14 +192,22 @@ function Screen({ at, live }) {
 }
 
 /* The phone: the merchant, the amount, the step's screen and the Pay button that ends on `succeeded`. */
-const PauseIcon = ({ on }) => (on
+const PauseIcon = ({ on }: { on: boolean }) => (on
   ? <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 
 const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 const usd = (cents: number) => USD.format(cents / 100);
 
-function Phone({ at, live, big, held, onHold, amt = 2000 }) {
+interface PhoneProps {
+  at: number;
+  live: boolean;
+  big?: boolean;
+  held?: boolean;
+  onHold: (() => void) | null;
+  amt?: number;
+}
+function Phone({ at, live, big, held, onHold, amt = 2000 }: PhoneProps) {
   const calm = useReducedMotion();
   const [ok, setOk] = useState(false);
   useEffect(() => {
@@ -224,7 +233,7 @@ function Phone({ at, live, big, held, onHold, amt = 2000 }) {
   );
 }
 
-function Tracker({ at, pick, run }) {
+function Tracker({ at, pick, run }: { at: number; pick: (i: number) => void; run: boolean }) {
   return (
     <div className="pay-track">
       <p className="pay-track-k"><span>A payment, routed</span><span className="x-mono">{two(at + 1)} / 04</span></p>
@@ -246,7 +255,7 @@ interface HeroProps {
   amt: number;
 }
 function Hero({ amt }: HeroProps) {
-  const [ref, live] = useLive(0.25);
+  const [ref, live] = useLive<HTMLElement>(0.25);
   const rm = useReducedMotion();
   const [calm, setCalm] = useState(false); // read after hydration, so the pause button renders the same on server and client
   useEffect(() => setCalm(!!rm), [rm]);
@@ -342,7 +351,7 @@ function PayCode({ text, mark }: PayCodeProps) {
   const line = (l: string) => {
     const at = l.indexOf('//');
     const src = at < 0 ? l : l.slice(0, at), com = at < 0 ? '' : l.slice(at);
-    const out = [];
+    const out: React.JSX.Element[] = [];
     src.split(/('[^']*')/).forEach((p, i) => {
       if (!p) return;
       if (i % 2) { out.push(<span key={'s' + i} className="s">{p}</span>); return; }
@@ -397,7 +406,9 @@ function OneApi({ amt }: OneApiProps) {
   );
 }
 
-const FEATS = [
+/* a feature: title, text, an optional tag */
+type Feat = [string, string, string?];
+const FEATS: Feat[] = [
   ['Checkout Interface', 'Fully customizable checkout UI that matches your brand and maximizes conversions.', 'Customizable checkout flow'],
   ['Global Reach', 'Regional processors are connectors like any other, so entering a market is a routing rule rather than a new integration.'],
   ['Mobile Optimized', 'Responsive checkout flows designed for high conversion on all devices and screen sizes.'],
@@ -410,8 +421,8 @@ const KIND = [0, 0, 0, 0, 0, 0, 1, 1, 1];
 const CO_LINES = ['Cards, wallets, bank debits, buy-now-pay-later and crypto', 'Local methods handled by whichever processor supports them best', 'The method someone expects to see, in the country they are in'];
 
 function Checkout() {
-  const [ref, live] = useLive(0.4);
-  const ride = useEnter(0.5);
+  const [ref, live] = useLive<HTMLElement>(0.4);
+  const ride = useEnter<HTMLDivElement>(0.5);
   const [kind, setKind] = useState(-1);
   const [lit, setLit] = useState(false); // the methods light one by one the first time the list is reached, then stay
   useEffect(() => { if (live) setLit(true); }, [live]);
@@ -446,14 +457,16 @@ function Checkout() {
 }
 
 const Shield = () => <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6 10 14v16c0 14 9.5 24 22 28 12.5-4 22-14 22-28V14z" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round" /><path className="pay-tick" pathLength="1" d="M22 32l7 7 13-14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const TAX = [
+/* a tax card: id, title, text, its three lines, its glyph */
+type TaxCard = [string, string, string, string[], ReactNode];
+const TAX: TaxCard[] = [
   ['tax', 'Automated Tax Management', 'Automatically handle VAT, GST, and regional taxes (including sales tax).', ['Real-time tax rate calculation', 'Tax exemption handling', 'Automated tax reporting'], <span className="pay-glyph bz-fig" key="g"><span className="pay-vg">VAT</span><br /><span className="pay-vg">GST</span></span>],
   ['fraud', 'Fraud Protection', 'Automatic fraud detection and prevention built-in to protect your business.', ['Machine learning fraud detection', 'Adaptive risk rules', 'Chargeback protection'], <span className="pay-glyph shield" key="g"><Shield /></span>],
 ];
 
 /* on arrival, once: VAT then GST cut in, the shield's tick draws, and each card's three lines tick in under it */
 function Tax() {
-  const [ref, live] = useLive(0.35);
+  const [ref, live] = useLive<HTMLElement>(0.35);
   const [inn, setInn] = useState(false);
   useEffect(() => { if (live) setInn(true); }, [live]);
   return (
@@ -510,9 +523,9 @@ interface FieldProps {
   k: string;
   unit?: string;
   value: string;
-  onChange: ((v: string) => void) | ((v: string) => void);
-  onBlur: (() => void) | (() => void);
-  mode: string;
+  onChange: (v: string) => void;
+  onBlur: () => void;
+  mode: 'decimal' | 'numeric';
   label: string;
 }
 function Field({ k, unit, value, onChange, onBlur, mode, label }: FieldProps) {
@@ -595,7 +608,7 @@ function Move({ amt, setAmt }: MoveProps) {
   );
 }
 
-const CASES = [
+const CASES: [string, string, string[]][] = [
   ['Selling in several countries', 'You sell in more than one country and each one wants a different payment method. Add the connector, write the rule, leave the checkout alone.', ['Local methods', 'Currency routing', 'One checkout', 'Rules per country']],
   ['Recovering declines', 'Renewals fail for reasons that have nothing to do with the customer. Retrying through a second processor turns some of those failures back into payments.', ['Retry on a second processor', 'Decline reasons', 'Renewal recovery', 'Rules per code']],
   ['Leaving a processor', 'The reason nobody switches is the rewrite. When the integration is here, moving is a routing change, and you can move a percentage first.', ['Move a percentage first', 'No checkout rewrite', 'The same API', 'Roll back at once']],

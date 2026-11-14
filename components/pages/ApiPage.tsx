@@ -66,7 +66,7 @@ function Console() {
     const [, full, d] = HERO[at];
     const p = full.split(' · ')[0]; // a curl calls one path
     if (!live) { if (path.current) path.current.textContent = p; if (desc.current) desc.current.textContent = d; setDone(true); return; }
-    let alive = true, t = 0, i = 0, w = 0;
+    let alive = true, t: ReturnType<typeof setTimeout> | undefined, i = 0, w = 0;
     const words = d.split(' ');
     setDone(false);
     const typeP = () => {
@@ -210,8 +210,11 @@ function Paste() {
 }
 
 /* ---------- How it fits together: four pinned chapters, each with its own live UI ---------- */
+interface SceneProps {
+  on: boolean;
+}
 /* scene 1: not another route list. One key at the top, calls falling from it into one bill that fills. */
-function KeyBill({ on }) {
+function KeyBill({ on }: SceneProps) {
   return (
     <div className={'api-vis api-bill' + (on ? ' on' : '')} aria-hidden="true">
       <div className="api-bill-key"><span className="x-mono">{KEY}</span></div>
@@ -225,7 +228,7 @@ function KeyBill({ on }) {
   );
 }
 
-function Identity({ on }) {
+function Identity({ on }: SceneProps) {
   return (
     <div className={'api-vis api-id' + (on ? ' on' : '')} aria-hidden="true">
       <div className="api-id-col">
@@ -250,7 +253,7 @@ function Identity({ on }) {
 /* scene 3: one row ticking through. The OpenAPI operation on the left, the client method named by its operation id
    on the right (the ids are the docs' own slugs); it walks six operations once and rests on the last. */
 const OPS = HERO.slice(0, 6).map(([m, p, , doc]) => [m + ' ' + p.split(' · ')[0], doc.split('/').pop()]);
-function Generated({ on }) {
+function Generated({ on }: SceneProps) {
   return (
     <div className={'api-vis api-gen' + (on ? ' on' : '')} aria-hidden="true">
       <div className="api-gen-h"><span className="av-kick">OpenAPI</span><span className="av-kick">Client</span></div>
@@ -270,7 +273,7 @@ function Generated({ on }) {
 
 /* scene 4: the gateway fans out to the models behind it (short names, never truncated) */
 const SERVICES = ['enso', 'zen', 'kai', 'koma', 'iro', 'mori'];
-function Gateway({ on }) {
+function Gateway({ on }: SceneProps) {
   return (
     <div className={'api-vis api-gw' + (on ? ' on' : '')} aria-hidden="true">
       <div className="api-gw-app"><b>Your app</b><span className="x-mono">{KEY}</span></div>
@@ -286,14 +289,18 @@ function Gateway({ on }) {
 }
 
 const FITS = [
-  { title: 'One key, one bill', body: <p className="av-body">A single key authenticates every endpoint, and usage meters to the organization it belongs to. Spend is attributed in one place instead of once per service.</p>, visual: (on) => <KeyBill on={on} /> },
-  { title: 'Identity is the gateway’s to state', body: <p className="av-body">Every request passes a gateway that throws away the identity headers a client sent and writes them again from the verified token. Nothing downstream has to wonder whether an org id came from a token or from a curl flag.</p>, visual: (on) => <Identity on={on} /> },
-  { title: 'Generated, not hand-written', body: <p className="av-body">The clients come from the OpenAPI document this API serves, and their method names are its operation ids. A client is checkable against a release rather than against somebody’s memory.</p>, visual: (on) => <Generated on={on} /> },
-  { title: 'Every route lives under /v1', body: <p className="av-body">Every route lives under <code>/v1</code>, and every service answers on the same host — there is no second base URL to configure and no v2 waiting to break the first one. Rate limits are applied per caller and across the edge as a whole; a rejected request comes back as a <code>429</code> with a <code>Retry-After</code> rather than a dropped connection.</p>, visual: (on) => <Gateway on={on} /> },
+  { title: 'One key, one bill', body: <p className="av-body">A single key authenticates every endpoint, and usage meters to the organization it belongs to. Spend is attributed in one place instead of once per service.</p>, visual: (on: boolean) => <KeyBill on={on} /> },
+  { title: 'Identity is the gateway’s to state', body: <p className="av-body">Every request passes a gateway that throws away the identity headers a client sent and writes them again from the verified token. Nothing downstream has to wonder whether an org id came from a token or from a curl flag.</p>, visual: (on: boolean) => <Identity on={on} /> },
+  { title: 'Generated, not hand-written', body: <p className="av-body">The clients come from the OpenAPI document this API serves, and their method names are its operation ids. A client is checkable against a release rather than against somebody’s memory.</p>, visual: (on: boolean) => <Generated on={on} /> },
+  { title: 'Every route lives under /v1', body: <p className="av-body">Every route lives under <code>/v1</code>, and every service answers on the same host — there is no second base URL to configure and no v2 waiting to break the first one. Rate limits are applied per caller and across the edge as a whole; a rejected request comes back as a <code>429</code> with a <code>Retry-After</code> rather than a dropped connection.</p>, visual: (on: boolean) => <Gateway on={on} /> },
 ];
 
 /* How it fits together: four plain rows (no pinned stage). Each visual plays once as its row arrives. */
-function FitRow({ item, i }) {
+interface FitRowProps {
+  item: (typeof FITS)[number];
+  i: number;
+}
+function FitRow({ item, i }: FitRowProps) {
   const ref = useRef<HTMLLIElement>(null);
   const on = useInView(ref, { once: true, amount: 0.35 });
   return (
@@ -501,7 +508,7 @@ function useOneSolidOnPhone() {
     // the shared header code clears the flag when it (re)starts: put it back while our ask is still on screen (the /affiliate move)
     const mo = new MutationObserver(() => { if (mq.matches && vis.size && H.dataset.ask !== 'quiet') apply(); });
     mo.observe(H, { attributes: true, attributeFilter: ['data-ask'] });
-    const timers = [[300, apply], [600, hand], [1400, apply]].map(([ms, fn]) => setTimeout(fn, ms));
+    const timers = ([[300, apply], [600, hand], [1400, apply]] as const).map(([ms, fn]) => setTimeout(fn, ms));
     mq.addEventListener('change', apply);
     return () => { io.disconnect(); mo.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); delete H.dataset.apiAsk; if (mine) delete H.dataset.ask; };
   }, []);

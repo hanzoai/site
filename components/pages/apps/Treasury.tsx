@@ -127,7 +127,7 @@ function codeLine(t: string, l: string, c: Calc) {
 }
 
 function Hero() {
-  const [ref, live, calm] = useLive(0.25);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.25);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   // lines written. It starts finished and balanced (the server paints that), holds, then re-writes from the source line,
   // so the streams are never an empty box: the first destination is named within a second of each re-write.
@@ -302,7 +302,7 @@ function CalcSection() {
 /* 2 · iris: the wallet with a hold (part 04, the Beyond) in its own quiet room, opening out of a circle. */
 function WalletSection() {
   const [ref, st] = useEnter(0.25);
-  const [lref, live] = useLive(0.35);
+  const [lref, live] = useLive<HTMLDivElement>(0.35);
   const [t, d] = PARTS[3];
   return (
     <section ref={ref} data-enter={st} className="ts-wal ten-iris">
@@ -333,7 +333,7 @@ interface CardProps {
   paused: boolean | React.JSX.Element;
 }
 function Card({ i, n, paused }: CardProps) {
-  const [ref, live] = useLive(0.5);
+  const [ref, live] = useLive<HTMLElement>(0.5);
   const [t, d] = PARTS[i];
   const V = VIS[i];
   return (

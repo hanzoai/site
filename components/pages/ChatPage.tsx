@@ -63,14 +63,21 @@ const DEV_TEST = 'pnpm test src/middleware/auth.test.ts';
 const DEV_OK = '14 passed (42ms)';
 
 // hanzo.ai/chat's own window conversation (live, 8 Nov), word for word: it is there from the first paint, as on live
-const CONVO = [
+const CONVO: [string, string[]][] = [
   ['How do black holes form?', ['A star much heavier than the Sun burns through its fuel, and its core collapses under its own gravity.', 'When what is left is heavy enough, nothing can stop the collapse, and not even light escapes it.']],
   ['And what makes the aurora?', ['Charged particles from the Sun reach the gas high above the poles.', 'The gas glows as they strike it: oxygen green and red, nitrogen blue and purple.']],
 ];
-const DONE = CONVO.flatMap(([q, a]) => [{ role: 'user', text: q }, { role: 'ai', text: a, model: 'zen', state: 'done' }]);
+/* a turn of the conversation: what was asked, or what a model answered (in paragraphs) */
+type Turn = { role: 'user'; text: string } | { role: 'ai'; text: string[]; model: string; state: string };
+type Model = (typeof MODELS)[number];
+interface Route {
+  phase: string;
+  pick: string | null;
+}
+const DONE = CONVO.flatMap(([q, a]): Turn[] => [{ role: 'user', text: q }, { role: 'ai', text: a, model: 'zen', state: 'done' }]);
 const ROUTED = MODELS.filter((m) => m.slug !== 'enso');
 const ENSO = MODELS[0];
-const ZEN = MODELS.find((m) => m.slug === 'zen');
+const ZEN = MODELS.find((m) => m.slug === 'zen')!; // one of the nine flagship models
 const pic = (slug: string) => `/models/${slug}.webp`;
 
 /* The one ask is the kit's Cta inside the prompt. The page holds each press for ~320 ms in its busy state before it leaves (Hand-off). */
@@ -91,7 +98,7 @@ function Prompt({ slot, big }: PromptProps) {
   const go = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (busy) return;
-    const to = href(openWith(e.currentTarget.querySelector('input').value.trim()));
+    const to = href(openWith(e.currentTarget.querySelector('input')!.value.trim())); // the form holds its input
     setBusy(true);
     setTimeout(() => { window.location.href = to; }, 280);
   };
@@ -107,10 +114,10 @@ function Prompt({ slot, big }: PromptProps) {
 /* Hand-off (MASTER 2: a cross-origin hand-off shows a pressed state, aria-busy, 200 to 400 ms). Any plain press on a
    link to Hanzo Chat inside the page is held, shown busy, then followed. New-tab presses go straight through. */
 function useHandoff() {
-  return (e) => {
-    const a = e.target.closest && e.target.closest('a[href]');
+  return (e: React.MouseEvent<HTMLElement>) => {
+    const a = e.target instanceof Element ? e.target.closest<HTMLAnchorElement>('a[href]') : null;
     if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    const h = a.getAttribute('href');
+    const h = a.getAttribute('href')!; // the selector matched on it
     if (!(h === href(OPEN) || h.startsWith(ask('')))) return;
     e.preventDefault();
     if (a.hasAttribute('data-leaving')) return;
@@ -122,7 +129,10 @@ function useHandoff() {
 }
 
 /* Speak an answer aloud with the browser's own voice. */
-function Listen({ text }) {
+interface ListenProps {
+  text: string;
+}
+function Listen({ text }: ListenProps) {
   const [on, setOn] = useState(false);
   const go = () => {
     const s = typeof window !== 'undefined' && window.speechSynthesis;
@@ -143,7 +153,7 @@ function Listen({ text }) {
 
 /* Messages arrive with a CSS rise, so the server's first frame paints at once. */
 interface MsgProps {
-  m: { role: string; text: string | string[]; model?: undefined; state?: undefined; } | { role: string; text: string | string[]; model: string; state: string; };
+  m: Turn;
   think: boolean;
 }
 function Msg({ m, think }: MsgProps) {
@@ -162,7 +172,7 @@ function Msg({ m, think }: MsgProps) {
 /* The router: Enso on top, the models it sends to below; a scan runs while it decides, then one lights.
    Any model you point at or tap says what it is for; otherwise the one that answered (or Enso) does. */
 interface RailProps {
-  route: { phase: string; pick: null; };
+  route: Route;
   at: number;
 }
 function Rail({ route, at }: RailProps) {
@@ -203,7 +213,10 @@ const CTL = {
   play: <path d="M5 3.2v9.6L12.6 8 5 3.2Z" fill="currentColor" />,
   replay: <path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />,
 };
-function Ctl({ demo }) {
+interface CtlProps {
+  demo: ReturnType<typeof useDemo>;
+}
+function Ctl({ demo }: CtlProps) {
   const done = demo.state === 'done' || demo.state === 'idle';
   const k = done ? 'replay' : demo.state === 'pause' ? 'play' : 'pause';
   return (
@@ -218,7 +231,7 @@ function Ctl({ demo }) {
 function Window() {
   const [msgs, setMsgs] = useState(DONE);
   const [think, setThink] = useState(-1); // the answer Enso is routing right now (its dots show; its words stay)
-  const [route, setRoute] = useState({ phase: 'scan', pick: null });
+  const [route, setRoute] = useState<Route>({ phase: 'scan', pick: null });
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const [sel, setSel] = useState(0);
@@ -229,7 +242,7 @@ function Window() {
   const log = useRef<HTMLDivElement>(null);
   const box = useRef<HTMLDivElement>(null);
 
-  const scan = async (sleep, n: number) => { setRoute({ phase: 'scan', pick: null }); for (let s = 0; s < n; s++) { setAt(s % ROUTED.length); await sleep(125); } };
+  const scan = async (sleep: (ms: number) => Promise<void>, n: number) => { setRoute({ phase: 'scan', pick: null }); for (let s = 0; s < n; s++) { setAt(s % ROUTED.length); await sleep(125); } };
   // the conversation stays whole; Enso routes each answer in turn (its dots on that answer, the rail scanning), then Zen lights
   const demo = useDemo(box, async (sleep) => {
     setMine(false); setSel(0); setMsgs(DONE);
@@ -259,13 +272,13 @@ function Window() {
     setBusy(true);
     setTimeout(() => { window.location.href = to; }, 280);
   };
-  const open = (i: string | number) => {
+  const open = (i: number) => {
     demo.stop(); setSel(i); setThink(-1);
     if (i === 0) { setMine(false); setMsgs(DONE); setRoute({ phase: 'pick', pick: 'zen' }); }
     else { setMine(true); setMsgs([]); setRoute({ phase: 'idle', pick: null }); }
   };
   const fresh = () => { demo.stop(); setThink(-1); setMine(true); setSel(-1); setMsgs([]); setRoute({ phase: 'idle', pick: null }); input.current?.focus(); };
-  const list = RECENTS.map((t, i) => [t, i]).filter(([t]) => !find || t.toLowerCase().includes(find.toLowerCase()));
+  const list = RECENTS.map((t, i): [string, number] => [t, i]).filter(([t]) => !find || t.toLowerCase().includes(find.toLowerCase()));
 
   return (
     <div className={'cht-win' + (side ? ' side' : '')} ref={box} id="cht-try">
@@ -356,7 +369,7 @@ const TOOLS = [
   ['Memory', 'Tell it what to remember, and it carries that into the next conversation.', 'memory'],
   ['Chat, then Dev', 'When a conversation turns into building, Dev is one press away in the same app.', 'dev'],
 ];
-const ICON = {
+const ICON: Record<string, React.ReactNode> = {
   route: <><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeDasharray="28 6" /><circle cx="8" cy="8" r="1.6" fill="currentColor" /></>,
   search: <><circle cx="7" cy="7" r="4.3" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="m10.3 10.3 3.2 3.2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></>,
   files: <path d="M4 2.5h5l3 3v8H4z M9 2.5v3h3" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />,
@@ -375,7 +388,10 @@ interface LineProps {
   j: number;
 }
 const Line = ({ c, s, j }: LineProps) => <span className={'cht-ln ' + c} style={{ '--j': j }}><i>{c === 'del' ? '-' : c === 'add' ? '+' : ' '}</i>{s}</span>;
-const Who = ({ m = ZEN }) => <p className="cht-mini-who"><Img src={pic(m.slug)} alt="" w={18} h={18} />{m.name}</p>;
+interface WhoProps {
+  m?: Model;
+}
+const Who = ({ m = ZEN }: WhoProps) => <p className="cht-mini-who"><Img src={pic(m.slug)} alt="" w={18} h={18} />{m.name}</p>;
 
 interface ArtProps {
   k: string;
@@ -537,9 +553,9 @@ function Tools() {
 function Answers() {
   const [k, setK] = useState('enso');
   const opener = useOpener();
-  const frame = useRef(null);
+  const frame = useRef<HTMLAnchorElement>(null);
   const m = MODELS.find((x) => x.slug === k) || ENSO;
-  const go = (e) => { if (opener && frame.current) opener.open(e, { el: frame.current, src: pic(m.slug), href: '/' + m.slug, key: m.slug }); };
+  const go = (e: React.MouseEvent<HTMLAnchorElement>) => { if (opener && frame.current) opener.open(e, { el: frame.current, src: pic(m.slug), href: '/' + m.slug, key: m.slug }); };
   return (
     <section className="v2a-sec cht-who-sec zf-sec" aria-labelledby="cht-who-h">
       <div className="v2a-wrap v2a-grid cht-who-grid">
@@ -608,7 +624,7 @@ function useQuietAtBand() {
     const H = document.documentElement;
     const band = document.querySelector('main.cht .cht-close');
     if (!band) return;
-    let on = false, mine = false, t = 0;
+    let on = false, mine = false, t: ReturnType<typeof setTimeout> | undefined;
     const apply = () => { if (on) { H.dataset.ask = 'quiet'; mine = true; } else if (mine) { delete H.dataset.ask; mine = false; } };
     const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; apply(); }, { threshold: 0.35 });
     io.observe(band);

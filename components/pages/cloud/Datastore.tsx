@@ -21,6 +21,8 @@
    the port settles onto a board, digit by digit from behind a mask (only the true digits ever show), with Hanzo's
    line on who connects that way.
    Every word and link is Hanzo's; the example table's cells carry no values. */
+import type { MotionValue } from 'motion/react';
+import type { SceneProps } from './scene';
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent, useInView } from 'motion/react';
@@ -44,11 +46,11 @@ const EXAMPLES = [
 const shade = (a: number, b: number) => Math.abs(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453) % 1;
 
 /* [ref, live, calm]: live while seen and motion is allowed (hydration-safe: useCalm is false on the first render) */
-function useLive(amount = 0.2) {
-  const ref = useRef(null);
+function useLive<T extends HTMLElement = HTMLDivElement>(amount = 0.2) {
+  const ref = useRef<T>(null);
   const seen = useInView(ref, { amount });
   const calm = useCalm();
-  return [ref, seen && !calm, calm];
+  return [ref, seen && !calm, calm] as const;
 }
 
 /* The hero object: the query console, as hanzo.ai runs it. It steps through Hanzo's four example queries (3.2 s each)
@@ -101,7 +103,7 @@ function Query() {
 
 /* which of n steps a chapter is on: from the scroll through it on desktop (p); on phones it steps once through by
    itself while seen, then rests (a step a second at most, so it ends inside 5 s) */
-function useStepOf(p, n: number, on) {
+function useStepOf(p: MotionValue<number> | undefined, n: number, on: boolean) {
   const [k, setK] = useState(0);
   const calm = useCalm();
   useEffect(() => {
@@ -146,7 +148,7 @@ function ColScene() {
 }
 
 /* 02: add a node and the parts spread; small parts merge in the background */
-function ShardScene({ p, on }) {
+function ShardScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 3, on);
   const nodes = k === 0 ? 2 : 3;
   const per = k === 0 ? 6 : 4;
@@ -168,7 +170,7 @@ function ShardScene({ p, on }) {
 }
 
 /* 03: a Raft quorum inside the server; a replica that fell behind catches up part by part */
-function RaftScene({ p, on }) {
+function RaftScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 5, on);
   return (
     <div className="kn-obj ds-sc ds-s-raft">
@@ -188,7 +190,7 @@ function RaftScene({ p, on }) {
 }
 
 /* 04: local NVMe, or object storage under query nodes; an old partition expiring */
-function DiskScene({ p, on }) {
+function DiskScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 2, on);
   return (
     <div className="kn-obj ds-sc ds-s-disk">

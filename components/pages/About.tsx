@@ -42,7 +42,7 @@ import './About.css';
 
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 interface Link2Props {
-  to: string | string[][];
+  to: string;
   children: ReactNode;
 }
 const Link2 = ({ to, children }: Link2Props) => <Cta to={to} kind="link">{children}</Cta>;
@@ -58,7 +58,7 @@ const W = 1600, H = 340, PL = 28, PR = 64, PT = 30, PB = 54;
 const f = (t: number) => 1 - Math.pow(1 - t, 2.2);
 const X = (t: number) => PL + t * (W - PL - PR);
 const Y = (v: number) => H - PB - v * (H - PB - PT);
-const trace = (g: ((t: number) => number) | ((t: number) => number)) => Array.from({ length: 81 }, (_, i) => { const t = i / 80; return (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(g(t)).toFixed(1); }).join('');
+const trace = (g: (t: number) => number) => Array.from({ length: 81 }, (_, i) => { const t = i / 80; return (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(g(t)).toFixed(1); }).join('');
 const FRONT = trace(f);
 const YEARS = [2014, 2016, 2018, 2020, 2022, 2024, 2026];
 
@@ -66,19 +66,22 @@ const YEARS = [2014, 2016, 2018, 2020, 2022, 2024, 2026];
    axis names fit 343px at a readable size (both plots are in the HTML; CSS shows one) */
 // ph: the phone plot sets the four axis names as a right-aligned stack in the empty lower right of the plot (in the
 // order their lines run), clear of the curve, the head and the plot's edges
+/* an axis: its name, how far up it starts, how it bends, and where along the curve its name sits */
+const AXES: [string, number, number, number][] = [['Intelligence', 0.42, 1.6, 0.3], ['Speed', 0.55, 1.2, 0.44], ['Deterministic safety', 0.66, 2.1, 0.58], ['Equitable cost', 0.78, 1.4, 0.72]];
 const geo = (W: number, H: number, PL: number, PR: number, PT: number, PB: number, ph = false) => {
-  const X = (t: string | number) => PL + t * (W - PL - PR);
+  const X = (t: number) => PL + t * (W - PL - PR);
   const Y = (v: number) => H - PB - v * (H - PB - PT);
-  const tr = (g: ((t: number) => number) | ((t: string | number) => number)) => Array.from({ length: 81 }, (_, i) => { const t = i / 80; return (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(g(t)).toFixed(1); }).join('');
-  const axes = [['Intelligence', 0.42, 1.6, 0.3], ['Speed', 0.55, 1.2, 0.44], ['Deterministic safety', 0.66, 2.1, 0.58], ['Equitable cost', 0.78, 1.4, 0.72]]
-    .map(([name, a, q, at], i) => { const g = (t: string | number) => f(t) * (a + (1 - a) * Math.pow(t, q)); return ph ? { name, d: tr(g), lx: X(1), ly: Y(0.12 + i * 0.11) } : { name, d: tr(g), lx: X(at), ly: Y(g(at)) + 24 }; });
+  const tr = (g: (t: number) => number) => Array.from({ length: 81 }, (_, i) => { const t = i / 80; return (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(g(t)).toFixed(1); }).join('');
+  const axes = AXES
+    .map(([name, a, q, at], i) => { const g = (t: number) => f(t) * (a + (1 - a) * Math.pow(t, q)); return ph ? { name, d: tr(g), lx: X(1), ly: Y(0.12 + i * 0.11) } : { name, d: tr(g), lx: X(at), ly: Y(g(at)) + 24 }; });
   return { W, H, PT, X, Y, front: tr(f), axes, ph };
 };
 const DESK = geo(W, H, PL, PR, PT, PB);
 const PH = geo(700, 470, 40, 44, 56, 60, true);
 
+type Geo = ReturnType<typeof geo>;
 interface PlotProps {
-  g: { W: number; H: number; PT: number; X: (t: string | number) => number; Y: (v: number) => number; front: string; axes: { name: string | number; d: string; lx: number; ly: number; }[]; ph: boolean; };
+  g: Geo;
   cls: string;
   children?: ReactNode;
 }
@@ -170,7 +173,7 @@ function useOneSolidOnPhone() {
     // the close's solid "Try Hanzo": while it is on screen the header's ask is quiet at every width
     const band = document.querySelector('main.xab .xab-close [data-cta="about.try"]');
     if (!el) return;
-    let mine = false, vis = false, inBand = false, t = 0;
+    let mine = false, vis = false, inBand = false, t: ReturnType<typeof setTimeout> | undefined;
     const apply = () => {
       if ((mq.matches && vis) || inBand) { H.dataset.ask = 'quiet'; mine = true; }
       else if (mine) { delete H.dataset.ask; mine = false; }
@@ -218,7 +221,9 @@ function Hero() {
 }
 
 /* ---------- 2. why we build: the statement, the four switches (Beyond) and the six tiles that open (Signature) ---------- */
-const PILLARS = [
+/* a principle: its name, its line, its words, the label of its link and where the link goes */
+type Pillar = [string, string, string, string, string];
+const PILLARS: Pillar[] = [
   ['Safety in AI', 'Deterministic verification over guesswork', 'Generative models drift and hallucinate when left unchecked. We pair frontier reasoning with Kai calibrated discrete decision models, formal policy gates, and sandboxed execution so autonomous agents stay bounded in production.', 'Safety research', '/research'],
   ['Frontier Performance', 'Bare-metal C, CUDA, and Metal runtimes', 'Speed is an architectural choice. From Hanzo Engine’s zero-Python inference kernels and Kai’s decisions, which write no text, to Enso’s learned multi-model routing, every layer is engineered to maximize intelligence per millisecond.', 'Live benchmarks', '/benchmarks'],
   ['Equitable Access', 'Frontier capability without hyperscaler tax', 'Breakthrough AI cannot belong only to trillion-dollar incumbents. By routing each task to the most efficient model, publishing open weights, and pricing compute fairly, we put startups, researchers, and builders on equal footing.', 'Transparent pricing', '/pricing'],
@@ -248,7 +253,7 @@ function Radar({ at }: RadarProps) {
   );
 }
 
-const PICKS = [
+const PICKS: [string, string, string, string][] = [
   ['Raw capability', '…every layer is engineered to maximize intelligence per millisecond.', 'Frontier Performance', '/benchmarks'],
   ['Low latency', 'Speed is an architectural choice.', 'Bare-metal C, CUDA, and Metal runtimes', '/benchmarks'],
   ['Affordable cost', '…routing each task to the most efficient model, publishing open weights, and pricing compute fairly…', 'Equitable Access', '/pricing'],
@@ -260,12 +265,12 @@ const PICKS = [
 const DIA = PICKS.map((_, i) => -Math.PI / 2 + (i * Math.PI) / 2);
 const dpt = (i: number, k: number) => [200 + Math.cos(DIA[i]) * 160 * k, 200 + Math.sin(DIA[i]) * 160 * k];
 // corner names: top and bottom centred on their corner, the side ones set above their corner, inside the frame
-const DLAB = [[200, 18, 'middle'], [400, 176, 'end'], [200, 398, 'middle'], [0, 158, 'start']];
+const DLAB: [number, number, 'start' | 'middle' | 'end'][] = [[200, 18, 'middle'], [400, 176, 'end'], [200, 398, 'middle'], [0, 158, 'start']];
 const dlines = (t: string, i: number) => (i === 3 ? ['Control over', 'your data'] : [t]);
 
 interface FigureProps {
   on: number[];
-  peek: null;
+  peek: number | null;
 }
 function Figure({ on, peek }: FigureProps) {
   const calm = useReducedMotion();
@@ -315,7 +320,14 @@ function Picks({ on, flip, touched }: PicksProps) {
 }
 
 /* the six principles as a compact index: a hand on one shows its radar in the figure; a click grows the row into its sheet */
-function Tile({ p, i, cue, onOpen, onPeek }) {
+interface TileProps {
+  p: Pillar;
+  i: number;
+  cue: boolean;
+  onOpen: (i: number) => void;
+  onPeek: (i: number) => void;
+}
+function Tile({ p, i, cue, onOpen, onPeek }: TileProps) {
   const [t, k, d, l, to] = p;
   return (
     <li>
@@ -339,7 +351,7 @@ function Tile({ p, i, cue, onOpen, onPeek }) {
 }
 
 function Why() {
-  const [open, setOpen] = useState(null);
+  const [open, setOpen] = useState<number | null>(null);
   const [at, setAt] = useState(0);
   const [cue, setCue] = useState(0);
   const grid = useRef<HTMLDivElement>(null);
@@ -351,17 +363,17 @@ function Why() {
     const t = setTimeout(() => setCue(-1), 3200);
     return () => clearTimeout(t);
   }, [seen, calm]);
-  const show = (i) => { setAt(i); setOpen(i); };
+  const show = (i: number) => { setAt(i); setOpen(i); };
   const [on, setOn] = useState([0, 1]);
   const [touched, setTouched] = useState(false);
   const flip = (i: number) => { setTouched(true); setOn((o) => (o.includes(i) ? o.filter((x) => x !== i) : [...o, i])); };
-  const [peek, setPeek] = useState(null);
+  const [peek, setPeek] = useState<number | null>(null);
   const shown = peek;
   // Tab stays inside the open sheet: from its last control back to its first, and the other way round
-  const trap = (e) => {
+  const trap = (e: KeyboardEvent) => {
     const box = document.querySelector('.v2u-sheet');
     if (!box) return;
-    const f = [...box.querySelectorAll('a[href], button:not([disabled])')];
+    const f = [...box.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')];
     if (!f.length) return;
     const first = f[0], last = f[f.length - 1], here = document.activeElement;
     if (!box.contains(here)) { e.preventDefault(); first.focus(); }
@@ -389,7 +401,7 @@ function Why() {
           </ul>
         </div>
       </div>
-      <StorySheet layoutId={open == null ? null : 'xab-p' + open} onClose={() => setOpen(null)} label={t} className="xab-sheet" onKey={(e) => { if (e.key === 'ArrowRight') step(1); if (e.key === 'ArrowLeft') step(-1); if (e.key === 'Tab') trap(e); }}>
+      <StorySheet layoutId={open == null ? null : 'xab-p' + open} onClose={() => setOpen(null)} label={t} className="xab-sheet" onKey={(e: KeyboardEvent) => { if (e.key === 'ArrowRight') step(1); if (e.key === 'ArrowLeft') step(-1); if (e.key === 'Tab') trap(e); }}>
         <div className="xab-sheet-g">
           <div className="xab-sheet-a">
             <p className="xab-sheet-n v2s-num" aria-hidden="true">{pad(at + 1)}</p>
@@ -431,7 +443,7 @@ function Record() {
     const pick = () => {
       const mid = innerHeight / 2;
       let best = -1, d = Infinity;
-      [...(figs.current?.children || [])].forEach((el, i) => { const r = el.querySelector('dt').getBoundingClientRect(); const x = Math.abs(r.top + r.height / 2 - mid); if (x < d) { d = x; best = i; } });
+      [...(figs.current?.children || [])].forEach((el, i) => { const r = el.querySelector('dt')!.getBoundingClientRect(); const x = Math.abs(r.top + r.height / 2 - mid); if (x < d) { d = x; best = i; } });
       setBig(d < innerHeight * 0.3 ? best : -1);
     };
     // three rects per scroll event, only while the figures are on screen; React skips the render when nothing changed
@@ -478,11 +490,11 @@ const FOUNDERS = [
 ];
 
 interface PortraitProps {
-  p: { name: string; mono: string; img: string; role: string; bio: string; links: string[][]; };
+  p: (typeof FOUNDERS)[number];
   has: boolean;
 }
 function Portrait({ p, has }: PortraitProps) {
-  const img = useRef(null);
+  const img = useRef<HTMLImageElement>(null);
   const [state, setState] = useState(has ? 'wait' : 'none');
   useEffect(() => { const el = img.current; if (el?.complete) setState(el.naturalWidth ? 'ok' : 'none'); }, []);
   if (!has) return (
@@ -501,7 +513,10 @@ function Portrait({ p, has }: PortraitProps) {
   );
 }
 
-function Founders({ portraits = [] }) {
+interface FoundersProps {
+  portraits?: string[];
+}
+function Founders({ portraits = [] }: FoundersProps) {
   return (
     <section className="v2s-sec tight zf-sec xab-people" aria-label="Founders" data-enter="squash-land">
       <div className="v2s-wrap xab-people-g">
@@ -533,7 +548,8 @@ const COMMITS = [ // the six hanzo.ai/about shows (8 Nov), word for word
   ['hanzoai/app', 'Merge pull request \u002337 from hanzoai/seats', '3979848', 'Nov 7, 07:47 UTC', 'https://github.com/hanzoai/app/commit/3979848f8a8f82bae2dfef77f59ec18daba85a1e'],
 ];
 
-const PANES = [
+/* a pane: its tab, its line, its words, its items (a term and what it means), the label of its link and where it goes */
+const PANES: [string, string, string, string[][], string, string][] = [
   ['1700+ Open Repositories', 'Auditable infrastructure from kernel to interface', 'Since open-sourcing our commerce architecture in 2014, we have published over 1700 public repositories. From C/CUDA/Metal inference engines to agent compilers, MCP tools, and cross-platform UI kits, our stack is built to be read, audited, and extended.',
     [['Zero Proprietary Lock-In:', 'Export and run models, agents, and state on your own hardware without rewriting application code.'], ['HIP Standards:', 'Core protocols and architectures published openly through Hanzo Improvement Proposals.'], ['Shared Ecosystem:', 'MCP servers, skills, UI primitives, and inference runtimes built in public with contributors worldwide.']], 'Explore Open Source Ecosystem', '/open-source'],
   ['Deterministic Safety Bounds', 'Calibrated decisions, not guesswork', 'Unconstrained token generators drift in high-stakes workflows. Hanzo puts calibrated decisions (Kai), policy checks and isolated sandboxes in front of any autonomous agent that touches production data or billing.',
@@ -599,20 +615,30 @@ function Open() {
 }
 
 /* ---------- 7. models and papers ---------- */
-const RUNTIMES = [
+const RUNTIMES: Engine[] = [
   { name: 'Kai', kind: 'Decision Intelligence', d: 'Calibrated discrete decision model for autonomous agent loops. Factorized discrete choice, calibrated probability distributions, and deterministic policy governance.', tag: 'No output tokens · Calibrated confidence', to: '/kai', slug: 'kai', img: '/models/kai.webp' },
   { name: 'Zen Multimodal', kind: 'Foundation Models', d: 'Multimodal reasoning models across text, code, vision, speech, and structured output, built for both low-power edge devices and sovereign GPU clusters.', tag: 'High token throughput · Edge & Cloud', to: '/zen', slug: 'zen', img: '/models/zen.webp' },
   { name: 'Hanzo Engine', kind: 'Inference Runtime', d: 'Bare-metal C, CUDA, and Metal inference engine with speculative decoding and NVFP4/FP8 kernels, removing Python runtime overhead on production hardware.', tag: 'Zero Python runtime · C / CUDA / Metal', to: '/engine', img: '/images/categories/cloud.webp' },
   { name: 'Enso Router', kind: 'Semantic Routing', d: 'Learned semantic router and multi-model coordinator (HIP-0510) that sends each prompt to a model by accuracy and cost.', tag: 'Learned arbitration · Accuracy & cost', to: '/enso', slug: 'enso', img: '/models/enso.webp' },
 ];
 
+interface Engine {
+  name: string;
+  kind: string;
+  d: string;
+  tag: string;
+  to: string;
+  img: string;
+  slug?: string;
+}
 interface RuntimeProps {
-  m: { name: string; kind: string; d: string; tag: string; to: string; slug: string; img: string; } | { name: string; kind: string; d: string; tag: string; to: string; img: string; slug?: undefined; };
+  m: Engine;
 }
 function Runtime({ m }: RuntimeProps) {
   const box = useRef<HTMLAnchorElement>(null);
   const opener = useOpener();
-  const open = m.slug ? (e) => opener?.open(e, { el: box.current, src: m.img, href: m.to, key: m.slug }) : undefined;
+  const slug = m.slug;
+  const open = slug ? (e: React.MouseEvent<HTMLAnchorElement>) => opener?.open(e, { el: box.current!, src: m.img, href: m.to, key: slug }) : undefined;
   return (
     <li>
       <a href={href(m.to)} ref={box} data-card={m.slug} className="xab-rt" onClick={open}>
@@ -752,7 +778,10 @@ function Close() {
   );
 }
 
-export default function About({ portraits = [] }) {
+interface AboutProps {
+  portraits?: string[];
+}
+export default function About({ portraits = [] }: AboutProps) {
   useEntrances(); // the five section entrances (about/enter.js)
   return (
     <main id="main" className="xab v2s zf">
