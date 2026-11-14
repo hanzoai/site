@@ -15,9 +15,10 @@
    V2: 8/10 signature race: a live race under the h1 at the real ratios, visitor-picked (prefill, decode, D-LSA by context length, agent CodeRace); sticky stage, pinned chapters and scroll wipes removed; five entrances; sheets stay fixed and inert when closed.
    Every word and figure is Hanzo's (hanzo.ai/benchmarks and its research API). */
 import type React from 'react';
-import type { ReactNode } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import { EASE } from '../ui';
 import { A, More, Cta, DataTable, CodeBlock } from '../kit';
 import MaskLines from '../v2/MaskLines';
@@ -27,6 +28,7 @@ import NoJs from '../NoJs';
 import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import * as D from './benchmarksData';
+import type { Lap, Point, Shelved, Suite, ToolSet, Quad, Duo, Link } from './benchmarks/types';
 import './Benchmarks.css';
 import { PLANS, checkout } from '../../lib/plans';
 
@@ -34,14 +36,21 @@ const SPRING = { duration: 0.3, ease: EASE }; // MASTER 3.1: ease-emphasis at 30
 const API = 'https://api.hanzo.ai/v1/research/runs?org=hanzo';
 
 /* ---------- small parts ---------- */
-function useSeen(amount = 0.3) {
-  const ref = useRef(null);
+function useSeen<T extends Element = HTMLDivElement>(amount = 0.3) {
+  const ref = useRef<T>(null);
   const seen = useInView(ref, { once: true, amount });
-  return [ref, seen];
+  return [ref, seen] as const;
 }
 
 
-function Seg({ opts, val, set, id, label }) {
+interface SegProps {
+  opts: string[];
+  val: string;
+  set: (v: string) => void;
+  id: string;
+  label: string;
+}
+function Seg({ opts, val, set, id, label }: SegProps) {
   const keys = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
     if (!k) return;
@@ -63,7 +72,12 @@ function Seg({ opts, val, set, id, label }) {
 }
 
 /* CSV, JSON and a link to this view: what Hanzo's boards offer, kept. */
-function Tools({ name, rows, hash }) {
+interface ToolsProps {
+  name: string;
+  rows: Record<string, string>[];
+  hash: string;
+}
+function Tools({ name, rows, hash }: ToolsProps) {
   const [ok, setOk] = useState(false);
   const save = (type: string) => {
     const cols = Object.keys(rows[0]);
@@ -92,7 +106,13 @@ function Tools({ name, rows, hash }) {
 const Down = () => <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 2.5v8M4.5 7.5 8 11l3.5-3.5M3 13.5h10" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* A bar that measures itself out when it is reached (scaleX only). */
-function Bar({ f, on, d = 0, tone = '' }) {
+interface BarProps {
+  f: number;
+  on: boolean;
+  d?: number;
+  tone?: string;
+}
+function Bar({ f, on, d = 0, tone = '' }: BarProps) {
   return (
     <i className={'xbm-bar ' + tone} aria-hidden="true">
       <motion.b style={{ '--f': Math.max(0.004, Math.min(1, f)) }} initial={{ scaleX: 0 }} animate={{ scaleX: on ? Math.max(0.004, Math.min(1, f)) : 0 }} transition={{ duration: 0.5, ease: EASE, delay: d }} />
@@ -101,7 +121,12 @@ function Bar({ f, on, d = 0, tone = '' }) {
 }
 
 /* In-page anchors and shelf views stay in this tab (the kit's A sends anything not on hanzo.ai to a new one). */
-function L({ to, ...p }) { return /^[#?]/.test(to) ? <a href={to} {...p} /> : <A to={to} {...p} />; }
+interface LProps {
+  to: string;
+  className?: string;
+  children?: ReactNode;
+}
+function L({ to, ...p }: LProps) { return /^[#?]/.test(to) ? <a href={to} {...p} /> : <A to={to} {...p} />; }
 
 const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Up = () => <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="m5 12 7-7 7 7M12 19V5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -109,21 +134,21 @@ const Up = () => <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="tr
 /* The kit's one table (DataTable), fed from header and row arrays; the caption names it in Hanzo's words. */
 interface TableProps {
   head: string[];
-  rows: string[][] | (string | number)[][] | (string | boolean | React.JSX.Element)[][] | (string | React.JSX.Element)[][] | ((string | number)[] | (string | React.JSX.Element)[])[] | ((string | number)[] | React.JSX.Element[])[];
+  rows: ReactNode[][];
   caption: string;
   className?: string;
 }
 function Table({ head, rows, caption, className = '' }: TableProps) {
   const cols = head.map((h, i) => ({ key: 'c' + i, label: h, num: i > 0 }));
-  const objs = rows.map((r) => Object.fromEntries(r.map((c, i) => ['c' + i, c])));
+  const objs = rows.map((r) => Object.fromEntries(r.map((c, i): [string, ReactNode] => ['c' + i, c])));
   return <DataTable caption={caption} cols={cols} rows={objs} className={'xbm-dt ' + className} />;
 }
 
 /* A reading marker that walks the rows of a visual (first step 1.2s after it is seen, then one row every 1.8s), so each screen has one quiet live object.
    The lit row's band cross-fades in place (300ms ease-emphasis), so it never paints over a neighbour. Pointing at a row brings the marker to it (and the walk carries on from
    there); a press, or keyboard focus inside, holds it (WCAG 2.2.2 pause). Off screen and under reduced motion it rests. */
-function useWalk(n: number, on = true, ms = 1800) {
-  const ref = useRef(null);
+function useWalk<T extends Element = HTMLDivElement>(n: number, on = true, ms = 1800) {
+  const ref = useRef<T>(null);
   const vis = useInView(ref, { amount: 0.3 });
   const calm = useReducedMotion();
   const [hold, setHold] = useState(false);
@@ -136,8 +161,8 @@ function useWalk(n: number, on = true, ms = 1800) {
     return () => clearTimeout(t);
   }, [k, live, n, ms]);
   const root = { onClick: () => setHold((h) => !h), onFocusCapture: () => setHold(true), onBlurCapture: () => setHold(false), 'data-step': k };
-  const pick = (i) => ({ onPointerEnter: () => { first.current = true; setK(i); } });
-  return [ref, calm ? -1 : k, root, pick];
+  const pick = (i: number) => ({ onPointerEnter: () => { first.current = true; setK(i); } });
+  return [ref, calm ? -1 : k, root, pick] as const;
 }
 
 /* A fold under a long list: the list shows its head, the press shows the rest (every row is in the HTML all along).
@@ -183,9 +208,16 @@ function Buy({ id, go, className = '' }: BuyProps) {
 
 /* Tabs that fold a section into one frame: the chosen pane shows, the rest stay in the page as hidden="until-found"
    (set by hand, React treats hidden as a boolean), so Find in page and an address inside a folded pane open it. */
-function Tabs({ id, label, tabs, className = '', aside }) {
+interface TabsProps {
+  id: string;
+  label: string;
+  tabs: { tab: ReactNode; body: ReactNode }[];
+  className?: string;
+  aside?: ReactNode;
+}
+function Tabs({ id, label, tabs, className = '', aside }: TabsProps) {
   const [at, setAt] = useState(0);
-  const panes = useRef([]);
+  const panes = useRef<(HTMLDivElement | null)[]>([]);
   useEffect(() => {
     panes.current.forEach((el, i) => { if (!el) return; if (i === at) el.removeAttribute('hidden'); else el.setAttribute('hidden', 'until-found'); });
   }, [at]);
@@ -230,7 +262,25 @@ function Tabs({ id, label, tabs, className = '', aside }) {
 }
 
 /* ---------- the scatter: accuracy against cost, log axis, the frontier as a dashed step ---------- */
-function Scatter({ pts, x0, x1, y0, y1, xt, yt, w = 640, h = 420, xLab, yLab, auto, labels, title, amount = 0.35, lead = 2200 }) {
+interface ScatterProps {
+  pts: Point[];
+  x0: number;
+  x1: number;
+  y0: number;
+  y1: number;
+  xt: [number, string][];
+  yt: number[];
+  w?: number;
+  h?: number;
+  xLab: string;
+  yLab?: string;
+  auto?: boolean;
+  labels?: boolean;
+  title: string;
+  amount?: number;
+  lead?: number;
+}
+function Scatter({ pts, x0, x1, y0, y1, xt, yt, w = 640, h = 420, xLab, yLab, auto, labels, title, amount = 0.35, lead = 2200 }: ScatterProps) {
   const P = { l: 44, r: 18, t: 16, b: 46 };
   // rounded: Math.log differs in the last digit between the server and the browser, which breaks hydration
   const X = (c: number) => Math.round((P.l + ((Math.log(c) - Math.log(x0)) / (Math.log(x1) - Math.log(x0))) * (w - P.l - P.r)) * 10) / 10;
@@ -241,7 +291,7 @@ function Scatter({ pts, x0, x1, y0, y1, xt, yt, w = 640, h = 420, xLab, yLab, au
   const [ref, seen] = useSeen(amount);
   const live = useInView(ref, { amount: 0.1 });
   const calm = useReducedMotion();
-  const [act, setAct] = useState(null);
+  const [act, setAct] = useState<number | null>(null);
   const [mine, setMine] = useState(false);
   const [pause, setPause] = useState(false);
   const step = useRef(0);
@@ -250,7 +300,7 @@ function Scatter({ pts, x0, x1, y0, y1, xt, yt, w = 640, h = 420, xLab, yLab, au
     const t = setTimeout(() => { const p = byCost[step.current++ % byCost.length]; setAct(p.i); }, act === null ? lead : 1900);
     return () => clearTimeout(t);
   }, [auto, mine, pause, calm, seen, live, act, byCost]);
-  const hold = (i) => { setMine(true); setAct(i); };
+  const hold = (i: number) => { setMine(true); setAct(i); };
   return (
     <div className="xbm-sc" ref={ref}>
       <svg viewBox={`0 0 ${w} ${h}`} role="group" aria-label={title}>
@@ -348,7 +398,7 @@ function Frontier() {
             <p className="pf-body">GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers.</p>
             <p className="xbm-src">
               <span className="xbm-key router">Enso</span><span className="xbm-key single">single model, same 198 questions</span><span className="xbm-key reported">reported:</span>
-              {reported.map((q, i) => <span key={q.name}><A to={q.src}>{q.name}</A>{i < reported.length - 1 ? ', ' : ''}</span>)}
+              {reported.map((q, i) => <span key={q.name}><A to={q.src!}>{q.name}</A>{i < reported.length - 1 ? ', ' : ''}</span>)}
             </p>
             <p className="xbm-open"><More to="/benchmarks/gpqa">GPQA-Diamond</More></p>
             <Buy id="frontier" go />
@@ -419,7 +469,7 @@ function Rail() {
   useEffect(() => {
     if (!open) return;
     box.current?.querySelector('input')?.focus();
-    const out = (e: PointerEvent) => { if (!box.current?.contains(e.target)) setOpen(false); };
+    const out = (e: PointerEvent) => { if (!(e.target instanceof Node) || !box.current?.contains(e.target)) setOpen(false); };
     document.addEventListener('pointerdown', out);
     return () => document.removeEventListener('pointerdown', out);
   }, [open]);
@@ -461,12 +511,13 @@ function Rail() {
 }
 
 /* ---------- 3. Enso ---------- */
-const LAB = { enso: [12, 5, 'start'], 'gpt-5.6-sol': [-4, -14, 'middle'], 'opus-5.5': [-6, 20, 'middle'] };
+const LAB: Partial<Record<string, NonNullable<Point['lab']>>> = { enso: [12, 5, 'start'], 'gpt-5.6-sol': [-4, -14, 'middle'], 'opus-5.5': [-6, 20, 'middle'] };
 
+type SystemRun = (typeof D.SYSTEMS)[number];
 function Systems() {
   const [sort, setSort] = useState('Accuracy');
   const sys = useMemo(() => {
-    const by = { Accuracy: (a, b) => b.n - a.n, 'Run cost': (a, b) => a.c - b.c, System: (a, b) => a.sys.localeCompare(b.sys) };
+    const by: Record<string, (a: SystemRun, b: SystemRun) => number> = { Accuracy: (a, b) => b.n - a.n, 'Run cost': (a, b) => a.c - b.c, System: (a, b) => a.sys.localeCompare(b.sys) };
     return [...D.SYSTEMS].sort(by[sort]);
   }, [sort]);
   const [ref, seen] = useSeen(0.05);
@@ -539,6 +590,10 @@ function Enso() {
 
 /* ---------- 4. Kai: sixteen of sixteen ---------- */
 interface DuelProps {
+  r: Suite;
+  i: number;
+}
+const __DUEL_OLD = {
   r: { bars: number[]; t: string; data: string[][]; kai: string; jev: string; runs: string[]; re: string; line?: undefined; note?: undefined; low?: undefined; cost?: undefined; } | { bars: number[]; t: string; line: string; kai: string; jev: string; runs: string[]; re: string; data?: undefined; note?: undefined; low?: undefined; cost?: undefined; } | { bars: number[]; t: string; line: string; note: string; kai: string; jev: string; runs: string[]; re: string; data?: undefined; low?: undefined; cost?: undefined; } | { bars: number[]; t: string; low: boolean; data: string[][]; note: string; kai: string; jev: string; runs: string[]; re: string; line?: undefined; cost?: undefined; } | { bars: number[]; t: string; cost: boolean; note: string; kai: string; jev: string; data?: undefined; runs?: undefined; re?: undefined; line?: undefined; low?: undefined; };
   i: number;
 }
