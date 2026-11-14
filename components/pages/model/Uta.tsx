@@ -13,6 +13,7 @@
    Beyond: "Take it to your DAW". Download MIDI writes the roll as you left it, your notes included, into a Standard
    MIDI File at the same 96 BPM, one channel per stem, so the sketch opens in any music app. Nothing leaves the page. */
 import { useEffect, useRef, useState } from 'react';
+import type { PointerEvent } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { Film, Img, Cta } from '../../kit';
 import { Studio } from './Studio';
@@ -22,41 +23,43 @@ import { C } from './creativeData';
 import { Scrub, Iris, Tilt, Fits, Close } from './uta/Motion';
 import { useLoop, fit, audio, tone, burst, hush, arrows } from './live';
 import { midi } from './Uta.midi.ts';
+import type { MidiNote } from './Uta.midi.ts';
 import './Uta.css';
 
 const ROWS = [74, 72, 70, 69, 67, 65, 64, 62, 57, 53, 50, 45, 38]; // D5 … D2, D minor
-const R = (m) => ROWS.indexOf(m);
+const R = (m: number) => ROWS.indexOf(m);
+type Note = [track: number, step: number, length: number, row: number]; // row indexes ROWS
 const TRACKS = [['Timpani & Concert Percussion', '88%'], ['Double Bass & Tuba Sub 40Hz', '76%'], ['French Horns & Symphonic Strings', '94%'], ['Chamber Choir & Solo Cello', '82%']];
-const SCORE = [
-  ...[[0, 50], [6, 45], [8, 50], [14, 45], [16, 50], [22, 45], [24, 50], [26, 50], [28, 50], [30, 50]].map(([s, m]) => [0, s, 1, R(m)]),
-  ...[[0, 6, 38], [8, 6, 45], [16, 6, 38], [24, 4, 45], [28, 4, 38]].map(([s, l, m]) => [1, s, l, R(m)]),
-  ...[[0, 62], [0, 65], [8, 62], [8, 67], [16, 57], [16, 64], [24, 57], [24, 65]].map(([s, m]) => [2, s, 8, R(m)]),
-  ...[[0, 4, 69], [4, 4, 74], [8, 2, 72], [10, 2, 70], [12, 4, 69], [16, 4, 67], [20, 2, 69], [22, 2, 70], [24, 6, 69]].map(([s, l, m]) => [3, s, l, R(m)]),
+const SCORE: Note[] = [
+  ...[[0, 50], [6, 45], [8, 50], [14, 45], [16, 50], [22, 45], [24, 50], [26, 50], [28, 50], [30, 50]].map(([s, m]): Note => [0, s, 1, R(m)]),
+  ...[[0, 6, 38], [8, 6, 45], [16, 6, 38], [24, 4, 45], [28, 4, 38]].map(([s, l, m]): Note => [1, s, l, R(m)]),
+  ...[[0, 62], [0, 65], [8, 62], [8, 67], [16, 57], [16, 64], [24, 57], [24, 65]].map(([s, m]): Note => [2, s, 8, R(m)]),
+  ...[[0, 4, 69], [4, 4, 74], [8, 2, 72], [10, 2, 70], [12, 4, 69], [16, 4, 67], [20, 2, 69], [22, 2, 70], [24, 6, 69]].map(([s, l, m]): Note => [3, s, l, R(m)]),
 ];
-const PRESETS = [
+const PRESETS: [name: string, wave: OscillatorType, attack: number, gain: number][] = [
   ['Symphonic Orchestral', 'triangle', 0.05, 0.08],
   ['Cyberpunk Synthwave', 'sawtooth', 0.01, 0.035],
   ['Film Trailer Braam', 'square', 0.08, 0.03],
   ['Lo-Fi Ambient Chill', 'sine', 0.03, 0.09],
 ];
 const STEPS = 32, STEP = 60 / 96 / 4; // a sixteenth at 96 BPM
-const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+const hz = (m: number) => 440 * Math.pow(2, (m - 69) / 12);
 const SHADE = ['#f5f5f7', '#8e8e93', '#5a5a5e', '#ffffff'];
 
 function Roll() {
-  const stage = useRef(null), cv = useRef(null), sec = useRef(null), cs = useRef(null), flow = useRef(null), lights = useRef([]);
-  const S = useRef({ t: 0, step: -1, notes: SCORE.map((n) => [...n]), tc: 90.1 });
+  const stage = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), sec = useRef<HTMLSpanElement>(null), cs = useRef<HTMLSpanElement>(null), flow = useRef<HTMLElement>(null), lights = useRef<(HTMLLIElement | null)[]>([]);
+  const S = useRef({ t: 0, step: -1, notes: SCORE.map((n): Note => [...n]), tc: 90.1 });
   const [pre, setPre] = useState(0);
   const [solo, setSolo] = useState(-1);
   const [sound, setSound] = useState(false);
   const [play, setPlay] = useState(true);
   const calm = useReducedMotion();
   useEffect(() => { if (calm) setPlay(false); }, [calm]); // reduced motion: the roll rests, and says so
-  const live = useRef({});
+  const live = useRef({ pre: 0, solo: -1, sound: false });
   live.current = { pre, solo, sound };
   useEffect(() => hush, []);
 
-  const voice = (n) => {
+  const voice = (n: Note) => {
     const { pre: p, sound: on } = live.current;
     if (!on) return;
     const ac = audio();
@@ -76,11 +79,12 @@ function Roll() {
       const on = [0, 0, 0, 0];
       s.notes.forEach((n) => { if (step >= n[1] && step < n[1] + n[2]) on[n[0]] = 1; if (n[1] === step && (so < 0 || so === n[0]) && !still && play) voice(n); });
       on.forEach((v, i) => { const el = lights.current[i]; if (el) el.dataset.on = v && (so < 0 || so === i) ? '1' : '0'; });
-      if (sec.current) { sec.current.textContent = String(Math.floor(s.tc % 60)).padStart(2, '0'); cs.current.textContent = String(Math.floor((s.tc % 1) * 100)).padStart(2, '0'); }
+      if (sec.current && cs.current) { sec.current.textContent = String(Math.floor(s.tc % 60)).padStart(2, '0'); cs.current.textContent = String(Math.floor((s.tc % 1) * 100)).padStart(2, '0'); }
     }
     if (flow.current) flow.current.style.transform = `scaleX(${s.t / (STEPS * STEP)})`;
     const { w, h, d } = fit(c);
     const g = c.getContext('2d'), cw = w / STEPS, rh = h / ROWS.length, x0 = (s.t / STEP) * cw;
+    if (!g) return;
     g.fillStyle = '#0a0a0a'; g.fillRect(0, 0, w, h);
     for (let r = 0; r < ROWS.length; r++) if ([70, 65, 57, 53, 45].includes(ROWS[r])) { g.fillStyle = '#111114'; g.fillRect(0, r * rh, w, rh); }
     for (let i = 0; i <= STEPS; i++) { g.fillStyle = i % 16 === 0 ? 'rgba(255,255,255,.22)' : i % 4 === 0 ? 'rgba(255,255,255,.1)' : 'rgba(255,255,255,.035)'; g.fillRect(i * cw, 0, d, h); }
@@ -99,17 +103,17 @@ function Roll() {
   });
 
   const save = () => {
-    const url = URL.createObjectURL(new Blob([midi(S.current.notes.map(([tr, st, len, row]) => [tr, st, len, ROWS[row]]), 96)], { type: 'audio/midi' }));
+    const url = URL.createObjectURL(new Blob([midi(S.current.notes.map(([tr, st, len, row]): MidiNote => [tr, st, len, ROWS[row]]), 96)], { type: 'audio/midi' }));
     const a = Object.assign(document.createElement('a'), { href: url, download: 'uta-sketch.mid' });
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
-  const tap = (e) => {
-    const r = cv.current.getBoundingClientRect();
+  const tap = (e: PointerEvent<HTMLCanvasElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
     const st = Math.floor(((e.clientX - r.left) / r.width) * STEPS), row = Math.floor(((e.clientY - r.top) / r.height) * ROWS.length);
     const s = S.current, hit = s.notes.findIndex((n) => n[0] === 3 && n[3] === row && st >= n[1] && st < n[1] + n[2]);
-    if (hit >= 0) s.notes.splice(hit, 1); else { const n = [3, Math.min(STEPS - 2, st), 2, row]; s.notes.push(n); const was = live.current.sound; if (was) voice(n); }
+    if (hit >= 0) s.notes.splice(hit, 1); else { const n: Note = [3, Math.min(STEPS - 2, st), 2, row]; s.notes.push(n); const was = live.current.sound; if (was) voice(n); }
   };
 
   return (
@@ -138,7 +142,7 @@ function Roll() {
       <div className="ut-main">
         <ul className="ut-tracks">
           {TRACKS.map(([n, v], i) => (
-            <li key={n} ref={(el) => (lights.current[i] = el)} data-on="0">
+            <li key={n} ref={(el) => { lights.current[i] = el; }} data-on="0">
               <span className="ut-tn">{n}</span>
               <span className="ut-lv"><i style={{ transform: `scaleX(${parseInt(v, 10) / 100})` }} /></span>
               <span className="ut-v mb-tnum">{v}</span>
@@ -179,11 +183,11 @@ function Splash() {
 }
 
 // the film splits into Uta's four stems: four faders rising left to right from one floor
-const STEMS = (t, W, H, wide) => {
+const STEMS = (t: number, W: number, H: number, wide: boolean) => {
   const x0 = wide ? W * 0.5 : W * 0.06, x1 = wide ? W * 0.94 : W * 0.94, B = wide ? H * 0.9 : H * 0.47, gap = wide ? 18 : 10;
   const tops = wide ? [0.5, 0.36, 0.22, 0.08] : [0.33, 0.26, 0.19, 0.13]; // a crescendo, rising with the film's fan of lines
   const bw = (x1 - x0 - 3 * gap) / 4, M = Math.max(W, H) * 0.5;
-  const pts = [];
+  const pts: [number, number][] = [];
   tops.forEach((f, i) => {
     const a = x0 + i * (bw + gap), b = a + bw, a0 = (i * W) / 4, b0 = ((i + 1) * W) / 4, T = H * f;
     pts.push([lerp(a0, a, t), lerp(H + M, B, t)], [lerp(a0, a, t), lerp(-M, T, t)], [lerp(b0, b, t), lerp(-M, T, t)], [lerp(b0, b, t), lerp(H + M, B, t)]);
@@ -230,7 +234,7 @@ function useHold() {
 // keyboard: focus entering the settled headline's links (hidden under the film until the stage settles) scrolls the
 // stage to its settled point, so every Tab stop shows
 const settleTo = () => {
-  const s = document.querySelector('.lv-stage[data-hero="uta"]');
+  const s = document.querySelector<HTMLElement>('.lv-stage[data-hero="uta"]');
   if (!s || innerWidth <= 900) return;
   const end = s.getBoundingClientRect().top + scrollY + s.offsetHeight - innerHeight;
   if (scrollY < end - 2) scrollTo({ top: end, behavior: 'instant' });
@@ -241,7 +245,7 @@ const settleTo = () => {
 // one solid there. The page opts out of the header hand-off with data-ask="off" on <main> (Ask.jsx's own switch).
 function useStillHeader() {
   useEffect(() => {
-    const H = document.documentElement, main = document.querySelector('main');
+    const H = document.documentElement, main = document.querySelector<HTMLElement>('main');
     const band = document.querySelector('.ut-band');
     if (main) main.dataset.ask = 'off';
     if (!band) return;
@@ -262,7 +266,7 @@ export default function Uta() {
       pos="50% 88%"
       ask={{ label: 'Request access', to: '/research-access?models=uta', id: 'uta.first' }}
       shape={STEMS}
-      aim={(W, H, wide) => (wide ? focus(0.66, 0.66, W * 0.72, H * 0.55, 1.12, [W * 0.5, H * 0.08, W * 0.94, H * 0.9], [0.5, 0.88]) : focus(0.7, 0.66, W / 2, H * 0.3, 1.3, [W * 0.06, H * 0.06, W * 0.94, H * 0.47], [0.5, 0.88]))(W, H)}
+      aim={(W: number, H: number, wide: boolean) => (wide ? focus(0.66, 0.66, W * 0.72, H * 0.55, 1.12, [W * 0.5, H * 0.08, W * 0.94, H * 0.9], [0.5, 0.88]) : focus(0.7, 0.66, W / 2, H * 0.3, 1.3, [W * 0.06, H * 0.06, W * 0.94, H * 0.47], [0.5, 0.88]))(W, H)}
       headClass="cr-head ut-v2"
       head={<Head />}
     >

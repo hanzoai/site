@@ -9,18 +9,18 @@
    reduced motion all show the final page, and the markup is identical on server and client. */
 import { useEffect } from 'react';
 
-export function useEnter(rootSel) {
+export function useEnter(rootSel: string) {
   useEffect(() => {
-    const root = document.querySelector(rootSel);
+    const root = document.querySelector<HTMLElement>(rootSel);
     if (!root) return undefined;
-    const els = [...root.querySelectorAll('[data-enter]')];
-    const timers = [];
-    const play = (el) => { el.dataset.in = ''; timers.push(setTimeout(() => { el.dataset.done = ''; }, 1800)); };
+    const els = [...root.querySelectorAll<HTMLElement>('[data-enter]')];
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const play = (el: HTMLElement) => { el.dataset.in = ''; timers.push(setTimeout(() => { el.dataset.done = ''; }, 1800)); };
     if (typeof IntersectionObserver === 'undefined' || matchMedia('(prefers-reduced-motion: reduce)').matches) { els.forEach(play); return undefined; }
     const io = new IntersectionObserver((es) => {
       es.forEach((e) => {
         if (!e.isIntersecting) return;
-        if (e.intersectionRatio >= 0.25 || e.intersectionRect.height >= innerHeight * 0.25) { play(e.target); io.unobserve(e.target); }
+        if (e.intersectionRatio >= 0.25 || e.intersectionRect.height >= innerHeight * 0.25) { play(e.target as HTMLElement); io.unobserve(e.target); }
       });
     }, { threshold: [0, 0.1, 0.25, 0.5] });
     els.forEach((el) => io.observe(el));

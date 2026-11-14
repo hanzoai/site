@@ -9,13 +9,15 @@
    4 card-deal       the studio map's six cards are dealt from a deck onto their places;
    5 scramble        "Frontier AI for everything you build." and the model names decode out of scrambled characters. */
 import { useEffect, useRef, useState } from 'react';
+import type { PointerEvent, ReactNode } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { MoriCap } from './MoriArt';
+import type { C, Slug } from './creativeData';
 
 const EMPH = 'cubic-bezier(.16,1,.3,1)';
 const calm = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 // run fn once, the first time el is a quarter in view
-function once(el, fn, amount = 0.25) {
+function once(el: Element | null, fn: () => void, amount = 0.25): () => void {
   if (!el) return () => {};
   const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { io.disconnect(); fn(); } }, { threshold: amount });
   io.observe(el);
@@ -23,8 +25,8 @@ function once(el, fn, amount = 0.25) {
 }
 
 /* 1. shrink-to-card: a wrapper whose room is a card on the way in and on the way out, full bleed while you are in it */
-export function ShrinkCard({ children }) {
-  const ref = useRef(null);
+export function ShrinkCard({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   // reduced motion, read after hydration so the server's HTML and the first client render agree
   const rm = useReducedMotion();
   const [still, setStill] = useState(false);
@@ -40,12 +42,13 @@ export function ShrinkCard({ children }) {
 }
 
 /* 2. side-carousel: the capabilities as cards on a horizontal snapping track */
-export function CapsCarousel({ d }) {
-  const sec = useRef(null), track = useRef(null);
+export function CapsCarousel({ d }: { d: (typeof C)[Slug] }) {
+  const sec = useRef<HTMLElement>(null), track = useRef<HTMLOListElement>(null);
   const [at, setAt] = useState(0);
   const [seen, setSeen] = useState(false);
   useEffect(() => {
-    const cards = [...track.current.children];
+    if (!track.current) return undefined;
+    const cards = [...track.current.children] as HTMLElement[];
     if (!calm()) cards.forEach((li) => { li.style.transform = 'translateX(70vw)'; }); // waiting off to the right (JS only)
     const off = once(sec.current, () => {
       setSeen(true);
@@ -63,8 +66,9 @@ export function CapsCarousel({ d }) {
   // which card is in front: the one nearest the track's left edge
   useEffect(() => {
     const t = track.current;
+    if (!t) return undefined;
     const onScroll = () => {
-      const cards = [...t.children], x = t.scrollLeft;
+      const cards = [...t.children] as HTMLElement[], x = t.scrollLeft;
       let best = 0, bd = Infinity;
       cards.forEach((c, i) => { const dd = Math.abs(c.offsetLeft - t.offsetLeft - x); if (dd < bd) { bd = dd; best = i; } });
       setAt(best);
@@ -72,24 +76,29 @@ export function CapsCarousel({ d }) {
     t.addEventListener('scroll', onScroll, { passive: true });
     return () => t.removeEventListener('scroll', onScroll);
   }, []);
-  const go = (i) => {
-    const t = track.current, n = t.children.length, j = Math.max(0, Math.min(n - 1, i));
-    t.scrollTo({ left: t.children[j].offsetLeft - t.offsetLeft, behavior: calm() ? 'auto' : 'smooth' });
+  const go = (i: number) => {
+    const t = track.current;
+    if (!t) return;
+    const n = t.children.length, j = Math.max(0, Math.min(n - 1, i));
+    t.scrollTo({ left: (t.children[j] as HTMLElement).offsetLeft - t.offsetLeft, behavior: calm() ? 'auto' : 'smooth' });
   };
   // mouse drag with a throw; touch and trackpads scroll natively
-  const drag = useRef(null);
-  const down = (e) => { if (e.pointerType !== 'mouse') return; drag.current = { x: e.clientX, l: track.current.scrollLeft, v: 0, t: performance.now(), moved: false }; track.current.setPointerCapture(e.pointerId); track.current.dataset.drag = ''; };
-  const move = (e) => {
+  const drag = useRef<{ x: number; l: number; v: number; t: number; moved: boolean } | null>(null);
+  const down = (e: PointerEvent<HTMLOListElement>) => { if (e.pointerType !== 'mouse') return; const t = e.currentTarget; drag.current = { x: e.clientX, l: t.scrollLeft, v: 0, t: performance.now(), moved: false }; t.setPointerCapture(e.pointerId); t.dataset.drag = ''; };
+  const move = (e: PointerEvent<HTMLOListElement>) => {
     const g = drag.current; if (!g) return;
     const dx = e.clientX - g.x, now = performance.now();
-    g.v = (g.l - dx - track.current.scrollLeft) / Math.max(1, now - g.t); g.t = now;
+    g.v = (g.l - dx - e.currentTarget.scrollLeft) / Math.max(1, now - g.t); g.t = now;
     if (Math.abs(dx) > 4) g.moved = true;
-    track.current.scrollLeft = g.l - dx;
+    e.currentTarget.scrollLeft = g.l - dx;
   };
   const up = () => {
     const g = drag.current; if (!g) return;
-    drag.current = null; delete track.current.dataset.drag;
-    const t = track.current, w = t.children[0]?.offsetWidth || 1;
+    drag.current = null;
+    const t = track.current;
+    if (!t) return;
+    delete t.dataset.drag;
+    const w = (t.children[0] as HTMLElement | undefined)?.offsetWidth || 1;
     go(Math.round((t.scrollLeft + g.v * 260) / (w + 12)));
   };
   return (
@@ -146,10 +155,10 @@ export function PixelFilters() {
 
 /* 3-5: the entrances that act on sections Creative.jsx draws (fits, map, model cards), found inside Mori's main */
 const GLYPHS = '#%&@$*+=?/<>[]{}01';
-function scramble(nodes) {
-  const items = nodes.map((n) => ({ n, s: n.nodeValue }));
+function scramble(nodes: Text[]) {
+  const items = nodes.map((n) => ({ n, s: n.nodeValue ?? '' }));
   const total = 1100, t0 = performance.now();
-  const tick = (now) => {
+  const tick = (now: number) => {
     const k = Math.min(1, (now - t0) / total);
     items.forEach(({ n, s }, j) => {
       const kk = Math.max(0, Math.min(1, k * 1.25 - j * 0.04)), cut = Math.floor(s.length * kk);
@@ -166,9 +175,9 @@ export function useEntrances() {
   useEffect(() => {
     const main = document.querySelector('main:has([data-hero=mori])') || document.querySelector('main');
     if (!main || calm()) return;
-    const offs = [];
+    const offs: (() => void)[] = [];
     // 3. pixel-resolve: the fits section holds coarse pixels until it is in view, then steps down to sharp
-    const fits = main.querySelector('.cr-fits');
+    const fits = main.querySelector<HTMLElement>('.cr-fits');
     if (fits) {
       fits.style.filter = `url(#mr-px-${PX[0]})`;
       offs.push(once(fits, () => {
@@ -179,7 +188,7 @@ export function useEntrances() {
     // 4. card-deal: the six cards wait as a deck under the grid, then are dealt to their places one by one
     const grid = main.querySelector('.cr-map-grid');
     if (grid) {
-      const tiles = [...grid.children];
+      const tiles = [...grid.children] as HTMLElement[];
       const pose = () => {
         const g = grid.getBoundingClientRect(), cx = g.left + g.width / 2, cy = g.bottom + 40;
         return tiles.map((li, i) => { const r = li.getBoundingClientRect(); return `translate(${cx - (r.left + r.width / 2)}px, ${cy - (r.top + r.height / 2)}px) rotate(${(i % 2 ? 1 : -1) * (3 + i)}deg)`; });
@@ -198,13 +207,13 @@ export function useEntrances() {
     // 5. scramble: the model cards' headline, its line and every model name decode as the section arrives
     const mc = main.querySelector('.mc');
     if (mc) {
-      const texts = [...mc.querySelectorAll('.mc-h, .mc-sub, .mc-t')].map((el) => [...el.childNodes].find((n) => n.nodeType === 3 && n.nodeValue.trim())).filter(Boolean);
+      const texts = [...mc.querySelectorAll('.mc-h, .mc-sub, .mc-t')].map((el) => [...el.childNodes].find((n) => n.nodeType === 3 && n.nodeValue?.trim())).filter((n): n is Text => !!n);
       offs.push(once(mc, () => scramble(texts), 0.2));
     }
     return () => {
       offs.forEach((f) => f());
       if (fits) fits.style.filter = '';
-      grid && [...grid.children].forEach((li) => { li.style.transform = ''; li.style.zIndex = ''; });
+      grid && ([...grid.children] as HTMLElement[]).forEach((li) => { li.style.transform = ''; li.style.zIndex = ''; });
     };
   }, []);
 }

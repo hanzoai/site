@@ -28,6 +28,7 @@
 import { Children, Fragment, cloneElement, isValidElement, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { motion, useInView, useReducedMotion } from 'motion/react';
+import type { CSSProperties, KeyboardEvent, ReactNode, RefObject } from 'react';
 import { Copy } from '../../ui';
 import { A, Cta, Tabs, TabPanel, CodeBlock } from '../../kit';
 import { check, TRAINED, MAXSTATE, MAXQ } from './kaiLimits';
@@ -39,18 +40,18 @@ import './KaiGuide.css';
 /* W: every loose run of text in a mixed line sits in its own <span>, and the text inside an inline code, b or mark
    sits in a <span> too (no visual change). Hanzo's copy check (scripts/copycheck.mjs) reads only leaf span, p, li…
    elements, so a sentence split around <code> must still arrive as its own leaves, word for word. */
-const leafy = (c) => {
+const leafy = (c: ReactNode): ReactNode => {
   if (typeof c === 'string') return c ? <span>{c}</span> : c;
-  if (!isValidElement(c)) return c;
+  if (!isValidElement<{ children?: ReactNode }>(c)) return c;
   if (c.type === Fragment) return Children.map(c.props.children, leafy);
-  if (['code', 'b', 'mark', 'em'].includes(c.type) && typeof c.props.children === 'string') return cloneElement(c, {}, <span>{c.props.children}</span>);
+  if (typeof c.type === 'string' && ['code', 'b', 'mark', 'em'].includes(c.type) && typeof c.props.children === 'string') return cloneElement(c, {}, <span>{c.props.children}</span>);
   return c;
 };
-const W = ({ children }) => <>{Children.map(children, leafy)}</>;
+const W = ({ children }: { children?: ReactNode }) => <>{Children.map(children, leafy)}</>;
 
 // the deck's motion tokens (MASTER 3.1): durations in seconds, one emphasis curve, no springs
 const T = { press: 0.09, fast: 0.15, base: 0.3, slow: 0.4, slower: 0.5, line: 0.7 };
-const EMPH = [0.16, 1, 0.3, 1];
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const CURL = `curl -sS --fail-with-body https://api.hanzo.ai/v1/decisions \\
   -H "Authorization: Bearer $HANZO_API_KEY" \\
@@ -124,7 +125,7 @@ console.log(decision.answers.risk.score, decision.answers.risk.probabilities)`;
 // tab names in the guide's own words: its first command and the two install lines its code opens with
 const CODES = [['curl', CURL], ['pip install hanzoai', PY], ['npm install hanzoai', TS]];
 
-const TYPES = [
+const TYPES: [name: string, send: ReactNode, get: ReactNode][] = [
   ['choice', <><b>Send</b> <code>criteria</code>: option → description, or a list of options.</>, <><b>Get</b> <code>choice</code>, <code>probabilities</code> (one per option, summing to 1), <code>confidence</code>.</>],
   ['score', <><b>Send</b> <code>criteria</code>: the levels, lowest first.</>, <><b>Get</b> <code>score</code> (the expected level index), <code>legend</code>, <code>probabilities</code> by level index.</>],
   ['noul', <><b>Send</b> <code>instructions</code>: a yes/no question.</>, <><b>Get</b> <code>noul</code>: P(true). kai-1.3, the default, does not read a noul’s <code>criteria</code>.</>],
@@ -136,7 +137,8 @@ const TYPES = [
 const S_TICKET = 'Customer email: Cancel my plan immediately. Your service was down during our product launch.';
 const S_PAY = '{"ticket_id": 4821, "text": "Can I get an extension on my payment due date?"}';
 const S_PR = "{ pull_request: 104, diff_lines: 480, files: ['auth.ts', 'token.go'] }";
-const ASKS = [
+type Ask = [name: string, type: number, question: string, state: string, criteria?: string[]];
+const ASKS: Ask[] = [
   ['churn_risk', 2, 'Is this account at risk of churning?', S_TICKET],
   ['urgency', 1, 'Rate ticket urgency', S_TICKET, ['low', 'normal', 'high', 'critical']],
   ['department', 0, 'Route ticket to appropriate team', S_TICKET, ['executive_escalations', 'support', 'billing']],
@@ -155,19 +157,20 @@ const DONE = '0 output tokens';
 const KEEP = 6; // the thread holds the last six exchanges
 
 // the streamed text, its em dashes set a step back (the values Hanzo does not print)
-const dash = (s) => s.split('—').flatMap((p, i) => (i ? [<i key={i}>—</i>, p] : [p]));
+const dash = (s: string) => s.split('—').flatMap((p, i) => (i ? [<i key={i}>—</i>, p] : [p]));
 
+interface Exchange { a: number; n: number; id: number }
 function Chat() {
-  const box = useRef(null), scr = useRef(null), uid = useRef(SEED.length), still = useRef(false);
+  const box = useRef<HTMLElement>(null), scr = useRef<HTMLDivElement>(null), uid = useRef(SEED.length), still = useRef(false);
   const seen = useInView(box, { amount: 0.35 });
   const [live, setLive] = useState(false);
-  const [items, setItems] = useState(() => SEED.map((a, id) => ({ a, n: Infinity, id })));
+  const [items, setItems] = useState<Exchange[]>(() => SEED.map((a, id) => ({ a, n: Infinity, id })));
   const [auto, setAuto] = useState(SEED.length); // the next question the conversation asks by itself
   const [mine, setMine] = useState(false); // the visitor has picked a question
   const [hold, setHold] = useState(false);
   const last = items[items.length - 1];
   const running = !!last && last.n < REPLY[last.a].length;
-  const ask = (a) => setItems((xs) => [...xs.map((x) => (x.n === Infinity ? x : { ...x, n: Infinity })), { a, n: still.current ? Infinity : 0, id: uid.current++ }].slice(-KEEP));
+  const ask = (a: number) => setItems((xs) => [...xs.map((x) => (x.n === Infinity ? x : { ...x, n: Infinity })), { a, n: still.current ? Infinity : 0, id: uid.current++ }].slice(-KEEP));
   // JS on and motion allowed: start empty and ask by itself; reduced motion keeps the settled three
   useEffect(() => {
     still.current = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -191,7 +194,7 @@ function Chat() {
     if (!live || !sc) return;
     sc.scrollTo({ top: sc.scrollHeight, behavior: last && last.n === 0 ? 'smooth' : 'auto' });
   }, [items, live]); // eslint-disable-line react-hooks/exhaustive-deps
-  const pick = (a) => { setMine(true); setHold(false); ask(a); };
+  const pick = (a: number) => { setMine(true); setHold(false); ask(a); };
   const replay = () => { setItems([]); setMine(false); setHold(false); setAuto(still.current ? SEED.length : 0); if (still.current) setItems(SEED.map((a) => ({ a, n: Infinity, id: uid.current++ }))); };
   const done = !running && (mine || auto >= SEED.length);
   const label = done ? 'Replay' : hold ? 'Play' : 'Pause';
@@ -244,7 +247,7 @@ function Chat() {
 /* the three types as a spec sheet; each glyph draws its type, then the three take turns showing it again (one mover at a
    time, a 9 s round) while the sheet is on screen, paused off screen and under reduced motion. Entrance: ripple */
 function Types() {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.2 });
   useRipple(box);
   return (
@@ -294,7 +297,7 @@ const CAP = 12;
 function CallIt() {
   const [k, setK] = useState(1);
   const [all, setAll] = useState([false, false, false]);
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   // the kit CodeBlock marks itself a dark room; here it sits on a white tile, so it is marked light before the header
   // starts watching for dark rooms (layout effects run first), else the header turns dark over light code
   // (docs/build-notes/requests/kai-guide.md asks for a room prop on CodeBlock)
@@ -302,20 +305,20 @@ function CallIt() {
   useEffect(() => {
     const read = () => {
       let i = LANG.indexOf(location.hash.slice(1));
-      if (i < 0) { try { i = LANG.indexOf(localStorage.getItem('kg-lang')); } catch { i = -1; } }
+      if (i < 0) { try { i = LANG.indexOf(localStorage.getItem('kg-lang') ?? ''); } catch { i = -1; } }
       if (i >= 0) setK(i);
     };
     read(); addEventListener('hashchange', read);
     return () => removeEventListener('hashchange', read);
   }, []);
-  const choose = (i) => {
+  const choose = (i: number) => {
     setK(i);
     try { localStorage.setItem('kg-lang', LANG[i]); } catch { /* storage off: the choice lasts this visit */ }
     history.replaceState(history.state, '', '#' + LANG[i]);
   };
-  const more = (i) => {
+  const more = (i: number) => {
     setAll((a) => a.map((v, j) => v || j === i));
-    requestAnimationFrame(() => box.current?.querySelector(`#kg-lang-panel-${i} pre`)?.focus({ preventScroll: true }));
+    requestAnimationFrame(() => box.current?.querySelector<HTMLElement>(`#kg-lang-panel-${i} pre`)?.focus({ preventScroll: true }));
   };
   return (
     <div className="kg-code" ref={box}>
@@ -324,7 +327,7 @@ function CallIt() {
         const long = c.split('\n').length > CAP;
         return (
           <TabPanel key={l} id="kg-lang" i={i} value={k} className="kg-code-p">
-            <div className="kg-cap" data-cap={(long && !all[i]) || undefined} style={{ '--cap': CAP }}>
+            <div className="kg-cap" data-cap={(long && !all[i]) || undefined} style={{ '--cap': CAP } as CSSProperties}>
               <CodeBlock code={c} label={l} />
               {long && !all[i] && <button type="button" className="kg-more" aria-controls={`kg-lang-panel-${i}`} aria-expanded="false" onClick={() => more(i)}><span>Show all</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></button>}
             </div>
@@ -337,7 +340,7 @@ function CallIt() {
 
 /* call it: the words beside the code (no sticky column). Entrance: drop-in */
 function Call() {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   useDropIn(box);
   return (
     <section className="kg-call kg-sec" ref={box} aria-labelledby="kg-c">
@@ -357,30 +360,32 @@ function Call() {
 // the checker only ever shows the guide's own figures: the state ruler snaps to the four points the guide names
 // (1,024 trained, the 3,982-token example, 32,768, past 32,768) and the questions are up to 100 or 101; no figure is
 // worked out from another, so the old per-request price readout is gone and Price lights the guide's own price line
-const STOPS = [[1024, '1,024'], [3982, '3,982'], [32768, '32,768'], [65536, 'Past 32,768']];
-const QS = [[100, 'Up to 100'], [101, '101']];
-const SCENES = [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 3, 0], [0, 0, 1]]; // [model, state stop, questions stop]
+const STOPS: [number, string][] = [[1024, '1,024'], [3982, '3,982'], [32768, '32,768'], [65536, 'Past 32,768']];
+const QS: [number, string][] = [[100, 'Up to 100'], [101, '101']];
+type Scene = [model: number, state: number, questions: number];
+const SCENES: Scene[] = [[0, 0, 0], [0, 1, 0], [1, 1, 0], [1, 3, 0], [0, 0, 1]]; // [model, state stop, questions stop]
 // the five answers kaiLimits can give, so the verdict box always holds the tallest one
 const OUTS = [check(0, 1024, 101), check(0, 65536, 100), check(0, 3982, 100), check(0, 1024, 100), check(1, 1024, 100)];
 const WALK = [2, 3, 4, 0, 1]; // the order the checker plays the five cases, ending where it began
 const SCENE_ROW = [3, 2, 0, 2, 1]; // which limit each checker case illustrates (Model, Questions, State, Time, Price)
 const ROW_SCENE = [2, 4, 1, 0, 0];
 const LO = Math.log2(256), HI = Math.log2(65536);
-const tokPos = (t) => (Math.log2(Math.max(256, t)) - LO) / (HI - LO);
-const nearest = (p) => STOPS.reduce((best, [t], i) => (Math.abs(tokPos(t) - p) < Math.abs(tokPos(STOPS[best][0]) - p) ? i : best), 0);
+const tokPos = (t: number) => (Math.log2(Math.max(256, t)) - LO) / (HI - LO);
+const nearest = (p: number) => STOPS.reduce((best, [t], i) => (Math.abs(tokPos(t) - p) < Math.abs(tokPos(STOPS[best][0]) - p) ? i : best), 0);
 
 // a ruler's thumb position as one fixed string, the same on the server and in the browser (no hydration drift).
 // The range input carries suppressHydrationWarning: a screenshot taken before hydration writes an inline caret-color on
 // every input, and that one attribute is all React would otherwise flag (the input itself renders no style).
-const run = (p) => ({ transform: `translateX(${(Math.round(p * 10000) / 100).toFixed(2)}%)` });
+const run = (p: number) => ({ transform: `translateX(${(Math.round(p * 10000) / 100).toFixed(2)}%)` });
 
-function Checker({ s, mine, setMine, price, tile }) {
+interface CheckerProps { s: number; mine: Scene | null; setMine: (v: Scene | null) => void; price: boolean; tile: RefObject<HTMLDivElement | null> }
+function Checker({ s, mine, setMine, price, tile }: CheckerProps) {
   const [m, si, qi] = mine || SCENES[s];
   const tok = STOPS[si][0];
   const r = check(m, tok, QS[qi][0]);
-  const set = (i, v) => { const n = [...(mine || SCENES[s])]; n[i] = v; setMine(n); };
-  const key = (e) => {
-    const d = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[e.key];
+  const set = (i: number, v: number) => { const n: Scene = [...(mine || SCENES[s])]; n[i] = v; setMine(n); };
+  const key = (e: KeyboardEvent<HTMLInputElement>) => {
+    const d = ({ ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 } as Record<string, number | undefined>)[e.key];
     const to = e.key === 'Home' ? 0 : e.key === 'End' ? STOPS.length - 1 : d !== undefined ? Math.min(STOPS.length - 1, Math.max(0, si + d)) : null;
     if (to === null) return;
     e.preventDefault(); set(1, to);
@@ -430,7 +435,7 @@ function Checker({ s, mine, setMine, price, tile }) {
   );
 }
 
-const LIMITS = [
+const LIMITS: [name: string, text: ReactNode][] = [
   ['Model', <>The model id <code>kai</code> answers from kai-1.3, the default. Ask for <code>kai-1.4</code> by id for the unified version: one encoder and one head, trained on long states. Ask for <code>kai-1.5</code> by id for the agentic preview: whether a tool fits a request, and whether to call one at all.</>],
   ['Questions', <>Up to 100 a request; 101 is refused with 422.</>],
   ['State', <>kai-1.3, the default, was trained on 1,024 tokens of state beside each question. Up to 32,768 is answered with <code>routing.extrapolated: true</code> and is unreliable: a fact at the end of a 3,982-token state read 0.507. <code>kai-1.4</code> was trained on long states and marks no read up to 32,768 extrapolated. Past 32,768 the answer is 422 <code>state_too_long</code>.</>],
@@ -443,16 +448,16 @@ const LIMITS = [
    open limit follows the checker as it walks Hanzo's cases, and a click on a label opens it and loads its case, so the
    two move together. The sentence slot keeps the height of the tallest sentence, so nothing moves as they change.
    Entrance: tilt-3d-hover (the checker tile arrives tipped back and levels, then leans toward the pointer) */
-const slug = (k) => 'limit-' + k.toLowerCase();
+const slug = (k: string) => 'limit-' + k.toLowerCase();
 function Limits() {
-  const box = useRef(null), list = useRef(null), tile = useRef(null);
+  const box = useRef<HTMLElement>(null), list = useRef<HTMLDListElement>(null), tile = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   useTiltIn(box, tile);
   const [s, setS] = useState(1);
   const [n, setN] = useState(0); // steps played: the checker walks Hanzo's cases once, then rests on the extrapolated one
-  const [mine, setMine] = useState(null); // [model, tokens, questions] once the visitor takes over
-  const [row, setRow] = useState(null);
+  const [mine, setMine] = useState<Scene | null>(null); // [model, tokens, questions] once the visitor takes over
+  const [row, setRow] = useState<number | null>(null);
   const [open, setOpen] = useState(SCENE_ROW[1]);
   useEffect(() => {
     if (!seen || mine || calm || n >= WALK.length) return;
@@ -462,14 +467,15 @@ function Limits() {
   const lit = row !== null ? row : mine ? null : SCENE_ROW[s];
   // the open limit follows the checker's walk; the sentence slot keeps one height, so nothing moves when it changes
   useEffect(() => { if (lit !== null) setOpen(lit); }, [lit]);
-  const pick = (i) => { setOpen(i); setRow(i); setMine([...SCENES[ROW_SCENE[i]]]); };
+  const pick = (i: number) => { setOpen(i); setRow(i); setMine([...SCENES[ROW_SCENE[i]]]); };
   // React writes `hidden` as a plain boolean, so the until-found value is set here, before paint; until then a .js rule
   // folds the same four sentences, and with JS off all five stay open
   useLayoutEffect(() => {
-    list.current.querySelectorAll('dd').forEach((d, i) => (i === open ? d.removeAttribute('hidden') : d.setAttribute('hidden', 'until-found')));
+    list.current?.querySelectorAll('dd').forEach((d, i) => (i === open ? d.removeAttribute('hidden') : d.setAttribute('hidden', 'until-found')));
   }, [open]);
   useEffect(() => {
     const dl = list.current;
+    if (!dl) return undefined;
     const dds = [...dl.querySelectorAll('dd')];
     // find-in-page or a #limit-<name> link reveals a folded sentence: open that row with it
     const found = dds.map((d, i) => { const f = () => flushSync(() => pick(i)); d.addEventListener('beforematch', f); return f; });
@@ -524,7 +530,7 @@ const RECIPES = [
    focusing a name brings it on stage, the pointer on the room holds the fill, and the bar's own control pauses it.
    Off screen and under reduced motion the fill does not run, so nothing changes by itself. */
 function Recipes() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.35 });
   const [k, setK] = useState(0);
   const [hold, setHold] = useState(false);
@@ -563,7 +569,7 @@ function Recipes() {
 
 /* the one black room. Entrance: line-draw (its outline strokes itself, then the black fills in behind the words) */
 function Room() {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   useLineDraw(box);
   return (
     <section className="kg-recipes kg-sec" ref={box} aria-labelledby="kg-r">
@@ -588,15 +594,17 @@ function Room() {
 
 /* the move from Jev as one diff (static: the section's own entrance carries it). Entrance: cover-slide */
 function Jev() {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   useCoverSlide(box);
   // the changed model id inside each body line is marked with the CSS Custom Highlight API, so the JSON body stays one
   // run of text (word for word, as the guide prints it); without the API the line simply shows unmarked
   useEffect(() => {
     if (typeof Highlight === 'undefined' || !window.CSS?.highlights || !box.current) return undefined;
     const was = new Highlight(), now = new Highlight();
-    box.current.querySelectorAll('.kg-js').forEach((el) => {
-      const t = el.firstChild, m = el.dataset.m, at = t?.data?.indexOf(m) ?? -1;
+    box.current.querySelectorAll<HTMLElement>('.kg-js').forEach((el) => {
+      const t = el.firstChild, m = el.dataset.m;
+      if (!(t instanceof Text) || !m) return;
+      const at = t.data.indexOf(m);
       if (at < 0) return;
       const rg = new Range(); rg.setStart(t, at); rg.setEnd(t, at + m.length);
       (el.closest('[data-s="+"]') ? now : was).add(rg);
@@ -604,7 +612,7 @@ function Jev() {
     CSS.highlights.set('kg-was', was); CSS.highlights.set('kg-now', now);
     return () => { CSS.highlights.delete('kg-was'); CSS.highlights.delete('kg-now'); };
   }, []);
-  const L = (sign, body) => <span className="kg-dl-l" data-s={sign}><i aria-hidden="true">{sign === '-' ? '−' : sign === '+' ? '+' : ' '}</i>{body}{'\n'}</span>;
+  const L = (sign: string, body: ReactNode) => <span className="kg-dl-l" data-s={sign}><i aria-hidden="true">{sign === '-' ? '−' : sign === '+' ? '+' : ' '}</i>{body}{'\n'}</span>;
   return (
     <section className="kg-jev kg-sec" ref={box} aria-labelledby="kg-j">
       <div className="kg-wrap">
@@ -633,10 +641,11 @@ function Jev() {
   );
 }
 
+const BENCH: [name: string, label: string, pct: number][] = [['kai-1.4', '84.4%', 84.4], ['Jev', '76.6%', 76.6]];
 function Bench() {
   return (
     <div className="kg-bench-f" aria-hidden="true">
-      {[['kai-1.4', '84.4%', 84.4], ['Jev', '76.6%', 76.6]].map(([n, v, x]) => (
+      {BENCH.map(([n, v, x]) => (
         <div key={n} className="kg-bf">
           <span className="kg-bf-n">{n}</span>
           <b className="kg-bf-v">{v}</b>

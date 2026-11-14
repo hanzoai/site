@@ -12,6 +12,7 @@
    No chapter pane is ever empty: each object rests on its settled frame until its chapter arrives, then draws in.
    V2: Request access is the one solid at both widths; the capabilities ride a snapping carousel, each card its own drawn object, never a blank pane; words through the settle; labels fit at 375; five page-local entrances (MoriMotion.jsx). */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { PointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import HeroDither from '../HeroDither';
 import { Specs } from './Studio';
@@ -26,9 +27,13 @@ import './Mori.css';
 const U = 72, V = 26;
 const MODES = ['wireframe', 'shaded', 'normals'];
 
+interface Pt { x: number; y: number }
+interface Drag extends Pt { t: number }
+interface State { yaw: number; pitch: number; vy: number; vp: number; drag: Drag | null; born: number; q: Float32Array; proj: Float32Array; nz: Float32Array; ox: Float32Array; oy: Float32Array; ptr: Pt | null; tap: Drag | null }
+
 function mesh() {
   const P = new Float32Array(U * V * 3), N = new Float32Array(U * V * 3), S = new Float32Array(U * V * 3), r0 = rng(42);
-  const at = (u, v) => {
+  const at = (u: number, v: number): [number, number, number] => {
     const a = (u / U) * Math.PI * 2, b = (v / V) * Math.PI * 2 + a; // a whole turn of twist, so the seam at u = U meets u = 0
     const r = 0.42 * (1 + 0.2 * Math.sin(3 * a + 2 * b));
     return [(1 + r * Math.cos(b)) * Math.cos(a), r * Math.sin(b) * 1.1, (1 + r * Math.cos(b)) * Math.sin(a)];
@@ -40,17 +45,17 @@ function mesh() {
     const l = Math.hypot(...n) || 1; n = n.map((x) => x / l);
     P.set(p, i); N.set(n, i);
     // the scattered start: a random point in a ball (the field before it is meshed)
-    let q; do { q = [r0() * 2 - 1, r0() * 2 - 1, r0() * 2 - 1]; } while (q[0] * q[0] + q[1] * q[1] + q[2] * q[2] > 1);
+    let q: number[]; do { q = [r0() * 2 - 1, r0() * 2 - 1, r0() * 2 - 1]; } while (q[0] * q[0] + q[1] * q[1] + q[2] * q[2] > 1);
     S.set(q.map((x) => x * 1.9), i);
   }
   return { P, N, S };
 }
 
 function Viewport() {
-  const stage = useRef(null), cv = useRef(null), deg = useRef(null);
+  const stage = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), deg = useRef<HTMLElement>(null);
   const geo = useMemo(mesh, []);
   const [mode, setMode] = useState(0);
-  const S = useRef({ yaw: 0.6, pitch: 0.42, vy: 0, vp: 0, drag: null, born: 0, q: new Float32Array(U * V * 3), proj: new Float32Array(U * V * 3), nz: new Float32Array(U * V * 3), ox: new Float32Array(U * V), oy: new Float32Array(U * V), ptr: null, tap: null });
+  const S = useRef<State>({ yaw: 0.6, pitch: 0.42, vy: 0, vp: 0, drag: null, born: 0, q: new Float32Array(U * V * 3), proj: new Float32Array(U * V * 3), nz: new Float32Array(U * V * 3), ox: new Float32Array(U * V), oy: new Float32Array(U * V), ptr: null, tap: null });
 
   const paused = usePaused();
   const pausedRef = useRef(paused);
@@ -61,6 +66,7 @@ function Viewport() {
     if (!c) return;
     const { w, h, d } = fit(c, 1.5);
     const g = c.getContext('2d');
+    if (!g) return;
     if (!still) {
       s.born += dt;
       if (!s.drag) { s.yaw += (0.32 + s.vy) * dt; s.pitch += s.vp * dt; s.vy *= 0.94; s.vp *= 0.9; s.pitch += (0.42 - s.pitch) * dt * 0.6; }
@@ -118,7 +124,7 @@ function Viewport() {
         g.fillRect(proj[k] - d, proj[k + 1] - d, 2 * d, 2 * d);
       }
     } else {
-      const quads = [];
+      const quads: [number, number, number, number, number][] = [];
       for (let u = 0; u < U; u++) for (let v = 0; v < V; v++) {
         const a = (u * V + v) * 3, b = (((u + 1) % U) * V + v) * 3, c2 = (((u + 1) % U) * V + ((v + 1) % V)) * 3, e = (u * V + ((v + 1) % V)) * 3;
         quads.push([proj[a + 2] + proj[c2 + 2], a, b, c2, e]);
@@ -137,15 +143,15 @@ function Viewport() {
     if (deg.current) deg.current.style.transform = `rotate(${(s.yaw * 180) / Math.PI}deg)`;
   });
 
-  const at = (e) => { const r = e.currentTarget.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-  const down = (e) => {
+  const at = (e: PointerEvent<HTMLCanvasElement>) => { const r = e.currentTarget.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  const down = (e: PointerEvent<HTMLCanvasElement>) => {
     e.currentTarget.setPointerCapture(e.pointerId);
     const s = S.current;
     s.drag = { x: e.clientX, y: e.clientY, t: performance.now() };
     s.tap = { x: e.clientX, y: e.clientY, t: performance.now() };
     s.ptr = at(e);
   };
-  const move = (e) => {
+  const move = (e: PointerEvent<HTMLCanvasElement>) => {
     const s = S.current, dr = s.drag;
     s.ptr = at(e);
     if (!dr) return;
@@ -155,7 +161,7 @@ function Viewport() {
     s.drag = { x: e.clientX, y: e.clientY, t: performance.now() };
   };
   // a tap (no drag) blows the whole shape back into a cloud, and it assembles again
-  const up = (e) => {
+  const up = (e?: PointerEvent<HTMLCanvasElement>) => {
     const s = S.current, tp = s.tap;
     s.drag = null; s.tap = null;
     if (tp && e && Math.hypot(e.clientX - tp.x, e.clientY - tp.y) < 6 && performance.now() - tp.t < 350) s.born = 0.15;
@@ -166,7 +172,7 @@ function Viewport() {
   return (
     <div className="mr-view" ref={stage}>
       <div className="mb-bar mr-bar"><i /><i /><i /><b>studio.hanzo.ai / <span>mori-1</span></b><em>mori</em><em>example</em></div>
-      <canvas ref={cv} className="mr-cv" role="img" aria-label="A 3D mesh turning; drag or use the arrow keys to orbit" tabIndex={0} onKeyDown={(e) => { const s = S.current, k = { ArrowLeft: [-0.3, 0], ArrowRight: [0.3, 0], ArrowUp: [0, -0.2], ArrowDown: [0, 0.2] }[e.key]; if (k) { e.preventDefault(); s.yaw += k[0]; s.pitch = Math.max(-1.1, Math.min(1.3, s.pitch + k[1])); } }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onPointerLeave={leave} />
+      <canvas ref={cv} className="mr-cv" role="img" aria-label="A 3D mesh turning; drag or use the arrow keys to orbit" tabIndex={0} onKeyDown={(e) => { const s = S.current, k = ({ ArrowLeft: [-0.3, 0], ArrowRight: [0.3, 0], ArrowUp: [0, -0.2], ArrowDown: [0, 0.2] } as Record<string, number[] | undefined>)[e.key]; if (k) { e.preventDefault(); s.yaw += k[0]; s.pitch = Math.max(-1.1, Math.min(1.3, s.pitch + k[1])); } }} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onPointerLeave={leave} />
       <div className="mr-hud mr-tl">
         <p className="mb-mono">SDF ➔ QUAD MESH: 245,820 TRIS</p>
         <p className="mb-mono mr-spin"><i ref={deg} aria-hidden="true" /><span>SPINNING · 360°</span></p>
@@ -183,12 +189,12 @@ function Viewport() {
 }
 
 // the film closes into a cube seen from above: a hexagon, its three near edges drawn in once it settles
-const hexAt = (W, H, wide) => {
+const hexAt = (W: number, H: number, wide: boolean) => {
   const c = wide ? [W * 0.71, H * 0.5] : [W / 2, H * 0.25], R = wide ? Math.min(H * 0.44, W * 0.25) : Math.min(W * 0.42, H * 0.2);
-  return { c, V: [-90, -30, 30, 90, 150, 210].map((a) => [c[0] + R * Math.cos((a * Math.PI) / 180), c[1] + R * Math.sin((a * Math.PI) / 180)]) };
+  return { c, V: [-90, -30, 30, 90, 150, 210].map((a): [number, number] => [c[0] + R * Math.cos((a * Math.PI) / 180), c[1] + R * Math.sin((a * Math.PI) / 180)]) };
 };
-const HEX = poly((W, H, wide) => dense(hexAt(W, H, wide).V, 5));
-const EDGES = (W, H, wide) => {
+const HEX = poly((W: number, H: number, wide: boolean) => dense(hexAt(W, H, wide).V, 5));
+const EDGES = (W: number, H: number, wide: boolean) => {
   const { c, V } = hexAt(W, H, wide);
   return (
     <svg className="mr-edges" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
@@ -204,7 +210,7 @@ function usePhoneAsk() {
     const mq = matchMedia('(max-width: 700px)'), H = document.documentElement;
     const els = [...document.querySelectorAll("[data-cta='mori.first'], [data-cta='mori.hero']")];
     if (!els.length) return;
-    const on = new Set();
+    const on = new Set<Element>();
     const set = () => { if (mq.matches && on.size) H.dataset.ask = 'quiet'; else if (mq.matches) delete H.dataset.ask; };
     const io = new IntersectionObserver((es) => { es.forEach((e) => { const r = e.boundingClientRect; if (e.isIntersecting && r.bottom > 60 && getComputedStyle(e.target.closest('.lv-name, .lv-head') || e.target).visibility !== 'hidden') on.add(e.target); else on.delete(e.target); }); set(); }, { threshold: [0, 0.5, 1] });
     els.forEach((el) => io.observe(el));
@@ -226,7 +232,7 @@ function usePhoneAsk() {
    headline's lede, ask and crumb in early (the headline's own line cut-in still lands at 70%). */
 function useMidWords() {
   useEffect(() => {
-    const st = document.querySelector('.lv-stage[data-hero=mori]');
+    const st = document.querySelector<HTMLElement>('.lv-stage[data-hero=mori]');
     if (!st || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let raf = 0;
     const check = () => {
@@ -249,7 +255,7 @@ function useMidWords() {
 /* live's hero halftone (HeroDither, dark only). The hero is the shared Launch stage, so the dots are portalled into its
    pinned frame (positioned, so they fill it); z -1 puts them under the film and the headline, over the stage's ground */
 function MoriDither() {
-  const [at, setAt] = useState(null);
+  const [at, setAt] = useState<Element | null>(null);
   useEffect(() => { setAt(document.querySelector('.lv-stage[data-hero=mori] .lv-pin')); }, []);
   return at ? createPortal(<HeroDither />, at) : null;
 }
@@ -266,13 +272,13 @@ export default function Mori() {
       shape={HEX}
       pos="50% 75%"
       subject={[0.6, 0.62]}
-      aim={(W, H, wide) => (wide ? null : focus(0.6, 0.62, W / 2, H * 0.25, 1.3, [W * 0.1, H * 0.04, W * 0.9, H * 0.46], [0.5, 0.75])(W, H))}
+      aim={(W: number, H: number, wide: boolean) => (wide ? null : focus(0.6, 0.62, W / 2, H * 0.25, 1.3, [W * 0.1, H * 0.04, W * 0.9, H * 0.46], [0.5, 0.75])(W, H))}
       over={EDGES}
       headClass="mr-v2"
       first="demo"
       flip
       renderCaps={(d) => <CapsCarousel d={d} />}
-      fitsArt={(seen) => <MoriFits seen={seen} />}
+      fitsArt={(seen: boolean) => <MoriFits seen={seen} />}
       demo={
         <ShrinkCard>
           <section className="lv-room mr-room" data-room="dark" aria-label="Mori">

@@ -12,22 +12,24 @@ import { useRef } from 'react';
 import { useLoop, fit, rng } from './live';
 import { usePaused } from '../../v2/ModelFilm';
 
-const PH = [['/h/', 0.55, 0.85, 0.16, 0.5], ['/æ/', 0.85, 1.55, 0.9, 1.25], ['/n/', 1.55, 1.95, 0.18, 0.75], ['/z/', 1.95, 2.45, 0.28, 0.6], ['/oʊ/', 2.45, 3.6, 0.72, 0.55]];
+type Ctx = CanvasRenderingContext2D;
+const PH: [string, number, number, number, number][] = [['/h/', 0.55, 0.85, 0.16, 0.5], ['/æ/', 0.85, 1.55, 0.9, 1.25], ['/n/', 1.55, 1.95, 0.18, 0.75], ['/z/', 1.95, 2.45, 0.28, 0.6], ['/oʊ/', 2.45, 3.6, 0.72, 0.55]];
 const INK = 'rgba(245,245,247,', W = '#fafafa';
-const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
-const noise = (seed, n) => { const r = rng(seed); return Array.from({ length: n }, () => r()); };
+const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const noise = (seed: number, n: number) => { const r = rng(seed); return Array.from({ length: n }, () => r()); };
 const N1 = noise(7, 400), N2 = noise(19, 400), N3 = noise(31, 400);
 
 // emotional modulation: four deliveries of one line, the contour easing from one to the next every 2.6s
 const DEL = [[0.25, 1.1, 0.35], [0.7, 2.2, 0.15], [1, 1.6, 0.05], [0.5, 3.4, 0.55]]; // [range, wiggle, breath]
-function contour(g, w, h, d, t) {
+function contour(g: Ctx, w: number, h: number, d: number, t: number) {
   const n = DEL.length, f = (t / 2.6) % n, a = DEL[Math.floor(f)], b = DEL[(Math.floor(f) + 1) % n], k = ease(Math.min(1, (f % 1) * 1.6));
   const [rg, wg, br] = a.map((v, i) => v + (b[i] - v) * k);
-  const env = (x) => Math.sin(Math.PI * Math.min(1, Math.max(0, x * 1.08 - 0.04)));
-  const yAt = (x) => h * 0.36 - env(x) * h * 0.2 * rg * Math.sin(x * Math.PI * 1.4 + 0.4) - h * 0.04 * Math.sin(x * wg * 6.3 + t * 1.1) * env(x);
+  const env = (x: number) => Math.sin(Math.PI * Math.min(1, Math.max(0, x * 1.08 - 0.04)));
+  const yAt = (x: number) => h * 0.36 - env(x) * h * 0.2 * rg * Math.sin(x * Math.PI * 1.4 + 0.4) - h * 0.04 * Math.sin(x * wg * 6.3 + t * 1.1) * env(x);
   const ph = (t * 0.22) % 1;
   // the contour: a wide soft trace, then the line itself
-  for (const [lw, col] of [[10 * d, INK + '.08)'], [2 * d, W]]) {
+  const strokes: [number, string][] = [[10 * d, INK + '.08)'], [2 * d, W]];
+  for (const [lw, col] of strokes) {
     g.beginPath();
     for (let i = 0; i <= 120; i++) { const x = i / 120; g[i ? 'lineTo' : 'moveTo'](w * 0.08 + x * w * 0.84, yAt(x)); }
     g.lineWidth = lw; g.strokeStyle = col; g.lineCap = 'round'; g.stroke();
@@ -46,10 +48,10 @@ function contour(g, w, h, d, t) {
 }
 
 // cross-lingual cloning: one envelope (the voice) over two different syllable patterns (two languages)
-function clone(g, w, h, d, t) {
+function clone(g: Ctx, w: number, h: number, d: number, t: number) {
   const bars = 72, bw = (w * 0.84) / bars, x0 = w * 0.08, ph = (t * 0.2) % 1;
-  const env = (x, s) => Math.pow(Math.sin(Math.PI * x), 0.8) * (0.55 + 0.45 * Math.sin(x * 9 + s));
-  const lanes = [[h * 0.32, N2, 0.6], [h * 0.68, N3, 2.1]];
+  const env = (x: number, s: number) => Math.pow(Math.sin(Math.PI * x), 0.8) * (0.55 + 0.45 * Math.sin(x * 9 + s));
+  const lanes: [number, number[], number][] = [[h * 0.32, N2, 0.6], [h * 0.68, N3, 2.1]];
   lanes.forEach(([mid, N, off], li) => {
     for (let i = 0; i < bars; i++) {
       const x = i / bars, syl = 0.35 + 0.65 * Math.abs(Math.sin(i * (li ? 0.55 : 0.82) + off + t * 0.9)) * (0.7 + 0.3 * N[i]);
@@ -72,7 +74,7 @@ function clone(g, w, h, d, t) {
 }
 
 // viseme dubbing: five mouths over five timed slots; the playhead walks the word and each mouth opens on its slot
-function viseme(g, w, h, d, t) {
+function viseme(g: Ctx, w: number, h: number, d: number, t: number) {
   const T = 4.2, s = (t % T) + 0.3, x0 = w * 0.08, tw = w * 0.84, span = 3.6 - 0.55;
   const cw = tw / 5, my = h * 0.36, R = Math.min(cw * 0.42, h * 0.16);
   PH.forEach(([p, a, b, open, wide], i) => {
@@ -93,7 +95,7 @@ function viseme(g, w, h, d, t) {
 }
 
 // likeness rights: the voice carries a watermark under it, and every second is logged as one block in a chain
-function mark(g, w, h, d, t) {
+function mark(g: Ctx, w: number, h: number, d: number, t: number) {
   const bars = 80, bw = (w * 0.84) / bars, x0 = w * 0.08, mid = h * 0.36;
   for (let i = 0; i < bars; i++) {
     const x = i / bars, a = Math.max(d, Math.pow(Math.sin(Math.PI * x), 0.7) * (0.35 + 0.65 * Math.abs(Math.sin(i * 0.61 + t * 1.4))) * h * 0.17);
@@ -118,9 +120,10 @@ function mark(g, w, h, d, t) {
 }
 
 // where it fits: three voices stream leftward past one playhead
-function fits(g, w, h, d, t) {
+function fits(g: Ctx, w: number, h: number, d: number, t: number) {
   const px = w * 0.62, bw = 5 * d;
-  [[0.24, 0.9, N1, 1], [0.5, 2.3, N2, 0.6], [0.76, 0.5, N3, 0.85]].forEach(([y, rate, N, loud], li) => {
+  const voices: [number, number, number[], number][] = [[0.24, 0.9, N1, 1], [0.5, 2.3, N2, 0.6], [0.76, 0.5, N3, 0.85]];
+  voices.forEach(([y, rate, N, loud], li) => {
     const mid = h * y, n = Math.ceil(w / bw) + 1, shift = (t * 60 * d) % bw, k0 = Math.floor((t * 60 * d) / bw);
     for (let i = 0; i < n; i++) {
       const k = k0 + i, gapOn = Math.sin(k * 0.09 * rate + li * 2) > 0.55, x = i * bw - shift;
@@ -135,8 +138,8 @@ function fits(g, w, h, d, t) {
 
 const DRAW = [contour, clone, viseme, mark, fits];
 
-export default function KoePanel({ k, on = true }) {
-  const cv = useRef(null), T = useRef(k * 1.7);
+export default function KoePanel({ k, on = true }: { k: number; on?: boolean }) {
+  const cv = useRef<HTMLCanvasElement>(null), T = useRef(k * 1.7);
   const paused = usePaused();
   useLoop(cv, (_, dt, still) => {
     const c = cv.current;
@@ -145,6 +148,7 @@ export default function KoePanel({ k, on = true }) {
     else if (on && !paused) T.current += Math.max(0, dt); // the first rAF stamp can sit before the loop's start time
     const { w, h, d } = fit(c);
     const g = c.getContext('2d');
+    if (!g) return;
     g.clearRect(0, 0, w, h);
     DRAW[k](g, w, h, d, T.current);
   });

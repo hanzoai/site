@@ -12,11 +12,11 @@
 import { useEffect } from 'react';
 
 const DG = '0123456789';
-function scramble(el, ms = 760) {
-  const real = el.textContent;
+function scramble(el: HTMLElement, ms = 760) {
+  const real = el.textContent ?? '';
   const t0 = performance.now();
   let last = 0;
-  const step = (now) => {
+  const step = (now: number) => {
     const e = now - t0;
     if (e >= ms) { delete el.dataset.fx; return; }
     if (now - last > 50) {
@@ -28,23 +28,23 @@ function scramble(el, ms = 760) {
   requestAnimationFrame(step);
 }
 
-export function useEnter(rootSel) {
+export function useEnter(rootSel: string) {
   useEffect(() => {
-    const root = document.querySelector(rootSel);
+    const root = document.querySelector<HTMLElement>(rootSel);
     if (!root) return undefined;
-    const els = [...root.querySelectorAll('[data-enter]')];
-    const timers = [];
+    const els = [...root.querySelectorAll<HTMLElement>('[data-enter]')];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const play = (el) => {
+    const play = (el: HTMLElement) => {
       el.dataset.in = '';
-      if (!calm && el.dataset.enter === 'scramble') el.querySelectorAll('.xrs-scr').forEach((x, i) => timers.push(setTimeout(() => scramble(x), i * 90)));
+      if (!calm && el.dataset.enter === 'scramble') el.querySelectorAll<HTMLElement>('.xrs-scr').forEach((x, i) => timers.push(setTimeout(() => scramble(x), i * 90)));
       timers.push(setTimeout(() => { el.dataset.done = ''; }, 1800));
     };
     if (typeof IntersectionObserver === 'undefined' || calm) { els.forEach(play); return undefined; }
     const io = new IntersectionObserver((es) => {
       es.forEach((e) => {
         if (!e.isIntersecting) return;
-        if (e.intersectionRatio >= 0.25 || e.intersectionRect.height >= innerHeight * 0.25) { play(e.target); io.unobserve(e.target); }
+        if (e.intersectionRatio >= 0.25 || e.intersectionRect.height >= innerHeight * 0.25) { play(e.target as HTMLElement); io.unobserve(e.target); }
       });
     }, { threshold: [0, 0.1, 0.25, 0.5] });
     els.forEach((el) => io.observe(el));

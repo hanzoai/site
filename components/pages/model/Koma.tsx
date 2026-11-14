@@ -5,6 +5,7 @@
    the arrow keys) and the film, the timecode and the shot follow your hand. The film settles into an anamorphic frame.
    Beyond: the studio map (Creative.jsx): every creative model serving your field, in its own words and colour. */
 import { useEffect, useRef, useState } from 'react';
+import type { PointerEvent } from 'react';
 import { Studio } from './Studio';
 import Creative, { Scene } from './Creative';
 import { box as frame, film, focus } from '../../v2/Launch';
@@ -18,22 +19,22 @@ const SHOTS = [
   ['Shot 04: Reveal Plate', '35mm Wide', 'Crane Up', '50% 30%'],
 ];
 const LEN = 12;
-const MOVE = [
+const MOVE: ((p: number) => string)[] = [
   (p) => `scale(${1.04 + 0.12 * p})`,
   (p) => `translateX(${-3 + 6 * p}%) rotate(${-0.8 + 1.6 * p}deg) scale(1.14)`,
   (p) => `translateX(${4 - 8 * p}%) scale(1.16)`,
   (p) => `translateY(${4 - 8 * p}%) scale(1.16)`,
 ];
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
 function Monitor() {
-  const stage = useRef(null), vid = useRef(null), cam = useRef(null), run = useRef(null), track = useRef(null);
-  const sec = useRef(null), cs = useRef(null), cut = useRef(null);
+  const stage = useRef<HTMLDivElement>(null), vid = useRef<HTMLVideoElement>(null), cam = useRef<HTMLDivElement>(null), run = useRef<HTMLSpanElement>(null), track = useRef<HTMLDivElement>(null);
+  const sec = useRef<HTMLSpanElement>(null), cs = useRef<HTMLSpanElement>(null), cut = useRef<HTMLElement>(null);
   const S = useRef({ t: 6, drag: false, idle: 0, shot: 0 });
   const [shot, setShot] = useState(0); // the server shows Hanzo's own frame: shot 01 at 00:06.00
   const [play, setPlay] = useState(true);
 
-  const show = (t) => {
+  const show = (t: number) => {
     const s = S.current, k = Math.min(3, Math.floor(t / 3)), p = (t - k * 3) / 3;
     s.t = t;
     if (cam.current) cam.current.style.transform = MOVE[k](p);
@@ -46,17 +47,18 @@ function Monitor() {
       cut.current?.animate([{ opacity: 0.85 }, { opacity: 0 }], { duration: 320, easing: 'ease-out' });
     }
   };
-  const seek = (t) => {
+  const seek = (t: number) => {
     const v = vid.current, d = v && Number.isFinite(v.duration) ? v.duration : 6;
     t = Math.max(0, Math.min(LEN - 0.01, t));
     if (v) v.currentTime = (t / LEN) * d;
     S.current.idle = 0;
     show(t);
   };
-  const fromX = (e) => { const r = track.current.getBoundingClientRect(); return ((e.clientX - r.left) / r.width) * LEN; };
+  const fromX = (e: PointerEvent<HTMLDivElement>) => { const r = e.currentTarget.getBoundingClientRect(); return ((e.clientX - r.left) / r.width) * LEN; };
 
   useEffect(() => {
     const v = vid.current;
+    if (!v) return;
     v.playbackRate = 0.5; // the 6 s film spans the 12 s timeline
     const ready = () => { v.currentTime = 0; };
     if (v.readyState >= 1) ready(); else v.addEventListener('loadedmetadata', ready, { once: true });
@@ -64,6 +66,7 @@ function Monitor() {
 
   useLoop(stage, (_, dt, still) => {
     const v = vid.current, s = S.current;
+    if (!v) return;
     if (still) { v.pause(); show(6); return; }
     if (s.drag) return;
     if (!play) { s.idle += dt; return; }
@@ -71,7 +74,7 @@ function Monitor() {
     if (Number.isFinite(v.duration) && v.duration) show((v.currentTime / v.duration) * LEN);
   });
 
-  const toggle = () => { const v = vid.current; if (play) v.pause(); else v.play().catch(() => {}); setPlay(!play); };
+  const toggle = () => { const v = vid.current; if (!v) return; if (play) v.pause(); else v.play().catch(() => {}); setPlay(!play); };
 
   return (
     <div className="kf-stage" ref={stage}>
@@ -102,11 +105,11 @@ function Monitor() {
           aria-valuemax={LEN}
           aria-valuenow={6}
          
-          onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); S.current.drag = true; vid.current.pause(); seek(fromX(e)); }}
+          onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); S.current.drag = true; vid.current?.pause(); seek(fromX(e)); }}
           onPointerMove={(e) => { if (S.current.drag) seek(fromX(e)); }}
-          onPointerUp={() => { S.current.drag = false; if (play) vid.current.play().catch(() => {}); }}
-          onPointerCancel={() => { S.current.drag = false; if (play) vid.current.play().catch(() => {}); }}
-          onKeyDown={(e) => { const k = { ArrowRight: 0.5, ArrowLeft: -0.5, ArrowUp: 3, ArrowDown: -3 }[e.key]; if (k) { e.preventDefault(); vid.current.pause(); seek(S.current.t + k); } }}
+          onPointerUp={() => { S.current.drag = false; if (play) vid.current?.play().catch(() => {}); }}
+          onPointerCancel={() => { S.current.drag = false; if (play) vid.current?.play().catch(() => {}); }}
+          onKeyDown={(e) => { const k = ({ ArrowRight: 0.5, ArrowLeft: -0.5, ArrowUp: 3, ArrowDown: -3 } as Record<string, number | undefined>)[e.key]; if (k) { e.preventDefault(); vid.current?.pause(); seek(S.current.t + k); } }}
         >
           <ol className="kf-shots">
             {SHOTS.map(([n, lens, move, pos], i) => (
@@ -126,7 +129,7 @@ function Monitor() {
 }
 
 // the film closes into an anamorphic frame across the top; the headline runs beneath it
-const SCOPE = frame((W, H, wide) => {
+const SCOPE = frame((W: number, H: number, wide: boolean) => {
   if (wide) { const w = W * 0.88, h = Math.min(w / 2.39, H * 0.5); return { l: (W - w) / 2, t: H * 0.06, w, h, r: 16 }; }
   const w = W - 32, h = Math.min(w / 1.25, H * 0.34); return { l: 16, t: H * 0.08, w, h, r: 14 };
 });
@@ -137,7 +140,7 @@ export default function Koma() {
       slug="koma"
       subject={[0.75, 0.5]}
       shape={SCOPE}
-      aim={(W, H, wide) => (wide ? focus(0.72, 0.5, W * 0.64, H * 0.31, 1.14, [W * 0.06, H * 0.06, W * 0.94, H * 0.56])(W, H) : focus(0.72, 0.5, W / 2, H * 0.25, 1.3, [16, H * 0.08, W - 16, H * 0.42])(W, H))}
+      aim={(W: number, H: number, wide: boolean) => (wide ? focus(0.72, 0.5, W * 0.64, H * 0.31, 1.14, [W * 0.06, H * 0.06, W * 0.94, H * 0.56])(W, H) : focus(0.72, 0.5, W / 2, H * 0.25, 1.3, [16, H * 0.08, W - 16, H * 0.42])(W, H))}
       headClass="kf-v2"
       first="chapters"
       flip

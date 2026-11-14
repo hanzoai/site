@@ -5,9 +5,10 @@
    useScramble(ref, selector, on): decodes each target's text from scrambled characters to Hanzo's words, left to right;
    drawn by a ::after overlay (data-scr), so the element's own text is always Hanzo's. */
 import { useEffect, useState } from 'react';
+import type { RefObject } from 'react';
 
-export function useEnter(ref, amount = 0.25) {
-  const [st, setSt] = useState(null);
+export function useEnter(ref: RefObject<HTMLElement | null>, amount = 0.25) {
+  const [st, setSt] = useState<'armed' | 'in' | null>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -20,16 +21,16 @@ export function useEnter(ref, amount = 0.25) {
 }
 
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=<>/';
-export function useScramble(ref, selector, on, ms = 1100) {
+export function useScramble(ref: RefObject<HTMLElement | null>, selector: string, on: boolean, ms = 1100) {
   // copy rule (8 Nov): the element's own text never changes; the scramble is drawn by ::after from data-scr over it
   useEffect(() => {
     if (!on) return;
-    const els = [...(ref.current?.querySelectorAll(selector) || [])].filter((el) => el.textContent.trim());
-    const finals = els.map((el) => el.textContent);
+    const els = [...(ref.current?.querySelectorAll<HTMLElement>(selector) || [])].filter((el) => el.textContent?.trim());
+    const finals = els.map((el) => el.textContent ?? '');
     let raf = 0;
     const t0 = performance.now();
     const done = () => els.forEach((el) => el.removeAttribute('data-scr'));
-    const tick = (t) => {
+    const tick = (t: number) => {
       const p = Math.min(1, (t - t0) / ms);
       if (p >= 1) return done();
       els.forEach((el, k) => {

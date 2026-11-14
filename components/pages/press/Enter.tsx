@@ -4,13 +4,17 @@
    Every moving element carries `xen`, so the page's <noscript> rule shows the final state with JS off; under reduced
    motion (MotionConfig reducedMotion="user" in the layout) transforms jump straight to their final state. */
 import { Children, useRef } from 'react';
+import type { ComponentType, ReactNode, Ref } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from 'motion/react';
+import type { HTMLMotionProps } from 'motion/react';
+
+interface Kids { children?: ReactNode; className?: string }
 
 const VIEW = { once: true, amount: 0.25 };
 
 /* conveyor: the pieces ride in from the right edge one after another on one belt, at one speed, then stop. A hairline
    belt under them runs while they ride. */
-export function Conveyor({ children, className = '' }) {
+export function Conveyor({ children, className = '' }: Kids) {
   const calm = useReducedMotion();
   const n = Children.count(children);
   return (
@@ -28,9 +32,9 @@ export function Conveyor({ children, className = '' }) {
 }
 
 /* pull-back: starts zoomed right in on the dark plate, then pulls back to show the whole kit. */
-export function PullBack({ children, className = '', origin = '22% 40%' }) {
+export function PullBack({ children, className = '', origin = '22% 40%' }: Kids & { origin?: string }) {
   const calm = useReducedMotion();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, VIEW); // watch the clipping box, not the scaled child (its ratio never reaches the amount)
   return (
     <div className={'xen-pb ' + className} ref={ref}>
@@ -43,7 +47,7 @@ export function PullBack({ children, className = '', origin = '22% 40%' }) {
 }
 
 /* velocity-skew: the section leans with the speed of the scroll and straightens when the page stops. */
-export function VelocitySkew({ children, className = '' }) {
+export function VelocitySkew({ children, className = '' }: Kids) {
   const calm = useReducedMotion();
   const { scrollY } = useScroll();
   const v = useVelocity(scrollY);
@@ -54,9 +58,17 @@ export function VelocitySkew({ children, className = '' }) {
 
 /* orbit-in: items swing into their places along an arc around a far-off centre, one after another. `go` comes from
    the parent's own in-view check (a rotated item sits far off its place, so it cannot watch itself). */
-export function OrbitItem({ i, go, as = 'li', className = '', children, ...rest }) {
+type OrbitBase = Omit<HTMLMotionProps<'div'>, 'ref' | 'children' | 'className'>;
+export interface OrbitItemProps extends OrbitBase, Kids {
+  i: number;
+  go?: boolean;
+  as?: 'li' | 'aside' | 'div';
+  ref?: Ref<HTMLElement>;
+}
+export function OrbitItem({ i, go, as = 'li', className = '', children, ...rest }: OrbitItemProps) {
   const calm = useReducedMotion();
-  const Tag = as === 'li' ? motion.li : as === 'aside' ? motion.aside : motion.div;
+  // li, aside and div take one prop shape here; the three element types differ only in their HTMLElement subtype
+  const Tag = (as === 'li' ? motion.li : as === 'aside' ? motion.aside : motion.div) as unknown as ComponentType<OrbitBase & Kids & { ref?: Ref<HTMLElement> }>;
   const side = i % 2 ? -1 : 1;
   return (
     <Tag className={'xen xen-orb ' + className} style={{ transformOrigin: side > 0 ? '-70vw 50%' : '170vw 50%' }}
@@ -68,7 +80,7 @@ export function OrbitItem({ i, go, as = 'li', className = '', children, ...rest 
 }
 
 /* stack-drop: the room's layers drop from above one by one and land on each other with a short settle. */
-export function StackDrop({ children, className = '' }) {
+export function StackDrop({ children, className = '' }: Kids) {
   const calm = useReducedMotion();
   return (
     <motion.div className={className} initial="off" whileInView="on" viewport={VIEW}>

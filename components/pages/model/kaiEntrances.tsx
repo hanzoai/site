@@ -5,11 +5,12 @@
    that is set only with JS on and motion allowed, so with JS off or under reduced motion every section is simply there.
    Everything moves by transform, opacity, clip-path or a stroke offset: no box changes size, nothing shifts. */
 import { useEffect, useLayoutEffect } from 'react';
+import type { RefObject } from 'react';
 
 const calm = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // arm the section before paint, then mark it in once enough of it is on screen
-function useArrive(ref, name, amount, margin) {
+function useArrive(ref: RefObject<HTMLElement | null>, name: string, amount: number, margin: string) {
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -27,18 +28,18 @@ function useArrive(ref, name, amount, margin) {
 }
 
 // 1. ripple: a ring spreads from the centre of the section and the content opens behind it
-export function useRipple(ref) { useArrive(ref, 'ripple', 0.25, '0px'); }
+export function useRipple(ref: RefObject<HTMLElement | null>) { useArrive(ref, 'ripple', 0.25, '0px'); }
 
 // 2. drop-in: the section falls in from above and settles with a small bounce
-export function useDropIn(ref) { useArrive(ref, 'drop-in', 0.2, '0px'); }
+export function useDropIn(ref: RefObject<HTMLElement | null>) { useArrive(ref, 'drop-in', 0.2, '0px'); }
 
 // 3. tilt-3d-hover: the tile arrives tipped back in 3D and levels; afterwards it leans toward a fine pointer, to 2.5°
-export function useTiltIn(ref, tile) {
+export function useTiltIn(ref: RefObject<HTMLElement | null>, tile: RefObject<HTMLElement | null>) {
   useArrive(ref, 'tilt-3d-hover', 0.25, '0px');
   useEffect(() => {
     const el = tile.current;
     if (!el || calm() || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-    const move = (e) => {
+    const move = (e: PointerEvent) => {
       const r = el.getBoundingClientRect();
       const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
       el.style.setProperty('--ry', (x * 5).toFixed(2) + 'deg');
@@ -51,10 +52,10 @@ export function useTiltIn(ref, tile) {
 }
 
 // 4. line-draw: the black room's outline draws itself, then the room fills
-export function useLineDraw(ref) { useArrive(ref, 'line-draw', 0.2, '0px'); }
+export function useLineDraw(ref: RefObject<HTMLElement | null>) { useArrive(ref, 'line-draw', 0.2, '0px'); }
 
 // 5. cover-slide: the section slides up over the one before it
-export function useCoverSlide(ref) { useArrive(ref, 'cover-slide', 0, '0px 0px -10% 0px'); }
+export function useCoverSlide(ref: RefObject<HTMLElement | null>) { useArrive(ref, 'cover-slide', 0, '0px 0px -10% 0px'); }
 
 // the outline the line-draw entrance strokes (a figure only: aria-hidden)
 export function Outline() {

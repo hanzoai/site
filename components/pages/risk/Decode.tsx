@@ -9,18 +9,20 @@ import { useEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'motion/react';
 
 const POOL = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghkmnpqrstuvwxyz0123456789#%&*/<>+=';
-const scramble = (t, k, seed) => [...t].map((c, i) => (i < k || c === ' ' ? c : POOL[(i * 31 + seed * 17) % POOL.length])).join('');
+const scramble = (t: string, k: number, seed: number) => [...t].map((c, i) => (i < k || c === ' ' ? c : POOL[(i * 31 + seed * 17) % POOL.length])).join('');
 
-export function useDecode(text, { start = 'view', ms = 720 } = {}) {
-  const ref = useRef(null);
+export interface DecodeOptions { start?: 'view' | 'mount' | 'change'; ms?: number }
+
+export function useDecode(text: string, { start = 'view', ms = 720 }: DecodeOptions = {}) {
+  const ref = useRef<HTMLHeadingElement>(null); // typed for the heading tags; a span takes it too (only HTMLElement members are used)
   const calm = useReducedMotion();
-  const [fx, setFx] = useState(null); // the overlay string while decoding, null at rest
+  const [fx, setFx] = useState<string | null>(null); // the overlay string while decoding, null at rest
   const raf = useRef(0);
   const run = () => {
     if (calm) return;
     cancelAnimationFrame(raf.current);
     const t0 = performance.now(), n = text.length;
-    const tick = (now) => {
+    const tick = (now: number) => {
       const p = Math.min(1, (now - t0) / ms);
       const k = Math.floor(p * p * (3 - 2 * p) * (n + 1));
       if (p >= 1) { setFx(null); return; }
@@ -43,7 +45,15 @@ export function useDecode(text, { start = 'view', ms = 720 } = {}) {
   return { ref, fx, run };
 }
 
-export default function Decode({ as: Tag = 'span', text, start, ms, className = '', id, hover = true }) {
+interface DecodeProps extends DecodeOptions {
+  as?: 'span' | 'h1' | 'h2';
+  text: string;
+  className?: string;
+  id?: string;
+  hover?: boolean;
+}
+
+export default function Decode({ as: Tag = 'span', text, start, ms, className = '', id, hover = true }: DecodeProps) {
   const { ref, fx, run } = useDecode(text, { start, ms });
   return (
     <Tag ref={ref} id={id} className={'rk-dc ' + className} data-on={fx ? '' : undefined} onPointerEnter={hover ? (e) => { if (e.pointerType !== 'touch') run(); } : undefined}>
@@ -54,7 +64,7 @@ export default function Decode({ as: Tag = 'span', text, start, ms, className = 
 }
 
 /* A headline in several lines, each line decoding a beat after the one above (the hero h1). */
-export function DecodeLines({ as: Tag = 'h1', lines, className = '', id }) {
+export function DecodeLines({ as: Tag = 'h1', lines, className = '', id }: { as?: 'h1' | 'h2'; lines: string[]; className?: string; id?: string }) {
   return (
     <Tag id={id} className={'rk-dc-lines ' + className}>
       {lines.map((l, i) => <Decode key={l} className="rk-dc-line" text={l + (i < lines.length - 1 ? ' ' : '')} start="mount" ms={620 + i * 220} />)}

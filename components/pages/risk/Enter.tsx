@@ -5,12 +5,13 @@
    Each one runs once when its section enters view. The server render is the final state (JS off is legible), the
    start state is only set on the client for a section still below the fold, and reduced motion keeps the final state. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, animate, useReducedMotion, useScroll, useTransform, useVelocity, useSpring } from 'motion/react';
 
 /* arms a section that starts below the fold; calls go() once it is `amount` in view. `outer` watches the parent
    instead: an element whose own clip-path hides it (the ink blot) never counts as intersecting in Chromium. */
-function useArrive(amount, setStart, go, outer = false) {
-  const ref = useRef(null);
+function useArrive(amount: number, setStart: (el: HTMLElement) => void, go: (el: HTMLElement) => void, outer = false) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const el = ref.current;
@@ -23,11 +24,12 @@ function useArrive(amount, setStart, go, outer = false) {
   }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
   return ref;
 }
-const items = (el) => [...el.querySelectorAll('[data-enter]')];
-const EMPH = [0.16, 1, 0.3, 1];
+const items = (el: HTMLElement) => [...el.querySelectorAll<HTMLElement>('[data-enter]')];
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
+interface Kids { children?: ReactNode; className?: string }
 
 /* 1. orbit-in: each [data-enter] item travels a curved arc (a quarter orbit around the section's centre) into place */
-export function OrbitIn({ children, className = '' }) {
+export function OrbitIn({ children, className = '' }: Kids) {
   const ref = useArrive(0.3, (el) => {
     items(el).forEach((it, i) => { it.style.opacity = '0'; it.style.transform = `rotate(${i % 2 ? 40 : -40}deg) translate(${i % 2 ? 260 : -260}px, 0) rotate(${i % 2 ? -40 : 40}deg)`; it.style.transformOrigin = '50% 50%'; });
   }, (el) => {
@@ -45,11 +47,11 @@ export function OrbitIn({ children, className = '' }) {
 }
 
 /* 2. ink-spread: an organic blot (a noisy 32-point polygon) grows from the left third until it covers the section */
-const blot = (s) => 'polygon(' + Array.from({ length: 32 }, (_, i) => {
+const blot = (s: number) => 'polygon(' + Array.from({ length: 32 }, (_, i) => {
   const t = (i / 32) * Math.PI * 2, r = s * (1 + 0.16 * Math.sin(3 * t + 0.6) + 0.09 * Math.sin(7 * t + 2.1) + 0.05 * Math.cos(11 * t));
   return `${(32 + r * Math.cos(t)).toFixed(2)}% ${(46 + r * Math.sin(t) * 1.35).toFixed(2)}%`;
 }).join(', ') + ')';
-export function InkSpread({ children, className = '' }) {
+export function InkSpread({ children, className = '' }: Kids) {
   const ref = useArrive(0.25, (el) => { el.style.clipPath = blot(0); }, (el) => {
     animate(0, 1, { duration: 1.25, ease: [0.45, 0, 0.2, 1], onUpdate: (p) => { el.style.clipPath = blot(p * 150); }, onComplete: () => { el.style.clipPath = ''; } });
   }, true);
@@ -57,7 +59,7 @@ export function InkSpread({ children, className = '' }) {
 }
 
 /* 3. squash-land: each [data-enter] item drops in, squashes wide on landing, stretches back and settles */
-export function SquashLand({ children, className = '' }) {
+export function SquashLand({ children, className = '' }: Kids) {
   const ref = useArrive(0.2, (el) => items(el).forEach((it) => { it.style.opacity = '0'; it.style.transform = 'translateY(-140px) scale(.92, 1.12)'; it.style.transformOrigin = '50% 100%'; }), (el) => {
     items(el).forEach((it, i) => {
       animate(it, { opacity: [0, 1, 1, 1, 1], y: [-140, 0, 0, -10, 0], scaleX: [0.92, 1, 1.1, 0.97, 1], scaleY: [1.12, 1, 0.84, 1.04, 1] },
@@ -70,7 +72,7 @@ export function SquashLand({ children, className = '' }) {
 
 /* 4. velocity-skew: the section arrives skewed and straightens; from then on it leans with scroll speed and
    straightens when the page is still */
-export function VelocitySkew({ children, className = '' }) {
+export function VelocitySkew({ children, className = '' }: Kids) {
   const calm = useReducedMotion();
   const [arrived, setArrived] = useState(false);
   const { scrollY } = useScroll();
@@ -89,14 +91,14 @@ export function VelocitySkew({ children, className = '' }) {
 
 /* 5. depth-parallax: [data-depth="n"] layers start spread apart by depth and close up as the section scrolls in,
    each at its own speed (deeper = slower) */
-export function DepthParallax({ children, className = '' }) {
-  const ref = useRef(null);
+export function DepthParallax({ children, className = '' }: Kids) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.25'] });
   useEffect(() => {
     if (calm || !ref.current) return undefined;
-    const layers = [...ref.current.querySelectorAll('[data-depth]')];
-    const apply = (p) => layers.forEach((l) => { const d = +l.dataset.depth; l.style.transform = p >= 1 ? '' : `translateY(${((1 - p) * d * 90).toFixed(1)}px) scale(${(1 - (1 - p) * d * 0.035).toFixed(3)})`; });
+    const layers = [...ref.current.querySelectorAll<HTMLElement>('[data-depth]')];
+    const apply = (p: number) => layers.forEach((l) => { const d = Number(l.dataset.depth); l.style.transform = p >= 1 ? '' : `translateY(${((1 - p) * d * 90).toFixed(1)}px) scale(${(1 - (1 - p) * d * 0.035).toFixed(3)})`; });
     apply(scrollYProgress.get());
     return scrollYProgress.on('change', apply);
   }, [calm, scrollYProgress]);
