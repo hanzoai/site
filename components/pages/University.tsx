@@ -6,15 +6,19 @@
    card beside the first screen walks the six courses in turn. Every word is Hanzo's; no tuition is typed (a course is
    priced only where the catalog sells it: universitySeat.js). */
 import { useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useInView } from 'motion/react';
 import { Cta, Faq, Tabs, TabPanel } from '../kit';
 import { Chip, Fold, Steps, Band } from './UniversityFold';
 import Icon from './universityIcons';
+import type { IconName } from './universityIcons';
 import { ASK, seatFor } from './universitySeat';
+import type { Seat } from './universitySeat';
 import { COMPARISON_ROWS, FAQ, LISTED, TRACKS } from './universityData';
 import './University.css';
 
 const COURSES = LISTED.map((c) => ({ ...c, seat: seatFor(c.planId, c.href) }));
+type Listing = (typeof COURSES)[number];
 
 /* the log of one grading run: [time, tone, text] */
 const LOG = [
@@ -29,7 +33,7 @@ const LOG = [
 ];
 
 function Pod() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { once: true, amount: 0.1 });
   return (
     <section className="xuv-sec tight">
@@ -45,7 +49,7 @@ function Pod() {
           </div>
           <div className="xuv-term-log" role="log" aria-label="hanzo-lab-pod-8921b">
             {LOG.map(([t, tone, text], i) => (
-              <div key={t} className="xuv-tl" style={{ '--i': i }}>
+              <div key={t} className="xuv-tl" style={{ '--i': i } as CSSProperties}>
                 <span className="xuv-tt">{t}</span>
                 <span className={'xuv-tx ' + tone}>{text}</span>
               </div>
@@ -67,7 +71,7 @@ function Pod() {
 
 /* Zero Lab Tax: the rebate, and for each course the catalog sells, its tuition and the credit it deposits */
 function Rebate() {
-  const sold = COURSES.filter((c) => c.seat);
+  const sold = COURSES.filter((c): c is Listing & { seat: Seat } => !!c.seat);
   return (
     <section className="xuv-sec tight">
       <div className="xuv-wrap narrow">
@@ -144,7 +148,7 @@ function Compare() {
   );
 }
 
-const PILLARS = [
+const PILLARS: [IconName, string, string][] = [
   ['scale', 'Automated CI Grading', 'Zero human subjectivity. Submissions are graded by isolated CI runners that clone your repository, inject breaking changes, and evaluate repair velocity and test pass rates.'],
   ['coins', 'Integer Micro-USD Ceilings', 'Prevent runaway cloud bills. Learn to configure pre-call price quoting, in-band budget refusals, and sub-cent financial caps directly in your agent loop.'],
   ['cpu', 'Zero-Token Decision Loops', 'Generate text only when generation is strictly required. Master finite-state control with Kai, evaluating tool calls and routing without paying for generation tokens.'],
@@ -168,7 +172,7 @@ function Pillars() {
 }
 
 /* one course in the catalog: its words, and its syllabus and seat at the foot */
-function CourseCard({ c, shown }) {
+function CourseCard({ c, shown }: { c: Listing; shown: boolean }) {
   const { seat } = c;
   return (
     <article className="xuv-card xuv-course" hidden={!shown}>
@@ -212,7 +216,7 @@ function Catalog() {
   return (
     <Band id="curriculum" tone="sunk" kicker="Curriculum Catalog" title="Courses & Professional Certifications" lede="Select an engineering track to inspect syllabi, lab architectures, and enrollment packages.">
       <div className="xuv-tabs">
-        <Tabs id="uvt" label="Engineering tracks" tabs={TRACKS.map(([l]) => l.replace('{n}', COURSES.length))} value={i} onChange={setI} />
+        <Tabs id="uvt" label="Engineering tracks" tabs={TRACKS.map(([l]) => l.replace('{n}', String(COURSES.length)))} value={i} onChange={setI} />
       </div>
       <TabPanel id="uvt" i={i} value={i} className="xuv-panel">
         <div className="xuv-grid c3 stack">

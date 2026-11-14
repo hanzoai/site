@@ -12,6 +12,7 @@
    pointer (the Sigil leans to the cursor; dots answer with their rates), state (bill sliders, sibling picks, code
    tabs), scroll (the Sigil eases up as you leave the first screen). Readable with animations and JavaScript off. */
 import { useEffect, useRef, useState } from 'react';
+import type { Fact, FactGroup, ModelDoc, Point, Rate } from './types';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import { A, Cta } from '../../kit';
@@ -23,28 +24,28 @@ import HeroDither from '../HeroDither';
 import { Field, Bill, Codes, Loose, RateBars, Reach, Also, CopyStatus, useCatalog, useShelf, rateFrom, rateText, money, isLocal } from './parts';
 import './models.css';
 
-const up = (d) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
-const size = (name) => (name.length <= 14 ? 's' : name.length <= 24 ? 'm' : 'l');
+const up = (d: number) => ({ initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const size = (name: string) => (name.length <= 14 ? 's' : name.length <= 24 ? 'm' : 'l');
 const FOLD = 1; // spec groups shown before the rest opens (the first, in MASTER 4.7's four groups when it is long)
 const DASH = '—'; // a value Hanzo has not printed yet (PLAN-COMPONENTS 0.6: never "…")
 const RAIL = 6; // sibling cards at most, every one a page of this site
-const idParts = (id) => id.split('/').map((p, i) => <span key={i}>{i ? <>/<wbr /></> : null}{p}</span>);
+const idParts = (id: string) => id.split('/').map((p, i) => <span key={i}>{i ? <>/<wbr /></> : null}{p}</span>);
 // a "#section" ask stays on this page (the kit opens anything that is not a site path in a new tab)
-const here = (h) => (h && h.startsWith('#') ? { target: undefined, rel: undefined } : {});
+const here = (h: string | undefined) => (h && h.startsWith('#') ? { target: undefined, rel: undefined } : {});
 
 /* MASTER 4.7: a long spec reads in four groups, Identity, Limits, Price, Modalities (empty groups omitted) */
-const PARTS = [
+const PARTS: [string, (l: string) => boolean][] = [
   ['Identity', () => true],
   ['Limits', (l) => /context|latency|output tokens|memory|limit|throughput|max/i.test(l)],
   ['Price', (l) => /price|cost/i.test(l)],
   ['Modalities', (l) => /^modalit|encoder/i.test(l)],
 ];
-const parted = (facts) => {
-  const at = (l) => PARTS.reduce((k, [, t], i) => (i && t(l) ? i : k), 0);
-  return PARTS.map(([title], i) => [title, facts.filter((f) => at(f.label) === i)]).filter(([, f]) => f.length);
+const parted = (facts: Fact[]) => {
+  const at = (l: string) => PARTS.reduce((k, [, t], i) => (i && t(l) ? i : k), 0);
+  return PARTS.map(([title], i): [string, Fact[]] => [title, facts.filter((f) => at(f.label) === i)]).filter(([, f]) => f.length);
 };
 
-function Facts({ facts, price }) {
+function Facts({ facts, price }: { facts: Fact[]; price: string }) {
   return (
     <dl>
       {facts.map((f) => (
@@ -57,7 +58,7 @@ function Facts({ facts, price }) {
   );
 }
 
-function Spec({ g, price, rate, lead }) {
+function Spec({ g, price, rate, lead }: { g: FactGroup; price: string; rate?: Rate | null; lead?: boolean }) {
   const split = lead && g.facts.length > 6;
   return (
     <div className={'xmf-spec' + (lead ? ' lead' : '')}>
@@ -76,7 +77,7 @@ function Spec({ g, price, rate, lead }) {
   );
 }
 
-export default function ModelSheet({ doc }) {
+export default function ModelSheet({ doc }: { doc: ModelDoc }) {
   // the rate is read from api.hanzo.ai as hanzo.ai reads it (the captured rate is the first paint)
   const cat = useCatalog(true);
   // once the gateway has answered without this model, hanzo.ai prints "No published rate" (its own words), whatever
@@ -97,8 +98,8 @@ export default function ModelSheet({ doc }) {
   const groups = doc.facts;
   const [all, setAll] = useState(false);
   const first = doc.actions[0];
-  const ctxLabel = doc.ctx ? (doc.facts.flatMap((g) => g.facts).find((f) => f.value === doc.ctx) || {}).label : null;
-  const hero = useRef(null);
+  const ctxLabel = doc.ctx ? doc.facts.flatMap((g) => g.facts).find((f) => f.value === doc.ctx)?.label : null;
+  const hero = useRef<HTMLElement>(null);
   const paused = usePaused();
   // the local nav's ask turns solid only once the hero's own ask has left the screen (one solid fill at a time)
   const [past, setPast] = useState(false);
@@ -116,7 +117,7 @@ export default function ModelSheet({ doc }) {
   // the sibling rail: only models with a page on this site (each opens by Morph), Hanzo's own "More from" picks first,
   // then the maker's nearest by context and output rate; six at most. Hanzo's other "More from" cards follow as one-line
   // links (Also), the ones without a page here opening hanzo.ai in a new tab and saying so.
-  const near = (s) => Math.abs(Math.log10((s.tokens || 1) / (doc.tokens || 1))) + (s.rate && rate ? Math.abs(Math.log10((s.rate.out + 0.01) / (rate.out + 0.01))) : 3);
+  const near = (s: Point) => Math.abs(Math.log10((s.tokens || 1) / (doc.tokens || 1))) + (s.rate && rate ? Math.abs(Math.log10((s.rate.out + 0.01) / (rate.out + 0.01))) : 3);
   const cap = doc.more ? doc.more.cards : [];
   // hanzo.ai's own More from (captured), in its order and words: its list is no longer the gateway's (8 Nov)
   const more = cap;
@@ -262,7 +263,7 @@ export default function ModelSheet({ doc }) {
               {doc.more && doc.more.all && <A to={doc.more.all.href} className="x-arrow">{doc.more.all.label}</A>}
             </div>
             {rate && plotted > 1 && <Field points={field} here={doc.route} label={`${doc.provider.name} models by context window and output rate`} />}
-            {rate && <div className="xmf-cost"><Bill self={self} others={sibs} /></div>}
+            {rate && <div className="xmf-cost"><Bill self={{ ...self, rate }} others={sibs} /></div>}
             {rail.length > 0 && (
               <ul className={'xmf-rail' + (rail.length < 4 ? ' few' : '')} data-swipe-own data-cursor="">
                 {rail.map((c) => {
@@ -282,12 +283,12 @@ export default function ModelSheet({ doc }) {
 
       {doc.band && (
         <section className="xmf-end">
-          <Sigil seed={doc.route + '#end'} data={[doc.siblings.length + 1, doc.tokens].filter(Boolean)} className="xmf-end-sigil" still={paused} />
+          <Sigil seed={doc.route + '#end'} data={[doc.siblings.length + 1, doc.tokens].filter((v): v is number => !!v)} className="xmf-end-sigil" still={paused} />
           <div className="x-wrap">
             <div className="xmf-band">
               <h2>{doc.band.title}</h2>
               {doc.band.lede && <p>{doc.band.lede}</p>}
-              {doc.band.nodes && <Loose nodes={doc.band.nodes.filter((n) => !(n && n.t === 'h2'))} />}
+              {doc.band.nodes && <Loose nodes={doc.band.nodes.filter((n) => !(typeof n !== 'string' && n.t === 'h2'))} />}
               <div className="xmf-acts">
                 {doc.band.actions.map((a, i) => <Cta key={a.label} to={a.href} kind={i ? 'link' : 'solid'} id={i ? 'model.band.2' : 'model.band'} {...here(a.href)}>{a.label}</Cta>)}
               </div>

@@ -14,17 +14,28 @@ import './ScienceDemos.css';
 
 const START_AT = VIDEO_DEMOS.findIndex((d) => d.id === 'materials'); // Hanzo opens on the crystal
 
-const Icon = ({ d }) => <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d={d} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Icon = ({ d }: { d: string }) => <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d={d} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const FILM = 'M2.5 3h11v10h-11zM5 3v10M11 3v10M2.5 6.5H5M2.5 9.5H5M11 6.5h2.5M11 9.5h2.5';
 const DB = 'M3 4.5C3 3.4 5.2 2.5 8 2.5s5 .9 5 2S10.8 6.5 8 6.5 3 5.6 3 4.5Zm0 0v7c0 1.1 2.2 2 5 2s5-.9 5-2v-7M3 8c0 1.1 2.2 2 5 2s5-.9 5-2';
 
 /* the player's position: which chapter, how far along it (0 to 100); one reducer so a chapter turns over exactly once */
-function move(s, a) {
+interface Pos {
+  c: number;
+  p: number;
+}
+type Act = { t: 'tick'; by: number; n: number } | { t: 'set'; c: number; p: number };
+function move(s: Pos, a: Act): Pos {
   if (a.t === 'tick') { const n = s.p + a.by; return n >= 100 ? { c: (s.c + 1) % a.n, p: 0 } : { c: s.c, p: n }; }
   return { c: a.c, p: a.p };
 }
 
-function Player({ d, on, pos, playing, speed, controls }) {
+interface Controls {
+  to: (c: number, p: number) => void;
+  toggle: () => void;
+  restart: () => void;
+  pace: () => void;
+}
+function Player({ d, on, pos, playing, speed, controls }: { d: (typeof VIDEO_DEMOS)[number]; on: boolean; pos: Pos; playing: boolean; speed: number; controls: Controls }) {
   const c = on ? pos.c : 0;
   return (
     <div className="xsd-play">
@@ -83,7 +94,7 @@ function Player({ d, on, pos, playing, speed, controls }) {
 }
 
 export function Walkthroughs() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.25 });
   const calm = useCalm();
   const [di, setDi] = useState(START_AT);
@@ -97,13 +108,13 @@ export function Walkthroughs() {
     const t = setInterval(() => dispatch({ t: 'tick', by: speed * 2, n }), 350);
     return () => clearInterval(t);
   }, [playing, seen, speed, n]);
-  const controls = {
+  const controls: Controls = {
     to: (c, p) => dispatch({ t: 'set', c, p }),
     toggle: () => setPlaying((v) => !v),
     restart: () => { dispatch({ t: 'set', c: 0, p: 0 }); setPlaying(true); },
     pace: () => setSpeed((s) => (s === 1 ? 2 : 1)),
   };
-  const pick = (i) => { setDi(i); dispatch({ t: 'set', c: 0, p: 24 }); };
+  const pick = (i: number) => { setDi(i); dispatch({ t: 'set', c: 0, p: 24 }); };
   return (
     <div className="xsd-wk" ref={box} data-slot="science-video-showcase">
       <div className="xsd-head">

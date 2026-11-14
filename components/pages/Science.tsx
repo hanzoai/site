@@ -7,6 +7,7 @@
    static and quiet: the loop, the lab, the graph, the verification, the research document, getting started.
    Every word and figure is Hanzo's (components/pages/scienceData.js); the interactive parts are ScienceWorkspace,
    ScienceBench and ScienceDemos. No price is typed: the commercial editions are named, never priced. */
+import type { ReactNode } from 'react';
 import { Rise } from '../ui';
 import { A, Cta } from '../kit';
 import Workspace from './ScienceWorkspace';
@@ -20,10 +21,17 @@ import {
 } from './scienceData';
 import './Science.css';
 
+const DOC = DOCUMENT as [string, string | string[], string?][]; // scienceData.ts lists [kind, text, link] rows
 const Check = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* a numbered band: the number, the line, one sentence */
-function Band({ b, children }) {
+interface BandHead {
+  id: string;
+  num: string;
+  title: string;
+  lede?: string;
+}
+function Band({ b, children }: { b: BandHead; children: ReactNode }) {
   return (
     <section id={b.id} className="xsc-band">
       <div className="x-wrap">
@@ -39,7 +47,7 @@ function Band({ b, children }) {
 }
 
 /* a titled group inside a band: a line, and beside it the small mono note Hanzo sets under it */
-function Group({ title, note, lede, id, children }) {
+function Group({ title, note, lede, id, children }: { title: string; note?: string; lede?: string; id?: string; children: ReactNode }) {
   return (
     <Rise className="xsc-group" id={id}>
       <div className="xsc-gh">
@@ -52,7 +60,7 @@ function Group({ title, note, lede, id, children }) {
   );
 }
 
-const Code = ({ children, label }) => <pre className="xsc-pre" tabIndex={0} aria-label={label}><code><span>{children}</span></code></pre>;
+const Code = ({ children, label }: { children: ReactNode; label: string }) => <pre className="xsc-pre" tabIndex={0} aria-label={label}><code><span>{children}</span></code></pre>;
 
 export default function Science() {
   return (
@@ -213,10 +221,10 @@ export default function Science() {
       {/* the research document */}
       <section className="xsc-band xsc-doc">
         <div className="x-wrap xsc-prose">
-          {DOCUMENT.map(([k, t, to], i) => {
+          {DOC.map(([k, t, to], i) => {
             if (k === 'h2') return <Rise as="h2" key={i}>{t}</Rise>;
             if (k === 'em') return <p key={i}>{t[0]}<em>{t[1]}</em>{t[2]}</p>;
-            if (k === 'a') return <p key={i}><A to={to} className="x-arrow">{t}</A></p>;
+            if (k === 'a') return <p key={i}><A to={to ?? ''} className="x-arrow">{t}</A></p>;
             return <p key={i}>{t}</p>;
           })}
         </div>

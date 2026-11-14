@@ -8,6 +8,7 @@
 import { A, Cta, Img } from '../kit';
 import { Chip, Fold, Steps, Band } from './UniversityFold';
 import Icon from './universityIcons';
+import type { IconName } from './universityIcons';
 import { ASK, seatFor } from './universitySeat';
 import { CODING_WEEKS, FILM } from './universityData';
 import './UniversityCourse.css';
@@ -23,7 +24,7 @@ const SPECS = [
   ['Evaluation method', 'SWE-bench Grader', 'Automated Cleanroom CI'],
 ];
 
-const LAB = [
+const LAB: [IconName, string, string][] = [
   ['shield', 'Hanzo Visor (`runsc`) User-Space Kernel Isolation', 'Every agent turn runs inside an unprivileged sandbox pod with virtualized syscalls, seccomp filtering, and read-only host mounts.'],
   ['zap', 'Zero-Copy ZAP IPC Protocol', 'Multi-agent communication traverses Cap’n Proto zero-copy serialization over Unix domain sockets, reducing message dispatch latency from 180ms to < 2ms.'],
   ['cpu', 'Zen 6 High-Throughput Model Serving', 'Access quantized GGUF/AWQ builds of Zen 6 (27.3B) and Zen 6 Flash with continuous token streaming, structured JSON tool schemas, and KV-cache reuse.'],
@@ -37,13 +38,13 @@ const RUBRIC = [
   ['20%', 'Telemetry & Audit Fidelity', 'Full Cap’n Proto trace records, tool invocation timestamps, and Kai state probabilities must be emitted to ClickHouse O11y.'],
 ];
 
-const CREDENTIAL = [
+const CREDENTIAL: [IconName, string, string][] = [
   ['shield', 'W3C Verifiable Credential', 'Issued under the W3C Verifiable Credentials Data Model v2.0 standard, cryptographically signed by the Hanzo Trust Root (`did:hanzo:trust`).'],
   ['binary', 'Immutable On-Chain Proof', 'Every issued certificate is permanently anchored with an on-chain cryptographic commitment, preventing credential forgery or revocation tampering.'],
   ['branch', 'Dynamic GitHub SVG Badges', 'Embed a real-time verified SVG badge into your GitHub profile and READMEs. Click-throughs link directly to your passing CI benchmark runs.'],
 ];
 
-const FACULTY = [
+const FACULTY: [IconName, string, string][] = [
   ['cap', 'Systems Faculty', 'Curriculum designed by the core Hanzo AI systems architects who build Zen 6, Enso, and the ZAP RPC runtime.'],
   ['terminal', 'Automated Grader Fleet', '`hanzo-grader` pods run 24/7. Submit your repository at any hour and receive comprehensive test traces within 90 seconds.'],
   ['book', 'Developer Preceptorials', 'Join private Discord channels and weekly architecture reviews with fellow systems engineers and teaching assistants.'],

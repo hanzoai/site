@@ -9,6 +9,7 @@
    Beyond: the shelf re-sorts by context window or by rate (and filters by modality), so the cheapest or the
    longest-context model is one press away. */
 import { useMemo, useState } from 'react';
+import type { ProviderDoc } from './types';
 import { motion, LayoutGroup } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import MaskFig from '../../v2/MaskFig';
@@ -20,17 +21,18 @@ import HeroDither from '../HeroDither';
 import { Field, CopyStatus, useCatalog, rateFrom, money } from './parts';
 import './models.css';
 
-const up = (d) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const up = (d: number) => ({ initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 const FILM = /^\/models\/hanzo\/(enso|kai|koma|zen|iro|oto|koe|uta|mori)\/?$/;
-const SORTS = [['shelf', 'As listed'], ['ctx', 'Context window'], ['rate', 'Output rate']];
+type Sort = 'shelf' | 'ctx' | 'rate';
+const SORTS: [Sort, string][] = [['shelf', 'As listed'], ['ctx', 'Context window'], ['rate', 'Output rate']];
 
-export default function ProviderShelf({ doc }) {
+export default function ProviderShelf({ doc }: { doc: ProviderDoc }) {
   const cat = useCatalog(true);
   // hanzo.ai's shelf is no longer the gateway's list (it shows :free variants the gateway omits and drops models the
   // gateway still serves), so the shelf is the capture of hanzo.ai's own page; rates still follow api.hanzo.ai
   const list = doc.cards;
   const cards = list.map((c, i) => ({ ...c, n: i, rate: rateFrom(cat, c.id, c.rate) }));
-  const [sort, setSort] = useState('shelf');
+  const [sort, setSort] = useState<Sort>('shelf');
   const [mod, setMod] = useState('all');
   const mods = useMemo(() => [...new Set(list.flatMap((c) => c.tags))], [list]);
   const shown = cards.filter((c) => mod === 'all' || c.tags.includes(mod)).sort((a, b) => {
@@ -44,13 +46,13 @@ export default function ProviderShelf({ doc }) {
   const n = list === doc.cards || !Number.isFinite(n0) ? n0 : list.length;
   const word = doc.count.replace(/^\d+\s*/, '');
   const lede = n === n0 ? doc.lede : doc.lede.replace(/^Access all \d+ (.+?) models? through /, (m, who) => `Access all ${n} ${who} ${n === 1 ? 'model' : 'models'} through `);
-  const tokens = cards.map((c) => c.tokens).filter(Boolean);
+  const tokens = cards.map((c) => c.tokens).filter((t): t is number => !!t);
   const outs = cards.map((c) => c.rate && c.rate.out).filter((v) => v != null);
   const plotted = cards.filter((c) => c.tokens && c.rate).length;
   const paused = usePaused();
   // Hanzo's own models that have a film (public/models/<slug>.webm) lead the shelf as Hanzo's black cards, Enso first
   const films = cards.map((c) => ({ ...c, film: (FILM.exec(c.href || '') || [])[1] })).filter((c) => c.film).slice(0, 4);
-  const [hot, setHot] = useState(null);
+  const [hot, setHot] = useState<string | null>(null);
   const anim = cards.length <= 60; // re-flow by layout only where it stays smooth
   return (
     <main className="xmf xmf-prov">

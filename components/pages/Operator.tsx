@@ -14,7 +14,9 @@
    top card is flicked or dragged away to either side and the next comes up (no pinned scene, no scroll-driven track).
    Every word is Hanzo's; the log uses only Hanzo's own words (drift, sweep, created, reverted, already in sync). */
 import { useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, RefObject } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import type { MotionValue, Transition } from 'motion/react';
 import { A, Cta, Band } from '../kit';
 import { Copy } from '../ui';
 import MaskLines from './proof/MaskLines';
@@ -27,8 +29,8 @@ import '../v2/A2.css';
 import './Operator.css';
 
 const GH = 'https://github.com/hanzoai';
-const KINDS = [['Service'], ['Datastore', 'SQL · KV · DocDB · S3'], ['Gateway'], ['Ingress'], ['DNS'], ['Base'], ['IAM'], ['KMS'], ['MPC'], ['KMSSecret', 'kms.hanzo.ai']];
-const SPRING = { duration: T.slower, ease: EMPH }; // a tween, not a spring (no overshoot)
+const KINDS: [string, string?][] = [['Service'], ['Datastore', 'SQL · KV · DocDB · S3'], ['Gateway'], ['Ingress'], ['DNS'], ['Base'], ['IAM'], ['KMS'], ['MPC'], ['KMSSecret', 'kms.hanzo.ai']];
+const SPRING: Transition = { duration: T.slower, ease: EMPH }; // a tween, not a spring (no overshoot)
 
 /* drag only with a fine pointer: on touch a swipe must scroll the page, and a tap drifts the tile instead */
 function useFine() {
@@ -37,7 +39,17 @@ function useFine() {
   return fine;
 }
 
-function Tile({ k, sub, i, mv, onDrift, fine, box, inward }) {
+interface TileProps {
+  k: string;
+  sub?: string;
+  i: number;
+  mv: { x: MotionValue<number>; y: MotionValue<number> };
+  onDrift: (i: number) => void;
+  fine: boolean;
+  box: RefObject<HTMLDivElement | null>;
+  inward: (i: number) => [number, number];
+}
+function Tile({ k, sub, i, mv, onDrift, fine, box, inward }: TileProps) {
   return (
     <motion.button type="button" className={'xop-tile' + (fine ? ' fine' : '')} style={{ x: mv.x, y: mv.y }} drag={fine} dragConstraints={box} dragMomentum={false} dragElastic={0}
       onDragEnd={() => onDrift(i)} onClick={() => { if (Math.abs(mv.x.get()) + Math.abs(mv.y.get()) < 2) { const [dx, dy] = inward(i); animate(mv.x, dx * 26, SPRING); animate(mv.y, dy * 14, SPRING); onDrift(i); } }}
@@ -51,29 +63,29 @@ function Tile({ k, sub, i, mv, onDrift, fine, box, inward }) {
 
 /* The control room: a sweep every few seconds; drift between sweeps; reverted on the sweep. */
 function Board() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.3 });
   const calm = useReducedMotion();
   const xs = KINDS.map(() => useMotionValue(0)); // eslint-disable-line react-hooks/rules-of-hooks -- KINDS never changes length
   const ys = KINDS.map(() => useMotionValue(0)); // eslint-disable-line react-hooks/rules-of-hooks
   const [n, setN] = useState(0);
-  const [log, setLog] = useState([{ id: 0, t: 'operator up', k: '' }]);
+  const [log, setLog] = useState<{ id: number; t: string; k: string }[]>([{ id: 0, t: 'operator up', k: '' }]);
   const [lit, setLit] = useState(-1);
   const [paused, setPaused] = useState(false);
-  const drifted = useRef(new Set());
+  const drifted = useRef(new Set<number>());
   const id = useRef(1);
   const fine = useFine();
-  const box = useRef(null); // dragged tiles stay inside the board
-  const say = (lines) => setLog((l) => [...lines.map(([t, k]) => ({ id: id.current++, t, k })).reverse(), ...l].slice(0, 5));
+  const box = useRef<HTMLDivElement>(null); // dragged tiles stay inside the board
+  const say = (lines: [string, string][]) => setLog((l) => [...lines.map(([t, k]) => ({ id: id.current++, t, k })).reverse(), ...l].slice(0, 5));
   // a tile drifts toward the middle of the board, never out past its edge (a right-hand tile goes left, a bottom one up)
-  const inward = (i) => {
+  const inward = (i: number): [number, number] => {
     const g = box.current, el = g?.children[i];
-    if (!el) return [1, 1];
+    if (!g || !(el instanceof HTMLElement)) return [1, 1];
     return [el.offsetLeft + el.offsetWidth / 2 > g.offsetWidth / 2 ? -1 : 1, el.offsetTop + el.offsetHeight / 2 > g.offsetHeight / 2 ? -1 : 1];
   };
-  const onDrift = (i) => { drifted.current.add(i); say([[KINDS[i][0], 'drift']]); };
-  const sweep = (s) => {
-    const lines = [];
+  const onDrift = (i: number) => { drifted.current.add(i); say([[KINDS[i][0], 'drift']]); };
+  const sweep = (s: number) => {
+    const lines: [string, string][] = [];
     if (s === 1) lines.push(['sweep', 'created']);
     else {
       KINDS.forEach((kd, i) => {
@@ -87,7 +99,7 @@ function Board() {
   };
   useEffect(() => {
     if (!seen || calm || paused) return;
-    let s = n, t1 = 0, t2 = 0, t3 = 0;
+    let s = n, t1: ReturnType<typeof setTimeout> | undefined, t2: ReturnType<typeof setTimeout> | undefined, t3: ReturnType<typeof setTimeout> | undefined;
     const lap = () => {
       s += 1; setN(s); setLit(s);
       t1 = setTimeout(() => sweep(s), 1100);
@@ -141,7 +153,7 @@ const POINTS = [
 ];
 
 const N = POINTS.length;
-const two = (n) => String(n).padStart(2, '0');
+const two = (n: number) => String(n).padStart(2, '0');
 
 function Stack() {
   const rm = useReducedMotion();
@@ -149,12 +161,12 @@ function Stack() {
   useEffect(() => setCalm(!!rm), [rm]);
   const [top, setTop] = useState(0);
   const busy = useRef(false);
-  const box = useRef(null);
+  const box = useRef<HTMLOListElement>(null);
   const x = useMotionValue(0);
   const rot = useTransform(x, [-480, 480], [-4, 4]);
   const far = () => (box.current?.offsetWidth || 480) * 1.25;
   // the top card leaves to one side; the next one is already underneath
-  const flick = (dir) => {
+  const flick = (dir: number) => {
     if (busy.current) return;
     busy.current = true;
     const done = () => { setTop((t) => (t + 1) % N); x.set(0); busy.current = false; };
@@ -177,7 +189,7 @@ function Stack() {
     const t = setTimeout(() => { animate(x, [0, -44, 0], { duration: 0.9, ease: INOUT, times: [0, 0.45, 1] }); }, 300);
     return () => clearTimeout(t);
   }, [seen, calm]); // eslint-disable-line react-hooks/exhaustive-deps
-  const onKey = (e) => { if (e.key === 'ArrowRight') { e.preventDefault(); flick(1); } if (e.key === 'ArrowLeft') { e.preventDefault(); back(); } };
+  const onKey = (e: KeyboardEvent) => { if (e.key === 'ArrowRight') { e.preventDefault(); flick(1); } if (e.key === 'ArrowLeft') { e.preventDefault(); back(); } };
   return (
     <section className="a2-sec xop-cards" aria-labelledby="xop-declare-h">
       <NoJs css=".xop-stack{height:auto!important}.xop-sc{position:relative!important;inset:auto!important;height:auto!important;transform:none!important;opacity:1!important;margin-bottom:12px;visibility:visible!important}.xop-stack-ctl{display:none}" />

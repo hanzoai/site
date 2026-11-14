@@ -24,14 +24,17 @@ const P = {
   arrow: 'M3 8h9M8.5 4.5 12 8l-3.5 3.5', alert: 'M8 2 14 13H2zM8 6.5v3M8 11.2v.1',
   wrench: 'M10.5 3a3 3 0 0 0-2.6 4.3L3 12.2 3.8 13l4.9-4.9A3 3 0 0 0 13 5.5L11 7.5 9.5 6 11.5 4Z',
 };
-const Ic = ({ n, s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true" className="xsb-ic"><path d={P[n]} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Ic = ({ n, s = 14 }: { n: keyof typeof P; s?: number }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true" className="xsb-ic"><path d={P[n]} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 const KERNELS = ['python', 'julia', 'r', 'sql'];
-const label = (s) => B.projects.find((p) => p[0] === s)[1];
-const pad = (e) => { e?.preventDefault?.(); };
+const ACTIVE = B.active as [string, string, string | null][]; // scienceData.ts lists [session, title, count or null]
+const label = (s: string) => B.projects.find((p) => p[0] === s)?.[1];
+/* what the composer and the REPL hand their handlers: an event, or nothing (the Send button) */
+type Ev = { preventDefault?: () => void } | undefined;
+const pad = (e?: Ev) => { e?.preventDefault?.(); };
 
 /* the composer: a field and a send; Enter sends too */
-function Composer({ ph, label: aria, value, set, send, more }) {
+function Composer({ ph, label: aria, value, set, send, more }: { ph: string; label: string; value: string; set: (v: string) => void; send: (e?: Ev) => void; more?: boolean }) {
   return (
     <div className="xsb-comp">
       <Ic n="plus" s={15} />
@@ -42,7 +45,7 @@ function Composer({ ph, label: aria, value, set, send, more }) {
   );
 }
 
-export default function Bench({ id, session: first = 'samosa', right: firstRight, url = false }) {
+export default function Bench({ id, session: first = 'samosa', right: firstRight, url = false }: { id: string; session?: string; right?: string; url?: boolean }) {
   const [session, setSession] = useState(first);
   const [rightMode, setRightMode] = useState(firstRight || (first === 'scrna' || first === 'physics' ? 'notebook' : 'artifact'));
   const [tab, setTab] = useState(0);
@@ -53,14 +56,14 @@ export default function Bench({ id, session: first = 'samosa', right: firstRight
   const [remoteOpen, setRemoteOpen] = useState(true);
   const [reviewerOpen, setReviewerOpen] = useState(true);
   const [full, setFull] = useState(false);
-  const [modal, setModal] = useState(null);
+  const [modal, setModal] = useState<'customize' | 'files' | null>(null);
   const [menu, setMenu] = useState(false);
   const [lang, setLang] = useState('python');
   const [cells, setCells] = useState(NOTEBOOK_CELLS);
   const [expr, setExpr] = useState('');
   const [repl, setRepl] = useState([{ expr: 'clean.shape', out: '(40000, 2000)' }, { expr: 'list(clean.obs.columns[:4])', out: "['sample_id', 'donor_id', 'Site', 'initial_clustering']" }]);
   const [prompt, setPrompt] = useState('');
-  const [turns, setTurns] = useState({ samosa: [], literature: [], scrna: [], physics: [] });
+  const [turns, setTurns] = useState<Record<string, { role: string; text: string; meta?: string }[]>>({ samosa: [], literature: [], scrna: [], physics: [] });
   const kernel = B.kernel;
 
   // Hanzo's deep links on the first workbench: ?workbench=1 opens it large, ?session=scrna|literature|physics (or ?view=notebook) picks the session
@@ -76,12 +79,12 @@ export default function Bench({ id, session: first = 'samosa', right: firstRight
   useEffect(() => {
     if (!full) return;
     document.documentElement.classList.add('x-lock');
-    const k = (e) => { if (e.key === 'Escape') setFull(false); };
+    const k = (e: KeyboardEvent) => { if (e.key === 'Escape') setFull(false); };
     addEventListener('keydown', k);
     return () => { document.documentElement.classList.remove('x-lock'); removeEventListener('keydown', k); };
   }, [full]);
 
-  const pick = (s) => { setSession(s); setMenu(false); setRightMode(s === 'scrna' || s === 'physics' ? 'notebook' : 'artifact'); };
+  const pick = (s: string) => { setSession(s); setMenu(false); setRightMode(s === 'scrna' || s === 'physics' ? 'notebook' : 'artifact'); };
   const sendPin = () => {
     const note = pinNote.trim();
     if (!note) return;
@@ -90,7 +93,7 @@ export default function Bench({ id, session: first = 'samosa', right: firstRight
     setHistory((h) => [...h, `v${ver} → v${next}: Applied pin #1 ("${note}") — stroke halo widened to 3.4pt and label contrast boosted.`]);
     setPinOpen(false);
   };
-  const run = (cid) => setCells((cs) => cs.map((c) => (c.id !== cid ? c : {
+  const run = (cid: number) => setCells((cs) => cs.map((c) => (c.id !== cid ? c : {
     ...c,
     output: c.id === 28
       ? "loaded: (40000, 2000) uns keys: ['_scvi_manager_uuid', '_scvi_uuid', 'batch_Condition_colors']\nrewritten: 184.6 MB\nwrote covid_pbmc_40k_hvg.h5ad"
@@ -109,11 +112,11 @@ export default function Bench({ id, session: first = 'samosa', right: firstRight
       output: lang === 'r' ? 'brms.mmrm Rhat = 1.001 | Week 72 Δ = -16.4% (95% CrI: -18.1, -14.7)' : session === 'physics' ? 'Max acoustic branch: 14.80 THz | Imaginary modes: 0' : 'UMAP coordinates: (40000, 2)',
     }]);
   };
-  const evalExpr = (e) => {
+  const evalExpr = (e?: Ev) => {
     pad(e);
     const x = expr.trim();
     if (!x) return;
-    let out;
+    let out: string;
     if (x.includes('shape')) out = '(40000, 2000)';
     else if (x.includes('obs')) out = "Index(['sample_id', 'donor_id', 'Site', 'author_cell_type', 'disease', 'Status', 'cell_type'], dtype='object')";
     else if (x.includes('12') || x.includes('0.12')) out = '0.03 (3.0 percentage points; 25.0% relative reduction)';
@@ -125,7 +128,7 @@ export default function Bench({ id, session: first = 'samosa', right: firstRight
     setRepl((r) => [...r, { expr: x, out }]);
     setExpr('');
   };
-  const ask = (e) => {
+  const ask = (e?: Ev) => {
     pad(e);
     const q = prompt.trim();
     if (!q) return;
@@ -140,12 +143,12 @@ export default function Bench({ id, session: first = 'samosa', right: firstRight
     a.click();
     URL.revokeObjectURL(a.href);
   };
-  const chat = (s) => turns[s].map((t, i) => (
+  const chat = (s: string) => turns[s].map((t, i) => (
     <div key={i} className={'xsb-turn ' + t.role}><p>{t.text}</p>{t.meta && <span>{t.meta}</span>}</div>
   ));
   const showNotebook = rightMode === 'notebook' || session === 'scrna' || session === 'physics';
   const pane = showNotebook ? 'notebook' : session === 'literature' ? 'pdf' : 'artifact';
-  const on = (s) => session !== s;
+  const on = (s: string) => session !== s;
 
   return (
     <div className="xsb" data-slot="science-workbench" data-workbench-session={session} data-full={full ? '' : undefined}>
@@ -165,7 +168,7 @@ export default function Bench({ id, session: first = 'samosa', right: firstRight
           <div className="xsb-list">
             <p>{session === 'samosa' ? 'Today' : 'Active'}</p>
             <ul hidden={session !== 'samosa'}>{B.today.map(([t, s], i) => <li key={t}><button type="button" data-session={s} data-on={i === 0 ? '' : undefined} onClick={() => pick(s)}><span aria-hidden="true">◦</span><span>{t}</span></button></li>)}</ul>
-            <ul hidden={session === 'samosa'}>{B.active.map(([s, t, n]) => <li key={s}><button type="button" data-session={s} data-on={session === s ? '' : undefined} onClick={() => pick(s)}><span aria-hidden="true">◦</span><span>{t}</span>{n && <span data-em>{n}</span>}</button></li>)}</ul>
+            <ul hidden={session === 'samosa'}>{ACTIVE.map(([s, t, n]) => <li key={s}><button type="button" data-session={s} data-on={session === s ? '' : undefined} onClick={() => pick(s)}><span aria-hidden="true">◦</span><span>{t}</span>{n && <span data-em>{n}</span>}</button></li>)}</ul>
           </div>
           <div className="xsb-acct" data-slot="science-account-badge">
             <span className="x-mono"><Ic n="gear" s={15} />{B.account}</span>
@@ -355,7 +358,7 @@ export default function Bench({ id, session: first = 'samosa', right: firstRight
         </section>
 
         {/* Customize and Files */}
-        {['customize', 'files'].map((m) => (
+        {(['customize', 'files'] as const).map((m) => (
           <div key={m} className="xsb-drawer" data-slot={`science-${m}-drawer`} hidden={modal !== m}>
             <div className="xsb-dh"><span data-b><Ic n={m === 'customize' ? 'wrench' : 'folder'} s={16} />{B[m]}</span><button type="button" aria-label="Close panel" onClick={() => setModal(null)}><Ic n="x" s={16} /></button></div>
             {m === 'customize' ? (

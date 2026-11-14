@@ -3,7 +3,37 @@
    server pages read it for their routes and the client components draw it. No tuition is here; a course is sold
    only where the catalog has a row for its planId (universitySeat.js). */
 
-export const UNIVERSITY_COURSES = [
+export interface Week {
+  week: string;
+  code: string;
+  title: string;
+  summary: string;
+  lectures: string[];
+  readings: string[];
+  lab: string;
+}
+
+export interface Course {
+  slug: string;
+  code: string;
+  title: string;
+  credential: string;
+  credentialFull: string;
+  track: string;
+  units: number;
+  duration: string;
+  level: string;
+  prerequisites: string;
+  summary: string;
+  capstone: string;
+  competencies: string[];
+  planId: string;
+  featured?: boolean;
+  instructor: { name: string; role: string };
+  syllabus: Week[];
+}
+
+export const UNIVERSITY_COURSES: Course[] = [
   {
     slug: 'agentic-coding',
     code: 'ENG 100',
@@ -268,7 +298,7 @@ export const UNIVERSITY_COURSES = [
   },
 ];
 
-export const ADDITIONAL_COURSES = [
+export const ADDITIONAL_COURSES: Course[] = [
   {
     slug: 'agentic-marketing',
     code: 'MKT 102',
@@ -498,7 +528,7 @@ export const ADDITIONAL_COURSES = [
   },
 ];
 
-export const ALL_COURSES = [
+export const ALL_COURSES: Course[] = [
   ...UNIVERSITY_COURSES,
   ...ADDITIONAL_COURSES,
 ];
@@ -506,7 +536,7 @@ export const ALL_COURSES = [
 /** The courses `/university/[slug]` renders: every course /university lists; agentic-coding has a page of its own. */
 export const COURSE_PAGES = ALL_COURSES.filter((c) => c.slug !== 'agentic-coding');
 
-export const findCourse = (slug) => ALL_COURSES.find((c) => c.slug === slug);
+export const findCourse = (slug: string) => ALL_COURSES.find((c) => c.slug === slug);
 
 export const COMPARISON_ROWS = [
   {
@@ -568,12 +598,12 @@ export const COMPARISON_ROWS = [
 /* /university lists the courses in this order, each at its own page */
 const ORDER = ['agentic-coding', 'reinforcement-learning', 'agentic-marketing', 'systems-engineering', 'ai-practitioner', 'ai-architect'];
 export const LISTED = ORDER.map((slug) => {
-  const c = ALL_COURSES.find((x) => x.slug === slug);
+  const c = ALL_COURSES.find((x) => x.slug === slug)!; // ORDER names only slugs that ALL_COURSES holds
   return { ...c, href: '/university/' + slug };
 });
 
 /* ENG 100's page states weeks 1 to 3 as the course data does, and its fourth week in its own words */
-export const CODING_WEEKS = [
+export const CODING_WEEKS: Week[] = [
   ...UNIVERSITY_COURSES[0].syllabus.slice(0, 3),
   {
     week: 'Week 4',
@@ -596,7 +626,7 @@ export const CODING_WEEKS = [
 ];
 
 /* /university: the questions, as the page asks them */
-export const FAQ = [
+export const FAQ: [string, string][] = [
   ['How does the 25% usage credit rebate work?', 'When you enroll in any course (e.g. $199 for ENG 100), exactly 25% of your payment rounded up to the nearest dollar ($50 USD) is deposited immediately into your Hanzo Cloud compute account. These credits never expire and can be used across Zen 6, Enso, Kai decision models, and Hanzo Visor sandbox container leases.'],
   ['How are capstone projects graded and evaluated?', 'Grading is 100% objective and automated. An isolated Hanzo grader pod clones your repository in an ephemeral cleanroom, injects synthetic faults and breaking changes into test suites, and evaluates whether your agent can reproduce defects, synthesize syntax-safe AST diffs, and achieve test exit code 0 within budget.'],
   ['Why do hiring managers value Hanzo credentials over AWS/Azure/Coursera?', 'Standard certifications test multiple-choice memorization about proprietary cloud consoles. Hanzo credentials prove hands-on software construction under real-world engineering constraints: multi-agent IPC latency, sandbox process isolation, SWE-bench problem resolution, and strict micro-USD financial ceilings.'],
@@ -608,7 +638,7 @@ export const FAQ = [
 ];
 
 /* the catalog filter: label and the track it keeps (null keeps all) */
-export const TRACKS = [
+export const TRACKS: [string, string | null][] = [
   ['All {n} Courses', null],
   ['Agentic Coding', 'coding'],
   ['Reinforcement Learning', 'rl'],
@@ -618,7 +648,7 @@ export const TRACKS = [
 ];
 
 /* the model film each course's steps card plays over (Hanzo's own films, public/models) */
-export const FILM = {
+export const FILM: Record<string, string> = {
   'agentic-coding': 'mori',
   'reinforcement-learning': 'kai',
   'systems-engineering': 'enso',

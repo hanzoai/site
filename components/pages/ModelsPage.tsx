@@ -8,7 +8,9 @@
    4 Enso vs Zen.  5 Kai's benchmarks.  6 Try any model.  7 Your first request.  8 Related.  9 The close.
    No UI hue: greys, black and white; colour arrives only through the films. Every word, id, rate and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
+import type { AnchorHTMLAttributes, CSSProperties, ElementType, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import type { Transition } from 'motion/react';
 import { EASE } from '../ui';
 import { A, Cta, Tabs, TabPanel, CodeBlock } from '../kit';
 import { useOpener } from '../Opener';
@@ -17,7 +19,9 @@ import ModelFilm, { FilmPause, usePaused } from '../v2/ModelFilm';
 import { useSpecTilt } from '../v2/SpecCard';
 import MaskFig from '../v2/MaskFig';
 import { media, bySlug } from '../../lib/models';
-import { ROWS, OTHERS } from './models/rates';
+import { ROWS as RATE_ROWS, OTHERS as RATE_OTHERS } from './models/rates';
+import type { Maker } from './models/types';
+import type { Opener } from './ModelsStudioTypes';
 import { BOARD } from './benchmarksData';
 import { CopyStatus } from './models/parts';
 import { track } from '../../lib/track';
@@ -26,10 +30,17 @@ import './ModelsPage.css';
 /* Kai's suites won against Jev, counted from Hanzo's research runs (the rows /benchmarks reads, api.hanzo.ai/v1/research/runs),
    the way hanzo.ai prints it: one line, "11 · Suites won · Kai vs Jev". */
 const WON = BOARD.filter((b) => b.k > b.j).length;
-const SPRING = { duration: 0.3, ease: [0.16, 1, 0.3, 1] }; // the deck has no springs: ease-emphasis, 300 ms
+const SPRING: Transition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] }; // the deck has no springs: ease-emphasis, 300 ms
+/* a row of models/rates.ts: [id, name, in $/M, out $/M, context window], null where Hanzo prints none */
+type RateRow = [string, string, number | null, number | null, number | null];
+const ROWS = RATE_ROWS as RateRow[];
+const OTHERS = RATE_OTHERS as RateRow[];
 
 /* A link with its arrow as text, the way Hanzo writes them. */
-const Lk = ({ to, children, className = '', ...r }) => {
+interface LkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
+  to: string;
+}
+const Lk = ({ to, children, className = '', ...r }: LkProps) => {
   // the arrow is in the label's own text (COPY-RULE, 8 Nov: "Explore Enso →" reads as one line, as Hanzo prints it)
   const inner = <span>{typeof children === 'string' ? `${children} →` : children}</span>;
   return to.startsWith('#')
@@ -39,28 +50,29 @@ const Lk = ({ to, children, className = '', ...r }) => {
 
 /* Opens a flagship's own page with the lifted-picture transition; its close button flies back to this card. */
 function useOpen() {
-  const opener = useOpener();
-  const open = (e, el, slug) => opener.open(e, { el, src: media(slug, 'webp'), href: '/' + slug, key: slug });
-  open.prefetch = (slug) => opener?.prefetch?.('/' + slug);
+  const opener = useOpener() as Opener | null; // Opener.tsx makes its context from null
+  const open = (e: MouseEvent<HTMLElement>, el: Element | null | undefined, slug: string) => opener?.open(e, { el, src: media(slug, 'webp'), href: '/' + slug, key: slug });
+  open.prefetch = (slug: string) => opener?.prefetch?.('/' + slug);
   return open;
 }
+type Open = ReturnType<typeof useOpen>;
 
 /* A model's film in its box: the poster at once, the clip only while asked and on screen (two at most on the page). */
-const Film = ({ slug, play = true, className = '' }) => <span className={'xmo-film ' + className} aria-hidden="true"><ModelFilm slug={slug} play={play} /></span>;
+const Film = ({ slug, play = true, className = '' }: { slug: string; play?: boolean; className?: string }) => <span className={'xmo-film ' + className} aria-hidden="true"><ModelFilm slug={slug} play={play} /></span>;
 
 /* Left and right arrows move through a row of tabs. */
-const arrows = (n, set) => (e) => {
+const arrows = (n: number, set: (j: number) => void) => (e: KeyboardEvent<HTMLElement>) => {
   const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
   if (!d) return;
   e.preventDefault();
-  const to = e.currentTarget.closest('[role=tablist]').querySelectorAll('[role=tab]');
-  const i = [...to].indexOf(document.activeElement);
+  const to = e.currentTarget.closest('[role=tablist]')!.querySelectorAll<HTMLElement>('[role=tab]'); // the handler sits on the tablist itself
+  const i = [...to].findIndex((t) => t === document.activeElement);
   const j = (i + d + n) % n;
   to[j].focus(); set(j);
 };
 
 /* The line-masked headline: each line rises once out of its own mask. */
-const Lines = ({ lines, delay = 0, as: T = 'span' }) => lines.map((t, i) => (
+const Lines = ({ lines, delay = 0, as: T = 'span' }: { lines: string[]; delay?: number; as?: ElementType }) => lines.map((t, i) => (
   <T key={t} className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: delay + i * 0.06 }}>{t}</motion.span></T>
 ));
 
@@ -70,7 +82,14 @@ const Lines = ({ lines, delay = 0, as: T = 'span' }) => lines.map((t, i) => (
    A click lifts the card into its page. */
 const GRID = ['enso', 'kai', 'zen', 'iro', 'koma', 'oto', 'koe', 'uta', 'mori'];
 
-function GridCard({ m, i, play, lit, open, setLit }) {
+interface Flagship {
+  slug: string;
+  name: string;
+  desc: string;
+  kicker?: string;
+  tags: string[];
+}
+function GridCard({ m, i, play, lit, open, setLit }: { m: Flagship; i: number; play: boolean; lit: boolean; open: Open; setLit: (i: number) => void }) {
   const big = i === 0;
   const tilt = useSpecTilt(big);
   const price = rateLine(ALL[m.slug]);
@@ -109,7 +128,7 @@ function Stage() {
   // passes. Two films at most.
   const [lit, setLit] = useState(0);
   const [walk, setWalk] = useState(0);
-  const grid = useRef(null);
+  const grid = useRef<HTMLUListElement>(null);
   const { scrollYProgress: gp } = useScroll({ target: grid, offset: ['start 85%', 'end 15%'] });
   useMotionValueEvent(gp, 'change', (v) => setWalk(v <= 0.02 || v >= 0.98 ? 0 : 1 + Math.min(7, Math.floor(v * 8))));
   const on = lit || walk;
@@ -150,7 +169,7 @@ const FAM = [
 
 function Families() {
   const open = useOpen();
-  const [hot, setHot] = useState(null);
+  const [hot, setHot] = useState<string | null>(null);
   return (
     <section className="xmo-sec xmo-fam" data-room="dark" aria-labelledby="xmo-fam-h">
       <div className="x-wrap">
@@ -173,7 +192,7 @@ function Families() {
                 <p className="xmo-bc-d">{f.d}</p>
                 {f.stat && <p className="xmo-bc-stat">{`${f.stat} · Suites won · Kai vs Jev`}</p>}
                 {f.foot && <p className="xmo-bc-foot">{f.foot}</p>}
-                <Lk to={f.to} onClick={(e) => open(e, e.currentTarget.closest('.xmo-bc').querySelector('.xmo-bc-film'), f.slug)}>{`Explore ${f.name}`}</Lk>
+                <Lk to={f.to} onClick={(e) => open(e, e.currentTarget.closest('.xmo-bc')?.querySelector('.xmo-bc-film'), f.slug)}>{`Explore ${f.name}`}</Lk>
               </div>
             </li>
           ))}
@@ -189,7 +208,7 @@ const VS = [
   { k: 'zen', name: 'Zen', tag: 'Open weights · Zoo Labs Foundation', items: ['Free to download and self-host', 'Or call it on Hanzo Cloud', 'From a 501(c)(3) non-profit'], to: '/zen' },
 ];
 function Versus() {
-  const [hot, setHot] = useState(null);
+  const [hot, setHot] = useState<string | null>(null);
   return (
     <section className="xmo-sec xmo-vs" aria-labelledby="xmo-vs-h">
       <div className="x-wrap">
@@ -229,8 +248,8 @@ const DUELS = [
   { kai: 100.0, jev: 44.2, say: 'of repeated requests answer identically' },
 ];
 function Figures() {
-  const ref = useRef(null);
-  const big = useRef(null);
+  const ref = useRef<HTMLElement>(null);
+  const big = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.3 });
   // scale with rhythm: the figure rests at its size and grows only while it is the moment (centred on screen), then settles
   const { scrollYProgress: f } = useScroll({ target: big, offset: ['start end', 'end start'] });
@@ -255,8 +274,8 @@ function Figures() {
               <p className="xmo-duel-n x-mono"><MaskFig delay={0.12 + i * 0.1}>{`${d.kai.toFixed(1)}%`}</MaskFig></p>
               <figcaption>{d.say}</figcaption>
               <div className="xmo-bars" aria-hidden="true">
-                <span className="kai"><b>Kai</b><i style={{ '--v': d.kai / 100 }} /><em className="x-mono">{d.kai.toFixed(1)}%</em></span>
-                <span className="jev"><b>Jev</b><i style={{ '--v': d.jev / 100 }} /><em className="x-mono">{d.jev.toFixed(1)}%</em></span>
+                <span className="kai"><b>Kai</b><i style={{ '--v': d.kai / 100 } as CSSProperties} /><em className="x-mono">{d.kai.toFixed(1)}%</em></span>
+                <span className="jev"><b>Jev</b><i style={{ '--v': d.jev / 100 } as CSSProperties} /><em className="x-mono">{d.jev.toFixed(1)}%</em></span>
               </div>
               <p className="xmo-duel-vs">{`against Jev's ${d.jev.toFixed(1)}%`}</p>
             </figure>
@@ -268,7 +287,7 @@ function Figures() {
 }
 
 /* ---------- prices (the catalogue's rows and the hero's cards) ---------- */
-const dollars = (v) => (v == null ? '—' : '$' + (v > 0 && v < 1 ? v.toFixed(3) : v.toFixed(2)));
+const dollars = (v: number | null) => (v == null ? '—' : '$' + (v > 0 && v < 1 ? v.toFixed(3) : v.toFixed(2)));
 /* GA item 15: the models whose price Hanzo itself prints, checked against the snapshots (7 Nov):
    content/live/models/hanzo/<id>.json ("$0.330 in · $1.65 out, per million tokens"), the maker pages under
    content/live/models/<lab>/, content/live/models.json's price list and /pricing's API tab. Zen6, Zen6 Flash,
@@ -276,26 +295,28 @@ const dollars = (v) => (v == null ? '—' : '$' + (v > 0 && v < 1 ? v.toFixed(3)
    Zen 7 print no price of their own, so the rows show none ("—"). Never a guessed price. */
 const PRICED = new Set(['enso-auto', 'enso-flash', 'enso-pro', 'enso-max', 'enso-ultra', 'zen5', 'zen5-pro', 'zen5-coder', 'zen5-flash', 'zen5-mini',
   'zen-vl', 'zen-embedding', 'zen-guard', 'kai', 'google/gemini-2.5-pro', 'deepseek/deepseek-chat', 'meta/muse-glimmer-30b', 'cohere/command-a']);
-const cost = (r, i) => (!r || !PRICED.has(r[0]) || r[2] == null ? '—' : r[2] === 0 && r[3] === 0 ? 'Free' : dollars(r[i]));
-const side = (v) => (v === 0 ? 'Free' : dollars(v));
+const cost = (r: RateRow | undefined, i: 2 | 3) => (!r || !PRICED.has(r[0]) || r[2] == null ? '—' : r[2] === 0 && r[3] === 0 ? 'Free' : dollars(r[i]));
+const side = (v: number | null) => (v === 0 ? 'Free' : dollars(v));
 // a model's own rate as one line, the way Hanzo's model pages print it ("$0.021 in · Free out"); null without a source
-const rateLine = (r) => (!r || !PRICED.has(r[0]) || r[2] == null ? null : r[2] === 0 && r[3] === 0 ? 'Free' : `${side(r[2])} in · ${side(r[3])} out`);
+const rateLine = (r: RateRow | undefined) => (!r || !PRICED.has(r[0]) || r[2] == null ? null : r[2] === 0 && r[3] === 0 ? 'Free' : `${side(r[2])} in · ${side(r[3])} out`);
 /* Each model's "Use it now": /chat, where Hanzo's own model pages send "Try in Chat". */
 const CHAT = '/chat';
-const Use = ({ id, name }) => <Cta to={CHAT} kind="quiet" size="sm" id={'models.use.' + id} className="xmo-use" aria-label={`Use ${name} now in Hanzo Chat`}>Use it now</Cta>;
-const ctxOf = (n) => (n == null ? '—' : n >= 950000 ? Math.round(n / 1e6) + 'M' : Math.round(n / 1000) + 'K');
+const Use = ({ id, name }: { id: string; name: string }) => <Cta to={CHAT} kind="quiet" size="sm" id={'models.use.' + id} className="xmo-use" aria-label={`Use ${name} now in Hanzo Chat`}>Use it now</Cta>;
+const ctxOf = (n: number | null) => (n == null ? '—' : n >= 950000 ? Math.round(n / 1e6) + 'M' : Math.round(n / 1000) + 'K');
 
-const ALL = Object.fromEntries([...ROWS, ...OTHERS].map((r) => [r[0], r]));
+const ALL: Record<string, RateRow> = Object.fromEntries([...ROWS, ...OTHERS].map((r): [string, RateRow] => [r[0], r]));
 
 /* ---------- 2. the catalogue: every model in one list, its price in and out, and "Use it now" on each ---------- */
-const ENSO = {
+/* a card's words: name, context, description, modalities */
+type Words = [string, string, string | null, string[]];
+const ENSO: Record<string, Words> = {
   'enso-auto': ['Enso Auto', '1M', "Adaptive Enso router — selects the right Enso model per request by reasoning depth and task, billing at the model that answers.", ['text']],
   'enso-flash': ['Enso Flash', '262K', 'Fast, economical Enso model for high-volume, low-latency everyday chat, coding, and tool calls.', ['text']],
   'enso-pro': ['Enso Pro', '1M', 'Balanced frontier reasoning and coding model for production agents, tool use, and repo-scale engineering.', ['text']],
   'enso-max': ['Enso Max', '1M', 'Extended frontier reasoning model for deep multi-step architecture, research, and autonomous coding loops.', ['text']],
   'enso-ultra': ['Enso Ultra', '1M', 'Adaptive fan-out — probes a task-appropriate model, escalates to a top-K panel only when needed, then verifies and selects the best answer.', ['text']],
 };
-const ZEN = {
+const ZEN: Record<string, Words> = {
   zen6: ['Zen6', '1M', null, ['text']],
   'zen6-flash': ['Zen6 Flash', '1M', null, ['text']],
   zen5: ['Zen5 (Default)', '1M', 'Canonical Zen5 default. a 35B frontier MoE (3B active) (35B total / 3B active per token, released Apr 2026, Apache-2.0). 256K context, agentic-trained, OpenAI + Anthropic API. The everyday Zen5 chat model.', ['text']],
@@ -330,25 +351,40 @@ const LABS = [
 
 /* One row per model: Hanzo's 27 (api.hanzo.ai's list, in its order, each with its card's words where it has a card),
    Zen 7, Kai's two decision cards, the six creative models and the other labs' flagships. */
-const hanzoTo = (id) => '/models/hanzo/' + id.replace('hanzo/', '');
-const fromRows = (f) => ROWS.filter((r) => r[0] !== 'kai' && (f === 'enso' ? r[0].startsWith('enso') : !r[0].startsWith('enso'))).map((r) => {
+const hanzoTo = (id: string) => '/models/hanzo/' + id.replace('hanzo/', '');
+const fromRows = (f: 'enso' | 'zen'): Entry[] => ROWS.filter((r) => r[0] !== 'kai' && (f === 'enso' ? r[0].startsWith('enso') : !r[0].startsWith('enso'))).map((r) => {
   const c = (f === 'enso' ? ENSO : ZEN)[r[0]];
   return { id: r[0], fam: f, to: hanzoTo(r[0]), name: c ? c[0] : r[1], ctx: c ? c[1] : ctxOf(r[4]), d: c && c[2], tags: c ? c[3] : [], r, thumb: f };
 });
-const CAT = [
+type Family = 'enso' | 'zen' | 'kai' | 'creative' | 'labs';
+interface Entry {
+  id: string;
+  fam: Family;
+  to: string;
+  name: string;
+  ctx?: string | null;
+  d: string | null | undefined;
+  tags: string[];
+  r?: RateRow;
+  thumb?: string;
+  ask?: boolean;
+  ep?: string;
+  who?: string;
+}
+const CAT: Entry[] = [
   ...fromRows('enso'),
   ...fromRows('zen'),
   { id: 'zen7', fam: 'zen', to: '/zen/7', name: 'Zen 7', ctx: '—', d: 'The next open-weight generation after Zen 6, in research preview.', tags: ['Research preview'], thumb: 'zen', ask: true },
-  ...KAI.map((k) => ({ ...k, fam: 'kai', r: ALL[k.id], thumb: 'kai', who: 'Kai' })),
-  ...CREATIVE.map(([slug, name, id, d, kind, ep]) => ({ id, fam: 'creative', to: '/' + slug, name, ctx: '—', d, tags: ['Research preview', kind], ep, thumb: slug })),
-  ...LABS.map(([id, name, ctx, d]) => ({ id, fam: 'labs', to: '/models/' + id, name, ctx, d, tags: ['text'], r: ALL[id] })),
+  ...KAI.map((k): Entry => ({ ...k, fam: 'kai', r: ALL[k.id], thumb: 'kai', who: 'Kai' })),
+  ...CREATIVE.map(([slug, name, id, d, kind, ep]): Entry => ({ id, fam: 'creative', to: '/' + slug, name, ctx: '—', d, tags: ['Research preview', kind], ep, thumb: slug })),
+  ...LABS.map(([id, name, ctx, d]): Entry => ({ id, fam: 'labs', to: '/models/' + id, name, ctx, d, tags: ['text'], r: ALL[id] })),
 ];
-const FAMS = ['enso', 'zen', 'kai', 'creative', 'labs'];
+const FAMS: Family[] = ['enso', 'zen', 'kai', 'creative', 'labs'];
 const CHIPS = [['all', 'All'], ['enso', 'Enso'], ['zen', 'Zen'], ['kai', 'Kai'], ['creative', 'Creative'], ['labs', 'Other labs']];
-const COUNT = Object.fromEntries(FAMS.map((f) => [f, CAT.filter((m) => m.fam === f).length]));
+const COUNT: Record<string, number> = Object.fromEntries(FAMS.map((f): [string, number] => [f, CAT.filter((m) => m.fam === f).length]));
 COUNT.all = CAT.length;
 const LENS = [['all', 'Everything'], ['ours', 'Ours'], ['free', 'Free'], ['under', 'Under $1 / M out'], ['million', '1M context']];
-const keep = {
+const keep: Record<string, (m: Entry) => boolean> = {
   all: () => true,
   ours: (m) => m.fam !== 'labs',
   free: (m) => !!m.r && PRICED.has(m.r[0]) && m.r[2] === 0 && m.r[3] === 0,
@@ -356,14 +392,14 @@ const keep = {
   million: (m) => !!m.r && m.r[4] != null && m.r[4] >= 950000,
 };
 const TOP = Math.log10(Math.max(...CAT.map((m) => (m.r && PRICED.has(m.r[0]) && m.r[3]) || 0)) * 100 + 1);
-const barOf = (m) => (m.r && PRICED.has(m.r[0]) && m.r[3] ? Math.max(0.04, Math.log10(m.r[3] * 100 + 1) / TOP) : 0);
-const said = (m) => [m.name, m.id, m.d, m.ep, ...(m.tags || [])].join(' ').toLowerCase();
+const barOf = (m: Entry) => (m.r && PRICED.has(m.r[0]) && m.r[3] ? Math.max(0.04, Math.log10(m.r[3] * 100 + 1) / TOP) : 0);
+const said = (m: Entry) => [m.name, m.id, m.d, m.ep, ...(m.tags || [])].join(' ').toLowerCase();
 
 /* ids and endpoints break only after a "/" (never mid-word) */
-const slashes = (t) => <><span aria-hidden="true">{String(t).split('/').flatMap((x, i) => (i ? [<wbr key={i} />, '/' + x] : [x]))}</span><span className="x-sr">{t}</span></>;
+const slashes = (t: string) => <><span aria-hidden="true">{String(t).split('/').flatMap((x, i) => (i ? [<wbr key={i} />, '/' + x] : [x]))}</span><span className="x-sr">{t}</span></>;
 
 /* Each row leads with a thumb: the family's own poster (Hanzo's media), or for another lab's model a still of its Sigil. */
-function Thumb({ fam, seed }) {
+function Thumb({ fam, seed }: { fam?: string | null; seed: string }) {
   return (
     <span className="xmo-thumb" aria-hidden="true" style={fam ? { backgroundImage: `url(${media(fam, 'webp')})` } : undefined}>
       {!fam && <Sigil seed={'/models/' + seed} className="xmo-thumb-s" still />}
@@ -371,7 +407,7 @@ function Thumb({ fam, seed }) {
   );
 }
 
-function Row({ m, hide }) {
+function Row({ m, hide }: { m: Entry; hide: boolean }) {
   return (
     <li className="xmo-row" hidden={hide}>
       <Thumb fam={m.thumb} seed={m.id} />
@@ -394,9 +430,9 @@ function Row({ m, hide }) {
 }
 
 /* A family's head, sticky at the top of the list while its rows pass. */
-function Group({ fam, n, hide, children }) {
+function Group({ fam, n, hide, children }: { fam: Family; n: number; hide: boolean; children: ReactNode }) {
   const open = useOpen();
-  const film = (e, slug) => open(e, e.currentTarget.closest('.xmo-ghead').querySelector('.xmo-thumb'), slug);
+  const film = (e: MouseEvent<HTMLElement>, slug: string) => open(e, e.currentTarget.closest('.xmo-ghead')?.querySelector('.xmo-thumb'), slug);
   const H = {
     enso: ['Enso models', null, <Lk to="/enso" onClick={(e) => film(e, 'enso')}>Enso: the router, its presets and its runs</Lk>],
     zen: ['Zen models', <p><span>Open weights, made with </span><A to="https://zoo.ngo">Zoo Labs Foundation</A><span>. Download every Zen model at </span><A to="https://huggingface.co/zenlm">huggingface.co/zenlm</A><span>, or call it here.</span></p>, <Lk to="https://docs.hanzo.ai/docs/models/zen">Run Zen: the docs</Lk>],
@@ -420,7 +456,7 @@ function Group({ fam, n, hide, children }) {
 
 /* Beyond: every model page and every maker page, one press away. Collapsed under Hanzo's own "Every model", a native
    disclosure, so find-in-page opens it and the links are in the HTML for crawlers and agents. */
-function Every({ makers }) {
+function Every({ makers }: { makers?: Maker[] }) {
   if (!makers || !makers.length) return null;
   return (
     <details className="xmo-every" id="every">
@@ -440,7 +476,7 @@ function Every({ makers }) {
   );
 }
 
-function Catalogue({ makers }) {
+function Catalogue({ makers }: { makers?: Maker[] }) {
   const [fam, setFam] = useState('all');
   const [lens, setLens] = useState('all');
   const [q, setQ] = useState('');
@@ -452,11 +488,11 @@ function Catalogue({ makers }) {
     const timer = setTimeout(() => track('search_performed', { search_string: s, from: 'models' }), 1200);
     return () => clearTimeout(timer);
   }, [q]);
-  const list = useRef(null);
+  const list = useRef<HTMLUListElement>(null);
   const sig = `${fam}|${lens}|${q.trim()}`;
   const first = useRef(sig);
   const words = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  const shown = (m) => (fam === 'all' || m.fam === fam) && keep[lens](m) && words.every((w) => said(m).includes(w));
+  const shown = (m: Entry) => (fam === 'all' || m.fam === fam) && keep[lens](m) && words.every((w) => said(m).includes(w));
   const n = CAT.filter(shown).length;
   // a filter brings the list back to its top, under a beam of light that sweeps the rows that stay
   useEffect(() => { if (list.current) list.current.scrollTop = 0; }, [sig]);
@@ -530,11 +566,11 @@ const REQ = [
 function Try() {
   const [k, setK] = useState(0);
   const [mine, setMine] = useState(false);
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
   const stop = usePaused();
-  const pick = (i) => { setK(i); setMine(true); };
+  const pick = (i: number) => { setK(i); setMine(true); };
   const r = REQ[k];
   return (
     <section className="xmo-sec xmo-try" aria-labelledby="xmo-try-h">
@@ -681,7 +717,7 @@ function First() {
 }
 
 /* ---------- 9. related, as an editorial index ---------- */
-const RELATED = [
+const RELATED: [string, string | null, string][] = [
   ['Agents', 'Build & run agents', '/agents'],
   ['Inference', null, '/engine'],
   ['Embeddings', 'Turn anything into vectors', '/cloud/embeddings'],
@@ -708,7 +744,7 @@ function Related() {
 
 /* ---------- 10. the close: the page's own words and its one ask, beside Enso's film on a lifted black card ---------- */
 function Close() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { amount: 0.3 });
   return (
     <section className="xmo-sec xmo-close" aria-labelledby="xmo-close-h" ref={ref}>
@@ -724,7 +760,7 @@ function Close() {
   );
 }
 
-export default function ModelsPage({ makers }) {
+export default function ModelsPage({ makers }: { makers?: Maker[] }) {
   return (
     <main className="xmo">
       <CopyStatus />

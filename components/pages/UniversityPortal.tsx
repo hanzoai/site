@@ -7,11 +7,13 @@
    hidden. The student, the pod and the balances are the portal's sample, as the app prints them; the credit a course
    deposits is a quarter of the tuition the catalog states, where it sells the course (universitySeat.js). */
 import { useEffect, useRef, useState } from 'react';
+import type { ElementType, ReactNode } from 'react';
 import { A, Tabs, TabPanel } from '../kit';
 import { Chip } from './UniversityFold';
 import Icon from './universityIcons';
 import { seatFor } from './universitySeat';
 import { UNIVERSITY_COURSES } from './universityData';
+import type { Course } from './universityData';
 import './UniversityPortal.css';
 
 const PROMPT = 'alex@hanzo-sandbox:~/swe-bench-agent$ ';
@@ -31,7 +33,7 @@ const START = [
   PROMPT + '_',
 ];
 const AUTOGRADE = 'zen eval --benchmark swe-bench';
-const OUT = {
+const OUT: Record<string, string[]> = {
   [AUTOGRADE]: [
     '[HANZO EVAL] Running SWE-bench Lite benchmark evaluation harness...',
     '  [1/5] django/django-14999: AST diff generated (cost: $0.038) -> TEST PASSED [100%]',
@@ -73,7 +75,7 @@ const TABS = ['Shell', 'AST Diff', 'Autograder', 'Spend'];
 const COPIED = 'W3C JSON-LD Credential copied to clipboard!';
 
 /* the credential as a W3C Verifiable Credential, for the sample student the portal shows */
-const credentialLD = (c) => JSON.stringify({
+const credentialLD = (c: Course) => JSON.stringify({
   '@context': ['https://www.w3.org/ns/credentials/v2'],
   type: ['VerifiableCredential'],
   issuer: 'did:hanzo:university:accreditation',
@@ -81,10 +83,10 @@ const credentialLD = (c) => JSON.stringify({
   proof: { type: 'Ed25519Signature2020', proofValue: '0x7f4a8b1c...99e2e89b' },
 }, null, 2);
 
-const tone = (line) => (line.startsWith('alex@') ? 'p' : line.includes('PASSED') || line.includes('[OK]') ? 'hi' : '');
+const tone = (line: string) => (line.startsWith('alex@') ? 'p' : line.includes('PASSED') || line.includes('[OK]') ? 'hi' : '');
 
 /* every course's variant of a piece, the one not picked hidden */
-function Per({ sel, as: Tag = 'span', children }) {
+function Per({ sel, as: Tag = 'span', children }: { sel: number; as?: ElementType; children: (c: Course, i: number) => ReactNode }) {
   return UNIVERSITY_COURSES.map((c, i) => <Tag key={c.slug} className="xuv-per" hidden={i !== sel}>{children(c, i)}</Tag>);
 }
 
@@ -95,9 +97,9 @@ export default function UniversityPortal() {
   const [log, setLog] = useState(START);
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState('');
-  const dlg = useRef(null);
-  const pane = useRef(null);
-  const timer = useRef(0);
+  const dlg = useRef<HTMLDialogElement>(null);
+  const pane = useRef<HTMLDivElement>(null);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const seen = useRef(START.length);
   const seats = UNIVERSITY_COURSES.map((c) => seatFor(c.planId, '/university/portal'));
   const active = UNIVERSITY_COURSES[sel];
@@ -109,7 +111,7 @@ export default function UniversityPortal() {
     pane.current?.scrollTo({ top: pane.current.scrollHeight });
   }, [log]);
 
-  const run = (cmd) => {
+  const run = (cmd: string) => {
     if (busy) return;
     setBusy(true);
     setLog((l) => [...l, PROMPT + cmd]);

@@ -3,29 +3,42 @@
    plain drawer for any section hanzo.ai adds later. Rates are Hanzo's: printed from hanzo.ai, refreshed from
    api.hanzo.ai/v1/models in the browser, as hanzo.ai does. */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, ElementType, KeyboardEvent } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy } from '../../ui';
 import { A, Tabs, TabPanel, CodeBlock } from '../../kit';
 import { href } from '../../../lib/route';
 import { SNAP } from './rates';
+import type { Card, Leaf, Point, Rate, Sample, Sibling } from './types';
 
-export const money = (v) => (v == null ? '—' : v === 0 ? 'Free' : '$' + (v < 1 ? v.toFixed(3) : v.toFixed(2)));
-export const rateText = (r) => (r ? `${money(r.in)} in · ${money(r.out)} out, per million tokens` : '—');
-const ctxText = (t) => (t == null ? '—' : t >= 1e6 ? +(t / 1e6).toFixed(1) + 'M' : Math.round(t / 1000) + 'K');
-const bill = (r, i, o) => (r ? r.in * i + r.out * o : null);
-const dollars = (v) => (v == null ? '—' : v === 0 ? '$0' : '$' + (v >= 100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(2)));
+export const money = (v: number | null | undefined) => (v == null ? '—' : v === 0 ? 'Free' : '$' + (v < 1 ? v.toFixed(3) : v.toFixed(2)));
+export const rateText = (r: Rate | null | undefined) => (r ? `${money(r.in)} in · ${money(r.out)} out, per million tokens` : '—');
+const ctxText = (t: number | null | undefined) => (t == null ? '—' : t >= 1e6 ? +(t / 1e6).toFixed(1) + 'M' : Math.round(t / 1000) + 'K');
+function bill(r: Rate, i: number, o: number): number;
+function bill(r: Rate | null | undefined, i: number, o: number): number | null;
+function bill(r: Rate | null | undefined, i: number, o: number) { return r ? r.in * i + r.out * o : null; }
+const dollars = (v: number | null) => (v == null ? '—' : v === 0 ? '$0' : '$' + (v >= 100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(2)));
 
 /* api.hanzo.ai's catalogue, asked once a page (the public GET hanzo.ai's own model pages read) */
-let CAT = null, RAW = null;
-const raw = () => (RAW ||= fetch('https://api.hanzo.ai/v1/models').then((r) => r.json()).then((j) => j.data || []).catch(() => { RAW = null; return []; }));
-export function useCatalog(need) {
-  const [map, setMap] = useState(null);
+interface Listed {
+  id: string;
+  name?: string;
+  description?: string;
+  context_window?: number;
+  outputs?: string[];
+  pricing?: { input_per_million: number | string | null; output_per_million: number | string | null };
+}
+type Catalog = Record<string, Rate>;
+let CAT: Promise<Catalog | null> | null = null, RAW: Promise<Listed[]> | null = null;
+const raw = () => (RAW ||= fetch('https://api.hanzo.ai/v1/models').then((r) => r.json() as Promise<{ data?: Listed[] }>).then((j) => j.data || []).catch((): Listed[] => { RAW = null; return []; }));
+export function useCatalog(need: boolean) {
+  const [map, setMap] = useState<Catalog | null>(null);
   useEffect(() => {
     if (!need) return;
     let gone = false;
     CAT ||= raw().then((data) => Object.fromEntries(data
-      .filter((x) => x.pricing && x.pricing.input_per_million != null)
-      .map((x) => [x.id, { in: +x.pricing.input_per_million, out: +x.pricing.output_per_million }]))).catch(() => { CAT = null; return null; }); // a failed read is no answer (null), not an empty price list
+      .filter((x): x is Listed & { pricing: NonNullable<Listed['pricing']> } => !!x.pricing && x.pricing.input_per_million != null)
+      .map((x): [string, Rate] => [x.id, { in: Number(x.pricing.input_per_million), out: Number(x.pricing.output_per_million) }]))).catch((): Catalog | null => { CAT = null; return null; }); // a failed read is no answer (null), not an empty price list
     CAT.then((m) => { if (!gone && m) setMap(m); });
     return () => { gone = true; };
   }, [need]);
@@ -38,10 +51,10 @@ export function useCatalog(need) {
    what stays when the gateway does not answer. The lab of an id is its prefix, as hanzo.ai files it ("~" marks a
    "latest" alias; ByteDance's Seed and Meta's Llama ids carry their own prefixes). Hanzo's own models are curated by
    hanzo.ai, not listed by prefix, so /models/hanzo keeps its captured shelf. */
-const LAB = { 'bytedance-seed': 'bytedance', 'meta-llama': 'meta' };
-const ctxOf = (n) => (!n ? null : n >= 1e6 ? Math.round(n / 1e6) + 'M' : Math.round(n / 1e3) + 'K');
-export function useShelf(slug, cards) {
-  const [list, setList] = useState(null);
+const LAB: Record<string, string> = { 'bytedance-seed': 'bytedance', 'meta-llama': 'meta' };
+const ctxOf = (n: number | null) => (!n ? null : n >= 1e6 ? Math.round(n / 1e6) + 'M' : Math.round(n / 1e3) + 'K');
+export function useShelf(slug: string, cards: Sibling[]): Sibling[] {
+  const [list, setList] = useState<Sibling[] | null>(null);
   useEffect(() => {
     if (slug === 'hanzo') return;
     let gone = false;
@@ -50,10 +63,10 @@ export function useShelf(slug, cards) {
       const next = data.filter((x) => x.id.includes('/')).map((x) => {
         const [lab, rest] = x.id.replace(/^~/, '').split(/\/(.*)/s);
         return (LAB[lab] || lab) === slug ? { x, href: '/models/' + slug + '/' + rest } : null;
-      }).filter(Boolean).map(({ x, href }) => {
-        const c = own.get(href) || {};
+      }).filter((e): e is { x: Listed; href: string } => e !== null).map(({ x, href }): Sibling => {
+        const c: Partial<Sibling> = own.get(href) || {};
         const t = x.context_window || null;
-        return { ...c, href, id: x.id, name: x.name || c.name || href.split('/').pop(), ctx: ctxOf(t) || c.ctx || null, tokens: t || c.tokens || null,
+        return { ...c, href, id: x.id, name: x.name || c.name || href.split('/').pop() || '', ctx: ctxOf(t) || c.ctx || null, tokens: t || c.tokens || null,
           desc: x.description || c.desc || '', tags: (x.outputs && x.outputs.length ? x.outputs : c.tags) || [] };
       });
       // a gateway answer that shares nothing with the captured shelf is not this maker's list: keep the capture
@@ -64,21 +77,21 @@ export function useShelf(slug, cards) {
   return list || cards;
 }
 // api.hanzo.ai's rate, once read, wins (it is what hanzo.ai itself prints); the captured rate and the snapshot are the first paint
-export const rateFrom = (cat, id, own) => (cat && (cat[id] || cat[id.replace(/^hanzo\//, '')])) || own || SNAP[id] || SNAP[id.replace(/^hanzo\//, '')] || null;
+export const rateFrom = (cat: Catalog | null, id: string, own?: Rate | null): Rate | null => (cat && (cat[id] || cat[id.replace(/^hanzo\//, '')])) || own || SNAP[id] || SNAP[id.replace(/^hanzo\//, '')] || null;
 /* a rate the page cannot print without asking api.hanzo.ai (printed rates and the snapshot need no request) */
-export const missing = (id, own) => !rateFrom(null, id, own);
+export const missing = (id: string, own?: Rate | null) => !rateFrom(null, id, own);
 
 /* a link to a page this rebuild has (it opens by Morph); anything else opens Hanzo's live page in a new tab */
-export const isLocal = (h) => !!h && !/^https?:/.test(href(h) || '');
+export const isLocal = (h: string | null | undefined) => !!h && !/^https?:/.test(href(h) || '');
 
 /* One polite live region for the page: whenever a Copy button really copied (its own label turns to "Copied"),
    it is said once here, so a screen reader hears it wherever focus is (role="status"). */
 export function CopyStatus() {
   const [msg, setMsg] = useState('');
   useEffect(() => {
-    let t1 = 0, t2 = 0;
-    const on = (e) => {
-      const b = e.target && e.target.closest && e.target.closest('.x-copy');
+    let t1: ReturnType<typeof setTimeout> | undefined, t2: ReturnType<typeof setTimeout> | undefined;
+    const on = (e: MouseEvent) => {
+      const b = e.target instanceof Element ? e.target.closest('.x-copy') : null;
       if (!b) return;
       clearTimeout(t1); clearTimeout(t2);
       t1 = setTimeout(() => {
@@ -96,12 +109,21 @@ export function CopyStatus() {
 /* ---------- signature: the sibling field ----------
    Every model from the same maker, placed by context window (across) and output rate (up). A light sweeps across it
    and each model it passes answers; this page's model rings. Every dot is a link (hover or focus reads it). */
-export function Field({ points, here, label = 'Models by context window and output rate' }) {
-  const ref = useRef(null);
+interface Plotted extends Point {
+  tokens: number;
+  rate: Rate;
+}
+interface FieldProps {
+  points: Point[];
+  here: string | null;
+  label?: string;
+}
+export function Field({ points, here, label = 'Models by context window and output rate' }: FieldProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.25 });
-  const [hot, setHot] = useState(null);
+  const [hot, setHot] = useState<string | null>(null);
   const placed = useMemo(() => {
-    const ok = points.filter((p) => p.tokens && p.rate);
+    const ok = points.filter((p): p is Plotted => !!(p.tokens && p.rate));
     if (!ok.length) return { dots: [], xt: [], yt: [] };
     const lx = ok.map((p) => Math.log10(p.tokens));
     const paid = ok.filter((p) => p.rate.out > 0).map((p) => Math.log10(p.rate.out));
@@ -112,9 +134,9 @@ export function Field({ points, here, label = 'Models by context window and outp
     x0 -= px; x1 += px;
     if (y1 - y0 < 0.4) { y0 -= 0.3; y1 += 0.3; }
     const free = ok.some((p) => p.rate.out === 0);
-    const X = (v) => 10 + ((v - x0) / (x1 - x0)) * 80;
-    const Y = (v) => (free ? 80 : 88) - ((v - y0) / (y1 - y0)) * (free ? 66 : 74);
-    const seenAt = {};
+    const X = (v: number) => 10 + ((v - x0) / (x1 - x0)) * 80;
+    const Y = (v: number) => (free ? 80 : 88) - ((v - y0) / (y1 - y0)) * (free ? 66 : 74);
+    const seenAt: Record<string, number> = {};
     const dots = ok.map((p, i) => {
       let x = X(Math.log10(p.tokens)), y = p.rate.out > 0 ? Y(Math.log10(p.rate.out)) : 92;
       // models on the same spot (batch twins, one size and rate) open out on a small spiral around it, never off the plot
@@ -125,12 +147,12 @@ export function Field({ points, here, label = 'Models by context window and outp
     });
     // a tick at every context size the maker offers (Hanzo's own short form), else at each power of ten
     const sizes = [...new Map(ok.map((p) => [p.ctx || ctxText(p.tokens), p.tokens])).entries()].sort((a, b) => a[1] - b[1]);
-    const xt = [];
+    const xt: { at: number; t: string }[] = [];
     if (sizes.length <= 6) sizes.forEach(([s, t]) => xt.push({ at: +X(Math.log10(t)).toFixed(2), t: s }));
     else for (let d = Math.ceil(x0); d <= Math.floor(x1); d++) xt.push({ at: +X(d).toFixed(2), t: ctxText(10 ** d) });
     // two sizes close together ("900K", "1M") keep only the first label, so no two labels print on each other
     for (let i = xt.length - 1; i > 0; i--) if (xt[i].at - xt[i - 1].at < 7) xt[i].t = '';
-    const yt = [];
+    const yt: { at: number; t: string }[] = [];
     for (let d = Math.ceil(y0); d <= Math.floor(y1); d++) yt.push({ at: +Y(d).toFixed(2), t: money(10 ** d) });
     if (free) yt.push({ at: 92, t: 'Free' });
     return { dots, xt, yt };
@@ -147,7 +169,7 @@ export function Field({ points, here, label = 'Models by context window and outp
           const mine = d.href === here;
           const p = {
             className: 'xmf-dot' + (mine ? ' me' : '') + (d.local ? '' : ' far'),
-            style: { left: d.x + '%', top: d.y + '%', '--x': (d.x / 100).toFixed(3), '--i': String(d.i) },
+            style: { left: d.x + '%', top: d.y + '%', '--x': (d.x / 100).toFixed(3), '--i': String(d.i) } as CSSProperties,
             'aria-label': `${d.name}: ${d.ctx || ctxText(d.tokens)} context, ${rateText(d.rate)}`,
             onPointerEnter: () => setHot(d.href), onPointerLeave: () => setHot(null),
             onFocus: () => setHot(d.href), onBlur: () => setHot(null),
@@ -184,12 +206,12 @@ export function Field({ points, here, label = 'Models by context window and outp
 
 /* ---------- the spec sheet's object: the two rates drawn to one scale ----------
    In and out per million tokens as two bars (Hanzo's own rates, nothing else); they draw in once when the sheet arrives. */
-export function RateBars({ rate }) {
-  const ref = useRef(null);
+export function RateBars({ rate }: { rate?: Rate | null }) {
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   if (!rate) return null;
   const top = Math.max(rate.in, rate.out) || 1;
-  const bar = (k, v) => (
+  const bar = (k: string, v: number) => (
     <div className="xmf-rb-r">
       <span className="x-mono">{k}</span>
       <i aria-hidden="true"><b style={{ transform: `scaleX(${seen ? Math.max(v ? 0.02 : 0, v / top) : 0})` }} /></i>
@@ -206,8 +228,8 @@ export function RateBars({ rate }) {
 
 /* ---------- a limit drawn: the context a model reaches, against what it was trained on ----------
    Both numbers come from Hanzo's own spec line ("32,768 tokens (YaRN; trained: 1,024)"); the bar is to scale. */
-export function Reach({ value, tokens }) {
-  const ref = useRef(null);
+export function Reach({ value, tokens }: { value: string | null; tokens: number | null }) {
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const m = /trained:\s*([\d,]+)/.exec(value || '');
   const trained = m ? parseInt(m[1].replace(/,/g, ''), 10) : null;
@@ -218,10 +240,10 @@ export function Reach({ value, tokens }) {
   return (
     <figure className={'xmf-reach' + (seen ? ' on' : '')} ref={ref}>
       <div className={'xmf-reach-bar' + (n ? ' cells' : '')} aria-hidden="true">
-        {n ? Array.from({ length: n }, (_, i) => <i key={i} className={i ? '' : 'tr'} style={{ '--i': String(i) }} />) : <i className="all" />}
+        {n ? Array.from({ length: n }, (_, i) => <i key={i} className={i ? '' : 'tr'} style={{ '--i': String(i) } as CSSProperties} />) : <i className="all" />}
       </div>
       <figcaption>
-        {trained && <span className="x-mono tr">{m[1]}</span>}
+        {trained && <span className="x-mono tr">{m?.[1]}</span>}
         <span className="x-mono all">{reach}</span>
       </figcaption>
     </figure>
@@ -231,7 +253,7 @@ export function Reach({ value, tokens }) {
 /* ---------- Hanzo's other "More from" cards that are not in the rail ----------
    One line each: the name and its context; the description arrives on hover or focus (it is in the HTML throughout).
    A model this rebuild has a page for opens it; one it has not opens Hanzo's live page in a new tab and says so. */
-export function Also({ cards }) {
+export function Also({ cards }: { cards: Card[] }) {
   if (!cards.length) return null;
   return (
     <ul className="xmf-also">
@@ -256,30 +278,33 @@ export function Also({ cards }) {
    Your month on this model next to any sibling: the two bills from Hanzo's rates, the ratio, and the context each
    gives you. Nothing is estimated; it is rate × volume. */
 const STEPS = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000];
-function Volume({ id, label, i, set }) {
+function Volume({ id, label, i, set }: { id: string; label: string; i: number; set: (n: number) => void }) {
   return (
     <label className="xmf-vol" htmlFor={id}>
       <span>{label}</span>
-      <input id={id} type="range" min={0} max={STEPS.length - 1} step={1} value={i} onChange={(e) => set(+e.target.value)} aria-valuetext={STEPS[i] + ' million tokens a month'} style={{ '--f': (i / (STEPS.length - 1)) * 100 + '%' }} />
+      <input id={id} type="range" min={0} max={STEPS.length - 1} step={1} value={i} onChange={(e) => set(+e.target.value)} aria-valuetext={STEPS[i] + ' million tokens a month'} style={{ '--f': (i / (STEPS.length - 1)) * 100 + '%' } as CSSProperties} />
       <b className="x-mono">{STEPS[i].toLocaleString('en-US')}M</b>
     </label>
   );
 }
-export function Bill({ self, others }) {
-  const priced = others.filter((o) => o.rate).sort((a, b) => a.rate.out - b.rate.out || a.rate.in - b.rate.in);
+interface Priced extends Point {
+  rate: Rate;
+}
+export function Bill({ self, others }: { self: Priced; others: Point[] }) {
+  const priced = others.filter((o): o is Priced => !!o.rate).sort((a, b) => a.rate.out - b.rate.out || a.rate.in - b.rate.in);
   const near = priced.length ? priced.reduce((b, o) => (Math.abs(o.rate.out - self.rate.out) < Math.abs(b.rate.out - self.rate.out) && o.name !== self.name ? o : b), priced[0]) : null;
-  const [pick, setPick] = useState(near ? near.href : null);
+  const [pick, setPick] = useState<string | null>(near ? near.href : null);
   const [vi, setVi] = useState(3);
   const [vo, setVo] = useState(1);
   const other = priced.find((o) => o.href === pick) || null;
   const i = STEPS[vi], o = STEPS[vo];
   const a = bill(self.rate, i, o), b = other ? bill(other.rate, i, o) : null;
   const top = Math.max(a || 0, b || 0) || 1;
-  const ratio = b != null && a > 0 && b > 0 ? (b > a ? b / a : a / b) : null;
-  const say = b == null ? null : a === b ? 'The same bill for this mix.' : a === 0 || b === 0 ? (a === 0 ? `${self.name} is free at this volume.` : `${other.name} is free at this volume.`)
-    : `${b > a ? other.name : self.name} costs ${ratio.toFixed(ratio < 10 ? 1 : 0)}× more for this mix.`;
+  const ratio = b != null && a > 0 && b > 0 ? (b > a ? b / a : a / b) : 0;
+  const say = b == null ? null : a === b ? 'The same bill for this mix.' : a === 0 || b === 0 ? (a === 0 ? `${self.name} is free at this volume.` : `${other?.name} is free at this volume.`)
+    : `${b > a ? other?.name : self.name} costs ${ratio.toFixed(ratio < 10 ? 1 : 0)}× more for this mix.`;
   const ctxTop = Math.max(self.tokens || 0, (other && other.tokens) || 0) || 1;
-  const row = (m, v, me) => (
+  const row = (m: Point, v: number | null, me: boolean) => (
     <div className={'xmf-brow' + (me ? ' me' : '')} key={m.name + (me ? '*' : '')}>
       <span className="xmf-bname">{m.name}</span>
       <span className="xmf-bar" aria-hidden="true"><motion.i initial={false} animate={{ scaleX: v == null ? 0 : Math.max(0.012, v / top) }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} /></span>
@@ -323,21 +348,26 @@ export function Bill({ self, others }) {
 /* ---------- the quick-start room: the language you pick is kept for the next model page (PLAN-COMPONENTS 2.15:
    no auto-rotating snippet; the language persists) ---------- */
 const LANG = 'hz-lang';
-export function Codes({ samples, keyLink, title }) {
+interface CodesProps {
+  samples: Sample[];
+  keyLink: { href: string; label: string } | null;
+  title: string;
+}
+export function Codes({ samples, keyLink, title }: CodesProps) {
   const [on, setOn] = useState(0);
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     try { const k = localStorage.getItem(LANG); const j = samples.findIndex((s) => s.lang === k); if (j > 0) setOn(j); } catch { /* storage off: first tab */ }
   }, [samples]);
-  const choose = (i) => { setOn(i); try { localStorage.setItem(LANG, samples[i].lang); } catch { /* storage off */ } };
-  const keys = (e) => {
+  const choose = (i: number) => { setOn(i); try { localStorage.setItem(LANG, samples[i].lang); } catch { /* storage off */ } };
+  const keys = (e: KeyboardEvent) => {
     const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
     if (!d) return;
     e.preventDefault();
     const j = (on + d + samples.length) % samples.length;
     choose(j);
-    box.current.querySelectorAll('[role=tab]')[j].focus();
+    box.current?.querySelectorAll<HTMLElement>('[role=tab]')[j].focus();
   };
   return (
     <div className="xmf-code" ref={box}>
@@ -354,10 +384,10 @@ export function Codes({ samples, keyLink, title }) {
 
 /* ---------- a section drawn as written (rare: limits, notes) ---------- */
 const BLOCK = new Set(['div', 'section', 'nav', 'header', 'footer', 'article', 'aside']);
-export function Loose({ nodes }) {
+export function Loose({ nodes }: { nodes: Leaf[] }) {
   return nodes.map((n, i) => <Bit key={i} n={n} />);
 }
-function Bit({ n }) {
+function Bit({ n }: { n: Leaf }) {
   if (typeof n === 'string') return n;
   const kids = <Loose nodes={n.c} />;
   const t = n.t;
@@ -366,6 +396,6 @@ function Bit({ n }) {
   if (t === 'img' || t === 'input') return null;
   if (t === 'button') return <span className="xmf-lbtn">{kids}</span>;
   if (BLOCK.has(t)) return <div>{kids}</div>;
-  const T = ['h1', 'h2', 'h3', 'h4', 'p', 'ul', 'ol', 'li', 'strong', 'em', 'b', 'i', 'code', 'pre', 'span', 'small', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'blockquote', 'sup', 'sub'].includes(t) ? (t === 'h1' ? 'h2' : t) : 'span';
+  const T = (['h1', 'h2', 'h3', 'h4', 'p', 'ul', 'ol', 'li', 'strong', 'em', 'b', 'i', 'code', 'pre', 'span', 'small', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'blockquote', 'sup', 'sub'].includes(t) ? (t === 'h1' ? 'h2' : t) : 'span') as ElementType; // a whitelisted HTML tag name
   return <T>{kids}</T>;
 }

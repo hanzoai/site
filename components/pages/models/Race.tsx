@@ -13,14 +13,34 @@ import './race.css';
 
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 const RUN = 1700; // ms for the meter to reach the leader
-const curve = (t) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+const curve = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
 /* lanes: [{ key, name, href?, me?, values: { [metric]: number|null }, text: { [metric]: string } }]
    metrics: [{ k, label, fmt(number) }] (fmt prints a running value; the finished one is the lane's own text) */
-export default function Race({ lanes, metrics, label, dark = false, className = '' }) {
+export interface Lane {
+  key: string;
+  name: string;
+  href?: string;
+  me?: boolean;
+  values: Record<string, number | null>;
+  text: Record<string, string>;
+}
+export interface Metric {
+  k: string;
+  label: string;
+  fmt: (v: number) => string;
+}
+interface RaceProps {
+  lanes: Lane[];
+  metrics: Metric[];
+  label: string;
+  dark?: boolean;
+  className?: string;
+}
+export default function Race({ lanes, metrics, label, dark = false, className = '' }: RaceProps) {
   const [k, setK] = useState(0);
   const [p, setP] = useState(1);
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const raf = useRef(0);
   const ran = useRef(false);
   const run = () => {
@@ -28,7 +48,7 @@ export default function Race({ lanes, metrics, label, dark = false, className = 
     if (calmNow()) { setP(1); return; }
     setP(0);
     let t0 = 0;
-    const tick = (now) => {
+    const tick = (now: number) => {
       t0 ||= now;
       const t = Math.min(1, (now - t0) / RUN);
       setP(t);
@@ -43,14 +63,14 @@ export default function Race({ lanes, metrics, label, dark = false, className = 
       if (!e.isIntersecting || ran.current) return;
       ran.current = true; io.disconnect(); run();
     }, { rootMargin: '0px 0px -20% 0px' });
-    io.observe(box.current);
+    if (box.current) io.observe(box.current);
     return () => { io.disconnect(); cancelAnimationFrame(raf.current); };
   }, []);
   const m = metrics[k];
   const vals = lanes.map((l) => l.values[m.k]);
   const top = Math.max(0, ...vals.filter((v) => v != null)) || 1;
   const meter = top * curve(p);
-  const pick = (i) => { setK(i); ran.current = true; run(); };
+  const pick = (i: number) => { setK(i); ran.current = true; run(); };
   const left = vals.filter((v) => v != null && v > meter).length;
   return (
     <div className={'rc' + (dark ? ' dark' : '') + (p < 1 ? ' running' : '') + ' ' + className} ref={box} role="group" aria-label={label}>
