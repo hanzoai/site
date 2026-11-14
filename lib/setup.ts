@@ -1,6 +1,7 @@
 // The "Copy setup prompt" menu, exactly as hanzo.ai lists it: [agent, deep-link prefix that takes the prompt (or null), plain link, docs path].
 export const SETUP_PROMPT = "Read https://hanzo.ai/skill.md and follow it to set up a Hanzo company in my project: register or sign in with `hanzo login`, pick a starter with `hanzo template list`, clone the repository `hanzo template get <slug>` names in its `source`, then tell me to run `hanzo dev` in it to start building. Check you are in the project directory first — if not, ask me where it is.";
-export const SETUP = [
+export type Setup = [agent: string, prefix: string | null, url: string, docs: string];
+export const SETUP: Setup[] = [
   ["Hanzo Dev", null, "https://docs.hanzo.ai/docs/guides/coding", "guides/coding"],
   ["Claude Code", "claude-cli://open?q=", "", "guides/coding/claude-code"],
   ["Cursor", "https://cursor.com/link/prompt?text=", "", "guides/coding/cursor"],
@@ -36,10 +37,10 @@ export const SETUP = [
   ["NanoClaw", null, "https://docs.hanzo.ai/docs/guides/coding/nanoclaw", "guides/coding/nanoclaw"],
   ["Perplexity Computer", "https://www.perplexity.ai/search?q=", "", "guides/coding"],
 ];
-export const SETUP_FOOT = [
+export const SETUP_FOOT: [label: string, url: string][] = [
   ["Integration guides for every agent", "https://docs.hanzo.ai/docs/guides/coding"],
   ["Migrate & conventions map", "https://docs.hanzo.ai/docs/guides/migrate/coding-agents"],
   ["Hanzo MCP Toolset", "https://docs.hanzo.ai/docs/mcp"],
   ["Hanzo Skills", "https://hanzoskills.com"],
 ];
-export const setupHref = ([, pre, url]) => (pre ? pre + encodeURIComponent(SETUP_PROMPT) : url);
+export const setupHref = ([, pre, url]: Setup) => (pre ? pre + encodeURIComponent(SETUP_PROMPT) : url);

@@ -5,13 +5,14 @@
 import { Analytics, track as fire } from '@hanzo/event';
 
 class Stream extends Analytics {
-  capture(...args) { this.client?.capture(...args); }
-  link(url) { return this.client ? this.client.link(url) : url; }
-  authorize(url) { return this.client ? this.client.authorize(url) : url; }
+  declare client?: Analytics | null;
+  capture(...args: Parameters<Analytics['capture']>) { this.client?.capture(...args); }
+  link(url: string) { return this.client ? this.client.link(url) : url; }
+  authorize(url: string) { return this.client ? this.client.authorize(url) : url; }
 }
 const stream = new Stream({ product: 'site', enabled: false });
 
 /** Points the stream at the provider's client (Telemetry). */
-export const attach = (client) => { stream.client = client; };
-export const track = (name, params = {}) => fire(stream, name, params);
-export const capture = (name, props = {}) => stream.capture(name, props);
+export const attach = (client: Analytics | null | undefined) => { stream.client = client; };
+export const track = (name: string, params: Record<string, unknown> = {}) => fire(stream, name, params);
+export const capture = (name: string, props: Record<string, unknown> = {}) => stream.capture(name, props);

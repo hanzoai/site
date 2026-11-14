@@ -1,6 +1,6 @@
 'use client';
-/* The sound layer (mounted once in app/layout.jsx): wires lib/sound.js to the site's meaningful moments. Pages add nothing; to sound
-   their own moment they call play('done') from lib/sound.js, or put data-sound="tick" on a control (data-sound=""
+/* The sound layer (mounted once in app/layout.tsx): wires lib/sound.ts to the site's meaningful moments. Pages add nothing; to sound
+   their own moment they call play('done') from lib/sound.ts, or put data-sound="tick" on a control (data-sound=""
    silences one). Clicks and keys only: never hover, scroll or page load. */
 import { useEffect } from 'react';
 import { play } from '../lib/sound';

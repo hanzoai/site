@@ -10,11 +10,11 @@
 import { onDomChange } from './domwatch';
 
 const CARD = '[data-tilt]';
-const clamp = (v) => Math.max(-1, Math.min(1, v));
+const clamp = (v: number) => Math.max(-1, Math.min(1, v));
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Where a light falls on a leaning card, as fractions of its face: 0 to 1 across and down. */
-function paint(el, x, y, w, h, lit) {
+function paint(el: HTMLElement, x: number, y: number, w: number, h: number, lit: string) {
   const s = el.style;
   const nx = (x - 0.5) * 2;
   const ny = (y - 0.5) * 2;
@@ -27,18 +27,18 @@ function paint(el, x, y, w, h, lit) {
   s.setProperty('--lit', lit);
   el.setAttribute('data-lit', '');
 }
-function rest(el) {
+function rest(el: HTMLElement) {
   for (const k of ['--nx', '--ny', '--rx', '--ry', '--lit']) el.style.removeProperty(k);
   el.removeAttribute('data-lit');
 }
 
 /* a mouse */
 function mouse() {
-  let on = null, x = 0, y = 0, raf = 0;
+  let on: HTMLElement | null = null, x = 0, y = 0, raf = 0;
   let wantTilt = 0.5, atTilt = 0.5, tiltRaf = 0;
   const stepBlade = () => {
     atTilt += (wantTilt - atTilt) * 0.42;
-    document.querySelectorAll('[data-slot="beta"]').forEach((el) => el.style.setProperty('--tilt', atTilt.toFixed(4)));
+    document.querySelectorAll<HTMLElement>('[data-slot="beta"]').forEach((el) => el.style.setProperty('--tilt', atTilt.toFixed(4)));
     tiltRaf = Math.abs(wantTilt - atTilt) > 0.0005 ? requestAnimationFrame(stepBlade) : 0;
   };
   const frame = () => {
@@ -47,11 +47,11 @@ function mouse() {
     const r = on.getBoundingClientRect();
     paint(on, (x - r.left) / r.width, (y - r.top) / r.height, r.width, r.height, '1');
   };
-  const move = (e) => {
+  const move = (e: PointerEvent) => {
     if (e.pointerType !== 'mouse' || calm()) return;
     wantTilt = e.clientX / Math.max(1, innerWidth);
     if (!tiltRaf) tiltRaf = requestAnimationFrame(stepBlade);
-    const el = e.target.closest?.(CARD) ?? null;
+    const el = (e.target as Element | null)?.closest?.<HTMLElement>(CARD) ?? null;
     if (el !== on) { if (on) rest(on); on = el; }
     if (!on) return;
     x = e.clientX; y = e.clientY;
@@ -73,13 +73,14 @@ function mouse() {
    30 degrees either way is the edge. Every card on screen is painted from the one reading, so the light moves across
    them all at once as across one pane of glass. */
 function phone() {
-  const seen = new Set();
+  const seen = new Set<HTMLElement>();
   const io = new IntersectionObserver((es) => es.forEach((e) => {
-    if (e.isIntersecting) seen.add(e.target);
-    else { seen.delete(e.target); rest(e.target); }
+    const el = e.target as HTMLElement;
+    if (e.isIntersecting) seen.add(el);
+    else { seen.delete(el); rest(el); }
   }));
-  const watched = new WeakSet();
-  const scan = () => document.querySelectorAll(CARD).forEach((el) => { if (!watched.has(el)) { watched.add(el); io.observe(el); } });
+  const watched = new WeakSet<Element>();
+  const scan = () => document.querySelectorAll<HTMLElement>(CARD).forEach((el) => { if (!watched.has(el)) { watched.add(el); io.observe(el); } });
   scan();
   const off = onDomChange(scan);
   let x = 0.5, y = 0.5, raf = 0;
@@ -87,7 +88,7 @@ function phone() {
     raf = 0;
     for (const el of seen) paint(el, x, y, el.offsetWidth, el.offsetHeight, '0.6');
   };
-  const orient = (e) => {
+  const orient = (e: DeviceOrientationEvent) => {
     if (e.beta == null || e.gamma == null || calm()) return;
     x = 0.5 + clamp(e.gamma / 30) / 2;
     y = 0.5 + clamp((e.beta - 45) / 30) / 2;
@@ -95,9 +96,10 @@ function phone() {
   };
   // where a browser asks before it shares the tilt (iOS, and Chromium too) it asks inside a tap; the listener is there
   // from the start and hears nothing until the answer is yes
-  const ask = (e) => {
-    const R = globalThis.DeviceOrientationEvent?.requestPermission;
-    if (typeof R !== 'function' || !e.target.closest?.(CARD)) return;
+  const ask = (e: MouseEvent) => {
+    // requestPermission is iOS's and Chromium's gate on the tilt, and lib.dom does not declare it
+    const R = (globalThis.DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> } | undefined)?.requestPermission;
+    if (typeof R !== 'function' || !(e.target as Element | null)?.closest?.(CARD)) return;
     document.removeEventListener('click', ask, true);
     R.call(globalThis.DeviceOrientationEvent).catch(() => {});
   };

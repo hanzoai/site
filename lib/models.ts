@@ -11,4 +11,4 @@ export const MODELS = [
   { slug: 'mori', name: 'Mori', desc: '3D generation and spatial understanding.', tags: ['3D'] },
 ];
 export const bySlug = Object.fromEntries(MODELS.map((m) => [m.slug, m]));
-export const media = (slug, ext) => `/models/${slug}.${ext}`;
+export const media = (slug: string, ext: string) => `/models/${slug}.${ext}`;

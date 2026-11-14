@@ -3,9 +3,10 @@
    belongs to such a link is read where the transition reads it, on the document in the capture phase, like the funnel's
    own (components/Telemetry.jsx). `on` is a selector or an element; `fire(el, event)` hears each press on a match.
    Returns the cleanup, so an effect can hand it back. */
-export function press(on, fire) {
-  const click = (e) => {
-    const el = typeof on === 'string' ? e.target?.closest?.(on) : on?.contains(e.target) ? on : null;
+export function press(on: string | Element | null | undefined, fire: (el: Element, event: MouseEvent) => void) {
+  const click = (e: MouseEvent) => {
+    const target = e.target as Element | null; // a click's target on the document is an element, or the document itself
+    const el = typeof on === 'string' ? target?.closest?.(on) : on?.contains(target) ? on : null;
     if (el) fire(el, e);
   };
   document.addEventListener('click', click, { capture: true });
