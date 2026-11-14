@@ -48,7 +48,7 @@
 
   /* space and shape */
   --side: clamp(24px, 3.45vw, 72px); --air: clamp(120px, 15vw, 240px); --hit: 44px; --row: 56px;
-  --x-radius-card: 28px; --x-radius-pill: 999px; --x-radius-sm: 12px;
+  --x-radius-card: 28px; --x-radius-pill: 999px; --x-radius-sm: var(--radius-lg);
   --shadow-1: 0 1px 2px rgba(0, 0, 0, .05), 0 0 0 1px rgba(0, 0, 0, .04);
   --shadow-2: 0 24px 48px -28px rgba(0, 0, 0, .28);
   --shadow-pop: 0 40px 100px -30px rgba(0, 0, 0, .35);
@@ -58,7 +58,7 @@
   /* layers */
   --x-z-ask: 70; --x-z-sheet: 985; --x-z-skip: 2147483001;
 }
-/* dark mode: the page's room is Hanzo's dark, from @hanzo/design's tokens (Hanzo's own :not(.light) selector); a
+/* dark mode: the page's room is Hanzo's dark, from @hanzo/tokens (Hanzo's own :not(.light) selector); a
    [data-room=light] section follows the page into the dark, and [data-room=dark] stays as it is */
 html:not(.light), html:not(.light) [data-room=light] {
   --room-bg: var(--background); --room-surface: var(--muted); --room-raised: var(--card);

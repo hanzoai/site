@@ -1,7 +1,7 @@
 # hanzo.ai — the redesign
 
 Every page of hanzo.ai, redesigned on Hanzo's own stack: **Next.js 16 (static export) · React 19 · Motion 12**, with
-light and dark mode from Hanzo's own **`@hanzo/appearance`** and **`@hanzo/design`**.
+light and dark mode from Hanzo's own **`@hanzo/appearance`** and **`@hanzo/tokens`**.
 
 - **897 pages**: every URL in hanzo.ai's sitemap, plus the home page, and **9 new sign-up and checkout pages**
   (`/pay`, `/signup`, `/login`…) that hand off to Hanzo's real checkout and hanzo.id ([details](#hand-offs-to-hanzos-real-flows)).
@@ -140,7 +140,7 @@ hanzo.ai's sitemap, plus the home page) and adds 9 sign-up and checkout pages. F
   is byte-identical to the script in live's HTML. It replays the visitor's saved choice before first paint, or follows
   the device. As on live, there is no visible switch.
 - **Choices stay in step across Hanzo sites and tabs.** `useAppearance()` applies the choice Hanzo IAM keeps.
-- **Colours come from `@hanzo/design` 0.5.39.** Every dark colour is a reference to a Hanzo token (`var(--foreground)`,
+- **Colours come from `@hanzo/tokens`.** Every dark colour is a reference to a Hanzo token (`var(--foreground)`,
   `var(--muted)`…), written as rules under `html:not(.light)`. Light values are kept separately, so changing one mode
   never moves the other.
 - **The server HTML says `class="t_dark"`, as live's does,** so the page renders dark with JavaScript off, like live.
@@ -403,7 +403,7 @@ Hanzo's own system, exactly as live hanzo.ai runs it. Full detail: `docs/DARK-MO
 - **`components/Appearance.jsx`** calls `useAppearance()` once at the root. It applies the choice Hanzo IAM keeps across
   Hanzo sites, follows the device while the theme is `system`, and syncs across tabs. There is no visible switch,
   as on live.
-- **Colours come from `@hanzo/design`** (0.5.39, `tokens/colors.css`). Dark is the default (`:root`, `:not(.light)`),
+- **Colours come from `@hanzo/tokens`** (its `css`). Dark is the default (`:root`, `:not(.light)`),
   light is `.light`. Every dark colour in this repo is a reference to Hanzo's tokens (`var(--foreground)`,
   `var(--muted)`…), written as `html:not(.light) …` rules beside each page's CSS. Light values are separate, so
   changing one mode never moves the other.

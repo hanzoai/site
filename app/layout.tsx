@@ -2,14 +2,14 @@
    HOW TO USE (pages add nothing here; see docs/build-notes/review/SYSTEM.md):
    - Every page.jsx exports its own `metadata` ({ title, description }) and renders <JsonLd route="/its/path" /> once:
      that gives it its canonical link, share card (Open Graph, X) and schema.org data.
-   - Styles load in this order: Hanzo's hanzo.css, globals.css, system.css (tokens and states), then the page's own CSS,
-     so a page rule always wins.
+   - Styles load in this order: @hanzo/tokens' css, globals.css, system.css (the site's roles and states), the page's own CSS,
+     then Hanzo's hanzo.css (a <link>, so last: where it states a token differently, it wins).
    - Layers mounted once here: arrival, progress, morph (page transitions), the phone ask, the sound kit, the phone
      layer. No cursor label: nothing floats over content (MASTER 3.3). */
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { bootScript } from '@hanzo/appearance/state';
-import '@hanzo/design/tokens/colors.css'; // Hanzo's colour ramps: dark by default, .light for light (hanzo.css carries the same)
+import '@hanzo/tokens/css'; // the tokens: colour ramps (dark by default, .light for light), radii, type, spacing and the data hues; hanzo.css keeps only what it states differently
 import './globals.css';
 import './system.css';
 import { Smooth, Header, Footer } from '../components/Chrome';

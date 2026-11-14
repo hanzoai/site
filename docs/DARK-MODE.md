@@ -15,7 +15,7 @@ We use Hanzo's own system, exactly as live hanzo.ai runs it, and build none of o
   - It follows the device while the theme is `system`, and re-applies when the choice changes in another tab.
   - It renders nothing. There is no visible switch, because live shows none.
 - **The server HTML says `class="t_dark"`**, as live's does. React never writes these classes (`suppressHydrationWarning`), so hydration and client navigation keep them.
-- **Colours come from `@hanzo/design` 0.5.39** (`tokens/colors.css`, imported in `app/layout.jsx`; `public/hanzo.css` carries the same ramps).
+- **Colours come from `@hanzo/tokens`** (its `css`, imported in `app/layout.tsx`: the ramps, radii, type, spacing and data hues). `public/hanzo.css` states only what the tokens do not: the density, radius and type scales, and the white page of `.light`.
   - Dark is Hanzo's default: `:root` / `:not(.light)`. Light is `.light`.
   - Our tokens in dark are references to Hanzo's (`--ink: var(--foreground)` and so on, in `app/globals.css` and `app/system.css`), so no dark colour is ours.
   - Our light values are unchanged.
