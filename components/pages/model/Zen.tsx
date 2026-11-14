@@ -10,6 +10,7 @@
    below lead to every Zen model, Zen 7 and Zen 6 Max with each one's living sigil.
    V2: 7/10 motion-map build: particles signature, five page-local entrances, own section order, no pinned chapters */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, PointerEvent, ReactNode } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Magnetic } from '../../ui';
 import { A, More, Cta, Img, Stat } from '../../kit';
@@ -30,7 +31,8 @@ const CARDS = [
 ];
 // each step reads one row of a card: [card, row, words, verdict]. Every word is Hanzo's own card copy (no composed
 // sentences); every need has three steps, so the trace keeps one fixed height and never moves the page.
-const NEEDS = [
+type Step = [card: number, row: string, words: string, verdict?: string];
+const NEEDS: { tab: string; steps: Step[]; pick: number[] }[] = [
   { tab: 'Open weights', steps: [
     [0, 'desc', CARDS[0].desc, 'yes'],
     [0, 'size', CARDS[0].size],
@@ -49,7 +51,7 @@ const NEEDS = [
 ];
 
 function Console() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const paused = usePaused();
@@ -65,10 +67,10 @@ function Console() {
     if (step <= len) { const t = setTimeout(() => setStep(step + 1), step === 0 ? 700 : 1500); return () => clearTimeout(t); }
     if (!mine) { const t = setTimeout(() => { setN((n + 1) % NEEDS.length); setStep(0); }, 3600); return () => clearTimeout(t); }
   }, [paused, step, seen, calm, n, mine, len]);
-  const pick = (i) => { setMine(true); setN(i); setStep(calm ? 9 : 0); };
+  const pick = (i: number) => { setMine(true); setN(i); setStep(calm ? 9 : 0); };
   useEffect(() => { if (step === len + 1 && seen) play('done'); }, [step, len, seen]); // the trace lands its answer: a faint settle (shared sound kit)
   const cur = step >= 1 && step <= len ? need.steps[step - 1] : null;
-  const lit = (ci, row) => {
+  const lit = (ci: number, row: string) => {
     if (cur && (cur[0] === ci || cur[0] === -1) && cur[1] === row) return 'on';
     const past = need.steps.slice(0, Math.min(step, len)).find((s) => (s[0] === ci || s[0] === -1) && s[1] === row);
     return past ? (past[3] === 'no' ? 'no' : 'seen') : undefined;
@@ -116,14 +118,14 @@ function Console() {
   );
 }
 
-const FAMILY = [
+const FAMILY: [to: string, name: string, line: string, data: number[]][] = [
   ['/zen/models', 'Every Zen model', 'The complete Zen API catalog', [18, 2, 0.01]],
   ['/zen/7', 'Zen 7', 'Zen 7, the next open-weight generation. Apply for research access.', [7, 2.0]],
   ['/zen/zen6-max', 'Zen 6 Max', 'Built for the hardest work: deep reasoning, long context, and code.', [3.7, 9216, 5760]],
 ];
 
 // the film closes into an arch: a window onto Zen's sphere
-const ARCH = (t, W, H, wide) => {
+const ARCH = (t: number, W: number, H: number, wide: boolean) => {
   const w = wide ? Math.min(W * 0.32, H * 0.64) : Math.min(W * 0.62, H * 0.36);
   const h = wide ? H * 0.82 : H * (H < 740 ? 0.38 : 0.44); // short phones: leave the settled headline clear of the arch
   const l = wide ? W * 0.6 : (W - w) / 2, top = wide ? (H - h) / 2 : H * 0.05;
@@ -132,10 +134,10 @@ const ARCH = (t, W, H, wide) => {
 };
 
 // a chapter's picture: Zen's film with a model card on it
-function CardArt({ ci, open, z, on }) {
-  const c = CARDS[ci];
+function CardArt({ ci, open, z, on }: { ci?: number; open?: boolean; z: number; on: boolean }) {
+  const c = CARDS[ci ?? 0];
   return (
-    <div className={'ze-art' + (open ? ' ze-art-sig' : '')} style={{ '--z': z }}>
+    <div className={'ze-art' + (open ? ' ze-art-sig' : '')} style={{ '--z': z } as CSSProperties}>
       {open ? <Sigil seed="/zen/open-weights" data={[6, 27.3, 5.95]} className="ze-sigart" /> : <>
         <Img src={film('zen', 'webp')} w={1200} h={1500} />
         <ModelFilm slug="zen" play={on} />
@@ -155,34 +157,35 @@ function CardArt({ ci, open, z, on }) {
   );
 }
 
-const cardBody = (c) => (
+const cardBody = (c: (typeof CARDS)[number]) => (
   <>
     <p>{c.desc}</p>
     <p className="ze-ch-specs"><span>{c.mods}</span></p>
     <p><More to={c.wb}>Open in Workbench</More></p>
   </>
 );
-const CHAPTERS = [
-  { k: 'Open weights', title: 'Open weights', art: (on) => <CardArt open z={1.1} on={on} />, body: <><p>Download the weights, or call them on Hanzo Cloud.</p><p><More to="https://github.com/zenlm">Docs on GitHub</More></p></> },
-  { k: CARDS[0].name, title: CARDS[0].name, art: (on) => <CardArt ci={0} z={1.35} on={on} />, body: cardBody(CARDS[0]) },
-  { k: CARDS[1].name, title: CARDS[1].name, art: (on) => <CardArt ci={1} z={1.7} on={on} />, body: cardBody(CARDS[1]) },
+const CHAPTERS: { k: string; title: string; art: (on: boolean) => ReactNode; body: ReactNode }[] = [
+  { k: 'Open weights', title: 'Open weights', art: (on: boolean) => <CardArt open z={1.1} on={on} />, body: <><p>Download the weights, or call them on Hanzo Cloud.</p><p><More to="https://github.com/zenlm">Docs on GitHub</More></p></> },
+  { k: CARDS[0].name, title: CARDS[0].name, art: (on: boolean) => <CardArt ci={0} z={1.35} on={on} />, body: cardBody(CARDS[0]) },
+  { k: CARDS[1].name, title: CARDS[1].name, art: (on: boolean) => <CardArt ci={1} z={1.7} on={on} />, body: cardBody(CARDS[1]) },
 ];
 
 // entrance 3, tilt-3d-hover: the three parts arrive tipped back in depth and level out one after another; then each
 // tilts toward a fine pointer (2.5° at most) and settles flat when it leaves. No pinned chapter scene on /zen.
-function Part({ c, i }) {
-  const ref = useRef(null);
+function Part({ c, i }: { c: (typeof CHAPTERS)[number]; i: number }) {
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { amount: 0.35 });
-  const tilt = (e) => {
-    if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const r = ref.current.getBoundingClientRect();
+  const tilt = (e: PointerEvent) => {
+    const el = ref.current;
+    if (!el || e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const r = el.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
-    ref.current.style.setProperty('--rx', (-y * 5).toFixed(2) + 'deg');
-    ref.current.style.setProperty('--ry', (x * 5).toFixed(2) + 'deg');
+    el.style.setProperty('--rx', (-y * 5).toFixed(2) + 'deg');
+    el.style.setProperty('--ry', (x * 5).toFixed(2) + 'deg');
   };
-  const flat = () => { ref.current.style.setProperty('--rx', '0deg'); ref.current.style.setProperty('--ry', '0deg'); };
+  const flat = () => { ref.current?.style.setProperty('--rx', '0deg'); ref.current?.style.setProperty('--ry', '0deg'); };
   return (
-    <article ref={ref} className="ze-part" style={{ '--d': i }} onPointerMove={tilt} onPointerLeave={flat}>
+    <article ref={ref} className="ze-part" style={{ '--d': i } as CSSProperties} onPointerMove={tilt} onPointerLeave={flat}>
       <div className="ze-part-art">{c.art(seen)}</div>
       <h3>{c.title}</h3>
       <div className="ze-part-b">{c.body}</div>
@@ -239,7 +242,7 @@ function Family() {
       <div className="x-wrap">
         <ul className="ze-fam">
           {FAMILY.map(([to, name, line, data], i) => (
-            <li key={to} className={i === 0 ? 'big' : ''} style={{ '--d': i }}>
+            <li key={to} className={i === 0 ? 'big' : ''} style={{ '--d': i } as CSSProperties}>
               <A to={to} className="ze-fam-a" data-cursor="">
                 <Sigil key={scheme} seed={to} data={data} className="ze-sig" />
                 <span className="ze-fam-n" data-morph>{name}</span>
@@ -256,8 +259,8 @@ function Family() {
 
 // entrance 5, focus-pull-scroll: Hanzo's model cards come into focus as they scroll in (blur 4px to 0, scale 1.03 to
 // 1, tied to the scroll; the page's one blur)
-function FocusPull({ children }) {
-  const ref = useRef(null);
+function FocusPull({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const [still, setStill] = useState(false); // read after mount: the server cannot know, so first render matches it
   useEffect(() => setStill(!!calm), [calm]);
@@ -270,7 +273,7 @@ function FocusPull({ children }) {
 
 // keyboard: focus entering the settled headline's links scrolls the stage to its settled point, so they show
 const settleTo = () => {
-  const s = document.querySelector('.lv-stage[data-hero="zen"]');
+  const s = document.querySelector<HTMLElement>('.lv-stage[data-hero="zen"]');
   if (!s || innerWidth <= 900) return;
   const end = s.getBoundingClientRect().top + scrollY + s.offsetHeight - innerHeight;
   if (scrollY < end - 2) scrollTo({ top: end, behavior: 'instant' });
@@ -282,7 +285,7 @@ export default function Zen() {
       slug="zen"
       ask={{ label: 'Try Hanzo', to: '/login', id: 'zen.first' }}
       shape={ARCH}
-      aim={(W, H, wide) => (wide ? null : [-0.24 * W, -0.21 * H])}
+      aim={(W: number, H: number, wide: boolean) => (wide ? null : [-0.24 * W, -0.21 * H])}
       headClass="ze-head"
       head={
         <>

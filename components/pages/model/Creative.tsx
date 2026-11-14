@@ -8,6 +8,7 @@
    own words, on Hanzo's black model cards; it tours the fields by itself and each card opens its model with the
    card-to-page transition. */
 import { useEffect, useRef, useState } from 'react';
+import type { ComponentProps, CSSProperties, PointerEvent, ReactNode, SyntheticEvent } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
 import { More, Cta, Img, Film, Band } from '../../kit';
@@ -17,12 +18,13 @@ import Chapters from '../../v2/x-cray/Chapters';
 import ModelCards from './ModelCards';
 import ModelFilm, { usePaused } from '../../v2/ModelFilm';
 import { C, ORDER, FIELDS } from './creativeData';
+import type { Slug } from './creativeData';
 import { Glyph } from './Studio';
 import { arrows } from './live';
 import './Creative.css';
 
 // the headline that sits beside the settled film
-function Head({ slug }) {
+function Head({ slug }: { slug: Slug }) {
   const d = C[slug];
   return (
     <>
@@ -40,14 +42,15 @@ function Head({ slug }) {
 // a capability chapter's picture: the model's own film, each chapter a different framing aimed at the film's own
 // subject (subject = where it sits in Hanzo's 4:5 frame; pos = the film's object-position), playing while read
 const LOOK = [[1.12, 0, 0], [1.55, 0.09, -0.05], [2.1, -0.07, 0.06], [1.35, 0.05, 0.09]];
-const clampPct = (v, z) => Math.max(-(z - 1) * 50, Math.min((z - 1) * 50, v));
-function frame(i, subject, pos) {
+const clampPct = (v: number, z: number) => Math.max(-(z - 1) * 50, Math.min((z - 1) * 50, v));
+type Point = [x: number, y: number];
+function frame(i: number, subject: Point, pos?: string): CSSProperties {
   const [z, ox, oy] = LOOK[i];
-  const fx = subject[0] + ox, fy = subject[1] + oy, py = parseFloat(String(pos || '50% 50%').split(' ')[1] || 50) / 100;
+  const fx = subject[0] + ox, fy = subject[1] + oy, py = parseFloat(String(pos || '50% 50%').split(' ')[1] || '50') / 100;
   const dx = fx - 0.5, dy = fy * (1.25 / 0.75) - (0.25 / 0.75) * 2 * py - 0.5; // offset from the box centre (4:3 box, 4:5 film)
-  return { '--z': z, '--x': clampPct(-dx * 100 * z, z).toFixed(1) + '%', '--y': clampPct(-dy * 100 * z, z).toFixed(1) + '%' };
+  return { '--z': z, '--x': clampPct(-dx * 100 * z, z).toFixed(1) + '%', '--y': clampPct(-dy * 100 * z, z).toFixed(1) + '%' } as CSSProperties;
 }
-function CapArt({ slug, i, on, subject, pos, glyph = true }) {
+function CapArt({ slug, i, on, subject, pos, glyph = true }: { slug: Slug; i: number; on: boolean; subject: Point; pos?: string; glyph?: boolean }) {
   return (
     <div className="cr-art" style={frame(i, subject, pos)}>
       <Img src={film(slug, 'webp')} w={1200} h={1500} />
@@ -58,7 +61,7 @@ function CapArt({ slug, i, on, subject, pos, glyph = true }) {
 }
 
 // capArt (optional, per page): (i, on, base) => node, a chapter's own picture; base is the default film framing
-function Caps({ slug, flip, subject, pos, capArt }) {
+function Caps({ slug, flip, subject, pos, capArt }: { slug: Slug; flip?: boolean; subject: Point; pos?: string; capArt?: (i: number, on: boolean, base: CSSProperties) => ReactNode }) {
   const d = C[slug];
   return (
     <Chapters
@@ -67,15 +70,15 @@ function Caps({ slug, flip, subject, pos, capArt }) {
       flip={flip}
       className="cr-caps"
       head={<><h2 id={'cr-caps-' + slug} className="cr-caps-h">What {d.name} does</h2><p className="lv-side cr-caps-side">Capabilities</p></>}
-      items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: (on) => (capArt ? capArt(i, on, frame(i, subject, pos)) : <CapArt slug={slug} i={i} on={on} subject={subject} pos={pos} />) }))}
+      items={d.caps.map(([t, x], i) => ({ k: d.kind, rail: t, title: t, body: <p>{x}</p>, art: (on: boolean) => (capArt ? capArt(i, on, frame(i, subject, pos)) : <CapArt slug={slug} i={i} on={on} subject={subject} pos={pos} />) }))}
     />
   );
 }
 
 // where it fits: the three rooms as a quiet list beside one picture of the model at work
-function Fits({ slug, flip, subject, pos, fitsArt }) {
+function Fits({ slug, flip, subject, pos, fitsArt }: { slug: Slug; flip?: boolean; subject: Point; pos?: string; fitsArt?: (seen: boolean) => ReactNode }) {
   const d = C[slug];
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   return (
     <section className="lv-sec cr-fits" ref={box} aria-labelledby={'cr-fits-' + slug}>
@@ -108,22 +111,22 @@ function Fits({ slug, flip, subject, pos, fitsArt }) {
 }
 
 // the model card's pointer tilt (SPEC.md: up to 3°, flat on leave, none on touch or under reduced motion)
-function tilt(e) {
+function tilt(e: PointerEvent<HTMLElement>) {
   if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const el = e.currentTarget, r = el.getBoundingClientRect();
   const x = ((e.clientX - r.left) / r.width) * 2 - 1, y = ((e.clientY - r.top) / r.height) * 2 - 1;
   el.style.transform = `perspective(900px) rotateX(${(y * 3).toFixed(2)}deg) rotateY(${(-x * 3).toFixed(2)}deg) scale(var(--mc-p, 1))`; // --mc-p: the press still answers under the tilt
 }
 
-function Map({ slug }) {
-  const box = useRef(null);
+function Map({ slug }: { slug: Slug }) {
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
   const opener = useOpener();
   const first = Math.max(0, FIELDS.findIndex(([, l]) => l.some(([s]) => s === slug)));
   const [f, setF] = useState(first);
   const [mine, setMine] = useState(false);
-  const [play, setPlay] = useState(null);
+  const [play, setPlay] = useState<Slug | null>(null);
   const paused = usePaused();
   useEffect(() => {
     if (!seen || mine || calm || paused) return;
@@ -165,11 +168,11 @@ function Map({ slug }) {
                     onPointerEnter={() => setPlay(s)}
                     onPointerLeave={() => setPlay((p) => (p === s ? null : p))}
                     onFocus={() => setPlay(s)}
-                    onClick={(e) => { if (here) { e.preventDefault(); return; } opener.open(e, { el: e.currentTarget, src: film(s, 'webp'), href: '/' + s, key: s }); }}
+                    onClick={(e) => { if (here) { e.preventDefault(); return; } opener?.open(e, { el: e.currentTarget, src: film(s, 'webp'), href: '/' + s, key: s }); }}
                   >
                     <span className="cr-mc-media" aria-hidden="true">
                       <Img src={film(s, 'webp')} w={1200} h={1500} />
-                      {play === s && <Film src={film(s, 'webm')} w={1200} h={1500} className="cr-mc-film" onPlaying={(e) => e.currentTarget.classList.add('on')} />}
+                      {play === s && <Film src={film(s, 'webm')} w={1200} h={1500} className="cr-mc-film" onPlaying={(e: SyntheticEvent<HTMLVideoElement>) => e.currentTarget.classList.add('on')} />}
                     </span>
                     <span className="cr-mc-t">{C[s].name}<span aria-hidden="true"> →</span></span>
                     <span className="cr-mc-d">
@@ -192,7 +195,7 @@ function Map({ slug }) {
 }
 
 // a model's live studio scene (the demo itself comes from the model's file); it carries no words of ours
-export function Scene({ slug, dark, className = '', children }) {
+export function Scene({ slug, dark, className = '', children }: { slug: Slug; dark?: boolean; className?: string; children?: ReactNode }) {
   return (
     <section className={'lv-sec cr-scene ' + (dark ? 'lv-room ' : '') + className} data-room={dark ? 'dark' : undefined} aria-label={C[slug].name}>
       <div className="x-wrap">{children}</div>
@@ -209,13 +212,32 @@ export function Scene({ slug, dark, className = '', children }) {
    first='tail' (the demo sits between the studio map and the model cards), headThumb={false} (the header keeps its own
    solid ask until the band), onHeadFocus (focus enters the headline's actions), fitsFirst (where-it-fits comes before
    the capability chapters), renderCaps(d) (the model draws its own capabilities section in place of the pinned chapters). */
-export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, fitsArt, map = true, band, headThumb = true, onHeadFocus, fitsFirst = false, renderCaps }) {
+// the stage's own props pass straight through to Launch
+type LaunchProps = ComponentProps<typeof Launch>;
+type Stage = Pick<LaunchProps, 'shape'> & Partial<Pick<LaunchProps, 'aim' | 'over' | 'pos'>>;
+interface CreativeProps extends Stage {
+  slug: Slug;
+  subject?: Point;
+  headClass?: string;
+  demo?: ReactNode;
+  first?: string;
+  flip?: boolean;
+  capArt?: (i: number, on: boolean, base: CSSProperties) => ReactNode;
+  fitsArt?: (seen: boolean) => ReactNode;
+  map?: boolean;
+  band?: ReactNode;
+  headThumb?: boolean;
+  onHeadFocus?: () => void;
+  fitsFirst?: boolean;
+  renderCaps?: (d: (typeof C)[Slug]) => ReactNode;
+}
+export default function Creative({ slug, shape, aim, over, pos, subject = [0.55, 0.5], headClass, demo, first = 'demo', flip, capArt, fitsArt, map = true, band, headThumb = true, onHeadFocus, fitsFirst = false, renderCaps }: CreativeProps) {
   const d = C[slug];
   const caps = renderCaps ? renderCaps(d) : <Caps slug={slug} flip={flip} subject={subject} pos={pos} capArt={capArt} />;
   const fits = <Fits slug={slug} flip={flip} subject={subject} pos={pos} fitsArt={fitsArt} />;
   const tail = first === 'tail';
   return (
-    <Launch slug={slug} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} thumb={headThumb} onFocus={onHeadFocus} />}>
+    <Launch slug={slug} pos={pos} ask={{ label: 'Request access', to: '/research-access?models=' + slug, id: slug + '.first' }} shape={shape} aim={aim} over={over} headClass={'cr-head ' + (headClass || '')} head={<Head slug={slug} />}>
       {fitsFirst ? <>{demo}{fits}{caps}</> : tail ? <>{caps}{fits}</> : <>{first === 'demo' ? <>{demo}{caps}</> : <>{caps}{demo}</>}{fits}</>}
       {map && <Map slug={slug} />}
       {tail && demo}

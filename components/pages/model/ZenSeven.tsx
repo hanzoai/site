@@ -14,7 +14,9 @@ V2: 8/10 the 7 rises and settles beside a 52px title (and on phone); the lineage
 // Signature: the 7 rises: a giant numeral with Zen 7's field showing through it settles beside the title as you scroll
 // Beyond: the lineage line: Zen 6's own facts on one end, Zen 7 on the other, and the three things Hanzo says Zen 7 expands landing on the line as it draws
 import { useEffect, useRef, useState } from 'react';
+import type { PointerEvent } from 'react';
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import type { MotionStyle } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, Cta } from '../../kit';
 import Sigil from '../../Sigil';
@@ -29,17 +31,17 @@ const PARA = "Zen 7 is the next open-weight generation from Zoo Labs Foundation,
 /* Hanzo's sentence stays one unbroken run of text (James, 8 Nov: copy word for word); the lit phrases are underlined with
    the CSS Custom Highlight API instead of being wrapped in elements. Without the API the sentence simply shows plain. */
 const HL_CSS = '::highlight(z7-grow) { color: var(--z7-ink); text-decoration: underline 1px var(--z7-ink); text-underline-offset: 5px; }';
-function Para({ on }) {
-  const ref = useRef(null);
+function Para({ on }: { on: boolean[] }) {
+  const ref = useRef<HTMLParagraphElement>(null);
   const key = on.join('');
   useEffect(() => {
-    const n = ref.current && ref.current.firstChild;
-    if (!n || typeof CSS === 'undefined' || !CSS.highlights || typeof Highlight === 'undefined') return;
+    const n = ref.current?.firstChild;
+    if (!(n instanceof Text) || typeof CSS === 'undefined' || !CSS.highlights || typeof Highlight === 'undefined') return;
     if (!document.getElementById('z7-hl-css')) { const st = document.createElement('style'); st.id = 'z7-hl-css'; st.textContent = HL_CSS; document.head.appendChild(st); } // the CSS parser here rejects ::highlight(), so it is added at runtime
     const h = new Highlight();
     GROWS.forEach((g, i) => { if (!on[i]) return; const at = n.data.indexOf(g); if (at < 0) return; const r = new Range(); r.setStart(n, at); r.setEnd(n, at + g.length); h.add(r); });
     CSS.highlights.set('z7-grow', h);
-    return () => CSS.highlights.delete('z7-grow');
+    return () => { CSS.highlights.delete('z7-grow'); };
   }, [key]); // eslint-disable-line react-hooks/exhaustive-deps
   return <p ref={ref} className="z7-para">{PARA}</p>;
 }
@@ -58,8 +60,8 @@ function usePhone() {
   return phone;
 }
 
-function Stage({ still, setStill }) {
-  const box = useRef(null);
+function Stage({ still, setStill }: { still: boolean; setStill: (still: boolean) => void }) {
+  const box = useRef<HTMLElement>(null);
   const phone = usePhone(); // phone: the stage is not pinned, so the settle runs over the stage leaving the screen
   const scheme = useScheme(); // the field's ink follows the page (docs/DARK-MODE.md): re-keyed so it redraws on a switch
   const { scrollYProgress: p } = useScroll({ target: box, offset: phone ? ['start start', 'end start'] : ['start start', 'end end'] });
@@ -71,7 +73,7 @@ function Stage({ still, setStill }) {
       <noscript><style>{'.z7-art{--k:0!important}.z7-stage{height:auto!important}.z7-h .x-line-in{transform:none!important}.z7-brings{height:auto!important}.z7-brings-pin{position:relative!important}.z7-run{transform:none!important}.z7-dot,.z7-pause{display:none!important}.z7-seven path{stroke-dasharray:none!important;stroke-dashoffset:0!important}.z7-access{--open:1!important}'}</style></noscript>
       <div className="z7-pin">
         <button type="button" className="z7-pause" aria-pressed={still} onClick={() => setStill(!still)}>{still ? 'Play' : 'Pause'}<span className="z7-vh"> the moving fields</span></button>
-        <motion.div className="z7-art" aria-hidden="true" style={{ '--k': ke }}>
+        <motion.div className="z7-art" aria-hidden="true" style={{ '--k': ke } as MotionStyle}>
           {/* three layers on white: the black 7, the field over it, white with a 7-shaped hole on top (so no box edge shows) */}
           <svg className="z7-mask" viewBox="0 0 600 700" preserveAspectRatio="xMidYMid slice"><text x="300" y="640" textAnchor="middle" className="z7-glyph z7-ink7">7</text></svg>
           <Sigil key={scheme} seed="zen-7" data={[7, 6, 2.0]} className="z7-sig" still={still} />
@@ -105,7 +107,7 @@ function Stage({ still, setStill }) {
 /* Beyond: Zen 6 to Zen 7 as a pinned scrub (desktop): your scroll carries a marker along the line; each station lights
    as it passes and underlines its phrase above; Zen 7 fills when the marker arrives. Phone: the same, down a vertical line. */
 function Lineage() {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const calm = useCalm();
   const phone = usePhone();
   const { scrollYProgress: p } = useScroll({ target: box, offset: phone ? ['start 0.75', 'end 0.6'] : ['start start', 'end end'] });
@@ -154,19 +156,19 @@ function Lineage() {
 
 /* the research room: the page's one black room; it enters as a rounded card inside the gutters and opens to full
    width as it is reached (ZenSeven.css turns --open into the clip) */
-function Access({ still }) {
-  const room = useRef(null);
+function Access({ still }: { still: boolean }) {
+  const room = useRef<HTMLElement>(null);
   const calm = useCalm();
   const { scrollYProgress: rp } = useScroll({ target: room, offset: ['start end', 'start 0.3'] });
   const [d, setD] = useState([0, 0]);
   /* the room's own 7, drawn once as line art (1.2 s) and drifting up to 28px toward a fine pointer */
-  const drift = (e) => {
+  const drift = (e: PointerEvent<HTMLElement>) => {
     if (calm || e.pointerType !== 'mouse') return;
     const r = e.currentTarget.getBoundingClientRect();
     setD([((e.clientX - r.left) / r.width - 0.5) * 56, ((e.clientY - r.top) / r.height - 0.5) * 56]);
   };
   return (
-    <motion.section className="z7-access" data-room="dark" data-ask-hide aria-labelledby="z7-r" ref={room} style={{ '--open': rp }} onPointerMove={drift} onPointerLeave={() => setD([0, 0])}>
+    <motion.section className="z7-access" data-room="dark" data-ask-hide aria-labelledby="z7-r" ref={room} style={{ '--open': rp } as MotionStyle} onPointerMove={drift} onPointerLeave={() => setD([0, 0])}>
       <Sigil seed="zen-7/access" data={[2, 0, 7]} className="z7-sig2" still={still} />
       <svg className="z7-seven" viewBox="0 0 600 700" aria-hidden="true" style={{ transform: `translate(${d[0]}px, ${d[1]}px)` }}>
         <motion.path d="M120 110H480L250 620" initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true, amount: 0.4 }} transition={calm ? { duration: 0 } : { duration: 1.2, ease: EASE }} />

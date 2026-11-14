@@ -25,7 +25,9 @@
 // Signature: the sort race: Zen5 model cards re-flow on sort or tier, each card opening into its model page
 // Beyond: the per-token sheet: total vs active parameters and context on one shared scale for every Zen5 model
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, PointerEvent, SyntheticEvent } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useMotionValueEvent } from 'motion/react';
+import type { MotionStyle } from 'motion/react';
 import { Copy } from '../../ui';
 import { A, Cta, Film, Img } from '../../kit';
 import Sigil from '../../Sigil';
@@ -34,12 +36,12 @@ import './ZenCatalog.css';
 
 // the deck's motion tokens (MASTER 3.1), in seconds; one emphasis curve; no springs
 const T = { press: 0.09, fast: 0.15, base: 0.3, slow: 0.4, slower: 0.5, line: 0.7 };
-const EMPH = [0.16, 1, 0.3, 1];
-const EXIT = [0.4, 0, 0.2, 1];
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EXIT: [number, number, number, number] = [0.4, 0, 0.2, 1];
 const GLIDE = { duration: T.base, ease: EMPH };
 
 const NAMES = ['zen6', 'zen6-flash', 'zen5-coder'];
-const code = (m) => `from hanzoai import Hanzo
+const code = (m: string) => `from hanzoai import Hanzo
 
 client = Hanzo()
 
@@ -51,7 +53,7 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)`;
 
 // each line of the snippet in its own span and each # comment in a grey span of its own, as Hanzo's highlighter splits them
-function Lines({ s }) {
+function Lines({ s }: { s: string }) {
   return s.split('\n').map((l, i, a) => {
     const c = l.indexOf('#'), nl = i < a.length - 1 ? '\n' : '';
     if (c < 0) return <span key={i}>{l + nl}</span>;
@@ -59,6 +61,7 @@ function Lines({ s }) {
   });
 }
 
+type ModelRow = (typeof ROWS)[number];
 const ROWS = [
   { n: 'Zen5 (Default)', slug: 'zen5', tier: 'pro', d: 'Canonical Zen5 default. a 35B frontier MoE (3B active) (35B total / 3B active per token, released Apr 2026, Apache-2.0). 256K context, agentic-trained, OpenAI + Anthropic API. The everyday Zen5 chat model.', big: '35B', small: '(3B active)', tot: 35, act: 3, ctx: '256K', ck: 256, arch: 'Zen frontier MoE' },
   { n: 'Zen5 Coder', slug: 'zen5-coder', tier: 'pro', d: 'Code-specialized Zen5 tier. 80B sparse MoE tuned for repo-scale code understanding, agentic refactoring, and tool-use coding loops.', big: '80B', small: '(MoE)', tot: 80, act: null, ctx: '256K', ck: 256, arch: 'Zen Coder MoE' },
@@ -69,7 +72,7 @@ const ROWS = [
 const TIERS = ['ultra max', 'ultra', 'pro max', 'pro', 'starter'];
 const SORTS = [['hanzo', 'Hanzo’s order'], ['size', 'By size'], ['ctx', 'By context']];
 const FIGS = [['19', 'Models'], ['2M', 'Max Context'], ['$0.01/MTok', 'From'], ['MoE + Dense', 'Architectures'], ['7', 'Modalities']];
-const MAXP = 284, ctxW = (k) => (Math.log2(k) - 4) / (Math.log2(1024) - 4);
+const MAXP = 284, ctxW = (k: number) => (Math.log2(k) - 4) / (Math.log2(1024) - 4);
 
 /* desktop with motion allowed: the pinned figures run; phones and reduced motion read the same content as a list */
 function useStage() {
@@ -88,7 +91,7 @@ function useStage() {
    opens to full width as you scroll it away (clip-path only) */
 const ZEN5 = ROWS.flatMap((r) => [r.tot, r.act || r.tot]);
 function Stage() {
-  const box = useRef(null), frame = useRef(null);
+  const box = useRef<HTMLElement>(null), frame = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const [held, setHeld] = useState(false); // the visitor paused the field
   const { scrollYProgress } = useScroll({ target: box, offset: ['start start', 'end start'] });
@@ -131,15 +134,15 @@ function Stage() {
    and the copied text are always the same string); a new cycle never starts while you hover or focus the block, a
    cycle already running finishes its name, and a press on a name switches to it */
 function Quick() {
-  const box = useRef(null), timer = useRef(0), now = useRef(NAMES[0]);
+  const box = useRef<HTMLElement>(null), timer = useRef<ReturnType<typeof setTimeout> | 0>(0), now = useRef(NAMES[0]);
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
   const [m, setM] = useState(0); // the last name fully typed
   const [typed, setTyped] = useState(NAMES[0]); // exactly what the code shows
-  const [pick, setPick] = useState(null); // once the visitor picks a name, the loop stops on it
+  const [pick, setPick] = useState<number | null>(null); // once the visitor picks a name, the loop stops on it
   const [still, setStill] = useState(false); // hover or focus inside: hold
-  const put = (s) => { now.current = s; setTyped(s); };
-  const go = (toI) => {
+  const put = (s: string) => { now.current = s; setTyped(s); };
+  const go = (toI: number) => {
     clearTimeout(timer.current);
     const to = NAMES[toI];
     const erase = () => { const s = now.current; if (s.length) { put(s.slice(0, -1)); timer.current = setTimeout(erase, 40); } else timer.current = setTimeout(type, 140); };
@@ -152,7 +155,7 @@ function Quick() {
     const t = setTimeout(() => go((m + 1) % NAMES.length), 2400);
     return () => clearTimeout(t);
   }, [seen, calm, m, pick, still]); // eslint-disable-line react-hooks/exhaustive-deps
-  const choose = (i) => {
+  const choose = (i: number) => {
     setPick(i);
     if (calm) { clearTimeout(timer.current); timer.current = 0; put(NAMES[i]); setM(i); }
     else if (now.current !== NAMES[i] || timer.current) go(i);
@@ -185,12 +188,13 @@ function Quick() {
    playhead sweeps it), one cent of a 100-cell dollar, the five Zen5 sizes (total against active per token), and
    seven rings for the modalities */
 const BY_CTX = [...ROWS].sort((a, b) => b.ck - a.ck || b.tot - a.tot);
-const grow = (k, prop = 'scaleX', step = 0.04) => ({
-  initial: { [prop]: 0 }, animate: { [prop]: 1 }, transition: { duration: T.slower, ease: EMPH, delay: T.fast + k * step },
+type Grow = Partial<Record<'scaleX' | 'scaleY' | 'scale', number>>;
+const grow = (k: number, prop: keyof Grow = 'scaleX', step = 0.04) => ({
+  initial: { [prop]: 0 } as Grow, animate: { [prop]: 1 } as Grow, transition: { duration: T.slower, ease: EMPH, delay: T.fast + k * step },
 });
-function FigArt({ i, still = false }) {
+function FigArt({ i, still = false }: { i: number; still?: boolean }) {
   if (i === 0) return (
-    <div className="zc-fa zc-fa-18">{Array.from({ length: 19 }, (_, k) => <motion.i key={k} data-z={k < 5 || undefined} style={{ '--k': k }} {...(still ? {} : grow(k, 'scaleY', 0.025))} />)}</div>
+    <div className="zc-fa zc-fa-18">{Array.from({ length: 19 }, (_, k) => <motion.i key={k} data-z={k < 5 || undefined} style={{ '--k': k } as MotionStyle} {...(still ? {} : grow(k, 'scaleY', 0.025))} />)}</div>
   );
   if (i === 1) return (
     <div className="zc-fa zc-fa-ctx">
@@ -207,7 +211,7 @@ function FigArt({ i, still = false }) {
   if (i === 3) return (
     <div className="zc-fa zc-fa-size">
       {ROWS.map((r, k) => (
-        <span key={r.slug} className="zc-fa-srow" style={{ '--k': k }}>
+        <span key={r.slug} className="zc-fa-srow" style={{ '--k': k } as CSSProperties}>
           <span className="zc-fa-n">{r.n}</span>
           <span className="zc-fa-track"><motion.i className="zc-fa-tot" style={{ width: (r.tot / MAXP) * 100 + '%' }} {...grow(k)} />{r.act && <motion.i className="zc-fa-act" style={{ width: Math.max(1.2, (r.act / MAXP) * 100) + '%' }} {...grow(k + 4)} />}</span>
           <span className="zc-mono">{r.big}</span>
@@ -215,13 +219,13 @@ function FigArt({ i, still = false }) {
       ))}
     </div>
   );
-  return <div className="zc-fa zc-fa-7">{Array.from({ length: 7 }, (_, k) => <motion.i key={k} style={{ '--k': k }} {...grow(k, 'scaleY', 0.06)} />)}</div>;
+  return <div className="zc-fa zc-fa-7">{Array.from({ length: 7 }, (_, k) => <motion.i key={k} style={{ '--k': k } as MotionStyle} {...grow(k, 'scaleY', 0.06)} />)}</div>;
 }
 
 /* five figures, one per screen: the scene pins; the old figure leaves before the new one cuts in through its mask,
    and its drawing crossfades to the new figure's drawing */
 function Figures() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const on = useStage();
   const [at, setAt] = useState(0);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
@@ -267,36 +271,36 @@ function Figures() {
 
 /* the model card of docs/build-notes/refs/hanzo-model-cards/SPEC.md: black, 20px, art behind, title top left, tag pill bottom left,
    a pointer tilt up to 3 degrees that settles flat on leave (fine pointers, never under reduced motion) */
-const tilt = (e) => {
+const tilt = (e: PointerEvent<HTMLElement>) => {
   if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const el = e.currentTarget, r = el.getBoundingClientRect();
   const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
   el.style.transform = `perspective(900px) rotateX(${((py - 0.5) * 5.4).toFixed(2)}deg) rotateY(${((0.5 - px) * 5.4).toFixed(2)}deg)`;
 };
-const flat = (e) => { e.currentTarget.style.transform = ''; };
+const flat = (e: PointerEvent<HTMLElement>) => { e.currentTarget.style.transform = ''; };
 
 /* the card's media is Hanzo's own: every Zen5 page opens on the Zen film (/models/zen.webm over zen.webp), so the card
    shows that picture and the Morph lands on the picture you clicked. The leader plays the film over its still (a 600 ms
    crossfade once it is playing; Film keeps the still under reduced motion and Data Saver, and pauses off screen, so at
    most one film plays here); the four others hold the still, each framed on its own part of the ripples. A model
    without media would fall back to its Sigil. */
-const MEDIA = { zen5: 'zen', 'zen5-coder': 'zen', 'zen5-flash': 'zen', 'zen5-mini': 'zen', 'zen5-pro': 'zen' };
+const MEDIA: Record<string, string> = { zen5: 'zen', 'zen5-coder': 'zen', 'zen5-flash': 'zen', 'zen5-mini': 'zen', 'zen5-pro': 'zen' };
 // [object-position, zoom, zoom origin]: the sphere, the ripples, a close-up, so five cards are not one picture five times
-const CROP = { zen5: ['62% 56%', 1, '50% 50%'], 'zen5-coder': ['50% 100%', 1, '50% 50%'], 'zen5-flash': ['50% 52%', 1.8, '66% 52%'], 'zen5-mini': ['50% 100%', 2.2, '15% 85%'], 'zen5-pro': ['50% 50%', 1, '50% 50%'] };
-const ready = (e) => e.currentTarget.setAttribute('data-on', '');
-function CardArt({ r, big }) {
+const CROP: Record<string, [at: string, zoom: number, origin: string]> = { zen5: ['62% 56%', 1, '50% 50%'], 'zen5-coder': ['50% 100%', 1, '50% 50%'], 'zen5-flash': ['50% 52%', 1.8, '66% 52%'], 'zen5-mini': ['50% 100%', 2.2, '15% 85%'], 'zen5-pro': ['50% 50%', 1, '50% 50%'] };
+const ready = (e: SyntheticEvent<HTMLElement>) => e.currentTarget.setAttribute('data-on', '');
+function CardArt({ r, big }: { r: ModelRow; big: boolean }) {
   const m = MEDIA[r.slug];
   if (!m) return <Sigil seed={'/models/hanzo/' + r.slug} data={[r.tot, r.act || r.tot, r.ck]} className="zc-mc-art" />;
   const [at, z, o] = CROP[r.slug] || ['50% 50%', 1, '50% 50%'];
   return (
     <span className="zc-mc-art zc-mc-media" aria-hidden="true">
       {big && <Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} className="zc-mc-film" style={{ objectPosition: CROP.zen5[0] }} onPlaying={ready} />}
-      <Img src={`/models/${m}.webp`} w={1200} h={1500} alt="" className="zc-mc-still" style={big ? { objectPosition: CROP.zen5[0] } : { objectPosition: at, '--zc-z': z, '--zc-o': o }} />
+      <Img src={`/models/${m}.webp`} w={1200} h={1500} alt="" className="zc-mc-still" style={big ? { objectPosition: CROP.zen5[0] } : { objectPosition: at, '--zc-z': z, '--zc-o': o } as CSSProperties} />
     </span>
   );
 }
 
-function ModelCard({ r, big }) {
+function ModelCard({ r, big }: { r: ModelRow; big: boolean }) {
   return (
     <motion.li layout className="zc-cell" data-big={big || undefined}
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: T.fast, ease: EXIT } }}
@@ -308,15 +312,15 @@ function ModelCard({ r, big }) {
         <span className="zc-mc-tag">{r.tier}</span>
         <span className="zc-mc-sz" aria-hidden="true">
           {/* the page's own --zc-w: the shared --w is a registered length, which would void scaleX() */}
-          <span className="zc-mc-bar"><i className="zc-mc-tot" style={{ '--zc-w': Math.max(0.015, r.tot / MAXP).toFixed(3) }} />{r.act && <i className="zc-mc-act" style={{ '--zc-w': Math.max(0.012, r.act / MAXP).toFixed(3) }} />}</span>
-          <span className="zc-mc-bar"><i className="zc-mc-ctx" style={{ '--zc-w': ctxW(r.ck).toFixed(3) }} /></span>
+          <span className="zc-mc-bar"><i className="zc-mc-tot" style={{ '--zc-w': Math.max(0.015, r.tot / MAXP).toFixed(3) } as CSSProperties} />{r.act && <i className="zc-mc-act" style={{ '--zc-w': Math.max(0.012, r.act / MAXP).toFixed(3) } as CSSProperties} />}</span>
+          <span className="zc-mc-bar"><i className="zc-mc-ctx" style={{ '--zc-w': ctxW(r.ck).toFixed(3) } as CSSProperties} /></span>
         </span>
       </A>
     </motion.li>
   );
 }
 
-function Row({ r, seen, i, open, onOpen }) {
+function Row({ r, seen, i, open, onOpen }: { r: ModelRow; seen: boolean; i: number; open: boolean; onOpen: () => void }) {
   const body = 'zc-more-' + r.slug;
   return (
     <motion.li layout className="zc-li" data-open={open || undefined} transition={{ layout: GLIDE }}>
@@ -340,22 +344,22 @@ function Row({ r, seen, i, open, onOpen }) {
 }
 
 function Shelf() {
-  const box = useRef(null), sheet = useRef(null);
+  const box = useRef<HTMLElement>(null), sheet = useRef<HTMLDivElement>(null);
   const seen = useInView(sheet, { once: true, amount: 0.2 });
   const [sort, setSort] = useState('hanzo');
   const [tier, setTier] = useState('all');
-  const [open, setOpen] = useState(null);
-  const ctl = useRef(null);
+  const [open, setOpen] = useState<string | null>(null);
+  const ctl = useRef<HTMLDivElement>(null);
   // a rail that runs past the screen edge gets data-over: a right-edge peek (CSS) says there is more to swipe
   useEffect(() => {
-    const segs = [...(ctl.current?.querySelectorAll('.zc-seg') || [])];
+    const segs = [...(ctl.current?.querySelectorAll<HTMLElement>('.zc-seg') || [])];
     const fit = () => segs.forEach((s) => { const pad = s.hasAttribute('data-over') ? 48 : 0; s.toggleAttribute('data-over', s.scrollWidth - pad > s.clientWidth + 1); });
     fit();
     const ro = new ResizeObserver(fit);
     segs.forEach((s) => ro.observe(s));
     return () => ro.disconnect();
   }, []);
-  const count = (t) => ROWS.filter((r) => r.tier === t).length;
+  const count = (t: string) => ROWS.filter((r) => r.tier === t).length;
   const shown = (sort === 'hanzo' ? ROWS : [...ROWS].sort(sort === 'size' ? (a, b) => b.tot - a.tot : (a, b) => b.ck - a.ck || b.tot - a.tot))
     .filter((r) => tier === 'all' || r.tier === tier);
   return (

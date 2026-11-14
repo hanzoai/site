@@ -8,6 +8,7 @@
    (PLAN-COMPONENTS 2.10). A click lifts the card into its page (WebGL opener, synchronized.studio); reduced motion and
    touch navigate plainly. Owned by the Zen-names chat. */
 import { useRef, useState } from 'react';
+import type { Dispatch, PointerEvent, SetStateAction, SyntheticEvent } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { Img, Film } from '../../kit';
 import { Arrow } from '../../ui';
@@ -16,19 +17,20 @@ import { MODELS, media } from '../../../lib/models';
 import { scrollToY } from '../../../lib/scroll';
 import './ModelCards.css';
 
-function Card({ m, big, here, live, setLive }) {
-  const ref = useRef(null);
+function Card({ m, big, here, live, setLive }: { m: (typeof MODELS)[number]; big: boolean; here: boolean; live: string | null; setLive: Dispatch<SetStateAction<string | null>> }) {
+  const ref = useRef<HTMLAnchorElement>(null);
   const opener = useOpener();
   const calm = useReducedMotion();
-  const tilt = (e) => {
-    if (calm || e.pointerType !== 'mouse') return;
-    const r = ref.current.getBoundingClientRect();
+  const tilt = (e: PointerEvent) => {
+    const el = ref.current;
+    if (!el || calm || e.pointerType !== 'mouse') return;
+    const r = el.getBoundingClientRect();
     const x = ((e.clientX - r.left) / r.width) * 2 - 1, y = ((e.clientY - r.top) / r.height) * 2 - 1;
     const deg = big ? 3.8 : 7.8;
     const persp = big ? 760 : 480;
-    ref.current.style.transform = `perspective(${persp}px) rotateX(${(y * deg).toFixed(2)}deg) rotateY(${(-x * deg).toFixed(2)}deg) scale(var(--mc-p, 1))`; // --mc-p: the press still answers under the tilt
+    el.style.transform = `perspective(${persp}px) rotateX(${(y * deg).toFixed(2)}deg) rotateY(${(-x * deg).toFixed(2)}deg) scale(var(--mc-p, 1))`; // --mc-p: the press still answers under the tilt
   };
-  const flat = () => { if (ref.current) ref.current.style.transform = ''; setLive((a) => (a === m.slug ? null : a)); };
+  const flat = () => { if (ref.current) ref.current.style.transform = ''; setLive((a: string | null) => (a === m.slug ? null : a)); };
   const plays = big || live === m.slug;
   return (
     <li className={'mc-cell' + (big ? ' big' : '')}>
@@ -46,12 +48,12 @@ function Card({ m, big, here, live, setLive }) {
         onBlur={flat}
         onClick={(e) => {
           if (here) { e.preventDefault(); scrollToY(0); return; }
-          opener.open(e, { el: ref.current, src: media(m.slug, 'webp'), href: '/' + m.slug, key: m.slug });
+          opener?.open(e, { el: e.currentTarget, src: media(m.slug, 'webp'), href: '/' + m.slug, key: m.slug });
         }}
       >
         <span className="mc-media" aria-hidden="true">
           <Img src={media(m.slug, 'webp')} w={1200} h={1500} />
-          {plays && <Film src={media(m.slug, 'webm')} w={1200} h={1500} className="mc-film" onPlaying={(e) => e.currentTarget.classList.add('on')} />}
+          {plays && <Film src={media(m.slug, 'webm')} w={1200} h={1500} className="mc-film" onPlaying={(e: SyntheticEvent<HTMLVideoElement>) => e.currentTarget.classList.add('on')} />}
         </span>
         <span className="mc-top">
           {big && m.kicker && <span className="mc-pill mc-flag">{m.kicker}</span>}
@@ -64,8 +66,8 @@ function Card({ m, big, here, live, setLive }) {
   );
 }
 
-export default function ModelCards({ slug }) {
-  const [live, setLive] = useState(null);
+export default function ModelCards({ slug }: { slug?: string }) {
+  const [live, setLive] = useState<string | null>(null);
   return (
     <section className="mc lv-sec" aria-labelledby="mc-h">
       <div className="mc-wrap">

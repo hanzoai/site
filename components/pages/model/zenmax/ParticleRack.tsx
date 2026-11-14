@@ -6,13 +6,14 @@
    Redundant pools split a twin rack off across a dashed failure domain. Keyboard: arrow keys steer a ring that
    scatters the dots, Enter or Space bursts them. Monochrome only; the loop (live.js useLoop) pauses off screen and in
    background tabs; the canvas is sized to devicePixelRatio max 1.5; reduced motion draws the formed rack, still. */
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import type { KeyboardEvent, PointerEvent } from 'react';
 import { useLoop, fit, rng } from '../live';
 
 // one rack: 4 servers x 8 GPUs x 32 dots, plus each server's chassis outline; two racks; the bracket; the domain line
 const GPU = 4 * 8 * 32, OUT = 4 * 80, RACK = GPU + OUT, BR = 64, DOM = 48;
 const N = RACK * 2 + BR + DOM;
-const pool = (s, g) => Math.min(2, Math.floor((s * 8 + g) / 11)); // 32 GPUs in three pools of 11, 11, 10
+const pool = (s: number, g: number) => Math.min(2, Math.floor((s * 8 + g) / 11)); // 32 GPUs in three pools of 11, 11, 10
 const TINT = [1, 0.55, 0.3];
 
 function make() {
@@ -28,15 +29,17 @@ function make() {
 }
 
 // targets for the current server (k), step (at: 0 the rack, 1-3 the planning range) and canvas size
-function layout(P, W, H, k, at) {
+type Particles = ReturnType<typeof make>;
+interface Field { P: Particles; W: number; H: number; sp: number; key: string; born: number; px: number; py: number; near: boolean; kb: boolean; bang: number; t: number }
+function layout(P: Particles, W: number, H: number, k: number, at: number) {
   const plan = Math.max(0, at - 1), twin = plan === 2;
   const sp = Math.min(W / 98.2, H / 54.6);
   const inP = 1.6 * sp, bw = 4 * sp, bg = 1.2 * sp, rw = 43.6 * sp, sh = 11.2 * sp, sg = 1.6 * sp, gap = 6 * sp;
   const rackH = 4 * sh + 3 * sg, top = (H - rackH) / 2, cx = W / 2;
   const x0 = [twin ? cx - gap / 2 - rw : cx - rw / 2, cx + gap / 2];
   const dot = Math.max(1.3, sp * 0.62);
-  const cloud = (i) => { P.home[i] = 1; P.ta[i] = 0.1; P.ts[i] = Math.max(1.1, dot * 0.6); };
-  const put = (i, x, y, a, s) => { P.home[i] = 0; P.tx[i] = x; P.ty[i] = y; P.ta[i] = a; P.ts[i] = s; };
+  const cloud = (i: number) => { P.home[i] = 1; P.ta[i] = 0.1; P.ts[i] = Math.max(1.1, dot * 0.6); };
+  const put = (i: number, x: number, y: number, a: number, s: number) => { P.home[i] = 0; P.tx[i] = x; P.ty[i] = y; P.ta[i] = a; P.ts[i] = s; };
   for (let rk = 0; rk < 2; rk++) {
     const on = rk === 0 || twin, base = rk * RACK;
     for (let s = 0; s < 4; s++) {
@@ -79,11 +82,11 @@ function layout(P, W, H, k, at) {
   return sp;
 }
 
-export default function ParticleRack({ k, at, label }) {
-  const box = useRef(null);
-  const cv = useRef(null);
-  const S = useRef(null);
-  if (!S.current) S.current = { P: make(), W: 0, H: 0, sp: 6, key: '', born: -1, px: 0, py: 0, near: false, kb: false, bang: 0, t: 0 };
+export default function ParticleRack({ k, at, label }: { k: number; at: number; label?: string }) {
+  const box = useRef<HTMLDivElement>(null);
+  const cv = useRef<HTMLCanvasElement>(null);
+  const [init] = useState<Field>(() => ({ P: make(), W: 0, H: 0, sp: 6, key: '', born: -1, px: 0, py: 0, near: false, kb: false, bang: 0, t: 0 }));
+  const S = useRef(init);
 
   useLoop(box, (t, dt, still) => {
     const c = cv.current, st = S.current, P = st.P;
@@ -100,6 +103,7 @@ export default function ParticleRack({ k, at, label }) {
       st.key = key;
     }
     const ctx = c.getContext('2d');
+    if (!ctx) return;
     ctx.setTransform(d, 0, 0, d, 0, 0);
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = '#fafafa';
@@ -157,14 +161,15 @@ export default function ParticleRack({ k, at, label }) {
   }, []);
 
   const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const at_ = (e) => { const r = cv.current.getBoundingClientRect(); const st = S.current; st.px = e.clientX - r.left; st.py = e.clientY - r.top; st.kb = false; };
-  const move = (e) => { if (calm()) return; at_(e); S.current.near = true; };
-  const down = (e) => { if (calm()) return; at_(e); S.current.near = true; S.current.bang = 1; };
+  const at_ = (e: PointerEvent) => { const c = cv.current; if (!c) return; const r = c.getBoundingClientRect(); const st = S.current; st.px = e.clientX - r.left; st.py = e.clientY - r.top; st.kb = false; };
+  const move = (e: PointerEvent) => { if (calm()) return; at_(e); S.current.near = true; };
+  const down = (e: PointerEvent) => { if (calm()) return; at_(e); S.current.near = true; S.current.bang = 1; };
   const leave = () => { S.current.near = false; };
-  const key = (e) => {
+  const key = (e: KeyboardEvent) => {
     if (calm()) return;
     const st = S.current, step = Math.max(12, st.sp * 4);
-    const m = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+    const dirs: Record<string, number[] | undefined> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+    const m = dirs[e.key];
     if (!st.kb || !st.near) { st.px = st.W / 2; st.py = st.H / 2; }
     if (m) { e.preventDefault(); st.kb = true; st.near = true; st.px = Math.min(st.W, Math.max(0, st.px + m[0] * step)); st.py = Math.min(st.H, Math.max(0, st.py + m[1] * step)); }
     else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); st.kb = true; st.near = true; st.bang = 1; }

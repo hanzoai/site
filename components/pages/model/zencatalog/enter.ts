@@ -4,6 +4,7 @@
    state), then data-e="in" when it reaches the screen; ZenCatalog.css holds each section's own motion. Under reduced
    motion nothing is marked, so every section simply shows its final state. */
 import { useEffect } from 'react';
+import type { RefObject } from 'react';
 
 // the last pointer or tap position on screen, for the entrances that start from the cursor (lens, grid wave)
 export const ptr = { x: 0, y: 0, seen: false, touch: false };
@@ -11,20 +12,20 @@ let bound = false;
 const bind = () => {
   if (bound) return;
   bound = true;
-  const at = (e) => { ptr.x = e.clientX; ptr.y = e.clientY; ptr.seen = true; ptr.touch = e.pointerType === 'touch'; };
+  const at = (e: PointerEvent) => { ptr.x = e.clientX; ptr.y = e.clientY; ptr.seen = true; ptr.touch = e.pointerType === 'touch'; };
   addEventListener('pointermove', at, { passive: true });
   addEventListener('pointerdown', at, { passive: true });
 };
 
 /* the point an entrance starts from, in the element's own box: the pointer when it is over the element, else its
    centre (touch, keyboard, or a pointer elsewhere) */
-export function origin(el) {
+export function origin(el: Element) {
   const r = el.getBoundingClientRect();
   const over = ptr.seen && !ptr.touch && ptr.x >= r.left && ptr.x <= r.right && ptr.y >= r.top && ptr.y <= r.bottom;
   return over ? { x: ptr.x - r.left, y: ptr.y - r.top, over } : { x: r.width / 2, y: Math.min(r.height / 2, innerHeight / 2), over };
 }
 
-export function useEnter(ref, onIn) {
+export function useEnter(ref: RefObject<Element | null>, onIn?: (el: Element) => void) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;

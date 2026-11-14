@@ -15,13 +15,13 @@ import { lerp, film, focus } from '../../v2/Launch';
 import { useLoop, fit, audio, burst, tone, hush } from './live';
 import './Oto.css';
 
-const PROPS = [
+const PROPS: [emoji: string, name: string, level: string, cue: string, at: number][] = [
   ['🥁', 'Acoustic Drumming & Floor Impacts', '98.4 dBA', '00:01.12', 1.12],
   ['👟', 'Gravel Footsteps (120 BPM)', '74.2 dBA', '00:02.40', 2.4],
   ['🔐', 'Heavy Vault Door Latch', '92.1 dBA', '00:03.85', 3.85],
   ['🌧️', 'Rain on Stained Glass', '62.8 dBA', '00:05.10', 5.1],
 ];
-const BUS = [['Direct Prop Spot Mic', 88], ['Foley Pit Room Atmos', 79], ['Sub-Harmonic Exciter (40Hz)', 92], ['Ribbon High Air Texture', 59]];
+const BUS: [name: string, level: number][] = [['Direct Prop Spot Mic', 88], ['Foley Pit Room Atmos', 79], ['Sub-Harmonic Exciter (40Hz)', 92], ['Ribbon High Air Texture', 59]];
 const H = 128, LOOP = 6;
 // monochrome heat: black, graphite, grey, white (no hue: colour lives only in Hanzo's films)
 const LUT = (() => {
@@ -33,30 +33,32 @@ const LUT = (() => {
   }
   return o;
 })();
-const gauss = (y, c, w) => Math.exp(-((y - c) * (y - c)) / w);
+const gauss = (y: number, c: number, w: number) => Math.exp(-((y - c) * (y - c)) / w);
 // how much energy each prop puts at frequency y (0 low … 1 high), `age` seconds after its cue
-const SOUND = [
+const SOUND: ((y: number, age: number, r: number) => number)[] = [
   (y, age, r) => (age > 0.6 ? 0 : Math.exp(-age * 9) * (y < 0.25 ? 1 : 0.75 * Math.exp(-(y - 0.25) * 2.5)) * (0.75 + 0.25 * r)),
   (y, age, r) => { if (age > 2.4) return 0; const l = age % 0.5; return l < 0.09 ? (y > 0.3 && y < 0.85 ? 0.8 : 0.25) * (1 - l / 0.09) * r : 0; },
   (y, age) => (age > 2.2 ? 0 : (y < 0.18 ? Math.exp(-age * 5) : 0) + (age < 0.05 ? 0.6 : 0) + [0.31, 0.44, 0.58, 0.72].reduce((s, f, i) => s + Math.exp(-age * (1.6 + i * 0.4)) * gauss(y, f, 0.00018) * 0.85, 0)),
   (y, age, r) => (age > 2.5 ? 0 : y > 0.5 ? (r < 0.18 ? 0.35 + 0.5 * Math.random() : 0.05) * Math.min(1, age * 4, (2.5 - age) * 2) : 0),
 ];
-const SYNTH = [
+const SYNTH: ((ac: AudioContext) => void)[] = [
   (ac) => { tone(ac, { f: 92, type: 'sine', dur: 0.4, gain: 0.5, glide: 0.5 }); burst(ac, { f: 1800, q: 0.7, dur: 0.12, gain: 0.35 }); },
   (ac) => { for (let i = 0; i < 5; i++) { burst(ac, { f: 2600, q: 1.1, dur: 0.08, gain: 0.22, at: i * 0.5 }); burst(ac, { f: 600, q: 1, dur: 0.05, gain: 0.15, at: i * 0.5 }); } },
   (ac) => { tone(ac, { f: 55, type: 'sine', dur: 0.5, gain: 0.5, glide: 0.7 }); burst(ac, { f: 3200, type: 'highpass', dur: 0.05, gain: 0.3 }); [420, 615, 840].forEach((f, i) => tone(ac, { f, type: 'triangle', dur: 1.4 - i * 0.2, gain: 0.05 })); },
   (ac) => { for (let i = 0; i < 40; i++) burst(ac, { f: 5000 + Math.random() * 3000, q: 2, dur: 0.03, gain: 0.06 + Math.random() * 0.05, at: Math.random() * 2.2 }); },
 ];
 
+interface Cue { k: number; age: number; tick: boolean }
+
 function Board() {
-  const stage = useRef(null), cv = useRef(null), clock = useRef(null), meters = useRef([]), pads = useRef([]);
-  const S = useRef({ t: 1.12, ev: [], col: new Float32Array(H), lv: [0, 0, 0, 0], acc: 0 });
+  const stage = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), clock = useRef<HTMLParagraphElement>(null), meters = useRef<(HTMLElement | null)[]>([]), pads = useRef<(HTMLButtonElement | null)[]>([]);
+  const S = useRef<{ t: number; ev: Cue[]; col: Float32Array; lv: number[]; acc: number }>({ t: 1.12, ev: [], col: new Float32Array(H), lv: [0, 0, 0, 0], acc: 0 });
   const [sound, setSound] = useState(false);
   const soundRef = useRef(false);
   soundRef.current = sound;
   useEffect(() => hush, []);
 
-  const fire = (i) => {
+  const fire = (i: number) => {
     S.current.ev.push({ k: i, age: 0, tick: true });
     const p = pads.current[i];
     p?.animate([{ transform: 'scale(.95)' }, { transform: 'scale(1)' }], { duration: 520, easing: 'cubic-bezier(.16,1,.3,1)' });
@@ -75,6 +77,7 @@ function Board() {
     const W = Math.max(120, Math.min(640, Math.round(r.width / 2)));
     if (c.width !== W || c.height !== H) { c.width = W; c.height = H; }
     const g = c.getContext('2d');
+    if (!g) return;
     if (still) { // one still frame: each prop once, side by side
       const img = g.createImageData(W, H);
       for (let x = 0; x < W; x++) for (let yy = 0; yy < H; yy++) {
@@ -113,7 +116,7 @@ function Board() {
       g.putImageData(col, W - 1, 0);
     }
     // the bus: four bands of the newest column, smoothed
-    const band = (a, b) => { let m = 0; for (let yy = Math.floor((1 - b) * H); yy < Math.floor((1 - a) * H); yy++) m += s.col[yy]; return m / Math.max(1, (b - a) * H); };
+    const band = (a: number, b: number) => { let m = 0; for (let yy = Math.floor((1 - b) * H); yy < Math.floor((1 - a) * H); yy++) m += s.col[yy]; return m / Math.max(1, (b - a) * H); };
     const want = [band(0.3, 0.7), band(0, 1), band(0, 0.15), band(0.75, 1)];
     want.forEach((w, i) => {
       s.lv[i] += (Math.min(1, w * 1.8) - s.lv[i]) * Math.min(1, dt * (w > s.lv[i] ? 30 : 6));
@@ -137,7 +140,7 @@ function Board() {
           <ul>
             {PROPS.map(([e, n, db, tc], i) => (
               <li key={n}>
-                <button type="button" className="ot-pad" ref={(el) => (pads.current[i] = el)} onClick={() => fire(i)} aria-label={'Fire ' + n}>
+                <button type="button" className="ot-pad" ref={(el) => { pads.current[i] = el; }} onClick={() => fire(i)} aria-label={'Fire ' + n}>
                   <i className="ot-ring" aria-hidden="true" />
                   <span className="ot-emo">{e}</span>
                   <span className="ot-pad-n">{n}</span>
@@ -160,7 +163,7 @@ function Board() {
           {BUS.map(([n, v], i) => (
             <li key={n}>
               <span className="ot-ch">{n}</span>
-              <span className="ot-meter"><i ref={(el) => (meters.current[i] = el)} /><b style={{ left: v + '%' }} /></span>
+              <span className="ot-meter"><i ref={(el) => { meters.current[i] = el; }} /><b style={{ left: v + '%' }} /></span>
               <span className="ot-v mb-tnum">{v}</span>
             </li>
           ))}
@@ -172,10 +175,10 @@ function Board() {
 
 // the film closes into a waveform: a band whose edges follow a sound's envelope. It closes as one band (its top edge
 // comes down from above the screen, its bottom edge up from below), so every frame between reads as sound.
-const WAVE = (t, W, H, wide) => {
+const WAVE = (t: number, W: number, H: number, wide: boolean) => {
   const n = 30, x0 = wide ? W * 0.47 : W * 0.05, x1 = wide ? W * 0.96 : W * 0.95, cy = wide ? H * 0.5 : H * 0.25, A = wide ? H * 0.38 : H * 0.18;
-  const amp = (k) => { const u = k / (n - 1); const env = Math.pow(Math.sin(Math.PI * u), 0.55); return A * (0.12 + 0.88 * env * Math.abs(0.55 * Math.sin(u * 19.3) + 0.3 * Math.sin(u * 41.7 + 1.2) + 0.28 * Math.sin(u * 7.1 + 0.4))); };
-  const M = Math.max(W, H) * 0.3, pt = (k, sgn) => {
+  const amp = (k: number) => { const u = k / (n - 1); const env = Math.pow(Math.sin(Math.PI * u), 0.55); return A * (0.12 + 0.88 * env * Math.abs(0.55 * Math.sin(u * 19.3) + 0.3 * Math.sin(u * 41.7 + 1.2) + 0.28 * Math.sin(u * 7.1 + 0.4))); };
+  const M = Math.max(W, H) * 0.3, pt = (k: number, sgn: number) => {
     const u = k / (n - 1), x = lerp(-M + u * (W + 2 * M), x0 + u * (x1 - x0), t), y = lerp(sgn < 0 ? -M : H + M, cy + sgn * amp(k), t);
     return `${x.toFixed(1)}px ${y.toFixed(1)}px`;
   };
@@ -189,7 +192,7 @@ export default function Oto() {
       slug="oto"
       subject={[0.5, 0.55]}
       shape={WAVE}
-      aim={(W, H, wide) => (wide ? null : focus(0.5, 0.55, W / 2, H * 0.25, 1.2, [W * 0.05, H * 0.07, W * 0.95, H * 0.43])(W, H))}
+      aim={(W: number, H: number, wide: boolean) => (wide ? null : focus(0.5, 0.55, W / 2, H * 0.25, 1.2, [W * 0.05, H * 0.07, W * 0.95, H * 0.43])(W, H))}
       headClass="ot-v2"
       first="demo"
       demo={
