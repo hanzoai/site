@@ -15,15 +15,15 @@ export const dynamicParams = false;
 export const generateStaticParams = () => ROUTES.map((r) => ({ slug: cardPath(r).slice(4).split('/') }));
 
 const W = 1200, H = 630, CELL = 10;
-const font = (f) => fs.readFileSync(path.join(process.cwd(), 'lib', 'og', f)); // static Zen instances (OFL), satori reads no woff2
-const FONTS = [
+const font = (f: string) => fs.readFileSync(path.join(process.cwd(), 'lib', 'og', f)); // static Zen instances (OFL), satori reads no woff2
+const FONTS: NonNullable<ConstructorParameters<typeof ImageResponse>[1]>['fonts'] = [
   { name: 'Zen', data: font('zen-400.ttf'), weight: 400, style: 'normal' },
   { name: 'Zen', data: font('zen-560.ttf'), weight: 600, style: 'normal' },
   { name: 'Zen Mono', data: font('zen-mono-500.ttf'), weight: 500, style: 'normal' },
 ];
-const cut = (s, n) => { if (s.length <= n) return s; const i = s.lastIndexOf(' ', n); return s.slice(0, i > n / 2 ? i : n).replace(/[,.;:—-]+$/, '') + '…'; };
+const cut = (s: string, n: number) => { if (s.length <= n) return s; const i = s.lastIndexOf(' ', n); return s.slice(0, i > n / 2 ? i : n).replace(/[,.;:—-]+$/, '') + '…'; };
 
-export async function GET(_req, { params }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ slug: string[] }> }) {
   const { slug } = await params;
   const at = '/' + slug.join('/').replace(/\.png$/, '');
   const { route, title, description } = cardText(at === '/index' ? '/' : at);

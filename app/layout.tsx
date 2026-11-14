@@ -6,6 +6,8 @@
      so a page rule always wins.
    - Layers mounted once here: arrival, progress, morph (page transitions), the phone ask, the sound kit, the phone
      layer. No cursor label: nothing floats over content (MASTER 3.3). */
+import type { Metadata, Viewport } from 'next';
+import type { ReactNode } from 'react';
 import { bootScript } from '@hanzo/appearance/state';
 import '@hanzo/design/tokens/colors.css'; // Hanzo's colour ramps: dark by default, .light for light (hanzo.css carries the same)
 import './globals.css';
@@ -22,7 +24,7 @@ import Appearance from '../components/Appearance';
 import Telemetry from '../components/Telemetry';
 import OneTap from '../components/OneTap';
 
-export const metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL('https://hanzo.ai'),
   title: 'Hanzo AI — Smarter, Faster, Cheaper. Pick all three.',
   description: 'Frontier intelligence over 200× faster and 400× cheaper. Agentic OS for organizations of every size.',
@@ -32,7 +34,7 @@ export const metadata = {
   twitter: { card: 'summary_large_image', site: '@hanzoai' },
 };
 // the browser chrome follows the theme: Hanzo's own colours (#0A0A0A dark, as live); light stays our white
-export const viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', interactiveWidget: 'resizes-content', themeColor: [{ media: '(prefers-color-scheme: light)', color: '#ffffff' }, { media: '(prefers-color-scheme: dark)', color: '#0A0A0A' }], colorScheme: 'light dark' };
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', interactiveWidget: 'resizes-content', themeColor: [{ media: '(prefers-color-scheme: light)', color: '#ffffff' }, { media: '(prefers-color-scheme: dark)', color: '#0A0A0A' }], colorScheme: 'light dark' };
 
 /* Dark mode (docs/DARK-MODE.md): Hanzo's own @hanzo/appearance, as live hanzo.ai runs it. bootScript() replays the
    choice saved under localStorage "hanzo.appearance.painted" ({ theme: 'light' | 'dark' | 'system', vars }), else the
@@ -42,7 +44,7 @@ export const viewport = { width: 'device-width', initialScale: 1, viewportFit: '
    writes these classes (the server sends live's class="t_dark" and suppressHydrationWarning), so hydration keeps them. */
 const BOOT = bootScript({ base: { theme: 'system' } });
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" data-brand="hanzo" className="t_dark" suppressHydrationWarning>
       <head>

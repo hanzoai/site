@@ -13,23 +13,27 @@
      agrees with it.
    The day they play is hanzo.ai's own (hero-scenes.json); a scene lights the place it happens in. Every scene is in the
    page from the first paint (search engines, screen readers); one shows at a time. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { motion } from 'motion/react';
 import AGENTS from '../../content/agents';
 import { EASE, Mark } from '../ui';
 import { Glyph } from './glyphs';
 import { track } from '../../lib/track';
-import SCENES from './hero-scenes.json';
+import SCENES_JSON from './hero-scenes.json';
 import * as app from '../../lib/app';
+import type { HeroScene, Place, SelectScene, ShellLine, Step, TermExample } from './types';
 
-const pic = (src) => src.replace('/images/models/', '/models/').replace(/^(\/models\/\w+)$/, '$1.webp');
-const step = (s) => (Array.isArray(s) ? s[0].replace('{file}', s[1]) : s);
+const pic = (src: string) => src.replace('/images/models/', '/models/').replace(/^(\/models\/\w+)$/, '$1.webp');
+const step = (s: Step): string => (Array.isArray(s) ? s[0].replace('{file}', s[1]) : s);
+
+// the JSON reads its shell lines and steps as plain arrays; they are the tuples of Step and ShellLine
+const SCENES = SCENES_JSON as HeroScene[];
 
 // scene 0 is the hero's own opening (the prompt, the answer, the install); the rest follow it
 export const OPEN = SCENES[0];
 export const MORE = SCENES.slice(1);
 const TERM_TABS = ['install', 'cli', 'dev', 'mcp', 'up'];
-const TERM_EXAMPLES = {
+const TERM_EXAMPLES: Record<string, TermExample[]> = {
   install: [
     {
       cmd: 'curl -fsSL https://hanzo.sh | sh',
@@ -160,19 +164,21 @@ const TERM_EXAMPLES = {
 };
 
 // the latest scene up to `sc` that has what `has` asks for, or -1
-const last = (sc, has) => { for (let i = sc; i >= 0; i--) if (has(MORE[i])) return i; return -1; };
+const last = (sc: number, has: (s: HeroScene) => boolean) => { for (let i = sc; i >= 0; i--) if (has(MORE[i])) return i; return -1; };
 // the place of the app a scene happens in: the Beta scene is a chat
-const placeOf = (sc) => (sc < 0 ? 'chat' : MORE[sc].place === 'beta' ? 'chat' : MORE[sc].place);
+const placeOf = (sc: number): Place => (sc < 0 ? 'chat' : MORE[sc].place === 'beta' ? 'chat' : MORE[sc].place);
 
 /* ---------- the desktop ---------- */
 
-const PLACES = [['chat', 'Chat', 'message-square'], ['dev', 'Dev', 'code-xml'], ['design', 'Design', 'wand-sparkles'], ['studio', 'Studio', 'clapperboard'], ['tabs', 'Tabs', 'square-terminal']];
-const MORE_PLACES = [['library', 'Library', 'library'], ['scheduled', 'Scheduled tasks', 'clock'], ['customize', 'Customize', 'puzzle'], ['more', 'More', 'ellipsis']];
+// a mark of the rail or the phone's menu: its id, its name and its glyph
+type Entry = [id: string, label: string, icon: string];
+const PLACES: Entry[] = [['chat', 'Chat', 'message-square'], ['dev', 'Dev', 'code-xml'], ['design', 'Design', 'wand-sparkles'], ['studio', 'Studio', 'clapperboard'], ['tabs', 'Tabs', 'square-terminal']];
+const MORE_PLACES: Entry[] = [['library', 'Library', 'library'], ['scheduled', 'Scheduled tasks', 'clock'], ['customize', 'Customize', 'puzzle'], ['more', 'More', 'ellipsis']];
 
 const CHAT_SCENES = [-1, ...MORE.map((s, i) => (s.place === 'chat' ? i : -99)).filter((i) => i >= 0)];
 const DEV_SCENES = MORE.map((s, i) => (s.place === 'dev' ? i : -1)).filter((i) => i >= 0);
 const TABS_SCENES = MORE.map((s, i) => (s.place === 'tabs' ? i : -1)).filter((i) => i >= 0);
-const PLACE_SCENES = {
+const PLACE_SCENES: Record<string, number[]> = {
   chat: CHAT_SCENES,
   dev: DEV_SCENES,
   design: [1, 4, 5, 19, 25],
@@ -185,7 +191,8 @@ const PLACE_SCENES = {
   more: [32],
 };
 
-const Row = ({ icon, on, dot, onClick, children }) => (
+interface RowProps { icon?: string; on?: boolean; dot?: boolean; onClick: () => void; children?: ReactNode }
+const Row = ({ icon, on, dot, onClick, children }: RowProps) => (
   <button type="button" className="xw-row" data-on={on || undefined} onClick={onClick}>
     {icon ? <Glyph name={icon} size={12} /> : dot ? <i className="xw-dot" /> : null}
     <span>{children}</span>
@@ -193,8 +200,8 @@ const Row = ({ icon, on, dot, onClick, children }) => (
 );
 
 /* The rail's marks: what the products are, the lit one where the scene is; clicking any jumps straight to that app. */
-function Rail({ at, onPick }) {
-  const mark = ([id, label, icon]) => (
+function Rail({ at, onPick }: { at: string; onPick: (id: string) => void }) {
+  const mark = ([id, label, icon]: Entry) => (
     <button
       key={id}
       type="button"
@@ -215,15 +222,15 @@ function Rail({ at, onPick }) {
 /* The account at the rail's foot: a real button; the menu is always in the page and opens with a spring. */
 function Account() {
   const [open, setOpen] = useState(false);
-  const box = useRef(null);
-  const btn = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!open) return;
-    const away = (e) => { if (!box.current.contains(e.target)) setOpen(false); };
+    const away = (e: PointerEvent) => { if (!box.current?.contains(e.target as Node)) setOpen(false); };
     document.addEventListener('pointerdown', away);
     return () => document.removeEventListener('pointerdown', away);
   }, [open]);
-  const shut = () => { setOpen(false); btn.current.focus(); };
+  const shut = () => { setOpen(false); btn.current?.focus(); };
   return (
     <div className="x-acct" ref={box} onKeyDown={(e) => { if (e.key === 'Escape' && open) shut(); }}>
       <button ref={btn} type="button" className="x-acct-b" aria-label="Account" aria-haspopup="true" aria-expanded={open} onClick={() => { track('hero_demo', { control: 'account' }); setOpen((o) => !o); }}>
@@ -238,12 +245,12 @@ function Account() {
 }
 
 /* The sidebar of the lit place. Dev's Recents are the runs the day has made, the newest lit; Tabs lists the sessions open. */
-function Side({ sc, onSelectScene }) {
-  const [pickedRow, setPickedRow] = useState(null);
+function Side({ sc, onSelectScene }: { sc: number; onSelectScene?: SelectScene }) {
+  const [pickedRow, setPickedRow] = useState<string | null>(null);
   const runs = MORE.slice(0, Math.max(0, sc) + 1).filter((s) => s.place === 'dev').map((s) => s.run).reverse().slice(0, 4);
   const t = last(sc, (s) => s.place === 'tabs');
-  const open = (MORE[t] ?? MORE.find((s) => s.place === 'tabs')).panes.map((p) => p.name);
-  const go = (key, targetSc, navId) => () => {
+  const open = (MORE[t] ?? MORE.find((s) => s.place === 'tabs'))!.panes!.map((p) => p.name);
+  const go = (key: string, targetSc: number, navId: string) => () => {
     track('hero_demo', { control: key });
     setPickedRow(key);
     onSelectScene?.(targetSc, navId);
@@ -266,7 +273,7 @@ function Side({ sc, onSelectScene }) {
         <Row icon="circle-dot" on={pickedRow === 'dev-iss'} onClick={go('dev-iss', 9, 'dev')}>Issues</Row>
         <Row icon="layout-template" on={pickedRow === 'dev-tpl'} onClick={go('dev-tpl', 15, 'dev')}>Templates</Row>
         <small>Recents</small>
-        {(runs.length ? runs : [MORE.find((s) => s.place === 'dev').run]).map((r, i) => {
+        {(runs.length ? runs : [MORE.find((s) => s.place === 'dev')!.run]).map((r, i) => {
           const runIdx = MORE.findIndex((s) => s.place === 'dev' && s.run === r);
           return <Row key={r} dot={i === 0} on={pickedRow ? pickedRow === `run-${r}` : i === 0} onClick={go(`run-${r}`, runIdx >= 0 ? runIdx : 0, 'dev')}>{r}</Row>;
         })}
@@ -299,7 +306,7 @@ function Side({ sc, onSelectScene }) {
 }
 
 // Every demo part is in the page from the first paint; the demo only reveals them.
-function Bubble({ children, on = true }) {
+function Bubble({ children, on = true }: { children?: ReactNode; on?: boolean }) {
   return (
     <motion.div className="x-bub me" initial={false} animate={on ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.96 }} aria-hidden={on ? undefined : true} transition={{ type: 'spring', stiffness: 380, damping: 30 }}>
       {children}
@@ -308,7 +315,7 @@ function Bubble({ children, on = true }) {
 }
 
 // the chat's app card: the app's artifact beside the chat, "App · desktop and mobile" with Preview (hanzo.ai, 8 Nov)
-function AppCard({ on = true, onPreview }) {
+function AppCard({ on = true, onPreview }: { on?: boolean; onPreview: () => void }) {
   return (
     <motion.div className="x-appcard" initial={false} animate={on ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }} aria-hidden={on ? undefined : true} transition={{ duration: 0.6, ease: EASE }}>
       <span className="x-appicon"><Mark size={13} /></span>
@@ -318,8 +325,8 @@ function AppCard({ on = true, onPreview }) {
   );
 }
 
-function Scene({ s, on }) {
-  const [pickedArt, setPickedArt] = useState(null);
+function Scene({ s, on }: { s: HeroScene; on: boolean }) {
+  const [pickedArt, setPickedArt] = useState<number | null>(null);
   const ask = s.ask || s.prompt || s.run || s.title;
   const activeArt = pickedArt ?? (s.pick ?? -1);
   return (
@@ -355,7 +362,8 @@ function Scene({ s, on }) {
 }
 
 // the composer: Ask Hanzo, the app's own placeholder; `ref` is where the opening's prompt types itself
-function Composer({ phase, promptEl, full, typing, onSend }) {
+interface ComposerProps { phase: number; promptEl?: RefObject<HTMLSpanElement | null>; full?: boolean; typing?: boolean; onSend: () => void }
+function Composer({ phase, promptEl, full, typing, onSend }: ComposerProps) {
   return (
     <div className="x-input">
       <Glyph name="plus" size={14} />
@@ -373,25 +381,35 @@ function Composer({ phase, promptEl, full, typing, onSend }) {
   );
 }
 
-export function Desk({ sc, navPick, onSelectScene, phase, side, onSide, promptEl, full }) {
+interface DeskProps {
+  sc: number;
+  navPick?: string | null;
+  onSelectScene?: SelectScene;
+  phase: number;
+  side: boolean;
+  onSide: () => void;
+  promptEl: RefObject<HTMLSpanElement | null>;
+  full: boolean;
+}
+export function Desk({ sc, navPick, onSelectScene, phase, side, onSide, promptEl, full }: DeskProps) {
   const basePlace = placeOf(sc);
   const railAt = navPick || basePlace;
   const viewPlace = railAt === 'design' ? 'design' : basePlace;
-  const pickRail = (id) => {
+  const pickRail = (id: string) => {
     track('hero_demo', { control: id });
     const list = PLACE_SCENES[id] || [-1];
     const nextSc = railAt === id ? list[(list.indexOf(sc) + 1) % list.length] : list[0];
     onSelectScene?.(nextSc, id);
   };
-  const stepScene = (delta) => {
+  const stepScene = (delta: number) => {
     track('hero_demo', { control: delta < 0 ? 'nav-prev' : 'nav-next' });
     const total = MORE.length + 1; // include -1
     const curIdx = sc + 1;
     const nextIdx = (curIdx + delta + total) % total;
     onSelectScene?.(nextIdx - 1, null);
   };
-  const view = (p, children) => <section className="xw-view" data-p={p} aria-hidden={viewPlace === p ? undefined : true}>{children}</section>;
-  const scenes = (p) => MORE.map((s, i) => (placeOf(i) === p ? <Scene key={i} s={s} on={i === sc} /> : null));
+  const view = (p: string, children: ReactNode) => <section className="xw-view" data-p={p} aria-hidden={viewPlace === p ? undefined : true}>{children}</section>;
+  const scenes = (p: Place) => MORE.map((s, i) => (placeOf(i) === p ? <Scene key={i} s={s} on={i === sc} /> : null));
   return (
     <div className={'x-win' + (side ? '' : ' xs-noside')} data-place={viewPlace}>
       <div className="x-win-bar">
@@ -436,12 +454,12 @@ export function Desk({ sc, navPick, onSelectScene, phase, side, onSide, promptEl
 /* ---------- the terminal ---------- */
 
 /* A line as the terminal prints it. Each comes `after` the one before it: a scene's lines arrive one by one. */
-function Lines({ lines }) {
+function Lines({ lines }: { lines: ShellLine[] }) {
   let t = 0;
   return lines.map(([after, kind, text], k) => {
     t += after;
     return (
-      <p key={k} className={kind} style={{ '--d': t + 'ms' }}>
+      <p key={k} className={kind} style={{ '--d': t + 'ms' } as CSSProperties}>
         <span>{kind === 'run' ? <><span className="x-dim">$ </span>{text}</> : kind === 'ask' ? <><span className="xt-ask">▶ </span>{text}</> : text}</span>
       </p>
     );
@@ -454,7 +472,7 @@ const SANDBOXES = [
   ['hanzo-dev-agent', 'Hanzo Dev', 'runc (native GPU)', '8%', '1h 14m'],
   ['claude-docs', 'Claude Code', 'microvm', '4%', '39s'],
 ];
-function Console({ on }) {
+function Console({ on }: { on?: boolean }) {
   return (
     <div className="xt-con" data-shown={on || undefined}>
       <p className="xt-con-h"><b>Hanzo Sandboxes</b><span>● iam:3690</span></p>
@@ -465,8 +483,15 @@ function Console({ on }) {
   );
 }
 
-export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
-  const box = useRef(null);
+interface TermProps {
+  onSelectScene?: SelectScene;
+  calm: boolean | null;
+  inView?: boolean;
+  copy: () => void;
+  copied: boolean;
+}
+export function Term({ onSelectScene, calm, inView = true, copy, copied }: TermProps) {
+  const box = useRef<HTMLDivElement>(null);
   const live = useRef(true);
   live.current = inView;
   const hoverRef = useRef(false);
@@ -481,7 +506,7 @@ export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
 
   useEffect(() => {
     if (!pinned) return;
-    const away = (e) => { if (box.current && !box.current.contains(e.target)) setPinned(false); };
+    const away = (e: PointerEvent) => { if (box.current && !box.current.contains(e.target as Node)) setPinned(false); };
     document.addEventListener('pointerdown', away);
     return () => document.removeEventListener('pointerdown', away);
   }, [pinned]);
@@ -493,7 +518,7 @@ export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
       return;
     }
     let dead = false;
-    const nap = (ms) => new Promise((r) => setTimeout(r, ms));
+    const nap = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
     const opening = firstRun.current && cursor.seq === 0 && cursor.tabIdx === 0 && cursor.exIdx === 0;
     firstRun.current = false;
     if (opening) {
@@ -535,7 +560,7 @@ export function Term({ onSelectScene, calm, inView = true, copy, copied }) {
     return () => { dead = true; };
   }, [cursor.seq, calm]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const pickTab = (i) => {
+  const pickTab = (i: number) => {
     const name = TERM_TABS[i];
     track('hero_demo', { control: `term-${name}` });
     setPinned(true);
@@ -615,7 +640,7 @@ const Flask = () => (
     <path d="M7 16h10" />
   </svg>
 );
-const PHONE_PLACES = [
+const PHONE_PLACES: Entry[] = [
   ['chat', 'Chat', 'message-square'],
   ['dev', 'Dev', 'code-xml'],
   ['design', 'Design', 'wand-sparkles'],
@@ -630,7 +655,8 @@ const OPEN_TRACE = [
   '  └ ready in 1.8s',
 ];
 const AGENT_ICON = Object.fromEntries(AGENTS.map((a) => [a.name, a.icon]));
-const DUO_AGENTS = [
+// a lane of the Duo's live view: the agent, the mark it wears, and its tokens a second
+const DUO_AGENTS: [name: string, icon: string, rate: number][] = [
   ['Hanzo Dev', 'Hanzo Dev', 164],
   ['Claude Code', 'Claude Code', 142],
   ['Codex', 'Codex', 118],
@@ -643,13 +669,13 @@ const DUO_AGENTS = [
 ];
 const DUO_ROUTES = ['Zen6', 'Opus 4.8', 'GPT-5.6', 'Fable 5', 'Zen6 Max'];
 
-function PhoneBar({ at, onPick, onNew }) {
+function PhoneBar({ at, onPick, onNew }: { at: string; onPick: (id: string) => void; onNew: () => void }) {
   const [open, setOpen] = useState(false);
-  const box = useRef(null);
-  const btn = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!open) return;
-    const away = (e) => { if (box.current && !box.current.contains(e.target)) setOpen(false); };
+    const away = (e: PointerEvent) => { if (box.current && !box.current.contains(e.target as Node)) setOpen(false); };
     document.addEventListener('pointerdown', away);
     return () => document.removeEventListener('pointerdown', away);
   }, [open]);
@@ -699,7 +725,7 @@ function PhoneBar({ at, onPick, onNew }) {
 }
 
 /* One turn on the mobile / Duo left screen: what was asked, then the answer or agent output. */
-function Turn({ ask, on, answer, children }) {
+function Turn({ ask, on, answer, children }: { ask?: string; on: boolean; answer?: boolean; children?: ReactNode }) {
   return (
     <div className="xm-turn" data-on={on ? '' : undefined} aria-hidden={on ? undefined : true}>
       {ask && <div className="xm-me"><span>{ask}</span></div>}
@@ -710,7 +736,7 @@ function Turn({ ask, on, answer, children }) {
   );
 }
 
-function PhoneComposer({ id }) {
+function PhoneComposer({ id }: { id: string }) {
   const [draft, setDraft] = useState('');
   const submit = () => {
     const q = draft.trim();
@@ -741,10 +767,16 @@ function PhoneComposer({ id }) {
 
 /* The phone is hanzo.app on an iPhone Duo / Fold (9:16 closed on its right half, turning open on its center hinge via
    3D rotateY(-180deg) into the 9:8 Duo split-screen with hanzo.app on the left half and live maxpower on the right half). */
-export function Phone({ sc, navPick, onSelectScene, phase }) {
-  const [foldPick, setFoldPick] = useState(null);
+interface PhoneProps {
+  sc: number;
+  navPick?: string | null;
+  onSelectScene?: SelectScene;
+  phase: number;
+}
+export function Phone({ sc, navPick, onSelectScene, phase }: PhoneProps) {
+  const [foldPick, setFoldPick] = useState<boolean | null>(null);
   const [pickedArt, setPickedArt] = useState(0);
-  const [off, setOff] = useState(() => new Set());
+  const [off, setOff] = useState(() => new Set<string>());
   const [tick, setTick] = useState(0);
   const [pump, setPump] = useState(false);
 
@@ -762,17 +794,17 @@ export function Phone({ sc, navPick, onSelectScene, phase }) {
   const duo = foldPick ?? false;
   const flip = () => { track('hero_demo', { control: 'phone-duo' }); setFoldPick((v) => !v); };
 
-  const pickMobilePlace = (id, advance = false) => {
+  const pickMobilePlace = (id: string, advance = false) => {
     const list = PLACE_SCENES[id] || [-1];
     const nextSc = (advance || mobilePlace === id) ? list[(list.indexOf(sc) + 1) % list.length] : list[0];
     onSelectScene?.(nextSc, id === 'beta' ? 'chat' : id);
   };
 
-  const shipped = new Set();
-  for (let i = 0; i <= sc && i < MORE.length; i++) if (MORE[i]?.ships) shipped.add(MORE[i].ships);
+  const shipped = new Set<string>();
+  for (let i = 0; i <= sc && i < MORE.length; i++) if (MORE[i]?.ships) shipped.add(MORE[i].ships!);
 
   const allOn = off.size === 0;
-  const toggleLane = (name) => {
+  const toggleLane = (name: string) => {
     setOff((prev) => {
       const next = new Set(prev);
       if (next.has(name)) next.delete(name);
@@ -780,12 +812,12 @@ export function Phone({ sc, navPick, onSelectScene, phase }) {
       return next;
     });
   };
-  const toggleAll = () => setOff(allOn ? new Set(DUO_AGENTS.map(([n]) => n)) : new Set());
+  const toggleAll = () => setOff(allOn ? new Set(DUO_AGENTS.map(([n]) => n)) : new Set<string>());
   const runAll = () => { setPump(true); setTimeout(() => setPump(false), 2600); };
   const flowing = DUO_AGENTS.length - off.size;
   const spent = ((tick + 4) * Math.max(1, flowing) * 0.0001).toFixed(4);
 
-  const duoCard = (isInner) => (
+  const duoCard = (isInner: boolean) => (
     <div className="xm-duo-card">
       <span className="xm-duo-card-i"><Mark size={11} /></span>
       <span className="xm-duo-card-t"><b>maxpower</b><small>Mobile + Duo app</small></span>
@@ -795,7 +827,7 @@ export function Phone({ sc, navPick, onSelectScene, phase }) {
     </div>
   );
 
-  const renderSceneTurn = (s, i, isInner) => {
+  const renderSceneTurn = (s: HeroScene, i: number, isInner: boolean) => {
     const isOn = i === sc;
     const askText = s.phone?.ask || s.ask || s.prompt || s.run || s.title;
     if (s.place === 'beta') {
@@ -873,7 +905,7 @@ export function Phone({ sc, navPick, onSelectScene, phase }) {
     );
   };
 
-  const renderTurns = (isInner) => (
+  const renderTurns = (isInner: boolean) => (
     <>
       <h2 className="xm-hi" data-on={!isInner && sc < 0 && phase < 1 ? '' : undefined}>What’s up?</h2>
       <Turn ask={OPEN.ask} on={sc < 0 && (isInner || phase >= 1)} answer={isInner || phase >= 2}>

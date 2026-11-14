@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import JsonLd from '../../../../components/JsonLd';
 import ModelSheet from '../../../../components/pages/models/ModelSheet';
@@ -7,14 +8,16 @@ import { MODEL_PARAMS, modelDoc, metaOf, exists } from '../../../../components/p
 export const dynamicParams = false;
 export const generateStaticParams = () => MODEL_PARAMS();
 
-const routeOf = async (params) => { const p = await params; return '/models/' + decodeURIComponent(p.slug) + '/' + decodeURIComponent(p.model); };
+type Props = { params: Promise<{ slug: string; model: string }> };
 
-export async function generateMetadata({ params }) {
+const routeOf = async (params: Props['params']) => { const p = await params; return '/models/' + decodeURIComponent(p.slug) + '/' + decodeURIComponent(p.model); };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const m = metaOf(await routeOf(params));
   return m ? { title: m.title, description: m.description } : {};
 }
 
-export default async function Page({ params }) {
+export default async function Page({ params }: Props) {
   const route = await routeOf(params);
   if (!exists(route)) notFound();
   const [, , slug, model] = route.split('/');
