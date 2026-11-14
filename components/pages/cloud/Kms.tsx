@@ -35,6 +35,7 @@
    is shown struck through because it is not run here.
    Greys only, from Hanzo's deck. Every word and link is Hanzo's. */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { PointerEvent, ReactNode, SyntheticEvent } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, CodeBlock } from '../../kit';
 import { Console, useLive } from './Frame';
@@ -44,14 +45,14 @@ import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Kms.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const CHAIN = ['Argon2id', 'HKDF-SHA256', 'AES-256-GCM'];
 const HEX = '0123456789abcdef';
-const noise = (n, s) => Array.from({ length: n }, (_, i) => HEX[(s * 31 + i * 17 + ((s + i) * (i + 3)) % 13) % 16]).join('');
+const noise = (n: number, s: number) => Array.from({ length: n }, (_, i) => HEX[(s * 31 + i * 17 + ((s + i) * (i + 3)) % 13) % 16]).join('');
 const ROW = 60; // one version row (52px) plus its 8px gap
 
 /* The version stack: three rows that slide by transform inside a fixed box, so the vault never changes height. */
-function Versions({ v, top, stale }) {
+function Versions({ v, top, stale }: { v: number; top: number; stale: boolean }) {
   // every version that can show stays mounted; each slides to its slot (above the box, 0, 1, 2, below the box)
   const rows = [top, top - 1, top - 2, top - 3];
   return (
@@ -100,7 +101,7 @@ function Vault() {
   const sealed = t >= 3;
   const v = t >= 4 ? ver + 1 : ver;
   // pointer: the card leans up to 2.5 degrees toward a mouse (never on touch, never under reduced motion)
-  const lean = (e) => {
+  const lean = (e: PointerEvent<HTMLDivElement>) => {
     if (calm || e.pointerType !== 'mouse') return;
     const r = e.currentTarget.getBoundingClientRect();
     const px = (e.clientX - r.left) / r.width - 0.5;
@@ -108,7 +109,7 @@ function Vault() {
     e.currentTarget.style.setProperty('--km-ry', (px * 5).toFixed(2) + 'deg');
     e.currentTarget.style.setProperty('--km-rx', (-py * 5).toFixed(2) + 'deg');
   };
-  const rest = (e) => { e.currentTarget.style.setProperty('--km-ry', '0deg'); e.currentTarget.style.setProperty('--km-rx', '0deg'); };
+  const rest = (e: PointerEvent<HTMLDivElement>) => { e.currentTarget.style.setProperty('--km-ry', '0deg'); e.currentTarget.style.setProperty('--km-rx', '0deg'); };
   return (
     <div className="lp-host km-tilt" onPointerMove={lean} onPointerLeave={rest}>
     <LivePause paused={paused} onToggle={togglePause} className="km-pause" />
@@ -138,12 +139,12 @@ function Vault() {
 }
 
 /* Beyond: seal one yourself (WebCrypto: HKDF-SHA256 then AES-256-GCM; the key is random and never leaves). */
-const b64 = (u8) => btoa(String.fromCharCode(...u8));
+const b64 = (u8: Uint8Array) => btoa(String.fromCharCode(...u8));
 function Seal() {
   const [val, setVal] = useState('');
   const [out, setOut] = useState({ ct: '' });
   const [err, setErr] = useState('');
-  const master = useRef(null);
+  const master = useRef<CryptoKey | null>(null);
   const [own, setOwn] = useState(false); // the visitor has the field: the idle sealing stops for good
   const [box, idle, calmSeal] = useLive(0.4);
   // left alone, the box seals on its own: dots type in at 80 ms each, the ciphertext rolls in under them, a rest, again
@@ -199,8 +200,8 @@ const RULES = [
 ];
 
 /* One rule as a picture, built from the vault's own parts and the rule's own words (spans: it sits inside a button). */
-function Scene({ i }) {
-  const L = (k, cls, body) => <span key={k} className={'km-sc-l ' + (cls || '')}>{body}</span>;
+function Scene({ i }: { i: number }) {
+  const L = (k: number, cls: string | undefined, body: ReactNode) => <span key={k} className={'km-sc-l ' + (cls || '')}>{body}</span>;
   const pages = [
     [
       <span key="c" className="km-sc-chain">{CHAIN.map((c) => <span key={c}><i />{c}</span>)}</span>,
@@ -241,16 +242,16 @@ function Scene({ i }) {
    radial masks per cell (seal out, contents in) placed by CSS variables, so nothing reflows while it moves. */
 function Holds() {
   const [sec, arrived] = useArrive(0.12);
-  const box = useRef(null);
-  const cells = useRef([]);
-  const geo = useRef([]);
+  const box = useRef<HTMLDivElement>(null);
+  const cells = useRef<(HTMLButtonElement | null)[]>([]);
+  const geo = useRef<{ x: number; y: number; w: number; h: number }[]>([]);
   const calm = useReducedMotion();
   const seen = useInView(box, { amount: 0.2 });
   const [paused, togglePause] = usePause();
   const [at, setAt] = useState(0);
   const s = useRef({ x: 0, y: 0, tx: 0, ty: 0, at: 0, goal: 0, hand: false, next: 0, init: false });
 
-  const paint = useCallback((x, y) => {
+  const paint = useCallback((x: number, y: number) => {
     const b = box.current;
     if (!b) return;
     b.style.setProperty('--lx', x.toFixed(1) + 'px');
@@ -264,7 +265,7 @@ function Holds() {
     });
     if (hit >= 0 && hit !== s.current.at) { s.current.at = hit; setAt(hit); }
   }, []);
-  const centre = (i) => { const c = geo.current[i]; return c ? [c.x + c.w / 2, c.y + c.h / 2] : [0, 0]; };
+  const centre = (i: number): [number, number] => { const c = geo.current[i]; return c ? [c.x + c.w / 2, c.y + c.h / 2] : [0, 0]; };
 
   // measure the cells (their offsets place each cell's masks), and keep the light on its cell through a resize
   useEffect(() => {
@@ -272,6 +273,7 @@ function Holds() {
     if (!b) return;
     const measure = () => {
       geo.current = cells.current.map((c) => {
+        if (!c) return { x: 0, y: 0, w: 0, h: 0 };
         c.style.setProperty('--cx', c.offsetLeft + 'px');
         c.style.setProperty('--cy', c.offsetTop + 'px');
         return { x: c.offsetLeft, y: c.offsetTop, w: c.offsetWidth, h: c.offsetHeight };
@@ -297,7 +299,7 @@ function Holds() {
     const st = s.current;
     let raf = 0, last = performance.now();
     if (!st.next) st.next = last + 2600;
-    const loop = (now) => {
+    const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       if (!st.hand && !paused) {
@@ -316,12 +318,15 @@ function Holds() {
   }, [calm, seen, paused, paint]);
 
   // the hand takes the light for good: a mouse leads it, a tap or click places it, focus brings it to that cell
-  const hand = (x, y) => {
+  const hand = (x: number, y: number) => {
     const st = s.current;
     st.hand = true; st.tx = x; st.ty = y;
     if (calm) { st.x = x; st.y = y; paint(x, y); }
   };
-  const point = (e) => { const r = box.current.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  const point = (e: { clientX: number; clientY: number }): [number, number] => {
+    const r = box.current?.getBoundingClientRect();
+    return r ? [e.clientX - r.left, e.clientY - r.top] : [0, 0];
+  };
 
   return (
     <section ref={sec} className="km-holds v2-dark" data-room="dark">
@@ -374,7 +379,7 @@ function Holds() {
   );
 }
 
-const FIGS = [['AES-256', 'Sealed on your machine'], ['K8s', 'Secrets kept in step'], ['Every read recorded', ''], ['MIT', 'Run it yourself']];
+const FIGS: [string, string][] = [['AES-256', 'Sealed on your machine'], ['K8s', 'Secrets kept in step'], ['Every read recorded', ''], ['MIT', 'Run it yourself']];
 const CLI = `# Sign in, then point this directory at a path
 kms login
 kms init
@@ -390,7 +395,7 @@ kms scan`;
 /* The dark room: its tiles lift away in a wave from the cursor as it arrives (grid-wave). */
 function Disk() {
   const [ref, on] = useArrive(0.2);
-  const cli = useRef(null);
+  const cli = useRef<HTMLDivElement>(null);
   const typing = useInView(cli, { once: true, amount: 0.4 });
   return (
     <section ref={ref} className="km-disk v2-dark" data-room="dark">
@@ -418,23 +423,23 @@ function Disk() {
    hover, click or Enter on a project and the strip shows that service reading DATABASE_PASSWORD v4 (the same version
    and fingerprint the vault rotated to); left alone it steps through the projects by pressing the console's own rows. */
 const SVC = ['gateway', 'payments-api', 'checkout-web', 'docs-site'];
-const SIDE = [['KMS', '/kms'], ['IAM', '/iam'], ['Authz', '/authz'], ['Secrets', '/cloud/secrets'], ['Audit', '/cloud/audit'], ['Zero Trust', '/cloud/zero-trust']];
-const RELATED = [['IAM', '/iam', 'OIDC identity & orgs'], ['Authz', '/authz', 'Fine-grained access'], ['Secrets', '/cloud/secrets', 'Store once, sync everywhere']];
+const SIDE: [string, string][] = [['KMS', '/kms'], ['IAM', '/iam'], ['Authz', '/authz'], ['Secrets', '/cloud/secrets'], ['Audit', '/cloud/audit'], ['Zero Trust', '/cloud/zero-trust']];
+const RELATED: [string, string, string][] = [['IAM', '/iam', 'OIDC identity & orgs'], ['Authz', '/authz', 'Fine-grained access'], ['Secrets', '/cloud/secrets', 'Store once, sync everywhere']];
 const PROMPT = 'Read https://hanzo.ai/skill.md and use Hanzo KMS in my project. Start with: hanzo kms secrets create';
 const arrow = <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 function Ship() {
-  const wrap = useRef(null);
+  const wrap = useRef<HTMLDivElement>(null);
   const [ref, live, calm] = useLive(0.4);
   const [paused, togglePause] = usePause();
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false); // once the hand has chosen a project, the strip stops stepping
   const [hold, setHold] = useState(false); // a mouse over the console holds the step
   const run = live && !paused && !mine && !hold;
-  const follow = (e, chose) => {
-    const li = e.target.closest && e.target.closest('li[role="option"]');
+  const follow = (e: SyntheticEvent<HTMLElement>, chose: boolean) => {
+    const li = e.target instanceof Element ? e.target.closest('li[role="option"]') : null;
     if (!li || !wrap.current || !wrap.current.contains(li)) return;
-    const i = SVC.indexOf(li.querySelector('.cf-name')?.textContent);
+    const i = SVC.indexOf(li.querySelector('.cf-name')?.textContent ?? '');
     if (i < 0) return;
     setAt(i);
     if (chose && e.nativeEvent.isTrusted) setMine(true);
@@ -443,7 +448,8 @@ function Ship() {
     if (!run) return;
     const id = setTimeout(() => {
       const n = (at + 1) % SVC.length;
-      const rows = wrap.current ? wrap.current.querySelectorAll('li[role="option"]') : [];
+      const rows = wrap.current ? wrap.current.querySelectorAll<HTMLElement>('li[role="option"]') : [];
+
       if (rows[n]) rows[n].click(); // the console's own row takes the highlight (an untrusted click: no sound)
       setAt(n);
     }, 2600);

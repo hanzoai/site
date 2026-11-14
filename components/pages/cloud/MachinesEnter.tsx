@@ -6,46 +6,53 @@
    motion and with JS off: every pre-state in Machines.css sits behind `.js` and `prefers-reduced-motion: no-preference`.
    Nothing here changes layout: overlays are absolutely placed inside their section. */
 import { useEffect, useRef } from 'react';
+import type { ComponentPropsWithoutRef, ElementType } from 'react';
 import { scrollToY } from '../../../lib/scroll';
 
 const calm = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Sets data-in on the element once a share of it is on screen. `parent` watches the element's parent instead: an
    element whose own clip-path starts empty never intersects, so the wipe watches its section. */
+/* The sections take the page's own tag (`as`), a class and whatever else a section carries (data-room). */
+interface EnterProps extends ComponentPropsWithoutRef<'div'> { as?: ElementType }
+
 function useArrive(amount = 0.25, parent = false) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const watched = parent ? el.parentElement : el;
+    if (!watched) return;
     const io = new IntersectionObserver((es) => {
       if (es.some((e) => e.isIntersecting)) { el.setAttribute('data-in', ''); io.disconnect(); }
     }, { threshold: amount });
-    io.observe(parent ? el.parentElement : el);
+    io.observe(watched);
     return () => io.disconnect();
   }, [amount, parent]);
   return ref;
 }
 
 /* glitch-in: a short monochrome glitch (sliced copies jump sideways), then it holds still. */
-export function Glitch({ as: Tag = 'div', className = '', children, ...rest }) {
+export function Glitch({ as: Tag = 'div', className = '', children, ...rest }: EnterProps) {
   const ref = useArrive(0);
   return <Tag ref={ref} className={'mc-gl ' + className} {...rest}>{children}</Tag>;
 }
 
 /* diagonal-wipe: a diagonal clip sweeps across from the top-left corner. */
-export function Wipe({ as: Tag = 'div', className = '', children, ...rest }) {
+export function Wipe({ as: Tag = 'div', className = '', children, ...rest }: EnterProps) {
   const ref = useArrive(0.2, true);
   return <Tag ref={ref} className={'mc-dw ' + className} {...rest}>{children}</Tag>;
 }
 
 /* snap-sections: as the section comes up, the page snaps it to the top of the screen (once, scrolling down, when the
    scroll comes to rest with the section's top in the upper part of the screen) and its content snaps up into place. */
-export function Snap({ as: Tag = 'section', className = '', children, ...rest }) {
+export function Snap({ as: Tag = 'section', className = '', children, ...rest }: EnterProps) {
   const ref = useArrive(0.2);
   useEffect(() => {
     const el = ref.current;
     if (!el || calm()) return;
-    let last = scrollY, down = false, t = 0, done = false;
+    let last = scrollY, down = false, done = false;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const check = () => {
       if (done) return;
       const top = el.getBoundingClientRect().top;
@@ -66,7 +73,7 @@ export function Snap({ as: Tag = 'section', className = '', children, ...rest })
 
 /* page-curl: the previous section's white surface lies over this one and curls away from the bottom-right corner,
    its folded back shading as it goes. */
-export function Curl({ as: Tag = 'section', className = '', children, ...rest }) {
+export function Curl({ as: Tag = 'section', className = '', children, ...rest }: EnterProps) {
   const ref = useArrive(0.3);
   return (
     <Tag ref={ref} className={'mc-curl ' + className} {...rest}>
@@ -78,25 +85,26 @@ export function Curl({ as: Tag = 'section', className = '', children, ...rest })
 }
 
 /* noise-dissolve: the section starts under a field of grey grain that dissolves away cell by cell. */
-export function Dissolve({ as: Tag = 'section', className = '', children, ...rest }) {
-  const ref = useRef(null);
-  const cv = useRef(null);
+export function Dissolve({ as: Tag = 'section', className = '', children, ...rest }: EnterProps) {
+  const ref = useRef<HTMLElement>(null);
+  const cv = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const el = ref.current, c = cv.current;
     if (!el || !c) return;
     const hide = () => { c.style.display = 'none'; };
     if (calm()) return hide();
     const S = 3;
-    let raf = 0, io;
+    let raf = 0, io: IntersectionObserver;
     const w = Math.ceil(el.offsetWidth / S), h = Math.ceil(el.offsetHeight / S);
     c.width = w; c.height = h;
     const g = c.getContext('2d');
+    if (!g) return hide();
     const img = g.createImageData(w, h);
     const n = w * h, r = new Float32Array(n), shade = new Uint8Array(n);
     // grain in the page's own light: near-white in bright, near Hanzo's dark page in dark (its :not(.light) rule)
     const base = document.documentElement.classList.contains('light') ? 229 : 13;
     for (let i = 0; i < n; i++) { r[i] = Math.random(); shade[i] = base + ((Math.random() * 27) | 0); }
-    const paint = (t) => {
+    const paint = (t: number) => {
       const d = img.data;
       for (let i = 0, j = 0; i < n; i++, j += 4) {
         const v = shade[i];
@@ -111,7 +119,8 @@ export function Dissolve({ as: Tag = 'section', className = '', children, ...res
       io.disconnect();
       el.setAttribute('data-in', '');
       const t0 = performance.now(), D = 900;
-      const step = (now) => {
+      const step = (now: number) => {
+
         const p = Math.min(1, (now - t0) / D);
         paint((1 - Math.pow(1 - p, 2)) * 1.02);
         if (p < 1) raf = requestAnimationFrame(step); else hide();

@@ -15,8 +15,8 @@ const calm = () => typeof matchMedia === 'undefined' || matchMedia('(prefers-red
 
 /* Arrival: sets data-go on the section the first time it crosses into the lower part of the screen. An attribute, not a
    class, so React re-rendering the section's className never takes it away. */
-export function useArrive(margin = '0px 0px -16% 0px') {
-  const ref = useRef(null);
+export function useArrive<T extends HTMLElement = HTMLElement>(margin = '0px 0px -16% 0px') {
+  const ref = useRef<T>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -32,15 +32,16 @@ export function useArrive(margin = '0px 0px -16% 0px') {
 
 /* opposite-drift: the two halves (found by selector inside the section) sit pushed apart in opposite directions and
    come together as the section scrolls up; once they meet they stay met (it plays once). */
-export function useDrift(selA, selB) {
-  const ref = useRef(null);
+export function useDrift<T extends HTMLElement = HTMLElement>(selA: string, selB: string) {
+  const ref = useRef<T>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || calm()) return;
-    const a = el.querySelector(selA), b = el.querySelector(selB);
+    const a = el.querySelector<HTMLElement>(selA), b = el.querySelector<HTMLElement>(selB);
     if (!a || !b) return;
     let raf = 0, done = false;
-    const put = (k) => {
+    const put = (k: number) => {
+
       const wide = innerWidth >= 900;
       const x = (wide ? 72 : 40) * k, y = (wide ? 48 : 0) * k;
       a.style.transform = k ? `translate3d(${-x}px, ${y}px, 0)` : '';

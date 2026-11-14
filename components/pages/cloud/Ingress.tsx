@@ -39,9 +39,9 @@ import { SideCarousel, StretchScroll, InertiaDrag, RollNum, CurtainRise, useArri
 import '../../v2/v2scale.css';
 import './Ingress.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 // every label on the board is Hanzo's own words from this page: its hostname, its files, its middleware
-const ROUTES = [
+const ROUTES: [string, string[]][] = [
   ['skill.md', ['rate limiting', 'retry']],
   ['docs/index.html', ['compression']],
   ['pricing.html', ['circuit breaking']],
@@ -95,7 +95,7 @@ function Board() {
   );
 }
 
-const FACTS = [
+const FACTS: [title: string, text: string, kind: string][] = [
   ['It reads what you already wrote', "Standard networking.k8s.io/v1 Ingress is the primary source, alongside IngressRoute for the things a plain Ingress can't say, Gateway API, and TOML or YAML from disk. It registers as the cluster's default IngressClass, so an Ingress that names none is still picked up.", 'sources'],
   ['Certificates it fetches itself', "Let's Encrypt provisioning and renewal, wildcards included. A new hostname gets a certificate without anyone filing a ticket for one.", 'cert'],
   ['Middleware you compose by annotation', 'Rate limiting, retry with exponential backoff, circuit breaking, compression, header rewriting, IP allowlists, redirects, prefix stripping. Name one in an annotation, or chain several into a named pipeline and name that.', 'mw'],
@@ -108,8 +108,8 @@ const MW = ['rate limiting', 'retry', 'circuit breaking', 'compression', 'header
 
 /* each fact's drawing, from its own words; it plays once when its card is half in view, then rests.
    With JS off or reduced motion it is simply its final frame. */
-function Draw({ k, on }) {
-  const c = (name) => name + (on ? ' play' : '');
+function Draw({ k, on }: { k: string; on: boolean }) {
+  const c = (name: string) => name + (on ? ' play' : '');
   if (k === 'sources') return (
     <div className={c('ig-d ig-d-src')}>
       <p className="main">networking.k8s.io/v1 Ingress</p>
@@ -138,8 +138,8 @@ function Draw({ k, on }) {
   return <div className={c('ig-d ig-d-ports')}><b>80</b><b>443</b><p>every Linux capability dropped except the one that lets it</p></div>;
 }
 
-function FactDraw({ k }) {
-  const ref = useRef(null);
+function FactDraw({ k }: { k: string }) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const seen = useInView(ref, { amount: 0.5, once: true });
   return <div ref={ref} className="ig-fact-r" aria-hidden="true"><Draw k={k} on={calm || seen} /></div>;
@@ -151,11 +151,11 @@ const NOTE = ['no reload, no dropped connection', 'out of rotation', 'out of rot
 /* Beyond: chain your own pipeline. Pick middleware, drag to reorder; a request walks the chain again on every change,
    lighting each step as it passes. Its entrance is count-roll: the step numbers roll up into their values. */
 function Pipeline() {
-  const [chain, setChain] = useState(['IP allowlists', 'rate limiting', 'retry']);
-  const toggle = (m) => setChain((c) => (c.includes(m) ? c.filter((x) => x !== m) : [...c, m]));
-  const move = (i, d) => setChain((c) => { const n = [...c]; [n[i], n[i + d]] = [n[i + d], n[i]]; return n; });
-  const [room] = useArrive();
-  const run = useRef(null);
+  const [chain, setChain] = useState<string[]>(['IP allowlists', 'rate limiting', 'retry']);
+  const toggle = (m: string) => setChain((c) => (c.includes(m) ? c.filter((x) => x !== m) : [...c, m]));
+  const move = (i: number, d: number) => setChain((c) => { const n = [...c]; [n[i], n[i + d]] = [n[i + d], n[i]]; return n; });
+  const [room] = useArrive<HTMLElement>();
+  const run = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const seen = useInView(run, { amount: 0.5, once: true });
   // the walk: -2 resting, -1 at "request", 0..n-1 on a step, n at "backend"
@@ -164,7 +164,8 @@ function Pipeline() {
   const sig = chain.join('|');
   useEffect(() => {
     if (!seen || calm) return;
-    let i = -1, t;
+    let i = -1, t: ReturnType<typeof setTimeout>;
+
     setAt(-1);
     const step = () => { i += 1; setAt(i); t = setTimeout(i < chain.length ? step : () => setAt(-2), i < chain.length ? 300 : 700); };
     t = setTimeout(step, 300);

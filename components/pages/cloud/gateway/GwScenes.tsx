@@ -111,7 +111,7 @@ function Hop() {
 const SCENES = [Jwks, Headers, Routes, Bucket, Health, Hop];
 
 /* no window chrome: the scene is the object (its chapter's "0N / 06" sits once, under the chapter's heading) */
-export default function GwScene({ at }) {
+export default function GwScene({ at }: { at: number }) {
   const S = SCENES[at];
   return (
     <div className="gws v2-obj" aria-hidden="true">

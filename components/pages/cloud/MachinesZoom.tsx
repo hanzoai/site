@@ -7,33 +7,34 @@
    the sheet's button zooms out. Reduced motion rests on the sheet; JS off prints the sheet under the fleet.
    Every word and figure is Hanzo's (the card's name and its spec values); the fleet itself is unlabeled shapes. */
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import type { MouseEvent } from 'react';
 import { motion, animate, useMotionValue, useMotionValueEvent, useScroll, useTransform, useInView } from 'motion/react';
 import { scrollToY } from '../../../lib/scroll';
 import { Wipe } from './MachinesEnter';
 
-const IO = [0.4, 0, 0.2, 1];
-const EASE = [0.16, 1, 0.3, 1];
+const IO: [number, number, number, number] = [0.4, 0, 0.2, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const RACKS = 12, CARDS = 6, AIM = [4, 2]; // the lit card: rack 4 (top row on desktop, the centre on a phone), card 2
 const ZEND = 0.78; // share of the scroll travel spent zooming; the rest holds the sheet
 const SCROLL_Q = '(min-width: 901px) and (pointer: fine) and (prefers-reduced-motion: no-preference)';
 const CALM_Q = '(prefers-reduced-motion: reduce)';
 
-const useMedia = (q) => useSyncExternalStore(
+const useMedia = (q: string) => useSyncExternalStore(
   (f) => { const m = matchMedia(q); m.addEventListener('change', f); return () => m.removeEventListener('change', f); },
   () => matchMedia(q).matches,
   () => false,
 );
 
 const H100 = [['Cores', '16,896 CUDA'], ['Tensor Cores', '528 TCs']];
-const lit = (r, c) => (r * 5 + c * 3) % 7 < 3;
-const fins = (n) => Array.from({ length: n }).map((_, k) => <i key={k} />);
-const easeIO = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+const lit = (r: number, c: number) => (r * 5 + c * 3) % 7 < 3;
+const fins = (n: number) => Array.from({ length: n }).map((_, k) => <i key={k} />);
+const easeIO = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
 export default function MachinesZoom() {
-  const sec = useRef(null);
-  const fleet = useRef(null);
-  const aim = useRef(null);
-  const back = useRef(null);
+  const sec = useRef<HTMLElement>(null);
+  const fleet = useRef<HTMLDivElement>(null);
+  const aim = useRef<HTMLButtonElement>(null);
+  const back = useRef<HTMLButtonElement>(null);
   const scrollMode = useMedia(SCROLL_Q);
   const calm = useMedia(CALM_Q);
   const geo = useRef({ s: 1 });
@@ -46,7 +47,7 @@ export default function MachinesZoom() {
   const touched = useRef(false);
   const [up, setUp] = useState(false); // hydrated: only then is the hidden sheet made inert (JS off keeps it readable)
   useEffect(() => setUp(true), []);
-  const focusNext = useRef(null);
+  const focusNext = useRef<HTMLButtonElement | null>(null);
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
 
   // the zoom: about a fixed point F chosen so the lit card's centre lands on the stage's centre at full scale
@@ -105,12 +106,14 @@ export default function MachinesZoom() {
     return () => c.stop();
   }, [shown]);
 
-  const go = (inward, e) => {
+  const go = (inward: boolean, e?: MouseEvent<HTMLButtonElement>) => {
     touched.current = true;
     if (e && e.detail === 0) focusNext.current = inward ? back.current : aim.current; // keyboard: follow the zoom
     if (!scrollMode) return setOpen(inward);
     const el = sec.current;
+    if (!el) return;
     const top = el.getBoundingClientRect().top + scrollY;
+
     const travel = el.offsetHeight - innerHeight;
     scrollToY(inward ? top + travel * (ZEND + 0.08) : top, { duration: 1.4 });
   };

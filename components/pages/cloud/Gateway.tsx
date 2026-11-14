@@ -20,6 +20,7 @@
    Goal: see, in one request, that the token is checked once at the edge and identity is written, not trusted.
    CTA: Read the docs (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
+import type { PointerEvent, ReactNode } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent, useReducedMotion } from 'motion/react';
 import { A, Cta } from '../../kit';
 import { Console, useLive } from './Frame';
@@ -43,7 +44,7 @@ const STEPS_OK = [1100, 950, 900, 1300, 1100];
 const STEPS_429 = [1000, 1500, 900];
 const LEDGER = [{ id: -1, w: 'docs-site' }, { id: 0, w: 'payments-api' }];
 function Lane() {
-  const [ref, seen, calm] = useLive(0.25);
+  const [ref, seen, calm] = useLive<HTMLDivElement>(0.25);
   const [wd, setWd] = useState(1400); // the lane's width, for where the ledger sits on the far side
   const [wide, setWide] = useState(true); // the ledger shows only above the 900px breakpoint (as the CSS has it)
   useEffect(() => {
@@ -55,7 +56,7 @@ function Lane() {
   }, [ref]);
   // a fine pointer leans the lane toward it (2.5° at most), written straight to the element; flat on leave, none with
   // reduced motion or touch
-  const tilt = (e) => {
+  const tilt = (e: PointerEvent<HTMLDivElement>) => {
     const el = ref.current;
     if (!el || calm || e.pointerType !== 'mouse') return;
     const r = el.getBoundingClientRect();
@@ -97,7 +98,7 @@ function Lane() {
   const x = !wide ? '0%' : limited ? (phase >= 2 ? '-140%' : '0%') : phase >= 4 ? toLedger : '0%';
   const y = wide ? 0 : limited ? (phase >= 2 ? -120 : 0) : phase >= 4 ? 262 : 0;
   const gone = limited ? phase >= 2 : phase >= 4;
-  const enter = (v) => (boot.current ? false : v);
+  const enter = <T,>(v: T) => (boot.current ? false : v);
   return (
     <div className="lp-host">
     <LivePause paused={paused} onToggle={togglePause} className="gw-pause" />
@@ -156,7 +157,7 @@ function Lane() {
   );
 }
 
-const RULES = [
+const RULES: [string, string][] = [
   ['The token is checked here', "A JWT is validated against Hanzo IAM's JWKS before anything else reads the request. Opaque API keys aren't JWTs, so they go on to the service that issued them and it decides."],
   ['Identity headers are written, not trusted', 'X-User-Id, X-Org-Id, X-Roles and every X-IAM-* variant are stripped from every inbound request, then written back from the verified claims — sub, owner, roles. A curl flag can\'t set them.'],
   ['No route map, deliberately', 'For api.hanzo.ai it forwards /* straight to Hanzo Cloud, which owns the /v1 mount table. A second table here would be a second thing to keep in sync, and the first one to go stale.'],
@@ -230,9 +231,9 @@ function Forge() {
 /* The hero lane as the same inset card from first paint: no transform in the server HTML or the first client render
    (a plain element with a class, never a style object that reduced motion could render differently). After mount, as
    the hero leaves, the card recedes a little (scale and lift written straight to the element, tied to scroll only). */
-function Settle({ children, className }) {
-  const ref = useRef(null);
-  const inner = useRef(null);
+function Settle({ children, className }: { children?: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inner = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.3', 'end start'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
@@ -251,8 +252,8 @@ function Settle({ children, className }) {
 /* The statement: it grows as it crosses the middle of the screen, then settles back, over a one-line request lane where
    a forged header is torn off at the gate and the org id that walks through is the one Gateway wrote. */
 function Say() {
-  const ref = useRef(null);
-  const head = useRef(null);
+  const ref = useRef<HTMLElement>(null);
+  const head = useRef<HTMLHeadingElement>(null);
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   // the line cuts in once as the statement arrives (a class added after mount, so the server HTML shows it whole)
@@ -311,7 +312,8 @@ export default function Gateway() {
 
       <Say />
 
-      <GwChapters className="gw-ch" label="Gateway" items={RULES} scene={(at) => <GwScene at={at} />} />
+      <GwChapters className="gw-ch" label="Gateway" items={RULES} scene={(at: number) => <GwScene at={at} />}
+ />
 
       <Forge />
 

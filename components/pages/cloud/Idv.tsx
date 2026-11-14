@@ -23,6 +23,7 @@
    Goal: see that the vendor is configuration, that only a proven verdict counts, and try a forged webhook.
    CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { useEffect, useRef, useState } from 'react';
+import type { ComponentType, PointerEvent, ReactNode, RefObject } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useMotionValueEvent, useInView, useReducedMotion, animate } from 'motion/react';
 import { Cta } from '../../kit';
 import { useLive, useSteps } from './Frame';
@@ -34,10 +35,10 @@ import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Idv.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const CALLS = ['start a verification', 'check its status', 'parse a webhook', 'name yourself'];
 // [vendor, how it answers, the verdict line, kind]: every phrase is Hanzo's (the intro and the six facts)
-const VENDORS = [
+const VENDORS: [string, string, string, string][] = [
   ['Jumio', 'webhook', 'HMAC-SHA256', 'ok'],
   ['Onfido', 'webhook', 'HMAC-SHA256', 'ok'],
   ['Plaid', 'polling', 'polled from the provider', 'poll'],
@@ -50,8 +51,8 @@ const CROSS = <svg className="iv-tk" viewBox="0 0 20 20" width="20" height="20" 
 
 /* The hero object settles as the page moves on: the same style on server and client (motion values start at identity),
    so the first frame is the finished card; reduced motion holds it still in CSS. */
-function Settle({ children, className }) {
-  const ref = useRef(null);
+function Settle({ children, className }: { children?: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.2', 'end start'] });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.96]);
   const y = useTransform(scrollYProgress, [0, 1], [0, 32]);
@@ -69,11 +70,11 @@ function Board() {
   const [paused, togglePause] = usePause();
   const live = seen && !paused;
   const [v, pick] = useSteps(VENDORS.length, 3000, live);
-  const [peek, setPeek] = useState(null);
+  const [peek, setPeek] = useState<number | null>(null);
   const shown = peek ?? v;
   const [name, how, verdict, k] = VENDORS[shown];
   const rx = useMotionValue(0), ry = useMotionValue(0);
-  const lean = (e) => {
+  const lean = (e: PointerEvent<HTMLElement>) => {
     if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const r = e.currentTarget.getBoundingClientRect();
     ry.set(((e.clientX - r.left) / r.width - 0.5) * 5);
@@ -81,9 +82,10 @@ function Board() {
   };
   const rest = () => { animate(rx, 0, { duration: 0.4, ease: EASE }); animate(ry, 0, { duration: 0.4, ease: EASE }); };
   // on a phone the vendors are one sideways rail: keep the vendor being shown in view (the rail scrolls, never the page)
-  const rail = useRef(null);
+  const rail = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const r = rail.current, b = r && r.children[v];
+    const r = rail.current, b = r && (r.children[v] as HTMLElement | undefined); // the vendor tabs are buttons
+
     if (!r || !b || r.scrollWidth <= r.clientWidth) return;
     const inView = b.offsetLeft >= r.scrollLeft && b.offsetLeft + b.offsetWidth <= r.scrollLeft + r.clientWidth * 0.82;
     if (inView) return;
@@ -133,7 +135,7 @@ const FIRST = WORDS.indexOf('onboarding.') + 1; // the first sentence: in ink fr
    the first sentence in ink from the first paint, the rest inked in word by word over 1.4 s after load (one CSS
    variable; no per-word state). The closing clause inks last. Reduced motion: all ink at once (CSS). */
 function Lede() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -142,26 +144,26 @@ function Lede() {
     return () => p.stop();
   }, []);
   // --i runs 0 to 0.88 so the last word reaches full ink before --p reaches 1 (at rest nothing stays grey)
-  const word = (w, i) => <span key={i} className={i < FIRST ? 'on' : undefined} style={{ '--i': (0.88 * (i - FIRST) / (WORDS.length - FIRST)).toFixed(3) }}>{w} </span>;
+  const word = (w: string, i: number) => <span key={i} className={i < FIRST ? 'on' : undefined} style={{ '--i': (0.88 * (i - FIRST) / (WORDS.length - FIRST)).toFixed(3) }}>{w} </span>;
   return <p className="iv-lede" ref={ref} style={{ '--p': 0 }}>{WORDS.map(word)}</p>;
 }
 
 /* One sheet object's little script: it renders finished (server and first client frame), rewinds after mount while
    still unseen, and plays once to the finish when half of it is on screen. Reduced motion stays finished. */
-function useStage(max, ms) {
-  const ref = useRef(null);
+function useStage(max: number, ms: number) {
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const calm = useReducedMotion();
   const [s, setS] = useState(max);
   useEffect(() => {
     if (calm) { setS(max); return; }
     if (!seen) { setS(0); return; }
-    let k = 0, t;
+    let k = 0, t: ReturnType<typeof setTimeout>;
     const step = () => { k += 1; setS(k); if (k < max) t = setTimeout(step, ms); };
     t = setTimeout(step, 220);
     return () => clearTimeout(t);
   }, [seen, calm, max, ms]);
-  return [ref, s];
+  return [ref, s] as const;
 }
 
 // The demo's secret and body are Hanzo's own words; HEX is HMAC-SHA256(SECRET, BODY), the value the forge computes live.
@@ -255,7 +257,7 @@ function Split() {
   );
 }
 
-const FACTS = [
+const FACTS: [string, string, ComponentType][] = [
   ['Four calls, whichever vendor', 'Start a verification, check its status, parse a webhook, name yourself. Every provider implements the same four, so swapping one for another is configuration and not a rewrite of your onboarding.', Four],
   ['A verdict, or nothing', 'A provider whose response we do not parse refuses rather than answering. Two of them used to return approved without reading the reply — one for any response that was not an error, the other including a rejected document. Anything gating on that would have admitted an unverified person, so both now refuse until the parsing is written.', Refuses],
   ['A webhook has to prove it is one', 'Signatures are HMAC-SHA256 over the raw body, compared in constant time, with the header matched case-insensitively because the wire spelling and the canonical spelling differ. An empty signing secret is a refusal, never a skip — an HMAC under a key everybody knows is one anybody can compute.', Hex],
@@ -269,14 +271,14 @@ const FACTS = [
    its edge can reach them. The timing comes from a marker in the flow just above the next sheet (sticky sheets cannot
    be measured themselves). Server and first client render are identical (opacity 1, no transform); phones and reduced
    motion drop the stacking in CSS, so every sheet and its object read whole. */
-function Sheet({ i, t, d, Obj, next }) {
+function Sheet({ i, t, d, Obj, next }: { i: number; t: string; d: string; Obj: ComponentType; next: RefObject<HTMLElement | null> }) {
   const { scrollYProgress } = useScroll({ target: next, offset: ['start end', 'start start'] });
   const last = i === FACTS.length - 1;
   // the outgoing sheet keeps its words and object: it dims and steps back (0.94) while the next one covers it, so it is
   // never an empty slab; every sheet is the same height on desktop, so only a 16px edge of it peeks above the next
   const dim = useTransform(scrollYProgress, [0.45, 0.95], [1, last ? 1 : 0.35]);
   const sink = useTransform(scrollYProgress, [0.3, 0.95], [1, last ? 1 : 0.94]);
-  const title = useRef(null);
+  const title = useRef<HTMLHeadingElement>(null);
   const seen = useInView(title, { once: true, amount: 0.6 });
   return (
     <motion.article className={'iv-sheet s' + (i + 1)} style={{ '--k': i, scale: sink }}>
@@ -294,10 +296,10 @@ function Sheet({ i, t, d, Obj, next }) {
 }
 
 function Sheets() {
-  const marks = useRef(FACTS.map(() => ({ current: null }))).current;
+  const marks = useRef(FACTS.map((): { current: HTMLElement | null } => ({ current: null }))).current;
   // on a desk-size screen every sheet takes the tallest sheet's height, so a sheet is always fully covered by the next
   // (only its 16px top edge peeks); phones and reduced motion unstack and keep their natural heights
-  const wrap = useRef(null);
+  const wrap = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const w = wrap.current;
     if (!w) return;
@@ -305,11 +307,11 @@ function Sheets() {
     const fit = () => {
       w.style.removeProperty('--iv-h');
       if (!mq.matches) return;
-      const h = Math.max(...[...w.querySelectorAll('.iv-sheet')].map((s) => s.offsetHeight));
+      const h = Math.max(...[...w.querySelectorAll<HTMLElement>('.iv-sheet')].map((s) => s.offsetHeight));
       w.style.setProperty('--iv-h', h + 'px');
     };
     fit();
-    let t;
+    let t: ReturnType<typeof setTimeout>;
     const later = () => { clearTimeout(t); t = setTimeout(fit, 150); };
     addEventListener('resize', later);
     mq.addEventListener('change', fit);
@@ -329,13 +331,15 @@ function Sheets() {
 }
 
 // what each verdict means: a short state word, then Hanzo's own sentence as the second line (facts 03 and 04)
-const SAYS = {
+const SAYS: Record<string, [string, string]> = {
   accepted: ['accepted', 'A webhook whose signature we can check is accepted'],
   'turned away': ['polled', 'anything else is polled from the provider directly, so the verdict always comes from the source.'],
   refused: ['refusal', 'An empty signing secret is a refusal, never a skip'],
 };
 // the four states the room plays as you scroll: as sent, a changed body, a forgery, an empty signing secret
-const SCENES = [
+interface Scene { secret: string; body: string; forgery: boolean }
+const PICK: Record<string, number> = { approved: 1, forgery: 2, empty: 3 };
+const SCENES: Scene[] = [
   { secret: SECRET, body: BODY, forgery: false },
   { secret: SECRET, body: TAMPER, forgery: false },
   { secret: SECRET, body: BODY, forgery: true },
@@ -345,10 +349,10 @@ const SCENES = [
 /* Beyond: the provider signs the raw body; the receiver checks what actually arrived. The room pins and plays its four
    states as you scroll; touching any control hands it to you (Reset gives it back to the scroll). */
 function Forge() {
-  const room = useRef(null);
+  const room = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   const [scene, setScene] = useState(0);
-  const [mine, setMine] = useState(null);
+  const [mine, setMine] = useState<Scene | null>(null);
   const cur = mine || SCENES[scene];
   const { scrollYProgress } = useScroll({ target: room, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (p) => { if (!calm) setScene(Math.min(3, Math.max(0, Math.floor(p * 4.4 - 0.2)))); });
@@ -366,11 +370,12 @@ function Forge() {
     verify(cur.secret, cur.body, header).then((v) => on && setVerdict(v), () => {});
     return () => { on = false; };
   }, [cur.secret, cur.body, header]);
-  const set = (k) => setMine({ ...cur, ...k });
+  const set = (k: Partial<Scene>) => setMine({ ...cur, ...k });
   // one choice at a time: the lit segment is the state the callback is in (an empty secret first, then a forgery,
   // then a changed body); pressing it again returns to the callback as sent
   const lit = !cur.secret ? 'empty' : cur.forgery ? 'forgery' : cur.body === TAMPER ? 'approved' : null;
-  const choose = (c) => setMine(c === lit ? { ...SCENES[0] } : { ...SCENES[{ approved: 1, forgery: 2, empty: 3 }[c]] });
+  const choose = (c: string) => setMine(c === lit ? { ...SCENES[0] } : { ...SCENES[PICK[c]] });
+
   const ok = verdict === 'accepted';
   const [word, line] = SAYS[verdict] || ['', ''];
   // the room enters as a rounded card inside the gutters and opens to full width as it is reached (clip-path only;

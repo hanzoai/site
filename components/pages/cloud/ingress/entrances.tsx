@@ -9,11 +9,12 @@
    Each plays once when its section arrives (IntersectionObserver), moves only transform and clip-path, and shows the
    final state under reduced motion and with JS off (the waiting states live under `html.js … :not([data-in])`). */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useReducedMotion } from 'motion/react';
 
 /* sets data-in on the element once it arrives; at once under reduced motion */
-export function useArrive(margin = '0px 0px -22% 0px') {
-  const ref = useRef(null);
+export function useArrive<T extends HTMLElement = HTMLDivElement>(margin = '0px 0px -22% 0px') {
+  const ref = useRef<T>(null);
   const calm = useReducedMotion();
   const [inn, setIn] = useState(false);
   useEffect(() => {
@@ -26,14 +27,14 @@ export function useArrive(margin = '0px 0px -22% 0px') {
     io.observe(el);
     return () => io.disconnect();
   }, [calm, margin]);
-  return [ref, inn, calm];
+  return [ref, inn, calm] as const;
 }
 
 /* 1. side-carousel: a horizontal snapping track with Previous / Next (keyboard: the track is focusable and scrolls
    with the arrow keys; the buttons are real buttons). */
-export function SideCarousel({ items, render, label, className = '' }) {
+export function SideCarousel<Item>({ items, render, label, className = '' }: { items: Item[]; render: (it: Item, i: number) => ReactNode; label?: string; className?: string }) {
   const [ref, , calm] = useArrive();
-  const track = useRef(null);
+  const track = useRef<HTMLOListElement>(null);
   const [edge, setEdge] = useState([true, false]);
   const look = useCallback(() => {
     const t = track.current;
@@ -48,10 +49,10 @@ export function SideCarousel({ items, render, label, className = '' }) {
     addEventListener('resize', look, { passive: true });
     return () => { t.removeEventListener('scroll', look); removeEventListener('resize', look); };
   }, [look]);
-  const go = (d) => {
+  const go = (d: number) => {
     const t = track.current;
     const card = t?.querySelector('li');
-    if (!card) return;
+    if (!t || !card) return;
     t.scrollBy({ left: d * (card.offsetWidth + 12), behavior: calm ? 'auto' : 'smooth' });
   };
   return (
@@ -69,15 +70,15 @@ export function SideCarousel({ items, render, label, className = '' }) {
 
 /* 2. stretch-scroll: the child arrives stretched (scaleY from its top edge) and relaxes; then, while on screen, it
    stretches with scroll speed (up to 4%, from the edge the scroll pulls) and relaxes when the scroll stops. */
-export function StretchScroll({ children, className = '' }) {
+export function StretchScroll({ children, className = '' }: { children?: ReactNode; className?: string }) {
   const [ref, inn, calm] = useArrive('0px 0px -18% 0px');
-  const inner = useRef(null);
+  const inner = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = inner.current;
     if (!inn || calm || !el) return;
     let s = 1.16, ty = 48, target = 1, raf = 0, lastY = scrollY, lastT = performance.now(), lastS = lastT, dir = 1, seen = true;
     const paint = () => { el.style.transformOrigin = dir > 0 ? '50% 0%' : '50% 100%'; el.style.transform = `translateY(${ty.toFixed(2)}px) scaleY(${s.toFixed(4)})`; };
-    const loop = (now) => {
+    const loop = (now: number) => {
       const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
       const k = 1 - Math.exp(-dt * 7);
       s += (target - s) * k; ty += (0 - ty) * k;
@@ -108,15 +109,16 @@ export function StretchScroll({ children, className = '' }) {
 /* 3. inertia-drag: the target inside (a CSS selector) is thrown in from the right and coasts to rest; the visitor can
    drag it sideways and throw it, and it coasts, then drifts back to its place (no spring, no overshoot). Buttons and
    links inside keep working (a drag never starts on them). */
-export function InertiaDrag({ children, target, from = 1, className = '' }) {
+export function InertiaDrag({ children, target, from = 1, className = '' }: { children?: ReactNode; target: string; from?: number; className?: string }) {
   const [ref, inn, calm] = useArrive();
   useEffect(() => {
     const box = ref.current;
-    const el = box?.querySelector(target);
-    if (!inn || !el) return;
-    let x = calm ? 0 : from * Math.min(520, innerWidth * 0.42), v = calm ? 0 : -2600, raf = 0, last = performance.now(), drag = null;
+    const el = box?.querySelector<HTMLElement>(target);
+    if (!inn || !box || !el) return;
+    let x = calm ? 0 : from * Math.min(520, innerWidth * 0.42), v = calm ? 0 : -2600, raf = 0, last = performance.now();
+    let drag: { x0: number; lx: number; lt: number; id: number } | null = null;
     const set = () => box.style.setProperty('--tx', x.toFixed(2) + 'px');
-    const loop = (now) => {
+    const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
       if (!drag) {
         x += v * dt; v *= Math.exp(-dt * 4.2);
@@ -130,21 +132,21 @@ export function InertiaDrag({ children, target, from = 1, className = '' }) {
     if (!calm) { // a throw that lands at 0: start at x0 with the velocity that the decay spends exactly there
       v = -x * 4.2; set(); kick();
     } else set();
-    const band = (d) => Math.sign(d) * Math.min(Math.abs(d), 160 + (Math.abs(d) - 160) * 0.25 * (Math.abs(d) > 160 ? 1 : 0));
-    const down = (e) => {
-      if (e.button || e.target.closest('button, a')) return;
+    const band = (d: number) => Math.sign(d) * Math.min(Math.abs(d), 160 + (Math.abs(d) - 160) * 0.25 * (Math.abs(d) > 160 ? 1 : 0));
+    const down = (e: PointerEvent) => {
+      if (e.button || (e.target instanceof Element && e.target.closest('button, a'))) return;
       if (e.pointerType === 'mouse') e.preventDefault();
       drag = { x0: e.clientX - x, lx: e.clientX, lt: performance.now(), id: e.pointerId };
       v = 0; el.setPointerCapture?.(e.pointerId); box.setAttribute('data-drag', ''); kick();
     };
-    const move = (e) => {
+    const move = (e: PointerEvent) => {
       if (!drag || drag.id !== e.pointerId) return;
       const now = performance.now();
       x = band(e.clientX - drag.x0);
       v = calm ? 0 : 0.6 * v + 0.4 * ((e.clientX - drag.lx) / Math.max(0.008, (now - drag.lt) / 1000));
       drag.lx = e.clientX; drag.lt = now;
     };
-    const up = (e) => {
+    const up = (e: PointerEvent) => {
       if (!drag || drag.id !== e.pointerId) return;
       if (performance.now() - drag.lt > 90) v = 0;
       v = Math.max(-3000, Math.min(3000, v));
@@ -167,7 +169,7 @@ export function InertiaDrag({ children, target, from = 1, className = '' }) {
 /* 4. count-roll: a number whose digits roll up into place like counters (the text itself is in the HTML; the rolling
    strip is decoration). The room it sits in carries data-in (useArrive); a changed value rolls to the new digit. */
 const STRIP = Array.from({ length: 20 }, (_, i) => i % 10);
-export function RollNum({ value }) {
+export function RollNum({ value }: { value: string | number }) {
   return (
     <span className="ig-roll">
       <span className="ig-roll-t">{value}</span>
@@ -181,7 +183,8 @@ export function RollNum({ value }) {
 }
 
 /* 5. curtain-rise: the section rises from below behind a clip */
-export function CurtainRise({ children, className = '' }) {
+export function CurtainRise({ children, className = '' }: { children?: ReactNode; className?: string }) {
+
   const [ref] = useArrive('0px 0px -12% 0px');
   return <div ref={ref} className={'ig-curtain ' + className}><div className="ig-curtain-in">{children}</div></div>;
 }

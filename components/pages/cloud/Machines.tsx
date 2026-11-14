@@ -16,6 +16,7 @@
    Beyond: the dry-run quote itself - priced for an hour, a working day and a month before anything is created.
    Greys only: the card LED is a grey light. Every word, figure and link is Hanzo's. */
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import type { PointerEvent as ReactPointerEvent } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
@@ -27,21 +28,24 @@ import { Glitch, Snap, Curl, Dissolve } from './MachinesEnter';
 import '../../v2/v2scale.css';
 import './Machines.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 // [size label, cards lit]: Hanzo's three sizes. Each one's quote is hanzo.ai's own: the GPU price list it reads from
 // api.hanzo.ai/v1/pricing (infrastructure.gpu), an hour, a working day (8 h) and all month (730 h), printed as it prints
 // them. GPU0 is that list as read at build: the first paint, and what stays if the request fails.
-const SIZES = [['1x H100', 1], ['2x H100', 2], ['4x H100', 4]];
-const GPU0 = [{ gpu: '1x H100', price: 3.48, vram: '80 GB' }, { gpu: '2x H100', price: 6.96, vram: '160 GB' }, { gpu: '4x H100', price: 13.92, vram: '320 GB' }];
-const usd = (v) => '$' + (v >= 100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(2));
-const quoteOf = (g) => [g.vram, usd(g.price), usd(g.price * 8), usd(g.price * 730)];
-let GPU_REQ = null;
+interface Gpu { gpu: string; price: number; vram: string }
+interface Pricing { infrastructure?: { gpu?: Gpu[] } }
+
+const SIZES: [string, number][] = [['1x H100', 1], ['2x H100', 2], ['4x H100', 4]];
+const GPU0: Gpu[] = [{ gpu: '1x H100', price: 3.48, vram: '80 GB' }, { gpu: '2x H100', price: 6.96, vram: '160 GB' }, { gpu: '4x H100', price: 13.92, vram: '320 GB' }];
+const usd = (v: number) => '$' + (v >= 100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(2));
+const quoteOf = (g: Gpu) => [g.vram, usd(g.price), usd(g.price * 8), usd(g.price * 730)];
+let GPU_REQ: Promise<Gpu[]> | null = null;
 function useGpus() {
   const [list, setList] = useState(GPU0);
   useEffect(() => {
     let gone = false;
-    GPU_REQ ||= fetch('https://api.hanzo.ai/v1/pricing').then((r) => r.json())
+    GPU_REQ ||= fetch('https://api.hanzo.ai/v1/pricing').then((r): Promise<Pricing | null> => r.json())
       .then((j) => ((j && j.infrastructure && j.infrastructure.gpu) || []).filter((g) => g && g.gpu && g.vram && Number.isFinite(+g.price)).map((g) => ({ ...g, price: +g.price })))
       .catch(() => { GPU_REQ = null; return []; });
     GPU_REQ.then((l) => { if (!gone && l.length) setList(l); });
@@ -52,13 +56,13 @@ function useGpus() {
 
 /* The size the hero last showed (chosen, or where the cycle stood when it left the screen): the close remembers it. */
 let lastSize = 0;
-const sizeSubs = new Set();
-const setLastSize = (i) => { lastSize = i; sizeSubs.forEach((f) => f()); };
-const subSize = (f) => { sizeSubs.add(f); return () => sizeSubs.delete(f); };
+const sizeSubs = new Set<() => void>();
+const setLastSize = (i: number) => { lastSize = i; sizeSubs.forEach((f) => f()); };
+const subSize = (f: () => void) => { sizeSubs.add(f); return () => sizeSubs.delete(f); };
 const useLastSize = () => useSyncExternalStore(subSize, () => lastSize, () => 0);
 
 /* Steps through n states while live: the first change after `first` ms, then every `ms`; a choice stops it. */
-function useCycle(n, first, ms, live) {
+function useCycle(n: number, first: number, ms: number, live: boolean): [number, (i: number) => void] {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const ticks = useRef(0);
@@ -70,7 +74,7 @@ function useCycle(n, first, ms, live) {
   return [at, (i) => { setAt(i); setMine(true); }];
 }
 
-function Roll({ v, k }) {
+function Roll({ v, k }: { v: string; k: string }) {
   return (
     <span className="mc-roll">
       <AnimatePresence mode="popLayout" initial={false}>
@@ -81,7 +85,7 @@ function Roll({ v, k }) {
 }
 
 /* The rack of four H100 cards; `on` of them are lit (each wakes 90 ms after the one above). */
-function Rack({ on, count = 4, className = '' }) {
+function Rack({ on, count = 4, className = '' }: { on: number; count?: number; className?: string }) {
   return (
     <div className={'mc-rack ' + className} aria-hidden="true">
       {Array.from({ length: count }, (_, i) => i).map((i) => (
@@ -145,7 +149,7 @@ function Rent() {
   );
 }
 
-const SPECS = [
+const SPECS: [title: string, text: string, rows: [string, string][]][] = [
   ['AMD EPYC 7763', 'High-core count CPU instances', [['Cores', '64 Cores'], ['Threads', '128 Threads'], ['Memory', 'Up to 2TB']]],
   ['Storage Options', 'Ultra-fast NVMe and persistent storage', [['Local NVMe', 'Up to 8TB'], ['Network Storage', 'Unlimited'], ['I/O Performance', '7GB/s']]],
 ];
@@ -169,7 +173,7 @@ function Specs() {
   );
 }
 
-const STEPS = [
+const STEPS: [string, string][] = [
   ['Ask what exists', 'The sizes and regions you can launch into are an endpoint, not a page in the docs. Read them, then pick one — nothing to keep in sync by hand.'],
   ['Price it before you buy it', 'A launch with dryRun returns the price and creates nothing. The same call without it creates the machine, so what you were quoted is what you asked for.'],
   ['Metered to the organization', "Time is debited from your org's prepaid balance while a machine is up. Before it launches, the cloud says whether you may — and what is missing if you may not."],
@@ -201,14 +205,14 @@ function Steps() {
   );
 }
 
-const USES = [
+const USES: [title: string, text: string, points: string[]][] = [
   ['Training runs', 'A job that needs cards for hours and nothing for the rest of the week.', ['GPU sizes named from the list the API returns', 'GPU-hours metered while the job runs', 'Cancel and the hours used so far are billed, then the job stops']],
   ['Serving a model', 'A machine that stays up because something is calling it.', ['Run Hanzo Engine on a card you rented', 'Terminate it when the traffic goes away', 'The bill follows the machine, not a reservation']],
   ['Work that will not fit in a request', 'Renders, batches and simulations that take longer than an HTTP call.', ['A queue per GPU, plus a shared any-GPU lane', 'Each item says which node claimed it', 'Read the queue instead of guessing where a job went']],
   ['Agents that need a computer', 'An agent with a machine under it, launched and torn down as one thing.', ['Bind a cloud agent to a machine', 'Message it, or stop it, by name', 'Tearing down the pair unbinds the agent first']],
 ];
 
-function UseArt({ i }) {
+function UseArt({ i }: { i: number }) {
   if (i === 0) return <div className="mc-art a0">{Array.from({ length: 7 }).map((_, k) => <i key={k} className={k < 3 ? 'on' : ''} style={{ '--k': k }} />)}</div>;
   if (i === 1) return <div className="mc-art a1">{Array.from({ length: 24 }).map((_, k) => <i key={k} style={{ height: 30 + ((k * 37) % 60) + '%', '--k': k }} />)}</div>;
   // a queue per card, plus the shared lane (labels are Hanzo's: the card's name and "any-GPU")
@@ -218,14 +222,15 @@ function UseArt({ i }) {
 
 /* A use tile on the rail: its diagram runs when it is the tile in focus (and again on hover), and it tilts up to 2.5°
    under a mouse. A tile out of focus sits back; a click brings it in. */
-const Tile = ({ i, t, d, pts, on, setRef, onPick }) => {
-  const tilt = (e) => {
+interface TileProps { i: number; t: string; d: string; pts: string[]; on: boolean; setRef: (el: HTMLElement | null) => void; onPick: () => void }
+const Tile = ({ i, t, d, pts, on, setRef, onPick }: TileProps) => {
+  const tilt = (e: ReactPointerEvent<HTMLElement>) => {
     if (e.pointerType !== 'mouse') return;
     const r = e.currentTarget.getBoundingClientRect();
     e.currentTarget.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
     e.currentTarget.style.setProperty('--rx', ((0.5 - (e.clientY - r.top) / r.height) * 5).toFixed(2) + 'deg');
   };
-  const flat = (e) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
+  const flat = (e: ReactPointerEvent<HTMLElement>) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
   return (
     <article ref={setRef} data-i={i} className={'mc-tile t' + i} data-on={on ? '' : undefined} onPointerMove={tilt} onPointerLeave={flat} onClick={on ? undefined : onPick}>
       <div className="mc-tile-art" aria-hidden="true"><UseArt i={i} /></div>
@@ -243,17 +248,17 @@ const arrowR = <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true
 
 /* When you want a whole machine: one tile in focus at a time, on a snap rail with the next one peeking. */
 function Uses() {
-  const rail = useRef(null);
-  const tiles = useRef([]);
+  const rail = useRef<HTMLDivElement>(null);
+  const tiles = useRef<(HTMLElement | null)[]>([]);
   const [at, setAt] = useState(0);
   useEffect(() => {
     const r = rail.current;
     if (!r) return;
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(+e.target.dataset.i)), { root: r, threshold: 0.75 });
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && e.target instanceof HTMLElement && setAt(Number(e.target.dataset.i))), { root: r, threshold: 0.75 });
     tiles.current.forEach((el) => el && io.observe(el));
     return () => io.disconnect();
   }, []);
-  const go = (i) => {
+  const go = (i: number) => {
     const r = rail.current, el = tiles.current[i];
     if (!r || !el) return;
     setAt(i);
@@ -283,7 +288,7 @@ function Uses() {
 
 /* Whose machine it is: the three rows drive one small diagram of org, accounts and region. The focused (or hovered)
    row lights its part; untouched, it walks the three while it is on screen. Labels are Hanzo's words from the rows. */
-function OwnMap({ at }) {
+function OwnMap({ at }: { at: number }) {
   return (
     <div className="mc-map" data-at={at} aria-hidden="true">
       <div className="mc-map-accts g1">{['DigitalOcean', 'AWS', 'GCP'].map((a) => <span key={a}>{a}</span>)}</div>
@@ -303,7 +308,7 @@ function OwnMap({ at }) {
 function Own() {
   const [ref, live] = useLive(0.4);
   const [auto, pick] = useCycle(OWN.length, 1200, 3600, live);
-  const [hov, setHov] = useState(null);
+  const [hov, setHov] = useState<number | null>(null);
   const at = hov ?? auto;
   return (
     <Dissolve className="v2-sec mc-own">
@@ -330,7 +335,7 @@ function Own() {
   );
 }
 
-const OWN = [
+const OWN: [string, string][] = [
   ['Scoped to your organization', 'A machine belongs to one org and is named within it. Every read and every terminate is checked against the org on your token, not against the id in the URL.'],
   ['Bring your own account', 'Link a DigitalOcean, AWS or GCP account and the clusters it holds fold into the same fleet. Your capacity, your contract, one place to see it.'],
   ['Pick the region deliberately', 'Launches name a region from the list the API returns, so where a workload runs is a decision you made rather than one that was made for you.'],
@@ -341,7 +346,8 @@ const Gh = () => <svg viewBox="0 0 16 16" width="14" height="14" fill="currentCo
 /* The close: "Get Machines" beside the rack at rest, ending lit at the size the visitor last saw in the hero (chosen, or
    where the cycle stood), with that request beside it. Its cards wake one after another as it arrives. */
 function Close() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
+
   const seen = useInView(ref, { amount: 0.5, once: true });
   const calm = useReducedMotion();
   const [up, setUp] = useState(false); // reduced motion is known only after mount: the server and first client frame match

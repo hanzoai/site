@@ -34,23 +34,23 @@ import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Insights.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const N = 120;
 const rank = Array.from({ length: N }, (_, i) => ({ i, r: (Math.sin(i * 12.9898) * 43758.5453) % 1 })).sort((a, b) => Math.abs(a.r) - Math.abs(b.r)).map((x) => x.i);
-const order = new Array(N);
+const order: number[] = new Array(N);
 rank.forEach((cell, k) => { order[cell] = k; });
 // Hanzo's three ways to roll a flag out ("a percentage, a cohort, or one account"), drawn as which people light up.
 // No percentages are shown: Hanzo states none.
 const MODES = ['a percentage', 'a cohort', 'one account'];
 const ONE = 52;
 // the field is 20 x 6 on desktop and 12 x 10 on phone; a cohort is the block in the middle of whichever grid shows
-const lit = (m, i, cols) => {
+const lit = (m: number, i: number, cols: number) => {
   if (m === 0) return order[i] < N * 0.3;
   if (m === 2) return i === ONE;
   const R = N / cols, r = Math.floor(i / cols), c = i % cols;
   return c >= Math.round(cols * 0.27) && c < Math.round(cols * 0.73) && r >= Math.floor(R * 0.25) && r < Math.ceil(R * 0.75);
 };
-const fine = (e) => e.pointerType === 'mouse';
+const fine = (e: { pointerType: string }) => e.pointerType === 'mouse';
 
 /* the rollout: a flag, a field of people, the events they send; then the kill switch, no deploy */
 function Rollout() {
@@ -132,7 +132,7 @@ function Rollout() {
 }
 
 // The six tools. Each carries its sub-tools: Hanzo's own tool names and the clause of its sentence that is theirs.
-const LOG = [
+const LOG: [title: string, text: string, kind: string, tools: [name: string, clause: string][]][] = [
   ['Events, and SQL when you need it', 'Autocapture gets you data before you have instrumented anything, and named events get you data you can trust. When a chart cannot express the question, write the query instead — it is the same table underneath.', 'events',
     [['Autocapture', 'Autocapture gets you data before you have instrumented anything'], ['named events', 'named events get you data you can trust'], ['SQL', 'write the query instead']]],
   ['Feature flags', 'Roll out to a percentage, a cohort, or one account. The flag is also a kill switch, which is the reason to reach for one: turning a feature off should not require a deploy at the worst possible moment.', 'flags',
@@ -148,29 +148,30 @@ const LOG = [
 ];
 
 /* the whole sentence, its own clause in ink and the rest quiet */
-function Said({ s, k }) {
+function Said({ s, k }: { s: string; k: string }) {
   const at = s.indexOf(k);
   if (at < 0) return <span>{s}</span>;
   // each piece is its own leaf span (scripts/copycheck.mjs reads leaves, joined by a space), so a break falls only at a
   // space: punctuation right after the key stays with it
-  const pre = s.slice(0, at), m = s.slice(at + k.length).match(/^[^\s]*/)[0], post = s.slice(at + k.length + m.length);
+  const pre = s.slice(0, at), m = (s.slice(at + k.length).match(/^[^\s]*/) ?? [''])[0], post
+ = s.slice(at + k.length + m.length);
   return <>{pre && <span>{pre}</span>}<b><span>{k + m}</span></b>{post && <span>{post}</span>}</>;
 }
 
-const Ev = ({ tag, hi }) => (
+const Ev = ({ tag, hi }: { tag: string; hi?: boolean }) => (
   <div className={'in-row' + (hi ? ' hi' : '')}><code>button_clicked</code><span className="in-prop">variant: "primary"</span><span className="in-tag">{tag}</span></div>
 );
 
 /* the replay: a page in line art, the visitor's path draws once and the cursor travels it */
-function Replay({ on }) {
-  const path = useRef(null);
-  const cur = useRef(null);
+function Replay({ on }: { on: boolean }) {
+  const path = useRef<SVGPathElement>(null);
+  const cur = useRef<SVGGElement>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const p = path.current, c = cur.current;
     if (!p || !c) return;
     const len = p.getTotalLength();
-    const put = (t) => { const pt = p.getPointAtLength(t * len); c.setAttribute('transform', `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)})`); };
+    const put = (t: number) => { const pt = p.getPointAtLength(t * len); c.setAttribute('transform', `translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)})`); };
     if (!on || calm) { put(on ? 1 : 0); return; }
     put(0);
     const a = animate(0, 1, { duration: 1.2, ease: [0.4, 0, 0.2, 1], onUpdate: put });
@@ -193,7 +194,7 @@ function Replay({ on }) {
 }
 
 /* each tool's view, from its own words; shapes and Hanzo's labels only, no figures */
-function View({ k, v, on }) {
+function View({ k, v, on }: { k: string; v: number; on: boolean }) {
   if (k === 'events') {
     if (v === 2) return (
       <div className="in-v in-v-sql">
@@ -270,7 +271,7 @@ function View({ k, v, on }) {
     if (v === 2) return (
       <div className="in-v in-v-pa">
         <svg viewBox="0 0 360 200" aria-hidden="true">
-          {[['M30 100 C 110 100, 110 40, 180 40', 0], ['M30 100 C 110 100, 110 100, 180 100', 1], ['M180 40 C 250 40, 250 60, 330 60', 2], ['M180 100 C 250 100, 250 60, 330 60', 3]].map(([d, i]) => <path key={i} d={d} pathLength="1" className="in-pa-l" style={{ '--id': i }} />)}
+          {([['M30 100 C 110 100, 110 40, 180 40', 0], ['M30 100 C 110 100, 110 100, 180 100', 1], ['M180 40 C 250 40, 250 60, 330 60', 2], ['M180 100 C 250 100, 250 60, 330 60', 3]] satisfies [string, number][]).map(([d, i]) => <path key={i} d={d} pathLength="1" className="in-pa-l" style={{ '--id': i }} />)}
           <path d="M30 100 C 90 160, 140 180, 200 160 S 300 150, 330 140" pathLength="1" className="in-pa-l odd" />
           {[[30, 100], [180, 40], [180, 100], [330, 60], [330, 140]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r="7" className={'in-pa-n' + (i === 4 ? ' odd' : '')} style={{ '--id': i }} />)}
         </svg>
@@ -315,8 +316,8 @@ function Tour() {
   const [peek, setPeek] = useState(-1);
   const [mine, setMine] = useState(false);
   const [onNav, setOnNav] = useState(false); // a pointer on a panel's own tool names holds its view too
-  const rail = useRef(null);
-  const go = (i) => { setAt(i); setSub(0); };
+  const rail = useRef<HTMLDivElement>(null);
+  const go = (i: number) => { setAt(i); setSub(0); };
   useEffect(() => {
     if (!touring || mine) return;
     const t = setTimeout(() => go((at + 1) % LOG.length), 5200);
@@ -335,7 +336,8 @@ function Tour() {
     const r = rail.current;
     if (!r || r.scrollWidth <= r.clientWidth) return;
     const b = r.children[at];
-    if (!b) return;
+    if (!(b instanceof HTMLElement)) return;
+
     const left = b.offsetLeft - 10, right = b.offsetLeft + b.offsetWidth + 10;
     if (left < r.scrollLeft || right > r.scrollLeft + r.clientWidth) r.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
   }, [at]);

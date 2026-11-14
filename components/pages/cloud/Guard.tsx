@@ -25,6 +25,7 @@
    Goal: watch both directions get read, then try it on their own text.
    CTA: View on GitHub (hero, the sticky ask bar and the close; one solid button per screen). */
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { Dispatch, KeyboardEvent, PointerEvent, ReactNode, RefObject, SetStateAction } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { A, Cta } from '../../kit';
 import { useLive } from './Frame';
@@ -36,19 +37,22 @@ import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Guard.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 /* what each detector is called, in Hanzo's own words (the second fact's sentence); the brackets of a marker are drawn
    by CSS, so every word on the page is Hanzo's */
-const NAME = { CARD: 'card numbers', EMAIL: 'emails', SSN: 'Social security numbers', PHONE: 'phone numbers', IP: 'IP addresses', API_KEY: 'provider API keys' };
+const NAME: Record<string, string> = { CARD: 'card numbers', EMAIL: 'emails', SSN: 'Social security numbers', PHONE: 'phone numbers', IP: 'IP addresses', API_KEY: 'provider API keys' };
 /* the request and the reply hold data, not sentences: data-shaped values (a standard test card number, an address at
    example.com, a test-key-shaped string, the documentation IP) that turn into Hanzo's typed markers once read, and the
    injection shown by Hanzo's own name for its first shape, underlined once it is scored. No invented prose. */
-const REQ = [{ k: 'CARD', v: '4111 1111 1111 1111' }, { k: 'EMAIL', v: 'jane@example.com' }, { inj: 'Overriding the instructions' }];
-const REP = [{ k: 'API_KEY', v: 'sk-test-51Hx9Qb2aZ' }, { k: 'IP', v: '192.0.2.1' }];
-const Arrow = ({ back }) => <svg className="gd-arr" viewBox="0 0 16 10" width="16" height="10" aria-hidden="true"><path d={back ? 'M15 5H2M5.5 1.5 2 5l3.5 3.5' : 'M1 5h13M10.5 1.5 14 5l-3.5 3.5'} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+type Kind = 'CARD' | 'EMAIL' | 'SSN' | 'PHONE' | 'IP' | 'API_KEY';
+type Seg = { k: Kind; v: string; inj?: never }
+ | { inj: string; k?: never; v?: never };
+const REQ: Seg[] = [{ k: 'CARD', v: '4111 1111 1111 1111' }, { k: 'EMAIL', v: 'jane@example.com' }, { inj: 'Overriding the instructions' }];
+const REP: Seg[] = [{ k: 'API_KEY', v: 'sk-test-51Hx9Qb2aZ' }, { k: 'IP', v: '192.0.2.1' }];
+const Arrow = ({ back }: { back?: boolean }) => <svg className="gd-arr" viewBox="0 0 16 10" width="16" height="10" aria-hidden="true"><path d={back ? 'M15 5H2M5.5 1.5 2 5l3.5 3.5' : 'M1 5h13M10.5 1.5 14 5l-3.5 3.5'} fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* a line typed character by character (n of them so far); once read, the values become Hanzo's typed markers */
-function Typed({ seq, n, read }) {
+function Typed({ seq, n, read }: { seq: Seg[]; n: number; read: boolean }) {
   let left = n;
   return seq.map((x, i) => {
     if (x.k && read) return <motion.span key={i} className="gd-mk" initial={{ opacity: 0, scale: 0.8, y: 4 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.3, ease: EASE }}>{NAME[x.k]}<span className="gd-mk-v">{x.v}</span></motion.span>;
@@ -58,13 +62,13 @@ function Typed({ seq, n, read }) {
     return <span key={i} className={x.k ? 'gd-tv sec' : 'gd-tv gd-injr' + (read ? ' on' : '')}>{t}</span>;
   });
 }
-const count = (seq) => seq.reduce((s, x) => s + (x.k ? x.v : x.inj).length, 0);
+const count = (seq: Seg[]) => seq.reduce((s, x) => s + (x.k ? x.v : x.inj).length, 0);
 
 /* The composer: the request types, then is read (values become markers, the injection gets its confidence); the
    reply comes back and is read too. 0 typing req, 1 req read, 2 typing reply, 3 reply read, 4 hold. It starts on the
    finished frame (4) so the server HTML and a JS-off visit show the whole exchange; once seen, it plays from the top. */
 function Composer() {
-  const [ref, seen, calm] = useLive(0.3);
+  const [ref, seen, calm] = useLive<HTMLDivElement>(0.3);
   const [paused, togglePause] = usePause();
   const live = seen && !paused;
   const [st, setSt] = useState(4);
@@ -90,14 +94,14 @@ function Composer() {
      run and its confidence light up. Reduced motion: no veil and every detail shows. */
   const held = useRef(false);
   const step = useRef(0);
-  const targets = () => (ref.current ? [...ref.current.querySelectorAll('.gd-mk, .gd-injr')] : []);
-  const lightAt = (x, y, drift) => {
+  const targets = () => (ref.current ? [...ref.current.querySelectorAll<HTMLElement>('.gd-mk, .gd-injr')] : []);
+  const lightAt = (x: number, y: number, drift: boolean) => {
     const c = ref.current;
     if (!c) return;
     c.classList.toggle('drift', !!drift);
     c.style.setProperty('--gd-sx', x + 'px');
     c.style.setProperty('--gd-sy', y + 'px');
-    c.dataset.lx = x; c.dataset.ly = y;
+    c.dataset.lx = String(x); c.dataset.ly = String(y);
     light();
   };
   const light = () => {
@@ -115,7 +119,7 @@ function Composer() {
     const conf = c.querySelector('.gd-conf');
     if (conf) { if (inj) conf.setAttribute('data-lit', ''); else conf.removeAttribute('data-lit'); }
   };
-  const toTarget = (i, drift) => {
+  const toTarget = (i: number, drift: boolean) => {
     const t = targets(), c = ref.current;
     if (!t.length || !c) return;
     step.current = (i + t.length) % t.length;
@@ -125,15 +129,15 @@ function Composer() {
   useEffect(() => { light(); }); // markers remount as the request types: keep the lit state on whatever is under the light
   useEffect(() => {
     if (!live || calm) return;
-    let t;
+    let t: ReturnType<typeof setTimeout>;
     const go = () => { if (!held.current) toTarget(step.current + 1, true); t = setTimeout(go, 2400); };
     t = setTimeout(go, 1200);
     return () => clearTimeout(t);
   }, [live, calm]); // eslint-disable-line react-hooks/exhaustive-deps
-  const at = (e) => { const r = ref.current.getBoundingClientRect(); lightAt(e.clientX - r.left, e.clientY - r.top, false); };
-  const onMove = (e) => { if (calm || e.pointerType !== 'mouse') return; held.current = true; at(e); };
-  const onDown = (e) => { if (calm || e.pointerType === 'mouse') return; held.current = true; at(e); };
-  const onKey = (e) => {
+  const at = (e: PointerEvent) => { if (!ref.current) return; const r = ref.current.getBoundingClientRect(); lightAt(e.clientX - r.left, e.clientY - r.top, false); };
+  const onMove = (e: PointerEvent) => { if (calm || e.pointerType !== 'mouse') return; held.current = true; at(e); };
+  const onDown = (e: PointerEvent) => { if (calm || e.pointerType === 'mouse') return; held.current = true; at(e); };
+  const onKey = (e: KeyboardEvent) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
     e.preventDefault(); held.current = true;
     toTarget(step.current + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1), true);
@@ -177,7 +181,14 @@ const FACTS = [
 
 /* The detector board: what each fact looks like, in its own words. The second fact is one run of data-shaped values
    (no prose), each read into Hanzo's typed marker in turn; the card number carries its Luhn tick. */
-const BOARD = [
+type Panel =
+  | { kind: 'list'; items: string[]; foot: string }
+  | { kind: 'redact'; items: [string, string, string?][] }
+  | { kind: 'lanes'; items: [string, boolean][]; foot: string }
+  | { kind: 'dials' }
+  | { kind: 'log'; items: [string, boolean][] }
+  | { kind: 'modes'; items: [string, string][] };
+const BOARD: Panel[] = [
   { kind: 'list', items: ['Overriding the instructions', 'role-play', 'asking for the system prompt', 'bypassing a rule', 'hiding the ask in an encoding', 'reframing the context'], foot: 'confidence' },
   { kind: 'redact', items: [['CARD', '4111 1111 1111 1111', 'Luhn'], ['EMAIL', 'jane@example.com'], ['SSN', '078-05-1120'], ['PHONE', '202-555-0143'], ['IP', '192.0.2.1'], ['API_KEY', 'sk-test-51Hx9Qb2aZ']] },
   { kind: 'lanes', items: [['request', false], ['reply', true]], foot: 'machine-learning classifier' },
@@ -187,10 +198,21 @@ const BOARD = [
 ];
 
 /* the playground's dials, shared with the board's "You set the dials" panel: flipping one changes the other */
-const Dials = createContext(null);
+interface DialsValue {
+  det: Record<string, boolean>;
+  setDet: Dispatch<SetStateAction<Record<string, boolean>>>;
+  sty: number;
+  setSty: Dispatch<SetStateAction<number>>;
+}
+const Dials = createContext<DialsValue | null>(null);
+function useDials() {
+  const d = useContext(Dials);
+  if (!d) throw new Error('Guard: the dials are read outside their provider');
+  return d;
+}
 const GLYPH = ['[ ]', '< >', '███'];
 function DialsList() {
-  const d = useContext(Dials);
+  const d = useDials();
   const all = KINDS.every((k) => d.det[k]);
   return (
     <ul>
@@ -203,13 +225,13 @@ function DialsList() {
   );
 }
 
-const it = (j) => ({ in: { opacity: 0, y: 18 }, on: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE, delay: 0.05 + j * 0.05 } } });
+const it = (j: number) => ({ in: { opacity: 0, y: 18 }, on: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE, delay: 0.05 + j * 0.05 } } });
 
 /* Each panel does one thing as it arrives (CSS keyframes, so they restart whenever the panel is remounted and freeze
    under reduced motion): the six shapes light in turn, [CARD] gets its Luhn tick, a token runs through the gate and
    back, the dials flip on and the bucket drains, "content" is struck while its hash is written, the proxy draws its
    lines to the CLI tool and the MCP server. Each kind also sits on its own surface, so it is not one grey box six times. */
-function Board({ at, still }) {
+function Board({ at, still }: { at: number; still?: boolean }) {
   const b = BOARD[at];
   return (
     <div className="gd-board" data-k={b.kind} aria-hidden={b.kind === 'dials' ? undefined : 'true'}>
@@ -242,21 +264,21 @@ function Board({ at, still }) {
   );
 }
 
-const KINDS = ['CARD', 'EMAIL', 'SSN', 'PHONE', 'IP', 'API_KEY'];
+const KINDS: string[] = ['CARD', 'EMAIL', 'SSN', 'PHONE', 'IP', 'API_KEY'];
 /* the marker text you choose: square brackets, angle brackets or a solid block (the shape is the label; the radio's
    name is the detector's own name in that shape, built by the page) */
-const STYLES = [(m) => `[${m}]`, (m) => `<${m}>`, (m) => '█'.repeat(Math.max(4, Math.round(m.length / 2)))];
+const STYLES: ((m: string) => string)[] = [(m) => `[${m}]`, (m) => `<${m}>`, (m) => '█'.repeat(Math.max(4, Math.round(m.length / 2)))];
 
 /* Beyond: paste your own, with the dials. Runs in this page; nothing you type is sent. Every label is Hanzo's: the
    detectors by their names in the second fact, the field as "request" to "model", the reset as the site's "Reset". */
 const SAMPLE = '4111 1111 1111 1111\njane@example.com\n192.0.2.1';
 function Yours() {
   const [text, setText] = useState(SAMPLE);
-  const { det: on, setDet: setOn, sty, setSty } = useContext(Dials);
+  const { det: on, setDet: setOn, sty, setSty } = useDials();
   const { parts, found, inject } = useMemo(() => redact(text), [text]);
   const shown = parts.map(([t, m]) => (m && on[m] ? [t, m] : [t, null]));
   const kinds = Object.entries(found).filter(([m]) => on[m]);
-  const sec = useRef(null);
+  const sec = useRef<HTMLElement>(null);
   useEnter(sec);
   return (
     <section ref={sec} className="v2-sec gd-yours" data-entrance="letter-cascade" aria-labelledby="gd-ft1">
@@ -293,18 +315,18 @@ function Yours() {
   );
 }
 
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
 /* Entrances (MOTION-MAP row /guard): each main section enters its own way, in the map's order. The resting state is
    the server HTML; only once mounted, with motion allowed and the section still below the fold, is it "armed" into its
    starting state, and it plays once when a quarter of it is on screen. JS off or reduced motion: never armed. */
-function useEnter(ref) {
+function useEnter(ref: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const el = ref.current;
     if (!el || typeof IntersectionObserver === 'undefined' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (el.getBoundingClientRect().top < innerHeight * 0.75) return; // already on screen: leave it at rest
     el.setAttribute('data-arm', '');
-    let done;
+    let done: ReturnType<typeof setTimeout> | undefined;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       el.setAttribute('data-in', '');
@@ -315,21 +337,21 @@ function useEnter(ref) {
     return () => { io.disconnect(); clearTimeout(done); };
   }, [ref]);
 }
-function Enter({ name, className = '', children }) {
-  const ref = useRef(null);
+function Enter({ name, className = '', children }: { name: string; className?: string; children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   useEnter(ref);
   return <div ref={ref} className={className} data-entrance={name}>{children}</div>;
 }
 /* letter-cascade: a word's letters fall into place one by one (the text stays whole for screen readers) */
-function Cascade({ text, from = 0 }) {
+function Cascade({ text, from = 0 }: { text: string; from?: number }) {
   return [...text].map((ch, i) => <span key={i} className="gd-lc" style={{ '--c': from + i }}>{ch}</span>);
 }
 
 /* The six facts, as two plain sections of rows: the words on the left (5/13), the fact's own board on the right (8/13),
    which plays its arrival once it is on screen. Phones: the board first, then the words clamped behind Read more. */
-function Facts({ from, to, entrance, head }) {
-  const ref = useRef(null);
-  const [open, setOpen] = useState({});
+function Facts({ from, to, entrance, head }: { from: number; to: number; entrance: string; head?: boolean }) {
+  const ref = useRef<HTMLElement>(null);
+  const [open, setOpen] = useState<Record<number, boolean>>({});
   useEnter(ref);
   useEffect(() => {
     const els = ref.current ? [...ref.current.querySelectorAll('.gd-f-vis')] : [];
@@ -363,17 +385,17 @@ function Facts({ from, to, entrance, head }) {
 
 /* the hero composer: true size from the first paint; a 2.5° tilt under a fine pointer, and it settles a little
    smaller only as the hero scrolls away (start big, shrink as things happen) */
-function HeroObject({ children }) {
-  const ref = useRef(null);
+function HeroObject({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   // the server cannot know the visitor's motion setting: render the same style on the server and the first client
   // pass, and only drop the scroll scale once mounted (so reduced-motion loads hydrate without a mismatch)
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  const [tilt, setTilt] = useState(null);
+  const [tilt, setTilt] = useState<{ rx: string; ry: string } | null>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.35', 'end start'] });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
-  const move = (e) => {
+  const move = (e: PointerEvent<HTMLDivElement>) => {
     if (calm || e.pointerType !== 'mouse') return;
     const r = e.currentTarget.getBoundingClientRect();
     const px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
@@ -399,7 +421,8 @@ export default function Guard() {
     return () => { clearTimeout(t); removeEventListener('pageshow', back); document.removeEventListener('visibilitychange', back); };
   }, [busy]);
   // the playground's dials and the board's "You set the dials" panel share one state
-  const [det, setDet] = useState(() => Object.fromEntries(KINDS.map((k) => [k, true])));
+  const [det, setDet] = useState<Record<string, boolean>>(() => Object.fromEntries(KINDS.map((k) => [k, true])));
+
   const [sty, setSty] = useState(0);
   const dials = useMemo(() => ({ det, setDet, sty, setSty }), [det, sty]);
   return (

@@ -21,7 +21,9 @@
    Every word and link is Hanzo's; the map, routes, hashes and the strand are drawn, not measured; the model pictures are
    Hanzo's own renders (public/models). */
 import { useEffect, useRef, useState } from 'react';
+import type { PointerEvent as ReactPointerEvent, RefObject } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion, useInView } from 'motion/react';
+import type { Transition } from 'motion/react';
 import { Copy } from '../../ui';
 import { A, Img } from '../../kit';
 import { Paste } from './Frame';
@@ -33,31 +35,35 @@ import { Enter, Typed, useEnter } from '../network/Enter';
 import './Network.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/network';
-const EMPH = [0.16, 1, 0.3, 1];
-const PILL = { duration: 0.3, ease: EMPH }; // MASTER §3.1: toggles slide with ease-emphasis at 300ms, never a spring
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const PILL: Transition = { duration: 0.3, ease: EMPH }; // MASTER §3.1: toggles slide with ease-emphasis at 300ms, never a spring
 
 /* ---------- the hero object: the fabric ---------- */
 // peers: [x%, y%, models loaded] inside the map's own frame; index 9 is you
-const PEERS = [[38, 12, ['zen']], [62, 7, ['kai']], [88, 17, []], [50, 33, ['zen', 'kai']], [76, 38, ['enso']], [26, 49, []], [59, 56, ['koe']], [91, 58, []], [6, 61, ['enso']], [41, 86, []], [72, 72, ['zen']]];
-const LINKS = [[0, 1], [1, 2], [0, 3], [1, 3], [2, 4], [3, 4], [3, 5], [3, 6], [4, 6], [4, 7], [5, 8], [5, 6], [6, 7], [6, 10], [7, 10], [5, 9], [6, 9], [8, 9], [9, 10], [0, 5]];
+type Peer = [x: number, y: number, models: string[]];
+type Ask = [model: string, path: number[], placed?: boolean];
+type Pt = [x: number, y: number, ...rest: unknown[]];
+type Spot = { x: number; y: number; vx: number; vy: number };
+const PEERS: Peer[] = [[38, 12, ['zen']], [62, 7, ['kai']], [88, 17, []], [50, 33, ['zen', 'kai']], [76, 38, ['enso']], [26, 49, []], [59, 56, ['koe']], [91, 58, []], [6, 61, ['enso']], [41, 86, []], [72, 72, ['zen']]];
+const LINKS: [number, number][] = [[0, 1], [1, 2], [0, 3], [1, 3], [2, 4], [3, 4], [3, 5], [3, 6], [4, 6], [4, 7], [5, 8], [5, 6], [6, 7], [6, 10], [7, 10], [5, 9], [6, 9], [8, 9], [9, 10], [0, 5]];
 const YOU = 9;
 // [model asked for, path of peers from you, placed (nobody had it loaded)]
-const ASKS = [['kai', [9, 5, 3]], ['enso', [9, 8]], ['koe', [9, 6]], ['uta', [9, 6, 7], true]];
+const ASKS: Ask[] = [['kai', [9, 5, 3]], ['enso', [9, 8]], ['koe', [9, 6]], ['uta', [9, 6, 7], true]];
 const HOP = 0.55;
 const ADJ = PEERS.map((_, i) => LINKS.flatMap(([a, b]) => (a === i ? [b] : b === i ? [a] : [])));
 // the route the fabric would take from you to a peer: fewest hops
-const routeTo = (to) => {
-  const prev = { [YOU]: -1 };
+const routeTo = (to: number) => {
+  const prev: Record<number, number> = { [YOU]: -1 };
   const q = [YOU];
-  while (q.length) { const v = q.shift(); if (v === to) break; ADJ[v].forEach((w) => { if (!(w in prev)) { prev[w] = v; q.push(w); } }); }
-  const p = [];
-  for (let v = to; v !== -1 && v !== undefined; v = prev[v]) p.unshift(v);
+  while (q.length) { const v = q.shift()!; if (v === to) break; ADJ[v].forEach((w) => { if (!(w in prev)) { prev[w] = v; q.push(w); } }); }
+  const p: number[] = [];
+  for (let v: number | undefined = to; v !== -1 && v !== undefined; v = prev[v]) p.unshift(v);
   return p;
 };
-const onPath = (path, a, b) => path.findIndex((p, i) => i > 0 && ((path[i - 1] === a && p === b) || (path[i - 1] === b && p === a)));
-const peerName = (p) => (p === YOU ? 'you' : 'peer ' + String(p).padStart(2, '0'));
+const onPath = (path: number[], a: number, b: number) => path.findIndex((p, i) => i > 0 && ((path[i - 1] === a && p === b) || (path[i - 1] === b && p === a)));
+const peerName = (p: number) => (p === YOU ? 'you' : 'peer ' + String(p).padStart(2, '0'));
 
-function useSize(ref) {
+function useSize(ref: RefObject<HTMLElement | null>) {
   const [s, setS] = useState({ w: 0, h: 0 });
   useEffect(() => {
     const el = ref.current;
@@ -71,19 +77,19 @@ function useSize(ref) {
 
 /* a model a peer has loaded wears Hanzo's own render of it (the only colour on the page, from Hanzo's media) */
 // where each render's mark sits (fraction of the picture), so a 32px crop lands on it at a fixed zoom
-const MARK = { zen: [0.67, 0.48], kai: [0.65, 0.5], enso: [0.7, 0.37], koe: [0.67, 0.47], uta: [0.83, 0.67] };
-const Thumb = ({ m }) => <span className="nw-th" style={{ '--cx': MARK[m][0], '--cy': MARK[m][1] }}><Img src={`/models/${m}.webp`} w={1200} h={1500} alt="" /></span>;
-const Tag = ({ m, hit }) => <b className={'nw-tag' + (hit ? ' hit' : '')}><Thumb m={m} />{m}</b>;
+const MARK: Record<string, [number, number]> = { zen: [0.67, 0.48], kai: [0.65, 0.5], enso: [0.7, 0.37], koe: [0.67, 0.47], uta: [0.83, 0.67] };
+const Thumb = ({ m }: { m: string }) => <span className="nw-th" style={{ '--cx': MARK[m][0], '--cy': MARK[m][1] }}><Img src={`/models/${m}.webp`} w={1200} h={1500} alt="" /></span>;
+const Tag = ({ m, hit }: { m: string; hit?: boolean }) => <b className={'nw-tag' + (hit ? ' hit' : '')}><Thumb m={m} />{m}</b>;
 
 /* the signature: a living graph. The peers start bunched in the middle and settle outward on springs (each link pulls
    toward its own length, every peer repels its neighbours, an anchor holds the shape), then keep breathing a little.
    Drag a peer and let go: it springs back and pulls its links with it. Point at a peer (tap on a phone): its paths
    light (the route from you and every link it has) and each peer on them is named. Reduced motion: the settled map. */
-function useGraph(calm, peerEls, lineEls, box, onSettle) {
+function useGraph(calm: boolean | null, peerEls: RefObject<(HTMLElement | null)[]>, lineEls: RefObject<(SVGLineElement | null)[]>, box: RefObject<HTMLDivElement | null>, onSettle: () => void) {
   useEffect(() => {
     const els = peerEls.current, ls = lineEls.current, el = box.current;
     if (!el) return;
-    const place = (P) => {
+    const place = (P: Spot[]) => {
       P.forEach((q, i) => { const n = els[i]; if (n) { n.style.left = q.x.toFixed(2) + '%'; n.style.top = q.y.toFixed(2) + '%'; } });
       LINKS.forEach(([a, b], k) => { const l = ls[k]; if (l) { l.setAttribute('x1', P[a].x.toFixed(2)); l.setAttribute('y1', P[a].y.toFixed(2)); l.setAttribute('x2', P[b].x.toFixed(2)); l.setAttribute('y2', P[b].y.toFixed(2)); } });
     };
@@ -91,11 +97,11 @@ function useGraph(calm, peerEls, lineEls, box, onSettle) {
     // start bunched toward the middle, a little turned, so the settle reads as a graph finding its shape
     const P = PEERS.map(([x, y], i) => ({ x: 50 + (x - 50) * 0.18 + Math.sin(i * 2.3) * 3, y: 50 + (y - 50) * 0.18 + Math.cos(i * 1.7) * 3, vx: 0, vy: 0 }));
     const REST = LINKS.map(([a, b]) => Math.hypot(PEERS[a][0] - PEERS[b][0], PEERS[a][1] - PEERS[b][1]));
-    let ptr = null, drag = -1, raf = 0, t0 = performance.now(), last = t0, seen = true, settledOnce = false;
-    const pos = (e) => { const r = el.getBoundingClientRect(); return { x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 }; };
-    const move = (e) => { if (e.pointerType !== 'mouse') return; ptr = pos(e); };
+    let ptr: { x: number; y: number } | null = null, drag = -1, raf = 0, t0 = performance.now(), last = t0, seen = true, settledOnce = false;
+    const pos = (e: PointerEvent) => { const r = el.getBoundingClientRect(); return { x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 }; };
+    const move = (e: PointerEvent) => { if (e.pointerType !== 'mouse') return; ptr = pos(e); };
     const leave = () => { ptr = null; };
-    const down = (e) => { if (e.pointerType !== 'mouse') return; const i = els.indexOf(e.target.closest('.nw-peer')); if (i < 0) return; drag = i; el.setPointerCapture?.(e.pointerId); e.preventDefault(); };
+    const down = (e: PointerEvent) => { if (e.pointerType !== 'mouse') return; const i = els.indexOf((e.target as Element).closest<HTMLElement>('.nw-peer')); if (i < 0) return; drag = i; el.setPointerCapture?.(e.pointerId); e.preventDefault(); };
     const up = () => { drag = -1; };
     el.addEventListener('pointermove', move);
     el.addEventListener('pointerleave', leave);
@@ -103,7 +109,7 @@ function useGraph(calm, peerEls, lineEls, box, onSettle) {
     addEventListener('pointerup', up);
     const io = new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !raf) { last = performance.now(); raf = requestAnimationFrame(step); } }, { threshold: 0 });
     io.observe(el);
-    function step(now) {
+    function step(now: number) {
       raf = 0;
       if (!seen) return;
       const dt = Math.min(2, (now - last) / 16.67); last = now;
@@ -138,18 +144,29 @@ function useGraph(calm, peerEls, lineEls, box, onSettle) {
   }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
 }
 
-function Fabric({ at, arrived, calm, peek, setPeek, idle, live, onSettle }) {
-  const box = useRef(null);
-  const peerEls = useRef([]);
-  const lineEls = useRef([]);
+interface FabricProps {
+  at: number;
+  arrived: boolean;
+  calm: boolean | null;
+  peek: number | null;
+  setPeek: (p: number | null) => void;
+  idle: boolean;
+  live: boolean;
+  onSettle: () => void;
+}
+
+function Fabric({ at, arrived, calm, peek, setPeek, idle, live, onSettle }: FabricProps) {
+  const box = useRef<HTMLDivElement>(null);
+  const peerEls = useRef<(HTMLElement | null)[]>([]);
+  const lineEls = useRef<(SVGLineElement | null)[]>([]);
   const { w, h } = useSize(box);
   useGraph(calm, peerEls, lineEls, box, onSettle);
   const [model, fullPath, placed] = ASKS[at];
   const path = live ? fullPath : [];
   const end = path[path.length - 1];
   const pv = peek === null ? [] : routeTo(peek);
-  const named = peek === null ? new Set() : new Set([peek, ...pv, ...ADJ[peek]]);
-  const tap = (i) => (e) => { if (e.pointerType === 'mouse' || i === YOU) return; setPeek(peek === i ? null : i); };
+  const named = peek === null ? new Set<number>() : new Set([peek, ...pv, ...ADJ[peek]]);
+  const tap = (i: number) => (e: ReactPointerEvent<HTMLDivElement>) => { if (e.pointerType === 'mouse' || i === YOU) return; setPeek(peek === i ? null : i); };
   return (
     <div className="nw-map" ref={box} aria-hidden="true" data-peek={peek === null ? undefined : ''}>
       <svg className="nw-links" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -199,10 +216,11 @@ function Fabric({ at, arrived, calm, peek, setPeek, idle, live, onSettle }) {
 }
 
 /* the map's own toolbar, inside its frame: what it is, the model you ask for, the route and the answer, the pause */
-function Tool({ at, choose, arrived, peek, paused, pause }) {
+function Tool({ at, choose, arrived, peek, paused, pause }: { at: number; choose: (i: number) => void; arrived: boolean; peek: number | null; paused: boolean; pause: () => void }) {
   const [model, path, placed] = ASKS[at];
   const pv = peek === null ? null : routeTo(peek);
   const shown = pv || path;
+  const hops: (number | '…')[] = shown.length > 3 ? [shown[0], '…', shown[shown.length - 1]] : shown;
   return (
     <div className="nw-tool">
       <LivePause paused={paused} onToggle={pause} inline className="nw-pause" />
@@ -212,7 +230,7 @@ function Tool({ at, choose, arrived, peek, paused, pause }) {
         <div className="nw-seg nw-models" role="radiogroup" aria-labelledby="nw-ask-l">
           {ASKS.map(([m], i) => (
             <button key={m} type="button" role="radio" aria-checked={at === i} tabIndex={at === i ? 0 : -1} onClick={() => choose(i)}
-              onKeyDown={(e) => { const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0; if (!d) return; e.preventDefault(); const n = (i + d + ASKS.length) % ASKS.length; choose(n); e.currentTarget.parentElement.children[n]?.focus(); }}>
+              onKeyDown={(e) => { const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0; if (!d) return; e.preventDefault(); const n = (i + d + ASKS.length) % ASKS.length; choose(n); (e.currentTarget.parentElement!.children[n] as HTMLElement | undefined)?.focus(); }}>
               {at === i && <motion.i layoutId="nw-pick" className="nw-pick" transition={PILL} />}
               <span>{m}</span>
             </button>
@@ -220,9 +238,9 @@ function Tool({ at, choose, arrived, peek, paused, pause }) {
         </div>
       </div>
       <div className="nw-read">
-        <p className={'nw-route' + (pv ? ' pv' : '')} aria-hidden="true">{(shown.length > 3 ? [shown[0], '…', shown[shown.length - 1]] : shown).map((p) => (p === '…' ? p : peerName(p))).join('  →  ')}</p>
+        <p className={'nw-route' + (pv ? ' pv' : '')} aria-hidden="true">{hops.map((p) => (p === '…' ? p : peerName(p))).join('  →  ')}</p>
         <p className={'nw-ans' + (arrived || pv ? ' on' : '')} aria-live="polite">
-          {pv ? (PEERS[peek][2].length ? PEERS[peek][2].join(' · ') + ' loaded' : 'nothing loaded') : arrived ? (placed ? `nobody has ${model} loaded · placement` : `a peer that already has ${model} loaded`) : 'routing…'}
+          {pv ? (PEERS[peek!][2].length ? PEERS[peek!][2].join(' · ') + ' loaded' : 'nothing loaded') : arrived ? (placed ? `nobody has ${model} loaded · placement` : `a peer that already has ${model} loaded`) : 'routing…'}
         </p>
       </div>
     </div>
@@ -230,11 +248,11 @@ function Tool({ at, choose, arrived, peek, paused, pause }) {
 }
 
 function Hero() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(true);
   const calm = useReducedMotion();
   const [paused, pause] = usePause();
-  const [peek, setPeek] = useState(null);
+  const [peek, setPeek] = useState<number | null>(null);
   const run = inView && !paused && !calm && peek === null;
   // MASTER §4.1: the demo runs once (four asks, about ten seconds), then rests on the placement; play replays it
   const [at, setAt] = useState(0);
@@ -247,7 +265,7 @@ function Hero() {
     const t = setTimeout(() => (at >= ASKS.length - 1 ? setDone(true) : setAt(at + 1)), 2600);
     return () => clearTimeout(t);
   }, [at, run, mine, done, live]);
-  const choose = (i) => { setAt(i); setMine(true); };
+  const choose = (i: number) => { setAt(i); setMine(true); };
   const toggle = () => { if (done || mine) { setDone(false); setMine(false); setAt(0); if (paused) pause(); } else pause(); };
   const [arrived, setArrived] = useState(true);
   useEffect(() => {
@@ -257,7 +275,7 @@ function Hero() {
     const t = setTimeout(() => setArrived(true), HOP * (ASKS[at][1].length - 1) * 1000 + 120);
     return () => clearTimeout(t);
   }, [at, calm, live]);
-  const enterRef = useRef(null);
+  const enterRef = useRef<HTMLDivElement>(null);
   const st = useEnter(enterRef, 0.05);
   // scale rhythm: the map grows into the page as you leave the hero (it is the moment), and rests at 1 on arrival
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
@@ -300,20 +318,20 @@ const FACTS = [
   ['One command to join', 'hanzo fabric join names a network and starts the node on it. If you would rather lend the machine to builds than to inference, hanzo runner offers the same box as a CI runner.'],
   ['Anchored, not asserted', 'Work is ordered on the Hanzo L2 and committed to Lux as a Merkle root, under a stake-weighted validator set. What you can check is what settled, not what a status page says.'],
 ];
-const LEND = [['inference', 'hanzo fabric join', 'names a network and starts the node on it.'], ['builds', 'hanzo runner', 'offers the same box as a CI runner.']];
-const key = (a, b) => (a < b ? a + '-' + b : b + '-' + a);
-const WORK = { '5-9': 3, '3-5': 3, '1-3': 2, '3-6': 2, '6-10': 2, '4-6': 1, '6-9': 1 }; // links carrying work, by its level
+const LEND: [string, string, string][] = [['inference', 'hanzo fabric join', 'names a network and starts the node on it.'], ['builds', 'hanzo runner', 'offers the same box as a CI runner.']];
+const key = (a: number, b: number) => (a < b ? a + '-' + b : b + '-' + a);
+const WORK: Record<string, number> = { '5-9': 3, '3-5': 3, '1-3': 2, '3-6': 2, '6-10': 2, '4-6': 1, '6-9': 1 }; // links carrying work, by its level
 const IDLE = new Set([2, 7]);
 const ATTESTED = new Set([0, 3, 4, 5, 6, 10]);
 const DECLARED = new Set([1, 8]);
-const JOIN = [16, 27]; // the machine that joins in chapter five, linked to peers 0 and 5
+const JOIN: [number, number] = [16, 27]; // the machine that joins in chapter five, linked to peers 0 and 5
 const SETTLE = [3, 6, 10, 4]; // peers whose work settles into the block in chapter six
 const ROUTE = [9, 5, 3]; // kai, from you
-const ROOT = [70, 97];
-const P = (i) => PEERS[i];
+const ROOT: [number, number] = [70, 97];
+const P = (i: number) => PEERS[i];
 // the links each chapter's dash runs: 01 discovery from you, 02 the links carrying work, 03 trust reaching the attested,
 // 04 the route to kai, 05 the new machine to its two peers, 06 the work into the root
-const flows = (step) => [
+const flows = (step: number): Pt[][] => [
   [[P(9), P(5)], [P(9), P(6)], [P(9), P(8)], [P(9), P(10)]],
   Object.keys(WORK).filter((k) => WORK[k] > 1).map((k) => k.split('-').map((n) => P(+n))),
   [[P(5), P(3)], [P(3), P(0)], [P(3), P(4)], [P(6), P(10)]],
@@ -322,13 +340,13 @@ const flows = (step) => [
   SETTLE.map((p) => [P(p), ROOT]),
 ][step] || [];
 
-function Story({ step, intro, lend }) {
-  const box = useRef(null);
+function Story({ step, intro, lend }: { step: number; intro: boolean; lend: number }) {
+  const box = useRef<HTMLDivElement>(null);
   const { w, h } = useSize(box);
-  const X = (x) => (x * w) / 100, Y = (y) => (y * h) / 100;
+  const X = (x: number) => (x * w) / 100, Y = (y: number) => (y * h) / 100;
   const st = intro ? 'intro' : step;
   const draw = step === 0 && !intro; // the topology draws itself in chapter one
-  const lit = (a, b) => step === 3 && !intro && ROUTE.some((p, i) => i && key(ROUTE[i - 1], p) === key(a, b));
+  const lit = (a: number, b: number) => step === 3 && !intro && ROUTE.some((p, i) => i && key(ROUTE[i - 1], p) === key(a, b));
   return (
     <div className="nw-sm" data-st={st} aria-hidden="true">
       <div className="nw-sm-map" ref={box}>
@@ -389,7 +407,7 @@ function Story({ step, intro, lend }) {
   );
 }
 
-function Lend({ k, setK }) {
+function Lend({ k, setK }: { k: number; setK: (k: number) => void }) {
   const [, cmd, d] = LEND[k];
   return (
     <div className="nw-lend">
@@ -409,19 +427,19 @@ function Lend({ k, setK }) {
 
 /* ---------- the black room's object: the two ends, joined by a strand of the fabric ---------- */
 // the strand from you (first) to a peer with a model loaded (last), and a few peers either side of it
-const STRAND = [[5, 58], [22, 30], [40, 62], [58, 28], [76, 60], [95, 40]];
-const SPUR = [[13, 90, 0], [30, 6, 1], [49, 94, 2], [67, 4, 3], [86, 92, 4], [84, 10, 5]];
+const STRAND: [number, number][] = [[5, 58], [22, 30], [40, 62], [58, 28], [76, 60], [95, 40]];
+const SPUR: [number, number, number][] = [[13, 90, 0], [30, 6, 1], [49, 94, 2], [67, 4, 3], [86, 92, 4], [84, 10, 5]];
 const strandD = STRAND.map(([x, y], i) => (i ? 'L' : 'M') + x + ' ' + y).join(''); // static, stretched
 
 function Ends() {
-  const ref = useRef(null);
-  const band = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const band = useRef<HTMLDivElement>(null);
   const { w, h } = useSize(band);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const calm = useReducedMotion();
-  const [flow, setFlow] = useState({ way: null, n: 0 });
+  const [flow, setFlow] = useState<{ way: 'call' | 'serve' | null; n: number }>({ way: null, n: 0 });
   useEffect(() => { if (seen && !calm) setFlow((f) => ({ way: 'call', n: f.n + 1 })); }, [seen, calm]);
-  const send = (way) => (e) => { if (calm || (e.pointerType && e.pointerType !== 'mouse')) return; setFlow((f) => ({ way, n: f.n + 1 })); };
+  const send = (way: 'call' | 'serve') => (e: ReactPointerEvent) => { if (calm || (e.pointerType && e.pointerType !== 'mouse')) return; setFlow((f) => ({ way, n: f.n + 1 })); };
   const Ar = () => <svg viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
   return (
     <div className="nw-ends-obj" ref={ref}>
@@ -454,8 +472,8 @@ function Ends() {
 
 /* the six facts, not pinned: the list on one side, the same fabric on the other; point at a fact (or tap it) and the
    map changes to show it; left alone, the map walks the six by itself (5 s each) until you pick one */
-function Facts({ lend, setLend }) {
-  const ref = useRef(null);
+function Facts({ lend, setLend }: { lend: number; setLend: (k: number) => void }) {
+  const ref = useRef<HTMLElement>(null);
   const st = useEnter(ref, 0.15);
   const calm = useReducedMotion();
   const seen = useInView(ref, { amount: 0.3 });
@@ -466,7 +484,8 @@ function Facts({ lend, setLend }) {
     const t = setTimeout(() => setStep((step + 1) % FACTS.length), 5000);
     return () => clearTimeout(t);
   }, [step, held, seen, calm, st]);
-  const pick = (i) => { setStep(i); setHeld(true); };
+  const pick = (i: number) => { setStep(i); setHeld(true); };
+
   return (
     <section ref={ref} className="nw-how nw-en nw-en-type" data-kind="type" data-enter={st} aria-labelledby="nw-how-h">
       <div className="lx-wrap">

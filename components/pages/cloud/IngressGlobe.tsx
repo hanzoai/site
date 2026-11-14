@@ -9,16 +9,21 @@
    - Reduced motion: no idle turn; a still frame with a few requests mid-route (drag still turns it, without inertia).
    - JS off: a flat disc of the same size (CSS), so the layout never moves. Canvas size is fixed by aspect-ratio. */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, PointerEvent } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import LivePause, { usePause } from '../../v2/LivePause';
 
 const TAU = Math.PI * 2;
-const rad = (d) => (d * Math.PI) / 180;
+type Vec = [number, number, number];
+interface Drag { x: number; y: number; t: number; id: number }
+interface Globe { yaw: number; tilt: number; vy: number; vt: number; clock: number; drag: Drag | null; last: number; idleAt: number; raf: number; size: [number, number]; dpr: number; ink: string }
+
+const rad = (d: number) => (d * Math.PI) / 180;
 // a point on the unit sphere from latitude and longitude (degrees)
-const ll = (lat, lon) => [Math.cos(rad(lat)) * Math.sin(rad(lon)), Math.sin(rad(lat)), Math.cos(rad(lat)) * Math.cos(rad(lon))];
+const ll = (lat: number, lon: number): Vec => [Math.cos(rad(lat)) * Math.sin(rad(lon)), Math.sin(rad(lat)), Math.cos(rad(lat)) * Math.cos(rad(lon))];
 // the dotted sphere (golden spiral)
 const N = 1150;
-const DOTS = Array.from({ length: N }, (_, i) => {
+const DOTS = Array.from({ length: N }, (_, i): Vec => {
   const y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(1 - y * y), th = i * 2.399963;
   return [Math.cos(th) * r, y, Math.sin(th) * r];
 });
@@ -31,7 +36,7 @@ const EVERY = 0.55; // a new request every 0.55 s of globe time
 const LIFE = 2.6;
 const LEG1 = 1.0, LEG2 = 0.75;
 
-const slerp = (a, b, u) => {
+const slerp = (a: Vec, b: Vec, u: number): Vec => {
   const d = Math.min(1, Math.max(-1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]));
   const w = Math.acos(d);
   if (w < 1e-4) return a;
@@ -39,22 +44,22 @@ const slerp = (a, b, u) => {
   return [a[0] * k1 + b[0] * k2, a[1] * k1 + b[1] * k2, a[2] * k1 + b[2] * k2];
 };
 // the loop of the page's copy: 0 in rotation, 1-2 out of rotation, 3 put back when it recovers (the board's phases)
-export const phaseAt = (clock) => Math.floor(clock / 5) % 4;
-const isDown = (clock) => { const p = phaseAt(clock); return p === 1 || p === 2; };
+export const phaseAt = (clock: number) => Math.floor(clock / 5) % 4;
+const isDown = (clock: number) => { const p = phaseAt(clock); return p === 1 || p === 2; };
 // request i: which source sends it and which backend serves it (round robin over the backends in rotation)
-const route = (i, spawn) => {
+const route = (i: number, spawn: number): [Vec, number] => {
   const live = isDown(spawn) ? [0, 2] : [0, 1, 2];
   return [SRC[(i * 5) % SRC.length], live[i % live.length]];
 };
 
-export default function IngressGlobe({ onPhase }) {
-  const box = useRef(null);
-  const cv = useRef(null);
+export default function IngressGlobe({ onPhase }: { onPhase?: (phase: number) => void }) {
+  const box = useRef<HTMLDivElement>(null);
+  const cv = useRef<HTMLCanvasElement>(null);
   const seen = useInView(box, { amount: 0.25 });
   const calm = useReducedMotion();
   const [paused, togglePause] = usePause();
   const live = seen && !paused && !calm;
-  const st = useRef({ yaw: -0.25, tilt: 0.38, vy: 0, vt: 0, clock: 9.4, drag: null, last: 0, idleAt: -10, raf: 0, size: [0, 0], dpr: 1, ink: '10, 10, 10' });
+  const st = useRef<Globe>({ yaw: -0.25, tilt: 0.38, vy: 0, vt: 0, clock: 9.4, drag: null, last: 0, idleAt: -10, raf: 0, size: [0, 0], dpr: 1, ink: '10, 10, 10' });
   const liveRef = useRef(live);
   liveRef.current = live;
   const phaseRef = useRef(-1);
@@ -65,11 +70,12 @@ export default function IngressGlobe({ onPhase }) {
     const [w, h] = s.size;
     if (!w || !h) return;
     const g = c.getContext('2d');
+    if (!g) return;
     g.setTransform(s.dpr, 0, 0, s.dpr, 0, 0);
     g.clearRect(0, 0, w, h);
     const R = Math.min(w, h) * 0.46, cx = w / 2, cy = h / 2;
     const cy0 = Math.cos(s.yaw), sy0 = Math.sin(s.yaw), ct = Math.cos(s.tilt), stt = Math.sin(s.tilt);
-    const proj = (p, lift = 1) => {
+    const proj = (p: Vec, lift = 1): Vec => {
       const X = p[0] * cy0 + p[2] * sy0, Z = -p[0] * sy0 + p[2] * cy0;
       const Y = p[1] * ct - Z * stt, Z2 = p[1] * stt + Z * ct;
       return [cx + X * R * lift, cy - Y * R * lift, Z2];
@@ -85,7 +91,7 @@ export default function IngressGlobe({ onPhase }) {
     }
     const clock = s.clock;
     const down = isDown(clock);
-    const hits = new Set();
+    const hits = new Set<number>();
     let edgeHit = 0;
     // requests in flight: source -> edge, then edge -> backend, along lifted great circles
     const first = Math.max(0, Math.floor((clock - LIFE) / EVERY));
@@ -94,11 +100,11 @@ export default function IngressGlobe({ onPhase }) {
       if (age < 0 || age > LIFE) continue;
       const [src, b] = route(i, spawn);
       const fade = 1 - Math.min(1, Math.max(0, (age - (LEG1 + LEG2)) / (LIFE - LEG1 - LEG2)));
-      const leg = (a, z, p, lw) => {
+      const leg = (a: Vec, z: Vec, p: number, lw: number) => {
         if (p <= 0) return;
         const d = Math.acos(Math.min(1, a[0] * z[0] + a[1] * z[1] + a[2] * z[2]));
         const hgt = 0.06 + d * 0.16, n = 36, end = Math.round(n * Math.min(1, p));
-        let prev = null;
+        let prev: Vec | null = null;
         g.lineWidth = lw;
         for (let k = 0; k <= end; k++) {
           const u = k / n, q = proj(slerp(a, z, u), 1 + hgt * Math.sin(Math.PI * u));
@@ -154,7 +160,7 @@ export default function IngressGlobe({ onPhase }) {
     const s = st.current;
     if (s.raf) return;
     s.last = performance.now();
-    const loop = (now) => {
+    const loop = (now: number) => {
       const dt = Math.min(0.05, (now - s.last) / 1000);
       s.last = now;
       const run = liveRef.current;
@@ -202,7 +208,7 @@ export default function IngressGlobe({ onPhase }) {
   }, [live, kick, draw]);
   useEffect(() => () => { cancelAnimationFrame(st.current.raf); st.current.raf = 0; }, []);
 
-  const onDown = (e) => {
+  const onDown = (e: PointerEvent<HTMLDivElement>) => {
     const s = st.current;
     if (e.button !== undefined && e.button !== 0) return;
     e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -211,7 +217,7 @@ export default function IngressGlobe({ onPhase }) {
     box.current?.setAttribute('data-drag', '');
     kick();
   };
-  const onMove = (e) => {
+  const onMove = (e: PointerEvent<HTMLDivElement>) => {
     const s = st.current, d = s.drag;
     if (!d || d.id !== e.pointerId) return;
     const now = performance.now(), dt = Math.max(1, now - d.t) / 1000;
@@ -223,7 +229,7 @@ export default function IngressGlobe({ onPhase }) {
     s.vt = calm ? 0 : 0.7 * s.vt + 0.3 * (dtilt / dt);
     d.x = e.clientX; d.y = e.clientY; d.t = now;
   };
-  const onUp = (e) => {
+  const onUp = (e: PointerEvent<HTMLDivElement>) => {
     const s = st.current;
     if (!s.drag || s.drag.id !== e.pointerId) return;
     if (performance.now() - s.drag.t > 90) { s.vy = 0; s.vt = 0; } // a hold before release: no throw
@@ -232,9 +238,11 @@ export default function IngressGlobe({ onPhase }) {
     box.current?.removeAttribute('data-drag');
     kick();
   };
-  const onKey = (e) => {
+  const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
     const s = st.current;
-    const k = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+    const keys: Record<string, [number, number] | undefined> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+    const k = keys[e.key];
+
     if (!k) return;
     e.preventDefault();
     if (calm) { s.yaw += k[0] * 0.3; s.tilt = Math.max(-0.9, Math.min(0.9, s.tilt + k[1] * 0.2)); draw(); return; }

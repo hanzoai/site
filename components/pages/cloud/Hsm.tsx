@@ -17,6 +17,7 @@
    prefers-reduced-motion: no-preference, so scripts-off and reduced motion show every section at rest.
    Greys only (Hanzo's deck): the module is silver and ink. Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
 import { motion, AnimatePresence, animate, useScroll, useTransform, useMotionValue, useMotionTemplate, useInView, useReducedMotion } from 'motion/react';
 import { Cta } from '../../kit';
 import { Copy } from '../../ui';
@@ -28,10 +29,10 @@ import '../../v2/v2scale.css';
 import '../../v2/GetIt.css';
 import './Hsm.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const MODULES = ['AWS KMS', 'Azure Key Vault', 'Google Cloud KMS', 'Zymbit'];
 const LAYERS = ['handle', 'boundary', 'key', 'firmware', 'module'];
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 /* drawn marks, kept apart from Hanzo's words (a tick, an arrow): shapes, not text */
 const Tk = () => <svg className="hs-tk" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Arr = () => <svg className="hs-arr" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -39,7 +40,7 @@ const Arr = () => <svg className="hs-arr" viewBox="0 0 16 16" width="14" height=
 /* A section's entrance: once a quarter of it is in view it gets data-in, and its CSS entrance plays. The attribute is
    written on the DOM after mount, so the server HTML and the first client render are the same. */
 function useEnter() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return undefined;
@@ -53,8 +54,8 @@ function useEnter() {
 
 /* The hero object's settle, page-local: it paints at its final size (server and client agree, nothing snaps at load),
    then eases back and down a little as the hero scrolls away. Reduced motion holds it still in CSS (.hs-settle). */
-function Settle({ children, className }) {
-  const ref = useRef(null);
+function Settle({ children, className }: { children?: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 0.2', 'end start'] });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
   const y = useTransform(scrollYProgress, [0, 1], [0, 48]);
@@ -66,7 +67,16 @@ function Settle({ children, className }) {
 }
 
 /* The module: five plates in one 3D stack. gap opens it; lit picks the plate in the light; labels sit on leader lines. */
-function Module({ gap = 14, lit = [2], labels = {}, base, shares, small }) {
+interface ModuleProps {
+  gap?: number;
+  lit?: number[];
+  labels?: Record<number, string>;
+  base?: string;
+  shares?: boolean;
+  small?: boolean;
+}
+
+function Module({ gap = 14, lit = [2], labels = {}, base, shares, small }: ModuleProps) {
   return (
     <div className={'hm' + (small ? ' small' : '')} style={{ '--gap': gap + 'px' }}>
       <div className="hm-stack">
@@ -98,13 +108,13 @@ function Sign() {
   const live = seen && !paused;
   const [m] = useSteps(MODULES.length, 3400, live);
   // a fine pointer tilts the module up to 2.5° (CSS vars, no re-render); hovering parts the plates (Hsm.css)
-  const tilt = (e) => {
+  const tilt = (e: PointerEvent<HTMLElement>) => {
     if (e.pointerType !== 'mouse') return;
     const r = e.currentTarget.getBoundingClientRect();
     e.currentTarget.style.setProperty('--tx', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
     e.currentTarget.style.setProperty('--ty', (((e.clientY - r.top) / r.height - 0.5) * -5).toFixed(2) + 'deg');
   };
-  const flat = (e) => { e.currentTarget.style.setProperty('--tx', '0deg'); e.currentTarget.style.setProperty('--ty', '0deg'); };
+  const flat = (e: PointerEvent<HTMLElement>) => { e.currentTarget.style.setProperty('--tx', '0deg'); e.currentTarget.style.setProperty('--ty', '0deg'); };
   return (
     <div className="lp-host">
       <LivePause paused={paused} onToggle={togglePause} className="hs-pause" />
@@ -133,7 +143,7 @@ const FACTS = [
 
 /* Each fact opens the module its own way (gap) and lights its layer. The lit layer carries one noun from the fact (the
    sentence beside it says the rest), so nothing is said twice. */
-const SCENES = [
+const SCENES: { gap: number; lit: number[]; labels: Record<number, string>; shares?: boolean }[] = [
   { gap: 62, lit: [0, 2], labels: { 0: 'handle', 2: 'key' } },
   { gap: 80, lit: [2], labels: { 2: 'key' } },
   { gap: 80, lit: [1], labels: { 1: 'password' } },
@@ -153,9 +163,9 @@ const VENDOR_LIT = [[0, 2, 4], [0, 2, 4], [0, 2, 4], [1, 2, 4], [0, 4]];
    module. Touch: tap a fact to place the light. Keyboard: Tab to a fact, or the arrow keys from one fact to the next.
    Reduced motion: no light, every fact at full ink and every plate lit (Hsm.css). Entrance: pull-back. */
 function Room() {
-  const room = useRef(null);
+  const room = useRef<HTMLElement>(null);
   const enter = useEnter();
-  const facts = useRef([]);
+  const facts = useRef<(HTMLElement | null)[]>([]);
   const [at, setAt] = useState(0);
   const lx = useMotionValue(-400);
   const ly = useMotionValue(-400);
@@ -165,13 +175,13 @@ function Room() {
   const round = useTransform(scrollYProgress, [0, 1], [28, 0]);
   const clipPath = useTransform([inset, round], ([i, r]) => `inset(0px ${i}px round ${r}px)`);
 
-  const centre = (i) => {
+  const centre = (i: number): [number, number] | null => {
     const r = room.current, f = facts.current[i];
     if (!r || !f) return null;
     const a = r.getBoundingClientRect(), b = f.getBoundingClientRect();
     return [b.left - a.left + Math.min(b.width * 0.42, 260), b.top - a.top + b.height / 2];
   };
-  const glide = (i) => {
+  const glide = (i: number) => {
     const c = centre(i);
     if (!c) return;
     animate(lx, c[0], { duration: 0.5, ease: EASE });
@@ -204,7 +214,7 @@ function Room() {
     return () => { cancelAnimationFrame(raf); removeEventListener('scroll', f); };
   }, []);
 
-  const under = (y) => {
+  const under = (y: number) => {
     let best = at, gap = Infinity;
     facts.current.forEach((f, i) => {
       if (!f) return;
@@ -214,16 +224,16 @@ function Room() {
     });
     return best;
   };
-  const move = (e) => {
-    if (e.pointerType !== 'mouse') return;
+  const move = (e: PointerEvent<HTMLElement>) => {
+    if (e.pointerType !== 'mouse' || !room.current) return;
     const a = room.current.getBoundingClientRect();
     lx.set(e.clientX - a.left);
     ly.set(e.clientY - a.top);
     const i = under(e.clientY);
     if (i !== at) setAt(i);
   };
-  const place = (i) => { setAt(i); glide(i); };
-  const keys = (e, i) => {
+  const place = (i: number) => { setAt(i); glide(i); };
+  const keys = (e: KeyboardEvent, i: number) => {
     const n = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 0;
     if (!n) return;
     e.preventDefault();
@@ -244,7 +254,8 @@ function Room() {
           {FACTS.slice(0, 5).map(([t, d], i) => (
             <article
               key={t}
-              ref={(el) => (facts.current[i] = el)}
+              ref={(el) => { facts.current[i] = el; }}
+
               className="hc-art"
               data-on={i === at ? '' : undefined}
               tabIndex={0}
@@ -305,7 +316,7 @@ const Gh = () => <svg viewBox="0 0 16 16" width="14" height="14" fill="currentCo
 const PROMPT = 'Read https://hanzo.ai/skill.md and use Hanzo HSM in my project.';
 function Ship() {
   const enter = useEnter();
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   const calm = useReducedMotion();
   const [n, setN] = useState(PROMPT.length);

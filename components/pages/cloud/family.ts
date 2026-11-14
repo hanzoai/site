@@ -51,4 +51,4 @@ export const FAMILIES = [
   ['Seeing what runs', ['o11y', 'metrics', 'telemetry', 'dashboards', 'sentinel', 'insights', 'analytics', 'world']],
 ];
 
-export const familyOf = (slug) => FAMILIES.find(([, m]) => m.includes(slug));
+export const familyOf = (slug: string) => FAMILIES.find(([, m]) => m.includes(slug));
