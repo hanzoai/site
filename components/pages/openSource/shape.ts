@@ -28,7 +28,7 @@ export function shape({ sum, act }: { sum: Summary; act: Activity }): Snapshot {
     const pc = (c: number) => ((c / tot) * 100).toFixed(1), five = g.languages.slice(0, 5);
     const top = five.map((l) => [l.name, pc(l.count)]), other = pc(tot - five.reduce((s, l) => s + l.count, 0));
     return {
-      stats: [['Commits', n(g.commits.year), 'In the past year'], ['Merges', n(g.estate.merges), 'In the past year'], ['Commits', n(g.commits.week), 'In the past 7 days'],
+      stats: [['Commits', n(g.commits.year), 'In the past year'], ['Merges', n(g.estate.merges as number), 'In the past year'], ['Commits', n(g.commits.week), 'In the past 7 days'],
         [`${g.checked} organizations`, n(g.repos), 'Original repositories'], ['GitHub stars', n(g.stars), 'as GitHub counts them'], ['GitHub forks', n(g.forks), 'as GitHub counts them']],
       heat: heat(a.daily, act.from, act.to),
       window: win,

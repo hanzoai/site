@@ -1,58 +1,13 @@
 // The shapes behind /open-source: what scripts/live.ts hands shape() (oss-stats and oss-activity, as lib/oss.ts's
 // combine() writes them), what shape() returns and snapshot.ts holds, and what the API's activity read can replace.
 
+import type { combine } from '../../../lib/oss.ts';
+
 export interface Language { name: string; count: number }
 
-/* the cards and organizations as lib/oss.ts's combine() writes them: what GitHub did not say stays absent */
-export interface SummaryRepo {
-  repo: string;
-  description?: string;
-  language?: string;
-  stars?: number;
-  forks?: number;
-  contributors?: number;
-  faces?: string[];
-  commits?: number;
-  pushed?: string;
-  forge?: string;
-  months?: number[];
-}
-
-export interface SummaryOrg {
-  name?: string;
-  login: string;
-  description?: string;
-  repos: number;
-  stars: number;
-  commits?: number;
-  months?: number[];
-}
-
-export interface SummaryGroup {
-  name: string;
-  lead: string;
-  checked: number;
-  orgs: SummaryOrg[];
-  repos: number;
-  stars: number;
-  forks: number;
-  commits: { year: number; month: number; week: number };
-  estate: { merges: number };
-  languages: Language[];
-  top: SummaryRepo[];
-}
-
-export interface Summary {
-  estate: { commits: number };
-  forge: { read: string };
-  groups: Record<string, SummaryGroup>;
-}
-
-export interface ActivityCommit { repo: string; message: string; at: string; url: string }
-
-export interface ActivityGroup { daily: Record<string, number>; latest: ActivityCommit[] }
-
-export interface Activity { from: string; to: string; groups: Record<string, ActivityGroup> }
+/* what lib/oss.ts's combine() hands shape(): oss-stats (sum) and oss-activity (act) */
+export type Summary = ReturnType<typeof combine>['sum'];
+export type Activity = ReturnType<typeof combine>['act'];
 
 /* the page's figures; the tuples are [label, value, note] style rows, kept as the string lists JSON holds */
 export interface SnapRepo {

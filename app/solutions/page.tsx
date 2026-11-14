@@ -9,8 +9,8 @@ import JsonLd from '../../components/JsonLd';
 import SolutionsIndex from '../../components/pages/solutions/SolutionsIndex';
 import { indexDoc, allSolutions, metaOf } from '../../components/pages/solutions/solData';
 
-const m = metaOf('/solutions') || {};
-export const metadata = { title: m.title, description: m.description };
+const m = metaOf('/solutions');
+export const metadata = { title: m?.title, description: m?.description };
 
 export default function Page() {
   const all = allSolutions();

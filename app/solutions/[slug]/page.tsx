@@ -20,6 +20,6 @@ export default async function Page({ params }: Props) {
   if (!SLUGS().includes(slug)) notFound();
   const doc = solutionDoc(slug);
   const all = allSolutions();
-  const near = Object.fromEntries((doc.more ? doc.more.links : []).map((l: { href: string }) => l.href.split('/').pop()).filter((s: string) => all[s]).map((s: string) => [s, { products: all[s].products }]));
+  const near = Object.fromEntries((doc.more ? doc.more.links : []).map((l) => l.href.split('/').pop() ?? '').filter((s) => all[s]).map((s): [string, { products: string[] }] => [s, { products: all[s].products }]));
   return <><JsonLd route={'/solutions/' + slug} /><Solution doc={doc} data={near} /></>;
 }
