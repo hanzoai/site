@@ -90,7 +90,7 @@ function Issue({ step, email, hot }: { step: Step; email: string; hot: number })
 function Ask({ email, setEmail, step, setStep }: { email: string; setEmail: (v: string) => void; step: Step; setStep: (s: Step) => void }) {
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
-  const field = useRef<HTMLInputElement>(null), send = useRef<HTMLElement>(null), done = useRef<HTMLParagraphElement>(null);
+  const field = useRef<HTMLInputElement>(null), send = useRef<HTMLButtonElement>(null), done = useRef<HTMLParagraphElement>(null);
   const at = STEPS.indexOf(step);
   const first = useRef(true);
   useEffect(() => {
