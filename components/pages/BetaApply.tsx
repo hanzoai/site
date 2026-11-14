@@ -79,7 +79,7 @@ const STORE = 'hz-beta-apply'; // this browser only: { program, step, got, filed
 const EASE = [0.16, 1, 0.3, 1];
 const answered = (a, v) => (a.kind === 'many' ? Array.isArray(v) && v.length > 0 : said(v) !== '');
 const read = () => { try { return JSON.parse(localStorage.getItem(STORE) || 'null'); } catch { return null; } };
-const keep = (v) => { try { localStorage.setItem(STORE, JSON.stringify(v)); } catch { /* private window: the form still works */ } };
+const keep = (v: { program: string; step: number; got: {}; filed: boolean; } | { program: string; step: number; got: {}; filed: boolean; }) => { try { localStorage.setItem(STORE, JSON.stringify(v)); } catch { /* private window: the form still works */ } };
 
 const ArrowR = ({ s = 15 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const ArrowL = () => <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -87,13 +87,17 @@ const Check = () => <svg className="xba-check" viewBox="0 0 24 24" width="18" he
 
 /* calls on(parent element) once, when its step mounts (the focus that follows a step) */
 function Mount({ on }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => { on(ref.current?.parentElement); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return <span ref={ref} hidden />;
 }
 
 /* hanzo.ai's progress: three bars filling in turn */
-function Bars({ done, total }) {
+interface BarsProps {
+  done: number;
+  total: number;
+}
+function Bars({ done, total }: BarsProps) {
   const a = 3 * Math.min(1, done / total);
   return (
     <div className="xba-bars" role="progressbar" aria-label="Application progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round((done / total) * 100)}>
@@ -148,7 +152,10 @@ function Pass({ p, program, asks, got, at, go, open }) {
   );
 }
 
-function Apply({ program }) {
+interface ApplyProps {
+  program: string;
+}
+function Apply({ program }: ApplyProps) {
   const p = PROGRAMS[program];
   const asks = useMemo(() => [...p.asks, ...ABOUT], [p]);
   const n = asks.length;
@@ -163,7 +170,7 @@ function Apply({ program }) {
   const [trap, setTrap] = useState(''); // the honeypot ("Leave this empty")
   const [ready, setReady] = useState(false);
   const timer = useRef(0);
-  const gateH = useRef(null);
+  const gateH = useRef<HTMLHeadingElement>(null);
 
   // resume this browser's application to the same programme (a filed one opens at its first question, as on hanzo.ai)
   useEffect(() => {
@@ -260,7 +267,7 @@ function Apply({ program }) {
 
   // the keys hanzo.ai answers: Esc back, Enter on, a letter picks
   useEffect(() => {
-    const on = (e) => {
+    const on = (e: KeyboardEvent) => {
       if (gate || e.defaultPrevented) return;
       const inField = e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement;
       if (e.key === 'Escape') { e.preventDefault(); back(); return; }

@@ -11,6 +11,7 @@
    0 UI hues. The chat is real: POST https://api.hanzo.ai/v1/chat/public (model enso-auto, as the app sends it) with Hanzo's own
    specialist brief, the transcript filed as Hanzo files it, and Hanzo's own written answers when the endpoint cannot
    be reached. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useAnimate } from 'motion/react';
 import { EASE, Magnetic, Mark } from '../ui';
@@ -37,7 +38,7 @@ const PROMISES = [
 const ASK = ['We have a team of 10 developers', 'Explain Standard vs Premium seats', 'Looking for dedicated VPC & HIPAA', 'Compare Team vs Enterprise'];
 
 /* A small, safe markdown: paragraphs, headings, lists, bold, emphasis, code and http(s) or on-site links only. */
-function inline(t) {
+function inline(t: string | boolean) {
   const out = []; let at = 0;
   for (const m of t.matchAll(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)|\*\*(.*?)\*\*|\*(.*?)\*|`(.*?)`|\b(cal\.com\/hanzo)\b/g)) {
     if (m.index > at) out.push(t.slice(at, m.index));
@@ -90,7 +91,12 @@ const teamUrl = teamCart;
 /* Signature, stamp: whenever a plan is settled (the sheet comes to rest, you let go of the seats, or an answer
    proposes a plan) the plan and its seats land on the quote like a rubber stamp: a short drop, a squash, a settle,
    and the sheet takes the hit. Its words are the sheet's own (the plan's name, "members"). */
-function Stamp({ n, ent, seats }) {
+interface StampProps {
+  n: number;
+  ent: boolean;
+  seats: number;
+}
+function Stamp({ n, ent, seats }: StampProps) {
   if (!n) return null;
   return (
     <motion.span key={n} className="xbs-stamp x-mono" aria-hidden="true"
@@ -102,7 +108,15 @@ function Stamp({ n, ent, seats }) {
   );
 }
 
-function Sheet({ seats: target, setSeats, mine, plan, stamp, onSettle }) {
+interface SheetProps {
+  seats: number;
+  setSeats: React.Dispatch<React.SetStateAction<number>>;
+  mine: () => void;
+  plan: string;
+  stamp: number;
+  onSettle: () => void;
+}
+function Sheet({ seats: target, setSeats, mine, plan, stamp, onSettle }: SheetProps) {
   const ent = plan === 'ent';
   const [scope, animate] = useAnimate();
   const seats = useRollIn(scope, target); // entrance 1, count-roll: the figures roll up from zero
@@ -148,10 +162,10 @@ function Sheet({ seats: target, setSeats, mine, plan, stamp, onSettle }) {
    chat, the composer) in its own words and Hanzo's prices. */
 function Scene({ i, seats }) {
   const yr = seats * P.std, mo = seats * P.stdMo;
-  const grid = (fill, cls = '') => (
+  const grid = (fill: number, cls = '') => (
     <div className={'xbs-sg ' + cls}>{Array.from({ length: 40 }, (_, k) => <i key={k} className={k < fill ? 's' : ''} style={{ '--k': k }} />)}</div>
   );
-  const ai = (text, extra) => (
+  const ai = (text: React.JSX.Element, extra: React.JSX.Element) => (
     <div className="xbs-mai"><span className="xbs-av dk">✦</span><div className="xbs-mans"><p className="xbs-mb">{text}</p>{extra}</div></div>
   );
   if (i === 0) return (<>
@@ -191,7 +205,10 @@ function Scene({ i, seats }) {
 /* The six promises as three plain sections of two (no pinned stage): each promise with its own small card of the
    page's interface. Each pair enters its own way (enter.js): rack-focus, swing-door, tile-flip. */
 const PAIRS = [['rack-focus', 0], ['swing-door', 2], ['tile-flip', 4]];
-function Promises({ seats }) {
+interface PromisesProps {
+  seats: number;
+}
+function Promises({ seats }: PromisesProps) {
   return PAIRS.map(([how, at], k) => (
     <section key={how} className={'xp-sec xbs-why' + (k ? ' next' : '')} data-enter={how}>
       <ol className="xp-wrap xbs-pair" start={at + 1}>
@@ -236,12 +253,16 @@ function useQuietHeader() {
 
 /* Phone only: once the sheet's own ask has gone by, a slim bar under the thumb carries "Start Team Plan →" with the
    sheet's live figures beside it. It steps aside for the sheet's button, the closing band, the footer and the keyboard. */
-function Dock({ seats, plan }) {
+interface DockProps {
+  seats: number;
+  plan: string;
+}
+function Dock({ seats, plan }: DockProps) {
   const [on, setOn] = useState(false);
   useEffect(() => {
     const mq = matchMedia('(max-width: 700px)');
     let raf = 0;
-    const inView = (sel) => [...document.querySelectorAll(sel)].some((el) => { const r = el.getBoundingClientRect(); return r.height > 0 && r.top < innerHeight && r.bottom > 0; });
+    const inView = (sel: string) => [...document.querySelectorAll(sel)].some((el) => { const r = el.getBoundingClientRect(); return r.height > 0 && r.top < innerHeight && r.bottom > 0; });
     const check = () => {
       raf = 0;
       const typing = document.activeElement?.matches?.('input[type="text"], textarea');
@@ -275,18 +296,18 @@ export default function BuyingSpecialist() {
   const [seats, setSeats] = useState(10);
   const [plan, setPlan] = useState('team');
   const cycle = useRef(0);
-  const ask = useRef(null);
+  const ask = useRef<HTMLInputElement>(null);
   const [own, setOwn] = useState(false);
-  const end = useRef(null);
-  const logRef = useRef(null);
-  const desk = useRef(null);
+  const end = useRef<HTMLParagraphElement>(null);
+  const logRef = useRef<HTMLOListElement>(null);
+  const desk = useRef<HTMLElement>(null);
   const seen = useInView(desk, { amount: 0.2 });
   const calm = useReducedMotion();
   const started = msgs.length > 0;
   const [stamp, setStamp] = useState(0); // the signature: each settle stamps the plan onto the quote
   const stamped = useRef(false);
   const stampIt = () => setStamp((s) => s + 1);
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useEnter(root);
   useQuietHeader();
 
@@ -302,7 +323,7 @@ export default function BuyingSpecialist() {
     if (!started) return;
     window.__lenis?.stop();
     document.documentElement.classList.add('x-lock');
-    const onKey = (e) => { if (e.key === 'Escape') exitChat(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') exitChat(); };
     addEventListener('keydown', onKey);
     return () => {
       removeEventListener('keydown', onKey);
@@ -335,7 +356,7 @@ export default function BuyingSpecialist() {
     return () => clearTimeout(t);
   }, [seats, own, calm, seen]);
 
-  const file = (q, a, quote, list) => {
+  const file = (q: string, a: string, quote: { plan: string; seats: number; monthlyTotal: null; annualTotal: number; savings: null; checkoutUrl: string; } | { plan: string; seats: number; monthlyTotal: number; annualTotal: number; savings: number; checkoutUrl: string; } | undefined, list) => {
     const transcript = [...list, { role: 'user', content: q }, { role: 'assistant', content: a }].map((m) => `${m.role === 'user' ? 'Visitor' : 'Buying Specialist'}: ${m.content}`).join('\n\n');
     const answers = [{ field: 'message', text: q }, { field: 'transcript', text: transcript }];
     if (quote?.plan) answers.push({ field: 'plan', text: quote.plan });
@@ -343,7 +364,7 @@ export default function BuyingSpecialist() {
     fetch(FORM, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ answers, hidden: { program: 'chat', source: 'hanzo.ai/buying-specialist' } }) }).catch(() => {});
   };
 
-  const send = async (text) => {
+  const send = async (text: string) => {
     const q = (text || val.trim() || 'Hi! Can you help me find the right plan for my team?').slice(0, 2000);
     if (busy) return;
     setVal('');

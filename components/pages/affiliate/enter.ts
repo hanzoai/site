@@ -7,9 +7,10 @@
    - The three below the fold hide their start state only under `.xaf-enter`, a class added here after mount (server
      and client render the same markup, and JS off shows everything). One IntersectionObserver plays each once at ~25%.
    - Reduced motion: no class, no listeners, every section in its final state. */
+import type React from 'react';
 import { useEffect } from 'react';
 
-export function useEntrances(root) {
+export function useEntrances(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const main = root.current;
     if (!main || typeof IntersectionObserver === 'undefined') return;

@@ -8,6 +8,7 @@
      tokens (--b-line2 at rest, --b-ink under the pointer), so there is no hue and no literal colour here.
    Usage: <MagnetGrid stage={ref to the element that receives the pointer} onRipple={() => ...} label="Design System" />
    Page-local to /brand. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 
 const GAP = 26;        // px between dots
@@ -20,8 +21,8 @@ const AMP = 14;        // ripple push, px
 const BAND = 34;       // ripple band width, px
 
 export default function MagnetGrid({ stage, onRipple, label }) {
-  const wrap = useRef(null);
-  const cv = useRef(null);
+  const wrap = useRef<HTMLDivElement>(null);
+  const cv = useRef<HTMLCanvasElement>(null);
   const [live, setLive] = useState(false);
   const api = useRef({ ripple: () => {} });
   const cb = useRef(onRipple);
@@ -35,11 +36,11 @@ export default function MagnetGrid({ stage, onRipple, label }) {
     const ctx = c.getContext('2d');
     if (!ctx) return undefined;
     // the tokens, resolved by the browser to rgb(r, g, b) / rgba(r, g, b, a) (dark mode: Hanzo's tokens can carry alpha)
-    const parse = (v) => {
+    const parse = (v: string) => {
       const m = v.match(/\d+(\.\d+)?/g);
       return m ? [...m.slice(0, 3).map(Number), m[3] != null ? Number(m[3]) : 1] : [212, 212, 212, 1];
     };
-    const resolve = (name) => { const e = document.createElement('i'); e.style.color = `var(${name})`; host.appendChild(e); const c = getComputedStyle(e).color; e.remove(); return parse(c); };
+    const resolve = (name: string) => { const e = document.createElement('i'); e.style.color = `var(${name})`; host.appendChild(e); const c = getComputedStyle(e).color; e.remove(); return parse(c); };
     let rest, ink;
     const read = () => { rest = resolve('--mg-rest'); ink = resolve('--mg-ink'); };
     read();
@@ -70,7 +71,7 @@ export default function MagnetGrid({ stage, onRipple, label }) {
       }
     };
 
-    const step = (now) => {
+    const step = (now: number) => {
       raf = 0;
       let busy = false;
       for (let i = rings.length - 1; i >= 0; i--) if (now - rings[i].t > LIFE) rings.splice(i, 1);
@@ -104,7 +105,7 @@ export default function MagnetGrid({ stage, onRipple, label }) {
       [ptr.x, ptr.y] = local(e); ptr.on = true; kick();
     };
     const leave = () => { ptr.on = false; kick(); };
-    const ripple = (x, y) => {
+    const ripple = (x: number, y: number) => {
       if (calm) { onRipple(); return; }
       rings.push({ x, y, t: performance.now() }); if (rings.length > 4) rings.shift();
       onRipple(); kick();
@@ -132,7 +133,7 @@ export default function MagnetGrid({ stage, onRipple, label }) {
     };
   }, [stage]);
 
-  const key = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); api.current.ripple(); } };
+  const key = (e: React.KeyboardEvent<HTMLDivElement>) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); api.current.ripple(); } };
   return (
     <div ref={wrap} className={'xbr-mg' + (live ? ' live' : '')} role="button" tabIndex={0} aria-label={label} onKeyDown={key}>
       <canvas ref={cv} aria-hidden="true" />

@@ -8,10 +8,10 @@ import { codeOf } from '../models/modelsData';
 const ROOT = process.cwd();
 let IDX;
 const idx = () => (IDX ||= JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'pages.json'), 'utf8')));
-export const metaOf = (route) => idx()[route];
+export const metaOf = (route: string) => idx()[route];
 export const SLUGS = () => Object.keys(idx()).filter((p) => /^\/blockchain\/[^/]+$/.test(p)).map((p) => p.split('/')[2]);
-const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
-const raw = (rel) => fs.readFileSync(path.join(ROOT, 'content', 'pages', rel + '.html'), 'utf8');
+const clean = (s: string) => (s || '').replace(/\s+/g, ' ').trim();
+const raw = (rel: string) => fs.readFileSync(path.join(ROOT, 'content', 'pages', rel + '.html'), 'utf8');
 
 function sections(root) {
   const out = [];
@@ -52,7 +52,7 @@ const items = (f) => {
 };
 const head = (f) => { const h3 = f.findIndex((x) => x.k === 'h3'); const pre = h3 < 0 ? f : f.slice(0, h3); return { title: (f.find((x) => x.k === 'h2') || {}).text || '', lede: (pre.find((x) => x.k === 'p') || {}).text || '' }; };
 
-export function productDoc(slug) {
+export function productDoc(slug: string) {
   const rel = 'blockchain/' + slug;
   if (slug === 'directory') return directoryDoc();
   const secs = sections(load(rel)).map(flow);

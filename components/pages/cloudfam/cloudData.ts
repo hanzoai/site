@@ -7,11 +7,11 @@ import { load, find, findAll, textOf, slot, tag, isN } from '../htmltree';
 const ROOT = process.cwd();
 let IDX;
 const idx = () => (IDX ||= JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'pages.json'), 'utf8')));
-export const metaOf = (route) => idx()[route];
+export const metaOf = (route: string) => idx()[route];
 export const MEMBERS = () => Object.keys(idx()).filter((p) => /^\/cloud\/[^/]+$/.test(p)).map((p) => p.split('/')[2]);
 const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
-const txt = (n) => clean(textOf(n));
-const leaves = (n) => (isN(n) ? n.c.flatMap(leaves) : [clean(n)]).filter(Boolean);
+const txt = (n: never) => clean(textOf(n));
+const leaves = (n: never) => (isN(n) ? n.c.flatMap(leaves) : [clean(n)]).filter(Boolean);
 const kids = (n) => (isN(n) ? n.c.filter(isN) : []);
 // each service of hanzo.ai's shared example project has its own note, which its browser draws (its server copy does
 // not carry them): Hanzo's words from its shared console (live, 8 Nov)
@@ -21,11 +21,11 @@ const ROW_NOTE = {
   'checkout-web': 'A build is running from the last commit on main.',
   'docs-site': 'Static, published by the same pipeline as the rest.',
 };
-const live = (slug) => {
+const live = (slug: string) => {
   try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'live', 'cloud', slug + '.json'), 'utf8')); } catch { return { text: [], links: [] }; }
 };
 
-function product(root, slug) {
+function product(root, slug: string) {
   const secs = findAll(root, tag('section'));
   const fold = secs.find((s) => s.a && s.a['data-slot'] === 'fold') || secs[0];
   const h1 = find(fold, tag('h1'));
@@ -94,7 +94,7 @@ function product(root, slug) {
 }
 
 // /cloud/local is a different page on hanzo.ai: a boot story and a terminal session, so it keeps its own shape
-function local(root, slug) {
+function local(root, slug: string) {
   const fold = find(root, (n) => n.t === 'section' && n.a && n.a['data-slot'] === 'fold');
   const boot = find(root, (n) => n.t === 'section' && n.a && n.a.id === 'boot');
   const grids = findAll(boot, slot('grid'));
@@ -127,7 +127,7 @@ export function googlePairs() {
 }
 
 const DOCS = {};
-export function cloudDoc(slug) {
+export function cloudDoc(slug: string) {
   if (DOCS[slug]) return DOCS[slug];
   const root = load('cloud/' + slug);
   const doc = slug === 'local' ? local(root, slug) : product(root, slug);
@@ -137,7 +137,7 @@ export function cloudDoc(slug) {
   const hrefs = new Set(findAll(root, (n) => n.t === 'a' && n.a && n.a.href).map((a) => a.a.href));
   doc.live = L.text.map(clean).filter((t) => t.length > 12 && !html.includes(t));
   // where hanzo.ai's browser sends the console button today (its server copy says /home)
-  doc.liveLinks = L.links.filter((h) => /^https?:/.test(h) && !hrefs.has(h));
+  doc.liveLinks = L.links.filter((h: string) => /^https?:/.test(h) && !hrefs.has(h));
   return (DOCS[slug] = doc);
 }
 
@@ -146,8 +146,8 @@ export function cloudDoc(slug) {
 export const groupOf = (doc) => (doc.kind === 'local' ? 'Local' : (doc.crumb[1] && doc.crumb[1].label) || doc.label);
 
 /* the numbers that shape a product's Sigil: its own figures (a family size, a feature count, numbers in its words) */
-const nums = (s) => (String(s).match(/\d+(?:\.\d+)?/g) || []).map(Number);
-export function sigilOf(slug) {
+const nums = (s: string) => (String(s).match(/\d+(?:\.\d+)?/g) || []).map(Number);
+export function sigilOf(slug: string) {
   const d = cloudDoc(slug);
   const data = d.kind === 'local'
     ? d.boot.figures.flatMap((f) => nums(f.value))

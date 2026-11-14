@@ -7,7 +7,13 @@
 import { useRef } from 'react';
 import { useInView } from 'motion/react';
 
-export default function Cut({ lines, as = 'h2', className = '', id }) {
+interface CutProps {
+  lines: string[];
+  as?: string;
+  className?: string;
+  id: string;
+}
+export default function Cut({ lines, as = 'h2', className = '', id }: CutProps) {
   const ref = useRef(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const Tag = as;

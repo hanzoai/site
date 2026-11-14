@@ -9,6 +9,7 @@
    Motion: scrubbed race with @hanzo's figure growing 52→84px while it is the moment (scroll, the signature) + open
    bounty arriving and the count ticking (time, idle) + the awards deck dealing (time) + steppers gliding the marker (pointer,
    state) + line-mask headline (arrival) + the PR changing state as it is read (state). 0 UI hues. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useReducedMotion, useTransform, useMotionValue, useMotionValueEvent } from 'motion/react';
 import { A, Cta } from '../kit';
@@ -27,14 +28,17 @@ const n = (v) => v.toLocaleString('en-US');
 /* The live window: open bounties straight from GitHub, the build snapshot until it answers (or when it does not).
    Once the list is in, the newest bounty arrives at the top and the count ticks up by one; then a quiet reader walks
    the rows (paused under the pointer, off screen and under reduced motion). */
-function Open({ st }) {
+interface OpenProps {
+  st: { kind: string; };
+}
+function Open({ st }: OpenProps) {
   const live = st.kind === 'ready';
   const data = live ? st.open : SNAP;
   const items = data.items.slice(0, 6);
   const total = data.total;
   const more = Math.max(0, total - items.length);
   const calm = useReducedMotion();
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.4 });
   const [arrived, setArrived] = useState(false);
   const [walk, setWalk] = useState(-1);
@@ -139,7 +143,10 @@ function useHoldHeaderAsk() {
   }, []);
 }
 
-function Hero({ st }) {
+interface HeroProps {
+  st: { kind: string; };
+}
+function Hero({ st }: HeroProps) {
   useOneSolidOnPhone();
   useHoldHeaderAsk();
   return (
@@ -183,7 +190,7 @@ const STEP = [1, 1, 1, 1];
 function Rewards() {
   const [v, setV] = useState([1, 1, 0, 10]); // bug reports, merged bounty pull requests, qualified referrals, 100K-token blocks
   const [mine, setMine] = useState(false);
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const DEMO = [[1, 1, 0, 10], [2, 1, 1, 20], [3, 2, 1, 50], [0, 1, 2, 5]];
@@ -197,9 +204,9 @@ function Rewards() {
   const lo = bugs * 50 + prs * 100 + refs * 20 + blocks;
   const hi = bugs * 50 + prs * 500 + refs * 20 + blocks;
   const credits = bugs * 20 + prs * 20 + refs * 5;
-  const set = (i, x) => { setMine(true); setV((o) => o.map((y, j) => (j === i ? Math.max(0, Math.min(i === 3 ? 1000 : 99, x)) : y))); };
+  const set = (i: number, x: number) => { setMine(true); setV((o) => o.map((y, j) => (j === i ? Math.max(0, Math.min(i === 3 ? 1000 : 99, x)) : y))); };
   const MAX = 1700;
-  const pos = (p) => Math.min(100, (p / MAX) * 100) + '%';
+  const pos = (p: string | number | null) => Math.min(100, (p / MAX) * 100) + '%';
   return (
     <section className="xp-sec xbo-rewards" aria-labelledby="xbo-rw" ref={box}>
       <div className="xp-wrap">
@@ -250,7 +257,7 @@ const DEAL = 5000;
 function Awards() {
   const [cur, setCur] = useState(0);
   const [hold, setHold] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.5 });
   const calm = useReducedMotion();
   const run = seen && !hold && !calm;
@@ -329,7 +336,7 @@ const ORGS = [
   ['@venuswhispers', 'Active Builder', '340 requests', 590242],
   ['@Aeonaby', 'Active Builder', '79 requests', 521279],
 ];
-const LOG = (t) => Math.log10(t) - 5; // 100K tokens sits at the left edge; @hanzo's 106M at the right
+const LOG = (t: number) => Math.log10(t) - 5; // 100K tokens sits at the left edge; @hanzo's 106M at the right
 const TOP = LOG(ORGS[0][3]);
 
 function Lane({ p, i, org }) {
@@ -348,9 +355,9 @@ function Lane({ p, i, org }) {
 
 /* @hanzo's figure counts with the race; the server and no-JS page carry the real figure. */
 function Tally({ p, to }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement>(null);
   const v = useTransform(p, [0.05, 0.55], [0, to], { clamp: true });
-  useMotionValueEvent(v, 'change', (x) => { if (ref.current) ref.current.textContent = n(Math.round(x)); });
+  useMotionValueEvent(v, 'change', (x: number) => { if (ref.current) ref.current.textContent = n(Math.round(x)); });
   useEffect(() => { if (ref.current) ref.current.textContent = n(Math.round(v.get())); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return <span ref={ref}>{n(to)}</span>;
 }
@@ -358,7 +365,7 @@ function Tally({ p, to }) {
 /* The token race, a plain section on a log line: once it is in view the ten bars race out in time (2.6s) while
    @hanzo's figure counts and grows; reduced motion shows the finished race. */
 function Volume() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const p = useMotionValue(0);
   const seen = useInView(ref, { amount: 0.3, once: true });
   useEffect(() => {
@@ -410,7 +417,10 @@ function Glyph() {
    It never submits anything: picking an issue only fills the summary, and the only ways out are links to GitHub.
    Keyboard: every choice and arrow is a button; ← → move between steps when the flow has focus. Touch: swipe. JS off:
    every step is shown in order. Reduced motion: steps change without the slide. */
-function Take({ st }) {
+interface TakeProps {
+  st: { kind: string; };
+}
+function Take({ st }: TakeProps) {
   const issues = ((st.kind === 'ready' && st.open.items.length) ? st.open.items : SNAP.items).slice(0, 3);
   const [q, setQ] = useState(0);
   const [pick, setPick] = useState(null);
@@ -418,24 +428,24 @@ function Take({ st }) {
   useEffect(() => setReady(true), []);
   const it = pick != null ? issues[pick] || issues[0] : null;
   const last = TAKE.length; // the 4th screen is "Propose a bounty"
-  const go = (i) => setQ(Math.max(0, Math.min(last, i)));
+  const go = (i: number) => setQ(Math.max(0, Math.min(last, i)));
   const choose = (i) => { setPick(i); setTimeout(() => setQ((x) => (x === 0 ? 1 : x)), 420); };
-  const sx = useRef(null);
-  const onDown = (e) => { sx.current = e.clientX; };
-  const onUp = (e) => {
+  const sx = useRef<number | null | null>(null);
+  const onDown = (e: React.PointerEvent<HTMLDivElement>) => { sx.current = e.clientX; };
+  const onUp = (e: React.PointerEvent<HTMLDivElement>) => {
     if (sx.current == null) return;
     const dx = e.clientX - sx.current; sx.current = null;
     if (Math.abs(dx) > 56) go(q + (dx < 0 ? (q === 0 && !it ? 0 : 1) : -1));
   };
-  const onKey = (e) => {
+  const onKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.target.closest('a')) return;
     if (e.key === 'ArrowRight' && !(q === 0 && !it)) { e.preventDefault(); go(q + 1); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); go(q - 1); }
   };
   const ref = it ? `${it.repo}#${it.number}` : '';
   const merged = WAYS[1];
-  const off = (i) => (ready && q !== i ? true : undefined);
-  const name = (i) => (i < TAKE.length ? TAKE[i] : PROPOSE);
+  const off = (i: number) => (ready && q !== i ? true : undefined);
+  const name = (i: number) => (i < TAKE.length ? TAKE[i] : PROPOSE);
   return (
     <section className="xp-sec xbo-take" aria-labelledby="xbo-take-h">
       <div className="xp-wrap">
@@ -525,7 +535,7 @@ function Close() {
 
 export default function Bounty() {
   const st = useBounties();
-  const main = useRef(null);
+  const main = useRef<HTMLElement>(null);
   useEnter(main);
   return (
     <main className="xp xbo" ref={main}>

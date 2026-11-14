@@ -3,21 +3,26 @@
    tilt card behind the six facts (live: data-model="<slug>" data-tilt, /models/<slug>.webp). COPY-RULE.md rule 5: never
    remove an image Hanzo shows. The film plays only on screen (ModelFilm rules); the card leans toward the pointer.
    Usage: <ArtCard slug="mori" className="st2-art" /> */
+import type React from 'react';
 import { useRef } from 'react';
 import { useReducedMotion } from 'motion/react';
 import ModelFilm from '../../v2/ModelFilm';
 import './ArtCard.css';
 
-export default function ArtCard({ slug, className = '' }) {
-  const ref = useRef(null);
+interface ArtCardProps {
+  slug: string;
+  className?: string;
+}
+export default function ArtCard({ slug, className = '' }: ArtCardProps) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
-  const move = (e) => {
+  const move = (e: React.PointerEvent<HTMLElement>) => {
     if (calm || e.pointerType !== 'mouse') return;
-    const r = ref.current.getBoundingClientRect();
-    ref.current.style.setProperty('--rx', ((0.5 - (e.clientY - r.top) / r.height) * 8).toFixed(2) + 'deg');
-    ref.current.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 10).toFixed(2) + 'deg');
+    const r = ref.current!.getBoundingClientRect();
+    ref.current!.style.setProperty('--rx', ((0.5 - (e.clientY - r.top) / r.height) * 8).toFixed(2) + 'deg');
+    ref.current!.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 10).toFixed(2) + 'deg');
   };
-  const leave = () => { ref.current.style.setProperty('--rx', '0deg'); ref.current.style.setProperty('--ry', '0deg'); };
+  const leave = () => { ref.current!.style.setProperty('--rx', '0deg'); ref.current!.style.setProperty('--ry', '0deg'); };
   return (
     <figure ref={ref} className={'art-card ' + className} data-model={slug} onPointerMove={move} onPointerLeave={leave}>
       <ModelFilm slug={slug} />

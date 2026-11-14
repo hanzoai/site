@@ -6,15 +6,16 @@
    - keyboard: the lede is focusable; focus reads it again, and the arrow keys move the light a word at a time.
    Reduced motion and JS off: every word in ink at once. The words are Hanzo's, unchanged.
    A replay swaps the animation's name (.again), which restarts it without remounting (focus stays put). */
+import type React from 'react';
 import { Fragment, useState } from 'react';
 
 export default function WordLight({ text, lead, className = '', label }) {
   const words = text.split(' ');
-  const [upto, setUpto] = useState(null);
+  const [upto, setUpto] = useState<number | null>(null);
   const [run, setRun] = useState(0);
   const replay = () => { setUpto(null); setRun((r) => r + 1); };
-  const at = (e) => { const w = e.target.closest?.('.xbl-w'); if (w) setUpto(+w.dataset.i); };
-  const key = (e) => {
+  const at = (e: React.PointerEvent<HTMLParagraphElement>) => { const w = e.target.closest?.('.xbl-w'); if (w) setUpto(+w.dataset.i); };
+  const key = (e: React.KeyboardEvent<HTMLParagraphElement>) => {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
     e.preventDefault();
     setUpto((u) => Math.max(0, Math.min(words.length - 1, (u ?? -1) + (e.key === 'ArrowRight' ? 1 : -1))));

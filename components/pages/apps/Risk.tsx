@@ -10,6 +10,7 @@
    Motion budget: signature = the live dial; supporting = Settle, Chapters (PinChapters), Open (sheets). No springs.
    Colour: none (JAMES.md, 0 UI hues); the hot side of the dial is ink, status reads by shape and word. Every self-running
    demo has a pause control. One dark room: "Your data, your model". Every word and link is Hanzo's. */
+import type React from 'react';
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
@@ -35,7 +36,7 @@ const STAGES = [
 const LINE = 50;
 
 /* Runs a short sequence once each time its section comes into view (0 … n-1, ms apart), then rests on `rest`. */
-function useRun(n, ms, on, rest) {
+function useRun(n: number, ms: number, on, rest: number) {
   const [i, setI] = useState(rest);
   const [go, setGo] = useState(false);
   useEffect(() => { if (on) { setI(0); setGo(true); } else setGo(false); }, [on]);
@@ -63,8 +64,8 @@ function Dial() {
   const hot = score >= LINE;
   const act = hot ? 'summon a person' : 'allow';
   const rot = -90 + (score / 100) * 180;
-  const pick = (i) => { setMine(true); setSt(i); setOff([false, false, false]); };
-  const flip = (i) => { setMine(true); setOff((o) => o.map((v, k) => (k === i ? !v : v))); };
+  const pick = (i: number) => { setMine(true); setSt(i); setOff([false, false, false]); };
+  const flip = (i: number) => { setMine(true); setOff((o) => o.map((v, k) => (k === i ? !v : v))); };
   return (
     <div className="rk-dial" ref={ref}>
       <div className="rk-dial-l">
@@ -286,7 +287,11 @@ function Chapters() {
 }
 
 /* One chapter: its words beside its own stepping object, which runs while it is in view (pause in the card's corner). */
-function ChapterRow({ c, i }) {
+interface ChapterRowProps {
+  c: { t: string; b: React.JSX.Element; };
+  i: number;
+}
+function ChapterRow({ c, i }: ChapterRowProps) {
   const [ref, live] = useLive(0.35);
   const [paused, pauseBtn] = usePause({ right: 12, top: 12 });
   const V = [CaseFile, Track, Lanes][i];
@@ -313,7 +318,10 @@ const ON = [
 ];
 
 /* A small object per subject: accounts acting as one, a transaction meeting its decision, usage climbing, a dispute's record. */
-function OnArt({ i }) {
+interface OnArtProps {
+  i: number;
+}
+function OnArt({ i }: OnArtProps) {
   if (i === 0) return <span className="rk-art acc"><i /><i /><i /><i /><b /></span>;
   if (i === 1) return <span className="rk-art tx"><i /><em /><b>action</b></span>;
   if (i === 2) return <span className="rk-art ab">{[30, 44, 38, 62, 80, 96].map((h, k) => <i key={k} style={{ height: h + '%' }} />)}</span>;

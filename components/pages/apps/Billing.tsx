@@ -20,6 +20,7 @@
    highlight in the history (pointer, state); one reveal style on the page (the h1's line-mask cut-in). Every word and
    link is Hanzo's; customer, meter and price names are the examples Hanzo's own code uses, and the input values are
    the visitor's own (example starting values, not Hanzo prices). */
+import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useMotionValue, useTransform } from 'motion/react';
 import { EASE } from '../../ui';
@@ -38,13 +39,13 @@ const STEPS = ['Draft', 'Preview', 'Issued'];
 /* figures, formatted the same on the server and in the browser */
 const NUM = new Intl.NumberFormat('en-US');
 const CMP = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 });
-const usd = (v) => '$' + new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.max(0, v));
-const unitUsd = (v) => '$' + v.toFixed(4);
+const usd = (v: number) => '$' + new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.max(0, v));
+const unitUsd = (v: number) => '$' + v.toFixed(4);
 const pct = (v) => (Number.isInteger(v) ? v : v.toFixed(1)) + '%';
 
 /* the visitor's inputs: [key, name on the invoice, min, max, step, format] */
 const INPUTS = [
-  ['usage', 'api_requests', 0, 1000000, 5000, (v) => NUM.format(Math.round(v))],
+  ['usage', 'api_requests', 0, 1000000, 5000, (v: number) => NUM.format(Math.round(v))],
   ['unit', 'price_api_metered', 0.0005, 0.01, 0.0005, unitUsd],
   ['base', 'Subscription', 0, 200, 5, usd],
   ['disc', 'discount', 0, 50, 5, pct],
@@ -82,7 +83,7 @@ function Calc({ plan, set, stage, setStage }) {
     set((p) => ({ ...p, usage: DEMO[demo] }));
     setDemo((d) => d + 1);
   });
-  const change = (k, v) => {
+  const change = (k: string | number | ((v: number) => string), v: number) => {
     touched.current = true;
     set((p) => ({ ...p, [k]: v }));
     if (stage === 2) setStage(1); // a changed invoice is a new preview
@@ -109,8 +110,8 @@ function Calc({ plan, set, stage, setStage }) {
         </div>
         <ul className="bl2-ci-lines">
           <li><span className="bl2-ci-k">Subscription<em className="l2-mono">price_api_metered</em></span><Fig v={plan.base} fmt={usd} className="bl2-ci-v l2-mono" /></li>
-          <li><span className="bl2-ci-k">api_requests<em className="l2-mono"><Fig v={plan.usage} fmt={(v) => '× ' + NUM.format(Math.round(v))} /> · {unitUsd(plan.unit)}</em></span><Fig v={r.metered} fmt={usd} className="bl2-ci-v l2-mono" /></li>
-          <li className={plan.disc ? '' : 'off'}><span className="bl2-ci-k">discount<em className="l2-mono">{pct(plan.disc)}</em></span><Fig v={r.off} fmt={(v) => '−' + usd(v)} className="bl2-ci-v l2-mono" /></li>
+          <li><span className="bl2-ci-k">api_requests<em className="l2-mono"><Fig v={plan.usage} fmt={(v: number) => '× ' + NUM.format(Math.round(v))} /> · {unitUsd(plan.unit)}</em></span><Fig v={r.metered} fmt={usd} className="bl2-ci-v l2-mono" /></li>
+          <li className={plan.disc ? '' : 'off'}><span className="bl2-ci-k">discount<em className="l2-mono">{pct(plan.disc)}</em></span><Fig v={r.off} fmt={(v: number) => '−' + usd(v)} className="bl2-ci-v l2-mono" /></li>
           <li><span className="bl2-ci-k">Tax<em className="l2-mono">calculated on the invoice · {pct(plan.tax)}</em></span><Fig v={r.tax} fmt={usd} className="bl2-ci-v l2-mono" /></li>
         </ul>
         <div className="bl2-ci-f">
@@ -131,7 +132,10 @@ const LINES = [
 
 /* The running machine: events → meter → invoice, one period after another, only while seen. It meters the usage the
    calculator is set to: each event carries one eighteenth of it. */
-function Machine({ usage }) {
+interface MachineProps {
+  usage: number;
+}
+function Machine({ usage }: MachineProps) {
   const [ref, live, calm, paused, toggle] = useDemo(0.25);
   const [n, setN] = useState(7);
   const [ev, setEv] = useState(7);
@@ -226,14 +230,17 @@ function Prices() {
 }
 
 /* Meters: the calculator's usage as one period of 18 cells; it refills whenever the usage changes. */
-function MeterFill({ usage }) {
+interface MeterFillProps {
+  usage: number;
+}
+function MeterFill({ usage }: MeterFillProps) {
   const [ref, live] = useLive(0.4);
   const target = Math.round((usage / INPUTS[0][3]) * PERIOD);
   const [k, setK] = useState(0);
   useTick(45, live && k !== target, () => setK((c) => c + Math.sign(target - c)));
   return (
     <div className="bl2-mf" ref={ref} aria-hidden="true">
-      <p className="bl2-mf-k l2-mono"><span>Meter · api_requests</span><Fig v={usage} fmt={(v) => CMP.format(Math.round(v))} className="l2-fig" /></p>
+      <p className="bl2-mf-k l2-mono"><span>Meter · api_requests</span><Fig v={usage} fmt={(v: number) => CMP.format(Math.round(v))} className="l2-fig" /></p>
       <div className="bl2-mf-slots">{Array.from({ length: PERIOD }).map((_, i) => <i key={i} className={i < k ? 'on' : ''} />)}</div>
       <p className="bl2-mf-f l2-mono"><span>billing.usage.record</span><span>open</span></p>
     </div>
@@ -241,7 +248,10 @@ function MeterFill({ usage }) {
 }
 
 /* Invoices: the same Draft / Preview / Issued stage the calculator's invoice shows. */
-function IssueSteps({ s }) {
+interface IssueStepsProps {
+  s: number;
+}
+function IssueSteps({ s }: IssueStepsProps) {
   return (
     <div className="bl2-is" aria-hidden="true">
       <p className="bl2-is-k l2-mono"><span>Invoice</span><span>cus_abc123</span></p>
@@ -265,7 +275,11 @@ const OBJECTS = [
 ];
 
 /* The objects, as plain quick rows (no pin): the running machine first, then each object beside its own small thing. */
-function Objects({ plan, stage }) {
+interface ObjectsProps {
+  plan: { usage: number; unit: number; base: number; disc: number; tax: number; };
+  stage: number;
+}
+function Objects({ plan, stage }: ObjectsProps) {
   const things = [<Prices key="p" />, <MeterFill key="m" usage={plan.usage} />, <IssueSteps key="s" s={stage} />];
   return (
     <section className="l2-sec bl2-objs bl2-e bl2-e-orbit">
@@ -294,7 +308,10 @@ function Objects({ plan, stage }) {
 }
 
 /* The close: one object, this period's invoice at the calculator's figures, issued once as it arrives. */
-function Closing({ plan }) {
+interface ClosingProps {
+  plan: { usage: number; unit: number; base: number; disc: number; tax: number; };
+}
+function Closing({ plan }: ClosingProps) {
   const [ref, live, calm] = useLive(0.5);
   const [done, setDone] = useState(false);
   useEffect(() => { if (calm) setDone(true); }, [calm]);

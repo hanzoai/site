@@ -89,7 +89,7 @@ const COVER = POSTS.slice(0, 6);
 /* each on-site post shows Hanzo's own film for the first model it is about (as its /blog/<slug> plate and keep-reading cards do) */
 const HERE = [['The Next Frontier Will Be Synthesis', '/blog/synthesis', 'zen'], ['A New Pareto Frontier', '/blog/pareto-frontier', 'enso'], ['Kai 1: Decisions, Not Completions', '/blog/kai-decision-models', 'kai']];
 const MONTHS = ['February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October'];
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 const HOLD = 6.5;
 const calmNow = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -99,7 +99,7 @@ function Count({ n, label, go, from }) {
   useEffect(() => {
     if (!go || from == null || calmNow()) { setV(n); return; }
     let raf = 0; const t0 = performance.now();
-    const step = (t) => { const k = Math.min(1, (t - t0) / 1100); setV(Math.round(from + (n - from) * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(step); };
+    const step = (t: number) => { const k = Math.min(1, (t - t0) / 1100); setV(Math.round(from + (n - from) * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
   }, [go, n, from]);
@@ -118,7 +118,7 @@ function Cover() {
   const [hold, setHold] = useState(false);
   const [paused, setPaused] = useState(false);
   const how = useRef('auto'); // the timer turns the page with the curtain; a hand cuts straight to its story
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.35 });
   const calm = useReducedMotion();
   const run = seen && !hold && !calm && !paused;
@@ -132,7 +132,7 @@ function Cover() {
   // the server's static first frame of the plate stays until the living canvas has drawn its own (its effect runs first)
   const [live, setLive] = useState(false);
   useEffect(() => setLive(true), []);
-  const pick = (i) => { how.current = 'hand'; setAt(i); setHold(true); };
+  const pick = (i: number) => { how.current = 'hand'; setAt(i); setHold(true); };
   // the cinematic moment: as the timer turns the page, the plate swings back on its spine like a cover turning, and the
   // new art settles in behind the silver curtain
   const [plate, turn] = useAnimate();
@@ -261,7 +261,7 @@ function Here() {
 
 /* ---------- 3. the contents, in one frame: the publishing strip and the count beside a pane that holds every post ---------- */
 function Strip({ m, setM, months, top }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   return (
     <div className="xbl-strip-w">
@@ -295,8 +295,8 @@ function Contents() {
     POSTS.forEach((p) => { const last = g[g.length - 1]; if (last && last[0] === p.month) last[1].push(p); else g.push([p.month, [p]]); });
     return g;
   }, []);
-  const pane = useRef(null);
-  const head = useRef(null);
+  const pane = useRef<HTMLDivElement>(null);
+  const head = useRef<HTMLDivElement>(null);
   const headSeen = useInView(head, { once: true, amount: 0.5 });
   // a month from the strip filters the pane to it (the other months stay in the page, hidden); All opens every month again
   const choose = (k) => { setM(k); const el = pane.current; if (el) el.scrollTo({ top: 0, behavior: calmNow() ? 'auto' : 'smooth' }); };
@@ -342,7 +342,7 @@ function Contents() {
 }
 
 export default function BlogIndex() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useEnter(root);
   return (
     <main id="main" className="xbl v2s" ref={root}>

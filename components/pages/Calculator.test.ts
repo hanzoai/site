@@ -44,7 +44,7 @@ test('the software total is the rows at their weights', () => {
 });
 
 test('rows scale on their billing basis: seats on employees, engineers on engineers, platform fees not at all', () => {
-  const one = (name, over) => at(over).value[ROWS.findIndex((r) => r.name === name)];
+  const one = (name: string, over: { E: number; } | { E: number; Dp: number; } | { E: number; Dp: number; }) => at(over).value[ROWS.findIndex((r) => r.name === name)];
   assert.equal(one('SSO & workforce identity', { E: 200 }), 20_000); // per seat
   assert.equal(one('Secrets & KMS', { E: 200, Dp: 60 }), 11_000 * (120 / REF_D)); // per engineer: 200 x 60% = 120
   assert.equal(one('Customer identity (product)', { E: 2000, Dp: 60 }), 14_000); // platform fee
@@ -189,7 +189,7 @@ test('the three monthly figures for the example the page opens with', () => {
 });
 
 // ---- the readers, against the shapes the API answers ----
-const get = (map) => async (url) => {
+const get = (map) => async (url: string) => {
   if (!(url in map)) throw new Error('404 ' + url);
   return map[url];
 };

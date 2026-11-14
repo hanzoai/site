@@ -4,6 +4,7 @@
    <Enter kind="noise" as="section" className="…">…</Enter> adds `.in` once, when the element first scrolls into view
    (IntersectionObserver, play once). The initial states live in enter.css under `.js` only, so JS off and the server HTML
    show the final state; reduced motion shows the final state at once (CSS). Transform / opacity / clip-path / filter only. */
+import type React from 'react';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 
 export const Enter = forwardRef(function Enter({ kind, as: Tag = 'div', className = '', onIn, children, ...rest }, outer) {
@@ -30,8 +31,12 @@ export const Enter = forwardRef(function Enter({ kind, as: Tag = 'div', classNam
    (left to right, in step with the section's clip reveal), so phones and keyboards get the entrance too; afterwards it follows
    a fine pointer and fades when the pointer rests. Fixed-size, absolutely placed, transform and opacity only. */
 const N = 9;
-export function Trail({ host, run }) {
-  const box = useRef(null);
+interface TrailProps {
+  host: React.RefObject<null>;
+  run: boolean;
+}
+export function Trail({ host, run }: TrailProps) {
+  const box = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const el = box.current, hostEl = host.current;
     if (!el || !hostEl) return;
@@ -40,7 +45,7 @@ export function Trail({ host, run }) {
     const dots = [...el.children];
     const pts = dots.map(() => ({ x: -40, y: -40 }));
     let target = null, raf = 0, idle = 0, last = performance.now(), auto = null;
-    const frame = (t) => {
+    const frame = (t: number) => {
       if (auto) {
         const p = Math.min(1, (t - auto.t0) / auto.dur), e = 1 - Math.pow(1 - p, 3);
         target = { x: auto.x0 + (auto.x1 - auto.x0) * e, y: auto.y + Math.sin(p * Math.PI * 2) * auto.amp };

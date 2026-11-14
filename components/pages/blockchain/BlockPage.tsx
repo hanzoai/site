@@ -38,7 +38,7 @@ const MODE = { bundler: 'merge', oracle: 'tick' }; // how each member acts itsel
 
 export function Stream({ chains, label }) {
   if (!chains.length) return null;
-  const row = (k) => chains.map((c) => <li key={k + c} aria-hidden={k ? true : undefined}><i className="xb2-blk" aria-hidden="true" /><b>{c}</b></li>);
+  const row = (k: string) => chains.map((c) => <li key={k + c} aria-hidden={k ? true : undefined}><i className="xb2-blk" aria-hidden="true" /><b>{c}</b></li>);
   return (
     <div className="xbc-stream" aria-label={label}>
       <ul style={{ '--n': chains.length }}>{row('')}{row('b')}</ul>
@@ -78,7 +78,7 @@ export function Code({ file, code, langs }) {
    copies whole); the lines light up one after another by class, through refs, never a re-render per line. Reduced
    motion and no-JS show it whole. */
 function Typed({ file, code, langs }) {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = box.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -113,13 +113,13 @@ function Typed({ file, code, langs }) {
    300–500 ms, not a scrub). Marks under the words show where you are, preview a title under the pointer or focus,
    and jump to any card. Phones swipe the same cards one at a time. */
 function Deck({ b, seed }) {
-  const sec = useRef(null);
-  const rail = useRef(null);
+  const sec = useRef<HTMLElement>(null);
+  const rail = useRef<HTMLUListElement>(null);
   const n = b.items.length;
   const [at, setAt] = useState(0);
   const [peek, setPeek] = useState(-1);
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
-  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+  useMotionValueEvent(scrollYProgress, 'change', (p: number) => {
     if (!matchMedia('(min-width: 901px)').matches) return;
     const k = Math.max(0, Math.min(n - 1, Math.floor(p * n * 0.999)));
     if (k !== at) setAt(k);
@@ -132,7 +132,7 @@ function Deck({ b, seed }) {
     el.addEventListener('scroll', on, { passive: true });
     return () => el.removeEventListener('scroll', on);
   }, []);
-  const jump = (k) => {
+  const jump = (k: number) => {
     if (matchMedia('(max-width: 900px)').matches) { const el = rail.current; const c = el && el.children[k]; c && el.scrollTo({ left: c.offsetLeft - el.offsetLeft, behavior: 'smooth' }); return; }
     const el = sec.current;
     const top = el.getBoundingClientRect().top + scrollY + ((el.offsetHeight - innerHeight) * (k + 0.5)) / n;
@@ -201,7 +201,7 @@ function Tiles({ b }) {
    through them by itself (pausing when touched); every product's words stay in the page, the others hidden */
 function Console({ b, seed }) {
   const calm = useReducedMotion();
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   const [done, setDone] = useState(false);
@@ -290,11 +290,11 @@ export default function BlockPage({ doc, all }) {
   // the lane's stations: the product's own first capabilities (the hero's features, else the deck's first cards)
   const stations = (h.features.length ? h.features : deckAt >= 0 ? doc.blocks[deckAt].items : []).map((f) => f.title);
   // the ask sits beside the headline: the hero's own actions, or the key card's two moved up
-  const askOf = (list, from) => (list.length > 0 && (
+  const askOf = (list, from: string) => (list.length > 0 && (
     <div className="xb2-acts">{list.map((a, i) => (i ? <A key={a.label} to={a.href} className="x-arrow xb2-ask2" data-cta={from + '-second'}><span>{a.label}</span><Arrow /></A>
       : <Magnetic key={a.label} strength={0.25}><A to={a.href} className="v2f-btn solid" data-thumb={a.label} data-cta={from}>{a.label}</A></Magnetic>))}</div>
   ));
-  const keyActs = key ? key.actions.map((t) => ({ label: t, href: GO[t] || '/signup' })) : [];
+  const keyActs = key ? key.actions.map((t: string | number) => ({ label: t, href: GO[t] || '/signup' })) : [];
   const heroActs = h.actions.length ? askOf(h.actions, 'blockchain.hero') : askOf(keyActs, 'blockchain.key');
   // the products after this one, in the family's order, as cards that open into their page
   const at = all.findIndex((p) => p.slug === doc.slug);

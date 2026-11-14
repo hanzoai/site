@@ -7,7 +7,7 @@
    Movement is transform, clip-path and opacity only (CSS keyframes in Commerce.css under [data-enter]). */
 import { useEffect, useRef } from 'react';
 
-export function useEnter(kind) {
+export function useEnter(kind: string) {
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current;

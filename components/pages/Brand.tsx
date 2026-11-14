@@ -21,6 +21,7 @@
    loops; invented words and figures (the contrast ratios, the weight readout and its 100 / 900, the bench echo,
    "construction", "mark", "Copied"); the tick on a failed copy.
    Every word is Hanzo's. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Cta } from '../kit';
@@ -55,7 +56,7 @@ function Piece({ d, i, open, mx, my }) {
 
 /* The construction, drawn full-bleed on the hero's stage. */
 function Drawing({ mx, my, stage }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const live = useInView(ref, { amount: 0.3 });
   const calm = useReducedMotion();
   // visibility never waits on anything; only the idle life waits for the curtain (if any) to lift
@@ -103,7 +104,7 @@ function Drawing({ mx, my, stage }) {
           <line x1="-30" y1="97" x2="97" y2="-30" className="xbr-g c" />
           <g className="xbr-ticks">{Array.from({ length: 24 }, (_, i) => {
             const a = (i / 24) * Math.PI * 2, r1 = 47.3, r2 = i % 6 ? 45.3 : 43.3;
-            const f = (v) => Math.round(v * 100) / 100; // rounded: server and browser maths then print the same numbers
+            const f = (v: number) => Math.round(v * 100) / 100; // rounded: server and browser maths then print the same numbers
             return <line key={i} x1={f(33.4 + Math.cos(a) * r1)} y1={f(33.5 + Math.sin(a) * r1)} x2={f(33.4 + Math.cos(a) * r2)} y2={f(33.5 + Math.sin(a) * r2)} className="xbr-tick" />;
           })}</g>
         </motion.g>
@@ -121,12 +122,12 @@ function Drawing({ mx, my, stage }) {
 
 function Hero() {
   const calm = useReducedMotion();
-  const stage = useRef(null); // the whole hero takes the pointer for the magnet field
+  const stage = useRef<HTMLElement>(null); // the whole hero takes the pointer for the magnet field
   // the pointer anywhere in the hero pulls the pieces toward it (fine pointers only), settling in 300 ms (no spring)
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const to = (mv, v) => animate(mv, v, SOFT);
-  const lean = (e) => {
+  const to = (mv, v: number) => animate(mv, v, SOFT);
+  const lean = (e: React.PointerEvent<HTMLElement>) => {
     if (calm || (e.pointerType !== 'mouse' && e.pointerType !== 'pen')) return;
     const art = e.currentTarget.querySelector('.xbr-dr svg');
     if (!art) return;
@@ -163,7 +164,10 @@ function Hero() {
 const PRINCIPLES = [['Minimal & Focused', 'Reduce visual noise and focus on essential elements. Each design decision should have purpose and enhance the user experience.'], ['Elegant & Refined', 'Use subtle gradients, appropriate spacing, and thoughtful typography to create elegant and sophisticated interfaces.'], ['Consistent & Cohesive', 'Maintain consistency in design patterns, spacing, and visual hierarchy to create a unified experience across all touchpoints.']];
 const MarkSvg = ({ s = 40 }) => <svg viewBox="0 0 67 67" width={s} height={s} aria-hidden="true">{PIECES.map((d, i) => <path key={i} d={d} fill="currentColor" />)}</svg>;
 // each numeral stands in the principle's own material: one mark in a lot of space, the Brand Glow, the mark on a grid
-const Numeral = ({ i }) => (
+interface NumeralProps {
+  i: number;
+}
+const Numeral = ({ i }: NumeralProps) => (
   <div className={'xbr-num n' + i}>
     {i === 2 && <span className="xbr-num-grid" aria-hidden="true">{Array.from({ length: 16 }, (_, k) => <MarkSvg key={k} s={26} />)}</span>}
     {i === 0 && <span className="xbr-num-mark" aria-hidden="true"><MarkSvg s={30} /></span>}
@@ -193,7 +197,7 @@ function Principles() {
 
 /* ---------- colour: the one dark room ---------- */
 // Copy only ticks when the clipboard really took the text; a blocked clipboard leaves the copy icon as it was.
-function useCopy(text) {
+function useCopy(text: string) {
   const [ok, setOk] = useState(false);
   const t = useRef(0);
   const go = async () => {
@@ -202,12 +206,22 @@ function useCopy(text) {
   };
   return [ok, go];
 }
-const CopyIcon = ({ ok }) => (ok
+interface CopyIconProps {
+  ok: boolean | (() => Promise<void>);
+}
+const CopyIcon = ({ ok }: CopyIconProps) => (ok
   ? <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><motion.path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }} /></svg>
   : <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><rect x="5" y="5" width="8.5" height="8.5" rx="2" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M10.5 3.2V3a.8.8 0 0 0-.8-.8H3a.8.8 0 0 0-.8.8v6.7c0 .44.36.8.8.8h.2" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>);
 
 // The colour room arrives by its cursor-trail entrance (./brand/enter.js), so the swatches carry no reveal of their own.
-function Swatch({ name, hex, big, dark, sel }) {
+interface SwatchProps {
+  name: string;
+  hex: string;
+  big?: boolean;
+  dark?: boolean;
+  sel?: boolean;
+}
+function Swatch({ name, hex, big, dark, sel }: SwatchProps) {
   const [ok, go] = useCopy(hex);
   return (
     <motion.button type="button" className={'xbr-sw' + (big ? ' big' : '') + (dark ? ' dk' : '') + (sel ? ' sel' : '')} style={{ '--c': hex }} onClick={go} whileTap={{ scale: 0.97 }} transition={{ duration: 0.09 }} aria-label={`${name} ${hex}`} aria-pressed={ok}>
@@ -220,11 +234,14 @@ function Swatch({ name, hex, big, dark, sel }) {
 const GRAYS = [['Gray 900', '#171717'], ['Gray 800', '#262626'], ['Gray 700', '#404040'], ['Gray 600', '#525252'], ['Gray 500', '#737373'], ['Gray 400', '#A3A3A3']];
 const GRADS = [['Brand Glow', 'Radial', 'radial-gradient(circle at 50% 40%, rgba(255,255,255,.35), #0A0A0B 62%)'], ['White Fade', 'Linear', 'linear-gradient(180deg, #FFFFFF, rgba(255,255,255,0))'], ['Gray Fade', 'Linear', 'linear-gradient(180deg, #404040, #0A0A0B)']];
 
-const lum = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)).reduce((a, c, i) => a + c * [0.2126, 0.7152, 0.0722][i], 0);
-const contrast = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+const lum = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)).reduce((a, c, i) => a + c * [0.2126, 0.7152, 0.0722][i], 0);
+const contrast = (a: string, b: string) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
 
 /* The WCAG AA line as a shape: a filled check (4.5:1, body text), a half disc (3:1, large text only), a cross (below). */
-function Verdict({ r }) {
+interface VerdictProps {
+  r: number;
+}
+function Verdict({ r }: VerdictProps) {
   const k = r >= 4.5 ? 'ok' : r >= 3 ? 'mid' : 'no';
   return (
     <motion.span key={k} className={'xbr-v ' + k} role="img" aria-label={k === 'ok' ? 'WCAG AA 4.5:1' : k === 'mid' ? 'WCAG AA 3:1' : 'below WCAG AA'}
@@ -241,8 +258,12 @@ function Verdict({ r }) {
 
 /* One thing in as another goes out: when the board is well in view, Hanzo Black slides in under the six grays, every
    verdict flips with it, then Hanzo White comes back and the switch is yours. Once; a touch stops it; calm skips it. */
-function Reads({ bg, setBg }) {
-  const ref = useRef(null);
+interface ReadsProps {
+  bg: string;
+  setBg: React.Dispatch<React.SetStateAction<string>>;
+}
+function Reads({ bg, setBg }: ReadsProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.6, once: true });
   const calm = useReducedMotion();
   const mine = useRef(false);
@@ -252,7 +273,7 @@ function Reads({ bg, setBg }) {
     const b = setTimeout(() => { if (!mine.current) setBg('#FFFFFF'); }, 3600);
     return () => { clearTimeout(a); clearTimeout(b); };
   }, [seen, calm]);
-  const pick = (h) => { mine.current = true; setBg(h); };
+  const pick = (h: string) => { mine.current = true; setBg(h); };
   return (
     <div className="xbr-reads" ref={ref} role="group" aria-label="Gray Scale on Hanzo White or Hanzo Black">
       <div className="xbr-seg" role="group" aria-label="Background">
@@ -303,14 +324,14 @@ function Type() {
   const [val, setVal] = useState(560);
   const [mine, setMine] = useState(false);
   const calm = useReducedMotion();
-  const spec = useRef(null);
+  const spec = useRef<HTMLDivElement>(null);
   const live = useInView(spec, { amount: 0.6 }); // the specimen itself, well on screen: the sweep is seen whole
-  const fw = useTransform(w, (v) => Math.round(v));
+  const fw = useTransform(w, (v: number) => Math.round(v));
   const swept = useRef(false);
   // The track fill (--p) is never a React style: the CSS rests it at 560's 57.5% in the server HTML, and after mount
   // the weight writes it straight to the input, so nothing the sweep changes can differ from the server markup.
-  const range = useRef(null);
-  useEffect(() => w.on('change', (v) => {
+  const range = useRef<HTMLInputElement>(null);
+  useEffect(() => w.on('change', (v: number) => {
     const r = Math.round(v);
     setVal(r);
     if (range.current) range.current.style.setProperty('--p', ((r - 100) / 8) + '%');
@@ -413,7 +434,7 @@ function Assets() {
 }
 
 export default function Brand() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useEnter(root); // the five section entrances (./brand/enter.js)
   return (
     <main ref={root} className="vc xbr" style={{ '--acc': 'var(--ink)' }}>

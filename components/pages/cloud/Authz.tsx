@@ -20,6 +20,7 @@
    Beyond: "Delegate it yourself": choose where your grant sits and where you write the agent's, and see whether it can
    be delegated, with Hanzo's own sentence on why. Built only from the path rule on this page.
    Every word and link is Hanzo's; the demo's labels (caller, location, can, grant, target) are UI. */
+import type React from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useDragControls, useReducedMotion } from 'motion/react';
 import { Count } from '../../ui';
@@ -45,15 +46,15 @@ const WHO = [['org-wide member', 0], ['workspace member', 1], ['agent, delegated
 const SCRIPT = [[1, 2], [1, 0], [0, 3], [2, 1], [3, 3], [2, 2]];
 const EVERY = 4600; // ms per request; the CSS fill in the request bar runs the same time
 const HOP = 0.4;
-const covers = (g, t) => t >= g;
+const covers = (g: string | number, t: number) => t >= g;
 
 /* where each node sits inside the graph, from layout (offsets ignore the Stage's scale) */
-function useGeo(box) {
+function useGeo(box: React.RefObject<HTMLDivElement | null>) {
   const [geo, setGeo] = useState(null);
   useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
-    const pos = (n) => { let x = 0, y = 0, e = n; while (e && e !== el) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return { x, y, w: n.offsetWidth, h: n.offsetHeight }; };
+    const pos = (n: Element) => { let x = 0, y = 0, e = n; while (e && e !== el) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return { x, y, w: n.offsetWidth, h: n.offsetHeight }; };
     const read = () => setGeo({ W: el.offsetWidth, H: el.offsetHeight, who: [...el.querySelectorAll('[data-who]')].map(pos), loc: [...el.querySelectorAll('[data-loc]')].map(pos) });
     read();
     const ro = new ResizeObserver(read);
@@ -63,13 +64,13 @@ function useGeo(box) {
   }, [box]);
   return geo;
 }
-const whoPath = (G, i, g) => {
+const whoPath = (G: never, i: number, g: string | number) => {
   const a = G.who[i], b = G.loc[g];
   if (!a || !b) return '';
   const ax = a.x + a.w, ay = a.y + a.h / 2, bx = b.x, by = b.y + b.h / 2, dx = (bx - ax) / 2;
   return `M${ax} ${ay} C${ax + dx} ${ay} ${bx - dx} ${by} ${bx} ${by}`;
 };
-const treePath = (G, i, j) => {
+const treePath = (G: never, i, j) => {
   const a = G.loc[i], b = G.loc[j];
   if (!a || !b) return '';
   const x = a.x + Math.max(8, Math.min(24, b.x - a.x - 14));
@@ -91,18 +92,18 @@ function Check() {
   const ok = covers(g, t);
   const walk = ok ? t - g : 0;
   const key = w + '-' + t;
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const G = useGeo(box);
-  const d = (i) => (calm ? 0 : i * HOP);
+  const d = (i: number) => (calm ? 0 : i * HOP);
   const land = d(3 + walk);
-  const lit = (i) => ok && i >= g && i <= t;
+  const lit = (i: number) => ok && i >= g && i <= t;
   const pick = (nw, nt) => setMine([nw, nt]);
   /* the last answer stays on the panel, in the quiet grey, while the next check walks; the new one cuts in over it */
   const prev = useRef({ key, ok, before: null });
   if (prev.current.key !== key) prev.current = { key, ok, before: prev.current.ok };
   const before = prev.current.before;
   /* hovering a request mark names it in the bar (pointer only; the bar's own label returns on leave) */
-  const [peek, setPeek] = useState(null);
+  const [peek, setPeek] = useState<number | null>(null);
   return (
     <div className="kn-obj az-obj" ref={ref}>
       <div className={'az-bar' + (mine ? ' held' : '')}>
@@ -212,7 +213,13 @@ const DEC = [
 const SEG = ['acme', 'prod', 'web', 'app or site'];
 
 /* Beyond: write a delegation yourself. Allowed when the agent's grant sits at or under yours. */
-function Pick({ label, at, set, id }) {
+interface PickProps {
+  label: string;
+  at: number;
+  set: React.Dispatch<React.SetStateAction<number>>;
+  id: string;
+}
+function Pick({ label, at, set, id }: PickProps) {
   const calm = useReducedMotion();
   return (
     <div className="az-pk" role="radiogroup" aria-label={label}>

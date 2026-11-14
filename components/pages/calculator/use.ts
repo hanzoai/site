@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { readPricing, readSummary, readServed } from './sources.ts';
 
 const PATIENCE = 15000;
-const get = async (url) => {
+const get = async (url: string | URL | Request) => {
   const r = await fetch(url, { credentials: 'omit', headers: { accept: 'application/json' }, signal: AbortSignal.timeout(PATIENCE) });
   if (!r.ok) throw new Error(`${r.status} from ${url}`);
   return r.json();

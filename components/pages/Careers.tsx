@@ -42,7 +42,7 @@ const NOJS = { __html: '<style>.xcb-hero-f,.xcb-hero-o{opacity:1!important;trans
 function Hire({ how }) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.15 });
   const calm = useReducedMotion();
   const n = how.steps.length;
@@ -105,12 +105,12 @@ function CopyDirect({ id, title }) {
 
 // skills as Hanzo's role descriptions write them; a chip is shown only if some role asks for it
 const SKILLS = ['transformers', 'RLHF', 'distributed', 'LLVM', 'MLIR', 'compilers', 'Model Context Protocol', 'agents', 'zero-knowledge', 'cryptography', 'Go/Rust', 'developer tools', 'data visualization'];
-const stem = (t) => t.toLowerCase().replace(/s$/, ''); // "agents" also finds "agent infrastructure"
+const stem = (t: string) => t.toLowerCase().replace(/s$/, ''); // "agents" also finds "agent infrastructure"
 const asks = (r, k) => (r.title + ' ' + r.desc).toLowerCase().includes(stem(k));
-const esc = (t) => t.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
 function Marked({ text, know }) {
   if (!know.length) return text;
-  const re = new RegExp('(' + know.map((k) => esc(stem(k)) + '\\w*').join('|') + ')', 'gi');
+  const re = new RegExp('(' + know.map((k: string) => esc(stem(k)) + '\\w*').join('|') + ')', 'gi');
   return text.split(re).map((p, i) => (i % 2 ? <mark key={i}>{p}</mark> : p));
 }
 
@@ -118,11 +118,11 @@ function Marked({ text, know }) {
 /* The sheet opens into its page: the whole sheet grows to fill the screen in its own white, carrying its title and
    numeral, which then land on the role page's h1 and numeral (careers/door.js). The site Morph is skipped here
    (data-no-morph): it times out today (docs/build-notes/requests/careers.md). */
-const open = (e, to, router, el) => openSheet(e, hrefOf(to), router, el || e.currentTarget.closest('.xcb-sheet-in'));
+const open = (e, to, router, el: null) => openSheet(e, hrefOf(to), router, el || e.currentTarget.closest('.xcb-sheet-in'));
 
 function Sheet({ r, i, n, know, progress, on }) {
   const router = useRouter();
-  const card = useRef(null);
+  const card = useRef<HTMLDivElement>(null);
   const [where, kind, team] = r.chips;
   const miss = know.length > 0 && !know.some((k) => asks(r, k));
   const scale = useTransform(progress, [i / n, 1], [1, 1 - (n - 1 - i) * 0.028]);
@@ -149,11 +149,11 @@ function Sheet({ r, i, n, know, progress, on }) {
 
 function Deck({ roles, know, dont, dontA }) {
   const router = useRouter();
-  const ref = useRef(null);
+  const ref = useRef<HTMLUListElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const n = roles.length + 1;
   const [front, setFront] = useState(0);
-  useMotionValueEvent(scrollYProgress, 'change', (v) => setFront(Math.min(n - 1, Math.max(0, Math.round(v * (n - 1))))));
+  useMotionValueEvent(scrollYProgress, 'change', (v: number) => setFront(Math.min(n - 1, Math.max(0, Math.round(v * (n - 1))))));
   return (
     <ul className="xcb-deck" ref={ref}>
       {roles.map((r, i) => <Sheet key={r.id} r={r} i={i} n={n} know={know} progress={scrollYProgress} on={front === i} />)}
@@ -172,16 +172,16 @@ function Deck({ roles, know, dont, dontA }) {
    perks lights in turn as you read down the list (scroll-linked, ink from a pale grey); the tile beside it crossfades its
    Sigil field and numeral to the perk being lit, or to the one you point at, tap or focus. Server HTML, JS off and
    reduced motion show every word lit. */
-const split = (t) => t.split(/(\s+)/);
+const split = (t: string) => t.split(/(\s+)/);
 function Perks({ perks }) {
-  const list = useRef(null);
+  const list = useRef<HTMLOListElement>(null);
   const calm = useReducedMotion();
-  const counts = perks.items.map(([pt, pp]) => split(pt + ' ' + pp).filter((w) => w.trim()).length);
+  const counts = perks.items.map(([pt, pp]) => split(pt + ' ' + pp).filter((w: string) => w.trim()).length);
   const total = counts.reduce((a, b) => a + b, 0);
   const [lit, setLit] = useState(total);
   const [hover, setHover] = useState(null);
   const { scrollYProgress } = useScroll({ target: list, offset: ['start 78%', 'end 55%'] });
-  const read = (v) => setLit(calm ? total : Math.round(Math.min(1, Math.max(0, v)) * total));
+  const read = (v: number) => setLit(calm ? total : Math.round(Math.min(1, Math.max(0, v)) * total));
   useMotionValueEvent(scrollYProgress, 'change', read);
   useEffect(() => { read(scrollYProgress.get()); }, [calm]); // eslint-disable-line react-hooks/exhaustive-deps
   let reading = 0;
@@ -190,7 +190,7 @@ function Perks({ perks }) {
   const [t, p] = perks.items[at];
   const fade = { duration: calm ? 0 : 0.3, ease: EASE };
   let w = 0;
-  const words = (text) => split(text).map((x, k) => (x.trim() ? <span key={k} className={'xcb-w' + (w++ < lit ? '' : ' off')}>{x}</span> : x));
+  const words = (text: string) => split(text).map((x, k) => (x.trim() ? <span key={k} className={'xcb-w' + (w++ < lit ? '' : ' off')}>{x}</span> : x));
   return (
     <div className="vc-grid xcb-perk-g xce-swing" ref={useEnter()}>
       <div className="xcb-perk-v" aria-hidden="true">
@@ -215,12 +215,12 @@ function Perks({ perks }) {
   );
 }
 
-const fig = (t) => /^([\d,]+\+)\s+(.*)$/.exec(t);
+const fig = (t: string) => /^([\d,]+\+)\s+(.*)$/.exec(t);
 
 export default function Careers({ d }) {
   useSheetLanding();
   const roles = d.pos.leaves;
-  const [pick, setPick] = useState(null); // one skill at a time: the ink pill glides to it
+  const [pick, setPick] = useState<string | null>(null); // one skill at a time: the ink pill glides to it
   const know = pick ? [pick] : [];
   const shown = roles;
   const skills = SKILLS.filter((k) => roles.some((r) => asks(r, k)));
@@ -233,7 +233,7 @@ export default function Careers({ d }) {
   const draw = useEnter('0px');
   const iris = useEnter();
   const count = useEnter();
-  const under = useRef(null);
+  const under = useRef<HTMLElement>(null);
   const stack = useEnter('0px 0px -30% 0px');
   // sticky-stack: Academic holds with its bottom on the screen's bottom while the dark close slides over it
   useEffect(() => {
@@ -326,7 +326,7 @@ export default function Careers({ d }) {
               {k === 0 && <span className="xcb-panel-sig" aria-hidden="true"><Sigil seed={'careers/' + l.title} data={[l.desc.length]} /></span>}
               {l.perks.filter(fig).map((p) => { const m = fig(p); return <p key={p} className="xcb-fig"><Roll text={m[1]} className="vc-num" /><span>{m[2]}</span></p>; })}
               <h3 className="vc-title">{l.title}</h3>
-              <ul className="xcb-panel-p">{l.perks.filter((p) => !fig(p)).map((p) => <li key={p}>{p}</li>)}</ul>
+              <ul className="xcb-panel-p">{l.perks.filter((p: string) => !fig(p)).map((p) => <li key={p}>{p}</li>)}</ul>
               <p className="vc-body">{l.desc}</p>
               <div className="xcb-panel-a">
                 <Cta to={l.acts[0].href} kind={k ? 'quiet' : 'solid'} className="xcb-big" id={'careers.' + (k ? 'grant' : 'intern')} thumb={!k}>{l.acts[0].text}</Cta>

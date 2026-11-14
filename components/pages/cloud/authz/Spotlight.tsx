@@ -6,14 +6,26 @@
    room is seen (on phones it rests on the rule nearest the middle of the screen as you scroll), then stays.
    Reduced motion: the light jumps instead of gliding and does not walk. JS off: every rule stands fully lit.
    The light is a mask over a second, identical grid (no glow, no colour); the dark grid under it is aria-hidden. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionTemplate, useMotionValue, useReducedMotion } from 'motion/react';
 import './Spotlight.css';
 
 const MOVE = [0.4, 0, 0.2, 1];
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
-function Tile({ i, n, title, body, dec, on, lit, onFocus }) {
+interface TileProps {
+  i: number;
+  n: number;
+  title: string;
+  body: string;
+  dec: string[][];
+  on: boolean;
+  lit?: boolean;
+  onFocus?: () => void;
+}
+function Tile({ i, n, title, body, dec, on, lit, onFocus }: TileProps) {
   return (
     <li className={'az-sp-t' + (on ? ' on' : '')}>
       <article tabIndex={lit ? 0 : -1} aria-labelledby={lit ? 'az-sp-h' + i : undefined} onFocus={onFocus}>
@@ -28,8 +40,13 @@ function Tile({ i, n, title, body, dec, on, lit, onFocus }) {
   );
 }
 
-export default function Spotlight({ rules, decisions, children }) {
-  const box = useRef(null);
+interface SpotlightProps {
+  rules: string[][];
+  decisions: string[][][];
+  children: ReactNode;
+}
+export default function Spotlight({ rules, decisions, children }: SpotlightProps) {
+  const box = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const seen = useInView(box, { amount: 0.3 });
   const [ready, setReady] = useState(false);
@@ -41,17 +58,17 @@ export default function Spotlight({ rules, decisions, children }) {
   const mask = useMotionTemplate`radial-gradient(circle at ${x}px ${y}px, #000 0px, #000 ${r * 0.5}px, transparent ${r}px)`;
   const runs = useRef([]);
 
-  const stage = useRef(null); // the lit grid: the light's coordinates are in its box
+  const stage = useRef<HTMLOListElement>(null); // the lit grid: the light's coordinates are in its box
   const tiles = () => [...(stage.current?.querySelectorAll('.az-sp-t') || [])];
-  const center = (i) => { const el = tiles()[i]; return el ? [el.offsetLeft + el.offsetWidth / 2, el.offsetTop + el.offsetHeight / 2] : null; };
+  const center = (i: number) => { const el = tiles()[i]; return el ? [el.offsetLeft + el.offsetWidth / 2, el.offsetTop + el.offsetHeight / 2] : null; };
   const stop = () => { runs.current.forEach((c) => c.stop()); runs.current = []; };
   const glide = (tx, ty, d = 1.1) => {
     stop();
     if (calm) { x.set(tx); y.set(ty); return; }
     runs.current = [animate(x, tx, { duration: d, ease: MOVE }), animate(y, ty, { duration: d, ease: MOVE })];
   };
-  const aim = (i, d) => { const c = center(i); if (c) { setAt(i); glide(c[0], c[1], d); } };
-  const nearest = (px, py) => {
+  const aim = (i: number, d: number) => { const c = center(i); if (c) { setAt(i); glide(c[0], c[1], d); } };
+  const nearest = (px: number, py: number) => {
     let best = 0, bd = Infinity;
     tiles().forEach((el, i) => {
       const dx = Math.max(el.offsetLeft - px, 0, px - el.offsetLeft - el.offsetWidth);
@@ -61,7 +78,7 @@ export default function Spotlight({ rules, decisions, children }) {
     });
     return best;
   };
-  const local = (e) => { const b = stage.current.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; };
+  const local = (e: React.PointerEvent<HTMLDivElement>) => { const b = stage.current!.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; };
 
   /* mask on only once the script runs; light size from the room's width; light starts on the first rule */
   useEffect(() => {
@@ -99,7 +116,7 @@ export default function Spotlight({ rules, decisions, children }) {
   }, [ready, wide, mine]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => stop, []);
 
-  const move = (e) => {
+  const move = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== 'mouse') return;
     stop();
     setMine(true);
@@ -108,7 +125,7 @@ export default function Spotlight({ rules, decisions, children }) {
     const i = nearest(px, py);
     if (i !== at) setAt(i);
   };
-  const place = (e) => {
+  const place = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === 'mouse') return;
     setMine(true);
     const [px, py] = local(e);

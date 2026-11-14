@@ -19,6 +19,7 @@
    Motion: the running canvas (signature) + line-masked headings + sticky chapters + nodes that open into their page.
 V2: 8/10 round 5: the six-step chain is told twice only (the hero graph and the playground); chapter 03 opens one node, the node that caused it, with a strange answer drawn broken, no six-step list; the pinned stage fills and centres in the screen on desktop and phone (no dead band under it); the hero graph fills its screen with its pause and counter under node 06 inside the graph, and reduced motion shows the run finished (06 / 06, no pause); the playground's returned value is 32px, centred, with a running bar instead of an empty slot; received and returned never share the slot for a frame; Previous/Next fill and Documentation draws its underline on hover; done steps read white on graphite; the Keys chips fit at 375; the Python sheet says "Python class" once and no opened card repeats its chapter; the closing line rests at 26–32px; deck greys on this page
    Every word and link is Hanzo's. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { Copy } from '../../ui';
@@ -55,11 +56,11 @@ const LAY = {
   // the phone's pinned mini-graph: two rows of three, compact nodes
   mini: [[[17, 27], [50, 27], [83, 27], [83, 73], [50, 73], [17, 73]], [[17, 27], [50, 27], [83, 27], [83, 73], [50, 73], [17, 73]]],
 };
-const two = (n) => String(n).padStart(2, '0');
-const r1 = (v) => Math.round(v * 10) / 10;
+const two = (n: number) => String(n).padStart(2, '0');
+const r1 = (v: number) => Math.round(v * 10) / 10;
 // the run, in steps: 2i = node i runs, 2i + 1 = its output travels to node i + 1, 11 = the run is done
 const END = 11;
-const STEP_MS = (s) => (s === END ? 2600 : s % 2 ? 950 : 900);
+const STEP_MS = (s: number) => (s === END ? 2600 : s % 2 ? 950 : 900);
 
 /* One edge between two nodes: leave on the side that faces the next node, a soft S between, and the points a pulse rides. */
 function edge([ax, ay], [bx, by], nw, nh) {
@@ -76,7 +77,7 @@ function edge([ax, ay], [bx, by], nw, nh) {
     const k = Math.max(28, Math.abs(p3[1] - p0[1]) / 2);
     c1 = [p0[0], p0[1] + sy * k]; c2 = [p3[0], p3[1] - sy * k];
   }
-  const at = (t) => [0, 1].map((j) => (1 - t) ** 3 * p0[j] + 3 * (1 - t) ** 2 * t * c1[j] + 3 * (1 - t) * t * t * c2[j] + t ** 3 * p3[j]);
+  const at = (t: number) => [0, 1].map((j) => (1 - t) ** 3 * p0[j] + 3 * (1 - t) ** 2 * t * c1[j] + 3 * (1 - t) * t * t * c2[j] + t ** 3 * p3[j]);
   const pts = Array.from({ length: 25 }, (_, i) => at(i / 24));
   // two stacked nodes close together: their port heads would fuse into one blob, so the short wire draws without them
   const short = Math.hypot(p3[0] - p0[0], p3[1] - p0[1]) < 30;
@@ -94,11 +95,20 @@ function useRun(live, calm, on = true) {
   }, [s, live, on]);
   return [s, setS];
 }
-const nodeOf = (s) => (s >= END ? 5 : Math.floor(s / 2));
+const nodeOf = (s: number | React.Dispatch<React.SetStateAction<number>>) => (s >= END ? 5 : Math.floor(s / 2));
 
 /* The graph on a canvas. s is the run's step; lit picks out one node; pick makes nodes tappable. */
-function Graph({ lay, s, lit = -1, pulse = true, pick, upto = 5, cls = '' }) {
-  const box = useRef(null);
+interface GraphProps {
+  lay: string;
+  s: number | React.Dispatch<React.SetStateAction<number>>;
+  lit?: number;
+  pulse?: boolean;
+  pick: (k: number) => void;
+  upto?: number;
+  cls?: string;
+}
+function Graph({ lay, s, lit = -1, pulse = true, pick, upto = 5, cls = '' }: GraphProps) {
+  const box = useRef<HTMLDivElement>(null);
   const [dim, setDim] = useState(null);
   useEffect(() => {
     const el = box.current;
@@ -155,7 +165,10 @@ function Graph({ lay, s, lit = -1, pulse = true, pick, upto = 5, cls = '' }) {
   );
 }
 
-const Ico = ({ k }) => (
+interface IcoProps {
+  k: string;
+}
+const Ico = ({ k }: IcoProps) => (
   <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
     {k === 'play' && <path d="M5 3.2v9.6L12.6 8z" fill="currentColor" />}
     {k === 'pause' && <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" fill="currentColor" />}
@@ -173,7 +186,7 @@ function Hero() {
   const [still, setStill] = useState(false);
   useEffect(() => setStill(!!calm), [calm]);
   // tap or click a node: the run holds there, that node lit with what it returned
-  const pick = (k) => { setHold(true); setS(2 * k + 1); };
+  const pick = (k: number) => { setHold(true); setS(2 * k + 1); };
   return (
     <section ref={ref} className="fl-hero" aria-labelledby="fl-h1">
       <Graph lay="hero" s={s} lit={hold ? nodeOf(s) : -1} pick={pick} />
@@ -246,8 +259,8 @@ function Playground() {
   const [s, setS] = useRun(live, calm, play);
   const i = nodeOf(s);
   const done = s > 2 * i;
-  const to = (n) => { setPlay(false); setS(Math.max(0, Math.min(END, n))); };
-  const node = (k) => to(2 * k + 1); // a node, run and returned
+  const to = (n: number) => { setPlay(false); setS(Math.max(0, Math.min(END, n))); };
+  const node = (k: number) => to(2 * k + 1); // a node, run and returned
   const next = () => (s >= END ? to(1) : to(s % 2 ? s + 2 : s + 1));
   const prev = () => to(s % 2 ? s - 2 : s - 1);
   // the one place the playground appears; its heading is the chapter "Step through it" just above, so it adds none
@@ -309,7 +322,10 @@ const Gh = () => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentCo
 
 /* Four facts, each a node on the strip that opens into its own page (synchronized.studio). */
 /* The two commands, as the terminal at the close shows them. */
-const Term = ({ copy }) => (
+interface TermProps {
+  copy?: boolean;
+}
+const Term = ({ copy }: TermProps) => (
   <div className="fl-term">
     <div className="fl-term-bar"><span aria-hidden="true"><i /><i /><i /></span>{copy && <Copy text={'uv pip install hanzoflow\nuv run hanzoflow run'} />}</div>
     <pre className="x-mono"><span className="fl-cmd"><i>$</i>uv pip install hanzoflow</span>{'\n'}<span className="fl-cmd"><i>$</i>uv run hanzoflow run</span>{'\n'}<span className="fl-out">→ 127.0.0.1:7860<span className="fl-caret" /></span></pre>
@@ -325,7 +341,7 @@ const FACTS = [
 ];
 
 /* The edges between the fact nodes, measured from where the cards actually sit (desktop; phones use a rule). */
-function useWires(ref) {
+function useWires(ref: React.RefObject<HTMLDivElement | null>) {
   const [w, setW] = useState({ d: [], h: 0 });
   useEffect(() => {
     const el = ref.current;
@@ -344,7 +360,7 @@ function useWires(ref) {
 }
 
 function Facts() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const w = useWires(ref);
   const [sec, live] = useLive(0.4);
   const [big, setBig] = useState(0);
@@ -355,7 +371,7 @@ function Facts() {
     const t = setTimeout(() => setBig((b) => (b + 1) % FACTS.length), 2400);
     return () => clearTimeout(t);
   }, [big, live, hand]);
-  const take = (e) => { const c = e.target.closest?.('.fl-facts > li'); if (!c) return; setHand(true); setBig([...c.parentNode.children].indexOf(c)); };
+  const take = (e: React.FocusEvent<HTMLDivElement, Element>) => { const c = e.target.closest?.('.fl-facts > li'); if (!c) return; setHand(true); setBig([...c.parentNode.children].indexOf(c)); };
   return (
     <section ref={sec} className="bz-sec fl-facts-sec" aria-label="Hanzo Flow">
       <div ref={ref} className="bz-wrap fl-strip" onPointerOver={(e) => e.pointerType === 'mouse' && take(e)} onPointerLeave={() => setHand(false)} onFocus={take} onBlur={() => setHand(false)}>

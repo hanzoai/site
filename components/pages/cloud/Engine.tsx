@@ -13,6 +13,7 @@
    Beyond: "One binary, three verbs": choose the verb, name a Hugging Face model and whether you want the built-in UI,
    and the one line to run is written for you to copy, with Hanzo's sentence on what it does.
    Every word, figure and link is Hanzo's; the scenes are drawn, not measured, and show no numbers. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useInView, useMotionValue, useTransform } from 'motion/react';
@@ -28,11 +29,11 @@ import './Engine.css';
 const VERBS = ['run', 'serve', 'bench'];
 
 /* which of n steps a chapter is on: from the scroll through it on desktop (p), or by itself while seen on phones */
-function useStepOf(p, n, on) {
+function useStepOf(p, n: number, on) {
   const [k, setK] = useState(0);
   const calm = useCalm();
   useEffect(() => {
-    if (p) { const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
+    if (p) { const f = (v: number) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
     if (!on || calm) return;
     const t = setTimeout(() => setK((x) => (x + 1) % n), 1500);
     return () => clearTimeout(t);
@@ -54,7 +55,7 @@ function Run() {
 
 /* serve: continuous batching. Eight slots; a request holds a slot for its own length and a new one takes it at once. */
 function Lanes({ live, n = 8 }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const slots = useRef(Array.from({ length: n }, (_, i) => ({ left: 0.3 + i * 0.37, len: 1.4 + ((i * 7) % 5) * 0.5 })));
   useFrame(live, (t, dt) => {
     const el = ref.current;
@@ -238,7 +239,10 @@ function useCommand() {
   return { verb, setVerb, model, setModel, ui, setUi, plain, cmd };
 }
 
-function Write({ c }) {
+interface WriteProps {
+  c: { verb: string; setVerb: React.Dispatch<React.SetStateAction<string>>; model: string; setModel: React.Dispatch<React.SetStateAction<string>>; ui: boolean; setUi: React.Dispatch<React.SetStateAction<boolean>>; plain: boolean; cmd: string; };
+}
+function Write({ c }: WriteProps) {
   const { verb, setVerb, model, setModel, ui, setUi, plain, cmd } = c;
   return (
     <section className="kn-sec en-write">
@@ -262,15 +266,18 @@ function Write({ c }) {
 }
 
 /* Hover or focus a chapter number and its title previews under the rail (desktop, pinned layout only). */
-function RailTip({ host }) {
-  const [rail, setRail] = useState(null);
+interface RailTipProps {
+  host: React.RefObject<HTMLDivElement | null>;
+}
+function RailTip({ host }: RailTipProps) {
+  const [rail, setRail] = useState<Element | null>(null);
   const [tip, setTip] = useState(null);
   useEffect(() => {
     const nav = host.current?.querySelector('.knc-rail');
     if (!nav) return;
     setRail(nav);
     const bs = [...nav.querySelectorAll('button')];
-    const show = (e) => { const i = bs.indexOf(e.currentTarget); setTip({ i, x: e.currentTarget.offsetLeft }); };
+    const show = (e: FocusEvent) => { const i = bs.indexOf(e.currentTarget); setTip({ i, x: e.currentTarget.offsetLeft }); };
     const hide = () => setTip(null);
     bs.forEach((b) => { b.addEventListener('pointerenter', show); b.addEventListener('focus', show); b.addEventListener('pointerleave', hide); b.addEventListener('blur', hide); });
     return () => bs.forEach((b) => { b.removeEventListener('pointerenter', show); b.removeEventListener('focus', show); b.removeEventListener('pointerleave', hide); b.removeEventListener('blur', hide); });
@@ -283,8 +290,11 @@ function RailTip({ host }) {
 }
 
 /* The close's payoff: the command you wrote above types itself in once, when the close arrives. */
-function Typed({ cmd }) {
-  const ref = useRef(null);
+interface TypedProps {
+  cmd: string;
+}
+function Typed({ cmd }: TypedProps) {
+  const ref = useRef<HTMLParagraphElement>(null);
   const seen = useInView(ref, { amount: 0.6, once: true });
   const calm = useCalm();
   const [n, setN] = useState(0);
@@ -308,7 +318,7 @@ function Typed({ cmd }) {
 
 export default function Engine() {
   const c = useCommand();
-  const host = useRef(null);
+  const host = useRef<HTMLDivElement>(null);
   return (
     <main className="kn en">
       <KeynoteStage

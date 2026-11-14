@@ -5,6 +5,7 @@
    - In the browser, if the window is still below the fold on mount, it empties itself (unseen) and asks the first
      question once it comes into view; after that the visitor drives it. A newer question cancels the answer in flight.
    - Reduced motion: answers appear whole. Keyboard: the questions are buttons, Tab and Enter/Space. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'motion/react';
 import useCalm from '../../v2/useCalm';
@@ -14,8 +15,13 @@ import './Chat.css';
 const WORD_MS = 34;
 const THINK_MS = 650;
 
-export default function Chat({ qa, Face, bot = 'su' }) {
-  const box = useRef(null), log = useRef(null);
+interface ChatProps {
+  qa: string[][];
+  Face: ({ k, size, id }: FaceProps) => React.JSX.Element;
+  bot?: string;
+}
+export default function Chat({ qa, Face, bot = 'su' }: ChatProps) {
+  const box = useRef<HTMLDivElement>(null), log = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.35 });
   const calm = useCalm();
   // turns: [{ q, n }] where n = words of the answer shown so far (Infinity = whole)
@@ -46,7 +52,7 @@ export default function Chat({ qa, Face, bot = 'su' }) {
   // keep the newest line in view inside the window (never scrolls the page)
   useEffect(() => { const l = log.current; if (l) l.scrollTop = l.scrollHeight; }, [turns]);
 
-  function ask(q) {
+  function ask(q: number) {
     setTurns((ts) => {
       const done = ts.map((x) => ({ ...x, n: Infinity }));
       return [...done.filter((x) => x.q !== q), { q, n: calm ? Infinity : 0 }].slice(-3);

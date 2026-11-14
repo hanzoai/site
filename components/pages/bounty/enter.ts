@@ -3,10 +3,11 @@
    One IntersectionObserver plays each once when about a quarter of it is in view. The start states live in enter.css
    under `.xbe`, a class this hook puts on <main> after mount, so the server HTML, JS off and reduced motion all show
    the final state, and server and client render the same markup. */
+import type React from 'react';
 import { useEffect } from 'react';
 
 // the typewriter needs each line's width and length, measured once on the client
-function measureType(el) {
+function measureType(el: Element) {
   let at = 0;
   el.querySelectorAll('.xbo-tw').forEach((line) => {
     const inner = line.firstElementChild;
@@ -21,7 +22,7 @@ function measureType(el) {
   });
 }
 
-export function useEnter(root) {
+export function useEnter(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const main = root.current;
     if (!main || typeof IntersectionObserver === 'undefined') return;

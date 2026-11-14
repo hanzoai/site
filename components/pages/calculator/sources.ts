@@ -9,7 +9,7 @@ export const PRICING = 'https://api.hanzo.ai/v1/pricing'; // the price list: oth
 export const SUMMARY = 'https://api.hanzo.ai/v1/pricing/summary'; // the price list's own count of models
 export const SERVED = 'https://api.hanzo.ai/v1/models'; // what the gateway bills a model at
 
-const need = (ok, what) => { if (!ok) throw new Error('unexpected data: ' + what); };
+const need = (ok: number | boolean | undefined, what: string) => { if (!ok) throw new Error('unexpected data: ' + what); };
 const list = (v) => (Array.isArray(v) ? v : null);
 const object = (v) => (v && typeof v === 'object' && !Array.isArray(v) ? v : null);
 

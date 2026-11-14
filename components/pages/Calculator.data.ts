@@ -101,13 +101,13 @@ export const SECOND_ORDER = [
 ];
 
 // $1.051M above a million, $941k below it; a negative figure leads with a true minus
-export const money = (n) => {
+export const money = (n: number) => {
   const a = Math.abs(n);
   const sign = n < 0 ? '\u2212' : '';
   if (a >= 1e6) return `${sign}$${(a / 1e6).toFixed(3).replace(/\.?0+$/, '')}M`;
   return `${sign}$${Math.round(a / 1e3).toLocaleString('en-US')}k`;
 };
-export const dollars = (n) => `${n < 0 ? '\u2212' : ''}$${Math.round(Math.abs(n)).toLocaleString('en-US')}`;
+export const dollars = (n: number) => `${n < 0 ? '\u2212' : ''}$${Math.round(Math.abs(n)).toLocaleString('en-US')}`;
 
 // the controls a visitor opens the page with: the analyst's reference deployment
 export const DEFAULTS = { E: 100, Dp: 30, cloud: 15, infraPct: 60, glueFte: 1.5, opsFte: 0.5, retained: 0, fee: 0, migration: 0, migYears: 3 };
@@ -139,7 +139,7 @@ export const AI_CONTROLS = [
 ];
 
 // the eligible saving on the AI bill, a year: frontier pass-through is never counted
-export const aiSaving = (ai) => {
+export const aiSaving = (ai: { spend: number; routable: number; selfHost: number; ensoSave: number; zenCost: number; frontier: number; overhead: number; gpuUtil: number; batch: number; } | { spend: number; routable: number; selfHost: number; ensoSave: number; zenCost: number; frontier: number; overhead: number; gpuUtil: number; batch: number; } | { spend: number; routable: number; selfHost: number; ensoSave: number; zenCost: number; frontier: number; overhead: number; gpuUtil: number; batch: number; } | { frontier: number; spend: number; routable: number; selfHost: number; ensoSave: number; zenCost: number; overhead: number; gpuUtil: number; batch: number; } | { spend: number; routable: number; selfHost: number; ensoSave: number; zenCost: number; frontier: number; overhead: number; gpuUtil: number; batch: number; } | { gpuUtil: number; spend: number; routable: number; selfHost: number; ensoSave: number; zenCost: number; frontier: number; overhead: number; batch: number; } | { batch: number; spend: number; routable: number; selfHost: number; ensoSave: number; zenCost: number; frontier: number; overhead: number; gpuUtil: number; }) => {
   const annual = ai.spend * 1000 * 12;
   const passthrough = annual * (ai.frontier / 100);
   const addressable = annual - passthrough;
@@ -153,7 +153,7 @@ export const aiSaving = (ai) => {
 };
 
 // the grade a coverage chip takes when clicked: full, partial, experimental, roadmap, and round again
-export const nextCov = (c) => COV_CYCLE[(COV_CYCLE.indexOf(c) + 1) % COV_CYCLE.length];
+export const nextCov = (c: string) => COV_CYCLE[(COV_CYCLE.indexOf(c) + 1) % COV_CYCLE.length];
 
 export const initial = () => ({
   ...DEFAULTS,
@@ -167,7 +167,7 @@ export const initial = () => ({
 /* The whole model. `s` is the page's state (initial() has every field): the six controls, the three deductions and
    their years, the coverage grade of each row, the prices a visitor typed over, the vendors selected, and the AI
    sub-calculator. Four tiers come out: gross, run-rate, fully adjusted and three-year value. */
-export function model(s) {
+export function model(s: { cov: string[]; price: {}; von: boolean[]; aiOn: boolean; ai: { spend: number; routable: number; selfHost: number; ensoSave: number; zenCost: number; frontier: number; overhead: number; gpuUtil: number; batch: number; }; E: number; Dp: number; cloud: number; infraPct: number; glueFte: number; opsFte: number; retained: number; fee: number; migration: number; migYears: number; } | { cov: string[]; price: {}; von: boolean[]; aiOn: boolean; ai: { spend: number; routable: number; selfHost: number; ensoSave: number; zenCost: number; frontier: number; overhead: number; gpuUtil: number; batch: number; }; E: number; Dp: number; cloud: number; infraPct: number; glueFte: number; opsFte: number; retained: number; fee: number; migration: number; migYears: number; }) {
   const D = Math.round((s.E * s.Dp) / 100);
   const saving = aiSaving(s.ai);
   const on = ROWS.map((_, i) => VENDORS.some(([, c], k) => c === i && s.von[k]));

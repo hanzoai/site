@@ -3,6 +3,7 @@
    styles them as before), with one change each so Hanzo's lines read whole (docs/build-notes/COPY-RULE.md, copycheck): every code
    line is one element holding exactly that line (a marked line: before, the mark, after), the prompt is one element holding exactly Hanzo's prompt, and the
    api tag is one element ("api /v1/…"), never split into finer spans. A whole comment line keeps the grey (class c). */
+import type React from 'react';
 import { useState } from 'react';
 import { Rise, Copy } from '../../../ui';
 import '../Frame.css';
@@ -31,7 +32,15 @@ export function LeafCode({ tabs, title, light, mark, className = '' }) {
   );
 }
 
-export function LeafPaste({ name, prompt, api, dark, aside, className = '' }) {
+interface LeafPasteProps {
+  name: string;
+  prompt: string;
+  api?: string;
+  dark?: boolean;
+  aside?: React.JSX.Element;
+  className?: string;
+}
+export function LeafPaste({ name, prompt, api, dark, aside, className = '' }: LeafPasteProps) {
   return (
     <Rise className={`cf-paste ${dark ? 'dark' : ''} ${className}`}>
       <div className="cf-paste-h">

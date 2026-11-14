@@ -13,6 +13,8 @@
    Motion budget: signature = the self-using board; supporting = Stage (a page-local settle), the chapter board (the chapter in
    the middle of the screen drives one real board), magnetic primary. No springs. Colour: none (0 UI hues); the token demo
    retunes between deck greys. Pauses sit in the token panel's bar, the chapter head row and the terminal bar. One dark room: "From init to UI in 60 seconds". Every word and link is Hanzo's. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../../ui';
@@ -37,9 +39,9 @@ function Board({ tok, setTok, mine, setMine, paused, hold }) {
   const [k, setK] = useState(0);
   const [menu, setMenu] = useState(false);
   const [dlg, setDlg] = useState(false);
-  const [own, setOwn] = useState(null); // 'menu' | 'dialog' only when the visitor opened it; the script never takes focus
+  const [own, setOwn] = useState<string | null>(null); // 'menu' | 'dialog' only when the visitor opened it; the script never takes focus
   const [focus, setFocus] = useState(0);
-  const ship = useRef(null), opts = useRef(null), box = useRef(null), items = useRef([]);
+  const ship = useRef<HTMLButtonElement>(null), opts = useRef<HTMLButtonElement>(null), box = useRef<HTMLDivElement>(null), items = useRef([]);
   const run = live && !mine && !paused && !hold; // the script holds while focus is on the board
   // the board wakes inside the first second: its first real act (the menu opens, the ring lands on Options) about
   // 600 ms after it is first seen, then the 1.5 s rhythm takes over
@@ -63,7 +65,7 @@ function Board({ tok, setTok, mine, setMine, paused, hold }) {
   useEffect(() => {
     if (!dlg || own !== 'dialog') return;
     const t = setTimeout(() => box.current?.querySelector('button')?.focus(), 30);
-    const key = (e) => {
+    const key = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { setDlg(false); ship.current?.focus(); }
       if (e.key === 'Tab') { e.preventDefault(); box.current?.querySelector('button')?.focus(); }
     };
@@ -72,13 +74,13 @@ function Board({ tok, setTok, mine, setMine, paused, hold }) {
   }, [dlg, own]);
   const closeDlg = () => { const mineDlg = own === 'dialog'; setDlg(false); setOwn(null); if (mineDlg) ship.current?.focus(); };
   // the DropdownMenu: arrows move between items, Esc closes and returns to the trigger
-  const menuKey = (e, i) => {
+  const menuKey = (e: React.KeyboardEvent<HTMLLIElement>, i: number) => {
     const n = { ArrowDown: 1, ArrowUp: -1 }[e.key];
     if (n) { e.preventDefault(); items.current[(i + n + 3) % 3]?.focus(); }
     if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setMenu(false); setOwn(null); opts.current?.focus(); }
   };
   useEffect(() => { if (menu && own === 'menu') setTimeout(() => items.current[0]?.focus(), 30); }, [menu, own]);
-  const R = (i) => (focus === i && !mine && !hold ? ' ui-ring' : '');
+  const R = (i: number) => (focus === i && !mine && !hold ? ' ui-ring' : '');
   const style = { '--ua': ACCENTS[tok.a][1], '--ur': tok.r + 'px', '--ud': tok.d };
   return (
     <div className="ui-board" ref={ref} style={style}>
@@ -117,7 +119,7 @@ function Board({ tok, setTok, mine, setMine, paused, hold }) {
 
 function Tokens({ tok, setTok, setMine, pauseBtn }) {
   const set = (p) => { setMine(true); setTok((t) => ({ ...t, ...p })); };
-  const swKey = (e) => {
+  const swKey = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
     if (!d) return;
     e.preventDefault();
@@ -125,7 +127,7 @@ function Tokens({ tok, setTok, setMine, pauseBtn }) {
     set({ a: n });
     e.currentTarget.parentElement.querySelectorAll('button')[n]?.focus();
   };
-  const [hov, setHov] = useState(null); // the swatch under the pointer or focus names its token
+  const [hov, setHov] = useState<number | null>(null); // the swatch under the pointer or focus names its token
   const shownSw = ACCENTS[hov ?? tok.a];
   return (
     <div className="ui-tok">
@@ -145,7 +147,12 @@ function Tokens({ tok, setTok, setMine, pauseBtn }) {
 /* Stage: the hero settles 10px as the first screen scrolls away. Page-local, not the shared Settle: it renders the
    same style on the server and on the first client render, and reads reduced motion only after mount (the shared one
    reads it during render, which breaks hydration under reduced motion; requested in docs/build-notes/requests/ui.md). */
-function Stage({ children, from = 1, lift = 10 }) {
+interface StageProps {
+  children: ReactNode;
+  from?: number;
+  lift?: number;
+}
+function Stage({ children, from = 1, lift = 10 }: StageProps) {
   const [m, setM] = useState({ h: 800, calm: false });
   useEffect(() => {
     const q = matchMedia('(prefers-reduced-motion: reduce)');
@@ -167,9 +174,9 @@ function Hero() {
   const [poke, setPoke] = useState(0);
   const setMine = (v) => { setMineRaw(v); setPoke((n) => n + 1); };
   // focus on the stage holds the board's script, so a keyboard visitor is never interrupted (a click already makes it theirs)
-  const stage = useRef(null);
+  const stage = useRef<HTMLDivElement>(null);
   const [hold, setHold] = useState(false);
-  const leave = (next) => { if (!stage.current?.contains(next)) setHold(false); };
+  const leave = (next: (EventTarget & Element) | null) => { if (!stage.current?.contains(next)) setHold(false); };
   // after 8 s without a touch (and nothing held) the board goes back to using itself, so it never sits dead
   useEffect(() => { if (!mine || hold) return undefined; const t = setTimeout(() => setMineRaw(false), 8000); return () => clearTimeout(t); }, [mine, poke, hold]);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
@@ -351,7 +358,13 @@ function ShowBoard({ at, run, bare }) {
 /* The six chapters as plain, quick cards (no pinned scene: /ui is not a `split` page). Each card carries its own small
    board in that chapter's state, running only while the card is on screen. They arrive by magnet-gather. */
 const SCATTER = [[-120, 60, -6], [140, -40, 5], [-80, 120, 4], [110, 90, -5], [-150, -30, 3], [90, 140, -4]];
-function Card({ i, t, d, paused }) {
+interface CardProps {
+  i: number;
+  t: string;
+  d: string;
+  paused: boolean | React.JSX.Element;
+}
+function Card({ i, t, d, paused }: CardProps) {
   const [ref, live] = useLive(0.3);
   const [gx, gy, gr] = SCATTER[i];
   return (
@@ -414,7 +427,7 @@ function Init() {
     if (!live || calm || counted.current) return undefined;
     counted.current = true;
     let raf = 0; const t0 = performance.now();
-    const step = (now) => { const p = Math.min(1, (now - t0) / 1100); setSec(Math.round(60 * (1 - Math.pow(1 - p, 3)))); if (p < 1) raf = requestAnimationFrame(step); };
+    const step = (now: number) => { const p = Math.min(1, (now - t0) / 1100); setSec(Math.round(60 * (1 - Math.pow(1 - p, 3)))); if (p < 1) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step);
     return () => { cancelAnimationFrame(raf); setSec(60); };
   }, [live, calm]);

@@ -19,7 +19,11 @@ export function useEnter(margin = '0px 0px -18% 0px') {
   return ref;
 }
 
-export function Roll({ text, className = '' }) {
+interface RollProps {
+  text: string;
+  className?: string;
+}
+export function Roll({ text, className = '' }: RollProps) {
   let k = 0;
   return (
     <b className={'xce-roll ' + className}>

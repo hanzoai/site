@@ -7,6 +7,7 @@
    (Shift for longer steps), Home or the reset button to come back, or tap the minimap to jump. Once in view it nudges
    itself sideways once so people see it moves; a token runs along the flow's wires (CSS). Reduced motion: no nudge, no
    running token, no momentum; dragging, keys and reset still work. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useMotionValue, useTransform, useInView } from 'motion/react';
 import { useCalm } from '../../../ui';
@@ -16,7 +17,7 @@ const H = 1240;
 const HOME = { x: 1010, y: 560 }; // plane point centred on arrival and on reset
 const HOME_PHONE = { x: 760, y: 600 }; // phones: the GitHub node with the two runs under it
 const NODES = ['trigger', 'GitHub', 'Postgres', 'Slack', 'done'];
-const NX = (i) => 560 + i * 206; // node left
+const NX = (i: number) => 560 + i * 206; // node left
 const NY = 420; // node top (56 tall)
 const PIECES = ['Slack', 'GitHub', 'Notion', 'Gmail', 'Stripe', 'HubSpot', 'Jira', 'Linear', 'Discord', 'Airtable', 'Google Sheets', 'Postgres'];
 const FIGS = [['Go', 'One process'], ['SQLite', 'Per replica'], ['/v1', 'Flows and runs'], ['Apache', 'Self-hosted']];
@@ -25,7 +26,12 @@ const BLOCKS = [[180, 110, 420, 150], [200, 320, 160, 200], [560, 360, 974, 116]
 
 const Tick = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.4 6.6 11.4 12.5 5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-function Run({ k, at, left }) {
+interface RunProps {
+  k: string;
+  at: number;
+  left: number;
+}
+function Run({ k, at, left }: RunProps) {
   return (
     <div className={'au2-cv-run ' + k} style={{ left, top: 590 }}>
       <p className="l2-mono">{k}</p>
@@ -37,7 +43,7 @@ function Run({ k, at, left }) {
 }
 
 export default function Canvas() {
-  const vp = useRef(null);
+  const vp = useRef<HTMLDivElement>(null);
   const seen = useInView(vp, { amount: 0.4, once: true });
   const calm = useCalm();
   const x = useMotionValue(0);
@@ -45,9 +51,9 @@ export default function Canvas() {
   const [box, setBox] = useState({ w: 0, h: 0, s: 1 });
   const [moved, setMoved] = useState(false);
 
-  const lim = (b) => ({ left: Math.min(0, b.w - W * b.s), right: 0, top: Math.min(0, b.h - H * b.s), bottom: 0 });
-  const clamp = (v, lo) => Math.min(0, Math.max(lo, v));
-  const home = (b) => {
+  const lim = (b: { w: number; h: number; s: number; } | { w: number; h: number; s: number; } | { w: number; h: number; s: number; }) => ({ left: Math.min(0, b.w - W * b.s), right: 0, top: Math.min(0, b.h - H * b.s), bottom: 0 });
+  const clamp = (v: number, lo: number) => Math.min(0, Math.max(lo, v));
+  const home = (b: { w: number; h: number; s: number; } | { w: number; h: number; s: number; }) => {
     const h = b.w < 700 ? HOME_PHONE : HOME;
     return { x: clamp(b.w / 2 - h.x * b.s, lim(b).left), y: clamp(b.h / 2 - h.y * b.s, lim(b).top) };
   };
@@ -81,7 +87,7 @@ export default function Canvas() {
     return () => c.stop();
   }, [seen]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const onKey = (e) => {
+  const onKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const step = (e.shiftKey ? 320 : 120) * box.s;
     const k = { ArrowLeft: [step, 0], ArrowRight: [-step, 0], ArrowUp: [0, step], ArrowDown: [0, -step] }[e.key];
     if (k) { e.preventDefault(); setMoved(true); go(x.get() + k[0], y.get() + k[1]); }
@@ -91,9 +97,9 @@ export default function Canvas() {
 
   /* minimap: the plane at 1/12, the viewport as a moving frame; tap to jump there */
   const M = box.w && box.w < 700 ? 1 / 20 : 1 / 12;
-  const fx = useTransform(x, (v) => (-v / box.s) * M);
-  const fy = useTransform(y, (v) => (-v / box.s) * M);
-  const jump = (e) => {
+  const fx = useTransform(x, (v: number) => (-v / box.s) * M);
+  const fy = useTransform(y, (v: number) => (-v / box.s) * M);
+  const jump = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const r = e.currentTarget.getBoundingClientRect();
     const px = (e.clientX - r.left) / M;
     const py = (e.clientY - r.top) / M;

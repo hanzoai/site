@@ -7,7 +7,7 @@ export const API = 'https://api.hanzo.ai';
 export const said = (v) => (Array.isArray(v) ? v.join(', ') : (v ?? '').trim());
 
 /* the POST for a program's answers: its address and body, or null where nothing was answered (nothing is sent) */
-export function filing(program, asks, got, now = Date.now()) {
+export function filing(program: string, asks, got, now = Date.now()) {
   const answers = asks.filter((a) => said(got[a.id])).map((a) => ({ field: a.id, text: said(got[a.id]).slice(0, 2000) }));
   if (!answers.length) return null;
   return {

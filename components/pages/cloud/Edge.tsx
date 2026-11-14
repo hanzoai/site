@@ -19,6 +19,8 @@
 // Beyond: "What runs on yours": pick the machine you have and see what Edge uses on it and which Zen model fits, each
 //   answer built from Hanzo's own lines.
 // Every word and link is Hanzo's; the field and the stream are drawn, not measured, and show no numbers.
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useScroll, useTransform, useMotionTemplate, useReducedMotion } from 'motion/react';
 import { useWide } from '../../v2/KeynoteChapters';
@@ -30,13 +32,16 @@ import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
 import './Edge.css';
 
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 const EMPH = [0.16, 1, 0.3, 1];
 
 const Off = () => (
   <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" className="eg-off-i"><path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0" /><circle cx="12" cy="19" r="1.3" /><path d="M3 3l18 18" className="cut" /></svg>
 );
-const PauseIcon = ({ on }) => on
+interface PauseIconProps {
+  on: boolean;
+}
+const PauseIcon = ({ on }: PauseIconProps) => on
   ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>;
 
@@ -44,7 +49,7 @@ const PauseIcon = ({ on }) => on
 // the stream is Hanzo's own words, one token per server-sent event
 const TOKENS = 'There is no request, so there is nothing to be slow. Nothing is uploaded'.split(' ');
 function Local() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.25 });
   const calm = useCalm();
   const paused = useStagePause();
@@ -91,9 +96,9 @@ const FACTS = [
 ];
 const SAID = ['Where it runs', 'There is no request', 'After that, offline'];
 const KINDS = [['macOS', 'Apple Silicon and Intel'], ['Linux', 'x86 and ARM'], ['WebAssembly', 'modern browsers']];
-const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const rnd = (i: number) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 
-function useField(canvas, wrap) {
+function useField(canvas: React.RefObject<HTMLCanvasElement | null>, wrap: React.RefObject<HTMLDivElement | null>) {
   const st = useRef({ pts: [], w: 0, h: 0, dpr: 1, rings: [], t0: 0, mode: 0, last: 0, ink: '10, 10, 10', inkAt: 0 });
   useEffect(() => {
     const el = wrap.current, cv = canvas.current;
@@ -136,7 +141,7 @@ function useField(canvas, wrap) {
 }
 
 /* one frame of the field, ink on white: a lit machine is darker and larger, a ring is ink fading out */
-function draw(s, cv, t, mode, calm) {
+function draw(s, cv: never, t: number, mode: number, calm: boolean) {
   const c = cv.getContext('2d');
   if (!c) return;
   const { w, h, dpr, pts } = s;
@@ -193,15 +198,15 @@ function draw(s, cv, t, mode, calm) {
 }
 
 function Field() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { amount: 0.3 });
   const calm = useCalm();
   const [hold, setHold] = useState(false);
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const live = seen && !calm && !hold;
-  const wrap = useRef(null);
-  const canvas = useRef(null);
+  const wrap = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
   const s = useField(canvas, wrap);
   const mode = useRef(0);
   mode.current = at;
@@ -225,7 +230,7 @@ function Field() {
   useEffect(() => {
     if (!live) return;
     let raf = 0;
-    const loop = (now) => { if (canvas.current) draw(s.current, canvas.current, now / 1000, mode.current, false); raf = requestAnimationFrame(loop); };
+    const loop = (now: number) => { if (canvas.current) draw(s.current, canvas.current, now / 1000, mode.current, false); raf = requestAnimationFrame(loop); };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, [live, s]);
@@ -283,7 +288,10 @@ const RUNTIME = [
   ['The prompt never leaves', 'Nothing is uploaded and there is no key to leak. The prompt and the output stay in the process that made them, which is the whole reason to run a model here.', 'Nothing is uploaded'],
 ];
 
-function Art({ i }) {
+interface ArtProps {
+  i: number;
+}
+function Art({ i }: ArtProps) {
   if (i === 0) return <div className="eg-art a0"><p><b>localhost</b><span>:port</span></p><i /></div>;
   if (i === 1) return <div className="eg-art a1">{['Q4_K', 'Q5_K', 'Q8_0'].map((q, k) => <p key={q} style={{ '--w': 0.5 + k * 0.25 }}><b>{q}</b><i /></p>)}<em>Q4_K_M · about 2.5GB</em></div>;
   if (i === 2) return <div className="eg-art a2">{[['Metal', 'Apple Silicon'], ['CUDA', 'NVIDIA'], ['AVX2', 'AVX-512']].map(([a, b], k) => <p key={a} className={k === 0 ? 'on' : ''}><b>{a}</b><span>{b}</span></p>)}</div>;
@@ -304,9 +312,9 @@ const YOURS = [
 const ICON = ['M5 4h14v10H5zM3 18h18', 'M3 7h18v10H3zM7 7V4M17 7V4M7 17v3M17 17v3', 'M7 7h10v10H7zM10 4v3M14 4v3M10 17v3M14 17v3M4 10h3M4 14h3M17 10h3M17 14h3', 'M7 3h10v18H7zM11 18h2', 'M4 6h16v12H4zM8 10h2v4H8zM13 10h3', 'M3 5h18v14H3zM3 9h18'];
 
 /* the kit's open cards shut on Esc without handing focus back: give it back to the card that opened */
-function useEscReturn(sel) {
+function useEscReturn(sel: string) {
   useEffect(() => {
-    const k = (e) => {
+    const k = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
       const c = document.querySelector(sel + ' .kno-card[aria-expanded="true"]');
       if (c) setTimeout(() => c.focus({ preventScroll: true }), 80);
@@ -320,7 +328,7 @@ function Yours() {
   const [at, setAt] = useState(0);
   const btns = useRef([]);
   const [name, uses, model, line] = YOURS[at];
-  const key = (e, i) => {
+  const key = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
     const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
     if (!k) return;
     e.preventDefault();
@@ -370,8 +378,12 @@ const WHEN = [
 
 /* The dark room opens out of a rounded window as it scrolls in (as the kit's KeynoteRoom does), but hydration-safe:
    the server and the first render agree, and reduced motion drops the clip only after mount. */
-function Room({ children, className = '' }) {
-  const ref = useRef(null);
+interface RoomProps {
+  children: ReactNode;
+  className?: string;
+}
+function Room({ children, className = '' }: RoomProps) {
+  const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const wide = useWide();
   const [ready, setReady] = useState(false);

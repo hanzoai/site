@@ -2,11 +2,11 @@
 import { load, find, findAll, textOf, slot, tag, metaOf, isN } from './htmltree';
 
 export const SLUGS = ['ai-ml-research-engineer', 'compiler-engineer', 'mcp-protocol-engineer', 'cryptography-engineer-zkp', 'senior-backend-engineer', 'product-designer', 'academic-research-intern', 'open'];
-const T = (n) => textOf(n).replace(/\s+/g, ' ').trim();
+const T = (n: never) => textOf(n).replace(/\s+/g, ' ').trim();
 const MODELS = ['enso', 'iro', 'kai', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
 const strs = (n) => (isN(n) ? n.c.filter((k) => typeof k === 'string').join('').replace(/\s+/g, ' ').trim() : n);
 
-export function role(slug) {
+export function role(slug: string) {
   const root = load('careers/' + slug);
   const chips = findAll(root, slot('chip')).map(T);
   const acts = findAll(root, slot('action'));
@@ -66,7 +66,7 @@ export function role(slug) {
 export const peers = () => SLUGS.map((s) => { const r = role(s); return { slug: s, at: r.at, title: r.title, chips: r.chips, lede: r.lede }; });
 
 /* the number a role wears on the /careers deck (its sheet's numeral), so the role page's hero can be that same sheet */
-export const deckNo = (slug) => { const i = board().pos.leaves.findIndex((l) => l.href === '/careers/' + slug); return i < 0 ? null : String(i + 1).padStart(2, '0'); };
+export const deckNo = (slug: string) => { const i = board().pos.leaves.findIndex((l) => l.href === '/careers/' + slug); return i < 0 ? null : String(i + 1).padStart(2, '0'); };
 
 export function board() {
   const root = load('careers');
@@ -75,8 +75,8 @@ export function board() {
   const steps = find(hero, slot('steps'));
   const sb = findAll(steps, (n) => n.t === 'button').map(T);
   const sd = findAll(steps, (n) => n.t === 'p').map(T);
-  const heads = (s) => ({ title: T(find(s, tag('h2'))), lede: T(find(s, slot('lede'))) });
-  const leaf = (l) => {
+  const heads = (s: never) => ({ title: T(find(s, tag('h2'))), lede: T(find(s, slot('lede'))) });
+  const leaf = (l: never) => {
     const h3 = find(l, tag('h3'));
     const acts = findAll(l, slot('action')).map((a) => ({ text: T(a), href: a.a.href }));
     const chips = findAll(l, (n) => n.t === 'span' && slot('text')(n)).map(T);

@@ -8,9 +8,9 @@ import { useEffect, useRef, useState } from 'react';
 import { animate } from 'motion/react';
 
 const calm = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-const below = (el) => el.getBoundingClientRect().top > innerHeight * 0.92;
+const below = (el: never) => el.getBoundingClientRect().top > innerHeight * 0.92;
 
-function whenSeen(el, amount, fn) {
+function whenSeen(el: never, amount: number, fn: (() => void) | (() => void)) {
   const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); fn(); } }, { threshold: amount });
   io.observe(el);
   return () => io.disconnect();
@@ -29,14 +29,14 @@ export function useEnter(amount = 0.2) {
 }
 
 export function CountTo({ value, prefix = '', render }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement>(null);
   const [n, setN] = useState(value);
   useEffect(() => {
     const el = ref.current;
     if (!el || calm() || !below(el)) return;
     setN(0);
     let ctl;
-    const stop = whenSeen(el, 0.5, () => { ctl = animate(0, value, { duration: 0.85, ease: [0.16, 1, 0.3, 1], onUpdate: (v) => setN(Math.round(v)) }); });
+    const stop = whenSeen(el, 0.5, () => { ctl = animate(0, value, { duration: 0.85, ease: [0.16, 1, 0.3, 1], onUpdate: (v: number) => setN(Math.round(v)) }); });
     return () => { stop(); ctl?.stop(); };
   }, [value]);
   return <span ref={ref} className="ct-count">{render(prefix + n)}</span>;

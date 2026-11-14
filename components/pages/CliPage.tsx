@@ -11,6 +11,7 @@
    Motion: signature = the compare slider (cli/Compare.jsx); the hero terminal still types Hanzo's own session (approved, kept).
    Entrances: cli/enter.jsx + enter.css. Supporting: the tree's gliding selection (layoutId, 300 ms), the added script block and
    claim windows that wipe in (clip), the script line count roll. Colour: Hanzo's deck greys only. Every word is Hanzo's. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Mark } from '../ui';
@@ -31,12 +32,17 @@ const INSTALL = 'curl -fsSL https://hanzo.sh | sh';
 
 /* ---------- the hero: the first screen is one terminal; Hanzo's example session types and streams in it ----------
    Every line keeps its full text as an invisible ghost, so a line being typed never changes its height. */
-function Session({ onDone, paused, runKey }) {
-  const box = useRef(null);
+interface SessionProps {
+  onDone: React.Dispatch<React.SetStateAction<boolean>>;
+  paused: boolean;
+  runKey: number;
+}
+function Session({ onDone, paused, runKey }: SessionProps) {
+  const box = useRef<HTMLUListElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const rows = useRef([]);
-  const spin = useRef(null);
+  const spin = useRef<HTMLSpanElement>(null);
   const hold = useRef(paused);
   hold.current = paused;
   const ran = useRef(-1);
@@ -50,8 +56,8 @@ function Session({ onDone, paused, runKey }) {
     if (!seen || ran.current === runKey) return;
     ran.current = runKey;
     let alive = true, t = 0;
-    const sleep = (ms) => new Promise((r) => { t = setTimeout(r, ms); });
-    const wait = async (ms) => { await sleep(ms); while (alive && hold.current) await sleep(150); };
+    const sleep = (ms: number) => new Promise((r) => { t = setTimeout(r, ms); });
+    const wait = async (ms: number) => { await sleep(ms); while (alive && hold.current) await sleep(150); };
     const run = async () => {
       rows.current.forEach((el, i) => { if (el && i < 2) el.textContent = ''; });
       setN(1);
@@ -180,8 +186,12 @@ const TREE = [
 ];
 const TOUR = [[0, 0], [5, 0], [3, 0], [6, 0], [4, 0], [8, 1], [1, 0]];
 
-function Print({ cmd, desc }) {
-  const ref = useRef(null);
+interface PrintProps {
+  cmd: string;
+  desc: string;
+}
+function Print({ cmd, desc }: PrintProps) {
+  const ref = useRef<HTMLSpanElement>(null);
   const calm = useReducedMotion();
   const first = useRef(cmd); // the first command is the server frame: its description is in the HTML at full opacity
   useEffect(() => {
@@ -214,13 +224,13 @@ function Tree() {
   // fixed row slots: every folder starts open, so the self-running tour never opens or collapses a row (no reflow, no layout shift);
   // it only moves the selection and scrolls the tree's own pane to it. A press still opens and closes folders by hand.
   const [open, setOpen] = useState(() => new Set(TREE.map((_, r) => r)));
-  const pane = useRef(null);
+  const pane = useRef<HTMLUListElement>(null);
   const [over, setOver] = useState(false);
   const [sel, setSel] = useState([0, 0]);
   const [mine, setMine] = useState(false);
   const [k, setK] = useState(0);
   const [paused, setPaused] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.35 });
   const rm = useReducedMotion();
   const [up, setUp] = useState(false);
@@ -237,8 +247,8 @@ function Tree() {
     }, 3800);
     return () => clearTimeout(t);
   }, [k, touring, seen, paused, over]);
-  const toggle = (r) => { setMine(true); setOpen((o) => { const s = new Set(o); s.has(r) ? s.delete(r) : s.add(r); return s; }); };
-  const pick = (r, c) => { setMine(true); setSel([r, c]); };
+  const toggle = (r: number) => { setMine(true); setOpen((o) => { const s = new Set(o); s.has(r) ? s.delete(r) : s.add(r); return s; }); };
+  const pick = (r: number, c: number) => { setMine(true); setSel([r, c]); };
   const [res, cmds] = TREE[sel[0]];
   const [leaf, cmd, desc] = cmds[sel[1]];
   return (
@@ -300,8 +310,14 @@ const WHAT = [
   ['hanzo api', 'No raw-path escape hatch', 'There is no hanzo api verb and no URL to hand-write. Every cloud capability arrives as a typed subcommand, which is what keeps the CLI and the API from disagreeing.'],
 ];
 
-function Claim({ c, t, d, i }) {
-  const ref = useRef(null);
+interface ClaimProps {
+  c: string;
+  t: string;
+  d: string;
+  i: number;
+}
+function Claim({ c, t, d, i }: ClaimProps) {
+  const ref = useRef<HTMLLIElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   return (
     <li ref={ref} className={(i === 2 ? 'no ' : '') + (seen ? 'in' : '')} style={{ '--n': c.length + 2 }}>
@@ -349,13 +365,13 @@ const CAPS = [
 ];
 
 function Caps() {
-  const rail = useRef(null);
+  const rail = useRef<HTMLUListElement>(null);
   const [edge, setEdge] = useState([true, false]);
   const onScroll = () => {
     const el = rail.current; if (!el) return;
     setEdge([el.scrollLeft < 8, el.scrollLeft + el.clientWidth > el.scrollWidth - 8]);
   };
-  const go = (d) => {
+  const go = (d: number) => {
     const el = rail.current; if (!el) return;
     const card = el.querySelector('li');
     el.scrollBy({ left: d * ((card?.offsetWidth || 360) + 20), behavior: 'smooth' });
@@ -409,7 +425,13 @@ hanzo billing balance`;
 const BASE = SCRIPT.split('\n\n');
 const EXTRA = CAPS.filter(([c]) => c.startsWith('hanzo ')).map(([c, t]) => ['# ' + t + '\n' + c, t, c]);
 
-function Block({ b, i, added, last }) {
+interface BlockProps {
+  b: string;
+  i: number;
+  added: boolean;
+  last: boolean;
+}
+function Block({ b, i, added, last }: BlockProps) {
   const [c, ...lines] = b.split('\n');
   const calm = useReducedMotion();
   const body = (
@@ -430,7 +452,7 @@ function Block({ b, i, added, last }) {
 /* the script's line count rolls to its value: from 0 as the window arrives (in step with the blocks wiping in), then from the old
    count to the new one each time a block is added or removed. The true value is in the HTML; tabular numerals, fixed ch width. */
 function Roll({ value, go }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement>(null);
   const from = useRef(null);
   const calm = useReducedMotion();
   useEffect(() => {
@@ -440,7 +462,7 @@ function Roll({ value, go }) {
     const a = from.current ?? 0, b = value, t0 = performance.now(), dur = a === 0 ? 900 : 400;
     from.current = b;
     let raf = 0;
-    const tick = (t) => {
+    const tick = (t: number) => {
       const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
       el.textContent = Math.round(a + (b - a) * e);
       if (p < 1) raf = requestAnimationFrame(tick);
@@ -452,11 +474,11 @@ function Roll({ value, go }) {
 }
 
 function Start() {
-  const [add, setAdd] = useState([]);
+  const [add, setAdd] = useState<number[]>([]);
   const blocks = [...BASE, ...add.map((i) => EXTRA[i][0])];
-  const flip = (i) => setAdd((a) => (a.includes(i) ? a.filter((x) => x !== i) : [...a, i]));
+  const flip = (i: number) => setAdd((a) => (a.includes(i) ? a.filter((x) => x !== i) : [...a, i]));
   const lines = blocks.join('\n\n').split('\n').length;
-  const win = useRef(null);
+  const win = useRef<HTMLDivElement>(null);
   const arrived = useInView(win, { once: true, amount: 0.3 });
   return (
     // entrance 4, curtain-rise: the builder and its script rise from below behind a clip
@@ -533,7 +555,7 @@ const PLACES = ['A local repo', 'a CI job', 'a machine you sshed into', 'a fix a
 
 function Band() {
   // one caret, stepping down the four places while the band is on screen: one mover in the viewport, not four
-  const ref = useRef(null);
+  const ref = useRef<HTMLUListElement>(null);
   const seen = useInView(ref, { amount: 0.4 });
   const calm = useReducedMotion();
   const [at, setAt] = useState(0);

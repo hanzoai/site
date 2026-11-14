@@ -11,7 +11,7 @@
    Each panel plays once when its chapter arrives (keyed, CSS only) and rests on its final frame; reduced motion shows it. */
 
 const LIB = ['Models', 'vector stores', 'document loaders', 'text splitters', 'output parsers', 'memory', 'retrievers', 'toolkits'];
-const two = (n) => String(n).padStart(2, '0');
+const two = (n: number) => String(n).padStart(2, '0');
 
 function Library() {
   return (

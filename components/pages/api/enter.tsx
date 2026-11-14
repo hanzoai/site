@@ -6,7 +6,7 @@
    show everything in its final state. */
 import { useEffect } from 'react';
 
-export function useEnter(rootSel) {
+export function useEnter(rootSel: string) {
   useEffect(() => {
     const root = document.querySelector(rootSel);
     if (!root) return;

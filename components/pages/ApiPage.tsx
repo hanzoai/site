@@ -45,7 +45,7 @@ const MORE = [
   ['GET', '/v1/tools', 'The tools your organization can call over REST or MCP. An agent picks from this list, and so can you — it is the same catalog either way.', 'tool'],
 ];
 const ALL = [...HERO.map(([m, p, d, doc]) => [m, p, d, doc]), ...MORE];
-const n8 = (i) => String(i + 1).padStart(2, '0') + ' / 08';
+const n8 = (i: number) => String(i + 1).padStart(2, '0') + ' / 08';
 const LONGEST = HERO.reduce((a, h) => (h[2].length > a.length ? h[2] : a), '');
 const KEY = 'Authorization: Bearer <your key>';
 
@@ -55,10 +55,10 @@ function Console() {
   const [mine, setMine] = useState(false);
   const [held, setHeld] = useState(false); // the pause control
   const calm = useReducedMotion();
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.25 });
-  const path = useRef(null);
-  const desc = useRef(null);
+  const path = useRef<HTMLSpanElement>(null);
+  const desc = useRef<HTMLSpanElement>(null);
   const [done, setDone] = useState(true);
   const first = useRef(true); // the first walk waits for the h1 to land (the words lead)
   const live = seen && !calm && !held;
@@ -71,18 +71,18 @@ function Console() {
     setDone(false);
     const typeP = () => {
       if (!alive) return;
-      if (i <= p.length) { path.current.textContent = p.slice(0, i++); t = setTimeout(typeP, 30); return; }
+      if (i <= p.length) { path.current!.textContent = p.slice(0, i++); t = setTimeout(typeP, 30); return; }
       setDone(true);
       t = setTimeout(stream, 200);
     };
     // the card never blanks: the previous answer stays (dimmed) while the new path types, then the new one streams over it
     const stream = () => {
       if (!alive) return;
-      if (w === 0) desc.current.classList.remove('stale');
-      if (w <= words.length) { desc.current.textContent = words.slice(0, w++).join(' ') || ' '; t = setTimeout(stream, 34); }
+      if (w === 0) desc.current!.classList.remove('stale');
+      if (w <= words.length) { desc.current!.textContent = words.slice(0, w++).join(' ') || ' '; t = setTimeout(stream, 34); }
     };
     // the first walk holds the server-painted request until the h1 has landed, then types
-    const hold = first.current, clear = () => { path.current.textContent = ''; desc.current.classList.add('stale'); };
+    const hold = first.current, clear = () => { path.current!.textContent = ''; desc.current!.classList.add('stale'); };
     first.current = false;
     if (!hold) clear();
     t = setTimeout(() => { if (!alive) return; if (hold) clear(); typeP(); }, hold ? 1000 : 240);
@@ -95,7 +95,7 @@ function Console() {
     const t = setTimeout(() => { if (at === HERO.length - 1) { setWalked(true); setAt(0); play('done'); } else setAt(at + 1); }, 4600);
     return () => clearTimeout(t);
   }, [at, mine, live, walked]);
-  const pick = (i) => { setAt(i); setMine(true); };
+  const pick = (i: number) => { setAt(i); setMine(true); };
   const [m, p, d, doc] = HERO[at];
   // hover detail: pointing at a chip previews the model that serves it in the frame (fine pointers only)
   const [peek, setPeek] = useState(-1);
@@ -294,7 +294,7 @@ const FITS = [
 
 /* How it fits together: four plain rows (no pinned stage). Each visual plays once as its row arrives. */
 function FitRow({ item, i }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLLIElement>(null);
   const on = useInView(ref, { once: true, amount: 0.35 });
   return (
     <li ref={ref} className={'api-fit' + (on ? ' on' : '')}>
@@ -380,10 +380,10 @@ function Table() {
   // six rows first, the rest one tap away; every row stays in the HTML (hidden="until-found", so Find in page opens them)
   const [all, setAll] = useState(false);
   const full = all || f !== 0 || !!q;
-  const list = useRef(null);
+  const list = useRef<HTMLUListElement>(null);
   // every row is set on every change (filter, search, Show all): a keyed row that moves into the first six loses `hidden`
   useEffect(() => {
-    const els = [...list.current.querySelectorAll(':scope > li')];
+    const els = [...list.current!.querySelectorAll(':scope > li')];
     const show = () => setAll(true);
     els.forEach((el) => {
       if (!full && el.hasAttribute('data-more')) el.setAttribute('hidden', 'until-found'); else el.removeAttribute('hidden');

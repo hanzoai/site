@@ -3,6 +3,7 @@
    Page-local, never shared. Each section carries data-entrance="<name>"; the CSS in Gui.css draws the entrance.
    The server HTML is the final state: a section is only "armed" (put in its start state) by JS, after mount, when it is
    below the fold and motion is allowed, so JS off, reduced motion and hydration all show the finished page. */
+import type React from 'react';
 import { useEffect } from 'react';
 
 const calm = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -10,13 +11,13 @@ const calm = () => typeof matchMedia === 'function' && matchMedia('(prefers-redu
 /* last point the visitor clicked or pointed at, in page coordinates (grow-from-point grows from it) */
 const last = { x: null, y: null };
 if (typeof window !== 'undefined') {
-  const keep = (e) => { last.x = e.pageX; last.y = e.pageY; };
+  const keep = (e: PointerEvent) => { last.x = e.pageX; last.y = e.pageY; };
   addEventListener('pointerdown', keep, { passive: true });
   addEventListener('pointermove', keep, { passive: true });
 }
 
 /* arms the section and plays its entrance once it is a quarter of the way into the screen */
-export function useEnter(ref, onIn) {
+export function useEnter(ref: React.RefObject<HTMLDivElement | null> | React.RefObject<HTMLElement | null> | React.RefObject<HTMLOListElement | null>, onIn) {
   useEffect(() => {
     const el = ref.current;
     if (!el || calm()) return;
@@ -35,7 +36,7 @@ export function useEnter(ref, onIn) {
 }
 
 /* grow-from-point: the section grows out of the last point clicked (or pointed at); with none, from its centre */
-export function useGrowFromPoint(ref) {
+export function useGrowFromPoint(ref: React.RefObject<HTMLElement | null>) {
   useEnter(ref, (el) => {
     const b = el.getBoundingClientRect();
     const top = b.top + scrollY, left = b.left + scrollX;
@@ -47,7 +48,7 @@ export function useGrowFromPoint(ref) {
 }
 
 /* velocity-skew: the chapter list leans with the speed of the scroll (4deg at most) and straightens when it stops */
-export function useVelocitySkew(ref) {
+export function useVelocitySkew(ref: React.RefObject<HTMLOListElement | null>) {
   useEffect(() => {
     const el = ref.current;
     if (!el || calm()) return;
@@ -70,12 +71,12 @@ export function useVelocitySkew(ref) {
 
 /* cursor-lens: a ring follows a fine pointer over the platform cards and the card under it magnifies; on arrival the
    lens sweeps across the row once and each card resolves as it passes (touch gets the sweep only) */
-export function useLens(ref) {
+export function useLens(ref: React.RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     const el = ref.current;
     if (!el || calm() || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     const cards = () => [...el.querySelectorAll(':scope .gu-plats > li')];
-    const move = (e) => {
+    const move = (e: PointerEvent) => {
       const b = el.getBoundingClientRect();
       el.style.setProperty('--lx', (e.clientX - b.left).toFixed(0) + 'px');
       el.style.setProperty('--ly', (e.clientY - b.top).toFixed(0) + 'px');

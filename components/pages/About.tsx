@@ -21,6 +21,8 @@
 // Signature: word-light on the pick-two belief (lit word by word as read), then six reasons Hanzo builds that open into their own sheet
 // Beyond: pick two? keep all four: the lede's four trade-offs as switches that never knock each other off
 // V2: 8/10 motion map: signature word-light (the Why belief statement lights word by word as it is read; a hand reads ahead); entrances ink-spread (Why figure + switches + principles), magnet-gather (track record), squash-land (founders), letter-cascade (Zen of Hanzo, now a plain index, no pinned scene), accordion (the dark room); phone chart labels clear of the curve
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
 import { Count } from '../ui';
@@ -39,16 +41,24 @@ import './Frame.css';
 import './About.css';
 
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const Link2 = ({ to, children }) => <Cta to={to} kind="link">{children}</Cta>;
-const TL = ({ to, children }) => <Cta to={to} kind="link">{children}</Cta>;
-const pad = (n) => String(n).padStart(2, '0');
+interface Link2Props {
+  to: string | string[][];
+  children: ReactNode;
+}
+const Link2 = ({ to, children }: Link2Props) => <Cta to={to} kind="link">{children}</Cta>;
+interface TLProps {
+  to: string;
+  children: ReactNode;
+}
+const TL = ({ to, children }: TLProps) => <Cta to={to} kind="link">{children}</Cta>;
+const pad = (n: number) => String(n).padStart(2, '0');
 
 /* ---------- the frontier: one curve, four ghost axes under it ---------- */
 const W = 1600, H = 340, PL = 28, PR = 64, PT = 30, PB = 54;
-const f = (t) => 1 - Math.pow(1 - t, 2.2);
-const X = (t) => PL + t * (W - PL - PR);
-const Y = (v) => H - PB - v * (H - PB - PT);
-const trace = (g) => Array.from({ length: 81 }, (_, i) => { const t = i / 80; return (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(g(t)).toFixed(1); }).join('');
+const f = (t: number) => 1 - Math.pow(1 - t, 2.2);
+const X = (t: number) => PL + t * (W - PL - PR);
+const Y = (v: number) => H - PB - v * (H - PB - PT);
+const trace = (g: ((t: number) => number) | ((t: number) => number)) => Array.from({ length: 81 }, (_, i) => { const t = i / 80; return (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(g(t)).toFixed(1); }).join('');
 const FRONT = trace(f);
 const YEARS = [2014, 2016, 2018, 2020, 2022, 2024, 2026];
 
@@ -56,18 +66,23 @@ const YEARS = [2014, 2016, 2018, 2020, 2022, 2024, 2026];
    axis names fit 343px at a readable size (both plots are in the HTML; CSS shows one) */
 // ph: the phone plot sets the four axis names as a right-aligned stack in the empty lower right of the plot (in the
 // order their lines run), clear of the curve, the head and the plot's edges
-const geo = (W, H, PL, PR, PT, PB, ph = false) => {
-  const X = (t) => PL + t * (W - PL - PR);
-  const Y = (v) => H - PB - v * (H - PB - PT);
-  const tr = (g) => Array.from({ length: 81 }, (_, i) => { const t = i / 80; return (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(g(t)).toFixed(1); }).join('');
+const geo = (W: number, H: number, PL: number, PR: number, PT: number, PB: number, ph = false) => {
+  const X = (t: string | number) => PL + t * (W - PL - PR);
+  const Y = (v: number) => H - PB - v * (H - PB - PT);
+  const tr = (g: ((t: number) => number) | ((t: string | number) => number)) => Array.from({ length: 81 }, (_, i) => { const t = i / 80; return (i ? 'L' : 'M') + X(t).toFixed(1) + ' ' + Y(g(t)).toFixed(1); }).join('');
   const axes = [['Intelligence', 0.42, 1.6, 0.3], ['Speed', 0.55, 1.2, 0.44], ['Deterministic safety', 0.66, 2.1, 0.58], ['Equitable cost', 0.78, 1.4, 0.72]]
-    .map(([name, a, q, at], i) => { const g = (t) => f(t) * (a + (1 - a) * Math.pow(t, q)); return ph ? { name, d: tr(g), lx: X(1), ly: Y(0.12 + i * 0.11) } : { name, d: tr(g), lx: X(at), ly: Y(g(at)) + 24 }; });
+    .map(([name, a, q, at], i) => { const g = (t: string | number) => f(t) * (a + (1 - a) * Math.pow(t, q)); return ph ? { name, d: tr(g), lx: X(1), ly: Y(0.12 + i * 0.11) } : { name, d: tr(g), lx: X(at), ly: Y(g(at)) + 24 }; });
   return { W, H, PT, X, Y, front: tr(f), axes, ph };
 };
 const DESK = geo(W, H, PL, PR, PT, PB);
 const PH = geo(700, 470, 40, 44, 56, 60, true);
 
-function Plot({ g, cls, children }) {
+interface PlotProps {
+  g: { W: number; H: number; PT: number; X: (t: string | number) => number; Y: (v: number) => number; front: string; axes: { name: string | number; d: string; lx: number; ly: number; }[]; ph: boolean; };
+  cls: string;
+  children?: ReactNode;
+}
+function Plot({ g, cls, children }: PlotProps) {
   const { W, H, X, Y, front, axes, ph } = g;
   const tx = X(0.25), ty = Y(f(0.25));
   return (
@@ -108,10 +123,10 @@ function Frontier() {
   // nothing waits on hydration, reduced motion and JS off show the drawn frontier at rest
   // pointer: the hand reads the year under it, on the curve
   const hand = useMotionValue(-1);
-  const cx = useTransform(hand, (t) => X(Math.max(0, t)));
-  const cy = useTransform(hand, (t) => Y(f(Math.max(0, t))));
-  const [yr, setYr] = useState(null);
-  const move = (e) => {
+  const cx = useTransform(hand, (t: number) => X(Math.max(0, t)));
+  const cy = useTransform(hand, (t: number) => Y(f(Math.max(0, t))));
+  const [yr, setYr] = useState<number | null>(null);
+  const move = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== 'mouse' || matchMedia('(max-width: 900px)').matches) return;
     const r = e.currentTarget.getBoundingClientRect();
     const t = Math.max(0, Math.min(1, ((e.clientX - r.left) / r.width * W - PL) / (W - PL - PR)));
@@ -121,7 +136,7 @@ function Frontier() {
   };
   // after the draw it stays alive by CSS: the head breathes and a reader glides along the curve while no hand is on it.
   // Off screen both pause (a class set on the element, never React state, so the server HTML is the same)
-  const wrap = useRef(null);
+  const wrap = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = wrap.current;
     if (!el) return;
@@ -211,12 +226,15 @@ const PILLARS = [
   ['Privacy by Architecture', 'No training without your say', 'Business and API accounts are never used to train shared models unless an administrator or a written agreement says so, and a personal account only if you turn it on. Organizations sit in isolated tenant databases with scoped HKDF-SHA256 keys, local-first CLI workflows, and strict gateway identity stripping.', 'Security & trust', '/trust'],
   ['Ownership & Sovereignty', 'Cloud, private VPC, on-prem, or air-gapped', 'If you cannot move your weights, memory, and runtime onto your own hardware, you are renting your intelligence. Hanzo runs identically on our global cloud, inside your VPC, or completely air-gapped on your own GPUs.', 'Explore platform', '/platform'],
 ];
-const ang = (i) => -Math.PI / 2 + (i * Math.PI) / 3;
-const pt = (i, k) => (200 + Math.cos(ang(i)) * 150 * k).toFixed(1) + ',' + (200 + Math.sin(ang(i)) * 150 * k).toFixed(1);
+const ang = (i: number) => -Math.PI / 2 + (i * Math.PI) / 3;
+const pt = (i: number, k: number) => (200 + Math.cos(ang(i)) * 150 * k).toFixed(1) + ',' + (200 + Math.sin(ang(i)) * 150 * k).toFixed(1);
 
 /* six axes, the one this pillar stands for pushed out to the edge */
-function Radar({ at }) {
-  const ring = (k) => PILLARS.map((_, i) => pt(i, k)).join(' ');
+interface RadarProps {
+  at: number;
+}
+function Radar({ at }: RadarProps) {
+  const ring = (k: number) => PILLARS.map((_, i) => pt(i, k)).join(' ');
   const shape = PILLARS.map((_, i) => pt(i, i === at ? 1 : 0.56)).join(' ');
   const [sx, sy] = pt(at, 1).split(',');
   return (
@@ -240,12 +258,16 @@ const PICKS = [
 /* the one figure of the section: the four trade-offs as a diamond. A switch kept pushes its corner out to the edge; all
    four kept is the full frontier. A hand on a principle in the index swaps the diamond for that principle's own radar */
 const DIA = PICKS.map((_, i) => -Math.PI / 2 + (i * Math.PI) / 2);
-const dpt = (i, k) => [200 + Math.cos(DIA[i]) * 160 * k, 200 + Math.sin(DIA[i]) * 160 * k];
+const dpt = (i: number, k: number) => [200 + Math.cos(DIA[i]) * 160 * k, 200 + Math.sin(DIA[i]) * 160 * k];
 // corner names: top and bottom centred on their corner, the side ones set above their corner, inside the frame
 const DLAB = [[200, 18, 'middle'], [400, 176, 'end'], [200, 398, 'middle'], [0, 158, 'start']];
-const dlines = (t, i) => (i === 3 ? ['Control over', 'your data'] : [t]);
+const dlines = (t: string, i: number) => (i === 3 ? ['Control over', 'your data'] : [t]);
 
-function Figure({ on, peek }) {
+interface FigureProps {
+  on: number[];
+  peek: null;
+}
+function Figure({ on, peek }: FigureProps) {
   const calm = useReducedMotion();
   const shape = PICKS.map((_, i) => dpt(i, on.includes(i) ? 1 : 0.36).map((v) => v.toFixed(1)).join(',')).join(' ');
   const all = on.length === PICKS.length;
@@ -262,7 +284,12 @@ function Figure({ on, peek }) {
   );
 }
 
-function Picks({ on, flip, touched }) {
+interface PicksProps {
+  on: number[];
+  flip: (i: number) => void;
+  touched: boolean;
+}
+function Picks({ on, flip, touched }: PicksProps) {
   const all = on.length === PICKS.length;
   // until a hand touches them, the next switch still off breathes, asking to be kept too
   const hint = touched ? -1 : PICKS.findIndex((_, i) => !on.includes(i));
@@ -315,7 +342,7 @@ function Why() {
   const [open, setOpen] = useState(null);
   const [at, setAt] = useState(0);
   const [cue, setCue] = useState(0);
-  const grid = useRef(null);
+  const grid = useRef<HTMLDivElement>(null);
   const seen = useInView(grid, { amount: 0.35 });
   const calm = useReducedMotion();
   // on arrival the first tile shows a line of what it holds (an invitation to open it), once, then rests
@@ -327,7 +354,7 @@ function Why() {
   const show = (i) => { setAt(i); setOpen(i); };
   const [on, setOn] = useState([0, 1]);
   const [touched, setTouched] = useState(false);
-  const flip = (i) => { setTouched(true); setOn((o) => (o.includes(i) ? o.filter((x) => x !== i) : [...o, i])); };
+  const flip = (i: number) => { setTouched(true); setOn((o) => (o.includes(i) ? o.filter((x) => x !== i) : [...o, i])); };
   const [peek, setPeek] = useState(null);
   const shown = peek;
   // Tab stays inside the open sheet: from its last control back to its first, and the other way round
@@ -341,7 +368,7 @@ function Why() {
     else if (e.shiftKey && here === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && here === last) { e.preventDefault(); first.focus(); }
   };
-  const step = (d) => setAt((a) => (a + d + PILLARS.length) % PILLARS.length);
+  const step = (d: number) => setAt((a) => (a + d + PILLARS.length) % PILLARS.length);
   const [t, k, d, l, to] = PILLARS[at];
   return (
     <section className="v2s-sec zf-sec xab-why" id="why" aria-labelledby="xab-why-h">
@@ -396,7 +423,7 @@ const MILES = [
 function Record() {
   // the three figures rest at 64px; only the one nearest the middle of the screen grows (MASTER 3.1: one big thing at a
   // time), handing over as the staircase passes the middle
-  const figs = useRef(null);
+  const figs = useRef<HTMLDListElement>(null);
   const seen = useInView(figs, { amount: 0.2 });
   const [big, setBig] = useState(-1);
   useEffect(() => {
@@ -450,7 +477,11 @@ const FOUNDERS = [
   { name: 'Zach Kelling', mono: 'ZK', img: '/authors/zach-kelling-portrait.jpg', role: 'Chief Technology Officer and founder', bio: 'Builds Hanzo’s AI cloud, its engine runtimes and its agent frameworks. A long-time open-source author.', links: [['Website', 'https://zeekay.io'], ['X', 'https://x.com/zeekay'], ['GitHub', 'https://github.com/zeekay'], ['LinkedIn', 'https://www.linkedin.com/in/zeekay/']] },
 ];
 
-function Portrait({ p, has }) {
+interface PortraitProps {
+  p: { name: string; mono: string; img: string; role: string; bio: string; links: string[][]; };
+  has: boolean;
+}
+function Portrait({ p, has }: PortraitProps) {
   const img = useRef(null);
   const [state, setState] = useState(has ? 'wait' : 'none');
   useEffect(() => { const el = img.current; if (el?.complete) setState(el.naturalWidth ? 'ok' : 'none'); }, []);
@@ -510,7 +541,7 @@ const PANES = [
 ];
 
 function Log() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.35 });
   return (
     <div className={'xab-log' + (seen ? ' in' : '')} ref={ref}>
@@ -575,8 +606,11 @@ const RUNTIMES = [
   { name: 'Enso Router', kind: 'Semantic Routing', d: 'Learned semantic router and multi-model coordinator (HIP-0510) that sends each prompt to a model by accuracy and cost.', tag: 'Learned arbitration · Accuracy & cost', to: '/enso', slug: 'enso', img: '/models/enso.webp' },
 ];
 
-function Runtime({ m }) {
-  const box = useRef(null);
+interface RuntimeProps {
+  m: { name: string; kind: string; d: string; tag: string; to: string; slug: string; img: string; } | { name: string; kind: string; d: string; tag: string; to: string; img: string; slug?: undefined; };
+}
+function Runtime({ m }: RuntimeProps) {
+  const box = useRef<HTMLAnchorElement>(null);
   const opener = useOpener();
   const open = m.slug ? (e) => opener?.open(e, { el: box.current, src: m.img, href: m.to, key: m.slug }) : undefined;
   return (
@@ -656,7 +690,7 @@ const ROLES = [
 ];
 
 /* three tracks, one frontier: each role is a line that ends at the same head; a hand on a role lights its line */
-const TRACKS = [[0.5, 1.5], [0.62, 1.1], [0.74, 2]].map(([a, q]) => trace((t) => f(t) * (a + (1 - a) * Math.pow(t, q))));
+const TRACKS = [[0.5, 1.5], [0.62, 1.1], [0.74, 2]].map(([a, q]) => trace((t: number) => f(t) * (a + (1 - a) * Math.pow(t, q))));
 
 function Careers() {
   const [on, setOn] = useState(-1);

@@ -19,6 +19,7 @@
    counts are counted from Hanzo's product pages.
 V2: 8/10 deck scale (h1 52, headings 26, the chain: reel 64 as the one moment), the reel lighting the product pages that name each chain, a catalogue index that morphs into each page, groups that open, an agent dark room on the kit CodeBlock, the coverage matrix on the kit DataTable read across and down; deck greys, no springs or hover lifts, quiet asks under the header's solid
 */
+import type React from 'react';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { A, More, Cta, DataTable, CodeBlock } from '../../kit';
@@ -28,18 +29,21 @@ import { play } from '../../../lib/sound';
 import './BlockchainIndex.css';
 
 const GO = { 'Try Hanzo': '/signup', 'View Pricing': '/pricing?tab=blockchain' };
-const two = (n) => String(n).padStart(2, '0');
+const two = (n: number) => String(n).padStart(2, '0');
 const bare = (h) => (h || '').replace(/\/$/, '');
 // a chain the overview lists, named on a product's page ("Lux D-Chain" is "Lux D-Chain (DEX)" there)
-const names = (list, c) => list.some((x) => x === c || x.startsWith(c + ' '));
-const PauseI = ({ held }) => (held
+const names = (list, c) => list.some((x: string) => x === c || x.startsWith(c + ' '));
+interface PauseIProps {
+  held: boolean;
+}
+const PauseI = ({ held }: PauseIProps) => (held
   ? <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* an object that walks itself once while it is on screen (one beat at a time), and steps aside for 3 s whenever
    the visitor points at it or touches it; reduced motion: it never walks */
-function useWalk(ref, n, beat) {
+function useWalk(ref: React.RefObject<HTMLElement | null>, n, beat: number) {
   const seen = useInView(ref, { amount: 0.25 });
   const calm = useReducedMotion();
   const [step, setStep] = useState(-1);
@@ -58,7 +62,7 @@ function useWalk(ref, n, beat) {
 /* The signature: chain: and a reel of every network Hanzo lists; the product pages that name it light up (quietly).
    Pointing at a product tells you how many chains its page names. */
 function Reel({ chains, all, onChain, alsoRun }) {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const inView = useInView(box, { amount: 0.3 });
   const seen = inView || alsoRun; // the pieces below follow the same chain, so it keeps turning while they are on screen
   const calm = useReducedMotion();
@@ -162,8 +166,8 @@ function Pieces({ b, all, chain, onSeen }) {
   const [more, setMore] = useState(false);
   const [at, setAt] = useState(0);
   const [point, setPoint] = useState(-1);
-  const list = useRef(null);
-  const sec = useRef(null);
+  const list = useRef<HTMLOListElement>(null);
+  const sec = useRef<HTMLElement>(null);
   const seen = useInView(sec);
   useEffect(() => { onSeen && onSeen(seen); }, [seen]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -231,7 +235,7 @@ function Pieces({ b, all, chain, onSeen }) {
 function Groups({ b }) {
   const [open, setOpen] = useState(0);
   const [peek, setPeek] = useState(-1);
-  const sec = useRef(null);
+  const sec = useRef<HTMLElement>(null);
   const [walk, touch] = useWalk(sec, b.groups.length, 1300); // the map walks its nine tiles once by itself
   const lit = peek >= 0 ? peek : walk;
   const shown = lit >= 0 ? lit : open;
@@ -274,7 +278,7 @@ function Groups({ b }) {
 /* the agent's code streams in once, line by line, when it reaches the screen: every line is in the HTML (and copies
    whole); a pause control sits first; it ends on the whole code. Reduced motion and JS off show it whole. */
 function Streamed({ code, label }) {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const [state, setState] = useState('idle'); // idle | run | held | done
   const st = useRef('idle');
   const tm = useRef(0);
@@ -339,22 +343,22 @@ function Agent({ b }) {
 function Matrix({ b, all }) {
   const cols = useMemo(() => {
     const c = {};
-    all.forEach((p) => p.chains.forEach((x) => { c[x] = (c[x] || 0) + 1; }));
+    all.forEach((p) => p.chains.forEach((x: string | number) => { c[x] = (c[x] || 0) + 1; }));
     return Object.keys(c).sort((x, y) => c[y] - c[x]).map((x) => [x, c[x]]);
   }, [all]);
   const [hot0, setHot0] = useState(null);
   // until you point at it, the crosshair walks the matrix by itself (one cell a beat, each product once, then rests)
-  const sec = useRef(null);
+  const sec = useRef<HTMLElement>(null);
   const [step, touch, mine] = useWalk(sec, all.length, 1400);
   const walk = step >= 0 ? [step, all[step].chains.length ? Math.max(0, cols.findIndex(([x]) => x === all[step].chains[step % all[step].chains.length])) : 0] : null;
   const hot = hot0 || walk;
   const setHot = (v) => { if (v) touch(); setHot0(v); };
   const [r, c] = hot || [-1, -1];
-  const down = (j) => `${cols[j][1]} ${cols[j][1] === 1 ? 'product' : 'products'} down`;
+  const down = (j: number | boolean | (() => void)) => `${cols[j][1]} ${cols[j][1] === 1 ? 'product' : 'products'} down`;
   const read = !hot ? 'Point at a cell, or tap one'
     : r < 0 ? (c >= 0 ? `${cols[c][0]} · ${down(c)}` : 'Point at a cell, or tap one')
     : `${all[r].name} × ${cols[c][0]}: ${all[r].chains.includes(cols[c][0]) ? 'named on its page' : 'not named on its page'} · ${all[r].chains.length} chains across · ${down(c)}`;
-  const colOf = (x) => cols.findIndex(([y]) => y === x || y.startsWith(x + ' '));
+  const colOf = (x: string) => cols.findIndex(([y]) => y === x || y.startsWith(x + ' '));
   return (
     <section className="bz-sec bci-mx-sec" aria-labelledby="bci-chains-h" ref={sec}>
       <div className="bz-wrap">
@@ -413,7 +417,7 @@ function End({ b }) {
 }
 
 export default function BlockchainIndex({ doc, all }) {
-  const find = (k) => doc.blocks.find((b) => b.kind === k);
+  const find = (k: string) => doc.blocks.find((b) => b.kind === k);
   const chainsBlock = find('chains');
   const chains = chainsBlock ? chainsBlock.chains : ['Ethereum'];
   const pieces = find('pieces'), groups = find('groups'), agent = find('agent'), last = find('band');

@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import P from '../../../content/live/_pricing.json';
 
-const fmt = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 export const READ = fmt(new Date(P.fetched_at));
 export const DAY = /(at list prices, )([A-Z][a-z]{2} \d{1,2}, \d{4})/;
 

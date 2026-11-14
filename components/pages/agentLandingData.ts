@@ -5,17 +5,17 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { load, find, findAll, textOf, slot, tag, isN } from './htmltree';
 
-const T = (n) => textOf(n).replace(/\s+/g, ' ').trim();
-const ent = (s) => s.replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"');
-const links = (n, f = slot('action')) => findAll(n, (k) => k.t === 'a' && k.a && k.a.href && f(k)).map((a) => ({ label: T(a), href: a.a.href }));
-const head = (s) => ({ eyebrow: T(find(s, slot('eyebrow'))), title: T(find(s, tag('h2'))), lede: T(find(s, slot('lede'))) });
-const cards = (s) => findAll(s, tag('h3')).map((h) => {
+const T = (n: never) => textOf(n).replace(/\s+/g, ' ').trim();
+const ent = (s: string) => s.replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"');
+const links = (n: never, f = slot('action')) => findAll(n, (k) => k.t === 'a' && k.a && k.a.href && f(k)).map((a) => ({ label: T(a), href: a.a.href }));
+const head = (s: never) => ({ eyebrow: T(find(s, slot('eyebrow'))), title: T(find(s, tag('h2'))), lede: T(find(s, slot('lede'))) });
+const cards = (s: never) => findAll(s, tag('h3')).map((h) => {
   const box = findAll(s, (n) => n.t === 'div' && n.c.includes(h))[0];
   const num = find(box, (n) => n.t === 'span' && /^\d{2}$/.test(T(n)));
   return { n: num ? T(num) : '', title: T(h), text: T(find(box, (n) => n.t === 'p')) };
 });
 // the code as Hanzo's lines (each line's tokens joined), one string with real line breaks
-const lines = (pre) => find(pre, tag('code')).c.filter(isN).map((line) => textOf(line).replace(/\n$/, '')).join('\n');
+const lines = (pre: never) => find(pre, tag('code')).c.filter(isN).map((line) => textOf(line).replace(/\n$/, '')).join('\n');
 
 export function agentLanding() {
   const root = load('agent');

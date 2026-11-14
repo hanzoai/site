@@ -2,6 +2,8 @@
 /* The closing ask for /pubsub, /realtime and /s3: a page-local copy of components/v2/LaunchClose.jsx (same markup,
    classes and CSS), with one change: reduced motion is read after hydration (useCalm), so the server and the client
    render the same h2 and Next shows no hydration warning under prefers-reduced-motion. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import Sigil from '../../../Sigil';
@@ -14,14 +16,18 @@ const Gh = () => <svg viewBox="0 0 16 16" width="15" height="15" fill="currentCo
 export const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* The magnetic ask: follows a fine pointer up to 22px, eased 300ms (no spring), home on leave. */
-function Pull({ children, calm }) {
-  const ref = useRef(null);
-  const move = (e) => {
+interface PullProps {
+  children: ReactNode;
+  calm: boolean;
+}
+function Pull({ children, calm }: PullProps) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const move = (e: React.PointerEvent<HTMLSpanElement>) => {
     if (calm || e.pointerType !== 'mouse') return;
-    const r = ref.current.getBoundingClientRect();
+    const r = ref.current!.getBoundingClientRect();
     const dx = Math.max(-22, Math.min(22, (e.clientX - r.left - r.width / 2) * 0.22));
     const dy = Math.max(-22, Math.min(22, (e.clientY - r.top - r.height / 2) * 0.3));
-    ref.current.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+    ref.current!.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
   };
   const leave = () => { if (ref.current) ref.current.style.transform = ''; };
   return <span ref={ref} className="lx-close-pull" onPointerMove={move} onPointerLeave={leave}>{children}</span>;
@@ -30,7 +36,7 @@ function Pull({ children, calm }) {
 export default function Close({ name, tag, seed, data = [], ask, cta, repo = ['hanzoai', 'https://github.com/hanzoai'], stars, license = 'Apache-2.0', deploy = 'https://platform.hanzo.ai/deploy', self, children, className = '' }) {
   const [label, to] = ask || ['Deploy to Cloud', deploy];
   const deployIsAsk = to === deploy;
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   // the heading grows from 26px to 64px as the close comes up the screen, then rests at 64
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 35%'] });

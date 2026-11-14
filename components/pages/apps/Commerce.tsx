@@ -21,6 +21,7 @@
    Every word and link is Hanzo's; each endpoint list sits inside an open card or a sheet.
 V2: 8/10 flip-board: an orders board whose statuses and endpoints flip tile by tile (auto, tap, processor switch) replaces the pinned journey; five entrances; sections reordered
 */
+import type React from 'react';
 import { cloneElement, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Flap from './commerce/Flap';
@@ -36,7 +37,7 @@ import './Commerce.css';
 const DOCS = 'https://docs.hanzo.ai/docs/cli/commerce';
 const GH = 'https://github.com/hanzoai';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
-const two = (n) => String(n).padStart(2, '0');
+const two = (n: number) => String(n).padStart(2, '0');
 
 const STOPS = [
   ['Product and variant', 'A product holds the description; a variant holds the size, the colour and the price.', '/variant/{id}'],
@@ -134,9 +135,9 @@ const EP = {
 };
 const GROUPS = Object.keys(EP);
 const FIND = Object.fromEntries(GROUPS.flatMap((g) => EP[g].map(([p, d]) => [p, [g, p, d]])));
-const eps = (paths) => paths.map((p) => FIND[p]);
+const eps = (paths: string | string[]) => paths.map((p: string | number) => FIND[p]);
 /* a path may only break after a slash, never inside a word ("/order/{id}/capture") */
-const brk = (s, k = '') => s.split(/(?<=\/)/).flatMap((x, i) => (i ? [<wbr key={k + 'w' + i} />, x] : [x]));
+const brk = (s: string, k = '') => s.split(/(?<=\/)/).flatMap((x, i) => (i ? [<wbr key={k + 'w' + i} />, x] : [x]));
 // an endpoint is one run of text (copy checks read it whole); CSS lets it wrap anywhere on narrow screens
 const P = ({ p }) => <span>{p}</span>;
 
@@ -144,14 +145,20 @@ const P = ({ p }) => <span>{p}</span>;
 const Lock = () => <svg viewBox="0 0 24 24" width="1.4em" height="1.4em" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.4" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" fill="none" stroke="currentColor" strokeWidth="1.7" /></svg>;
 const Box = () => <svg viewBox="0 0 24 24" width="1.4em" height="1.4em" aria-hidden="true"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z M3.5 7.5 12 12l8.5-4.5 M12 12v9" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>;
 const Back = () => <svg viewBox="0 0 24 24" width="1.4em" height="1.4em" aria-hidden="true"><path d="M9 6 4 11l5 5 M4.5 11H14a5.5 5.5 0 0 1 0 11h-2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-function Glyph({ at }) {
+interface GlyphProps {
+  at: number;
+}
+function Glyph({ at }: GlyphProps) {
   if (at === 0) return <div className="cm-g-var">{['size', 'colour', 'price'].map((t) => <span key={t}>{t}</span>)}</div>;
   if (at === 1) return <div className="cm-g-cart"><span className="x-mono">cart</span><b className="x-mono">{'{id}'}</b></div>;
   if (at === 2) return <div className="cm-g-st"><Lock /><span>held</span></div>;
   if (at === 3) return <div className="cm-g-st"><Box /><span>captured</span></div>;
   return <div className="cm-g-st"><Back /><span>return</span></div>;
 }
-function Order({ at }) {
+interface OrderProps {
+  at: number;
+}
+function Order({ at }: OrderProps) {
   return (
     <div className={'cm-order s' + at}>
       <img src="/models/zen.webp" alt="" width="104" height="104" />
@@ -167,7 +174,10 @@ function Order({ at }) {
   );
 }
 
-const PauseIcon = ({ on }) => (on
+interface PauseIconProps {
+  on: boolean;
+}
+const PauseIcon = ({ on }: PauseIconProps) => (on
   ? <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 
@@ -257,14 +267,17 @@ const STOP_EP = [
 const STATUS = ['variant', 'cart', 'held', 'captured', 'return'];
 const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-function Board({ proc }) {
+interface BoardProps {
+  proc: string;
+}
+function Board({ proc }: BoardProps) {
   const [ref, live, calm] = useLive(0.3);
   const tilt = useEnter('tilt');
   const [rows, setRows] = useState([0, 1, 2, 3]);
   const [last, setLast] = useState(2);
   const [paused, setPaused] = useState(false);
   const [held, setHeld] = useState(false);
-  const move = (r) => { setRows((o) => o.map((s, j) => (j === r ? (s + 1) % 5 : s))); setLast(r); };
+  const move = (r: number) => { setRows((o) => o.map((s, j) => (j === r ? (s + 1) % 5 : s))); setLast(r); };
   useEffect(() => {
     if (!live || paused) return;
     const t = setTimeout(() => { if (held) setHeld(false); else move((last + 1) % 4); }, held ? 6000 : 2400);
@@ -332,7 +345,7 @@ const EpList = ({ list, group }) => (
 /* The ten nouns as a type index: point at one and its detail previews; open it and it becomes its endpoints. */
 function Nouns() {
   const [pv, setPv] = useState(0);
-  const over = (e) => { const li = e.target.closest?.('li'); if (li?.parentNode?.classList.contains('cm-index')) setPv([...li.parentNode.children].indexOf(li)); };
+  const over = (e: React.FocusEvent<HTMLDivElement, Element>) => { const li = e.target.closest?.('li'); if (li?.parentNode?.classList.contains('cm-index')) setPv([...li.parentNode.children].indexOf(li)); };
   const [t, d, p] = NOUNS[pv];
   return (
     <section ref={useEnter('cover')} className="bz-sec cm-nouns" aria-labelledby="cm-nouns-h">
@@ -437,9 +450,13 @@ const INTEG = [
 ];
 
 /* The processor is a setting: switch it, and the checkout call underneath does not change. */
-function Money({ pick, setPick }) {
+interface MoneyProps {
+  pick: number;
+  setPick: React.Dispatch<React.SetStateAction<number>>;
+}
+function Money({ pick, setPick }: MoneyProps) {
   const g = INTEG[0][1];
-  const key = (e) => {
+  const key = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
     if (!d) return;
     e.preventDefault();

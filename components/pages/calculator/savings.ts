@@ -11,7 +11,7 @@ export const NO_TOKENS = { input: 0, output: 0 };
 export const cost = (t, r) => t.input * r.input + t.output * r.output;
 
 /** The tokens a monthly spend buys at a rate, given the share of tokens that are output (0 to 1). Null where the rate prices nothing. */
-export function bought(spend, share, r) {
+export function bought(spend, share: number, r) {
   const each = (1 - share) * r.input + share * r.output;
   if (!(each > 0) || !(spend >= 0)) return null;
   const total = spend / each;
@@ -22,10 +22,10 @@ export function bought(spend, share, r) {
 export const gpus = (count, hourly) => count * hourly * HOURS;
 
 /** One minus `of` over `against`: what `of` saves against `against`. Null when `against` is nothing. */
-export const saves = (of, against) => (against > 0 ? 1 - of / against : null);
+export const saves = (of: number, against: number) => (against > 0 ? 1 - of / against : null);
 
 /** Where GPUs on all month cost what the same tokens cost at list: the monthly tokens, in millions, at the usage's own mix of input and output, and that as tokens a second around the clock. Null when the usage prices nothing. */
-export function even(monthly, usage, listed) {
+export function even(monthly: number, usage, listed) {
   const total = usage.input + usage.output;
   if (!(total > 0) || !(listed > 0)) return null;
   const millions = monthly / (listed / total);
@@ -36,19 +36,19 @@ export function even(monthly, usage, listed) {
 export const usd = (v) => `$${v.toLocaleString('en-US', v >= 100 || Number.isInteger(v) ? { maximumFractionDigits: 0 } : { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 /** A rate as the price list states it: every digit it gives. */
-export const rate = (v) => `$${v}`;
+export const rate = (v: number) => `$${v}`;
 
 /** A share as a whole percent. */
-export const percent = (v) => `${Math.round(v * 100)}%`;
+export const percent = (v: number) => `${Math.round(v * 100)}%`;
 
 /** The price list's date as an English reader dates it: 2026-11-09T01:51:19Z reads Nov 9, 2026. */
-export const day = (iso) => (iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : '–');
+export const day = (iso: string | number | Date) => (iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : '–');
 
 /** Millions of tokens as a reader says them: 500 million, 1.5 billion. */
-export const millions = (v) => (v >= 1000 ? `${(v / 1000).toLocaleString('en-US', { maximumFractionDigits: 2 })} billion` : `${v.toLocaleString('en-US', { maximumFractionDigits: 1 })} million`);
+export const millions = (v: number) => (v >= 1000 ? `${(v / 1000).toLocaleString('en-US', { maximumFractionDigits: 2 })} billion` : `${v.toLocaleString('en-US', { maximumFractionDigits: 1 })} million`);
 
 /** A number field's value, never below nothing. */
-export const amount = (v) => {
+export const amount = (v: string) => {
   const n = Number(v);
   return Number.isFinite(n) && n > 0 ? n : 0;
 };

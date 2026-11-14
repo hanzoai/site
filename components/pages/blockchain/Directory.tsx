@@ -25,15 +25,19 @@ import '../../v2/fam.css';
 import './blockchain.css';
 import './BlockPage.css';
 
-const KIND = { All: () => true, L1s: (k) => k === 'L1', L2s: (k) => k === 'L2', Rollups: (k) => /ROLLUP/i.test(k), 'Lux Ecosystem': (k) => /Lux/i.test(k), Cosmos: (k) => /COSMOS/i.test(k), Other: (k) => /OTHER/i.test(k) };
+const KIND = { All: () => true, L1s: (k: string) => k === 'L1', L2s: (k: string) => k === 'L2', Rollups: (k: string) => /ROLLUP/i.test(k), 'Lux Ecosystem': (k: string) => /Lux/i.test(k), Cosmos: (k: string) => /COSMOS/i.test(k), Other: (k: string) => /OTHER/i.test(k) };
 const SPRING = { duration: 0.3, ease: [0.16, 1, 0.3, 1] }; // MASTER 3.1: ease-emphasis 300 ms, no springs
 
-function Sheet({ c, onClose }) {
-  const x = useRef(null);
+interface SheetProps {
+  c: never;
+  onClose: () => void;
+}
+function Sheet({ c, onClose }: SheetProps) {
+  const x = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     const back = document.activeElement;
     x.current && x.current.focus({ preventScroll: true });
-    const key = (e) => { if (e.key === 'Escape') onClose(); };
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     addEventListener('keydown', key);
     document.documentElement.classList.add('x-lock');
     window.__lenis && window.__lenis.stop();

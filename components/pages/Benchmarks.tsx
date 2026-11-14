@@ -14,6 +14,8 @@
    no scroll scrub). Order: statement and race, figures, Zen 6, the GPQA frontier, Enso, Kai, platform, methods, shelf.
    V2: 8/10 signature race: a live race under the h1 at the real ratios, visitor-picked (prefill, decode, D-LSA by context length, agent CodeRace); sticky stage, pinned chapters and scroll wipes removed; five entrances; sheets stay fixed and inert when closed.
    Every word and figure is Hanzo's (hanzo.ai/benchmarks and its research API). */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
 import { EASE } from '../ui';
@@ -40,7 +42,7 @@ function useSeen(amount = 0.3) {
 
 
 function Seg({ opts, val, set, id, label }) {
-  const keys = (e) => {
+  const keys = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
     if (!k) return;
     e.preventDefault();
@@ -63,7 +65,7 @@ function Seg({ opts, val, set, id, label }) {
 /* CSV, JSON and a link to this view: what Hanzo's boards offer, kept. */
 function Tools({ name, rows, hash }) {
   const [ok, setOk] = useState(false);
-  const save = (type) => {
+  const save = (type: string) => {
     const cols = Object.keys(rows[0]);
     const body = type === 'csv'
       ? [cols.join(','), ...rows.map((r) => cols.map((c) => JSON.stringify(r[c] ?? '')).join(','))].join('\n')
@@ -105,7 +107,13 @@ const Chev = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="
 const Up = () => <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="m5 12 7-7 7 7M12 19V5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* The kit's one table (DataTable), fed from header and row arrays; the caption names it in Hanzo's words. */
-function Table({ head, rows, caption, className = '' }) {
+interface TableProps {
+  head: string[];
+  rows: string[][] | (string | number)[][] | (string | boolean | React.JSX.Element)[][] | (string | React.JSX.Element)[][] | ((string | number)[] | (string | React.JSX.Element)[])[] | ((string | number)[] | React.JSX.Element[])[];
+  caption: string;
+  className?: string;
+}
+function Table({ head, rows, caption, className = '' }: TableProps) {
   const cols = head.map((h, i) => ({ key: 'c' + i, label: h, num: i > 0 }));
   const objs = rows.map((r) => Object.fromEntries(r.map((c, i) => ['c' + i, c])));
   return <DataTable caption={caption} cols={cols} rows={objs} className={'xbm-dt ' + className} />;
@@ -114,7 +122,7 @@ function Table({ head, rows, caption, className = '' }) {
 /* A reading marker that walks the rows of a visual (first step 1.2s after it is seen, then one row every 1.8s), so each screen has one quiet live object.
    The lit row's band cross-fades in place (300ms ease-emphasis), so it never paints over a neighbour. Pointing at a row brings the marker to it (and the walk carries on from
    there); a press, or keyboard focus inside, holds it (WCAG 2.2.2 pause). Off screen and under reduced motion it rests. */
-function useWalk(n, on = true, ms = 1800) {
+function useWalk(n: number, on = true, ms = 1800) {
   const ref = useRef(null);
   const vis = useInView(ref, { amount: 0.3 });
   const calm = useReducedMotion();
@@ -134,7 +142,13 @@ function useWalk(n, on = true, ms = 1800) {
 
 /* A fold under a long list: the list shows its head, the press shows the rest (every row is in the HTML all along).
    It names only a count, so no words are added to Hanzo's. */
-function Fold({ n, open, set, controls }) {
+interface FoldProps {
+  n: number;
+  open: boolean;
+  set: React.Dispatch<React.SetStateAction<boolean>>;
+  controls: string;
+}
+function Fold({ n, open, set, controls }: FoldProps) {
   return (
     <button type="button" className="xbm-fold" aria-expanded={open} aria-controls={controls} onClick={() => set(!open)}>
       <i aria-hidden="true"><svg viewBox="0 0 16 16" width="13" height="13"><path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg></i>
@@ -144,11 +158,19 @@ function Fold({ n, open, set, controls }) {
 }
 
 /* The sheet's contents carry the page's scope (its colours and type), since a sheet lives outside the page. */
-const In = ({ children }) => <div className="xbm-in">{children}</div>;
+interface InProps {
+  children: ReactNode;
+}
+const In = ({ children }: InProps) => <div className="xbm-in">{children}</div>;
 
 /* The buying action that stands beside every result, in Hanzo's own words: Start on Hanzo Cloud, and either the price
    list or the Go plan (go). */
-function Buy({ id, go, className = '' }) {
+interface BuyProps {
+  id: string;
+  go?: boolean;
+  className?: string;
+}
+function Buy({ id, go, className = '' }: BuyProps) {
   return (
     <div className={'xbm-buy ' + className}>
       <Cta to="https://platform.hanzo.ai" id={'benchmarks.' + id} size="sm">Start on Hanzo Cloud</Cta>
@@ -179,7 +201,7 @@ function Tabs({ id, label, tabs, className = '', aside }) {
     addEventListener('hashchange', open);
     return () => { offs.forEach((f) => f && f()); removeEventListener('hashchange', open); };
   }, []);
-  const keys = (e) => {
+  const keys = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const k = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 1, ArrowUp: -1 }[e.key];
     if (!k) return;
     e.preventDefault();
@@ -211,8 +233,8 @@ function Tabs({ id, label, tabs, className = '', aside }) {
 function Scatter({ pts, x0, x1, y0, y1, xt, yt, w = 640, h = 420, xLab, yLab, auto, labels, title, amount = 0.35, lead = 2200 }) {
   const P = { l: 44, r: 18, t: 16, b: 46 };
   // rounded: Math.log differs in the last digit between the server and the browser, which breaks hydration
-  const X = (c) => Math.round((P.l + ((Math.log(c) - Math.log(x0)) / (Math.log(x1) - Math.log(x0))) * (w - P.l - P.r)) * 10) / 10;
-  const Y = (a) => Math.round((h - P.b - ((a - y0) / (y1 - y0)) * (h - P.t - P.b)) * 10) / 10;
+  const X = (c: number) => Math.round((P.l + ((Math.log(c) - Math.log(x0)) / (Math.log(x1) - Math.log(x0))) * (w - P.l - P.r)) * 10) / 10;
+  const Y = (a: number) => Math.round((h - P.b - ((a - y0) / (y1 - y0)) * (h - P.t - P.b)) * 10) / 10;
   const byCost = useMemo(() => pts.map((p, i) => ({ ...p, i })).sort((a, b) => a.cost - b.cost), [pts]);
   const front = useMemo(() => { let best = -1; return byCost.filter((p) => (p.acc > best ? ((best = p.acc), true) : false)); }, [byCost]);
   const d = front.map((p, i) => (i ? `H${X(p.cost).toFixed(1)}V${Y(p.acc).toFixed(1)}` : `M${X(p.cost).toFixed(1)} ${Y(p.acc).toFixed(1)}`)).join('') + `H${w - P.r}`;
@@ -373,7 +395,7 @@ function Rail() {
   const [dark, setDark] = useState(false);
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // scroll-spy reads just under the 116px stacked header + rail; dark tracks whether the Zen 6 room physically sits behind the 56px rail
     const io = new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? setAt(e.target.id) : setAt((a) => (a === e.target.id ? '' : a)))), { rootMargin: '-128px 0px -65% 0px' });
@@ -387,7 +409,7 @@ function Rail() {
     syncDark();
     window.addEventListener('scroll', syncDark, { passive: true });
     window.addEventListener('resize', syncDark);
-    const key = (e) => {
+    const key = (e: KeyboardEvent) => {
       if (e.key === '/' && !/input|textarea/i.test(document.activeElement?.tagName || '')) { e.preventDefault(); setOpen(true); }
       if (e.key === 'Escape') setOpen(false);
     };
@@ -397,7 +419,7 @@ function Rail() {
   useEffect(() => {
     if (!open) return;
     box.current?.querySelector('input')?.focus();
-    const out = (e) => { if (!box.current?.contains(e.target)) setOpen(false); };
+    const out = (e: PointerEvent) => { if (!box.current?.contains(e.target)) setOpen(false); };
     document.addEventListener('pointerdown', out);
     return () => document.removeEventListener('pointerdown', out);
   }, [open]);
@@ -516,7 +538,11 @@ function Enso() {
 }
 
 /* ---------- 4. Kai: sixteen of sixteen ---------- */
-function Duel({ r, i }) {
+interface DuelProps {
+  r: { bars: number[]; t: string; data: string[][]; kai: string; jev: string; runs: string[]; re: string; line?: undefined; note?: undefined; low?: undefined; cost?: undefined; } | { bars: number[]; t: string; line: string; kai: string; jev: string; runs: string[]; re: string; data?: undefined; note?: undefined; low?: undefined; cost?: undefined; } | { bars: number[]; t: string; line: string; note: string; kai: string; jev: string; runs: string[]; re: string; data?: undefined; low?: undefined; cost?: undefined; } | { bars: number[]; t: string; low: boolean; data: string[][]; note: string; kai: string; jev: string; runs: string[]; re: string; line?: undefined; cost?: undefined; } | { bars: number[]; t: string; cost: boolean; note: string; kai: string; jev: string; data?: undefined; runs?: undefined; re?: undefined; line?: undefined; low?: undefined; };
+  i: number;
+}
+function Duel({ r, i }: DuelProps) {
   const [ref, seen] = useSeen(0.4);
   const runs = r.runs ? [['kai-1.4 run', D.runUrl(r.runs[0])], ['Jev run', D.runUrl(r.runs[1])], ['re-run', r.re]] : D.COST_LINKS;
   return (
@@ -584,17 +610,17 @@ function Kai() {
 }
 
 /* ---------- 5. the board: try it ---------- */
-const fmtE = (v) => v.toFixed(4);
+const fmtE = (v: string | number) => v.toFixed(4);
 /* each suite's own page (the index's Kai list), so a row opens to its full numbers */
-const kaiPage = (t) => (D.PAGES.find(([p]) => p === 'Kai')?.[2].find(([n]) => t === n || t.startsWith(n + ',')) || [])[1];
+const kaiPage = (t: string | number) => (D.PAGES.find(([p]) => p === 'Kai')?.[2].find(([n]) => t === n || t.startsWith(n + ',')) || [])[1];
 function Board() {
   const [metric, setMetric] = useState('Accuracy');
   const [view, setView] = useState('Chart');
   const [sort, setSort] = useState('Largest lead');
   const [mine, setMine] = useState([]);
-  const pickS = (t) => setMine((m) => (m.includes(t) ? m.filter((x) => x !== t) : [...m, t]));
+  const pickS = (t: string | number) => setMine((m) => (m.includes(t) ? m.filter((x) => x !== t) : [...m, t]));
   const sub = D.BOARD.filter((b) => mine.includes(b.t));
-  const avg = (k) => (Math.floor((sub.reduce((a, b) => a + b[k], 0) / sub.length) * 10) / 10).toFixed(1); // Hanzo's 84.4 is 84.46 cut, not rounded
+  const avg = (k: string) => (Math.floor((sub.reduce((a, b) => a + b[k], 0) / sub.length) * 10) / 10).toFixed(1); // Hanzo's 84.4 is 84.46 cut, not rounded
   useEffect(() => {
     const q = new URLSearchParams(location.search);
     if (q.get('metric') === 'ece') setMetric('Calibration error');
@@ -603,7 +629,7 @@ function Board() {
     if (s) setSort(s);
   }, []);
   // the view is kept in the address, as on Hanzo's board
-  const keep = (k, v, dflt) => { const q = new URLSearchParams(location.search); v === dflt ? q.delete(k) : q.set(k, v); const s = q.toString(); history.replaceState(null, '', location.pathname + (s ? '?' + s : '') + location.hash); };
+  const keep = (k: string, v: string, dflt: string) => { const q = new URLSearchParams(location.search); v === dflt ? q.delete(k) : q.set(k, v); const s = q.toString(); history.replaceState(null, '', location.pathname + (s ? '?' + s : '') + location.hash); };
   const setM = (v) => { setMetric(v); keep('metric', v === 'Accuracy' ? '' : 'ece', ''); };
   const setV = (v) => { setView(v); keep('view', v.toLowerCase(), 'chart'); };
   const setS = (v) => { setSort(v); keep('sort', { 'Largest lead': '', Kai: 'kai', Jev: 'jev', Name: 'name' }[v], ''); };
@@ -678,7 +704,7 @@ function Board() {
   );
 }
 
-const SRC = (what, extra) => `api.hanzo.ai/v1/research/runs?org=hanzo · ${what} · Kai kai-1.4@c1856a77 · ${extra} · measured 2026-10-16`;
+const SRC = (what: string, extra: string) => `api.hanzo.ai/v1/research/runs?org=hanzo · ${what} · Kai kai-1.4@c1856a77 · ${extra} · measured 2026-10-16`;
 const EVID = ['Ahead of Jev at 4, 16 and 77 options', 'The same request, answered three times', 'The frozen harness, the suites Kai leads', 'The languages of the multilingual suite Kai leads on'];
 
 function Evidence() {
@@ -754,7 +780,10 @@ function PairPanel({ t, to, foot, rows, a = 'BM25', b = 'shortlist', paired, on,
   );
 }
 
-function ToolTable({ x }) {
+interface ToolTableProps {
+  x: { h: string; bench: string; split: string; note: string; cols: string[]; rows: string[][]; } | { bench: string; split: string; note: string; cols: string[]; rows: string[][]; h?: undefined; };
+}
+function ToolTable({ x }: ToolTableProps) {
   return (
     <div className="xbm-tool">
       {x.h && <h4>{x.h}</h4>}
@@ -766,7 +795,7 @@ function ToolTable({ x }) {
 }
 
 /* ---------- 6. Kai, beyond the suites: seven pinned chapters ---------- */
-const pct = (s) => { const m = String(s).match(/\(([\d.]+)%\)/); return m ? parseFloat(m[1]) : 0; };
+const pct = (s: string) => { const m = String(s).match(/\(([\d.]+)%\)/); return m ? parseFloat(m[1]) : 0; };
 
 function VisYesNo({ on }) {
   const [ref, w, hold, pick] = useWalk(D.YESNO.length, on);
@@ -809,7 +838,7 @@ function VisShort() {
   let o = 0;
   return (
     <div className={'xbm-vis-pp s' + (w & 1)} ref={ref} {...hold}>
-      {D.SHORTLIST.map((s) => { const off = o; o += s.rows.length; return <PairPanel key={s.t} t={s.t} to="#shortlist" foot={s.foot} rows={s.rows} lit={w - off} pick={(i) => pick(off + i)} />; })}
+      {D.SHORTLIST.map((s) => { const off = o; o += s.rows.length; return <PairPanel key={s.t} t={s.t} to="#shortlist" foot={s.foot} rows={s.rows} lit={w - off} pick={(i: number) => pick(off + i)} />; })}
     </div>
   );
 }
@@ -986,11 +1015,11 @@ function KaiTools() {
 /* ---------- 7. Zen 6: the dark room, three chapters; scrolling the second sweeps the context dial ---------- */
 function Dial({ progress, on = true, from = 1 / 3, to = 2 / 3 }) {
   const [at, setAt] = useState(6);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const last = useRef(0);
   const calm = useReducedMotion();
   const [hold, setHold] = useState(false);
-  useMotionValueEvent(progress, 'change', (p) => {
+  useMotionValueEvent(progress, 'change', (p: number) => {
     last.current = Date.now();
     const l = (p - from) / (to - from);
     if (l < 0 || l > 1) return;
@@ -1124,7 +1153,7 @@ function Zen() {
 function Lane({ k, name, x, p, running, figs, desc, tone }) {
   const xr = useRef(x);
   xr.current = x;
-  const mv = useTransform(p, (v) => {
+  const mv = useTransform(p, (v: number) => {
     const { ms, latency } = xr.current;
     if (v >= 1) return latency;
     const t = v * ms;
@@ -1150,8 +1179,8 @@ function Race() {
   const p = [useMotionValue(1), useMotionValue(1), useMotionValue(1)];
   const totRef = useRef(0);
   totRef.current = D.RACE[at].trad.tokens;
-  const tok = useTransform(p[2], (v) => Math.round(v * totRef.current).toLocaleString('en-US'));
-  const box = useRef(null);
+  const tok = useTransform(p[2], (v: number) => Math.round(v * totRef.current).toLocaleString('en-US'));
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { once: true, amount: 0.5 });
   const calm = useReducedMotion();
   const ctl = useRef([]);
@@ -1162,17 +1191,17 @@ function Race() {
     p.forEach((m) => m.set(0));
     setRunning(true);
     // real ratios: the slowest lane takes 6s and every other lane its own latency's share of that
-    const T = 6, dur = (ms) => Math.max(0.0001, (ms / sc.trad.ms) * T);
+    const T = 6, dur = (ms: number) => Math.max(0.0001, (ms / sc.trad.ms) * T);
     ctl.current = [
       animate(p[0], 1, { duration: dur(sc.hanzo.ms), ease: 'linear' }),
       animate(p[1], 1, { duration: dur(sc.rag.ms), ease: 'linear' }),
-      animate(p[2], 1, { duration: T, ease: 'linear', onUpdate: (v) => setStepI(Math.min(sc.trad.steps.length - 1, Math.floor(v * sc.trad.steps.length))), onComplete: () => setRunning(false) }),
+      animate(p[2], 1, { duration: T, ease: 'linear', onUpdate: (v: number) => setStepI(Math.min(sc.trad.steps.length - 1, Math.floor(v * sc.trad.steps.length))), onComplete: () => setRunning(false) }),
     ];
   };
   useEffect(() => { if (seen) run(); }, [seen]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => ctl.current.forEach((c) => c.stop()), []);
-  const pick = (i) => { ctl.current.forEach((c) => c.stop()); setRunning(false); p.forEach((m) => m.set(1)); setAt(i); };
-  const speed = (ms) => (sc.trad.ms / ms > 1000 ? '100×+' : Math.round(sc.trad.ms / ms) + '×');
+  const pick = (i: number) => { ctl.current.forEach((c) => c.stop()); setRunning(false); p.forEach((m) => m.set(1)); setAt(i); };
+  const speed = (ms: number) => (sc.trad.ms / ms > 1000 ? '100×+' : Math.round(sc.trad.ms / ms) + '×');
   return (
     <div className="xbm-race" ref={box}>
       <div className="xbm-race-top">
@@ -1238,24 +1267,24 @@ function Race() {
    scenarios at their latencies' ratios. Every lane's figure is Hanzo's own, read out when it finishes. Reduced motion:
    every lane rests at its finish; picking still works. */
 const TRACKS = ['Prefill, tokens a second', 'Decode, tokens a second', 'Latent Sparse Attention (D-LSA) prefill speedup', 'Latent Sparse Attention (D-LSA) decode speedup', 'Agent Code Intelligence: The Race'];
-const n0 = (v) => Math.round(v).toLocaleString('en-US');
+const n0 = (v: number) => Math.round(v).toLocaleString('en-US');
 const TONE = ['me', 'mid', 'slow'];
 
-function lanesFor(t, li) {
+function lanesFor(t: number, li: number) {
   if (t < 2) {
     const [lab, col] = t === 0 ? [1, 2] : [3, 4];
     const top = Math.max(...D.HW.map((h) => h[col]));
-    return D.HW.map((h, i) => ({ name: h[0], secs: top / h[col], count: (v) => n0(v * top) + ' tokens', final: h[lab], tone: TONE[i] }));
+    return D.HW.map((h, i) => ({ name: h[0], secs: top / h[col], count: (v: number) => n0(v * top) + ' tokens', final: h[lab], tone: TONE[i] }));
   }
   const r = D.LSA[li], pre = t === 2, x = pre ? r[3] : r[5], T = 6;
   return [
-    { k: 'D-LSA', name: r[1], secs: T / x, count: (v) => Math.round(v * 100) + '%', final: pre ? r[2] : r[4], tone: 'me' },
-    { k: 'Full Attention', name: 'against full attention', secs: T, count: (v) => Math.round(v * 100) + '%', final: '1.00×', tone: 'slow' },
+    { k: 'D-LSA', name: r[1], secs: T / x, count: (v: number) => Math.round(v * 100) + '%', final: pre ? r[2] : r[4], tone: 'me' },
+    { k: 'Full Attention', name: 'against full attention', secs: T, count: (v: number) => Math.round(v * 100) + '%', final: '1.00×', tone: 'slow' },
   ];
 }
 
 function TrackLane({ k, name, p, count, final, tone }) {
-  const txt = useTransform(p, (v) => (v >= 1 ? final : count(v)));
+  const txt = useTransform(p, (v: number) => (v >= 1 ? final : count(v)));
   return (
     <div className={'xbm-lane ' + tone}>
       <div className="xbm-lane-h">
@@ -1273,7 +1302,7 @@ function RaceTrack() {
   const [li, setLi] = useState(6);
   const [running, setRunning] = useState(false);
   const p = [useMotionValue(1), useMotionValue(1), useMotionValue(1)];
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { once: true, amount: 0.3 });
   const live = useInView(box, { amount: 0.05 });
   const calm = useReducedMotion();
@@ -1293,7 +1322,7 @@ function RaceTrack() {
     else { ctl.current.forEach((c) => c.stop()); p.forEach((m) => m.set(1)); setRunning(false); }
   }, [seen, live, t, li]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => ctl.current.forEach((c) => c.stop()), []);
-  const keys = (e) => {
+  const keys = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
     if (!k) return;
     e.preventDefault();
@@ -1347,7 +1376,7 @@ function RaceTrack() {
 function Graph() {
   const [ref, seen] = useSeen(0.4);
   // log scale: 0.063 ms against 5,357 ms
-  const Lg = (v) => (Math.log10(v) + 2) / (Math.log10(5357) + 2);
+  const Lg = (v: string | number) => (Math.log10(v) + 2) / (Math.log10(5357) + 2);
   return (
     <div className="xbm-graph" ref={ref}>
       {[['0.063 ms', 0.063, 'Hanzo graph, through the API', 'acc'], ['5,357 ms', 5357, 'Semantica temporal query', '']].map(([v, n, t, tone], i) => (
@@ -1531,20 +1560,20 @@ function Methods() {
 
 /* ---------- 11. the shelf: every run, re-ordering, filtering and comparing ---------- */
 const ORDERS = ['Newest', 'Largest lead', 'Benchmark', 'Value'];
-const month = (d) => d.replace(/ \d+,/, '');
+const month = (d: string) => d.replace(/ \d+,/, '');
 const KEYOF = { product: 'product', category: 'category', measure: 'measure', by: () => 'Hanzo', date: (r) => month(r.date), state: 'status', result: 'result' };
-const valOf = (r, k) => (typeof KEYOF[k] === 'function' ? KEYOF[k](r) : r[KEYOF[k]]);
+const valOf = (r: { id: string; to: string; t: string; sys: string; product: string; category: string; measure: string; val: string; base: string; result: string; date: string; status: string; i: number; v: number; }, k: string) => (typeof KEYOF[k] === 'function' ? KEYOF[k](r) : r[KEYOF[k]]);
 const lead = (r) => { const m = r.base.match(/baseline ([\d.]+)/); return m ? r.v / parseFloat(m[1]) : 0; };
 
 function Shelf() {
   const [order, setOrder] = useState('Newest');
-  const [f, setF] = useState({});
+  const [f, setF] = useState<{} | {} | {}>({});
   const [q, setQ] = useState('');
   const [open, setOpen] = useState(false);
   const [pick, setPick] = useState([]);
   const [all, setAll] = useState(false);
   const [ix, setIx] = useState(false);
-  const apply = (search) => {
+  const apply = (search: string | string[][] | Record<string, string> | URLSearchParams | undefined) => {
     const s = new URLSearchParams(search);
     const n = {};
     for (const k of Object.keys(KEYOF)) { const v = s.getAll(k); if (v.length) n[k] = v.map((x) => (k === 'state' ? x[0].toUpperCase() + x.slice(1) : x)); }
@@ -1553,7 +1582,7 @@ function Shelf() {
     setOrder(o || 'Newest');
   };
   useEffect(() => { apply(location.search); }, []);
-  const go = (e, to) => {
+  const go = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, to: string | string[][]) => {
     e.preventDefault();
     apply(to.split('#')[0]);
     history.replaceState(null, '', location.pathname + to.split('#')[0] + '#all');
@@ -1562,14 +1591,14 @@ function Shelf() {
     if (window.__lenis) window.__lenis.scrollTo(el, { offset: -(parseFloat(getComputedStyle(el).scrollMarginTop) || 124) });
     else el.scrollIntoView({ behavior: 'smooth' });
   };
-  const toggle = (k, v) => setF((o) => { const cur = o[k] || []; const nx = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v]; const c = { ...o, [k]: nx }; if (!nx.length) delete c[k]; return c; });
+  const toggle = (k: string | (string | number)[][], v) => setF((o) => { const cur = o[k] || []; const nx = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v]; const c = { ...o, [k]: nx }; if (!nx.length) delete c[k]; return c; });
   const rows = useMemo(() => {
     const t = q.trim().toLowerCase();
     const r = D.SHELF.filter((x) => Object.entries(f).every(([k, vs]) => vs.includes(valOf(x, k))) && (!t || [x.t, x.sys, x.product, x.category, x.measure].join(' ').toLowerCase().includes(t)));
     const by = { Newest: (a, b) => new Date(b.date) - new Date(a.date) || a.i - b.i, 'Largest lead': (a, b) => lead(b) - lead(a), Benchmark: (a, b) => a.t.localeCompare(b.t) || a.i - b.i, Value: (a, b) => b.v - a.v };
     return [...r].sort(by[order]);
   }, [f, q, order]);
-  const sel = (r) => setPick((p) => (p.includes(r.id) ? p.filter((x) => x !== r.id) : p.length && D.SHELF.find((x) => x.id === p[0]).t !== r.t ? [r.id] : [...p, r.id]));
+  const sel = (r: { id: string; to: string; t: string; sys: string; product: string; category: string; measure: string; val: string; base: string; result: string; date: string; status: string; i: number; v: number; }) => setPick((p) => (p.includes(r.id) ? p.filter((x) => x !== r.id) : p.length && D.SHELF.find((x) => x.id === p[0]).t !== r.t ? [r.id] : [...p, r.id]));
   const picked = D.SHELF.filter((x) => pick.includes(x.id));
   const pmax = Math.max(...picked.map((x) => x.v), 1);
   const nf = Object.values(f).flat().length;

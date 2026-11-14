@@ -6,15 +6,16 @@
    5 diagonal-wipe (the closing band).
    Start states are scoped to html.js (set before first paint whenever scripts run) and to no-preference motion, so the
    server HTML, JS-off and reduced-motion visitors always see everything. Markup is the same on server and client. */
+import type React from 'react';
 import { useEffect } from 'react';
 
-export function useEnter(root) {
+export function useEnter(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const host = root.current;
     if (!host || typeof IntersectionObserver === 'undefined') return;
     const items = [...host.querySelectorAll('[data-enter]')];
     let px = innerWidth / 2;
-    const track = (e) => { px = e.clientX; };
+    const track = (e: PointerEvent) => { px = e.clientX; };
     addEventListener('pointermove', track, { passive: true });
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting) return;

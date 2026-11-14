@@ -33,6 +33,7 @@
    V2: 8/10 grey deck for every member (no hue); tags under the title; hero sheet with the contents plate fully in the
    first screen at 1470×801, alive on arrival; chapters read with JS off (html.js scoped); the why and apply rooms each
    hold a drifting contour; three-step apply in the dark room; sibling roles drag and open. No sticky ask (careers). */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { EASE, Magnetic } from '../ui';
@@ -49,11 +50,18 @@ import { answers, problem, send } from './Careers.apply';
 import '../v2/fam.css';
 import './CareerRole.css';
 
-const nn = (i) => String(i).padStart(2, '0');
-const Arrow = ({ back }) => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={back ? { transform: 'scaleX(-1)' } : undefined}><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const nn = (i: number) => String(i).padStart(2, '0');
+interface ArrowProps {
+  back?: boolean;
+}
+const Arrow = ({ back }: ArrowProps) => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={back ? { transform: 'scaleX(-1)' } : undefined}><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* a tick that draws itself when you mark a line */
-function Box({ on, soft }) {
+interface BoxProps {
+  on: boolean;
+  soft: boolean;
+}
+function Box({ on, soft }: BoxProps) {
   return (
     <svg className={'xcj-box' + (soft ? ' soft' : '')} viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
       <circle cx="12" cy="12" r="10.5" fill="none" strokeWidth="1.4" className="xcj-box-o" />
@@ -65,8 +73,8 @@ function Box({ on, soft }) {
 
 /* the application, three steps at a time; it files what the form on hanzo.ai files: the resume, then the lead */
 function Steps({ f, role }) {
-  const form = useRef(null);
-  const file = useRef(null);
+  const form = useRef<HTMLFormElement>(null);
+  const file = useRef<HTMLInputElement>(null);
   const [at, setAt] = useState(0);
   const [state, setState] = useState('idle'); // idle | sending | sent
   const [err, setErr] = useState('');
@@ -78,13 +86,13 @@ function Steps({ f, role }) {
   const groups = [[0, Math.min(2, cut)], [Math.min(2, cut), cut], [cut, n]];
   const steps = groups.map(([a, b]) => f.fields.slice(a, b).map((x, k) => [x, a + k]));
   const last = steps.length - 1;
-  const inStep = (k) => [...form.current.querySelectorAll(`[data-step="${k}"] input, [data-step="${k}"] textarea`)];
-  const check = (k) => { const bad = inStep(k).find((el) => !el.checkValidity()); if (bad) { bad.reportValidity(); return false; } return true; };
-  const go = (k) => {
+  const inStep = (k: number) => [...form.current!.querySelectorAll(`[data-step="${k}"] input, [data-step="${k}"] textarea`)];
+  const check = (k: number) => { const bad = inStep(k).find((el) => !el.checkValidity()); if (bad) { bad.reportValidity(); return false; } return true; };
+  const go = (k: number) => {
     setAt(k);
     setTimeout(() => { const el = inStep(k)[0]; el && el.focus({ preventScroll: true }); }, 380);
   };
-  const submit = async (e) => {
+  const submit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (state === 'sending') return;
     if (at < last) { if (check(at)) go(at + 1); return; }
@@ -171,7 +179,7 @@ export default function CareerRole({ role, no, peers = [] }) {
     setCopied(true); setTimeout(() => setCopied(false), 1800);
   };
   // the contents plate opens a chapter: on a desktop the chapter's place in the pinned scene, on a phone its heading
-  const open = (k) => (e) => {
+  const open = (k: number) => (e) => {
     e.preventDefault();
     const sec = document.getElementById('xcj-book');
     if (!sec) return;
@@ -181,7 +189,7 @@ export default function CareerRole({ role, no, peers = [] }) {
     window.__lenis ? window.__lenis.scrollTo(top, { duration: 1.2 }) : scrollTo({ top, behavior: 'smooth' });
   };
   const toc = [...chapters.map((b) => b.title), ...(why ? [why.title] : []), role.form.title];
-  const tocAt = (i) => (i < chapters.length ? open(i) : undefined);
+  const tocAt = (i: number) => (i < chapters.length ? open(i) : undefined);
   const items = chapters.map((b, ci) => {
     const isList = b.items.length > 0;
     const soft = b.title === 'Nice to Have';

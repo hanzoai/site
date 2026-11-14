@@ -16,6 +16,8 @@
    Motion budget: signature = the pointer and the walking parser; supporting = Stage (Settle, page-local), Open (packets as sheets),
    typing (the terminal). No springs. Colour: none (0 UI hues): the pointer and the walked text are white and silver in the
    dark room. Pause buttons sit in each object's own bar or control row. One dark room: the hero. Every word and link is Hanzo's. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { VSkew, Curl, Trail, Drop, Swing } from './zap/Enter';
@@ -39,16 +41,16 @@ const POINTS = [['No parse', 'Read it where it landed.'], ['A 16-byte header', '
 function Wire({ pick, auto, live }) {
   const f = FIELDS[pick];
   const target = JSON_TXT.indexOf('"' + f[0] + '"');
-  const seen = useRef(null), cur = useRef(null), rest = useRef(null), count = useRef(null);
+  const seen = useRef<HTMLSpanElement>(null), cur = useRef<HTMLSpanElement>(null), rest = useRef<HTMLSpanElement>(null), count = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     // the JSON reader walks the text up to the field, one character at a time; written straight to the text nodes
     const len = f[0].length + 2;
-    const draw = (i) => {
+    const draw = (i: number) => {
       if (!seen.current) return;
       seen.current.textContent = JSON_TXT.slice(0, i);
-      cur.current.textContent = JSON_TXT.slice(i, i + len);
-      rest.current.textContent = JSON_TXT.slice(i + len);
-      count.current.textContent = i + (i === 1 ? ' character walked' : ' characters walked');
+      cur.current!.textContent = JSON_TXT.slice(i, i + len);
+      rest.current!.textContent = JSON_TXT.slice(i + len);
+      count.current!.textContent = i + (i === 1 ? ' character walked' : ' characters walked');
     };
     let i = 0, t = 0;
     // walks again from the start while it is seen: the parser pays this on every message
@@ -88,7 +90,7 @@ function Wire({ pick, auto, live }) {
 
 /* Steps that run while seen; a choice holds its step, then the walk takes over again after 8 s untouched, so the
    points and the wire never stop for good after one tap (page-local; the shared useSteps holds forever). */
-function useStepsBack(n, ms, live, back = 8000) {
+function useStepsBack(n: number, ms: number, live, back = 8000) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(0);
   useEffect(() => {
@@ -167,13 +169,16 @@ const WHY = [
 ];
 
 /* Each reason is a packet: a sixteen-byte header, filled a little more on every packet; the packet that lands fills it all. */
-const Hdr = ({ n }) => <span className="zp-hdr" aria-hidden="true">{Array.from({ length: 16 }).map((_, b) => <i key={b} className={b < 2 + n ? 'f' : ''} style={{ '--b': b }} />)}</span>;
+interface HdrProps {
+  n: number;
+}
+const Hdr = ({ n }: HdrProps) => <span className="zp-hdr" aria-hidden="true">{Array.from({ length: 16 }).map((_, b) => <i key={b} className={b < 2 + n ? 'f' : ''} style={{ '--b': b }} />)}</span>;
 
 /* Why bother: no pinned stage (the map gives /zap no split scene). The eight packets sit as a plain grid on wide screens
    and a swipe rail on phones; they arrive behind a cursor trail (Trail). The packet you point at, focus or swipe to
    lands (its header fills) and the caption counts 01 / 08. */
 function Why() {
-  const track = useRef(null);
+  const track = useRef<HTMLDivElement>(null);
   const [on, setOn] = useState(0);
   useEffect(() => {
     // on the rail (phone), the packet nearest the left edge is the one that has landed
@@ -183,7 +188,7 @@ function Why() {
     return () => ul.removeEventListener('scroll', f);
   }, []);
   useEffect(() => { track.current?.querySelectorAll('.zp-packets > li').forEach((li, i) => li.classList.toggle('on', i === on)); }, [on]);
-  const pick = (e) => { const li = e.target.closest?.('.zp-packets > li'); if (!li) return; const i = [...li.parentElement.children].indexOf(li); if (i >= 0) { setOn(i); setMine(true); } };
+  const pick = (e: React.PointerEvent<HTMLDivElement>) => { const li = e.target.closest?.('.zp-packets > li'); if (!li) return; const i = [...li.parentElement.children].indexOf(li); if (i >= 0) { setOn(i); setMine(true); } };
   // on the grid (desktop) the packets land in turn by themselves while the grid is on screen, so it is never a still
   // wall; pointing at, focusing or swiping to one hands it over (and the walk resumes after the pointer leaves)
   const [wref, live] = useLive(0.35);
@@ -276,18 +281,18 @@ const SERVERS = ['github', 'slack', 'db'];
 
 /* A drawn slider (no browser control): drag the track, or arrows / Page keys / Home / End. */
 function Slide({ n, set }) {
-  const tr = useRef(null);
+  const tr = useRef<HTMLDivElement>(null);
   const [press, setPress] = useState(false); // pointer capture drops :active, so the press is a state
-  const clamp = (v) => Math.max(1, Math.min(100, v));
-  const at = (x) => { const r = tr.current.getBoundingClientRect(); return clamp(Math.round(1 + ((x - r.left) / r.width) * 99)); };
-  const key = (e) => {
+  const clamp = (v: number) => Math.max(1, Math.min(100, v));
+  const at = (x: number) => { const r = tr.current!.getBoundingClientRect(); return clamp(Math.round(1 + ((x - r.left) / r.width) * 99)); };
+  const key = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const d = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 10, PageDown: -10 }[e.key];
     if (d) { e.preventDefault(); set(clamp(n + d)); } else if (e.key === 'Home') { e.preventDefault(); set(1); } else if (e.key === 'End') { e.preventDefault(); set(100); }
   };
   return (
     <div ref={tr} className="zp-slide" role="slider" tabIndex={0} aria-label="Agents you run" aria-valuemin={1} aria-valuemax={100} aria-valuenow={n}
       data-press={press ? '' : undefined}
-      onPointerDown={(e) => { tr.current.setPointerCapture(e.pointerId); setPress(true); set(at(e.clientX)); }} onPointerMove={(e) => { if (e.buttons) set(at(e.clientX)); }}
+      onPointerDown={(e) => { tr.current!.setPointerCapture(e.pointerId); setPress(true); set(at(e.clientX)); }} onPointerMove={(e) => { if (e.buttons) set(at(e.clientX)); }}
       onPointerUp={() => setPress(false)} onPointerCancel={() => setPress(false)} onLostPointerCapture={() => setPress(false)} onKeyDown={key}
       style={{ '--v': (n - 1) / 99 }}>
       <i className="zp-slide-t"><em /></i><b className="zp-slide-k" />
@@ -301,10 +306,10 @@ function Slide({ n, set }) {
 function Fleet({ n, setN, srv, setSrv, setMine, live, paused, pauseBtn }) {
   const m = srv.length;
   const side = n * m;
-  const box = (k, cls) => Array.from({ length: k }).map((_, i) => <i key={i} className={cls} style={{ '--s': i % 3 }} />);
+  const box = (k: number, cls: string) => Array.from({ length: k }).map((_, i) => <i key={i} className={cls} style={{ '--s': i % 3 }} />);
   // the sidecar squares take the largest size at which every process still fits the box (108px tall), so a small
   // fleet fills it with big squares and a large one packs small ones; the box itself never changes height
-  const procs = useRef(null);
+  const procs = useRef<HTMLDivElement>(null);
   const [bw, setBw] = useState(480);
   useEffect(() => {
     const el = procs.current; if (!el) return;
@@ -315,7 +320,7 @@ function Fleet({ n, setN, srv, setSrv, setMine, live, paused, pauseBtn }) {
   // four sizes only, so the squares re-pack at a few counts rather than on every step
   let sz = 10;
   for (const s of [48, 30, 20, 14]) { const cols = Math.max(1, Math.floor((bw + 4) / (s + 4))); if (Math.ceil(Math.min(side, 300) / cols) * (s + 4) - 4 <= 108) { sz = s; break; } }
-  const toggle = (s) => { setMine(true); setSrv((cur) => (cur.includes(s) ? (cur.length > 1 ? cur.filter((x) => x !== s) : cur) : SERVERS.filter((x) => x === s || cur.includes(x)))); };
+  const toggle = (s: string) => { setMine(true); setSrv((cur: string[]) => (cur.includes(s) ? (cur.length > 1 ? cur.filter((x: string) => x !== s) : cur) : SERVERS.filter((x) => x === s || cur.includes(x)))); };
   return (
     <div className="zp-fleet w2-object">
       <div className="zp-fleet-k">
@@ -356,7 +361,7 @@ function Wires({ d, late, seen }) {
 
 /* Hanzo's gateway diagram, drawn: the same words as the ASCII (kept in the HTML, hidden, for the record). */
 function Diagram({ n = 4, srv = SERVERS }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
   // the calculator re-plans it: the agent boxes light up to the count you set, and a server you switch off goes quiet
   const off = { GitHub: !srv.includes('github'), Slack: !srv.includes('slack') };
@@ -383,7 +388,7 @@ function Diagram({ n = 4, srv = SERVERS }) {
    figures all re-plan at once. Until you take it, the swarm grows by itself. */
 function Built() {
   // the scale moment: N:1 and 1:M arrive at hero size, hold, then settle to figure size (the 0 stays medium, MASTER part 5)
-  const stats = useRef(null);
+  const stats = useRef<HTMLUListElement>(null);
   const seen = useInView(stats, { once: true, amount: 0.6 });
   const [ref, live] = useLive(0.3);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
@@ -440,8 +445,12 @@ function Point() {
   );
 }
 
-const host = (u) => u.replace(/^https?:\/\//, '').replace(/\/$/, '');
-const Row = ({ to, children }) => <A to={to} className="zp-row"><span>{children}</span><em className="x-mono">{host(to)}</em><i aria-hidden="true">→</i></A>;
+const host = (u: string) => u.replace(/^https?:\/\//, '').replace(/\/$/, '');
+interface RowProps {
+  to: string;
+  children: ReactNode;
+}
+const Row = ({ to, children }: RowProps) => <A to={to} className="zp-row"><span>{children}</span><em className="x-mono">{host(to)}</em><i aria-hidden="true">→</i></A>;
 
 /* The close: one black band holds the protocol and the way to get it, as quiet rows; the only solid stays above. The
    address types itself in when the band arrives and its cursor keeps time while it is on screen. */

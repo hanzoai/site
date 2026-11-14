@@ -4,9 +4,10 @@
    fold gets data-arm (its start state, CSS) and, on reaching ~85% of the screen, data-in (its animation). Anything
    already on screen, JS off and reduced motion stay in the final state. Attributes, not classes: React re-sets className.
    Also records the last pointer-down point as --hz-px/--hz-py on <html>, for grow-from-point entrances. */
+import type React from 'react';
 import { useEffect } from 'react';
 
-export function useArrivals(root) {
+export function useArrivals(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const main = root.current;
     if (!main || typeof IntersectionObserver === 'undefined' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -19,7 +20,7 @@ export function useArrivals(root) {
       io.unobserve(e.target);
     }), { rootMargin: '0px 0px -15% 0px' });
     els.forEach((el) => { el.setAttribute('data-arm', ''); io.observe(el); });
-    const down = (e) => { document.documentElement.dataset.hzPx = e.clientX; };
+    const down = (e: PointerEvent) => { document.documentElement.dataset.hzPx = e.clientX; };
     addEventListener('pointerdown', down, { passive: true });
     return () => { io.disconnect(); removeEventListener('pointerdown', down); };
   }, [root]);

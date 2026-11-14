@@ -47,7 +47,7 @@ import './bench.css';
 
 const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
 const textOf = (n) => (n && typeof n === 'object' ? n.c.map(textOf).join('') : n || '');
-const measure = (s) => /^[~<>≈$]?\s*\d/.test(String(s).trim()) || /^[—–-]?$/.test(String(s).trim());
+const measure = (s: string) => /^[~<>≈$]?\s*\d/.test(String(s).trim()) || /^[—–-]?$/.test(String(s).trim());
 const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 
 /* the playhead: one index the card and every chapter read. It walks the rows once (a demo plays and rests,
@@ -65,10 +65,10 @@ function makeWalk() {
     pinned: () => pin,
     playing: () => on,
     sub: (f) => { subs.add(f); return () => subs.delete(f); },
-    set: (k, pause = 0) => { i = k; if (pause) hold = Date.now() + pause; emit(); },
-    pick: (k) => { clearInterval(id); on = false; pin = k; i = k; emit(); },
+    set: (k: number, pause = 0) => { i = k; if (pause) hold = Date.now() + pause; emit(); },
+    pick: (k: number) => { clearInterval(id); on = false; pin = k; i = k; emit(); },
     stop,
-    start: (count) => {
+    start: (count: number) => {
       n = Math.max(1, count);
       clearInterval(id);
       if (n < 2) return () => {};
@@ -113,9 +113,9 @@ function scaleOf(vals) {
   const lo = Math.min(...v), hi = Math.max(...v);
   if (hi / lo > 50) {
     const a = Math.log10(lo), b = Math.log10(hi), k = b - a + 0.25;
-    return { w: (x) => (x > 0 ? (Math.log10(x) - a + 0.25) / k : 0), inv: (p) => (p > 0 ? Math.pow(10, p * k + a - 0.25) : 0) };
+    return { w: (x: number) => (x > 0 ? (Math.log10(x) - a + 0.25) / k : 0), inv: (p: number) => (p > 0 ? Math.pow(10, p * k + a - 0.25) : 0) };
   }
-  return { w: (x) => (x > 0 ? x / hi : 0), inv: (p) => p * hi };
+  return { w: (x: number) => (x > 0 ? x / hi : 0), inv: (p: number) => p * hi };
 }
 const scaler = (vals) => scaleOf(vals).w;
 
@@ -135,10 +135,10 @@ function counted(s, f) {
   return s.slice(0, m.index) + t + s.slice(m.index + raw.length);
 }
 const setText = (el, s) => { if (el && el.firstChild && el.firstChild.nodeType === 3 && el.firstChild.nodeValue !== s) el.firstChild.nodeValue = s; };
-const clock = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+const clock = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
 /* the lanes of the card as it is drawn now: [element, final width, counter element, figure, fraction(p)] */
-function lanesOf(box, c, col) {
+function lanesOf(box: never, c, col: number) {
   const out = [];
   if (c.kind === 'bars') {
     const sc = scaleOf(c.rows.map((r) => r.cells[col].v));
@@ -170,7 +170,7 @@ function lanesOf(box, c, col) {
 }
 
 /* run the race once over the card in `box`; returns a function that stops it at the finish */
-function runRace(box, c, col, own, done) {
+function runRace(box: never, c, col: number, own, done: () => void) {
   const trend = c.kind === 'trend';
   const D = trend ? 2300 : c.kind === 'one' ? 2400 : 2700;
   let raf = 0, t0 = 0, over = false;
@@ -178,11 +178,11 @@ function runRace(box, c, col, own, done) {
   let frame;
   if (trend) {
     const n = c.points.length, span = c.hi - c.lo || 1;
-    const X = (i) => (n > 1 ? (i / (n - 1)) * 100 : 50), Y = (v) => ((v - c.lo) / span) * 100;
+    const X = (i: number) => (n > 1 ? (i / (n - 1)) * 100 : 50), Y = (v: number) => ((v - c.lo) / span) * 100;
     const lis = [...box.querySelectorAll('.xbr-tr-pts li')];
     const path = box.querySelector('.xbr-tr-line path');
     // the revisions rise off the axis together along their dates; the line between them takes its shape as they climb
-    frame = (p) => {
+    frame = (p: number) => {
       const cur = c.points.map((pt) => c.lo + p * (pt.v - c.lo));
       lis.forEach((li, i) => { li.style.bottom = Y(cur[i]) + '%'; setText(li.querySelector('.xbr-tr-val'), counted(c.points[i].val, p)); });
       if (path) path.setAttribute('d', cur.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(2) + ' ' + (100 - Y(v)).toFixed(2)).join(' '));
@@ -191,7 +191,7 @@ function runRace(box, c, col, own, done) {
     };
   } else {
     const lanes = lanesOf(box, c, col);
-    frame = (p) => {
+    frame = (p: number) => {
       lanes.forEach((l) => {
         if (l.bar) l.bar.style.setProperty('--xbr-r', p * l.w);
         if (l.val) setText(l.val, counted(l.s, p >= 1 ? 1 : l.frac(p)));
@@ -208,7 +208,7 @@ function runRace(box, c, col, own, done) {
     done();
   };
   frame(0);
-  const tick = (t) => {
+  const tick = (t: number) => {
     if (!t0) t0 = t;
     const k = Math.min(1, (t - t0) / D);
     frame(clock(k));
@@ -244,7 +244,7 @@ function Readout({ c, walk, col = 0 }) {
     </div>
   );
 }
-const hoverRow = (k) => dispatchEvent(new CustomEvent('xbr-hover', { detail: k }));
+const hoverRow = (k: number) => dispatchEvent(new CustomEvent('xbr-hover', { detail: k }));
 
 /* stop the race and the playhead, or run the race again (WCAG 2.2.2: anything that moves for more than 5 s can be
    stopped) */
@@ -267,7 +267,7 @@ function Walker({ walk, racing, onStop, onReplay }) {
    value; Kai's revisions climb off the axis together along their dates; a single figure counts up against its own
    unit. The replay control runs it again; reduced motion shows the finish. ---------- */
 function Turn({ c, walk, slug }) {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const [chart, setChart] = useState(false);
@@ -275,14 +275,14 @@ function Turn({ c, walk, slug }) {
   const [armed, setArmed] = useState(false); // lanes held on the start line, then racing
   const [won, setWon] = useState(0);
   const turned = useRef(false);
-  const stopRace = useRef(null);
+  const stopRace = useRef<(() => void) | null | null>(null);
   const walkAt = useAt(walk);
   const pin = usePin(walk);
   const at = pin >= 0 ? pin : walkAt;
   const own = anchorOf(c);
   const n = rowsOf(c);
   const timers = useRef([]);
-  const later = (f, ms) => timers.current.push(setTimeout(f, ms));
+  const later = (f, ms: number) => timers.current.push(setTimeout(f, ms));
   useEffect(() => () => { timers.current.forEach(clearTimeout); stopRace.current && stopRace.current(); }, []);
   // the race: arm (lanes back to the start), let the card turn or the dots fall to the axis, then run on one clock
   const race = (k = col) => {
@@ -323,13 +323,13 @@ function Turn({ c, walk, slug }) {
     </div>
   );
   const pick = (i) => { hoverRow(-1); walk.pick(i); };
-  const near = (i) => (e) => { if (e.pointerType === 'mouse') hoverRow(i); };
+  const near = (i: number) => (e) => { if (e.pointerType === 'mouse') hoverRow(i); };
   const away = () => hoverRow(-1);
 
   let body = null;
   if (c.kind === 'trend') {
     const n = c.points.length, span = c.hi - c.lo || 1;
-    const X = (i) => (n > 1 ? (i / (n - 1)) * 100 : 50), Y = (v) => ((v - c.lo) / span) * 100;
+    const X = (i: number) => (n > 1 ? (i / (n - 1)) * 100 : 50), Y = (v: number) => ((v - c.lo) / span) * 100;
     const d = c.points.map((p, i) => (i ? 'L' : 'M') + X(i).toFixed(2) + ' ' + (100 - (armed ? 0 : Y(p.v))).toFixed(2)).join(' ');
     body = (
       <div className={'xbr-tr' + (chart ? ' chart' : '') + (armed ? ' racing' : '')}>
@@ -419,11 +419,11 @@ function Turn({ c, walk, slug }) {
 /* ---------- a chapter whose table is the card's own: its figures are said once (on the card); the chapter shows what
    they are made of instead, and the table itself waits in the chapter's sheet ---------- */
 const OF = /^(\d[\d,]*) of (\d[\d,]*)$/;
-const num = (s) => parseInt(String(s).replace(/,/g, ''), 10);
+const num = (s: string) => parseInt(String(s).replace(/,/g, ''), 10);
 /* the column whose every cell reads "x of y" (gpqa: "184 of 198"): the questions themselves */
 const partsCol = (c) => (c && c.kind === 'bars' ? c.cols.findIndex((_, j) => c.rows.every((r) => OF.test(String(r.cells[j].s || '').trim()) && num(String(r.cells[j].s).split(' of ')[1]) <= 400)) : -1);
 function Parts({ c, walk, j }) {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.35, once: true });
   const k = useLook(c, walk) % c.rows.length;
   const r = c.rows[k];
@@ -444,7 +444,7 @@ function Parts({ c, walk, j }) {
 }
 /* every other card table: its rows as squares whose area is the figure, nested from one corner (Hanzo's row in ink) */
 function Scale({ c, walk }) {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.35, once: true });
   const k = useLook(c, walk);
   let sq = [], keys = null;
@@ -544,7 +544,7 @@ function Facts({ n }) {
 
 /* the facts as a strip under the stage: its rules draw across, one after another, when it is reached */
 function FactsStrip({ n }) {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.4, once: true });
   return (
     <section ref={box} className="xbr-facts-s" data-seen={seen ? '' : undefined} aria-label={clean(textOf(n.c.find((k) => k && k.t === 'dt')))}>
@@ -554,18 +554,18 @@ function FactsStrip({ n }) {
 }
 
 /* ---------- beyond: ask the source ---------- */
-const ISO = (s) => (s ? s.replace('T', ' ').replace(/:\d\dZ$/, ' UTC') : '');
+const ISO = (s: string) => (s ? s.replace('T', ' ').replace(/:\d\dZ$/, ' UTC') : '');
 const Play = () => <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M7 4.5v11l9-5.5z" fill="currentColor" /></svg>;
 const Braces = () => <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M7 3.5C5 3.5 5 5 5 6.5S4.5 9 3 10c1.5 1 2 2 2 3.5s0 3 2 3M13 3.5c2 0 2 1.5 2 3s.5 2.5 2 3.5c-1.5 1-2 2-2 3.5s0 3-2 3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>;
 /* the reply, typed out once it arrives (time, not scroll): the runs' ids appear a character at a time into text nodes */
 function Typed({ text, delay = 0 }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const el = ref.current;
     if (!el || calm) return;
     let i = 0, raf = 0, t0 = 0;
-    const tick = (t) => { if (!t0) t0 = t + delay; if (t >= t0) { i = Math.min(text.length, Math.floor((t - t0) / 14)); el.firstChild.nodeValue = text.slice(0, i); } if (i < text.length) raf = requestAnimationFrame(tick); };
+    const tick = (t: number) => { if (!t0) t0 = t + delay; if (t >= t0) { i = Math.min(text.length, Math.floor((t - t0) / 14)); el.firstChild.nodeValue = text.slice(0, i); } if (i < text.length) raf = requestAnimationFrame(tick); };
     el.firstChild.nodeValue = '';
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
@@ -585,7 +585,7 @@ function snapOf(doc) {
 function Source({ doc }) {
   const src = doc.source;
   const calm = useReducedMotion();
-  const room = useRef(null);
+  const room = useRef<HTMLDivElement>(null);
   const seen = useInView(room, { amount: 0.35, once: true });
   const snap = useMemo(() => snapOf(doc), [doc]);
   const [st, setSt] = useState({ k: 'idle', n: 0 });
@@ -605,7 +605,7 @@ function Source({ doc }) {
       if (runs.length) setSt((s) => ({ k: 'live', n: s.n, runs }));
     } catch { /* unreachable: the transcribed reply stays */ } finally { clearTimeout(t); }
   };
-  const reply = '{ "data": [\n' + snap.ids.map((id) => '  "' + id + '"').join(',\n') + '\n] }';
+  const reply = '{ "data": [\n' + snap.ids.map((id: string) => '  "' + id + '"').join(',\n') + '\n] }';
   const figs = snap.rows.map(([l, v]) => l + '  ' + v).join('\n');
   const shown = src ? src.url.replace(/^https:\/\//, '') : '';
   return (
@@ -676,7 +676,7 @@ function Tail({ tail, near, peek }) {
   const cta = tail.length ? tail.slice(0, ctaEnd < 0 ? 3 : ctaEnd) : [];
   const rest = tail.slice((ctaEnd < 0 ? 3 : ctaEnd)).filter((b) => !pager.includes(b));
   const parts = (n) => n.c.filter((k) => k && typeof k === 'object').map((k) => clean(textOf(k)));
-  const slugOf = (h) => h.split('/').filter(Boolean).pop();
+  const slugOf = (h: string) => h.split('/').filter(Boolean).pop();
   const cards = (pager.length ? pager.map((b) => {
     const p = parts(b.n);
     const dir = /^Previous/.test(p[0]) ? 'prev' : /^Next/.test(p[0]) ? 'next' : null;

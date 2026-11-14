@@ -9,6 +9,7 @@
      and JS-off still reach it).
    - TiltRail: the "next product" rail tilts the card under a fine pointer by up to 2.5 degrees (none on touch or
      under reduced motion). */
+import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import Sigil from '../../Sigil';
@@ -17,7 +18,7 @@ import FamLines from '../../v2/FamLines';
 import { ui } from '../../v2/famUi';
 
 export function Picks({ b }) {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.5 });
   const calm = useReducedMotion();
   const n = b.items.length;
@@ -68,7 +69,7 @@ export function Chains({ b, all, self, seed }) {
   const [pick, setPick] = useState(b.chains[0]);
   const [open, setOpen] = useState(false);
   const every = useMemo(() => [...new Set(all.flatMap((p) => p.chains))], [all]);
-  const every_ = useRef(null);
+  const every_ = useRef<HTMLDivElement>(null);
   useEffect(() => { // find-in-page opens the collapsed list (hidden="until-found")
     const el = every_.current;
     if (!el) return;
@@ -117,14 +118,17 @@ export function Chains({ b, all, self, seed }) {
 }
 
 /* the next-product rail: a 2.5 degree tilt toward a fine pointer (MASTER 3.1), flat again on leave */
-export function TiltRail({ children }) {
-  const ref = useRef(null);
+interface TiltRailProps {
+  children: ReactNode;
+}
+export function TiltRail({ children }: TiltRailProps) {
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || !matchMedia('(pointer: fine), (pointer: none)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let last = null;
     const flat = (c) => { if (c) { c.style.removeProperty('--rx'); c.style.removeProperty('--ry'); } };
-    const move = (e) => {
+    const move = (e: PointerEvent) => {
       const c = e.target.closest && e.target.closest('.v2f-next-c');
       if (c !== last) { flat(last); last = c; }
       if (!c) return;

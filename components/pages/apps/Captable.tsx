@@ -20,6 +20,7 @@
    All inputs are an example company's, labelled as such; the arithmetic is the real thing. Every word and link is Hanzo's.
 V2: 8/10 signature: a live cap-table calculator (pre-money, raise, pool, exit) re-plans the table, bar, waterfall and all six instrument figures at once; pinned chapters removed
 */
+import type { ReactNode } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A, More, Cta } from '../../kit';
@@ -35,13 +36,13 @@ const DOCS = 'https://docs.hanzo.ai/docs/cli/captable';
 const REPO = 'https://github.com/hanzoai/captable';
 const UP = 'https://github.com/captableinc/captable';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
-const two = (n) => String(n).padStart(2, '0');
+const two = (n: number) => String(n).padStart(2, '0');
 
 // the example company: inputs only; everything shown is computed from them
 // the example company: the starting inputs; the pre-money, the raise, the pool and the exit price are the calculator's
 const FOUND = 8_000_000, SAFE = 500_000, CAP = 8_000_000, DISC = 0.2;
 const START = { pre: 12_000_000, raise: 2_000_000, pool: 1_000_000, exit: 6_000_000 };
-function model(pre, raise = START.raise, pool = START.pool) {
+function model(pre: number, raise = START.raise, pool = START.pool) {
   const preSh = FOUND + pool;
   const price = pre / preSh;
   const safePrice = Math.min(CAP / preSh, price * (1 - DISC));
@@ -50,9 +51,9 @@ function model(pre, raise = START.raise, pool = START.pool) {
   const total = preSh + safeSh + newSh;
   return { price, byCap: CAP / preSh <= price * (1 - DISC), safeSh, newSh, total, rows: [['Founders', FOUND, 'Common'], ['Option pool', pool, 'ISO and NSO'], ['SAFE', safeSh, 'converts'], ['New investor', newSh, 'Preferred']].map(([n, s, k]) => [n, s, s / total, k]) };
 }
-const USD = (v) => '$' + (v >= 1e6 ? (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + 'M' : Math.round(v).toLocaleString('en-US'));
-const PCT = (v) => (v * 100).toFixed(1) + '%';
-const SH = (v) => Math.round(v).toLocaleString('en-US');
+const USD = (v: number) => '$' + (v >= 1e6 ? (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + 'M' : Math.round(v).toLocaleString('en-US'));
+const PCT = (v: number) => (v * 100).toFixed(1) + '%';
+const SH = (v: number) => Math.round(v).toLocaleString('en-US');
 
 const STEPS = [
   ['Share classes', 'Common, preferred, and custom share classes, with authorized shares, par value and voting rights.'],
@@ -140,7 +141,7 @@ function Hero({ c, set, mine, setMine }) {
     }, ran.current ? 1300 : 450);
     return () => clearTimeout(t);
   }, [pre, live, mine, set]);
-  const hand = (k) => (v) => { setMine(true); set(k, v); };
+  const hand = (k: string) => (v) => { setMine(true); set(k, v); };
   const m = model(c.pre, c.raise, c.pool);
   return (
     <section className="ct-hero" ref={ref} aria-labelledby="ct-h1">
@@ -178,7 +179,10 @@ function Hero({ c, set, mine, setMine }) {
 }
 
 /* The six instruments as a live ledger: each row carries the figure it is about, re-planned by the calculator. */
-function Ledger({ c }) {
+interface LedgerProps {
+  c: { pre: number; raise: number; pool: number; exit: number; };
+}
+function Ledger({ c }: LedgerProps) {
   const m = model(c.pre, c.raise, c.pool);
   const pay = payout(c.exit, m.rows, c.raise);
   const live = [
@@ -223,7 +227,7 @@ const CLAUSES = [
   ['Audit Trail', 'Complete audit history for every transaction. SOC 2 compatible controls and data integrity.'],
   ['SSO Authentication', 'Passkeys, Google SSO, and Hanzo IAM single sign-on for secure access.'],
 ];
-const num = (i) => (i < 4 ? '1' : '2') + '.' + ((i % 4) + 1 + (i >= 8 ? 4 : 0));
+const num = (i: number) => (i < 4 ? '1' : '2') + '.' + ((i % 4) + 1 + (i >= 8 ? 4 : 0));
 
 /* The ten clauses as a term sheet: the page shows their titles; the sheet holds every word. */
 function TermSheet() {
@@ -260,7 +264,7 @@ function TermSheet() {
 }
 
 /* Beyond: the waterfall at an exit price, preferences paid first (1x, non-participating, as an example). */
-function payout(exit, rows, raise) {
+function payout(exit, rows: (string | number)[][], raise) {
   const pref = { 2: SAFE, 3: raise };
   let conv = new Set([0, 1, 2, 3]);
   for (let k = 0; k < 3; k++) {
@@ -281,7 +285,7 @@ function payout(exit, rows, raise) {
 
 function Waterfall({ c, set }) {
   const { pre, exit } = c;
-  const setExit = (v) => set('exit', v);
+  const setExit = (v: number) => set('exit', v);
   const [act, setAct] = useState(false);
   const [ref, e] = useEnter(0.25); // entrance 1: pull-back
   const m = model(c.pre, c.raise, c.pool);
@@ -348,7 +352,7 @@ function Plans() {
                   ? <CountTo value={+p.slice(1)} prefix="$" render={(s) => <Roll text={s} className="bz-fig" />} />
                   : <b className="bz-fig">{p}</b>}{per && <em>{per}</em>}</span>
                 <span className="ct-pc-d">{d}</span>
-                <span className="ct-pc-f">{li.find((x) => !x.startsWith('Everything'))}</span>
+                <span className="ct-pc-f">{li.find((x: string) => !x.startsWith('Everything'))}</span>
               </>
             ),
             panel: (

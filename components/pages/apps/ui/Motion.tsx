@@ -9,10 +9,12 @@
    - Curl: the page-curl entrance. The paper surface above the dark room curls away from its bottom-left corner.
    - Trail: the cursor-trail entrance. On fine pointers a cursor sweeps across the strip once, revealing it behind a
      short trail of dots; afterwards the trail follows the visitor's cursor over it. Touch: shown at rest, no trail. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import './Motion.css';
 
-export function useIn(ref, amount = 0.2) {
+export function useIn(ref: React.RefObject<HTMLDivElement | null> | React.RefObject<null> | React.RefObject<HTMLElement | null>, amount = 0.2) {
   const [on, setOn] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -30,8 +32,8 @@ const WORDS = ['.button', '.panel', '.field', '.table', 'Tab', 'role', 'focus', 
 const COLS = 12, ROWS = 4;
 
 export function MagnetGrid() {
-  const box = useRef(null);
-  const sec = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
+  const sec = useRef<HTMLElement>(null);
   const inView = useIn(sec, 0.25);
   useEffect(() => {
     const grid = box.current;
@@ -45,7 +47,7 @@ export function MagnetGrid() {
     let ptr = null, last = 0, raf = 0, seen = false;
     const ripples = [];
     const fine = matchMedia('(pointer: fine)').matches;
-    const tick = (now) => {
+    const tick = (now: number) => {
       raf = 0;
       let busy = false;
       for (let k = ripples.length - 1; k >= 0; k--) if (now - ripples[k].t > 1500) ripples.splice(k, 1);
@@ -68,10 +70,10 @@ export function MagnetGrid() {
       if ((busy || ripples.length) && seen) raf = requestAnimationFrame(tick);
     };
     const wake = () => { if (!raf && seen) raf = requestAnimationFrame(tick); };
-    const at = (e) => { const g = grid.getBoundingClientRect(); return { x: e.clientX - g.left, y: e.clientY - g.top }; };
-    const move = (e) => { if (e.pointerType !== 'mouse') return; ptr = at(e); last = performance.now(); wake(); };
+    const at = (e: PointerEvent) => { const g = grid.getBoundingClientRect(); return { x: e.clientX - g.left, y: e.clientY - g.top }; };
+    const move = (e: PointerEvent) => { if (e.pointerType !== 'mouse') return; ptr = at(e); last = performance.now(); wake(); };
     const out = () => { ptr = null; wake(); };
-    const down = (e) => { const p = at(e); ripples.push({ ...p, t: performance.now() }); last = performance.now(); wake(); };
+    const down = (e: PointerEvent) => { const p = at(e); ripples.push({ ...p, t: performance.now() }); last = performance.now(); wake(); };
     const io = new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) { measure(); wake(); } }, { threshold: 0 });
     io.observe(grid);
     // never dead: with no pointer for a while, a quiet ripple starts from a tile on its own
@@ -113,8 +115,11 @@ export function MagnetGrid() {
 }
 
 /* page-curl: wraps the dark room; the paper above peels off it from the bottom-left corner as it enters */
-export function Curl({ children }) {
-  const ref = useRef(null);
+interface CurlProps {
+  children: ReactNode;
+}
+export function Curl({ children }: CurlProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const on = useIn(ref, 0.2);
   return (
     <div className="ux-curlw" ref={ref} data-in={on ? '' : undefined}>
@@ -126,8 +131,11 @@ export function Curl({ children }) {
 }
 
 /* cursor-trail: a strip revealed behind a sweeping cursor and its trail; then the trail follows the visitor's cursor */
-export function Trail({ children }) {
-  const ref = useRef(null), inner = useRef(null), dots = useRef([]);
+interface TrailProps {
+  children: ReactNode;
+}
+export function Trail({ children }: TrailProps) {
+  const ref = useRef<HTMLDivElement>(null), inner = useRef<HTMLDivElement>(null), dots = useRef([]);
   const on = useIn(ref, 0.35);
   const [fine, setFine] = useState(false);
   useEffect(() => { setFine(matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches); }, []);
@@ -153,7 +161,7 @@ export function Trail({ children }) {
       if (still < 20) raf = requestAnimationFrame(tick);
     };
     const go = () => { if (!raf) raf = requestAnimationFrame(tick); };
-    const move = (e) => { const r = el.getBoundingClientRect(); target = { x: e.clientX - r.left, y: e.clientY - r.top, on: true }; still = 0; go(); };
+    const move = (e: PointerEvent) => { const r = el.getBoundingClientRect(); target = { x: e.clientX - r.left, y: e.clientY - r.top, on: true }; still = 0; go(); };
     const out = () => { if (target) target.on = false; go(); };
     el.addEventListener('pointermove', move);
     el.addEventListener('pointerleave', out);
@@ -167,7 +175,7 @@ export function Trail({ children }) {
     const r = el.getBoundingClientRect();
     const t0 = performance.now(), D = 1100;
     let raf = 0;
-    const step = (now) => {
+    const step = (now: number) => {
       const p = Math.min(1, (now - t0) / D), e = 1 - (1 - p) ** 3;
       const x = e * (r.width + 40) - 20, y = r.height * (0.55 - 0.25 * Math.sin(e * Math.PI));
       inn.style.clipPath = p < 1 ? `inset(0 ${(100 - e * 100).toFixed(2)}% 0 0)` : 'none';
@@ -186,7 +194,14 @@ export function Trail({ children }) {
 }
 
 /* magnet-gather and zoom-through are CSS on [data-in]; this marks a block when it arrives */
-export function In({ as: T = 'div', className = '', amount = 0.2, children, ...rest }) {
+interface InProps {
+  as?: string;
+  className?: string;
+  amount?: number;
+  children: ReactNode;
+  [key: string]: unknown;
+}
+export function In({ as: T = 'div', className = '', amount = 0.2, children, ...rest }: InProps) {
   const ref = useRef(null);
   const on = useIn(ref, amount);
   return <T ref={ref} className={className} data-in={on ? '' : undefined} {...rest}>{children}</T>;

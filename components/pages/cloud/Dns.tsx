@@ -42,7 +42,7 @@ function useSeen(amount = 0.25) {
   return [ref, seen && !calm, calm];
 }
 /* calls fn every ms while run is true: a chain of timeouts (no setInterval), the latest fn each time */
-function useTick(ms, run, fn) {
+function useTick(ms: number, run, fn: () => void) {
   const f = useRef(fn);
   f.current = fn;
   useEffect(() => {
@@ -105,12 +105,12 @@ function Zone() {
 /* ---------- chapters: one capability per screen ---------- */
 /* which of n steps a chapter is on: from the scroll through it on desktop (p); on phones it steps through once while
    seen and rests on the last step (no loop) */
-function useStepOf(p, n, on) {
+function useStepOf(p, n: number, on) {
   const [k, setK] = useState(0);
   const calm = useCalm();
   useEffect(() => {
     if (!p) return;
-    const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n))));
+    const f = (v: number) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n))));
     f(p.get());
     return p.on('change', f);
   }, [p, n]);
@@ -256,7 +256,10 @@ const COLS = [
   ['Hanzo DNS Control Plane', ['Record Manager', 'DNSSEC Engine', 'Parallel Query', 'Audit Log']],
   ['DNS Providers', ['Cloudflare', 'Route53', 'CoreDNS', 'GoDaddy', 'DigitalOcean', '+ More']],
 ];
-const PauseIcon = ({ paused }) => (paused
+interface PauseIconProps {
+  paused: boolean;
+}
+const PauseIcon = ({ paused }: PauseIconProps) => (paused
   ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>);
 function Arch() {
@@ -321,8 +324,13 @@ function UseArt({ k, on }) {
     </span>
   );
 }
-function Use({ i, t, d }) {
-  const ref = useRef(null);
+interface UseProps {
+  i: number;
+  t: string;
+  d: string;
+}
+function Use({ i, t, d }: UseProps) {
+  const ref = useRef<HTMLLIElement>(null);
   const seen = useInView(ref, { amount: 0.6 });
   const calm = useCalm();
   return (
@@ -347,11 +355,11 @@ const NEEDS = [['Unlimited zones', 1], ['All DNS providers', 1], ['DNSSEC manage
 const Down = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 function Pricing() {
-  const [need, setNeed] = useState([]);
+  const [need, setNeed] = useState<number[]>([]);
   const fit = Math.max(0, ...need.map((i) => NEEDS[i][1]));
   // the ink tile (and the one solid ask among the plans): the plan that fits, or Hanzo's "Popular" one
   const ink = need.length ? fit : PLANS.findIndex((x) => x[4]);
-  const pick = (i) => setNeed((n) => (n.includes(i) ? n.filter((x) => x !== i) : [...n, i]));
+  const pick = (i: number) => setNeed((n) => (n.includes(i) ? n.filter((x) => x !== i) : [...n, i]));
   return (
     <section className="kn-sec dn-price">
       <div className="kn-wrap">
@@ -388,7 +396,7 @@ function Pricing() {
 }
 
 export default function Dns() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useArrivals(root);
   return (
     <main className="kn dn" ref={root}>

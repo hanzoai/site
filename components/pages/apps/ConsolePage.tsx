@@ -22,6 +22,8 @@
    Motion: the canvas (signature) + the self-driving shell + Stage (it settles as you scroll) + cards that open.
 V2: 8/10 motion map: drag-canvas — the pinned BizChapters scene is gone; its six chapters are cards on a pannable dark canvas, each beside its live module; order is hero, canvas, facts, palette, Get, close
    The v1 drag-to-reorder sidebar is gone (its words stay, with the palette). Every word and link is Hanzo's. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView } from 'motion/react';
 import { useCalm } from '../../ui';
@@ -69,7 +71,7 @@ const ITEMS = [
   ...SIDE.map(([t, to, s], i) => ({ id: to, name: t, sub: s || to, kind: 'product', to, w: t.toLowerCase(), d: PICON[i] })),
 ];
 /* What answers a query: a name that starts with it first, then a word that does, then anything that contains it. */
-function find(q) {
+function find(q: string) {
   const s = q.trim().toLowerCase();
   if (!s) return ITEMS.map((x) => ({ x, at: -1 }));
   const out = [];
@@ -95,7 +97,7 @@ function focusFind() {
 }
 
 /* A module's own moment: steps 0..n, played once each time it opens (on screen only); reduced motion shows the end. */
-function usePlay(play, n, ms, first = 500) {
+function usePlay(play, n: number, ms: number, first = 500) {
   const calm = useCalm();
   const [k, setK] = useState(0);
   useEffect(() => {
@@ -125,7 +127,7 @@ function Projects({ play }) {
 
 function Keys({ org, play }) {
   const k = usePlay(play, 2, 480, 1500);
-  const [hand, setHand] = useState(null);
+  const [hand, setHand] = useState<boolean | null>(null);
   const off = hand ?? k >= 2;
   return (
     <div className="cs-v">
@@ -226,7 +228,11 @@ function Org({ org, play, flip }) {
   );
 }
 
-function View({ id, ...p }) {
+interface ViewProps {
+  id: string;
+  [key: string]: unknown;
+}
+function View({ id, ...p }: ViewProps) {
   if (id === 'keys') return <Keys {...p} />;
   if (id === 'usage') return <Usage {...p} />;
   if (id === 'apps') return <Apps {...p} />;
@@ -236,7 +242,11 @@ function View({ id, ...p }) {
 }
 
 /* The film's palette: it opens, types, the answers narrow letter by letter, Enter lands. */
-function Pal({ q, go }) {
+interface PalProps {
+  q: string;
+  go: boolean;
+}
+function Pal({ q, go }: PalProps) {
   const hits = find(q).slice(0, 5);
   return (
     <motion.div className="cs-pal" aria-hidden="true" initial={{ opacity: 0, y: -14, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.15 } }} transition={ARRIVE}>
@@ -257,7 +267,12 @@ function Pal({ q, go }) {
 }
 
 /* The shell. auto: it drives itself (the hero). Otherwise it shows the module it is given (chapters, the palette). */
-function Shell({ auto, view: want, size = 'lg' }) {
+interface ShellProps {
+  auto?: boolean;
+  view?: string;
+  size?: string;
+}
+function Shell({ auto, view: want, size = 'lg' }: ShellProps) {
   const [ref, live] = useLive(0.25);
   const [view, setView] = useState(want || 'projects');
   const [org, setOrg] = useState('acme');
@@ -266,14 +281,14 @@ function Shell({ auto, view: want, size = 'lg' }) {
   const [go, setGo] = useState(false);
   const [mine, setMine] = useState(false);
   const step = useRef(0);
-  const P = (k) => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{k ? <path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /> : <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" fill="currentColor" />}</svg>;
+  const P = (k: boolean) => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{k ? <path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /> : <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" fill="currentColor" />}</svg>;
   const first = useRef(true);
   useEffect(() => { if (want) setView(want); }, [want]);
   useEffect(() => {
     if (!auto || !live || mine) return;
     const [next, word] = DEMO[step.current % DEMO.length];
     const ts = [];
-    const at = (ms, fn) => ts.push(setTimeout(fn, ms));
+    const at = (ms: number, fn: (() => void) | (() => void) | (() => void) | (() => void)) => ts.push(setTimeout(fn, ms));
     setPal(false); setGo(false);
     let t = first.current ? 700 : 3600;
     first.current = false;
@@ -287,7 +302,7 @@ function Shell({ auto, view: want, size = 'lg' }) {
   const flip = useCallback(() => setOrg((o) => (o === 'acme' ? 'globex' : 'acme')), []);
   const idx = MODS.findIndex((x) => x.id === view);
   const m = MODS[idx];
-  const open = (id) => { setMine(true); setPal(false); setView(id); };
+  const open = (id: string) => { setMine(true); setPal(false); setView(id); };
   return (
     <div ref={ref} className={'cs-win ' + size}>
       <div className="cs-bar">
@@ -354,7 +369,14 @@ function Shell({ auto, view: want, size = 'lg' }) {
 
 /* The shell starts large and settles over the first scroll (the v2/BizStage move), hydration-safe: the server and the
    first client render carry no motion style; the scroll-linked transform starts after mount. Reduced motion: settled. */
-function BizStage({ children, from = 1.14, over = 620, lift = 60, className = '' }) {
+interface BizStageProps {
+  children: ReactNode;
+  from?: number;
+  over?: number;
+  lift?: number;
+  className?: string;
+}
+function BizStage({ children, from = 1.14, over = 620, lift = 60, className = '' }: BizStageProps) {
   const calm = useCalm();
   const [on, setOn] = useState(false);
   useEffect(() => setOn(true), []);
@@ -369,10 +391,13 @@ function BizStage({ children, from = 1.14, over = 620, lift = 60, className = ''
 }
 
 /* A fine pointer leans the shell toward it, 2.5 degrees at most; flat on leave, never on touch or under reduced motion. */
-function Lean({ children }) {
-  const ref = useRef(null);
+interface LeanProps {
+  children: ReactNode;
+}
+function Lean({ children }: LeanProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useCalm();
-  const move = (e) => {
+  const move = (e: React.PointerEvent<HTMLDivElement>) => {
     if (calm || e.pointerType !== 'mouse' || !ref.current) return;
     const r = ref.current.getBoundingClientRect();
     ref.current.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
@@ -464,7 +489,7 @@ function Find() {
   const [hi, setHi] = useState(0);
   const [open, setOpen] = useState('projects');
   const [went, setWent] = useState('');
-  const inp = useRef(null);
+  const inp = useRef<HTMLInputElement>(null);
   const tk = useTicker();
   const hits = useMemo(() => find(q), [q]);
   const h = Math.min(hi, hits.length - 1);
@@ -474,7 +499,7 @@ function Find() {
     if (r.x.kind === 'product') { const to = href(r.x.to); if (to.startsWith('/')) router.push(to); else location.href = to; } else setOpen(r.x.id);
   };
   useEffect(() => {
-    const k = (e) => {
+    const k = (e: KeyboardEvent) => {
       if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
       const a = document.activeElement;
       if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.isContentEditable)) return;
@@ -484,7 +509,7 @@ function Find() {
     addEventListener('keydown', k);
     return () => removeEventListener('keydown', k);
   }, []);
-  const key = (e) => {
+  const key = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setHi(Math.min(hits.length - 1, h + 1)); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setHi(Math.max(0, h - 1)); }
     else if (e.key === 'Enter') { e.preventDefault(); pick(hits[h]); }
@@ -614,7 +639,7 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden=
 
 /* The close: one sentence at Display size, the one ask, one text row. */
 function End() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.5, once: true });
   const skew = useVelocitySkew();
   return (

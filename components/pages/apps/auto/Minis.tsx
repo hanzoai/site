@@ -9,13 +9,16 @@ import { useTick } from '../../../v2/x-hamilton/Demo';
 const FLOW = ['trigger', 'GitHub', 'Postgres', 'Slack', 'done'];
 
 /* step through 0..len-1 every ms while run; calm pins the last frame */
-function useSeq(len, ms, run, calm) {
+function useSeq(len: number, ms: number, run, calm) {
   const [i, setI] = useState(0);
   useTick(ms, run, () => setI((v) => (v + 1) % len));
   return calm ? len - 1 : i;
 }
 
-const Check = ({ on }) => (
+interface CheckProps {
+  on: boolean;
+}
+const Check = ({ on }: CheckProps) => (
   <svg className={'au2-ck' + (on ? ' on' : '')} viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
     <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" strokeWidth="1.2" />
     <path d="M4.8 8.3 7 10.4l4.2-4.6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -97,7 +100,7 @@ function Publish({ run, calm }) {
   const s = P4[useSeq(P4.length, 800, run, calm)];
   const draft = s >= 1 ? FLOW.slice(0, 4) : FLOW.slice(0, 3);
   const pub = s >= 3 ? FLOW.slice(0, 4) : FLOW.slice(0, 3);
-  const col = (k, items, cls) => (
+  const col = (k: string, items: string[], cls: string) => (
     <div className={'au2-col ' + cls}>
       <p>{k}</p>
       <ol>{items.map((f, j) => <li key={f} className={j === 3 && cls === 'd' && s < 3 ? 'new' : j === 3 ? 'in' : ''}>{f}</li>)}</ol>

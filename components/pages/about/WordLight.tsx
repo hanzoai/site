@@ -7,10 +7,14 @@
 import { useEffect, useRef, useState } from 'react';
 import './wordlight.css';
 
-export default function WordLight({ text, className = '' }) {
+interface WordLightProps {
+  text: string;
+  className?: string;
+}
+export default function WordLight({ text, className = '' }: WordLightProps) {
   const words = text.split(' ');
   const N = words.length;
-  const box = useRef(null);
+  const box = useRef<HTMLParagraphElement>(null);
   const [lit, setLit] = useState(N); // all lit on the server and in the first client render (no mismatch)
   const [ahead, setAhead] = useState(-1);
   const [on, setOn] = useState(false);

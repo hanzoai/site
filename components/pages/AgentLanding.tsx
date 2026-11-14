@@ -17,7 +17,7 @@ import './AgentLanding.css';
 const READ = 3200; // how long each turn holds the light, ms
 
 function Console({ c }) {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.5 });
   const [step, setStep] = useState(0);
   const [held, setHeld] = useState(false);

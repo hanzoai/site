@@ -20,6 +20,8 @@
    Beyond: "Watch it instead". One saved query switched between widget and monitor: only its first word changes, and
    the alert line you drag sits on the same chart, so the alert and the chart cannot disagree (Hanzo's own claim).
    Every word and link is Hanzo's; chart values are drawn, not measured, and print no numbers. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import { A, Cta } from '../../kit';
@@ -41,7 +43,7 @@ function useSeen(amount = 0.25) {
   return [ref, seen && !calm];
 }
 /* steps through n every ms while run; choosing one by hand stops the cycle (timeouts, no setInterval) */
-function useCycle(n, ms, run) {
+function useCycle(n: number, ms: number, run) {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   useEffect(() => {
@@ -65,10 +67,10 @@ function useBox(w0 = 600, h0 = 300) {
   }, []);
   return [ref, box];
 }
-const px = (P, [w, h]) => P.map(([x, y]) => [+(x / 100 * w).toFixed(1), +(y / 100 * h).toFixed(1)]);
-function curve(P) {
+const px = (P: number[][], [w, h]) => P.map(([x, y]) => [+(x / 100 * w).toFixed(1), +(y / 100 * h).toFixed(1)]);
+function curve(P: number[][]) {
   let d = `M${P[0][0]} ${P[0][1]}`;
-  const f = (v) => +v.toFixed(1);
+  const f = (v: number) => +v.toFixed(1);
   for (let i = 0; i < P.length - 1; i++) {
     const a = P[i - 1] || P[i], b = P[i], c = P[i + 1], e = P[i + 2] || c;
     d += ` C${f(b[0] + (c[0] - a[0]) / 6)} ${f(b[1] + (c[1] - a[1]) / 6)} ${f(c[0] - (e[0] - b[0]) / 6)} ${f(c[1] - (e[1] - b[1]) / 6)} ${c[0]} ${c[1]}`;
@@ -121,7 +123,7 @@ function Saved() {
   const tabs = useRef([]);
   const [peek, setPeek] = useState(-1); // a hovered tab shows a ghost of its picture behind the current one
   const [kind, sel, grp, pic] = DEFS[at];
-  const key = (e, i) => {
+  const key = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
     const n = DEFS.length;
     const j = e.key === 'ArrowRight' ? (i + 1) % n : e.key === 'ArrowLeft' ? (i - 1 + n) % n : e.key === 'Home' ? 0 : e.key === 'End' ? n - 1 : -1;
     if (j < 0) return;
@@ -174,9 +176,13 @@ const PARTS = [
 // each panel's slot on the 12-column board and where it flies in from: [x %, y %, turn deg]
 const SLOTS = ['1 / 1 / 3 / 8', '1 / 8 / 3 / 13', '3 / 1 / 5 / 5', '3 / 5 / 5 / 10', '3 / 10 / 4 / 13', '4 / 10 / 5 / 13'];
 const FROM = [[-46, -18, -6], [52, -30, 7], [-40, 70, 5], [0, 90, -4], [90, 10, 8], [70, 80, -7]];
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
-function PanelHead({ t, k }) {
+interface PanelHeadProps {
+  t: string;
+  k?: string;
+}
+function PanelHead({ t, k }: PanelHeadProps) {
   return <p className="db-ph"><b>{t}</b>{k && <span>{k}</span>}</p>;
 }
 const PANELS = [
@@ -210,11 +216,11 @@ function Fly({ p, k, on, calm, children }) {
   // panel 1 is already in its slot when the run pins (never an empty board); the other five land through the run
   const a = k ? 0.02 + (k - 1) * 0.17 : -1, b = k ? a + 0.13 : -0.5;
   const t = useTransform(p, [a, b], [0, 1], { clamp: true });
-  const e = useTransform(t, (v) => 1 - Math.pow(1 - v, 3));
+  const e = useTransform(t, (v: number) => 1 - Math.pow(1 - v, 3));
   const [fx, fy, fr] = FROM[k];
-  const x = useTransform(e, (v) => `${fx * (1 - v)}%`);
-  const y = useTransform(e, (v) => `${fy * (1 - v)}%`);
-  const rotate = useTransform(e, (v) => fr * (1 - v));
+  const x = useTransform(e, (v: number) => `${fx * (1 - v)}%`);
+  const y = useTransform(e, (v: number) => `${fy * (1 - v)}%`);
+  const rotate = useTransform(e, (v: number) => fr * (1 - v));
   const scale = useTransform(e, [0, 1], [0.82, 1]);
   const opacity = useTransform(t, [0, 0.35, 1], [0, 1, 1]);
   return (
@@ -227,13 +233,13 @@ function Fly({ p, k, on, calm, children }) {
 /* Wide screens pin the board (CSS, once the script runs); phones get each part then its panel. Both are in the HTML
    and the breakpoint picks one, so nothing swaps after hydration; with JS off the wide layout simply stacks. */
 function Build() {
-  const run = useRef(null);
+  const run = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   const { scrollYProgress: p } = useScroll({ target: run, offset: ['start start', 'end end'] });
   const [at, setAt] = useState(0);
-  useMotionValueEvent(p, 'change', (v) => setAt(Math.min(5, Math.max(0, Math.floor(v * 6 * 0.9999)))));
+  useMotionValueEvent(p, 'change', (v: number) => setAt(Math.min(5, Math.max(0, Math.floor(v * 6 * 0.9999)))));
   const fill = useTransform(p, [0, 1], [0, 1]);
-  const go = (i) => {
+  const go = (i: number) => {
     const el = run.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY;
@@ -288,8 +294,14 @@ function PhoneBuild() {
     </div>
   );
 }
-function PhonePart({ i, t, d, onSeen }) {
-  const ref = useRef(null);
+interface PhonePartProps {
+  i: number;
+  t: string;
+  d: string | null;
+  onSeen: React.Dispatch<React.SetStateAction<number>>;
+}
+function PhonePart({ i, t, d, onSeen }: PhonePartProps) {
+  const ref = useRef<HTMLLIElement>(null);
   const seen = useInView(ref, { amount: 0.6 });
   useEffect(() => { if (seen) onSeen(i); }, [seen, i, onSeen]);
   return (
@@ -306,14 +318,14 @@ const KINDS = ['widget', 'monitor'];
 function Watch() {
   const [mon, setMon] = useState(true);
   const [th, setTh] = useState(42);
-  const plot = useRef(null);
+  const plot = useRef<HTMLDivElement>(null);
   const held = useRef(false);
   const radios = useRef([]);
-  const to = (e) => {
-    const r = plot.current.getBoundingClientRect();
+  const to = (e: React.PointerEvent<HTMLDivElement>) => {
+    const r = plot.current!.getBoundingClientRect();
     setTh(Math.round(Math.min(88, Math.max(12, ((e.clientY - r.top) / r.height) * 100))));
   };
-  const key = (e, i) => {
+  const key = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
     if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
     e.preventDefault();
     const j = 1 - i;
@@ -364,7 +376,7 @@ function Watch() {
 
 /* ---------- the four words, marked ---------- */
 function Figures() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLUListElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
   return (
     <section className="db-figs-s" data-enter="explode">
@@ -394,7 +406,7 @@ function Cap() {
 }
 
 export default function Dashboards() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useArrivals(root);
   return (
     <main className="kn db" ref={root}>

@@ -21,6 +21,8 @@
    platform cards and then follows the pointer; the close grows from the last point clicked.)
 V2: 8/10 motion map: the pinned five-chapter stage is replaced by the compare signature (drag, touch, arrow keys; 50% under reduced motion) and five plain chapter rows with their own objects (render targets, the token flip, the flat rule, the primitives, the wave); five page-local entrances in the map's order, final state in the server HTML. Round 6: phone hero keeps 44px before the stage and the pinned grid leads with the object (the heading and its 0N / 06 above the two frames, the chapter's paragraph under them), so the code bar and devices are on the first screen at 375 and start at 536 of 640 at 320; render tags hang under their frames (never over a card inside a window, measured at 1470, 375, 320); token names only $4 and $8 (Hanzo's own code), no "9:41" clock; the iOS card shows its sheet at rest; the picker's closing field shows the value the YStack takes; the opened Desktop's sidebar at 10–13px; opened cards carry only words about their platform (web: the atomic-CSS sentence; the rest name and sub-label); "Get GUI" and its prompt start on one line, the h2 first; the lit chip and the cards answer hover (the sub-label slides up for the woken props). Round 5: phone rail art sized to its box (never over a card's name, 375 and 320); the hero props first change at ~0.8 s; each stage step gets ~1.08 screens so a one-screen wheel lands on all five; on phones the words sit above the pinned frames so they leave first; card→sheet morph crossfades the flying card's content (no stretch); cards tilt and wake (their props take the next state) when pointed at or focused; phone stage h2 21 over h3 17, the lit step title grows and settles; the playground's typed value is an empty dashed slot in its chip row and the typecheck sits on the closing line; the phone terminal scrolls with an edge fade; hero ask hovers #262626 and presses 1px. Round 4: one object, many states. The hero's four frames ARE the pinned stage (no second device row): the opening cycles the props, then 01 wires the one source to the four with their render tags, 02 flips the brand token on all four, 03 collapses every screen to the flat rule, 04 takes the card apart into YStack/Text/Button with the kit's primitives under it, 05 rolls each new state across the four in a wave while the buttons press themselves. Phones keep the stage pinned and swap only the words; counters agree (01–05 / 06, the dark room 06 / 06); no invented words (token names only from the page's code scale, typecheck by shape, aria from ui-strings); each opened platform carries its own chapter's sentence; cards share one baseline and lift; the ask leans to the pointer; code scrolls instead of wrapping. Round 3: the pinned title is centred on the grid and releases with the stage (one grid cell, no crossing); the lit chapter title grows 26→32px and settles; colours swap in 150ms so the ink ($accent) state never goes grey-on-grey; hero captions on one baseline; gaps under the rail and the dark room closed; a platform card opens into a full-screen page of that platform (its device large with its live props, the name at 52px) and Esc, Close or Back return it. Round 2: hydration-safe hero settle; hero devices and labels inside 801px; each platform card its own screen (iOS sheet, Android list, Web form, Desktop split) that tilts and shows its tokens, opening into a live one; the dark room is one large window the chips restyle; chapters grow in as their step arrives and count 01–05; mock buttons answer; no clipping; Deploy to Cloud sits beside the ask. Round 1: a centred 52px title over four live device frames in step (the one big thing) with a Pause; five sticky chapters explain the one component across four platforms; the graphite room is the token editor with a real typecheck; platform cards open into their device; one ask; deck colours, radii and scale, outlined frames, no springs
    Every word and link is Hanzo's. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { useEnter, useGrowFromPoint, useVelocitySkew, useLens } from './gui/GuiMotion';
@@ -49,11 +51,15 @@ const ROUND = { $4: 10, $8: 24 };
 const TOK = { p: SPACE, bg: BG, rounded: ROUND };
 const PRESETS = [{ p: '$4', bg: '$4', rounded: '$4' }, { p: '$8', bg: '$4', rounded: '$8' }, { p: '$4', bg: '$8', rounded: '$8' }];
 const PLAT = [['iOS', 'Native', 'ios'], ['Android', 'Native', 'android'], ['Web', 'Atomic CSS', 'web'], ['Desktop', 'macOS · Win · Linux', 'desk']];
-const OK = (k, val) => TOK[k][val] !== undefined;
+const OK = (k: string, val) => TOK[k][val] !== undefined;
 
 /* The hero row settles as you scroll (from 1.03, lifted 20px, to its place over 700px). Page-local so the server and
    the client render the same style; reduced motion pins it in place from CSS. */
-function Settle({ children, className = '' }) {
+interface SettleProps {
+  children: ReactNode;
+  className?: string;
+}
+function Settle({ children, className = '' }: SettleProps) {
   const { scrollY } = useScroll();
   const scale = useTransform(scrollY, [0, 700], [1.03, 1], { clamp: true });
   const y = useTransform(scrollY, [0, 700], [8, 0], { clamp: true });
@@ -62,7 +68,12 @@ function Settle({ children, className = '' }) {
 
 /* Hanzo's Welcome component: a YStack with a Text and a Button. parts outlines the primitives it is made of;
    delay lets the four frames take a new state one after another (a wave across the platforms). */
-function Welcome({ v, parts, delay = 0 }) {
+interface WelcomeProps {
+  v: { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; };
+  parts?: boolean;
+  delay?: number;
+}
+function Welcome({ v, parts, delay = 0 }: WelcomeProps) {
   const dark = v.bg === INKY;
   const r = ROUND[v.rounded];
   const tr = delay ? { ...SHAPE, delay, backgroundColor: { ...INK, delay }, color: { ...INK, delay } } : SHAPE;
@@ -75,7 +86,10 @@ function Welcome({ v, parts, delay = 0 }) {
 }
 
 /* The same component once the compiler has been through it: the props it was given, flattened to one rule. */
-function Flat({ v }) {
+interface FlatProps {
+  v: { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; };
+}
+function Flat({ v }: FlatProps) {
   return (
     <div className="gu-flat x-mono" aria-hidden="true">
       <span className="gu-flat-t">{'<YStack'}</span>
@@ -86,7 +100,16 @@ function Flat({ v }) {
 }
 
 /* One device frame, drawn the way its platform draws it. */
-function Dev({ k, v, parts, tag, flat, delay, children }) {
+interface DevProps {
+  k: string;
+  v: { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; } | { p: string; bg: string; rounded: string; };
+  parts?: boolean;
+  tag?: string | null;
+  flat?: boolean;
+  delay?: number;
+  children?: ReactNode;
+}
+function Dev({ k, v, parts, tag, flat, delay, children }: DevProps) {
   return (
     <div className="gu-dev"><div className={'gu-frame gu-' + k}>
       {/* a neutral status bar: the island or camera hole only, no invented time */}
@@ -101,7 +124,12 @@ function Dev({ k, v, parts, tag, flat, delay, children }) {
 }
 
 /* The four, in step. step (-1 the opening, 0 to 4 the chapters) picks the state the one object is in. */
-function Four({ v, step = -1, cls = '' }) {
+interface FourProps {
+  v: { p: string; bg: string; rounded: string; };
+  step?: number;
+  cls?: string;
+}
+function Four({ v, step = -1, cls = '' }: FourProps) {
   return (
     <div className={'gu-four ' + cls} data-step={step}>
       {PLAT.map(([t, s, k], i) => (
@@ -148,13 +176,16 @@ function useCycle(on, ms = 2600, list = PRESETS, first = ms) {
 const WAVE = [PRESETS[1], PRESETS[2]]; // chapter 05 never rests on the plain default card
 
 /* The one ask leans toward a fine pointer (22px at most, ease-emphasis, no spring); touch and reduced motion stay put. */
-function Pull({ children }) {
-  const ref = useRef(null);
-  const move = (e) => {
+interface PullProps {
+  children: ReactNode;
+}
+function Pull({ children }: PullProps) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const move = (e: React.PointerEvent<HTMLSpanElement>) => {
     const el = ref.current;
     if (!el || e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const r = el.getBoundingClientRect();
-    const c = (n) => Math.max(-22, Math.min(22, n * 0.3));
+    const c = (n: number) => Math.max(-22, Math.min(22, n * 0.3));
     el.style.translate = `${c(e.clientX - r.left - r.width / 2).toFixed(1)}px ${c(e.clientY - r.top - r.height / 2).toFixed(1)}px`;
   };
   return <span ref={ref} className="gu-pull" onPointerMove={move} onPointerLeave={() => { if (ref.current) ref.current.style.translate = ''; }}>{children}</span>;
@@ -217,8 +248,8 @@ const SRC = [
    window is on screen: iOS, Android, Web, Desktop). Mouse and touch drag the divider anywhere in the window; the
    handle is a slider (arrow keys 5%, Home/End). On arrival it glides once to show it moves; reduced motion rests at 50%. */
 function Compare() {
-  const box = useRef(null);
-  const wrap = useRef(null);
+  const box = useRef<HTMLDivElement | null | null>(null);
+  const wrap = useRef<HTMLDivElement>(null);
   const [x, setX] = useState(50);
   const [p, setP] = useState(0);
   const touched = useRef(false);
@@ -236,19 +267,19 @@ function Compare() {
     const ts = steps.map((s, i) => setTimeout(() => { if (!touched.current) setX(s); }, 900 + i * 700));
     return () => ts.forEach(clearTimeout);
   }, [live]);
-  const at = (clientX) => {
-    const b = box.current.getBoundingClientRect();
+  const at = (clientX: number) => {
+    const b = box.current!.getBoundingClientRect();
     setX(Math.max(0, Math.min(100, ((clientX - b.left) / b.width) * 100)));
   };
-  const down = (e) => {
+  const down = (e: React.PointerEvent<HTMLDivElement>) => {
     touched.current = true;
-    box.current.dataset.dragging = '';
-    box.current.setPointerCapture?.(e.pointerId);
+    box.current!.dataset.dragging = '';
+    box.current!.setPointerCapture?.(e.pointerId);
     at(e.clientX);
   };
-  const move = (e) => { if (box.current.dataset.dragging !== undefined) at(e.clientX); };
+  const move = (e: React.PointerEvent<HTMLDivElement>) => { if (box.current!.dataset.dragging !== undefined) at(e.clientX); };
   const up = () => { if (box.current) delete box.current.dataset.dragging; };
-  const key = (e) => {
+  const key = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const d = { ArrowLeft: -5, ArrowDown: -5, ArrowRight: 5, ArrowUp: 5 }[e.key];
     if (d !== undefined) { e.preventDefault(); touched.current = true; setX((v) => Math.max(0, Math.min(100, v + d))); }
     if (e.key === 'Home') { e.preventDefault(); touched.current = true; setX(0); }
@@ -293,7 +324,12 @@ function ChapterObj({ i, live }) {
   return <div className="gu-ch-wave"><Welcome v={wave} /></div>;
 }
 
-function Chapter({ i, t, d }) {
+interface ChapterProps {
+  i: number;
+  t: string;
+  d: string;
+}
+function Chapter({ i, t, d }: ChapterProps) {
   const [ref, live] = useLive(0.4);
   return (
     <li ref={ref} className="gu-ch" style={{ '--i': i }}>
@@ -309,7 +345,7 @@ function Chapter({ i, t, d }) {
 
 /* Build it once: the signature, then the five chapters as plain rows that lean with the scroll. */
 function Build() {
-  const list = useRef(null);
+  const list = useRef<HTMLOListElement>(null);
   useEnter(list);
   useVelocitySkew(list);
   return (
@@ -328,15 +364,15 @@ function Build() {
 /* Beyond, in the one dark room: the shorthands are the API. Tokens set all four; a drifted value fails the typecheck. */
 function Editor() {
   const [v, setV] = useState(PRESETS[0]);
-  const [draft, setDraft] = useState({});
-  const set = (k, val) => {
+  const [draft, setDraft] = useState<{} | {}>({});
+  const set = (k: string, val: string) => {
     setDraft((d) => ({ ...d, [k]: val }));
     if (OK(k, val)) setV((o) => ({ ...o, [k]: val }));
   };
   // a chip sets the token and clears anything typed: the field only ever holds what the visitor typed
-  const pick = (k, val) => { setDraft((d) => ({ ...d, [k]: undefined })); setV((o) => ({ ...o, [k]: val })); };
+  const pick = (k: string, val: string) => { setDraft((d) => ({ ...d, [k]: undefined })); setV((o) => ({ ...o, [k]: val })); };
   const bad = Object.entries(draft).filter(([k, val]) => !OK(k, val));
-  const room = useRef(null);
+  const room = useRef<HTMLElement>(null);
   useEnter(room);
   return (
     <section ref={room} className="bz-sec gu-api" data-room="dark" aria-labelledby="gu-api-h" data-entrance="domino">
@@ -396,7 +432,12 @@ const PRIMS = ['Stack', 'XStack', 'YStack', 'Text', 'Button', 'Sheet', 'Dialog']
 /* an opened platform carries only words that are about that platform: the web gets Hanzo's atomic-CSS sentence (its
    own sub-label); the phones and the desktop carry their name and Hanzo's sub-label alone */
 const PANEL = { web: 2 };
-function PlatScreen({ k, v, wake }) {
+interface PlatScreenProps {
+  k: string;
+  v: { p: string; bg: string; rounded: string; };
+  wake?: boolean;
+}
+function PlatScreen({ k, v, wake }: PlatScreenProps) {
   if (k === 'ios') return (
     <Dev k="ios" v={v}>
       <div className="gu-s gu-s-ios"><span className="gu-s-bars" aria-hidden="true"><i /><i /><i /></span>
@@ -420,7 +461,10 @@ function PlatScreen({ k, v, wake }) {
   );
 }
 /* The opened card reads as that platform's own page: its device large, the props it renders right now above it. */
-function PlatLive({ k }) {
+interface PlatLiveProps {
+  k: string;
+}
+function PlatLive({ k }: PlatLiveProps) {
   const [ref, live] = useLive(0.3);
   const v = useCycle(live, 2200);
   return <div ref={ref} className={'gu-pp-dev gu-pp-' + k}><Bar v={v} /><PlatScreen k={k} v={v} /></div>;
@@ -428,7 +472,7 @@ function PlatLive({ k }) {
 
 /* Back closes an opened platform the way Esc does: opening pushes one history entry; Back pops it and presses Close;
    closing any other way takes that entry back off, so the page's own history stays as it was. */
-function useBackCloses(ref) {
+function useBackCloses(ref: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const box = ref.current;
     if (!box) return;
@@ -451,8 +495,11 @@ function useBackCloses(ref) {
 
 /* A card's device: it tilts toward the pointer (2.5° at most, fine pointers only, flat on leave), and wakes while the
    card is pointed at or focused: its props take the next state once (the list moves to Button, the form fills). */
-function CardDev({ k }) {
-  const ref = useRef(null);
+interface CardDevProps {
+  k: string;
+}
+function CardDev({ k }: CardDevProps) {
+  const ref = useRef<HTMLSpanElement>(null);
   const [wake, setWake] = useState(false);
   useEffect(() => {
     const el = ref.current, card = el && el.closest('.gu-plat');
@@ -481,8 +528,8 @@ function CardDev({ k }) {
 
 /* Drop it in: the install and the code, and the four platforms as cards that open into their device. */
 function Ship() {
-  const box = useRef(null);
-  const lens = useRef(null);
+  const box = useRef<HTMLElement>(null);
+  const lens = useRef<HTMLDivElement>(null);
   useBackCloses(box);
   useEnter(lens);
   useLens(lens);
@@ -545,7 +592,7 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden=
 
 /* The close: one sentence at Display size, the one ask, one text row. */
 function End() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useGrowFromPoint(ref);
   return (
     <section ref={ref} className="bz-sec gu-end" aria-labelledby="gu-end-h" data-entrance="grow-from-point">

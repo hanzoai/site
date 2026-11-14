@@ -38,14 +38,14 @@ import { ENTRANCES, Enter, Letters } from './entrances';
 import './cloudfam.css';
 import './entrances.css';
 
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const Arrow = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Check = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const VARIANT = { Compute: 'stage', Infrastructure: 'stage', AI: 'wide', Apps: 'wide', Observe: 'wide', Dev: 'wide', Science: 'path', Web3: 'path', Data: 'path', Security: 'field', Network: 'field', Local: 'stage' };
 const POSE = { stage: { rotateX: 12, scale: 1.04, y: 0 }, wide: { rotateX: 0, scale: 0.9, y: 0 }, path: { rotateX: 0, scale: 0.96, y: 0 }, field: { rotateX: 8, scale: 0.94, y: 0 } };
 
 /* status told by shape, not colour: Generally available is a filled dot, Beta a half dot, a family name a ring */
-const shape = (label) => (/^Generally available$/i.test(label) ? 'ga' : /^Beta$/i.test(label) ? 'beta' : 'fam');
+const shape = (label: string) => (/^Generally available$/i.test(label) ? 'ga' : /^Beta$/i.test(label) ? 'beta' : 'fam');
 const Chip = ({ label, className = '' }) => <span className={'xcf-chip ' + shape(label) + ' ' + className}><i aria-hidden="true" /><span>{label}</span></span>;
 
 /* the product's place in its family, from its own console sidebar: the one figure every member has (01 / 08 Compute) */
@@ -60,7 +60,7 @@ const cmdOf = (doc) => (doc.ship ? (doc.ship.prompt.split('Start with: ')[1] || 
 
 /* the typing: the whole prompt is always in flow (faint), and each character moves from the faint part into the
    white part, so the lines wrap the same from first paint to last character (no React state per character) */
-function typing(el, rest, text, cps, alive) {
+function typing(el: never, rest: null, text, cps: number, alive: (() => boolean) | (() => boolean)) {
   return new Promise((done) => {
     let i = 0;
     el.textContent = '';
@@ -75,7 +75,10 @@ function typing(el, rest, text, cps, alive) {
   });
 }
 
-const PauseIcon = ({ on }) => (on
+interface PauseIconProps {
+  on: boolean;
+}
+const PauseIcon = ({ on }: PauseIconProps) => (on
   ? <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
   : <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /></svg>);
 
@@ -100,9 +103,9 @@ const Peek = ({ s, p }) => (
 
 function Console({ doc, v, fig, previews, sigil }) {
   const w = doc.window;
-  const box = useRef(null);
-  const typed = useRef(null);
-  const ghost = useRef(null);
+  const box = useRef<HTMLElement>(null);
+  const typed = useRef<HTMLSpanElement>(null);
+  const ghost = useRef<HTMLSpanElement>(null);
   const seen = useInView(box, { amount: 0.12 }); // starts on the first screen, phones included, within a second
   const calm = useCalm();
   const prompt = (doc.ship && doc.ship.prompt) || '';
@@ -248,7 +251,7 @@ function Console({ doc, v, fig, previews, sigil }) {
 
 /* /cloud/local: the boot, as a terminal session that plays once on screen and settles */
 function Boot({ boot }) {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useCalm();
   const refs = useRef([]);
@@ -301,7 +304,7 @@ function Finder({ pairs, here, e }) {
   const [q, setQ] = useState('');
   const [lit, setLit] = useState(0);
   const [held, setHeld] = useState(false);
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const still = useCalm();
@@ -363,7 +366,7 @@ function Finder({ pairs, here, e }) {
 
 /* Hanzo's genesis line, a quiet strip: its two sentences move from Air to Book weight once */
 function Motto({ text, e }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   const parts = text.split(/(?<=\.)\s+/);
   return (
@@ -477,7 +480,7 @@ function Name({ name, small }) {
   const calm = useCalm();
   const { scrollY } = useScroll();
   const big = !small && name.length <= 12;
-  const s = useTransform(scrollY, (v) => 1 - (1 - 52 / 64) * Math.min(1, Math.max(0, v / 480)));
+  const s = useTransform(scrollY, (v: number) => 1 - (1 - 52 / 64) * Math.min(1, Math.max(0, v / 480)));
   return <motion.h1 id="xcf-h1" className={'xcf-display' + (big ? ' s-l' : '')} style={calm || !big ? undefined : { scale: s }}><span className="xcf-mask"><span>{name}</span></span></motion.h1>;
 }
 
@@ -626,7 +629,7 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, pre
     family: !!(doc.window && doc.window.siblings.length > 1), ship: !!doc.ship, finder: pairs.some((p) => p.slug === doc.slug),
     related: !!doc.related, motto: !!doc.motto, boothead: isLocal, bootrows: isLocal,
   };
-  const secs = ORDER[isLocal ? 'local' : v].filter((k) => has[k]);
+  const secs = ORDER[isLocal ? 'local' : v].filter((k: string | number) => has[k]);
   const E = isLocal ? ENTRANCES.slice(1) : ENTRANCES;
   const bandE = E[secs.length] && E[secs.length] !== 'letter-cascade' ? E[secs.length] : undefined;
   return (

@@ -8,6 +8,7 @@
      grow-from-point .agx-g     grows out of the point the visitor last clicked or pointed at
      stretch-scroll  .agx-st    lands stretched and relaxes; after that it stretches with scroll speed and relaxes again
    The hidden first state lives only under html.js and no-preference motion: JS off and reduced motion read it whole. */
+import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
 import './entrances.css';
 
@@ -17,13 +18,13 @@ let bound = false;
 function track() {
   if (bound || typeof window === 'undefined') return;
   bound = true;
-  const f = (e) => { last = { x: e.clientX, y: e.clientY }; };
+  const f = (e: PointerEvent) => { last = { x: e.clientX, y: e.clientY }; };
   addEventListener('pointerdown', f, { passive: true, capture: true });
   addEventListener('pointermove', f, { passive: true });
 }
 
 // after the landing: the row stretches with scroll speed and relaxes when the scroll stops
-function stretch(el) {
+function stretch(el: never) {
   let y = scrollY, t = performance.now(), want = 1, s = 1, raf = 0;
   const frame = () => {
     s += (want - s) * 0.22;
@@ -42,7 +43,14 @@ function stretch(el) {
   return () => { removeEventListener('scroll', on); cancelAnimationFrame(raf); };
 }
 
-export function Enter({ as: T = 'div', move, className = '', children, ...rest }) {
+interface EnterProps {
+  as?: string;
+  move: string;
+  className?: string;
+  children: ReactNode;
+  [key: string]: unknown;
+}
+export function Enter({ as: T = 'div', move, className = '', children, ...rest }: EnterProps) {
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current;
@@ -73,4 +81,4 @@ export function Enter({ as: T = 'div', move, className = '', children, ...rest }
 }
 
 // venetian-type: the side and delay of line i
-export const ven = (i, step = 28, cap = 30) => ({ '--s': i % 2 ? 1 : -1, '--d': Math.min(i, cap) * step + 'ms' });
+export const ven = (i: number, step = 28, cap = 30) => ({ '--s': i % 2 ? 1 : -1, '--d': Math.min(i, cap) * step + 'ms' });

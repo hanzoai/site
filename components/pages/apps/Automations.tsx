@@ -118,7 +118,7 @@ const APPS = [
 const CATS = ['All', 'AI & LLMs', 'Communication', 'Productivity', 'Data & Storage', 'CRM & Sales', 'Commerce', 'Marketing', 'Developer Tools', 'Social Media'];
 const DOCK = ['OpenAI', 'Anthropic Claude', 'Google Gemini', 'Slack', 'Discord', 'WhatsApp', 'Notion', 'Airtable', 'Google Sheets', 'Google Drive', 'Linear', 'Salesforce'];
 const BY = Object.fromEntries(APPS.map((a) => [a[1], a]));
-const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const slug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const BY_SLUG = Object.fromEntries(APPS.map((a) => [slug(a[1]), a]));
 /* the gallery's panels: "All" opens on the popular apps, then one panel per category, then "Not here?" */
 const STAGES = CATS.map((c, i) => (i === 0 ? APPS.filter((a) => a[3]) : APPS.filter((a) => a[2] === c)));
@@ -129,13 +129,13 @@ const K = 0.8; // px of vertical scroll per px the track travels
 /* the track rests on each panel for the first part of its share of the scroll, then glides to the next, so a panel is
    read whole (one in, one out) instead of two halves sliding past; HOLD is that resting share. */
 const HOLD = 0.5;
-const ease3 = (x) => x * x * (3 - 2 * x);
-const uneas3 = (y) => 0.5 - Math.sin(Math.asin(1 - 2 * Math.min(1, Math.max(0, y))) / 3);
-const held = (raw, step, travel) => { // page scroll (px of track) -> where the track sits
+const ease3 = (x: number) => x * x * (3 - 2 * x);
+const uneas3 = (y: number) => 0.5 - Math.sin(Math.asin(1 - 2 * Math.min(1, Math.max(0, y))) / 3);
+const held = (raw: number, step: number, travel: number) => { // page scroll (px of track) -> where the track sits
   const p = raw / step, i = Math.floor(p), f = p - i;
   return Math.min(travel, (i + (f < HOLD ? 0 : ease3((f - HOLD) / (1 - HOLD)))) * step);
 };
-const unheld = (left, step) => { // where the track sits -> page scroll (px of track), the middle of the glide
+const unheld = (left: number, step: number) => { // where the track sits -> page scroll (px of track), the middle of the glide
   const p = left / step, i = Math.floor(p), f = p - i;
   return (i + (f < 0.001 ? HOLD / 2 : HOLD + (1 - HOLD) * uneas3(f))) * step;
 };
@@ -162,7 +162,7 @@ function useEnter(before) {
 }
 function usePoint() {
   useEffect(() => {
-    const on = (e) => { PT.x = e.clientX; PT.y = e.clientY; };
+    const on = (e: PointerEvent) => { PT.x = e.clientX; PT.y = e.clientY; };
     addEventListener('pointerdown', on, { passive: true });
     addEventListener('pointermove', on, { passive: true });
     return () => { removeEventListener('pointerdown', on); removeEventListener('pointermove', on); };
@@ -171,12 +171,12 @@ function usePoint() {
 
 /* The board's three places, in px from its own box: a zig-zag (left high, middle low, right high) on desktop, and a
    left-right stagger standing up on the phone. The same numbers place the nodes (CSS) and draw the wires (SVG). */
-function places(w, h, narrow) {
+function places(w: number, h: number, narrow: boolean) {
   if (narrow) { const nw = w * 0.8, nh = 84; return [[0, 0], [w * 0.2, 112], [0, 224]].map(([x, y]) => ({ x, y, w: nw, h: nh })); }
   const nw = w * 0.3, nh = 116;
   return [[0, 0], [w * 0.35, h - nh], [w * 0.7, 0]].map(([x, y]) => ({ x, y, w: nw, h: nh }));
 }
-function wire(p, i, narrow) {
+function wire(p: never, i: number, narrow: boolean) {
   const a = p[i - 1], b = p[i];
   if (narrow) {
     if (i === 1) { const ax = a.x + a.w, ay = a.y + a.h / 2, bx = b.x + b.w * 0.88, by = b.y; return `M${ax} ${ay} C${bx} ${ay}, ${bx} ${ay + 10}, ${bx} ${by}`; }
@@ -190,8 +190,8 @@ function wire(p, i, narrow) {
    every 1.6 s, by a timeout chain). The first tap hands the board to the visitor: the loop stops for good. */
 function Canvas({ flow, add, mine, drop }) {
   const [ref, live, , paused, toggle] = useDemo(0.3);
-  const board = useRef(null);
-  const [box, setBox] = useState(null);
+  const board = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState<{ w: number; h: number; narrow: boolean; } | null>(null);
   const k = useRef(3);
   const [n, setN] = useState(0);
   const auto = live && !mine;
@@ -204,7 +204,7 @@ function Canvas({ flow, add, mine, drop }) {
   useEffect(() => {
     if (!auto) return;
     let t = 0;
-    const step = (ms) => { t = setTimeout(() => { add(DOCK[k.current % DOCK.length]); k.current += 5; setN((x) => x + 1); step(1600); }, ms); };
+    const step = (ms: number) => { t = setTimeout(() => { add(DOCK[k.current % DOCK.length]); k.current += 5; setN((x) => x + 1); step(1600); }, ms); };
     step(450);
     return () => clearTimeout(t);
   }, [auto]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -290,7 +290,12 @@ function Hero(props) {
 
 /* The tray: the board's flow, mirrored beside the gallery. When the visitor fills the third place it grows into a
    full-width run with a 64px "3 / 3" for 2.4 s, then settles back (shared layout). */
-function Tray({ flow, big, close }) {
+interface TrayProps {
+  flow: string[];
+  big: boolean;
+  close: () => void;
+}
+function Tray({ flow, big, close }: TrayProps) {
   const run = flow.join('|');
   return (
     <>
@@ -332,7 +337,14 @@ function Tray({ flow, big, close }) {
   );
 }
 
-function Tile({ a, flow, drop, id, lit }) {
+interface TileProps {
+  a: (string | number)[];
+  flow: string[];
+  drop: (t: string) => void;
+  id?: string;
+  lit?: string;
+}
+function Tile({ a, flow, drop, id, lit }: TileProps) {
   const [e, t, , pop] = a;
   const at = flow.indexOf(t);
   return (
@@ -348,25 +360,30 @@ function Tile({ a, flow, drop, id, lit }) {
    moves the track sideways (scrollLeft = travelled × 1/K). The track is also a real horizontal scroller, so a swipe or a
    trackpad moves it, and the page follows to the matching height. Under 900px the side (title, count, search, tray)
    scrolls away first and only the chips and the track hold. Every tile stays in the HTML. */
-function Gallery({ flow, mine, drop }) {
+interface GalleryProps {
+  flow: string[];
+  mine: boolean;
+  drop: (t: string) => void;
+}
+function Gallery({ flow, mine, drop }: GalleryProps) {
   const [idx, setIdx] = useState(0);
   const [q, setQ] = useState('');
   const [big, setBig] = useState(false);
   const [lit, setLit] = useState('');
   const [drawn, setDrawn] = useState(false);
-  const input = useRef(null);
-  const outer = useRef(null);
-  const pin = useRef(null);
+  const input = useRef<HTMLInputElement>(null);
+  const outer = useRef<HTMLElement>(null);
+  const pin = useRef<HTMLDivElement>(null);
   const side = useRef(null);
-  const track = useRef(null);
-  const chips = useRef(null);
+  const track = useRef<HTMLDivElement>(null);
+  const chips = useRef<HTMLDivElement>(null);
   const geo = useRef({ travel: 0, step: 1 });
   const seen = useInView(pin, { amount: 0.4 });
   usePoint();
   const [viewRef, e3] = useEnter();
   const [sideRef, e4] = useEnter();
   /* the last panel enters when the track reaches it (an IntersectionObserver cannot see it through its own start clip) */
-  const notRef = useRef(null);
+  const notRef = useRef<HTMLDivElement>(null);
   const [e5, setE5] = useState(undefined);
   useEffect(() => { setE5((v) => v || 'wait'); }, []);
   useEffect(() => {
@@ -382,13 +399,13 @@ function Gallery({ flow, mine, drop }) {
   const hits = s ? APPS.filter((a) => a[1].toLowerCase().includes(s)) : [];
   const nothing = s && !hits.length;
   const shown = s ? hits.length : idx === 0 || idx === LAST ? 81 : STAGES[idx].length;
-  const count = (c) => (c === 'All' ? APPS.length : APPS.filter((a) => a[2] === c).length);
+  const count = (c: string) => (c === 'All' ? APPS.length : APPS.filter((a) => a[2] === c).length);
   const stick = () => parseFloat(getComputedStyle(pin.current).top) || 0;
   const want = () => { // where the track should be for the page's scroll
     const { travel, step } = geo.current;
-    return held(Math.max(0, (stick() - outer.current.getBoundingClientRect().top) / K), step, travel);
+    return held(Math.max(0, (stick() - outer.current!.getBoundingClientRect().top) / K), step, travel);
   };
-  const mark = (left) => {
+  const mark = (left: number) => {
     const { travel, step } = geo.current;
     const i = left >= travel - 4 ? LAST : Math.min(LAST, Math.round(left / step));
     setIdx((x) => (x === i ? x : i));
@@ -404,11 +421,11 @@ function Gallery({ flow, mine, drop }) {
   useEffect(() => {
     const fit = () => {
       const t = track.current, narrow = matchMedia('(max-width: 900px)').matches;
-      pin.current.style.setProperty('--side-h', narrow ? side.current.offsetHeight + 'px' : '0px');
+      pin.current!.style.setProperty('--side-h', narrow ? side.current!.offsetHeight + 'px' : '0px');
       const panels = t.children;
       geo.current = { travel: Math.max(0, t.scrollWidth - t.clientWidth), step: panels[1] ? panels[1].offsetLeft - panels[0].offsetLeft : 1 };
       const { travel, step } = geo.current; // every glide, then a last rest on the final panel
-      outer.current.style.height = pin.current.offsetHeight + (travel ? (Math.ceil(travel / step - 0.001) + HOLD) * step : 0) * K + 'px';
+      outer.current!.style.height = pin.current!.offsetHeight + (travel ? (Math.ceil(travel / step - 0.001) + HOLD) * step : 0) * K + 'px';
       sync();
     };
     const ro = new ResizeObserver(fit);
@@ -421,17 +438,17 @@ function Gallery({ flow, mine, drop }) {
   const userAt = useRef(-1e9);
   const touched = () => { userAt.current = performance.now(); };
   const onSwipe = () => { // the visitor moved the track itself (swipe, trackpad, keys): bring the page to the matching height
-    const t = track.current, top = outer.current.getBoundingClientRect().top;
+    const t = track.current, top = outer.current!.getBoundingClientRect().top;
     if (performance.now() - userAt.current > 900 || Math.abs(t.scrollLeft - want()) < 2) return;
     touched(); // momentum after the finger lifts still belongs to the visitor
-    if (top > stick() + 2 || top + outer.current.offsetHeight < innerHeight - 2) { mark(t.scrollLeft); return; }
+    if (top > stick() + 2 || top + outer.current!.offsetHeight < innerHeight - 2) { mark(t.scrollLeft); return; }
     scrollToY(top + window.scrollY - stick() + unheld(t.scrollLeft, geo.current.step) * K, { immediate: true });
     mark(t.scrollLeft);
   };
-  const go = (i) => {
+  const go = (i: number) => {
     setQ('');
     const { travel, step } = geo.current;
-    const top = outer.current.getBoundingClientRect().top + window.scrollY;
+    const top = outer.current!.getBoundingClientRect().top + window.scrollY;
     scrollToY(top - stick() + (Math.min(i, Math.ceil(travel / step - 0.001)) + HOLD / 2) * step * K, { duration: 1 });
   };
   useEffect(() => { // keep the current chip in view on the phone's swipe row
@@ -453,7 +470,7 @@ function Gallery({ flow, mine, drop }) {
     const t = setTimeout(() => setBig(false), 2400);
     return () => clearTimeout(t);
   }, [flow.join('|'), mine]); // eslint-disable-line react-hooks/exhaustive-deps
-  const line = (d) => ({ initial: { pathLength: 0 }, animate: drawn ? { pathLength: 1 } : { pathLength: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+  const line = (d: number) => ({ initial: { pathLength: 0 }, animate: drawn ? { pathLength: 1 } : { pathLength: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
   const toLast = (e) => { e.preventDefault(); go(LAST); };
   return (
     <section className={'am2-gal' + (s ? ' find' : '')} id="all" aria-labelledby="am2-all" ref={outer}>
@@ -549,10 +566,10 @@ export default function Automations() {
   const [flow, setFlow] = useState(['Slack', 'OpenAI', 'Notion']);
   const [mine, setMine] = useState(false);
   const own = useRef(false);
-  const add = (t) => { if (!own.current) setFlow((f) => (f.length >= 3 ? [t] : [...f.filter((x) => x !== t), t])); };
+  const add = (t: string) => { if (!own.current) setFlow((f) => (f.length >= 3 ? [t] : [...f.filter((x) => x !== t), t])); };
   /* The first tap hands the flow to the visitor for good: it starts fresh with their app. After that a tap adds the app
      (the oldest leaves once three are placed), and a tap on a placed app takes it out. */
-  const drop = (t) => {
+  const drop = (t: string) => {
     const first = !own.current;
     own.current = true;
     setMine(true);

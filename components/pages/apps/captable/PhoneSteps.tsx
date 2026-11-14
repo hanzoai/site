@@ -7,10 +7,10 @@ import { useEffect, useRef, useState } from 'react';
 const two = (n) => String(n).padStart(2, '0');
 
 export default function PhoneSteps({ items, stage, label, children }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const [at, setAt] = useState(0);
   useEffect(() => {
-    const els = [...ref.current.querySelectorAll('[data-pch]')];
+    const els = [...ref.current!.querySelectorAll('[data-pch]')];
     const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(+e.target.dataset.pch)), { rootMargin: '-58% 0px -40% 0px' });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();

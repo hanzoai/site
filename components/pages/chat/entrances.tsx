@@ -8,6 +8,7 @@
    Each plays once when its section is about 30% on screen ([data-in] set here). Every pre-entrance state lives in
    chat-motion.css under `html.js` and prefers-reduced-motion: no-preference, so JS-off and reduced-motion visitors
    get the final state from the server HTML. Nothing here changes layout: transforms, opacity, clip-path and strokes. */
+import type { ReactNode } from 'react';
 import { Fragment, useEffect, useRef } from 'react';
 
 const calm = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -53,7 +54,7 @@ export function scrambleIn(root) {
   const t0 = performance.now();
   const DUR = 720;
   let last = 0;
-  const tick = (now) => {
+  const tick = (now: number) => {
     const t = now - t0;
     let live = false;
     if (now - last > 40) { // about 25 changes a second, so it reads as characters turning over, not noise

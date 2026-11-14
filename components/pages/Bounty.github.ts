@@ -16,11 +16,11 @@ export function issue(e) {
   if (!m || typeof e.title !== 'string' || !e.title.trim()) return null;
   const labels = Array.isArray(e.labels) ? e.labels.map((l) => (l && typeof l === 'object' ? String(l.name ?? '') : String(l))) : [];
   if (!labels.includes('bounty')) return null;
-  const tier = labels.map((l) => /^bounty:(.+)$/.exec(l)?.[1]?.trim()).find(Boolean) ?? null;
+  const tier = labels.map((l: string) => /^bounty:(.+)$/.exec(l)?.[1]?.trim()).find(Boolean) ?? null;
   return { repo: `${m[1]}/${m[2]}`, number: Number(m[3]), title: e.title.trim(), url, tier };
 }
 
-export async function openBounties(signal) {
+export async function openBounties(signal: AbortSignal) {
   const r = await fetch(`https://api.github.com/search/issues?q=${encodeURIComponent(Q)}&sort=created&order=desc&per_page=50`, { headers: { accept: 'application/vnd.github+json' }, signal });
   if (!r.ok) return null;
   const d = await r.json();

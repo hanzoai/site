@@ -7,6 +7,7 @@
    Persona: a finance or platform lead pricing what consolidating a vendor stack would save.
    Goal: a run-rate figure they can defend, with the three deductions named until entered.
    Copy: every label, note and disclaimer is hanzo.ai's own, word for word. */
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import Savings from './calculator/Savings';
 import { useModels } from './calculator/use';
@@ -17,12 +18,33 @@ import {
 import './Calculator.css';
 
 /* Sentences with a part in full ink. */
-const B = ({ mono, children }) => <b className={mono ? 'xc-b mono' : 'xc-b'}>{children}</b>;
-const Note = ({ children }) => <p className="xc-note">{children}</p>;
-const Label = ({ children }) => <p className="xc-label">{children}</p>;
-const H2 = ({ children }) => <h2 className="xc-h2">{children}</h2>;
-const Card = ({ accent, as: Tag = 'div', children }) => <Tag className={'xc-card' + (accent ? ' accent' : '')}>{children}</Tag>;
-const Controls = ({ children }) => <div className="xc-controls">{children}</div>;
+interface BProps {
+  mono?: boolean;
+  children: ReactNode;
+}
+const B = ({ mono, children }: BProps) => <b className={mono ? 'xc-b mono' : 'xc-b'}>{children}</b>;
+interface NoteProps {
+  children: ReactNode;
+}
+const Note = ({ children }: NoteProps) => <p className="xc-note">{children}</p>;
+interface LabelProps {
+  children: ReactNode;
+}
+const Label = ({ children }: LabelProps) => <p className="xc-label">{children}</p>;
+interface H2Props {
+  children: ReactNode;
+}
+const H2 = ({ children }: H2Props) => <h2 className="xc-h2">{children}</h2>;
+interface CardProps {
+  accent?: boolean;
+  as?: string;
+  children: ReactNode;
+}
+const Card = ({ accent, as: Tag = 'div', children }: CardProps) => <Tag className={'xc-card' + (accent ? ' accent' : '')}>{children}</Tag>;
+interface ControlsProps {
+  children: ReactNode;
+}
+const Controls = ({ children }: ControlsProps) => <div className="xc-controls">{children}</div>;
 
 /** A control's caption, in small caps; `shows` is its value at the right. */
 function Caption({ id, shows, children }) {
@@ -62,17 +84,31 @@ function Field({ id, label, min, step, value, placeholder, narrow, onChange }) {
 }
 
 /** One of the four tiers; `lead` is the headline, on the saving tint. */
-const Tier = ({ label, note, lead, children }) => (
+interface TierProps {
+  label: string;
+  note: string;
+  lead?: boolean;
+  children: ReactNode;
+}
+const Tier = ({ label, note, lead, children }: TierProps) => (
   <div className={'xc-tier' + (lead ? ' lead' : '')}>
     <span className="xc-tier-k">{label}</span>
     {children}
     <small>{note}</small>
   </div>
 );
-const Big = ({ children }) => <span className="xc-big">{children}</span>;
+interface BigProps {
+  children: ReactNode;
+}
+const Big = ({ children }: BigProps) => <span className="xc-big">{children}</span>;
 
 /** One part of the run-rate, ruled across its top in the saving hue, or the cost hue for what Hanzo costs. */
-const Part = ({ label, cost, children }) => (
+interface PartProps {
+  label: string;
+  cost?: boolean;
+  children: ReactNode;
+}
+const Part = ({ label, cost, children }: PartProps) => (
   <div className={'xc-part' + (cost ? ' cost' : '')}>
     <small>{label}</small>
     <span>{children}</span>
@@ -80,7 +116,12 @@ const Part = ({ label, cost, children }) => (
 );
 
 /** A vendor, or a small action set the same way; pressed reads in the saving hue on its tint. */
-const Toggle = ({ pressed, onPress, children }) => (
+interface ToggleProps {
+  pressed?: boolean;
+  onPress: (() => void) | (() => void) | (() => void) | (() => void) | (() => void);
+  children: ReactNode;
+}
+const Toggle = ({ pressed, onPress, children }: ToggleProps) => (
   <button type="button" className="xc-toggle" aria-pressed={pressed} onClick={onPress}>{children}</button>
 );
 
@@ -94,7 +135,13 @@ function Chip({ ink, title, onPress, children }) {
     : <span className={cls}>{children}</span>;
 }
 
-const Td = ({ off, right, svc, children }) => (
+interface TdProps {
+  off: boolean;
+  right?: boolean;
+  svc?: boolean;
+  children: ReactNode;
+}
+const Td = ({ off, right, svc, children }: TdProps) => (
   <td className={(off ? 'off ' : '') + (right ? 'r ' : '') + (svc ? 'svc' : '')}>{children}</td>
 );
 
@@ -110,11 +157,11 @@ export default function Calculator() {
   const { E, Dp, cloud, infraPct, glueFte, opsFte, retained, fee, migration, migYears } = s;
   const { D, on, value, software, infra, glue, ops, gross, runRate, adjusted, hasDeductions, vendorCount, saving } = m;
 
-  const cycleCov = (i) => up({ cov: s.cov.map((c, k) => (k === i ? nextCov(c) : c)) });
-  const toggleRow = (i, checked) => up({ von: s.von.map((v, k) => (VENDORS[k][1] === i ? checked : v)) });
-  const setAllVendors = (v) => up({ von: VENDORS.map(() => v) });
+  const cycleCov = (i: number) => up({ cov: s.cov.map((c, k) => (k === i ? nextCov(c) : c)) });
+  const toggleRow = (i: number, checked: boolean) => up({ von: s.von.map((v, k) => (VENDORS[k][1] === i ? checked : v)) });
+  const setAllVendors = (v: boolean) => up({ von: VENDORS.map(() => v) });
   const reset = () => { const i = initial(); up({ cov: i.cov, price: i.price, von: i.von, aiOn: i.aiOn }); };
-  const num = (id, v, key) => <Field id={id} min={0} step={1000} value={v || ''} placeholder="0" onChange={(n) => up({ [key]: n })} />;
+  const num = (id: string, v: number, key: string) => <Field id={id} min={0} step={1000} value={v || ''} placeholder="0" onChange={(n) => up({ [key]: n })} />;
 
   return (
     <main className="xc">

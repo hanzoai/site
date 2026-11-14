@@ -112,7 +112,11 @@ const KINDS = [
 ];
 
 /* Crisp monochrome geometric vector icons */
-function Icon({ name, size = 14 }) {
+interface IconProps {
+  name: string;
+  size?: number;
+}
+function Icon({ name, size = 14 }: IconProps) {
   switch (name) {
     case 'hanzo':
       return (

@@ -11,6 +11,8 @@
    five pinned chapters with clip wipes (components/v2/AppScenes), line-masked headline, a magnetic ask. Greys only; colour
    comes from Hanzo's memoji and connector logos. Bot faces are Hanzo's memoji, with a drawn face beneath in case a picture
    can't load. Every word, figure and link is Hanzo's. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Magnetic, copyText } from '../ui';
@@ -38,8 +40,13 @@ function Pic({ src, alt = '', className = '' }) {
 }
 
 /* A bot's face: Hanzo's memoji for that bot, over a little drawn screen with two eyes that shows if the picture can't load. */
-const memoji = (id) => `https://hanzo.ai/memoji/${id === 'qa' ? 'sci' : id}.svg`;
-function Face({ k = '', size, id }) {
+const memoji = (id: string | boolean) => `https://hanzo.ai/memoji/${id === 'qa' ? 'sci' : id}.svg`;
+interface FaceProps {
+  k?: string;
+  size?: number;
+  id: string | boolean;
+}
+function Face({ k = '', size, id }: FaceProps) {
   return <span className={'bt-face ' + k + (id ? ' has-id' : '')} style={size ? { '--s': size + 'px' } : undefined} aria-hidden="true"><i /><i />{id && <Pic src={memoji(id)} className="bt-face-img" />}</span>;
 }
 
@@ -60,13 +67,13 @@ function route(pts) {
   const l = pts[pts.length - 1];
   return d + ` L${l[0]} ${l[1]}`;
 }
-const off = (el, root) => { let x = 0, y = 0, e = el; while (e && e !== root) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return { x, y, w: el.offsetWidth, h: el.offsetHeight }; };
+const off = (el, root: never) => { let x = 0, y = 0, e = el; while (e && e !== root) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return { x, y, w: el.offsetWidth, h: el.offsetHeight }; };
 
 function Packet({ pts, dur, v }) {
   const len = pts.slice(1).map((p, i) => Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]));
   const tot = len.reduce((a, b) => a + b, 0) || 1;
   let s = 0;
-  const times = [0, ...len.map((l) => (s += l) / tot)];
+  const times = [0, ...len.map((l: number) => (s += l) / tot)];
   return (
     <motion.span className={'bt-pk' + (v ? ' v' : '')} aria-hidden="true" initial={{ x: pts[0][0], y: pts[0][1], opacity: 0 }}
       animate={{ x: pts.map((p) => p[0]), y: pts.map((p) => p[1]), opacity: pts.map((_, i) => (i === pts.length - 1 ? 0.2 : 1)) }}
@@ -81,7 +88,7 @@ function Org() {
   const [mine, setMine] = useState(false);
   const [paused, setPaused] = useState(false);
   const [g, setG] = useState(null);
-  const box = useRef(null), chart = useRef(null), ask = useRef(null), row = useRef(null);
+  const box = useRef<HTMLDivElement>(null), chart = useRef<HTMLDivElement>(null), ask = useRef<HTMLDivElement>(null), row = useRef<HTMLOListElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useCalm(); // false on the server and the first client render, so both match
   const live = seen && !calm && !paused;
@@ -101,7 +108,7 @@ function Org() {
     const m = () => {
       if (innerWidth <= 900) return setG(null);
       const a = off(ask.current, c);
-      const ns = [...row.current.children].map((n) => { const f = off(n.querySelector('.bt-face'), c), q = off(n, c); return { x: f.x + f.w / 2, top: f.y, bot: q.y + q.h }; });
+      const ns = [...row.current!.children].map((n) => { const f = off(n.querySelector('.bt-face'), c), q = off(n, c); return { x: f.x + f.w / 2, top: f.y, bot: q.y + q.h }; });
       setG({ W: c.offsetWidth, H: c.offsetHeight, hx: a.x + a.w / 2, hy: a.y + a.h + 6, ns });
     };
     m();
@@ -109,8 +116,8 @@ function Org() {
     return () => ro.disconnect();
   }, [at]);
 
-  const pick = (i) => { setAt(i); setB(calm ? 5 : 0); setMine(true); setFirst(false); };
-  const key = (e, i) => {
+  const pick = (i: number) => { setAt(i); setB(calm ? 5 : 0); setMine(true); setFirst(false); };
+  const key = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
     const n = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!n) return;
     const j = (i + n + WORKFLOWS.length) % WORKFLOWS.length; pick(j);
     e.currentTarget.parentElement.parentElement.children[j]?.querySelector('button')?.focus();
@@ -288,7 +295,10 @@ function Hero() {
 }
 
 /* ---------- the ten workflows, in one drawer; and what every bot has ---------- */
-function Case({ w }) {
+interface CaseProps {
+  w: { id: string; num: string; channel: string; category: string; title: string; summary: string; human: { initials: string; name: string; time: string; before: string; mention: string; after: string; }; primary: { id: string; name: string; role: string; time: string; reply: string; codeOrArtifact: string; artifactKind: string; }; verifier: { id: string; name: string; role: string; time: string; reply: string; badge: string; }; tools: string[]; steps: string[]; };
+}
+function Case({ w }: CaseProps) {
   return (
     <article className="bt-case">
       <h3 className="bt-case-t">{w.title}</h3>
@@ -395,7 +405,13 @@ function Board({ on }) {
   );
 }
 
-function Msg({ on, children, cls = '', face }) {
+interface MsgProps {
+  on: boolean;
+  children: ReactNode;
+  cls?: string;
+  face?: string;
+}
+function Msg({ on, children, cls = '', face }: MsgProps) {
   return (
     <div className={'bt-tm ' + cls + (on ? ' on' : '')} aria-hidden={!on}>
       {face && <Face k={face === 'des' ? 'v' : 'p'} size={30} id={face} />}
@@ -408,7 +424,7 @@ function Msg({ on, children, cls = '', face }) {
 function Thread({ on }) {
   const calm = useReducedMotion();
   const [b, setB] = useState(7);
-  const [pick, setPick] = useState(null);
+  const [pick, setPick] = useState<string | null>(null);
   useEffect(() => { if (on && !calm) { setB(0); setPick(null); } }, [on, calm]);
   useEffect(() => {
     if (!on || calm || b >= 7) return;
@@ -416,7 +432,7 @@ function Thread({ on }) {
     return () => clearTimeout(t);
   }, [b, on, calm]);
   useEffect(() => { if (b === 7 && !pick) setPick('yes'); }, [b, pick]);
-  const at = (k) => b > k;
+  const at = (k: number) => b > k;
   const desOn = b === 3;
   return (
     <div className="bt-vis bt-app">
@@ -536,7 +552,13 @@ function Memory({ on }) {
   );
 }
 
-const Items = ({ lede, items, link, to }) => (
+interface ItemsProps {
+  lede?: string;
+  items: string[][] | string[][];
+  link?: string;
+  to?: string;
+}
+const Items = ({ lede, items, link, to }: ItemsProps) => (
   <div className="bt-chb">
     {lede && <p className="av-body bt-chb-lede">{lede}</p>}
     {items && <dl className="bt-dl">{items.map(([t, d]) => <div key={t}><dt>{t}</dt><dd>{d}</dd></div>)}</dl>}
@@ -555,7 +577,7 @@ const CHAPTERS = [
 /* Five plain sections (no pin): words on one side, the live picture on the other, alternating. Each picture runs only
    while it is on screen. They enter with the page's `ripple` (components/pages/bot/enter.css). */
 function Chapter({ it, i }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const on = useInView(ref, { amount: 0.4 });
   return (
     <div ref={ref} className={'av-wrap av-grid bt-ch' + (i % 2 ? ' alt' : '')} data-enter="ripple">
@@ -647,7 +669,10 @@ const CMDS = ['npm install -g @hanzo/bot', 'hanzo-bot onboard --install-daemon']
 const TYPE_MS = 38;
 
 /* The terminal's copy button: it says "Copied" the moment the clipboard takes the text (a role=status line), never on failure. */
-function TermCopy({ text }) {
+interface TermCopyProps {
+  text: string;
+}
+function TermCopy({ text }: TermCopyProps) {
   const [ok, setOk] = useState(false);
   const t = useRef(0);
   useEffect(() => () => clearTimeout(t.current), []);
@@ -671,7 +696,7 @@ function TermCopy({ text }) {
 }
 
 function InstallStage() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.45 });
   const calm = useCalm();
   const [k, setK] = useState(3); // characters typed: 3 = all done (the server's frame)
@@ -696,7 +721,7 @@ function InstallStage() {
     return () => clearTimeout(t);
   }, [ready, seen, calm, k, n]);
   const again = () => { if (calm) return; setK(0); setN([0, 0]); setStep(0); };
-  const lit = (i) => (k >= 3 ? true : i <= step);
+  const lit = (i: number) => (k >= 3 ? true : i <= step);
   return (
     <div className="av-grid bt-inst" ref={ref}>
       <div className="bt-inst-l">
@@ -782,7 +807,7 @@ function Pricing() {
   const [k, setK] = useState(1);
   const [hl, setHl] = useState(0); // which included part the drawn machines light
   const [hold, setHold] = useState(false);
-  const rack = useRef(null);
+  const rack = useRef<HTMLDivElement>(null);
   const racked = useInView(rack, { amount: 0.4 });
   const calm = useCalm();
   // while the machines are on screen, their four parts light in turn; pointing at a row holds it
@@ -926,7 +951,7 @@ function More2() {
 
 /* ---------- the one closing Band ---------- */
 function Close() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm(); // after mount only, so the server's clip-path and the first client render match
   // the black room arrives as a rounded card inside the gutters and opens to the full width as it is reached
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
@@ -947,7 +972,7 @@ function Close() {
 }
 
 export default function Bot() {
-  const main = useRef(null);
+  const main = useRef<HTMLElement>(null);
   useEntrances(main); // the five page-local entrances (components/pages/bot/enter.js)
   return (
     <main ref={main} className="av bt" style={{ '--ac': '#0a0a0a' }}>

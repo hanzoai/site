@@ -24,7 +24,7 @@ function Count({ v }) {
     if (!el || !m || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const to = parseInt(m[2].replace(/,/g, ''), 10);
     let raf = 0, t0 = 0;
-    const tick = (t) => {
+    const tick = (t: number) => {
       if (!t0) t0 = t;
       const p = Math.min(1, (t - t0 - 500) / 1400);
       const e = p <= 0 ? 0 : 1 - Math.pow(1 - p, 3);
@@ -66,7 +66,7 @@ function Flow({ stations, chains, mode }) {
 export default function KeyStage({ k, chains, seed, stations, mode, stream }) {
   return (
     <aside className="xb2-key xb3-key">
-      <Sigil seed={seed} data={[chains.length, ...k.stats.map(([v]) => parseFloat(String(v).replace(/[^\d.]/g, ''))).filter((x) => x > 0)]} className="xb2-key-sig" />
+      <Sigil seed={seed} data={[chains.length, ...k.stats.map(([v]) => parseFloat(String(v).replace(/[^\d.]/g, ''))).filter((x: number) => x > 0)]} className="xb2-key-sig" />
       {stations.length > 1 && chains.length > 0 && <Flow stations={stations} chains={chains} mode={mode} />}
       {stream}
       <div className="xb2-key-g xb3-key-g">

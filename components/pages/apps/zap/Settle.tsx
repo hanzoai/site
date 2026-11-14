@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 
 export default function Settle({ children, from = 1.14, lift = 80, span, className = '' }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const rm = useReducedMotion();
   const [calm, setCalm] = useState(false);
   useEffect(() => setCalm(!!rm), [rm]);

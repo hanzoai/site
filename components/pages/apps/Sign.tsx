@@ -14,6 +14,7 @@
    time stamped on its certificate line. Nothing is sent anywhere.
    Colour: none (0 UI hues); ink and greys. Self-running demos carry a pause button.
    One dark room: "Send the first one". Every word and link is Hanzo's. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion, useInView } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
@@ -74,7 +75,10 @@ function dissolve(el) {
 
 /* The page itself. at: 0 uploaded, 1 fields placed, 2 sent (ink writes), 3 moving, 4 certificate. Everything that
    arrives on the paper stamps (Sign.css, "the stamp"). */
-function Page({ at }) {
+interface PageProps {
+  at: number;
+}
+function Page({ at }: PageProps) {
   const placed = at >= 1;
   const signed = at >= 2;
   return (
@@ -126,7 +130,7 @@ function Opening() {
   }, [step, live, paused, picked]);
   const at = calm ? 4 : step;
   const stepsRef = useEnter();
-  const pick = (i) => { setStep(i); setPicked(true); };
+  const pick = (i: number) => { setStep(i); setPicked(true); };
   return (
     <section className="sg-hero" aria-labelledby="sg-h1" data-morph-target>
       <div className="w2-wrap">
@@ -189,7 +193,7 @@ function Five() {
   const [paused, pauseBtn] = usePause({ right: 12, top: 12 });
   const [k, setK] = useState(3);
   useEvery(1200, live && !paused, () => setK((v) => (v + 1) % 9));
-  const st = (i) => (i === 3 ? (k > 1 ? 'opened' : 'sent') : k > i + 2 ? 'signed' : k > i ? 'opened' : 'sent'); // person 4 is the one holding it up
+  const st = (i: number) => (i === 3 ? (k > 1 ? 'opened' : 'sent') : k > i + 2 ? 'signed' : k > i ? 'opened' : 'sent'); // person 4 is the one holding it up
   return (
     <div className="sg-five" ref={ref}>
       {pauseBtn}
@@ -249,18 +253,18 @@ function Parts() {
 
 /* Beyond: a signing pad. Draw, press Sign, and the "Signed" line stamps onto the pad with the time. Nothing is sent. */
 function Pad() {
-  const cv = useRef(null);
-  const last = useRef(null);
+  const cv = useRef<HTMLCanvasElement>(null);
+  const last = useRef<number[] | null | null>(null);
   const [ink, setInk] = useState(false);
-  const [done, setDone] = useState(null);
-  const padRef = useRef(null);
+  const [done, setDone] = useState<string | null>(null);
+  const padRef = useRef<HTMLDivElement>(null);
   const padSeen = useInView(padRef, { once: true, amount: 0.6 });
   const secRef = useEnter();
-  const pt = (e) => { const r = cv.current.getBoundingClientRect(); return [(e.clientX - r.left) * (cv.current.width / r.width), (e.clientY - r.top) * (cv.current.height / r.height)]; };
-  const down = (e) => { if (done) return; cv.current.setPointerCapture(e.pointerId); last.current = pt(e); };
-  const move = (e) => {
+  const pt = (e: React.PointerEvent<HTMLCanvasElement>) => { const r = cv.current!.getBoundingClientRect(); return [(e.clientX - r.left) * (cv.current!.width / r.width), (e.clientY - r.top) * (cv.current!.height / r.height)]; };
+  const down = (e: React.PointerEvent<HTMLCanvasElement>) => { if (done) return; cv.current!.setPointerCapture(e.pointerId); last.current = pt(e); };
+  const move = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!last.current) return;
-    const c = cv.current.getContext('2d');
+    const c = cv.current!.getContext('2d');
     const p = pt(e);
     c.lineWidth = 4; c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = '#1d1d1f';
     c.beginPath(); c.moveTo(...last.current); c.lineTo(...p); c.stroke();
@@ -268,15 +272,15 @@ function Pad() {
   };
   const upE = () => { last.current = null; };
   // a keyboard user signs with Enter: the pad writes the same ink line the contract uses
-  const key = (e) => {
+  const key = (e: React.KeyboardEvent<HTMLCanvasElement>) => {
     if (done || (e.key !== 'Enter' && e.key !== ' ')) return;
     e.preventDefault();
-    const c = cv.current.getContext('2d');
+    const c = cv.current!.getContext('2d');
     c.save(); c.translate(260, 40); c.scale(4.2, 4.2);
     c.lineWidth = 1; c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = '#1d1d1f';
     c.stroke(new Path2D(INK)); c.restore(); setInk(true);
   };
-  const clear = () => { cv.current.getContext('2d').clearRect(0, 0, cv.current.width, cv.current.height); setInk(false); setDone(null); };
+  const clear = () => { cv.current!.getContext('2d').clearRect(0, 0, cv.current!.width, cv.current!.height); setInk(false); setDone(null); };
   const sign = () => setDone(new Date().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }));
   return (
     <section className="w2-sec sg-try sg-focus" ref={secRef}>
@@ -316,7 +320,7 @@ const PLANS = [
 /* The fork, drawn: upstream's line runs on, Hanzo's branch leaves it and carries on beside it (draws in once when
    reached; both ends are the two repositories named in the links above). */
 function Fork() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   return (
     <div className={'sg-fork' + (seen ? ' in' : '')} ref={ref} aria-hidden="true">
@@ -332,11 +336,11 @@ function Fork() {
 
 function Cost() {
   const [run, setRun] = useState(1); // 0 run it yourself, 1 we run it (the default: the hosted plans, Community stays legible)
-  const plansRef = useRef(null);
+  const plansRef = useRef<HTMLDivElement>(null);
   const seen = useInView(plansRef, { once: true, amount: 0.4 }); // the prices flip in once, the first time they are reached
   const wrapRef = useEnter(dissolve);
   // on phones the plans are a sideways rail: the toggle brings the plans it means into view
-  const toPlan = (k) => {
+  const toPlan = (k: number) => {
     const rail = plansRef.current;
     if (!rail || rail.scrollWidth <= rail.clientWidth + 1) return;
     const card = rail.children[k];

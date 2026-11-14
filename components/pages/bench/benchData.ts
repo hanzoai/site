@@ -9,11 +9,11 @@ import { load, find, findAll, textOf, tag, isN } from '../htmltree';
 const ROOT = process.cwd();
 let IDX;
 const idx = () => (IDX ||= JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'pages.json'), 'utf8')));
-export const metaOf = (route) => idx()[route];
+export const metaOf = (route: string) => idx()[route];
 export const MEMBERS = () => Object.keys(idx()).filter((p) => /^\/benchmarks\/[^/]+$/.test(p)).map((p) => p.split('/')[2]);
 const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
-const txt = (n) => clean(textOf(n));
-const live = (slug) => {
+const txt = (n: never) => clean(textOf(n));
+const live = (slug: string) => {
   try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'live', 'benchmarks', slug + '.json'), 'utf8')).text.map(clean); } catch { return []; }
 };
 
@@ -33,7 +33,7 @@ function flatten(n, out = []) {
 function grid(tb) {
   const head = findAll(tb, tag('th')).map(txt);
   // a row's name without its "run" link (gpqa: <strong>enso</strong> <a>run</a>)
-  const bare = (n) => (isN(n) ? (n.t === 'a' ? '' : n.c.map(bare).join(' ')) : n);
+  const bare = (n: never) => (isN(n) ? (n.t === 'a' ? '' : n.c.map(bare).join(' ')) : n);
   const rows = findAll(tb, tag('tr')).filter((r) => find(r, tag('td'))).map((r) => findAll(r, tag('td')).map((td, j) => (j ? txt(td) : clean(bare(td)) || txt(td))));
   return { head, rows };
 }
@@ -41,7 +41,7 @@ function grid(tb) {
 /* hanzo.ai re-reads some figures when the page opens (gpqa re-prices a run at today's list); take the live figure
    where a row's cells line up with the live page and exactly one figure moved.
    shortcut: needs two exact cells before the moved one (live text is de-duplicated); widen if a page re-reads more */
-function freshen(tb, liveText) {
+function freshen(tb: never, liveText) {
   for (const tr of findAll(tb, tag('tr'))) {
     const tds = findAll(tr, tag('td'));
     if (!tds.length) continue;
@@ -84,7 +84,7 @@ function drawable(g) {
 }
 
 /* the chart this page draws: its own trend (the History hanzo.ai plots), its own comparison, or its own table as bars */
-function chartOf(blocks, liveText, slug) {
+function chartOf(blocks, liveText, slug: string) {
   const tables = blocks.filter((b) => b.t === 'table').map((b) => ({ g: grid(b.n), b }));
   const titleOf = (b) => { const i = blocks.indexOf(b); for (let k = i - 1; k >= 0; k--) if (['h2', 'h3'].includes(blocks[k].t)) return txt(blocks[k].n); return ''; };
   // 1. a trend: hanzo.ai plots the first metric of the History table over the revisions measured
@@ -93,11 +93,11 @@ function chartOf(blocks, liveText, slug) {
     const h = liveText.indexOf('History');
     const end = liveText.indexOf('Measured', h);
     const drawn = h >= 0 && end > h ? liveText.slice(h + 2, end) : [];
-    const ticks = drawn.filter((t) => /^\d+(?:\.\d+)?%$/.test(t));
-    const dates = drawn.filter((t) => /^\d\d-\d\d$/.test(t));
-    const pts = drawn.filter((t) => /: \d+(?:\.\d+)?%, [A-Z][a-z]{2} \d{1,2}, \d{4}$/.test(t));
+    const ticks = drawn.filter((t: string) => /^\d+(?:\.\d+)?%$/.test(t));
+    const dates = drawn.filter((t: string) => /^\d\d-\d\d$/.test(t));
+    const pts = drawn.filter((t: string) => /: \d+(?:\.\d+)?%, [A-Z][a-z]{2} \d{1,2}, \d{4}$/.test(t));
     if (pts.length >= 2) {
-      const col = (k) => hist.g.head.indexOf(k);
+      const col = (k: string) => hist.g.head.indexOf(k);
       const metric = hist.g.rows.find((r) => pts[pts.length - 1].includes(r[col('Value')]))?.[col('Metric')] || '';
       const base = hist.g.rows.find((r) => r[col('Metric')] === metric)?.[col('Baseline')] || '';
       const bm = measure(base, true);
@@ -116,7 +116,7 @@ function chartOf(blocks, liveText, slug) {
   // 2. a comparison the page makes itself: Hanzo's figure against a published one, a value against its baseline,
   //    or Hanzo's column against the other engine's
   for (const t of tables) {
-    const H = t.g.head, col = (k) => H.indexOf(k);
+    const H = t.g.head, col = (k: string) => H.indexOf(k);
     let mine = -1, other = H.findIndex((h, j) => j > 0 && /published|baseline/i.test(h));
     if (other > 0) mine = /baseline/i.test(H[other]) ? col('Value') : other - 1;
     else {
@@ -144,7 +144,7 @@ function chartOf(blocks, liveText, slug) {
   let pick = null;
   for (const t of tables) {
     // one row reads across: its columns become the bars (LoCoMo subject scope: scoped F1 against the flat index)
-    const g = t.g.rows.length === 1 ? { head: [t.g.head[0], t.g.rows[0][0]], rows: t.g.head.slice(1).map((h, j) => [h, t.g.rows[0][j + 1]]).filter((r) => !/^n$/i.test(r[0])) } : t.g;
+    const g = t.g.rows.length === 1 ? { head: [t.g.head[0], t.g.rows[0][0]], rows: t.g.head.slice(1).map((h, j) => [h, t.g.rows[0][j + 1]]).filter((r: string[]) => !/^n$/i.test(r[0])) } : t.g;
     const label = g.head.indexOf('Metric');
     const cols = drawable(g);
     if (!cols.length) continue;
@@ -172,7 +172,7 @@ export function figureOf(d) {
 }
 
 const DOCS = {};
-export function benchDoc(slug) {
+export function benchDoc(slug: string) {
   if (DOCS[slug]) return DOCS[slug];
   const root = load('benchmarks/' + slug);
   const main = find(root, tag('main')) || root;

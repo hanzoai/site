@@ -2,7 +2,7 @@
    Display strings are Hanzo's exact strings; raw numbers ride beside them for sorting and drawing. */
 
 const RUN = 'https://api.hanzo.ai/v1/research/runs?org=hanzo&id=';
-export const runUrl = (id) => RUN + id;
+export const runUrl = (id: string) => RUN + id;
 
 /* GPQA Diamond, 198 questions: accuracy against $ per 1,000 questions. kind: router | single | reported */
 export const GPQA = [
@@ -60,7 +60,7 @@ export const SYSTEMS = [
 
 const HF = 'https://huggingface.co/datasets/';
 const TREE = 'https://github.com/hanzoai/benchmarks/tree/main/decision';
-const H = (s) => [`${s}-harness-kai-1.4.c1856a77-kai`, `${s}-harness-20260917-jev`];
+const H = (s: string) => [`${s}-harness-kai-1.4.c1856a77-kai`, `${s}-harness-20260917-jev`];
 
 /* The Decision Suite, 16 tasks: name, data (links or a line), note, kai, jev, [kai run, jev run], re-run, bar values 0..1 */
 export const SUITE = [
@@ -208,7 +208,7 @@ export const MEMORY = [
 ];
 
 /* The race: three agents on one target query, five scenarios (Hanzo's CodeRace figures) */
-const L = (latency, ms, turns, tokens, savings, detail) => ({ latency, ms, turns, tokens, savings, detail });
+const L = (latency: string, ms: number, turns: number, tokens: number, savings: string, detail: string) => ({ latency, ms, turns, tokens, savings, detail });
 export const RACE = [
   { title: 'Subsystem Logic (State Tracking & Auth)', target: 'Workspace state diffing & hashing logic',
     hanzo: L('0.7 ms', 0.7, 1, 398, '98.4%', 'In-process Trigram + Tree-Sitter AST context bundle (0 daemons)'),
@@ -279,8 +279,8 @@ export const PAPERS = [
 
 /* The shelf: the rows Hanzo's page lists before "Show all", from its build snapshot */
 const ZEN = 'Zen 6 throughput & Latent Sparse Attention';
-const LSAROW = (id, sys, kind, val, base) => [`zen-6.lsa.${id}.${kind}`, '/benchmarks/zen-6', ZEN, `Zen 6 · ${sys} vs Full Attention`, 'Zen 6', 'Throughput & subquadratic long-context attention', kind === 'prefill' ? 'D-LSA Prefill speedup' : 'D-LSA Decode speedup', val, base, 'Win', 'Nov 4, 2026'];
-const TPUT = (id, sys, kind, val) => [`zen-6.${id}.${kind}`, '/benchmarks/zen-6', ZEN, `Zen 6 · ${sys}`, 'Zen 6', 'Throughput & subquadratic long-context attention', kind === 'prefill' ? 'Prefill throughput' : 'Decode throughput', val, 'no baseline', 'Unscored', 'Nov 4, 2026'];
+const LSAROW = (id: string, sys: string, kind: string, val: string, base: string) => [`zen-6.lsa.${id}.${kind}`, '/benchmarks/zen-6', ZEN, `Zen 6 · ${sys} vs Full Attention`, 'Zen 6', 'Throughput & subquadratic long-context attention', kind === 'prefill' ? 'D-LSA Prefill speedup' : 'D-LSA Decode speedup', val, base, 'Win', 'Nov 4, 2026'];
+const TPUT = (id: string, sys: string, kind: string, val: string) => [`zen-6.${id}.${kind}`, '/benchmarks/zen-6', ZEN, `Zen 6 · ${sys}`, 'Zen 6', 'Throughput & subquadratic long-context attention', kind === 'prefill' ? 'Prefill throughput' : 'Decode throughput', val, 'no baseline', 'Unscored', 'Nov 4, 2026'];
 export const SHELF = [
   LSAROW('10m-h200', 'D-LSA (Tree) · 10M tokens (NVIDIA H200)', 'prefill', '72.40×', 'baseline 1.00×'),
   LSAROW('10m-h200', 'D-LSA (Tree) · 10M tokens (NVIDIA H200)', 'decode', '42.50×', 'baseline 1.00×'),

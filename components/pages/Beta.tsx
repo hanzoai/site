@@ -106,7 +106,7 @@ function Passes() {
 }
 
 export default function Beta() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useEnter(root);
   useEffect(() => { track('beta_viewed', { initial_program: 'none', resumed: false }); }, []);
   return (

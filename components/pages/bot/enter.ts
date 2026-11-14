@@ -5,15 +5,16 @@
    - The server and the first client render are identical: start states exist only under `.bt-en`, which this hook
      adds to <main> after mount (never under reduced motion), so JS off and reduced motion show everything at rest.
    - grid-wave and grow-from-point read where the visitor's pointer (or last tap) is. */
+import type React from 'react';
 import { useEffect } from 'react';
 import './enter.css';
 
-export default function useEntrances(ref) {
+export default function useEntrances(ref: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const main = ref.current;
     if (!main || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
     let px = innerWidth / 2, py = innerHeight / 2;
-    const at = (e) => { px = e.clientX; py = e.clientY; };
+    const at = (e: PointerEvent) => { px = e.clientX; py = e.clientY; };
     addEventListener('pointermove', at, { passive: true });
     addEventListener('pointerdown', at, { passive: true });
 
@@ -27,7 +28,7 @@ export default function useEntrances(ref) {
         tiles.forEach((t, i) => t.style.setProperty('--k', String((i % cols) + Math.floor(i / cols))));
       }
     }
-    const play = (el) => {
+    const play = (el: Element) => {
       const kind = el.dataset.enter;
       const r = el.getBoundingClientRect();
       if (kind === 'grid-wave') {

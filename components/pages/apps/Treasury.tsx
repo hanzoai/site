@@ -14,6 +14,8 @@
    primary. No springs. Colour: none (0 UI hues): the 90% stream is white, the 5% silver, the remainder grey. Pause in the
    editor bar and under the chapter visual. One dark room: the hero. Scale rhythm via Rhythm.css. Every word and link is Hanzo's; the only figures are
    the split's own. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useScroll, useTransform } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
@@ -47,13 +49,18 @@ const CODE = [
 ];
 const DEST = [['@merchants:042', '90%', 9000], ['@fees:processing', '5%', 500], ['@platform:revenue', 'remaining', 500]];
 const N = CODE.length;
-const fmt = (v) => v.toLocaleString('en-US');
+const fmt = (v: number) => v.toLocaleString('en-US');
 
 /* The Stage, page-local: the same settle as v2/Settle (the hero arrives a touch large and low, then settles as the first
    screen scrolls away), except reduced motion is read after mount, so the server and the first client render match in
    every motion mode. (v2/Settle reads it during render; requested in docs/build-notes/requests/treasury.md.) */
-function Stage({ children, from = 1.015, lift = 12 }) {
-  const ref = useRef(null);
+interface StageProps {
+  children: ReactNode;
+  from?: number;
+  lift?: number;
+}
+function Stage({ children, from = 1.015, lift = 12 }: StageProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const [m, setM] = useState({ h: 800, phone: false, calm: false });
   useEffect(() => {
     const q = matchMedia('(prefers-reduced-motion: reduce)');
@@ -79,7 +86,12 @@ function useSplit() {
 }
 
 /* Three streams out of one source, widths in proportion to the split (with a floor so a small share still reads). */
-function Streams({ shown, done, still }) {
+interface StreamsProps {
+  shown: boolean[];
+  done: boolean;
+  still: boolean | React.JSX.Element;
+}
+function Streams({ shown, done, still }: StreamsProps) {
   const s = useSplit();
   const y = [70, 200, 300];
   const w = s.parts.map((v) => Math.max(4, (120 * v) / s.a));
@@ -107,7 +119,7 @@ function Streams({ shown, done, still }) {
   );
 }
 /* the editor's lines carry the calculator's figures (the server paints Hanzo's own: 10000, 90%, 5%) */
-function codeLine(t, l, c) {
+function codeLine(t: string, l: string, c: { parts: number[]; set: () => void; a: number; p0: number; p1: number; }) {
   if (t === 's') return `send [USD/2 ${c.a}] (`;
   if (t === 'd0') return `    ${(c.p0 + '%').padEnd(4)}to @merchants:042`;
   if (t === 'd1') return `    ${(c.p1 + '%').padEnd(4)}to @fees:processing`;
@@ -121,7 +133,7 @@ function Hero() {
   // so the streams are never an empty box: the first destination is named within a second of each re-write.
   const [k, setK] = useState(N);
   useEvery(380, live && !paused && !calm, () => setK((v) => (v >= N + 9 ? 5 : v + 1)));
-  const has = (tag) => CODE.findIndex((l) => l[0] === tag) < k;
+  const has = (tag: string) => CODE.findIndex((l) => l[0] === tag) < k;
   const shown = [has('d0'), has('d1'), has('d2')];
   const c = useCalc();
   return (
@@ -169,7 +181,7 @@ const PARTS = [
 
 /* Chapter visuals: the same ledger, drawn for each part. Only the split's own figures appear. While a chapter is in
    view its rows are read in turn, one lit at a time, so the card is never a still table. */
-function useRow(on, n, ms = 1300) {
+function useRow(on, n: number, ms = 1300) {
   const [r, setR] = useState(0);
   useEvery(ms, on, () => setR((v) => (v + 1) % n));
   return r;
@@ -222,13 +234,16 @@ const states = ({ a, parts: [m, f, r] }) => {
   };
 };
 const AUTO = ['idle', 'held', 'paid', 'idle', 'held', 'back'];
-const Ico = ({ d }) => <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d={d} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+interface IcoProps {
+  d: string;
+}
+const Ico = ({ d }: IcoProps) => <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d={d} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 function Wallet({ on }) {
   const [s, setS] = useState('held');
   const [mine, setMine] = useState(false);
   const [i, setI] = useState(1);
   useEvery(2400, on && !mine, () => { const n = (i + 1) % AUTO.length; setI(n); setS(AUTO[n]); });
-  const go = (x) => { setMine(true); setS(x); };
+  const go = (x: string) => { setMine(true); setS(x); };
   const v = states(useCalc())[s];
   return (
     <div className="ts-v ts-hv">
@@ -303,7 +318,12 @@ function SaySection() {
 }
 
 /* 4 · side-carousel: the other four parts on a horizontal snapping track, each with its own live card. */
-function Card({ i, n, paused }) {
+interface CardProps {
+  i: number;
+  n: number;
+  paused: boolean | React.JSX.Element;
+}
+function Card({ i, n, paused }: CardProps) {
   const [ref, live] = useLive(0.5);
   const [t, d] = PARTS[i];
   const V = VIS[i];
@@ -317,11 +337,11 @@ function Card({ i, n, paused }) {
 }
 function PartsCarousel() {
   const [ref, st] = useEnter(0.2);
-  const tr = useRef(null);
+  const tr = useRef<HTMLDivElement>(null);
   const [at, setAt] = useState(0);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const ids = [0, 1, 2, 4];
-  const step = (k) => { const el = tr.current; const c = el.children[0]; if (c) el.scrollBy({ left: k * (c.getBoundingClientRect().width + 12), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); };
+  const step = (k: number) => { const el = tr.current; const c = el.children[0]; if (c) el.scrollBy({ left: k * (c.getBoundingClientRect().width + 12), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); };
   const onScroll = () => { const el = tr.current; const c = el.children[0]; if (c) setAt(Math.min(3, Math.round(el.scrollLeft / (c.getBoundingClientRect().width + 12)))); };
   return (
     <section ref={ref} data-enter={st} className="ts-car ten-car" aria-label="What it is made of">
@@ -343,7 +363,7 @@ function PartsCarousel() {
 /* The figure moment: the split's 10,000 at figure size, counted once as the close arrives. The true value is in the
    server HTML; reduced motion shows it without counting. */
 function Total() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLParagraphElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.8 });
   const { a } = useCalc();
   const [v, setV] = useState(10000);
@@ -352,7 +372,7 @@ function Total() {
   useEffect(() => {
     if (!done.current) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setV(a); return; }
-    const c = animate(v, a, { duration: 0.4, ease: EASE, onUpdate: (x) => setV(Math.round(x)) });
+    const c = animate(v, a, { duration: 0.4, ease: EASE, onUpdate: (x: number) => setV(Math.round(x)) });
     return () => c.stop();
   }, [a]); // eslint-disable-line react-hooks/exhaustive-deps
   // the server paints the true 10,000; if the figure is still below the fold after hydration, it rests at 0 out of
@@ -364,7 +384,7 @@ function Total() {
   useEffect(() => {
     if (!seen) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { done.current = true; setV(a); return; }
-    const c = animate(0, a, { duration: 1.1, ease: EASE, onUpdate: (x) => setV(Math.round(x / 100) * 100), onComplete: () => { done.current = true; setV(a); } });
+    const c = animate(0, a, { duration: 1.1, ease: EASE, onUpdate: (x: number) => setV(Math.round(x / 100) * 100), onComplete: () => { done.current = true; setV(a); } });
     return () => c.stop();
   }, [seen]); // eslint-disable-line react-hooks/exhaustive-deps
   return <p ref={ref} className="ts-total x-mono" aria-label={fmt(a)}>{fmt(v)}</p>;

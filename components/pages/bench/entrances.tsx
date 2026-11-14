@@ -8,13 +8,15 @@
    5. slot-roll: the spec headings (and the closing band's) roll down into place like a slot machine reel.
    The pre-entrance state exists only under html.js (server CSS keeps everything visible with scripts off), and reduced
    motion shows every section in place at once. Only transform, opacity, clip-path and filter move: nothing reflows. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
 import './entrances.css';
 
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* mark the element [data-in] once it is `amount` on screen (at once for reduced motion); before() runs first */
-export function useEnter(ref, amount = 0.3, before) {
+export function useEnter(ref: React.RefObject<HTMLDivElement | null> | React.RefObject<null>, amount = 0.3, before) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -47,8 +49,13 @@ export function Enter({ as: Tag = 'section', kind, className = '', children, amo
 
 /* venetian-type: the words of the title are grouped into the lines they actually wrap to; every line (and every block
    after the title: crumb, lede, ask) takes the opposite side to the one before */
-export function Venetian({ className = '', children, ...rest }) {
-  const ref = useRef(null);
+interface VenetianProps {
+  className?: string;
+  children?: ReactNode;
+  [key: string]: unknown;
+}
+export function Venetian({ className = '', children, ...rest }: VenetianProps) {
+  const ref = useRef<HTMLDivElement>(null);
   useEnter(ref, 0.3, (el) => {
     const words = [...el.querySelectorAll('.xbe-w')];
     let top = null, k = -1;

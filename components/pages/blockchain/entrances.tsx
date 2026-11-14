@@ -7,21 +7,22 @@
    Rules every entrance keeps: the server HTML is the final frame (JS off shows everything); a section is only set to
    its starting frame after hydration and only when it is still below the screen; reduced motion never arms; only
    transform, opacity, clip-path, mask and filter move, so nothing shifts the layout. */
+import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
 
 /* the last place the visitor pointed or touched (for grow-from-point and grid-wave) */
 const last = { x: -1, y: -1 };
 if (typeof window !== 'undefined' && !window.__bceTrack) {
   window.__bceTrack = true;
-  const put = (e) => { last.x = e.clientX; last.y = e.clientY; };
+  const put = (e: PointerEvent) => { last.x = e.clientX; last.y = e.clientY; };
   addEventListener('pointermove', put, { passive: true });
   addEventListener('pointerdown', put, { passive: true });
 }
 
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-const below = (el) => el.getBoundingClientRect().top > innerHeight * 0.9;
+const below = (el: never) => el.getBoundingClientRect().top > innerHeight * 0.9;
 /* ~30% of the screen covered by the section (tall sections), or 30% of the section seen (short ones) */
-function onArrive(el, go) {
+function onArrive(el: never, go: (() => void) | (() => void) | (() => void) | (() => void) | (() => void) | (() => void)) {
   const h = Math.max(1, el.offsetHeight);
   const io = new IntersectionObserver(([e]) => {
     if (!e.isIntersecting) return;
@@ -31,15 +32,15 @@ function onArrive(el, go) {
   io.observe(el);
   return () => io.disconnect();
 }
-const later = (fn, ms) => { const t = setTimeout(fn, ms); return () => clearTimeout(t); };
+const later = (fn: (() => void) | (() => void) | (() => void) | (() => void) | (() => void), ms: number) => { const t = setTimeout(fn, ms); return () => clearTimeout(t); };
 
 /* ---------- scramble: characters scramble and decode into the text (left to right) ---------- */
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=<>/$';
 const rnd = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
-const garble = (s, upto) => s.split('').map((ch, i) => (i < upto || /\s|[.,:;()'’-]/.test(ch) ? ch : rnd())).join('');
-function scramble(el, sel) {
+const garble = (s: string, upto: number) => s.split('').map((ch, i) => (i < upto || /\s|[.,:;()'’-]/.test(ch) ? ch : rnd())).join('');
+function scramble(el: never, sel) {
   const nodes = [];
-  el.querySelectorAll(sel).forEach((t) => {
+  el.querySelectorAll(sel).forEach((t: Node) => {
     const w = document.createTreeWalker(t, NodeFilter.SHOW_TEXT);
     for (let n = w.nextNode(); n; n = w.nextNode()) if (n.nodeValue.trim()) nodes.push({ n, s: n.nodeValue });
   });
@@ -52,7 +53,7 @@ function scramble(el, sel) {
   const play = () => {
     const t0 = performance.now();
     let tick = 0;
-    const frame = (t) => {
+    const frame = (t: number) => {
       let busy = false;
       const flick = t - tick > 45;
       if (flick) tick = t;
@@ -77,7 +78,7 @@ export function Enter({ fx, pick, as: Tag = 'div', className = '', children, ...
     const el = ref.current;
     if (!el || calm()) return;
     const offs = [];
-    const set = (s) => { el.dataset.st = s; };
+    const set = (s: string) => { el.dataset.st = s; };
 
     if (fx === 'opposite-drift' || fx === 'stretch-scroll') return scrolled(el, fx);
     if (!below(el)) return;
@@ -129,7 +130,7 @@ export function Enter({ fx, pick, as: Tag = 'div', className = '', children, ...
      the scroll, and meet when the section is a third of the way up the screen;
    - stretch-scroll: the section is drawn out vertically by the speed of the scroll (and by how far it still has to
      come), and relaxes to its true shape as the scroll slows. */
-function scrolled(el, fx) {
+function scrolled(el: never, fx: string) {
   const top0 = el.getBoundingClientRect().top;
   if (top0 < innerHeight * 0.4) return; // already in place
   const parts = fx === 'opposite-drift' ? [...el.querySelectorAll('[data-drift]')] : [el.querySelector('[data-stretch]') || el];
@@ -166,7 +167,7 @@ function scrolled(el, fx) {
 /* The headline is real ink text. Over it sits an aria-hidden copy whose letters are windows onto a grey film (Hanzo's
    own clip, desaturated): while the film plays the words are made of it; then the copy fades and the ink stays. */
 export function FilmHead({ as: Tag = 'h2', id, className = '', text, src = '/learn/zen-720.webm' }) {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = box.current;
     if (!el || calm() || !below(el)) return;
@@ -196,18 +197,23 @@ export function FilmHead({ as: Tag = 'h2', id, className = '', text, src = '/lea
 /* ---------- cursor-lens: a circular lens follows the cursor and magnifies ---------- */
 /* On arrival the lens sweeps once across the section and the content develops behind it; afterwards it follows a fine
    pointer over the section (touch: press and drag to move it). The magnified copy is aria-hidden and inert. */
-export function Lens({ children, className = '', zoom = 1.7 }) {
-  const box = useRef(null);
+interface LensProps {
+  children?: ReactNode;
+  className?: string;
+  zoom?: number;
+}
+export function Lens({ children, className = '', zoom = 1.7 }: LensProps) {
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = box.current;
     if (!el || calm()) return;
     const lens = el.querySelector('.bce-lens');
-    const show = (x, y) => { el.style.setProperty('--lx', x + 'px'); el.style.setProperty('--ly', y + 'px'); el.style.setProperty('--bw', el.offsetWidth + 'px'); };
-    const at = (e) => { const r = el.getBoundingClientRect(); show(e.clientX - r.left, e.clientY - r.top); };
-    const on = (e) => { if (el.dataset.st === 'play') return; at(e); lens.dataset.on = ''; };
+    const show = (x: number, y: number) => { el.style.setProperty('--lx', x + 'px'); el.style.setProperty('--ly', y + 'px'); el.style.setProperty('--bw', el.offsetWidth + 'px'); };
+    const at = (e: PointerEvent) => { const r = el.getBoundingClientRect(); show(e.clientX - r.left, e.clientY - r.top); };
+    const on = (e: PointerEvent) => { if (el.dataset.st === 'play') return; at(e); lens.dataset.on = ''; };
     const off = () => { if (el.dataset.st !== 'play') delete lens.dataset.on; };
     let tm = 0;
-    const up = (e) => { if (e.pointerType !== 'mouse') { clearTimeout(tm); tm = setTimeout(off, 700); } };
+    const up = (e: PointerEvent) => { if (e.pointerType !== 'mouse') { clearTimeout(tm); tm = setTimeout(off, 700); } };
     el.addEventListener('pointermove', on);
     el.addEventListener('pointerdown', on);
     el.addEventListener('pointerleave', off);
@@ -222,7 +228,7 @@ export function Lens({ children, className = '', zoom = 1.7 }) {
         const r = el.getBoundingClientRect();
         const t0 = performance.now(), D = 1500;
         let raf = 0;
-        const frame = (t) => {
+        const frame = (t: number) => {
           const p = Math.min(1, (t - t0) / D);
           const e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
           const x = -60 + e * (r.width + 120);

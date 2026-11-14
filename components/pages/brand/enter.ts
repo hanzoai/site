@@ -8,17 +8,18 @@
    - stretch-scroll: once in, the section's [data-stretch] child stretches vertically with scroll speed and relaxes
      when the scroll stops (rAF only while scrolling and on screen).
    Reduced motion: nothing is armed, so every section is simply there. Page-local to /brand; styles in ./enter.css. */
+import type React from 'react';
 import { useEffect } from 'react';
 import './enter.css';
 
-function trail(sec) {
+function trail(sec: Element) {
   const layer = document.createElement('div');
   layer.className = 'xbr-trail';
   layer.setAttribute('aria-hidden', 'true');
   sec.appendChild(layer);
   const pool = Array.from({ length: 14 }, () => { const s = document.createElement('i'); layer.appendChild(s); return s; });
   let n = 0;
-  const put = (x, y) => {
+  const put = (x: number, y: number) => {
     const s = pool[n++ % pool.length];
     s.style.transform = `translate(${x}px, ${y}px)`;
     s.classList.remove('go'); void s.offsetWidth; s.classList.add('go'); // restart the fade
@@ -26,7 +27,7 @@ function trail(sec) {
   // the entrance: a sweep from the left edge across the room, leading the clip that opens it
   const r = sec.getBoundingClientRect();
   const t0 = performance.now(), dur = 900;
-  const sweep = (now) => {
+  const sweep = (now: number) => {
     const p = Math.min(1, (now - t0) / dur);
     const e = 1 - (1 - p) ** 3;
     put(e * r.width, r.height * (0.32 + Math.sin(e * Math.PI * 2) * 0.12));
@@ -44,7 +45,7 @@ function trail(sec) {
   return () => { sec.removeEventListener('pointermove', move); layer.remove(); };
 }
 
-function stretch(sec) {
+function stretch(sec: Element) {
   const el = sec.querySelector('[data-stretch]') || sec;
   let y = scrollY, s = 0, raf = 0, seen = true;
   const io = new IntersectionObserver(([en]) => { seen = en.isIntersecting; }, { threshold: 0 });
@@ -62,7 +63,7 @@ function stretch(sec) {
   return () => { removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); io.disconnect(); el.style.transform = ''; };
 }
 
-export default function useEnter(root) {
+export default function useEnter(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const el = root.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;

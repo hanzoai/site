@@ -13,7 +13,7 @@ const OPEN = 'cubic-bezier(.76,0,.24,1)';
 const EM = 'cubic-bezier(.16,1,.3,1)';
 const KEEP = ['fontFamily', 'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight', 'color'];
 
-function ghost(src, box) {
+function ghost(src: Element, box: HTMLDivElement) {
   if (!src) return null;
   const r = src.getBoundingClientRect();
   const cs = getComputedStyle(src);
@@ -47,14 +47,14 @@ export function openSheet(e, href, router, el) {
   setTimeout(() => d.isConnected && d.remove(), 6000); // failsafe
 }
 
-function fly(g, to, dur) {
+function fly(g, to: Element | null, dur: number) {
   if (!g || !to) return null;
   const a = g.getBoundingClientRect(), b = to.getBoundingClientRect();
   const s = (parseFloat(getComputedStyle(to).fontSize) || 1) / (parseFloat(g.style.fontSize) || 1);
   return g.animate([{ transform: 'none' }, { transform: `translate(${b.left - a.left}px, ${b.top - a.top}px) scale(${s})` }], { duration: dur, easing: EM, fill: 'forwards' }).finished.catch(() => {});
 }
 
-async function land(d) {
+async function land(d: Element) {
   await d._grow;
   const h1 = document.querySelector('main h1');
   const no = document.querySelector('.xcj-no');
