@@ -2,10 +2,9 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import JsonLd from '../../../components/JsonLd';
 import BenchRun from '../../../components/pages/bench/BenchRun';
+import type { Card } from '../../../components/pages/bench/types';
 import { MEMBERS, benchDoc, metaOf, figureOf } from '../../../components/pages/bench/benchData';
 
-// A closing card: the neighbouring result page, or the board itself (no direction).
-interface Near { href: string; dir?: string; title: string; seed: string }
 // A lede is plain text or a tree of it.
 type Text = string | { c: Text[] } | null | undefined;
 
@@ -28,7 +27,8 @@ export default async function Page({ params }: Props) {
   // result pages carry no pager of their own: their neighbours among the result pages become the closing cards
   const results = all.filter((s) => benchDoc(s).kind === 'result');
   const k = results.indexOf(slug);
-  const near: Near[] = k < 0 ? [] : [[results[k - 1], 'prev'], [results[k + 1], 'next']].filter(([s]) => s).map(([s, w]): Near => ({ href: '/benchmarks/' + s, dir: w, title: benchDoc(s).title, seed: 'bench/' + s }))
+  // A closing card is the neighbouring result page, or the board itself (no direction).
+  const near: Card[] = k < 0 ? [] : [[results[k - 1], 'prev'], [results[k + 1], 'next']].filter(([s]) => s).map(([s, w]): Card => ({ href: '/benchmarks/' + s, dir: w as 'prev' | 'next', title: benchDoc(s).title, seed: 'bench/' + s }))
     .concat(k < 0 ? [] : [{ href: '/benchmarks', title: 'Benchmarks', seed: 'bench/board' }]);
   // every member's own line and headline figure (Hanzo's words), for the sibling cards' hover preview and contour
   const T = (n: Text): string => (n && typeof n === 'object' ? n.c.map(T).join('') : n || '');
