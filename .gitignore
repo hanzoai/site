@@ -11,3 +11,4 @@ AGENTS.md
 GEMINI.md
 QWEN.md
 *.tsbuildinfo
+app/gui.css

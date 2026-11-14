@@ -56,8 +56,8 @@ function Session({ onDone, paused, runKey }: SessionProps) {
     if (calm) { fill(); setN(SESSION.length + 1); setLive(true); return; }
     if (!seen || ran.current === runKey) return;
     ran.current = runKey;
-    let alive = true, t: ReturnType<typeof setTimeout> | 0 = 0;
-    const sleep = (ms: number) => new Promise((r) => { t = setTimeout(r, ms); });
+    let alive = true, t = 0;
+    const sleep = (ms: number) => new Promise((r) => { t = window.setTimeout(r, ms); });
     const wait = async (ms: number) => { await sleep(ms); while (alive && hold.current) await sleep(150); };
     const run = async () => {
       rows.current.forEach((el, i) => { if (el && i < 2) el.textContent = ''; });

@@ -8,7 +8,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent, ReactNode, RefObject } from 'react';
 import { motion, AnimatePresence, MotionConfig, useScroll, useVelocity, useTransform, useSpring } from 'motion/react';
 import { EASE, useCalm } from '../ui';
-import { A, More, Cta, Tabs, Faq, DataTable, Band } from '../kit';
+import { A, More, Cta, Faq, DataTable, Band } from '../kit';
+import '../../app/gui.css';
+import GuiProvider from '../GuiProvider';
+import { SizableText } from '@hanzo/gui';
+import { Tabs } from '@hanzo/ui/primitives/Tabs';
+import { TabsList } from '@hanzo/ui/primitives/TabsList';
+import { TabsTrigger } from '@hanzo/ui/primitives/TabsTrigger';
 import Odometer from '../v2/Odometer';
 import NoJs from '../NoJs';
 import Usage, { Stack } from '../Usage';
@@ -708,7 +714,19 @@ export default function Pricing() {
             <h1 id="xpr-h1" className="xpr-h1" data-enter="text-mask-film"><span className="xpr-cut"><span>Pricing</span></span></h1>
             <p className="xpr-lede">Start free, every model on one bill.</p>
           </div>
-          <div className="xpr-tabs"><Tabs id="xpr-plans" label="Plans" tabs={TABS} value={tab} onChange={pick} size="lg" /></div>
+          <div className="xpr-tabs">
+            <GuiProvider>
+              <Tabs activationMode="automatic" value={TABS[tab]} onValueChange={(v: string) => pick(TABS.indexOf(v))}>
+                <TabsList aria-label="Plans" height={52} p={4} gap={2} rounded={999} bg="var(--x-raised)" boxShadow="0 0 0 1px var(--line), 0 12px 30px -18px rgba(0, 0, 0, .35)">
+                  {TABS.map((t, i) => (
+                    <TabsTrigger key={t} value={t} px={20} rounded={999} borderTopLeftRadius={999} borderTopRightRadius={999} borderBottomLeftRadius={999} borderBottomRightRadius={999} activeStyle={{ bg: 'var(--x-raised)', boxShadow: '0 1px 3px rgba(0, 0, 0, .12), 0 0 0 1px rgba(0, 0, 0, .04)' }}>
+                      <SizableText fontSize={15} fontWeight="500" lineHeight={15} color={i === tab ? 'var(--room-ink)' : 'var(--room-soft)'}>{t}</SizableText>
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            </GuiProvider>
+          </div>
         </div>
         <div className="xpr-w xpr-panels" ref={rail}>
           <Plans tab={tab} s={s} set={set} hand={hand} live={live} />
