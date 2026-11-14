@@ -1,6 +1,20 @@
 /* Hanzo Tag's own copy, shared by /slack (the session replay) and /tag (the mention map). Every string is Hanzo's,
    from content/pages/slack.html and the live page; the two pages lay it out differently. */
 
+export type Who = 'hanzo' | 'dev' | 'qa' | 'zoe' | 'harry';
+/* A message part is a string, or [kind, text]: 'at' a mention, 'code' a file or token. */
+export type Part = string | [string, string];
+/* One step of the agent's trace: [name, detail, files]. */
+export type Trace = [string, (string | null)?, string[]?];
+/* A message: a person speaking, a system line, or the merged-PR banner. */
+export interface Said { who: Who; time: string; body: Part[]; trace?: Trace[]; canvas?: boolean; sys?: undefined; done?: undefined }
+export interface Sys { sys: string; who?: undefined; time?: undefined; body?: undefined; trace?: undefined; canvas?: undefined; done?: undefined }
+export interface Done { done: string; sys?: undefined; who?: undefined; time?: undefined; body?: undefined; trace?: undefined; canvas?: undefined }
+export type Message = Said | Sys | Done;
+interface Person { name: string; role: string; face?: string; init: string }
+interface Diff { head: string; stat: string; add: string; del: string; file: string; viewed: string; lines: [number | null, number | null, string, string][] }
+interface Frame { title: string; ready: string; working: string; badge: string; prReady: string; team: string; host: string; nav: string[]; groups: [string, string[]][]; repo: string; branch: string; artifacts: string; archive: string }
+
 export const HERO = {
   kick: 'Hanzo Tag · @Hanzo & Code Channels for Slack',
   title: ['Tag @Hanzo in Slack.', 'Ship code, canvases, and', 'pull requests in the thread.'],
@@ -36,23 +50,22 @@ export const SETUP = {
   chips: ['+32 -9 · styles/cta-button.css', 'Canvas: Fix Button Dark Mode'],
 };
 
-/* A message part is a string, or [kind, text]: 'at' a mention, 'code' a file or token. */
-export const ASK = { who: 'harry', time: '9:30 AM', body: [['at', '@Hanzo'], ' the Buy Now button text is unreadable in dark mode on staging. Can you trace the CSS token and open a PR?'] };
-export const ANSWER = { who: 'hanzo', time: '9:31 AM', body: ['Traced to ', ['code', 'styles/cta-button.css'], '. Updated text token to ', ['code', '#1A1A1A'], ' (WCAG AAA 8.9:1), wrote the Canvas summary, and opened PR \u0023418.'] };
+export const ASK: Said = { who: 'harry', time: '9:30 AM', body: [['at', '@Hanzo'], ' the Buy Now button text is unreadable in dark mode on staging. Can you trace the CSS token and open a PR?'] };
+export const ANSWER: Said = { who: 'hanzo', time: '9:31 AM', body: ['Traced to ', ['code', 'styles/cta-button.css'], '. Updated text token to ', ['code', '#1A1A1A'], ' (WCAG AAA 8.9:1), wrote the Canvas summary, and opened PR \u0023418.'] };
 
-export const PEOPLE = {
+export const PEOPLE: Record<Who, Person> = {
   hanzo: { name: 'Hanzo', role: 'APP', init: 'H' },
   dev: { name: 'Dev', role: 'Software', face: 'dev', init: 'D' },
   qa: { name: 'Sci', role: 'Quality', face: 'sci', init: 'S' },
   zoe: { name: 'Zoe Maxwell', role: 'Design', init: 'ZM' },
   harry: { name: 'Harry Boone', role: 'Eng', init: 'HB' },
 };
-export const MEMBERS = ['dev', 'qa', 'zoe', 'harry'];
+export const MEMBERS: Who[] = ['dev', 'qa', 'zoe', 'harry'];
 
 export const STEPS = ['1. Code trace', '2. Loop in design', '3. Decision', '4. Canvas summary', '5. E2E verify', '6. Session complete'];
 
 /* The code channel, step by step: each step's messages, and the artifact it fills. */
-export const SESSION = [
+export const SESSION: { tab: number; msgs: Message[] }[] = [
   { tab: 0, msgs: [{ who: 'dev', time: '9:31 AM', trace: [['Thinking', 'Checking the best fix for dark mode.'], ['Searched Codebase', '3 results found in components/ui/ and styles/'], ['Read 2 files', null, ['BuyNowButton.tsx', 'styles.css']], ['Done']], body: ['Found the issue: text color is too light on dark backgrounds. What color should we use instead?'] }] },
   { tab: 1, msgs: [{ who: 'harry', time: '9:32 AM', body: [['at', '@Zoe Maxwell'], ', what color should we use?'] }, { sys: 'Zoe Maxwell was added to #bug-button-darkmode by Harry Boone.' }] },
   { tab: 1, msgs: [{ who: 'zoe', time: '9:34 AM', body: ["Let's keep the pink and switch the text to ", ['code', '#1A1A1A'], '.'] }] },
@@ -65,7 +78,7 @@ export const CANVAS = { title: 'Fix: Button Dark Mode', meta: 'Canvas · Updated
   // the canvas itself, word for word as live hanzo.ai/slack and /tag show it (8 Nov)
   parts: [['OVERVIEW', 'Fixes a dark-mode contrast regression on the primary CTA button where light foreground text (#E5E7EB) rendered against the pink accent fill.'], ['ROOT CAUSE', 'Global dark theme inherited --text-light onto .cta-button without scoping foreground contrast to the accent surface token.'], ['VERIFICATION', 'WCAG AAA contrast ratio (8.9:1) verified on dark surface']] };
 
-export const WINDOW = {
+export const WINDOW: Frame = {
   title: 'Slack — Hanzo AI (hanzo.ai) · #bug-button-darkmode',
   ready: 'Session ready', working: 'Working · Session channel', badge: 'Working', prReady: 'PR ready',
   team: 'Hanzo AI', host: 'hanzo.ai', nav: ['Threads', 'Drafts & sent'],
@@ -76,7 +89,7 @@ export const WINDOW = {
 export const TABS = ['Code', 'View', 'Canvas'];
 
 /* the unified diff, as Hanzo shows it: [old line, new line, sign, text] */
-export const DIFF = {
+export const DIFF: Diff = {
   head: 'Comparing main → update-cta-button-color', stat: '1 commit · 3 files changed ·', add: '+32', del: '-9', file: 'styles/cta-button.css', viewed: 'Viewed',
   lines: [
     [12, 12, ' ', '.cta-button {'],
@@ -142,7 +155,7 @@ export const CODE = {
   lede: 'Mention @Hanzo in a channel or spin up a dedicated code channel. Inspect every file read, review live Canvas summaries and unified git diffs side-by-side, and merge the pull request without leaving the thread.',
 };
 
-export const FAQ = [
+export const FAQ: [string, string][] = [
   ['What can Hanzo Tag see in Slack?', 'Hanzo only reads messages in public or private channels where @Hanzo has been added, and only inspects thread context when someone explicitly tags @Hanzo or when scheduled channel work executes.'],
   ['Does Hanzo respond only when someone tags it?', 'Yes. In channels, Hanzo only responds when someone mentions @Hanzo in a message or thread, or when a scheduled task configured by your team posts to that channel.'],
   ['Does Hanzo Tag use my personal accounts to do its work?', 'No. Hanzo Tag uses organization-scoped connectors, GitHub installations, and federated workload identities (WIMSE) configured by your organization owners rather than personal member accounts.'],
@@ -158,20 +171,20 @@ export const CLOSE = {
 };
 
 /* The thread's grammar, drawn by both pages under their own class prefix (p). */
-export const Parts = ({ body, p }) => body.map((x, i) => (typeof x === 'string' ? x : <span key={i} className={`${p}-${x[0]}`}>{x[1]}</span>));
+export const Parts = ({ body, p }: { body: Part[]; p: string }) => body.map((x, i) => (typeof x === 'string' ? x : <span key={i} className={`${p}-${x[0]}`}>{x[1]}</span>));
 
 /* A face: the person's initial on a drawn disc, with Hanzo's own memoji (dev.svg, sci.svg, as on hanzo.ai/slack) drawn over
    it from hanzo.ai, the same way /team draws its crew. If the picture can't load, the disc and initial stand in. */
-export function Face({ who, p, size = 32 }) {
+export function Face({ who, p, size = 32 }: { who: Who; p: string; size?: number }) {
   const m = PEOPLE[who];
   const pic = m.face ? { '--img': `url(https://hanzo.ai/memoji/${m.face}.svg)` } : undefined;
   return <span className={`${p}-face ${who}` + (m.face ? ' pic' : '')} style={pic} aria-hidden="true">{m.init}</span>;
 }
 
 /* One message: a person, a system line, or the merged-PR banner. */
-export function Msg({ m, p }) {
-  if (m.sys) return <p className={`${p}-sys`}>{m.sys}</p>;
-  if (m.done) return <p className={`${p}-merged`}><i aria-hidden="true" /><span className={`${p}-t`}>{m.done}</span></p>;
+export function Msg({ m, p }: { m: Message; p: string }) {
+  if (m.sys !== undefined) return <p className={`${p}-sys`}>{m.sys}</p>;
+  if (m.done !== undefined) return <p className={`${p}-merged`}><i aria-hidden="true" /><span className={`${p}-t`}>{m.done}</span></p>;
   const who = PEOPLE[m.who];
   return (
     <div className={`${p}-msg`}>

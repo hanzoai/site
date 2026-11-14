@@ -15,13 +15,13 @@ export function useEnter() {
     const main = document.querySelector('main.xbg');
     if (!main || typeof IntersectionObserver === 'undefined') return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let px = null, py = null;
-    const track = (e) => { px = e.clientX; py = e.clientY; };
+    let px: number | null = null, py: number | null = null;
+    const track = (e: PointerEvent) => { px = e.clientX; py = e.clientY; };
     addEventListener('pointermove', track, { passive: true });
-    const timers = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
 
-    const type = (h) => {
-      const text = h.textContent;
+    const type = (h: HTMLElement) => {
+      const text = h.textContent ?? '';
       const tw = document.createElement('span');
       tw.className = 'xbg-tw';
       tw.setAttribute('aria-hidden', 'true');
@@ -37,10 +37,10 @@ export function useEnter() {
       };
       tick();
     };
-    const wave = (g) => {
+    const wave = (g: HTMLElement) => {
       const r = g.getBoundingClientRect();
       const ox = px ?? r.left, oy = py ?? r.top;
-      const kids = [...g.children];
+      const kids = [...g.children] as HTMLElement[];
       const far = Math.max(1, ...kids.map((k) => { const b = k.getBoundingClientRect(); return Math.hypot(b.left + b.width / 2 - ox, b.top + b.height / 2 - oy); }));
       kids.forEach((k) => {
         const b = k.getBoundingClientRect();
@@ -52,14 +52,14 @@ export function useEnter() {
     const io = new IntersectionObserver((es) => {
       es.forEach((e) => {
         if (!e.isIntersecting) return;
-        const el = e.target;
+        const el = e.target as HTMLElement;
         io.unobserve(el);
         if (el.dataset.enter === 'grid-wave') wave(el);
         el.dataset.in = el.dataset.in || '1';
         if (el.dataset.enter === 'typewriter') type(el);
       });
     }, { threshold: 0.25 });
-    const els = [...main.querySelectorAll('[data-enter]:not([data-enter="pendulum"])')];
+    const els = [...main.querySelectorAll<HTMLElement>('[data-enter]:not([data-enter="pendulum"])')];
     // anything already on screen at mount keeps its rest state (never hide what was being read)
     els.forEach((el) => { const b = el.getBoundingClientRect(); if (b.top < innerHeight && b.bottom > 0) el.dataset.in = 'done'; else io.observe(el); });
     main.classList.add('xbg-enter');

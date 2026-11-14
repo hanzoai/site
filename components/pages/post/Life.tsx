@@ -4,17 +4,18 @@
    writes data-on straight to the cells, so React does not re-render per turn. Turns run on one rAF clock (no setInterval), stop off screen and stay
    still for reduced motion. The controls are kit Cta buttons. */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { Cta } from '../../kit';
 import { W, H, glider, step } from './lifeGrid';
 
-export default function Life({ beside }) {
-  const box = useRef(null);
-  const cells = useRef([]);
-  const grid = useRef(glider());
-  const turn = useRef(null);
+export default function Life({ beside }: { beside?: ReactNode }) {
+  const box = useRef<HTMLElement>(null);
+  const cells = useRef<(HTMLButtonElement | null)[]>([]);
+  const grid = useRef<Uint8Array>(glider());
+  const turn = useRef<HTMLElement>(null);
   const n = useRef(0);
-  const paint = useRef(null);
+  const paint = useRef<number | null>(null);
   const [run, setRun] = useState(true);
   const [focus, setFocus] = useState(W * 4 + 3);
   const seen = useInView(box, { amount: 0.3 });
@@ -31,22 +32,22 @@ export default function Life({ beside }) {
   useEffect(() => {
     if (!run || !seen) return;
     let raf = 0, last = 0;
-    const loop = (t) => { if (t - last >= 260) { last = t; tick(); } raf = requestAnimationFrame(loop); };
+    const loop = (t: number) => { if (t - last >= 260) { last = t; tick(); } raf = requestAnimationFrame(loop); };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, [run, seen, tick]);
   useEffect(() => { const up = () => { paint.current = null; }; addEventListener('pointerup', up); return () => removeEventListener('pointerup', up); }, []);
 
-  const set = (i, v) => { grid.current[i] = v; draw(); };
-  const key = (e, i) => {
-    const m = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: W, ArrowUp: -W }[e.key];
+  const set = (i: number, v: number) => { grid.current[i] = v; draw(); };
+  const key = (e: KeyboardEvent<HTMLButtonElement>, i: number) => {
+    const m = ({ ArrowRight: 1, ArrowLeft: -1, ArrowDown: W, ArrowUp: -W } as Record<string, number>)[e.key];
     if (m === undefined) return;
     e.preventDefault();
     const j = (i + m + W * H) % (W * H);
     setFocus(j);
     cells.current[j]?.focus();
   };
-  const reset = (g) => { grid.current = g; n.current = 0; draw(); };
+  const reset = (g: Uint8Array) => { grid.current = g; n.current = 0; draw(); };
 
   return (
     <figure className="xbg-life" ref={box}>

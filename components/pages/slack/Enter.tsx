@@ -6,6 +6,7 @@
    mount, so the HTML never mismatches), plays once when it reaches the screen, then removes its own scaffolding. With
    JavaScript off, NoJs puts everything at rest; under reduced motion each one jumps to its final state. */
 import { useEffect, useId, useRef, useState } from 'react';
+import type { ElementType, ReactNode, RefObject } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import NoJs from '../../NoJs';
 import './Enter.css';
@@ -21,28 +22,29 @@ export function useCalm() {
 }
 
 /* armed (server + first paint) → go (on screen) → done (scaffolding gone) */
-function useEntrance(ref, amount = 0.3) {
-  const [phase, setPhase] = useState('armed');
+type Phase = 'armed' | 'go' | 'done';
+function useEntrance(ref: RefObject<Element | null>, amount = 0.3) {
+  const [phase, setPhase] = useState<Phase>('armed');
   const seen = useInView(ref, { once: true, amount });
   const calm = useCalm();
   useEffect(() => { if (calm) setPhase('done'); }, [calm]);
   useEffect(() => { if (seen) setPhase((p) => (p === 'armed' ? 'go' : p)); }, [seen]);
-  return [phase, setPhase];
+  return [phase, setPhase] as const;
 }
 
 /* pixel-resolve: an SVG mosaic filter samples the window in coarse blocks that halve until the picture is sharp */
 const BLOCKS = [36, 26, 18, 12, 8, 5, 3, 2];
-export function Pixel({ children, className = '' }) {
-  const ref = useRef(null);
-  const nodes = useRef({});
+export function Pixel({ children, className = '' }: { children?: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const nodes = useRef<{ flood?: SVGFEFloodElement | null; tile?: SVGFECompositeElement | null; dil?: SVGFEMorphologyElement | null }>({});
   const fid = 'xsqpx' + useId().replace(/[^a-zA-Z0-9]/g, '');
   const [phase, setPhase] = useEntrance(ref, 0.2);
   useEffect(() => {
     if (phase !== 'go') return;
-    let k = 0, t = 0;
-    const set = (s) => {
+    let k = 0, t: ReturnType<typeof setTimeout> | undefined;
+    const set = (s: number) => {
       const { flood, tile, dil } = nodes.current;
-      if (!flood) return;
+      if (!flood || !tile || !dil) return;
       flood.setAttribute('x', String(s / 2 - 1)); flood.setAttribute('y', String(s / 2 - 1));
       tile.setAttribute('width', String(s)); tile.setAttribute('height', String(s));
       dil.setAttribute('radius', String(s / 2));
@@ -78,23 +80,23 @@ export function Pixel({ children, className = '' }) {
 /* page-curl: a grey cover sheet lies over the card; its bottom-right corner lifts and curls back along a fold that
    sweeps to the top-left, showing the card under it. The fold is the line x + y = u (in the box's own fractions);
    the cover keeps the part before it and the flap is the curled-back part, mirrored over the fold. */
-const ease = (x) => 1 - Math.pow(1 - x, 3);
-function pts(list) { return 'polygon(' + list.map(([x, y]) => `${(x * 100).toFixed(2)}% ${(y * 100).toFixed(2)}%`).join(',') + ')'; }
-function fold(u) {
+const ease = (x: number) => 1 - Math.pow(1 - x, 3);
+function pts(list: number[][]) { return 'polygon(' + list.map(([x, y]) => `${(x * 100).toFixed(2)}% ${(y * 100).toFixed(2)}%`).join(',') + ')'; }
+function fold(u: number) {
   const cover = u >= 1 ? [[0, 0], [1, 0], [1, u - 1], [u - 1, 1], [0, 1]] : [[0, 0], [u, 0], [0, u]];
   const flap = u >= 1 ? [[1, u - 1], [u - 1, u - 1], [u - 1, 1]] : [[u, 0], [u, u - 1], [u - 1, u - 1], [u - 1, u], [0, u]];
   return [pts(cover), pts(flap)];
 }
-export function Curl({ children, className = '' }) {
-  const ref = useRef(null);
-  const cover = useRef(null);
-  const flap = useRef(null);
+export function Curl({ children, className = '' }: { children?: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const cover = useRef<HTMLElement>(null);
+  const flap = useRef<HTMLElement>(null);
   const [phase, setPhase] = useEntrance(ref, 0.45);
   useEffect(() => {
     if (phase !== 'go') return;
     let raf = 0, t0 = 0;
     const D = 1100;
-    const step = (now) => {
+    const step = (now: number) => {
       if (!t0) t0 = now;
       const x = Math.min(1, (now - t0) / D);
       const u = 2.02 - ease(x) * 2.1;
@@ -122,8 +124,8 @@ export function Curl({ children, className = '' }) {
 }
 
 /* ripple: rings spread from the centre; the block appears inside the first ring and stays behind as they pass */
-export function Ripple({ children, className = '' }) {
-  const ref = useRef(null);
+export function Ripple({ children, className = '' }: { children?: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useEntrance(ref, 0.35);
   useEffect(() => {
     if (phase !== 'go') return;
@@ -140,8 +142,8 @@ export function Ripple({ children, className = '' }) {
 }
 
 /* letter-cascade: each letter drops into its place, one after the next; words never break apart */
-export function Cascade({ text, as = 'h2', id, className = '' }) {
-  const ref = useRef(null);
+export function Cascade({ text, as = 'h2', id, className = '' }: { text: string; as?: ElementType; id?: string; className?: string }) {
+  const ref = useRef<HTMLElement>(null);
   const [phase, setPhase] = useEntrance(ref, 0.6);
   const n = text.replace(/\s/g, '').length;
   useEffect(() => {
@@ -165,10 +167,10 @@ export function Cascade({ text, as = 'h2', id, className = '' }) {
 }
 
 /* underline-sweep: the key words take an ink underline, swept left to right in reading order */
-export function Sweep({ text, keys, as = 'h2', id, className = '' }) {
-  const ref = useRef(null);
+export function Sweep({ text, keys, as = 'h2', id, className = '' }: { text: string; keys: string[]; as?: ElementType; id?: string; className?: string }) {
+  const ref = useRef<HTMLElement>(null);
   const [phase] = useEntrance(ref, 0.8);
-  const parts = [];
+  const parts: ReactNode[] = [];
   let rest = text;
   keys.forEach((k, j) => {
     const at = rest.indexOf(k);

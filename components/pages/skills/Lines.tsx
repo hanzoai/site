@@ -4,13 +4,16 @@
    mismatch (docs/build-notes/requests/skills.md). Here the first render always matches the server (masked), and reduced motion
    jumps to the final lines with a 0 s transition once mounted. Same props, same A2.css classes. */
 import { useRef } from 'react';
+import type { ElementType } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import NoJs from '../../NoJs';
 import { T, EMPH } from '../../v2/A2Motion';
 
-export default function Lines({ lines, as = 'h2', className = '', now, delay = 0, id }) {
+interface LinesProps { lines: string[]; as?: ElementType; className?: string; now?: boolean; delay?: number; id?: string }
+
+export default function Lines({ lines, as = 'h2', className = '', now, delay = 0, id }: LinesProps) {
   const calm = useReducedMotion();
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.3 });
   const Tag = as;
   const go = now || seen || calm;

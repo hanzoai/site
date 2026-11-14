@@ -4,11 +4,14 @@
    and client styles differ (red hydration badge). Here the still state is applied after hydration.
    Requested for the shared file in docs/build-notes/requests/research.md; delete this copy once it lands. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useMotionTemplate, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import '../../v2/ProofScale.css';
 
-export default function SceneWipe({ children, className = '', dark = true, tone = '#000', label, id }) {
-  const ref = useRef(null);
+interface SceneWipeProps { children?: ReactNode; className?: string; dark?: boolean; tone?: string; label?: string; id?: string }
+
+export default function SceneWipe({ children, className = '', dark = true, tone = '#000', label, id }: SceneWipeProps) {
+  const ref = useRef<HTMLElement>(null);
   const rm = useReducedMotion();
   const [reduce, setReduce] = useState(false);
   useEffect(() => setReduce(!!rm), [rm]);

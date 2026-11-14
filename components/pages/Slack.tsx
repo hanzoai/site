@@ -14,6 +14,7 @@
    figures; both colourways are drawn as greys of equal luminance, so no hue reaches the page.
    Every word, figure and link is Hanzo's (components/pages/slackData.js). */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, Dispatch, KeyboardEvent, SetStateAction } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { A, More } from '../kit';
 import A2Lines from './skills/Lines';
@@ -26,7 +27,7 @@ import '../v2/A2.css';
 import './Slack.css';
 
 const P = 'xsq';
-const EMPH = [0.16, 1, 0.3, 1];
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 /* The server knows nothing of the visitor's motion setting or the clock, so anything that depends on them waits for
    the first browser render (the server HTML and the first client render stay identical: no hydration mismatch). */
@@ -41,20 +42,20 @@ function useCalm() {
 }
 
 /* Beyond: the same button in both colourways, split by a handle you drag (it sweeps by itself until you do). */
-function Contrast({ live }) {
-  const box = useRef(null);
-  const knob = useRef(null);
+function Contrast({ live }: { live: boolean }) {
+  const box = useRef<HTMLDivElement>(null);
+  const knob = useRef<HTMLInputElement>(null);
   const mounted = useMounted();
   const [mine, setMine] = useState(false);
-  const set = (v) => { box.current?.style.setProperty('--cut', v + '%'); };
+  const set = (v: number | string) => { box.current?.style.setProperty('--cut', v + '%'); };
   useEffect(() => {
     if (!live || mine || !mounted) return;
     let raf = 0;
-    const loop = (now) => { const v = 50 + Math.sin(now / 1000 * 0.8) * 34; set(v); if (knob.current) knob.current.value = String(Math.round(v)); raf = requestAnimationFrame(loop); };
+    const loop = (now: number) => { const v = 50 + Math.sin(now / 1000 * 0.8) * 34; set(v); if (knob.current) knob.current.value = String(Math.round(v)); raf = requestAnimationFrame(loop); };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, [live, mine, mounted]);
-  const btn = (c) => <span className={`${P}-buy`} style={c}>{VIEW.button}</span>;
+  const btn = (c: CSSProperties) => <span className={`${P}-buy`} style={c}>{VIEW.button}</span>;
   return (
     <div className={`${P}-view`}>
       <p className={`${P}-cmp-ks`}><span>{VIEW.before}</span><span>{VIEW.after}</span></p>
@@ -103,8 +104,9 @@ function Canvas() {
 }
 
 /* The window, drawn at a given step. */
-function Window({ shown, live, tabHand, setTabHand, archived, setArchived }) {
-  const list = useRef(null);
+interface WindowProps { shown: number; live: boolean; tabHand: number | null; setTabHand: Dispatch<SetStateAction<number | null>>; archived: boolean; setArchived: Dispatch<SetStateAction<boolean>> }
+function Window({ shown, live, tabHand, setTabHand, archived, setArchived }: WindowProps) {
+  const list = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   useEffect(() => { const el = list.current; if (el) el.scrollTo({ top: el.scrollHeight, behavior: calm ? 'auto' : 'smooth' }); }, [shown, calm]);
   const tab = tabHand ?? SESSION[shown].tab;
@@ -189,13 +191,13 @@ function Window({ shown, live, tabHand, setTabHand, archived, setArchived }) {
 
 /* The signature: the one dark room pins the window; scroll plays the steps (phones too, in a compact pinned window). */
 function Scene() {
-  const ref = useRef(null);
-  const rail = useRef(null);
+  const ref = useRef<HTMLElement>(null);
+  const rail = useRef<HTMLDivElement>(null);
   const narrow = useNarrow();
   const calm = useCalm();
   const live = useInView(ref, { amount: 0.2 });
   const [at, setAt] = useState(0);
-  const [tabHand, setTabHand] = useState(null);
+  const [tabHand, setTabHand] = useState<number | null>(null);
   const [archived, setArchived] = useState(false);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const scale = useTransform(p, (v) => (narrow || calm ? 1 : 0.9 + Math.min(1, v / 0.08) * 0.1));
@@ -207,16 +209,17 @@ function Scene() {
   useEffect(() => {
     const el = rail.current;
     if (!narrow || !el) return;
-    const b = el.children[at];
+    const b = el.children[at] as HTMLElement | undefined;
     if (b) el.scrollTo({ left: b.offsetLeft - 16, behavior: calm ? 'auto' : 'smooth' });
   }, [at, narrow, calm]);
-  const go = (i) => {
+  const go = (i: number) => {
     const el = ref.current;
+    if (!el) return;
     const y = el.getBoundingClientRect().top + scrollY + (el.offsetHeight - innerHeight) * (0.06 + ((i + 0.5) / 6) * 0.94);
     window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
   };
-  const key = (e) => {
-    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+  const key = (e: KeyboardEvent<HTMLElement>) => {
+    const k = ({ ArrowRight: 1, ArrowLeft: -1 } as Record<string, number>)[e.key];
     if (k) { e.preventDefault(); go(Math.max(0, Math.min(5, at + k))); }
   };
   return (
@@ -261,8 +264,8 @@ function Hero() {
 }
 
 /* One promise: it lights its part of the window crop when it reaches the middle of the screen (or is pointed at). */
-function Point({ t, i, on, setOn }) {
-  const ref = useRef(null);
+function Point({ t, i, on, setOn }: { t: string; i: number; on: boolean; setOn: (i: number) => void }) {
+  const ref = useRef<HTMLLIElement>(null);
   const mid = useInView(ref, { margin: '-42% 0px -42% 0px' });
   useEffect(() => { if (mid) setOn(i); }, [mid, i, setOn]);
   return (
@@ -273,8 +276,8 @@ function Point({ t, i, on, setOn }) {
 }
 
 /* A crop of the same channel, light: each promise has its part, and the one being read is drawn in full. */
-function Crop({ on }) {
-  const r = (k) => `${P}-crop-r` + (on === k ? ' on' : '');
+function Crop({ on }: { on: number }) {
+  const r = (k: number) => `${P}-crop-r` + (on === k ? ' on' : '');
   return (
     <div className={`${P}-crop`} aria-hidden="true">
       <p className={`${P}-crop-bar`}><i /><i /><i /><span>{SETUP.channel}</span></p>
@@ -319,7 +322,7 @@ function Notes() {
    the live page has it, so the card carries its own name as the section's label. The demo plays once: the ask is
    already in the channel (so the dark box is never empty), the steps tick, Hanzo answers, and it ends at rest. */
 function Setup() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const live = useInView(ref, { amount: 0.6 });
   const calm = useCalm();
   const [k, setK] = useState(9); // the HTML shows the finished exchange; the browser plays it once from the ask
@@ -327,7 +330,7 @@ function Setup() {
   useEffect(() => {
     if (!live || calm || pos.current >= 9) return;
     if (pos.current < 0) { pos.current = 0; setK(0); }
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const tick = () => {
       pos.current = Math.min(9, pos.current + 1);
       setK(pos.current);
@@ -365,7 +368,7 @@ function Setup() {
 }
 
 /* The picture inside the rooms tile, one per room, drawn from the same channel. */
-function RoomArt({ k }) {
+function RoomArt({ k }: { k: number }) {
   if (k === 0) return (
     <div className={`${P}-ra chans`}>
       {WINDOW.groups.map(([g, chans]) => (
@@ -396,7 +399,7 @@ function RoomArt({ k }) {
    down it, each checkpoint it reaches turns to ink, and the one at the head of the fill is drawn in full. Under
    reduced motion the whole thread is reached. The sheet still carries each one's sentence. */
 function Thread() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   const [at, setAt] = useState(0);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 72%', 'end 52%'] });
@@ -468,8 +471,8 @@ function What() {
    under the rail, swapping like the rooms tile. The other three stay names on the line. Every sentence stays in the HTML. */
 function Platform() {
   const [i, setI] = useState(0);
-  const tabs = useRef(null);
-  const box = useRef(null);
+  const tabs = useRef<HTMLDivElement>(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.5 });
   const calm = useReducedMotion();
   const [mine, setMine] = useState(false); // once the visitor picks, the map stops walking on its own
@@ -478,14 +481,14 @@ function Platform() {
     const t = setInterval(() => setI((v) => (v + 1) % PLATFORM.items.length), 3200);
     return () => clearInterval(t);
   }, [seen, calm, mine]);
-  const key = (e) => {
+  const key = (e: KeyboardEvent<HTMLElement>) => {
     const n = PLATFORM.items.length;
-    const k = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: n - 1 }[e.key];
+    const k = ({ ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: n - 1 } as Record<string, number>)[e.key];
     if (k === undefined) return;
     e.preventDefault();
     const j = (k + n) % n;
     setI(j); setMine(true);
-    tabs.current?.children[j]?.focus();
+    (tabs.current?.children[j] as HTMLElement | undefined)?.focus();
   };
   return (
     <section className={`a2-sec ${P}-plat`} aria-labelledby="xsq-plat-h">

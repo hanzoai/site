@@ -23,6 +23,7 @@
    Entrances (MOTION-MAP, security/enter.js + enter.css, in order): shutter (hero layers, CSS from first paint), depth-parallax
    (controls, scroll), squash-land (rack), scroll-tilt (place switcher, scroll speed), slot-roll ("Ask us the hard question"). */
 import { useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../ui';
 import { A, Cta, More } from '../kit';
@@ -36,7 +37,7 @@ import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Security.css';
 
-const EMPH = [0.16, 1, 0.3, 1]; // deck ease-emphasis
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1]; // deck ease-emphasis
 const CONTROLS = [
   ['Encryption at Rest and in Transit', 'At rest, each organization is its own file on Hanzo Base, and where a master key is configured each file opens under its own key, derived through HKDF-SHA256. In transit the edge speaks TLS 1.3 and offers hybrid ML-KEM-768 key exchange to clients that support it, so their traffic captured today cannot be read by a quantum computer later.'],
   ['Second Factors', 'An authenticator app, or a code by SMS or email, with recovery codes. Enrolment hands out the material and demands it back before it writes anything, and adding or dropping a factor signs the account out of every other browser — a stolen session that outlives the change is the same as not having the factor.'],
@@ -46,7 +47,8 @@ const CONTROLS = [
   ['Where It Sits', 'An organization is a tenancy boundary, and on Hanzo Base it is a physical one — a different organization is a different database file, so no query can reach across two. Dedicated and self-hosted deployments pin that file to a region you choose.'],
 ];
 /* the mechanism each layer shows: Hanzo's own terms, lifted from the control's words */
-const MECH = [
+type Mechanism = { kind: 'chips'; items: string[] } | { kind: 'path'; items: string[] } | { kind: 'rules'; items: string[][] } | { kind: 'strike'; items: string[]; foot: string };
+const MECH: Mechanism[] = [
   { kind: 'chips', items: ['HKDF-SHA256', 'TLS 1.3', 'ML-KEM-768', 'Hanzo Base'] },
   { kind: 'chips', items: ['Authenticator app', 'SMS', 'Email', 'Recovery codes'] },
   { kind: 'rules', items: [['HMAC signature', 'refused'], ['no algorithm', 'refused'], ['refresh token', 'single-use']] },
@@ -54,13 +56,13 @@ const MECH = [
   { kind: 'strike', items: ['org', 'user', 'email'], foot: 'verified token' },
   { kind: 'chips', items: ['Dedicated', 'Self-hosted', 'a region you choose'] },
 ];
-const pad = (i) => String(i + 1).padStart(2, '0');
+const pad = (i: number) => String(i + 1).padStart(2, '0');
 const KEY = 'hz-security-checked';
-const Check = ({ s = 16 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Check = ({ s = 16 }: { s?: number }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* ---------- hero: the status, checked once as the page arrives ---------- */
-function Map({ pick }) {
-  const ref = useRef(null);
+function Map({ pick }: { pick: (i: number) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
   const live = useInView(ref, { amount: 0.3, once: true });
   const calm = useReducedMotion();
   const [n, setN] = useState(0); // 0 = waiting at the edge, 1..6 = layers checked; it stops at 6
@@ -92,7 +94,7 @@ function Map({ pick }) {
   );
 }
 
-function Hero({ pick }) {
+function Hero({ pick }: { pick: (i: number) => void }) {
   return (
     <section className="xsc-hero" aria-labelledby="xsc-h1">
       <div className="pf-wrap xsc-hero-g">
@@ -121,26 +123,26 @@ function Hero({ pick }) {
 
 /* ---------- the controls, a calm document you select from ---------- */
 /* the mechanism terms resolve when their layer is chosen; each scrambles again under a fine pointer */
-function Mech({ m, on }) {
-  const D = (t) => <Decode text={t} run={on} host="li" dur={560} />;
+function Mech({ m, on }: { m: Mechanism; on: boolean }) {
+  const D = (t: string) => <Decode text={t} run={on} host="li" dur={560} />;
   if (m.kind === 'chips') return <ul className="xsc-chips">{m.items.map((c) => <li key={c}>{D(c)}</li>)}</ul>;
   if (m.kind === 'rules') return <ul className="xsc-rules">{m.items.map(([a, b]) => <li key={a}><span>{D(a)}</span><b>{D(b)}</b></li>)}</ul>;
   if (m.kind === 'path') return <ol className="xsc-path">{m.items.map((c) => <li key={c}>{D(c)}</li>)}</ol>;
   return <div className="xsc-strike"><ul>{m.items.map((c) => <li key={c}><s>{D(c)}</s></li>)}</ul><p><span aria-hidden="true">→</span> {D(m.foot)}</p></div>;
 }
 
-function Layers({ at, setAt }) {
-  const stk = useRef(null);
+function Layers({ at, setAt }: { at: number; setAt: (i: number) => void }) {
+  const stk = useRef<HTMLDivElement>(null);
   const seen = useInView(stk, { amount: 0.4, once: true });
-  const [ok, setOk] = useState([]); // the reviewer's ticks, kept in this browser only
+  const [ok, setOk] = useState<number[]>([]); // the reviewer's ticks, kept in this browser only
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem(KEY) || '[]'); if (Array.isArray(v)) setOk(v.filter((i) => i >= 0 && i < 6)); } catch {} }, []);
-  const tick = (i) => setOk((o) => {
+  const tick = (i: number) => setOk((o) => {
     const v = o.includes(i) ? o.filter((k) => k !== i) : [...o, i];
     try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {}
     return v;
   });
-  const keys = (e) => {
-    const k = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+  const keys = (e: KeyboardEvent<HTMLElement>) => {
+    const k = ({ ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 } as Record<string, number>)[e.key];
     if (!k) return;
     e.preventDefault();
     const n = (at + k + 6) % 6;
@@ -211,7 +213,7 @@ const RACK = ['Hardware-virtualised machines, one tenant to a boundary', 'Errors
 const OPTIONS = [['Run it where you like', 'Our cloud, your cluster, your rack'], ['Scales to nothing', 'Idle should cost what idle is worth'], ['Your region', 'Pin the data and keep it there']];
 
 function Infra() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLOListElement>(null);
   const live = useInView(ref, { amount: 0.5, once: true });
   const calm = useReducedMotion();
   const [up, setUp] = useState(0); // units powered on, 0..4; it stops at 4
@@ -245,7 +247,7 @@ function Infra() {
 
 const PLACES = ['Our cloud', 'your cluster', 'your rack']; // Hanzo's own words, from "Our cloud, your cluster, your rack"
 function Where() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const live = useInView(ref, { amount: 0.6, once: true });
   const calm = useReducedMotion();
   const [at, setAt] = useState(0);
@@ -348,7 +350,7 @@ export default function Security() {
   useEnter('.xsc');
   const [at, setAt] = useState(0);
   // a layer named in the hero: bring the controls up with that layer chosen
-  const pick = (i) => {
+  const pick = (i: number) => {
     setAt(i);
     const el = document.getElementById('controls');
     if (!el) return;

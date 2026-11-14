@@ -16,6 +16,7 @@ import { EASE, Copy, Magnetic } from '../ui';
 import { A } from '../kit';
 import { useLive, useEvery } from './cloud/Frame';
 import { leaf, split, close, leaves, isLeaf } from './tabsTree';
+import type { Dir, Layout, Leaf } from './tabsTree';
 import LineMask from '../v2/x-gauss/LineMask';
 import Settle from '../v2/Settle';
 import PinChapters from '../v2/x-gauss/PinChapters';
@@ -25,9 +26,9 @@ import '../v2/Scale.css';
 import '../v2/x-gauss/Rhythm.css';
 import './Tabs.css';
 
-const START = { id: 's0', dir: 'row', a: leaf('p1', 'build'), b: leaf('p2', 'work') };
+const START: Layout = { id: 's0', dir: 'row', a: leaf('p1', 'build'), b: leaf('p2', 'work') };
 // the tree tends itself until you take over: two splits, then two closes, and it is back where it began
-const SCRIPT = [
+const SCRIPT: ((t: Layout) => Layout)[] = [
   (t) => split(t, 'p2', 'col', leaf('p3', 'shell 3'), 's3'),
   (t) => split(t, 'p1', 'col', leaf('p4', 'shell 4'), 's4'),
   (t) => close(t, 'p3'),
@@ -35,7 +36,9 @@ const SCRIPT = [
 ];
 const DOOMED = [null, null, 'p3', 'p4']; // the pane about to close glows first
 
-function Pane({ p, act, doomed, hand }) {
+type Hand = (fn: typeof split | typeof close, pid: string, dir?: Dir) => void;
+
+function Pane({ p, act, doomed, hand }: { p: Leaf; act: number; doomed: boolean; hand: Hand }) {
   return (
     <motion.div layout layoutId={'xtb-' + p.id} className={'xtb-pane' + (doomed ? ' doomed' : '')} initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
       <div className="xtb-pane-bar">
@@ -54,7 +57,7 @@ function Pane({ p, act, doomed, hand }) {
   );
 }
 
-function Panes({ t, n, doomed, hand }) {
+function Panes({ t, n, doomed, hand }: { t: Layout; n: number; doomed: string | null; hand: Hand }) {
   if (isLeaf(t)) return <Pane p={t} act={n} doomed={doomed === t.id} hand={hand} />;
   return (
     <div className={'xtb-split ' + t.dir}>
@@ -64,7 +67,7 @@ function Panes({ t, n, doomed, hand }) {
   );
 }
 
-function Tree({ t }) {
+function Tree({ t }: { t: Layout }) {
   // keyed by id, no shared layoutId: a new split node fades in on its own and nothing is reused mid-flight
   const enter = { initial: { opacity: 0, scale: 0.9 }, animate: { opacity: 1, scale: 1 }, transition: { duration: 0.3, ease: EASE } };
   if (isLeaf(t)) return <motion.li layout="position" className="xtb-leaf" {...enter}><span className="x-mono">{t.name}</span></motion.li>;
@@ -79,10 +82,10 @@ function Tree({ t }) {
 const KEYS = ['Esc', 'Ctrl', 'Tab', '←', '↑', '↓', '→'];
 
 /* The phone flip: the leaves of the same tree as pages you swipe, with the key row underneath. */
-function Phone({ list }) {
+function Phone({ list }: { list: Leaf[] }) {
   const [at, setAt] = useState(0);
-  const [key, setKey] = useState(null);
-  const x0 = useRef(null);
+  const [key, setKey] = useState<string | null>(null);
+  const x0 = useRef<number | null>(null);
   const i = Math.min(at, list.length - 1);
   return (
     <div className="xtb-phone" data-swipe-own data-cursor="Drag"
@@ -118,12 +121,12 @@ function Hero() {
     setWarn(false); setT((v) => SCRIPT[n](v)); setN((v) => (v + 1) % SCRIPT.length);
   });
   const id = useRef(10);
-  const hand = (fn, pid, dir) => {
+  const hand: Hand = (fn, pid, dir) => {
     setMine(true); setWarn(false);
     if (fn === close) return setT((v) => close(v, pid));
     const k = ++id.current;
     const cap = typeof window !== 'undefined' && innerWidth < 900 ? 4 : 6; // a phone keeps panes wide enough to close
-    setT((v) => (leaves(v).length >= cap ? v : split(v, pid, dir, leaf('p' + k, 'shell ' + (leaves(v).length + 1)), 's' + k)));
+    setT((v) => (leaves(v).length >= cap ? v : split(v, pid, dir as Dir, leaf('p' + k, 'shell ' + (leaves(v).length + 1)), 's' + k)));
   };
   const list = leaves(t);
   return (
@@ -198,7 +201,7 @@ function NoServer() {
     </div>
   );
 }
-function ShellUrl({ on }) {
+function ShellUrl({ on }: { on: boolean }) {
   const [k, setK] = useState(0);
   useEvery(1500, on, () => setK((v) => (v + 1) % 2));
   return (
@@ -210,7 +213,7 @@ function ShellUrl({ on }) {
     </div>
   );
 }
-function SpaceTree({ on }) {
+function SpaceTree({ on }: { on: boolean }) {
   const [shut, setShut] = useState(false);
   useEvery(1800, on, () => setShut((v) => !v));
   return (
@@ -235,7 +238,7 @@ function Why() {
       <PinChapters id="xtb-why" label="Why it is shaped this way" className="xtb-pin"
         title="Why it is shaped this way"
         chapters={WHY.map(([t, d]) => ({ t, b: <p>{d}</p> }))}
-        visual={(at) => (
+        visual={(at: number) => (
           <div className={'xtb-vis' + (paused ? ' paused' : '')}>
             {pauseBtn}
             {[NoServer, ShellUrl, SpaceTree].map((V, i) => (

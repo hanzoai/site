@@ -5,14 +5,17 @@
    showModal() traps focus, Esc and the scrim close with the slide, focus returns to the button. The words stay in the
    server HTML, and read inline with JavaScript off. Same props as DetailSheet: label, kicker, title, children, wide. */
 import { useEffect, useId, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import NoJs from '../../NoJs';
 import '../../v2/ProofScale.css';
 import '../../v2/DetailSheet.css';
 
-export default function Sheet({ label, kicker, title, children, className = '', wide = false }) {
+interface SheetProps { label: string; kicker?: ReactNode; title: ReactNode; children?: ReactNode; className?: string; wide?: boolean }
+
+export default function Sheet({ label, kicker, title, children, className = '', wide = false }: SheetProps) {
   const [open, setOpen] = useState(false);
-  const dlg = useRef(null);
-  const btn = useRef(null);
+  const dlg = useRef<HTMLDialogElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
   const id = useId();
 
   useEffect(() => {

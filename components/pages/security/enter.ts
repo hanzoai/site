@@ -12,28 +12,28 @@
    and the markup is identical on server and client. */
 import { useEffect } from 'react';
 
-export function useEnter(rootSel) {
+export function useEnter(rootSel: string) {
   useEffect(() => {
     const root = document.querySelector(rootSel);
     if (!root) return undefined;
-    const els = [...root.querySelectorAll('[data-enter]')];
-    const timers = [];
-    const play = (el) => { el.dataset.in = ''; timers.push(setTimeout(() => { el.dataset.done = ''; }, 1800)); };
+    const els = [...root.querySelectorAll<HTMLElement>('[data-enter]')];
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const play = (el: HTMLElement) => { el.dataset.in = ''; timers.push(setTimeout(() => { el.dataset.done = ''; }, 1800)); };
     if (typeof IntersectionObserver === 'undefined' || matchMedia('(prefers-reduced-motion: reduce)').matches) { els.forEach(play); return undefined; }
     const io = new IntersectionObserver((es) => {
       es.forEach((e) => {
         if (!e.isIntersecting) return;
-        if (e.intersectionRatio >= 0.25 || e.intersectionRect.height >= innerHeight * 0.25) { play(e.target); io.unobserve(e.target); }
+        if (e.intersectionRatio >= 0.25 || e.intersectionRect.height >= innerHeight * 0.25) { play(e.target as HTMLElement); io.unobserve(e.target); }
       });
     }, { threshold: [0, 0.1, 0.25, 0.5] });
     els.forEach((el) => io.observe(el));
 
     // the two scroll-linked entrances
-    const depth = root.querySelector('[data-enter="depth"]');
-    const tilt = root.querySelector('[data-enter="tilt"]');
+    const depth = root.querySelector<HTMLElement>('[data-enter="depth"]');
+    const tilt = root.querySelector<HTMLElement>('[data-enter="tilt"]');
     let raf = 0, lastY = scrollY, lastT = performance.now(), v = 0, lean = 0;
-    const near = (el) => { const r = el.getBoundingClientRect(); return r.bottom > -innerHeight * 0.5 && r.top < innerHeight * 1.5; };
-    const frame = (t) => {
+    const near = (el: HTMLElement) => { const r = el.getBoundingClientRect(); return r.bottom > -innerHeight * 0.5 && r.top < innerHeight * 1.5; };
+    const frame = (t: number) => {
       raf = 0;
       const dt = Math.max(1, t - lastT), y = scrollY;
       v = v * 0.8 + ((y - lastY) / dt) * 0.2; // px per ms, smoothed
