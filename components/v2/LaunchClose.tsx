@@ -13,6 +13,7 @@
                   self="https://…" deploy="https://platform.hanzo.ai/deploy" />
    seed/data: the page's slug and its figures from components/pages/cloud/family.js (never invented). Owned by Cloud 3. */
 import { useRef } from 'react';
+import type { PointerEvent, ReactNode } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import Sigil from '../Sigil';
 import { A } from '../kit';
@@ -23,11 +24,11 @@ const Gh = () => <svg viewBox="0 0 16 16" width="15" height="15" fill="currentCo
 export const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* The magnetic ask: follows a fine pointer up to 22px, eased 300ms (no spring), home on leave. */
-export function Pull({ children }) {
-  const ref = useRef(null);
+export function Pull({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const calm = useReducedMotion();
-  const move = (e) => {
-    if (calm || e.pointerType !== 'mouse') return;
+  const move = (e: PointerEvent<HTMLSpanElement>) => {
+    if (calm || e.pointerType !== 'mouse' || !ref.current) return;
     const r = ref.current.getBoundingClientRect();
     const dx = Math.max(-22, Math.min(22, (e.clientX - r.left - r.width / 2) * 0.22));
     const dy = Math.max(-22, Math.min(22, (e.clientY - r.top - r.height / 2) * 0.3));
@@ -37,10 +38,26 @@ export function Pull({ children }) {
   return <span ref={ref} className="lx-close-pull" onPointerMove={move} onPointerLeave={leave}>{children}</span>;
 }
 
-export default function LaunchClose({ name, tag, seed, data = [], ask, cta, repo = ['hanzoai', 'https://github.com/hanzoai'], stars, license = 'Apache-2.0', deploy = 'https://platform.hanzo.ai/deploy', self, children, className = '' }) {
+interface LaunchCloseProps {
+  name: string;
+  tag?: string;
+  seed?: string;
+  data?: ReadonlyArray<number | string>;
+  ask?: readonly [label: string, href: string];
+  cta?: string;
+  repo?: readonly [label: ReactNode, href: string];
+  stars?: string;
+  license?: string;
+  deploy?: string;
+  self?: string;
+  children?: ReactNode;
+  className?: string;
+}
+
+export default function LaunchClose({ name, tag, seed, data = [], ask, cta, repo = ['hanzoai', 'https://github.com/hanzoai'], stars, license = 'Apache-2.0', deploy = 'https://platform.hanzo.ai/deploy', self, children, className = '' }: LaunchCloseProps) {
   const [label, to] = ask || ['Deploy to Cloud', deploy];
   const deployIsAsk = to === deploy;
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   // the heading grows from 26px to 64px as the close comes up the screen, then rests at 64
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 35%'] });

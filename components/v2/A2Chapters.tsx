@@ -9,17 +9,30 @@
    visual(k, false). Reduced motion: the same states, no slide. Every chapter's words stay in the HTML, and with
    JavaScript off a <noscript> rule lays the chapters out as that phone story. */
 import { useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
 import NoJs from '../NoJs';
 
-export default function A2Chapters({ items, visual, flip, dark, label, className = '', head }) {
-  const ref = useRef(null);
+interface Chapter { k?: string; t: string; d: ReactNode }
+
+interface A2ChaptersProps {
+  items: readonly Chapter[];
+  visual: (i: number, live: boolean) => ReactNode;
+  flip?: boolean;
+  dark?: boolean;
+  label?: string;
+  className?: string;
+  head?: ReactNode;
+}
+
+export default function A2Chapters({ items, visual, flip, dark, label, className = '', head }: A2ChaptersProps) {
+  const ref = useRef<HTMLElement>(null);
   const [on, setOn] = useState(0);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     setOn(Math.min(items.length - 1, Math.max(0, Math.floor(v * items.length * 0.9999))));
   });
-  const go = (k) => {
+  const go = (k: number) => {
     const el = ref.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY;
@@ -30,7 +43,7 @@ export default function A2Chapters({ items, visual, flip, dark, label, className
   return (
     <>
     <NoJs css={'.a2-ch{height:auto!important;padding:120px 0 40px}.a2-ch-stick{position:static!important;height:auto!important;display:block!important}.a2-ch-nav,.a2-ch>.a2-ch-stick .a2-ch-vis{display:none!important}.a2-ch-items{gap:88px}.a2-ch-item{grid-area:auto!important;opacity:1!important;transform:none!important}.a2-ch-pv{display:block!important;margin-bottom:32px}'} />
-    <section ref={ref} className={'a2-ch' + (flip ? ' flip' : '') + (dark ? ' a2-dark' : '') + ' ' + className} style={{ '--n': items.length }} aria-label={label} {...(dark ? { 'data-room': 'dark' } : {})}>
+    <section ref={ref} className={'a2-ch' + (flip ? ' flip' : '') + (dark ? ' a2-dark' : '') + ' ' + className} style={{ '--n': items.length } as CSSProperties} aria-label={label} {...(dark ? { 'data-room': 'dark' } : {})}>
       <div className="a2-ch-stick">
         <div className="a2-wrap a2-ch-grid">
           <div className="a2-ch-copy">
@@ -42,7 +55,7 @@ export default function A2Chapters({ items, visual, flip, dark, label, className
             </div>
             <div className="a2-ch-items">
               {items.map((c, k) => (
-                <article key={k} className={'a2-ch-item' + (k === on ? ' on' : '')} style={{ '--dy': (k < on ? -28 : 28) + 'px' }}>
+                <article key={k} className={'a2-ch-item' + (k === on ? ' on' : '')} style={{ '--dy': (k < on ? -28 : 28) + 'px' } as CSSProperties}>
                   <div className="a2-ch-pv" aria-hidden="true">{visual(k, false)}</div>
                   {c.k && <p className="a2-kick">{c.k}</p>}
                   <h3 className="a2-headline">{c.t}</h3>

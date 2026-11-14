@@ -8,15 +8,23 @@
      <div className="my-demo"><LivePause paused={paused} onToggle={pause} className="my-pause" /> …</div>
    Position it with your own class (it is absolutely positioned top-right by default; `inline` makes it sit in flow,
    e.g. inside a toolbar). Owned by Cloud 3. */
-import { useCallback, useState } from 'react';
+import { useCallback, useState, type MouseEventHandler } from 'react';
 import './LivePause.css';
 
-export function usePause() {
+export function usePause(): [boolean, () => void] {
   const [paused, setPaused] = useState(false);
   return [paused, useCallback(() => setPaused((p) => !p), [])];
 }
 
-export default function LivePause({ paused, onToggle, dark, inline, className = '' }) {
+interface LivePauseProps {
+  paused: boolean;
+  onToggle: MouseEventHandler<HTMLButtonElement>;
+  dark?: boolean;
+  inline?: boolean;
+  className?: string;
+}
+
+export default function LivePause({ paused, onToggle, dark, inline, className = '' }: LivePauseProps) {
   return (
     <button type="button" className={`lx-pause ${dark ? 'dark' : ''} ${inline ? 'inline' : ''} ${className}`} aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={onToggle}>
       <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">

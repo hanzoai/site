@@ -8,21 +8,30 @@
    - onView: play when it scrolls into view (default: on arrival, for a hero). The arrival version is pure CSS, so the
      headline cuts in from the first paint, before any JavaScript runs, and still ends in place with JavaScript off;
    - delay: seconds before the first line. Needs components/v2/ProgramScale.css for the .xp-l masks. */
-import { useRef } from 'react';
+import { useRef, type CSSProperties, type ReactNode } from 'react';
 import { motion, useInView } from 'motion/react';
 import SharedNoJs from '../NoJs';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function LineReveal({ lines, as = 'h2', className = '', id, delay = 0, onView = false }) {
-  const ref = useRef(null);
+interface LineRevealProps {
+  lines: ReactNode[];
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
+  className?: string;
+  id?: string;
+  delay?: number;
+  onView?: boolean;
+}
+
+export default function LineReveal({ lines, as = 'h2', className = '', id, delay = 0, onView = false }: LineRevealProps) {
+  const ref = useRef<HTMLHeadingElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const go = onView ? seen : true;
   const Tag = as;
   if (!onView) return (
     <Tag id={id} className={className}>
       {lines.map((l, i) => (
-        <span className="xp-l" key={i}><span className="xp-cut" style={{ '--i': i, '--d': delay + 's' }}>{l}</span></span>
+        <span className="xp-l" key={i}><span className="xp-cut" style={{ '--i': i, '--d': delay + 's' } as CSSProperties}>{l}</span></span>
       ))}
     </Tag>
   );

@@ -12,9 +12,10 @@
    - No JS loop: the browser runs it. Reduced motion: the figure just changes.
    - Size it with font-size on the element; use tabular figures (it sets font-feature-settings: 'tnum').
    Owned by the Enterprise + Pricing chat (v2 wave 1). */
+import type { CSSProperties } from 'react';
 import './Odometer.css';
 
-export default function Odometer({ value, className = '' }) {
+export default function Odometer({ value, className = '' }: { value: string | number; className?: string }) {
   const chars = [...String(value)];
   const n = chars.length;
   return (
@@ -24,7 +25,7 @@ export default function Odometer({ value, className = '' }) {
         {chars.map((c, i) => {
           const place = n - 1 - i; // keyed from the right, so the ones place stays the same column
           if (!/[0-9]/.test(c)) return <span key={'c' + place + c} className="v2-odo-c">{c}</span>;
-          return <span key={'d' + place} className="v2-odo-d" style={{ '--d': +c, '--i': place }}><span className="v2-odo-s" /></span>;
+          return <span key={'d' + place} className="v2-odo-d" style={{ '--d': +c, '--i': place } as CSSProperties}><span className="v2-odo-s" /></span>;
         })}
       </span>
     </span>

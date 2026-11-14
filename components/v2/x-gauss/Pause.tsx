@@ -2,9 +2,9 @@
 /* Pause: the control every self-running demo carries (WCAG 2.2.2), icon only with an aria-label, 44px.
    Usage: const [paused, pauseBtn] = usePause(); … run the loop only while live && !paused; render {pauseBtn} inside
    the demo's positioned box (top-right by default; pass a style to move it). Owned by the Business 2 chat. */
-import { useState } from 'react';
+import { useState, type CSSProperties, type ReactElement } from 'react';
 
-export function usePause(style) {
+export function usePause(style?: CSSProperties): [boolean, ReactElement] {
   const [paused, setPaused] = useState(false);
   const btn = (
     <button type="button" className="w2-pause" style={style || { right: 16, top: 16 }} aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={() => setPaused((p) => !p)}>

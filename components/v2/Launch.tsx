@@ -25,6 +25,7 @@
    - Close runs the film back into the card it opened from. Reduced motion and JS off share one calm layout: the full
      film with the name and the ask, then the headline, lede and actions below it, nothing pinned or hidden. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion, animate, useScroll, useTransform, useMotionValue, useMotionValueEvent, useReducedMotion, useInView } from 'motion/react';
 import { EASE } from '../ui';
 import { Img, Cta } from '../kit';
@@ -35,20 +36,27 @@ import '../pages/model/Model.css';
 import './Launch.css';
 
 // each model's own film, exactly as Hanzo publishes it
-export const film = (slug, ext) => media(slug, ext);
-export const lerp = (a, b, t) => a + (b - a) * t;
-export const clamp01 = (t) => Math.min(1, Math.max(0, t));
-const settle = (t) => { const x = clamp01(t); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+export const film = (slug: string, ext: string) => media(slug, ext);
+export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+export const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
+const settle = (t: number) => { const x = clamp01(t); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+
+type Point = readonly [number, number];
+/* a clip-path for t in 0..1 (0 = full-bleed) on a stage W by H px; wide is the desktop layout */
+export type Shape = (t: number, W: number, H: number, wide: boolean) => string;
+/* [dx, dy, zoom?] for the layout, or null for no pan */
+export type Aim = (W: number, H: number, wide: boolean) => readonly number[] | null;
+interface Size { W: number; H: number; wide: boolean }
 
 /* shape helpers: each returns a function (t, W, H, wide) => clip-path */
 // a circle that closes from beyond the corners onto (cx, cy) with radius r (px), per layout
-export const ring = (at) => (t, W, H, wide) => {
+export const ring = (at: (W: number, H: number, wide: boolean) => { x: number; y: number; r: number }): Shape => (t, W, H, wide) => {
   const { x, y, r } = at(W, H, wide);
   const far = Math.hypot(W, H);
   return `circle(${lerp(far, r, t).toFixed(1)}px at ${lerp(W / 2, x, t).toFixed(1)}px ${lerp(H / 2, y, t).toFixed(1)}px)`;
 };
 // a rounded rectangle that closes onto {l, t, w, h, r} (px)
-export const box = (at) => (t, W, H, wide) => {
+export const box = (at: (W: number, H: number, wide: boolean) => { t: number; l: number; w: number; h: number; r: number | string }): Shape => (t, W, H, wide) => {
   const b = at(W, H, wide);
   const top = lerp(0, b.t, t), left = lerp(0, b.l, t), right = lerp(0, W - b.l - b.w, t), bottom = lerp(0, H - b.t - b.h, t);
   const r = typeof b.r === 'string' ? b.r : `${lerp(0, b.r, t).toFixed(1)}px`;
@@ -57,7 +65,7 @@ export const box = (at) => (t, W, H, wide) => {
 // any polygon: pts(W, H, wide) gives the settled outline in px (clockwise); the opening frame projects every point
 // out from the outline's centre to well beyond the screen, so t = 0 covers it all and every frame between is the
 // same polygon, which clip-path can interpolate
-export const poly = (pts) => (t, W, H, wide) => {
+export const poly = (pts: (W: number, H: number, wide: boolean) => readonly Point[]): Shape => (t, W, H, wide) => {
   const P = pts(W, H, wide);
   const cx = P.reduce((s, p) => s + p[0], 0) / P.length, cy = P.reduce((s, p) => s + p[1], 0) / P.length;
   const M = Math.max(W, H) * 0.6;
@@ -73,7 +81,7 @@ export const poly = (pts) => (t, W, H, wide) => {
 // box = [l, t, r, b], the settled shape's bounds in px: the pan is held back so the zoomed film always covers it.
 // pos = the film's object-position as fractions (Launch's pos prop), when the page moves it off centre.
 // Returns [dx, dy, z] for Launch's aim.
-export const focus = (fx, fy, tx, ty, z = 1.14, box, pos = [0.5, 0.5]) => (W, H) => {
+export const focus = (fx: number, fy: number, tx: number, ty: number, z = 1.14, box?: readonly [number, number, number, number], pos: Point = [0.5, 0.5]) => (W: number, H: number): [number, number, number] => {
   const s0 = Math.max(W / 1200, H / 1500), iw = 1200 * s0, ih = 1500 * s0;
   const px = fx * iw - (iw - W) * pos[0], py = fy * ih - (ih - H) * pos[1], cx = W / 2, cy = H / 2;
   let dx = tx - (cx + (px - cx) * z), dy = ty - (cy + (py - cy) * z);
@@ -84,27 +92,48 @@ export const focus = (fx, fy, tx, ty, z = 1.14, box, pos = [0.5, 0.5]) => (W, H)
   return [dx, dy, z];
 };
 // densify a closed outline so the opening frame stays a full cover (n points per edge)
-export const dense = (V, n = 6) => V.flatMap((a, i) => { const b = V[(i + 1) % V.length]; return Array.from({ length: n }, (_, k) => [lerp(a[0], b[0], k / n), lerp(a[1], b[1], k / n)]); });
+export const dense = (V: readonly Point[], n = 6) => V.flatMap((a, i) => { const b = V[(i + 1) % V.length]; return Array.from({ length: n }, (_, k): Point => [lerp(a[0], b[0], k / n), lerp(a[1], b[1], k / n)]); });
 
 // a headline whose lines rise out of a mask, staggered, when its parent says so ([data-on]), or by itself the first
 // time it scrolls into view (reveal)
-export function Lines({ as: T = 'h2', id, className = '', lines, reveal }) {
-  const ref = useRef(null);
+interface LinesProps {
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  id?: string;
+  className?: string;
+  lines: readonly ReactNode[];
+  reveal?: boolean;
+}
+
+export function Lines({ as: T = 'h2', id, className = '', lines, reveal }: LinesProps) {
+  const ref = useRef<HTMLHeadingElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   return (
     <T id={id} ref={ref} className={'lv-lines ' + className} data-on={reveal && seen ? '' : undefined}>
-      {lines.map((l, i) => <span key={i} className="lv-ln"><span style={{ '--i': i }}>{l}</span></span>)}
+      {lines.map((l, i) => <span key={i} className="lv-ln"><span style={{ '--i': i } as CSSProperties}>{l}</span></span>)}
     </T>
   );
 }
 
-export default function Launch({ slug, shape, aim, over, head, headClass = '', label, ask, pos, children }) {
+interface LaunchProps {
+  slug: string;
+  shape: Shape;
+  aim?: Aim;
+  over?: (W: number, H: number, wide: boolean) => ReactNode;
+  head?: ReactNode;
+  headClass?: string;
+  label?: string;
+  ask?: { label: string; to: string; id: string };
+  pos?: string;
+  children?: ReactNode;
+}
+
+export default function Launch({ slug, shape, aim, over, head, headClass = '', label, ask, pos, children }: LaunchProps) {
   const m = bySlug[slug];
   const opener = useOpener();
-  const stage = useRef(null), pin = useRef(null);
+  const stage = useRef<HTMLElement>(null), pin = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const [on, setOn] = useState(false);
-  const [size, setSize] = useState(null);
+  const [size, setSize] = useState<Size | null>(null);
   const calm = useReducedMotion();
   const [still, setStill] = useState(false); // set after mount: the server cannot know, and hydration keeps its attributes
   useEffect(() => setStill(!!calm), [calm]);
@@ -115,7 +144,7 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
   const tv = useMotionValue(0);
   const mode = useRef({ narrow: false, still: false });
   mode.current = { narrow, still };
-  const t = useTransform([p, tv], ([a, b]) => (mode.current.still ? 0 : mode.current.narrow ? b : clamp01(a / 0.8))); // reduced motion: the calm layout (film with the name, then the headline below)
+  const t = useTransform([p, tv], ([a, b]: number[]) => (mode.current.still ? 0 : mode.current.narrow ? b : clamp01(a / 0.8))); // reduced motion: the calm layout (film with the name, then the headline below)
   useEffect(() => {
     if (!ready || !narrow || still) return;
     const c = animate(tv, 1, { duration: 1.5, ease: EASE, delay: 1.1 });
@@ -124,14 +153,15 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
   const clip = useTransform(t, (v) => (!size || v <= 0.002 ? 'none' : shape(settle(v), size.W, size.H, size.wide)));
   const zoom = useTransform(t, (v) => { if (!size) return 1; const a = aim ? aim(size.W, size.H, size.wide) : null; return 1 + (((a && a[2]) || 1.14) - 1) * v; });
   // aim: the camera pans the film so its subject sits inside the settled shape ([dx, dy] px at t = 1, per layout)
-  const pan = (k) => (v) => { if (!size || !aim) return 0; const a = aim(size.W, size.H, size.wide); return (a ? a[k] : 0) * settle(v); };
+  const pan = (k: number) => (v: number) => { if (!size || !aim) return 0; const a = aim(size.W, size.H, size.wide); return (a ? a[k] : 0) * settle(v); };
   const panX = useTransform(t, pan(0));
   const panY = useTransform(t, pan(1));
   const nameO = useTransform(t, [0, 0.28], [1, 0]);
   const nameY = useTransform(t, [0, 0.28], [0, -72]);
 
   useEffect(() => {
-    const img = stage.current.querySelector('.lv-film img');
+    const img = stage.current?.querySelector<HTMLImageElement>('.lv-film img');
+    if (!img || !pin.current) return;
     const done = () => setReady(true);
     if (img.complete && img.naturalWidth > 0) done();
     else if (img.complete) img.decode().then(done, done);
@@ -146,7 +176,7 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
   useMotionValueEvent(t, 'change', (v) => { setGone(v > 0.2); if (v > 0.7) setOn(true); else if (v < 0.45) setOn(false); }); // back up the stage, the headline steps aside for the name
 
   return (
-    <main className="x-model lv" data-cursor="" style={pos ? { '--fpos': pos } : undefined} data-calm={still ? '' : undefined} data-narrow={narrow ? '' : undefined}>
+    <main className="x-model lv" data-cursor="" style={pos ? { '--fpos': pos } as CSSProperties : undefined} data-calm={still ? '' : undefined} data-narrow={narrow ? '' : undefined}>
       <section className="lv-stage" ref={stage} data-hero={slug} data-ready={ready ? '' : undefined} aria-label={label || m.name}>
         <div className="lv-pin" ref={pin}>
           <motion.div className="lv-film" style={{ clipPath: clip }}>
@@ -170,7 +200,7 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
             href="/"
             className="x-mclose lv-close"
             aria-label="Close and return to all models"
-            onClick={(e) => opener.close(e, { key: slug, src: film(slug, 'webp') })}
+            onClick={(e) => opener?.close(e, { key: slug, src: film(slug, 'webp') })}
             initial={{ opacity: 0, scale: 0.6 }} animate={ready ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.6, ease: EASE, delay: 0.5 }}
             whileHover={{ rotate: 90 }} whileTap={{ scale: 0.9 }}
           >

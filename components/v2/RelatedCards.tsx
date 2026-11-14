@@ -4,15 +4,23 @@
    whole card is one link: one tab stop, real <a href>. Hover deepens the fill and drifts the art (no lift, no cursor label); press is .97.
    Usage: <RelatedCards items={[['Logs', '/cloud/logs', 'Search every line']]} title="Related capabilities" />
    items: Hanzo's own [label, href, line]. Owned by Cloud 3. */
+import type { ReactNode } from 'react';
 import Sigil from '../Sigil';
 import { A } from '../kit';
 import './LaunchType.css';
 import './RelatedCards.css';
 
 const Arr = () => <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const slug = (to) => to.replace(/^\/+|\/+$/g, '').split('/').pop() || 'hanzo';
+const slug = (to: string) => to.replace(/^\/+|\/+$/g, '').split('/').pop() || 'hanzo';
 
-export default function RelatedCards({ items, title = 'Related capabilities', className = '', children }) {
+interface RelatedCardsProps {
+  items: string[][]; // [label, href, line?]
+  title?: string;
+  className?: string;
+  children?: ReactNode;
+}
+
+export default function RelatedCards({ items, title = 'Related capabilities', className = '', children }: RelatedCardsProps) {
   return (
     <section className={'lx-rel ' + className}>
       <div className="lx-wrap">

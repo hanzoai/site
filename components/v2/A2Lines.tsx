@@ -11,9 +11,18 @@ import NoJs from '../NoJs';
 
 import { T, EMPH } from './A2Motion';
 
-export default function A2Lines({ lines, as = 'h2', className = '', now, delay = 0, id }) {
+interface A2LinesProps {
+  lines: readonly string[];
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  className?: string;
+  now?: boolean;
+  delay?: number;
+  id?: string;
+}
+
+export default function A2Lines({ lines, as = 'h2', className = '', now, delay = 0, id }: A2LinesProps) {
   const calm = useReducedMotion();
-  const ref = useRef(null);
+  const ref = useRef<HTMLHeadingElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.3 });
   const Tag = as;
   const go = now || seen;

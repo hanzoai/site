@@ -5,10 +5,19 @@
      <BizStage from={1.14} over={620} className="ld-stage"><YourProductUI /></BizStage>
    Over the first `over` pixels of scroll the object goes from `from` times its size (growing down from its top edge)
    to 1, and lifts by `lift` px into place. Transform only; reduced motion shows it settled. */
+import type { ReactNode } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import './Biz.css';
 
-export default function BizStage({ children, from = 1.14, over = 620, lift = 60, className = '' }) {
+interface BizStageProps {
+  children?: ReactNode;
+  from?: number;
+  over?: number;
+  lift?: number;
+  className?: string;
+}
+
+export default function BizStage({ children, from = 1.14, over = 620, lift = 60, className = '' }: BizStageProps) {
   const calm = useReducedMotion();
   const { scrollY } = useScroll();
   const scale = useTransform(scrollY, [0, over], [from, 1], { clamp: true });

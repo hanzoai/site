@@ -7,22 +7,32 @@
    while shut), so nothing is lost. Put it outside any transformed or faded parent (position: fixed needs that).
    aria-modal is set only while it is open, so the site's ask bar (components/Ask.jsx) is not hidden by a shut sheet. */
 import { useEffect, useId, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import './Biz.css';
 
 const Plus = () => <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>;
 export const Close = () => <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>;
 
-export default function BizSheet({ label, title, kick, children, className = '', btnClass = '' }) {
+interface BizSheetProps {
+  label: ReactNode;
+  title: string;
+  kick?: string;
+  children?: ReactNode;
+  className?: string;
+  btnClass?: string;
+}
+
+export default function BizSheet({ label, title, kick, children, className = '', btnClass = '' }: BizSheetProps) {
   const [open, setOpen] = useState(false);
-  const btn = useRef(null);
-  const panel = useRef(null);
+  const btn = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
   const id = useId();
   useEffect(() => {
     if (!open) return;
     window.__lenis?.stop();
     document.documentElement.classList.add('x-lock');
     const t = setTimeout(() => panel.current?.focus({ preventScroll: true }), 80);
-    const key = (e) => { if (e.key === 'Escape') setOpen(false); };
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
     addEventListener('keydown', key);
     return () => {
       clearTimeout(t);

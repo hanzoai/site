@@ -9,13 +9,14 @@
    - more: optional; its body is always in the HTML (inert until opened). Esc, the backdrop and Close shut it.
    - kick: a small label set under the headline (never above it). */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion } from 'motion/react';
 import { EASE } from '../ui';
 import KeynoteLines from './KeynoteLines';
 import './Keynote.css';
 import './KeynoteSpec.css';
 
-export function Fig({ n, u, note }) {
+export function Fig({ n, u, note }: { n: ReactNode; u?: ReactNode; note?: ReactNode }) {
   return (
     <p className="kfs-fig">
       <b className="kn-fig">{n}</b>{u && <span>{u}</span>}
@@ -24,13 +25,20 @@ export function Fig({ n, u, note }) {
   );
 }
 
-export function KeynoteSheet({ label, title, children, className = '' }) {
+interface KeynoteSheetProps {
+  label: ReactNode;
+  title: string;
+  children?: ReactNode;
+  className?: string;
+}
+
+export function KeynoteSheet({ label, title, children, className = '' }: KeynoteSheetProps) {
   const [open, setOpen] = useState(false);
-  const close = useRef(null);
-  const btn = useRef(null);
+  const close = useRef<HTMLButtonElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!open) return;
-    const k = (e) => e.key === 'Escape' && setOpen(false);
+    const k = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
     window.addEventListener('keydown', k);
     window.__lenis?.stop();
     close.current?.focus({ preventScroll: true });
@@ -60,7 +68,16 @@ export function KeynoteSheet({ label, title, children, className = '' }) {
   );
 }
 
-export default function KeynoteSpec({ kick, title = 'Tech specs', rows, more, aside, className = '' }) {
+interface KeynoteSpecProps {
+  kick?: string;
+  title?: string;
+  rows: ReadonlyArray<readonly [string, ReactNode]>;
+  more?: { label: ReactNode; title: string; body: ReactNode };
+  aside?: ReactNode;
+  className?: string;
+}
+
+export default function KeynoteSpec({ kick, title = 'Tech specs', rows, more, aside, className = '' }: KeynoteSpecProps) {
   return (
     <section className={'kn-sec kfs ' + className}>
       <div className="kn-wrap">

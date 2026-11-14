@@ -11,14 +11,27 @@
      ]} />
    - Every chapter is in the HTML at all times (inactive ones are faded, never removed), so parity holds.
    - Theme with CSS on your className: --pc-acc (index accent), --pc-per (scroll length per chapter, default 90vh). */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { motion, useScroll, useMotionValueEvent, useTransform } from 'motion/react';
 import './PinChapters.css';
 
-const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
-export default function PinChapters({ chapters, label, className = '' }) {
-  const track = useRef(null);
+export interface Chapter {
+  id: string;
+  tab: ReactNode;
+  copy: ReactNode;
+  visual: ReactNode;
+}
+
+interface PinChaptersProps {
+  chapters: Chapter[];
+  label?: string;
+  className?: string;
+}
+
+export default function PinChapters({ chapters, label, className = '' }: PinChaptersProps) {
+  const track = useRef<HTMLDivElement>(null);
   const n = chapters.length;
   const [at, setAt] = useState(0);
   const { scrollYProgress } = useScroll({ target: track, offset: ['start start', 'end end'] });
@@ -35,7 +48,7 @@ export default function PinChapters({ chapters, label, className = '' }) {
     mq.addEventListener('change', on);
     return () => mq.removeEventListener('change', on);
   }, []);
-  const go = (i, smooth = true) => {
+  const go = (i: number, smooth = true) => {
     const el = track.current;
     if (!el || !pinned.current) return;
     const top = el.getBoundingClientRect().top + scrollY;
@@ -44,7 +57,7 @@ export default function PinChapters({ chapters, label, className = '' }) {
     else scrollTo({ top: y, behavior: smooth ? 'smooth' : 'auto' });
   };
   return (
-    <div ref={track} className={'pc ' + className} style={{ '--pc-n': n }}>
+    <div ref={track} className={'pc ' + className} style={{ '--pc-n': n } as CSSProperties}>
       <div className="pc-stage">
         <div className="pc-grid">
           <nav className="pc-idx" aria-label={label}>
@@ -61,12 +74,12 @@ export default function PinChapters({ chapters, label, className = '' }) {
             ))}
           </nav>
           {chapters.map((c, i) => (
-            <div key={c.id} id={c.id} className="pc-copy" style={{ '--i': i }} data-on={i === at} data-past={i < at} onFocus={() => i !== at && go(i, false)}>
+            <div key={c.id} id={c.id} className="pc-copy" style={{ '--i': i } as CSSProperties} data-on={i === at} data-past={i < at} onFocus={() => i !== at && go(i, false)}>
               {c.copy}
             </div>
           ))}
           {chapters.map((c, i) => (
-            <div key={c.id + '-v'} className="pc-vis" style={{ '--i': i }} data-on={i === at} data-past={i < at}>
+            <div key={c.id + '-v'} className="pc-vis" style={{ '--i': i } as CSSProperties} data-on={i === at} data-past={i < at}>
               {c.visual}
             </div>
           ))}

@@ -11,14 +11,18 @@
    then Replay once the script has ended. Reduced motion: the script is not run at all; render the final frame.
    Labels are aria-labels only ("Pause", "Replay", from the PLAN-COMPONENTS 0.6 register list), no visible words. */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 
 export const STOP = Symbol('stop');
 
-export function useDemo(box, script, { amount = 0.4 } = {}) {
+type Sleep = (ms: number) => Promise<void>;
+type State = 'idle' | 'play' | 'pause' | 'done';
+
+export function useDemo(box: RefObject<Element | null>, script: (sleep: Sleep) => Promise<unknown>, { amount = 0.4 }: { amount?: number } = {}) {
   const seen = useInView(box, { amount });
   const calm = useReducedMotion();
-  const [state, setState] = useState('idle'); // idle | play | pause | done
+  const [state, setState] = useState<State>('idle'); // idle | play | pause | done
   const [go, setGo] = useState(false); // latched: the box has been seen once
   const [run, setRun] = useState(0);
   const paused = useRef(false);
@@ -29,7 +33,7 @@ export function useDemo(box, script, { amount = 0.4 } = {}) {
     if (calm || !go) return;
     const id = ++token.current;
     paused.current = false;
-    const sleep = (ms) => new Promise((ok, no) => {
+    const sleep: Sleep = (ms) => new Promise<void>((ok, no) => {
       let left = ms, last = performance.now();
       const tick = () => {
         if (token.current !== id) { no(STOP); return; }
@@ -64,7 +68,7 @@ const ICON = {
   replay: <path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />,
 };
 
-export function DemoCtl({ demo, className = '' }) {
+export function DemoCtl({ demo, className = '' }: { demo: ReturnType<typeof useDemo>; className?: string }) {
   if (demo.calm) return null;
   const done = demo.state === 'done' || demo.state === 'idle';
   const k = done ? 'replay' : demo.state === 'pause' ? 'play' : 'pause';

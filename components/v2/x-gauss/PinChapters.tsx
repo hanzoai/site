@@ -12,28 +12,46 @@
    - c.node replaces the headline and body with your own block (for example the page's hero: its h1, lede and ask), and
      c.rail === false keeps that chapter out of the numbered rail; it then leads on phones too (before the visual).
    - Reduced motion: chapters swap without travel. JS off: <NoJs/> stacks every chapter. Owned by the Business 2 chat. */
-import { useRef, useState } from 'react';
+import { useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { motion, useMotionValueEvent, useScroll, useReducedMotion } from 'motion/react';
 import { scrollToY } from '../../../lib/scroll';
 import './PinChapters.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function PinChapters({ id, label, title, chapters, visual, className = '', flip = false }) {
-  const ref = useRef(null);
+interface Chapter {
+  k?: string;
+  t?: ReactNode;
+  b?: ReactNode;
+  node?: ReactNode;
+  rail?: boolean;
+}
+
+interface PinChaptersProps {
+  id?: string;
+  label: string;
+  title?: string;
+  chapters: Chapter[];
+  visual: (at: number) => ReactNode;
+  className?: string;
+  flip?: boolean;
+}
+
+export default function PinChapters({ id, label, title, chapters, visual, className = '', flip = false }: PinChaptersProps) {
+  const ref = useRef<HTMLElement>(null);
   const n = chapters.length;
   const [at, setAt] = useState(0);
   const calm = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (v) => setAt(Math.min(n - 1, Math.max(0, Math.floor(v * n * 0.999)))));
-  const go = (i) => {
+  const go = (i: number) => {
     const el = ref.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + scrollY + ((el.offsetHeight - innerHeight) * (i + 0.5)) / n;
     scrollToY(top, { duration: 0.9 });
   };
   return (
-    <section ref={ref} id={id} aria-label={label} className={'w2-pin' + (flip ? ' flip' : '') + ' ' + className} style={{ '--n': n }}>
+    <section ref={ref} id={id} aria-label={label} className={'w2-pin' + (flip ? ' flip' : '') + ' ' + className} style={{ '--n': n } as CSSProperties}>
       <div className="w2-pin-stick">
         <div className="w2-wrap w2-pin-grid">
           <div className="w2-pin-words">

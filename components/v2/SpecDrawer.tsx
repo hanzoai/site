@@ -9,20 +9,28 @@
    rows: Hanzo's own figures and words only. Without children there is no button. The closed sheet is not a dialog
    (no role, no aria-modal), so the site's sticky ask (components/Ask.jsx) does not mistake it for an open overlay.
    Owned by Cloud 3. */
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import './LaunchType.css';
 import './SpecDrawer.css';
 
-export function Sheet({ open, onClose, title, children, id }) {
-  const close = useRef(null);
+interface SheetProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  children?: ReactNode;
+  id?: string;
+}
+
+export function Sheet({ open, onClose, title, children, id }: SheetProps) {
+  const close = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!open) return;
-    const prev = document.activeElement;
+    const prev = document.activeElement as HTMLElement | null;
     const html = document.documentElement;
     html.classList.add('x-lock');
     window.__lenis?.stop();
     close.current?.focus({ preventScroll: true });
-    const key = (e) => e.key === 'Escape' && onClose();
+    const key = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
     addEventListener('keydown', key);
     return () => { removeEventListener('keydown', key); html.classList.remove('x-lock'); window.__lenis?.start(); prev?.focus?.({ preventScroll: true }); };
   }, [open, onClose]);
@@ -40,12 +48,21 @@ export function Sheet({ open, onClose, title, children, id }) {
   );
 }
 
-export default function SpecDrawer({ rows, open: openLabel = 'See the spec', sheetTitle, children, className = '', note }) {
+interface SpecDrawerProps {
+  rows: { v: ReactNode; l: ReactNode }[];
+  open?: string;
+  sheetTitle?: string;
+  children?: ReactNode;
+  className?: string;
+  note?: ReactNode;
+}
+
+export default function SpecDrawer({ rows, open: openLabel = 'See the spec', sheetTitle, children, className = '', note }: SpecDrawerProps) {
   const [open, setOpen] = useState(false);
   const id = useId();
   return (
     <div className={'lx-spec ' + className}>
-      <dl className="lx-spec-rows" style={{ '--cols': Math.min(rows.length, 4) }}>
+      <dl className="lx-spec-rows" style={{ '--cols': Math.min(rows.length, 4) } as CSSProperties}>
         {rows.map((r, i) => (
           <div key={i} className="lx-spec-row">
             <dt className="lx-spec-l">{r.l}</dt>

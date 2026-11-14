@@ -15,8 +15,8 @@
    Every chapter's words are in the HTML; the server renders visual(0) only, so words a visual shows for a later
    chapter must also be in that chapter's body (or the visual renders every state, hidden). Keyboard focus inside a chapter scrolls the scene to it. Reduced motion:
    chapters swap without movement. Page CSS can style .pf-pin-* under its own section class. */
-import { useEffect, useRef, useState } from 'react';
-import { motion, useMotionValueEvent, useScroll } from 'motion/react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { motion, useMotionValueEvent, useScroll, type MotionValue } from 'motion/react';
 import './ProofScale.css';
 import './PinScenes.css';
 import NoJs from '../NoJs';
@@ -33,8 +33,25 @@ function useWide() {
   return wide;
 }
 
-export default function PinScenes({ chapters, visual, label, className = '', flip = false, dark = false, per = 80, id }) {
-  const ref = useRef(null);
+interface PinChapter {
+  title?: ReactNode;
+  kicker?: ReactNode;
+  body?: ReactNode;
+}
+
+interface PinScenesProps {
+  chapters: PinChapter[];
+  visual: (at: number, progress: MotionValue<number>) => ReactNode;
+  label?: string;
+  className?: string;
+  flip?: boolean;
+  dark?: boolean;
+  per?: number;
+  id?: string;
+}
+
+export default function PinScenes({ chapters, visual, label, className = '', flip = false, dark = false, per = 80, id }: PinScenesProps) {
+  const ref = useRef<HTMLElement>(null);
   const wide = useWide();
   const [at, setAt] = useState(0);
   const n = chapters.length;
@@ -44,7 +61,7 @@ export default function PinScenes({ chapters, visual, label, className = '', fli
   useMotionValueEvent(scrollYProgress, 'change', (p) => setAt(Math.min(n - 1, Math.max(0, Math.floor(p * n * 0.999)))));
 
   // a keyboard user tabbing into a chapter that is not on screen: bring the scene to it
-  const go = (i) => {
+  const go = (i: number) => {
     const el = ref.current;
     if (!el || !wide) return;
     const top = el.getBoundingClientRect().top + scrollY;
@@ -73,7 +90,7 @@ export default function PinScenes({ chapters, visual, label, className = '', fli
   }
 
   return (
-    <section ref={ref} id={id} className={'pf-pin ' + (flip ? 'flip ' : '') + className} style={{ '--n': n, '--per': step + 'svh' }} aria-label={label} data-room={dark ? 'dark' : undefined}>
+    <section ref={ref} id={id} className={'pf-pin ' + (flip ? 'flip ' : '') + className} style={{ '--n': n, '--per': step + 'svh' } as CSSProperties} aria-label={label} data-room={dark ? 'dark' : undefined}>
       {/* JS off: no pinning, every chapter reads in order */}
       <NoJs css={'<style>.pf-pin{height:auto!important}.pf-pin-stick{position:static!important;height:auto!important;padding:120px 0}.pf-pin-texts{display:block!important}.pf-pin-t{opacity:1!important;transform:none!important;margin-bottom:64px}</style>'} />
       <div className="pf-pin-stick">

@@ -11,28 +11,49 @@
    Esc and the backdrop close it and hand focus back to the card; Tab stays inside while it is open. Each card's detail is
    in the HTML as hidden="until-found" (Find in page opens it). Reduced motion: the sheet appears without the morph. */
 import { useEffect, useId, useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { A, Cta } from '../kit';
 import './Keynote.css';
 import './KeynoteOpen.css';
 
-const T = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // Morph timing: 600 ms in-out, no spring
+/* React's types allow only a boolean for `hidden`; React writes the string through to the DOM, which Find in page needs. */
+const UNTIL_FOUND = 'until-found' as unknown as boolean;
 
-export default function KeynoteOpen({ items, cols = 3, className = '' }) {
+const T = { duration: 0.6, ease: [0.4, 0, 0.2, 1] } as const; // Morph timing: 600 ms in-out, no spring
+
+interface KeynoteOpenItem {
+  id: string;
+  kick?: string;
+  title: ReactNode;
+  sub?: string;
+  art?: ReactNode;
+  body?: ReactNode;
+  href?: string;
+  cta?: string;
+}
+
+interface KeynoteOpenProps {
+  items: readonly KeynoteOpenItem[];
+  cols?: number;
+  className?: string;
+}
+
+export default function KeynoteOpen({ items, cols = 3, className = '' }: KeynoteOpenProps) {
   const uid = useId().replace(/:/g, '');
-  const [open, setOpen] = useState(null);
+  const [open, setOpen] = useState<string | null>(null);
   const calm = useReducedMotion();
-  const last = useRef(null);
-  const sheet = useRef(null);
+  const last = useRef<HTMLButtonElement | null>(null);
+  const sheet = useRef<HTMLDivElement>(null);
   const cur = items.find((x) => x.id === open);
   const shut = () => { setOpen(null); setTimeout(() => last.current?.focus({ preventScroll: true }), 50); };
   useEffect(() => {
     if (!open) return;
     // Esc closes and hands focus back to the card; Tab stays inside the open card
-    const k = (e) => {
+    const k = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { e.preventDefault(); shut(); return; }
       if (e.key !== 'Tab' || !sheet.current) return;
-      const f = [...sheet.current.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')];
+      const f = [...sheet.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')];
       if (!f.length) return;
       const first = f[0], end = f[f.length - 1];
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); end.focus(); }
@@ -45,7 +66,7 @@ export default function KeynoteOpen({ items, cols = 3, className = '' }) {
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
   const t = calm ? { duration: 0 } : T;
   return (
-    <div className={'kno ' + className} style={{ '--cols': cols }}>
+    <div className={'kno ' + className} style={{ '--cols': cols } as CSSProperties}>
       <ul className="kno-grid">
         {items.map((it, i) => (
           <li key={it.id}>
@@ -64,7 +85,7 @@ export default function KeynoteOpen({ items, cols = 3, className = '' }) {
               <span className="kno-plus" aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M8 3v10M3 8h10" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg></span>
             </motion.button>
             {/* the opened detail, in the page from the start */}
-            {it.body && <div className="kno-detail" hidden="until-found">{it.body}{it.href && <A to={it.href}>{it.cta || 'Learn more'}</A>}</div>}
+            {it.body && <div className="kno-detail" hidden={UNTIL_FOUND}>{it.body}{it.href && <A to={it.href}>{it.cta || 'Learn more'}</A>}</div>}
           </li>
         ))}
       </ul>

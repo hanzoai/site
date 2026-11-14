@@ -7,10 +7,19 @@
    - <FamGrow to={1.75}><b className="v2f-num v2f-fig">93.8%</b></FamGrow>;
    - to: the scale at the moment (1.75 takes a 64px figure to 112px); origin: the transform origin. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 
-export default function FamGrow({ children, to = 1.75, origin = '0% 100%', className = '', as = 'span' }) {
-  const ref = useRef(null);
+interface FamGrowProps {
+  children?: ReactNode;
+  to?: number;
+  origin?: string;
+  className?: string;
+  as?: 'span' | 'div' | 'p' | 'b' | 'strong' | 'i' | 'em';
+}
+
+export default function FamGrow({ children, to = 1.75, origin = '0% 100%', className = '', as = 'span' }: FamGrowProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const [on, setOn] = useState(false); // after hydration only, so the server's HTML and the first paint agree
   useEffect(() => setOn(!calm), [calm]);

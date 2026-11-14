@@ -10,11 +10,30 @@
    Reduced motion: no transitions, the stage still follows the chapter you are reading. Every word stays in the HTML,
    and chapters dim only once JavaScript runs, so with JS off every chapter reads. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useScroll } from 'motion/react';
 import './Biz.css';
 
-export default function BizChapters({ items, stage, label, flip, dark, className = '', id, children }) {
-  const ref = useRef(null);
+interface BizChapter {
+  k?: string;
+  t?: string;
+  d?: ReactNode;
+  x?: ReactNode;
+}
+
+interface BizChaptersProps {
+  items: readonly BizChapter[];
+  stage: (at: number) => ReactNode;
+  label?: string;
+  flip?: boolean;
+  dark?: boolean;
+  className?: string;
+  id?: string;
+  children?: ReactNode;
+}
+
+export default function BizChapters({ items, stage, label, flip, dark, className = '', id, children }: BizChaptersProps) {
+  const ref = useRef<HTMLElement>(null);
   const [at, setAt] = useState(0);
   const [live, setLive] = useState(false);
   const [phone, setPhone] = useState(false);
@@ -29,8 +48,8 @@ export default function BizChapters({ items, stage, label, flip, dark, className
   useEffect(() => {
     setLive(true);
     if (phone) return;
-    const els = [...ref.current.querySelectorAll('[data-ch]')];
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(+e.target.dataset.ch)), { rootMargin: '-48% 0px -48% 0px' });
+    const els = [...(ref.current?.querySelectorAll('[data-ch]') ?? [])];
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(+(e.target as HTMLElement).dataset.ch!)), { rootMargin: '-48% 0px -48% 0px' });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [items.length, phone]);

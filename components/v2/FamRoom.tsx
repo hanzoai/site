@@ -7,9 +7,14 @@
    - tone: 'graphite' (default) or 'black'; the class you pass sets padding and layout. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
+import type { HTMLMotionProps } from 'motion/react';
 
-export default function FamRoom({ children, className = '', tone = 'graphite', ...rest }) {
-  const ref = useRef(null);
+interface FamRoomProps extends Omit<HTMLMotionProps<'section'>, 'ref'> {
+  tone?: 'graphite' | 'black';
+}
+
+export default function FamRoom({ children, className = '', tone = 'graphite', ...rest }: FamRoomProps) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   const [on, setOn] = useState(false); // after hydration only: the server paints the room open
   useEffect(() => setOn(!calm), [calm]);

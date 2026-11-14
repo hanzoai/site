@@ -9,6 +9,7 @@
    - title: the sheet's heading (Hanzo's section title); children: the detail, as Hanzo wrote it;
    - Escape, the scrim and the close button shut it, and focus returns to the trigger. */
 import { useEffect, useId, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { ui } from './famUi';
 import NoJs from '../NoJs';
 
@@ -16,14 +17,22 @@ import NoJs from '../NoJs';
 const NOJS = '.v2f-sheet{position:static!important;visibility:visible!important;pointer-events:auto!important}.v2f-sheet-scrim,.v2f-sheet-x,.v2f-spec-btn{display:none!important}.v2f-sheet-p{position:static!important;transform:none!important;width:auto!important;max-height:none!important;box-shadow:none!important;border:1px solid rgba(0,0,0,.08)}';
 
 /* a preview never stops mid-word: whole words up to about 90 characters, then an ellipsis */
-const cut = (t) => { const s = String(t).replace(/\s+/g, ' ').trim(); if (s.length <= 96) return s; const i = s.lastIndexOf(' ', 90); return s.slice(0, i > 40 ? i : 90).replace(/[,;:.]$/, '') + ' …'; };
+const cut = (t: string) => { const s = String(t).replace(/\s+/g, ' ').trim(); if (s.length <= 96) return s; const i = s.lastIndexOf(' ', 90); return s.slice(0, i > 40 ? i : 90).replace(/[,;:.]$/, '') + ' …'; };
 
-export default function FamDrawer({ preview, title, children, className = '', label }) {
+interface FamDrawerProps {
+  preview?: string;
+  title?: string;
+  children?: ReactNode;
+  className?: string;
+  label?: string;
+}
+
+export default function FamDrawer({ preview, title, children, className = '', label }: FamDrawerProps) {
   const [open, setOpen] = useState(false);
   const [live, setLive] = useState(false); // inert only once scripts run, so a no-JS reader can still use the links
   useEffect(() => setLive(true), []);
-  const btn = useRef(null);
-  const close = useRef(null);
+  const btn = useRef<HTMLButtonElement>(null);
+  const close = useRef<HTMLButtonElement>(null);
   const id = useId();
   useEffect(() => {
     if (!open) return;
@@ -31,7 +40,7 @@ export default function FamDrawer({ preview, title, children, className = '', la
     html.classList.add('x-lock');
     window.__lenis && window.__lenis.stop();
     const t = setTimeout(() => close.current && close.current.focus({ preventScroll: true }), 60);
-    const key = (e) => { if (e.key === 'Escape') setOpen(false); };
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
     addEventListener('keydown', key);
     return () => {
       clearTimeout(t);

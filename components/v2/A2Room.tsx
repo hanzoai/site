@@ -6,10 +6,15 @@
    room={null} drops data-room for a room that turns light inside (the page then marks the dark stretch itself). */
 import { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import type { HTMLMotionProps } from 'motion/react';
 import useNarrow from './A2Narrow';
 
-export default function A2Room({ className = '', room = 'dark', children, ...rest }) {
-  const ref = useRef(null);
+interface A2RoomProps extends Omit<HTMLMotionProps<'section'>, 'ref'> {
+  room?: string | null;
+}
+
+export default function A2Room({ className = '', room = 'dark', children, ...rest }: A2RoomProps) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   const narrow = useNarrow();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.25'] });

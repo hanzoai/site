@@ -6,17 +6,27 @@
    - place it outside transformed or clipped containers (the panel is position: fixed).
    Esc, the backdrop and the close button close it; focus moves in and comes back; page scroll pauses while open. */
 import { useEffect, useId, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import './AppSheet.css';
 
-export default function Sheet({ label, title, kick, children, trigger = '', icon = true }) {
+interface SheetProps {
+  label?: ReactNode;
+  title?: string;
+  kick?: string;
+  children?: ReactNode;
+  trigger?: string;
+  icon?: boolean;
+}
+
+export default function Sheet({ label, title, kick, children, trigger = '', icon = true }: SheetProps) {
   const [open, setOpen] = useState(false);
-  const btn = useRef(null);
-  const close = useRef(null);
+  const btn = useRef<HTMLButtonElement>(null);
+  const close = useRef<HTMLButtonElement>(null);
   const id = useId();
   useEffect(() => {
     if (!open) return;
     window.__lenis?.stop();
-    const k = (e) => { if (e.key === 'Escape') setOpen(false); };
+    const k = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
     addEventListener('keydown', k);
     const t = setTimeout(() => close.current?.focus(), 60);
     return () => { window.__lenis?.start(); removeEventListener('keydown', k); clearTimeout(t); };
@@ -30,7 +40,7 @@ export default function Sheet({ label, title, kick, children, trigger = '', icon
       </button>
       <div className={'av-sh' + (open ? ' open' : '')} data-dock={open ? '' : undefined}>
         <div className="av-sh-back" onClick={shut} aria-hidden="true" />
-        <div id={id} className="av-sh-panel" role="dialog" aria-modal={open ? true : undefined} aria-label={title || label} data-lenis-prevent data-swipe-own>
+        <div id={id} className="av-sh-panel" role="dialog" aria-modal={open ? true : undefined} aria-label={title || (typeof label === 'string' ? label : undefined)} data-lenis-prevent data-swipe-own>
           <div className="av-sh-top">
             <div>
               {title && <p className="av-sh-title">{title}</p>}

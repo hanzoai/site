@@ -6,7 +6,15 @@
 import { Copy } from '../ui';
 import '../pages/cloud/Frame.css';
 
-export default function BizPaste({ name, prompt, api, dark, className = '' }) {
+interface BizPasteProps {
+  name: string;
+  prompt: string;
+  api?: string;
+  dark?: boolean;
+  className?: string;
+}
+
+export default function BizPaste({ name, prompt, api, dark, className = '' }: BizPasteProps) {
   return (
     <div className={`cf-paste ${dark ? 'dark' : ''} ${className}`}>
       <div className="cf-paste-h">

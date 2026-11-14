@@ -8,11 +8,21 @@
      </StageZoom>
    Props: runway (svh of scroll the settle takes, ≥100), from / to (scale), y (px the object rises while settling),
    origin (transform-origin), className. Phones (≤900px) and reduced motion: the object simply sits at its final size. */
-import { useEffect, useRef, useState } from 'react';
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from 'motion/react';
 
-export default function StageZoom({ children, runway = 170, from = 1.5, to = 1, y = 0, origin = '50% 50%', className = '' }) {
-  const ref = useRef(null);
+interface StageZoomProps {
+  children?: ReactNode | ((p: MotionValue<number>) => ReactNode);
+  runway?: number;
+  from?: number;
+  to?: number;
+  y?: number;
+  origin?: string;
+  className?: string;
+}
+
+export default function StageZoom({ children, runway = 170, from = 1.5, to = 1, y = 0, origin = '50% 50%', className = '' }: StageZoomProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const [wide, setWide] = useState(true);
   useEffect(() => { const m = matchMedia('(min-width: 901px)'); const f = () => setWide(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, []);

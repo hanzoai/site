@@ -11,12 +11,20 @@
    - Real buttons with aria-expanded/aria-controls; the question is a heading so screen readers can jump between them.
    Owned by the Enterprise + Pricing chat (v2 wave 1). */
 import { useId, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion } from 'motion/react';
 import './Answers.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function Answers({ items, start = 0, dark = false, className = '' }) {
+interface AnswersProps {
+  items: ReadonlyArray<readonly [string, ReactNode]>;
+  start?: number;
+  dark?: boolean;
+  className?: string;
+}
+
+export default function Answers({ items, start = 0, dark = false, className = '' }: AnswersProps) {
   const [open, setOpen] = useState(start);
   const id = useId();
   return (

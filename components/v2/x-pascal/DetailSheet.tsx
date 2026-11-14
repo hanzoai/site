@@ -13,14 +13,25 @@
    layer above everything; Esc and a click outside the panel close it with the slide out, and focus returns to the
    button. Closed, the dialog is not rendered but its words stay in the server HTML (parity); with JS off they read
    inline where the button would be. */
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import '../ProofScale.css';
 import './DetailSheet.css';
 
-export default function DetailSheet({ label, kicker, title, children, ghost = false, className = '', wide = false, onOpen }) {
+interface DetailSheetProps {
+  label: ReactNode;
+  kicker?: ReactNode;
+  title: ReactNode;
+  children?: ReactNode;
+  ghost?: boolean;
+  className?: string;
+  wide?: boolean;
+  onOpen?: () => void;
+}
+
+export default function DetailSheet({ label, kicker, title, children, ghost = false, className = '', wide = false, onOpen }: DetailSheetProps) {
   const [open, setOpen] = useState(false); // drives the slide (data-open); the dialog itself opens a frame earlier
-  const dlg = useRef(null);
-  const btn = useRef(null);
+  const dlg = useRef<HTMLDialogElement>(null);
+  const btn = useRef<HTMLButtonElement>(null);
   const id = useId();
 
   useEffect(() => {

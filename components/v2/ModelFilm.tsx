@@ -18,22 +18,34 @@ import { media } from '../../lib/models';
 import './ModelFilm.css';
 
 const MAX = 2;
-const playing = new Set();
-const queue = [];
-const wake = () => { while (playing.size < MAX && queue.length) queue.shift()(); };
+const playing = new Set<HTMLVideoElement>();
+const queue: (() => void)[] = [];
+const wake = () => { while (playing.size < MAX && queue.length) queue.shift()?.(); };
 
 let paused = false;
-const subs = new Set();
-const sub = (f) => { subs.add(f); return () => subs.delete(f); };
-const setPaused = (v) => {
+const subs = new Set<() => void>();
+const sub = (f: () => void) => { subs.add(f); return () => subs.delete(f); };
+const setPaused = (v: boolean) => {
   paused = v;
   document.documentElement.toggleAttribute('data-mpaused', v); // CSS loops on the page stop too ([data-mpaused] …)
   subs.forEach((f) => f());
 };
 export const usePaused = () => useSyncExternalStore(sub, () => paused, () => false);
 
-export default function ModelFilm({ slug, play = true, className = '', label }) {
-  const ref = useRef(null);
+// the Network Information API is not in the DOM typings yet
+interface SaveDataNavigator extends Navigator {
+  connection?: { saveData?: boolean };
+}
+
+interface ModelFilmProps {
+  slug: string;
+  play?: boolean;
+  className?: string;
+  label?: string;
+}
+
+export default function ModelFilm({ slug, play = true, className = '', label }: ModelFilmProps) {
+  const ref = useRef<HTMLVideoElement>(null);
   const [near, setNear] = useState(false);
   const [seen, setSeen] = useState(false);
   const calm = useReducedMotion();
@@ -43,12 +55,13 @@ export default function ModelFilm({ slug, play = true, className = '', label }) 
       if (e.isIntersecting) setNear(true);
       setSeen(e.intersectionRatio > 0.15);
     }, { rootMargin: '300px 0px', threshold: [0, 0.15] });
-    io.observe(ref.current);
+    if (ref.current) io.observe(ref.current);
     return () => io.disconnect();
   }, []);
   useEffect(() => {
     const v = ref.current;
-    const want = play && seen && near && !calm && !stop && !navigator.connection?.saveData;
+    if (!v) return;
+    const want = play && seen && near && !calm && !stop && !(navigator as SaveDataNavigator).connection?.saveData;
     let gone = false;
     const go = () => { if (gone || document.hidden) return; playing.add(v); v.play().catch(() => { playing.delete(v); wake(); }); };
     const halt = () => {
@@ -80,7 +93,7 @@ export default function ModelFilm({ slug, play = true, className = '', label }) 
 
 /* The one pause for the page: icon only, its name in aria-label (PLAN-COMPONENTS 0.6: register strings stay icon-only
    until James approves the visible words). */
-export function FilmPause({ className = '' }) {
+export function FilmPause({ className = '' }: { className?: string }) {
   const p = usePaused();
   return (
     <button type="button" className={'v2-mpause ' + className} aria-pressed={p} aria-label={p ? 'Play' : 'Pause'} onClick={() => setPaused(!p)}>

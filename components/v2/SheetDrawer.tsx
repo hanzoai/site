@@ -5,20 +5,29 @@
    - The content is always in the HTML (closed = off screen and inert), so nothing is lost and search still finds it.
    - Esc, the scrim and the close button shut it; focus moves in on open and back to the button on close.
    Styles: SheetDrawer.css (prefix sd-); set --acc on an ancestor for the accent. */
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import './SheetDrawer.css';
 
-export default function SheetDrawer({ label, title, kick, children, className = 'v2-btn', icon = true }) {
+interface SheetDrawerProps {
+  label: ReactNode;
+  title: string;
+  kick?: ReactNode;
+  children?: ReactNode;
+  className?: string;
+  icon?: boolean;
+}
+
+export default function SheetDrawer({ label, title, kick, children, className = 'v2-btn', icon = true }: SheetDrawerProps) {
   const [open, setOpen] = useState(false);
-  const btn = useRef(null);
-  const panel = useRef(null);
+  const btn = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLElement>(null);
   const id = useId();
   useEffect(() => {
     if (!open) return;
     window.__lenis?.stop();
     document.documentElement.classList.add('sd-lock');
-    const t = setTimeout(() => panel.current?.querySelector('.sd-x')?.focus(), 60);
-    const key = (e) => e.key === 'Escape' && setOpen(false);
+    const t = setTimeout(() => panel.current?.querySelector<HTMLElement>('.sd-x')?.focus(), 60);
+    const key = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
     addEventListener('keydown', key);
     return () => {
       clearTimeout(t);

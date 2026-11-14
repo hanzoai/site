@@ -12,11 +12,11 @@
    - head (optional): the section's own 26px heading, pinned above the chapter words so it never sits alone on a screen.
    - flip puts the picture on the left. The chapter rail on the side jumps to a chapter (buttons, keyboard).
    - Phones and reduced motion get a plain vertical story (picture, then words); every word is always in the HTML. */
-import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion } from 'motion/react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { motion, useScroll, useTransform, useMotionValueEvent, useReducedMotion, type MotionStyle, type MotionValue } from 'motion/react';
 import { clamp01 } from '../Launch';
 
-function Layer({ p, i, n, live, children }) {
+function Layer({ p, i, n, live, children }: { p: MotionValue<number>; i: number; n: number; live: boolean; children?: ReactNode }) {
   const clip = useTransform(p, (v) => {
     if (!live || i === 0) return 'none';
     const k = clamp01((v * n - i + 0.2) / 0.36);
@@ -25,14 +25,31 @@ function Layer({ p, i, n, live, children }) {
   });
   const y = useTransform(p, (v) => (live && i > 0 ? `${(clamp01(1 - (v * n - i + 0.2) / 0.36) * 8).toFixed(2)}%` : '0%'));
   return (
-    <motion.div className="lv-ch-art" style={{ clipPath: clip, zIndex: i, '--o': i }}>
+    <motion.div className="lv-ch-art" style={{ clipPath: clip, zIndex: i, '--o': i } as MotionStyle}>
       <motion.div className="lv-ch-art-in" style={{ y }}>{children}</motion.div>
     </motion.div>
   );
 }
 
-export default function Chapters({ id, label, items, flip, head, className = '' }) {
-  const sec = useRef(null);
+export interface ChapterItem {
+  k?: ReactNode;
+  rail?: ReactNode;
+  title: string;
+  body?: ReactNode;
+  art?: ReactNode | ((on: boolean) => ReactNode);
+}
+
+interface ChaptersProps {
+  id?: string;
+  label: string;
+  items: ChapterItem[];
+  flip?: boolean;
+  head?: ReactNode;
+  className?: string;
+}
+
+export default function Chapters({ id, label, items, flip, head, className = '' }: ChaptersProps) {
+  const sec = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   const [wide, setWide] = useState(false);
   const [at, setAt] = useState(0);
@@ -47,22 +64,23 @@ export default function Chapters({ id, label, items, flip, head, className = '' 
   const { scrollYProgress: p } = useScroll({ target: sec, offset: ['start 60px', 'end end'] });
   const bar = useTransform(p, [0, 1], [0, 1]);
   useMotionValueEvent(p, 'change', (v) => setAt(Math.min(n - 1, Math.max(0, Math.floor(v * n)))));
-  const go = (i) => {
+  const go = (i: number) => {
     const el = sec.current;
+    if (!el) return;
     const top = el.getBoundingClientRect().top + scrollY - 60;
     const run = el.offsetHeight - (innerHeight - 60);
     const y = top + ((i + 0.5) / n) * run;
     window.__lenis ? window.__lenis.scrollTo(y) : scrollTo({ top: y, behavior: 'smooth' });
   };
   return (
-    <section id={id} className={'lv-ch ' + (flip ? 'flip ' : '') + className} ref={sec} style={{ '--n': n }} data-live={live ? '' : undefined} aria-label={label}>
+    <section id={id} className={'lv-ch ' + (flip ? 'flip ' : '') + className} ref={sec} style={{ '--n': n } as CSSProperties} data-live={live ? '' : undefined} aria-label={label}>
       <div className="lv-ch-pin">
         <div className="x-wrap lv-ch-grid">
           <div className="lv-ch-words">
             {head && <div className="lv-ch-top">{head}</div>}
             <div className="lv-ch-texts">
               {items.map((c, i) => (
-                <article key={c.title} className="lv-ch-t" style={{ '--o': i }} data-on={!live || i === at ? '' : undefined} aria-hidden={live && i !== at ? 'true' : undefined}>
+                <article key={c.title} className="lv-ch-t" style={{ '--o': i } as CSSProperties} data-on={!live || i === at ? '' : undefined} aria-hidden={live && i !== at ? 'true' : undefined}>
                   <h3 className="lv-ch-h"><span className="lv-ln"><span>{c.title}</span></span></h3>
                   <div className="lv-ch-b">{c.body}</div>
                 </article>

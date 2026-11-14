@@ -16,15 +16,40 @@
    Desktop: 5/8 split. Phone (the rail there is a progress line, out of the tab order): the object on top, the words below, still one at a time. The rail of ticks scrolls to a
    chapter (keyboard too). JS off: the scene unpins and every chapter reads in order. Reduced motion: swaps, no
    movement. Owned by Cloud 3. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
 import './LaunchType.css';
 import './PinnedChapters.css';
 
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
-export default function PinnedChapters({ steps, visual, label = 'Chapters', flip, per = 80, className = '', id, dark, intro, objH }) {
-  const ref = useRef(null);
+interface PinStep {
+  t?: string;
+  k?: string;
+  d?: ReactNode;
+  extra?: ReactNode;
+}
+
+interface PinIntro {
+  title: ReactNode | ReactNode[];
+  lede?: ReactNode;
+}
+
+interface PinnedChaptersProps {
+  steps: PinStep[];
+  visual: (at: number, intro: boolean) => ReactNode;
+  label?: string;
+  flip?: boolean;
+  per?: number;
+  className?: string;
+  id?: string;
+  dark?: boolean;
+  intro?: PinIntro;
+  objH?: number;
+}
+
+export default function PinnedChapters({ steps, visual, label = 'Chapters', flip, per = 80, className = '', id, dark, intro, objH }: PinnedChaptersProps) {
+  const ref = useRef<HTMLElement>(null);
   const n = steps.length;
   const lead = intro ? 1 : 0;
   const total = n + lead;
@@ -37,7 +62,7 @@ export default function PinnedChapters({ steps, visual, label = 'Chapters', flip
     const i = Math.min(total - 1, Math.max(0, Math.floor(p * total * 0.999))) - lead;
     setAt((v) => (v === i ? v : i));
   });
-  const jump = (i) => {
+  const jump = (i: number) => {
     const el = ref.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY;
@@ -45,7 +70,7 @@ export default function PinnedChapters({ steps, visual, label = 'Chapters', flip
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.__lenis ? window.__lenis.scrollTo(y, { duration: calm ? 0 : 1.4, easing: (t) => 1 - Math.pow(1 - t, 4) }) : window.scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });
   };
-  const where = (i) => (i < at ? 'past' : i === at ? 'on' : 'next');
+  const where = (i: number) => (i < at ? 'past' : i === at ? 'on' : 'next');
   const Intro = intro && (
     <article className="lx-pin-step lx-pin-intro" data-at={where(-1)}>
       <h2 className="lx-pin-it">{(Array.isArray(intro.title) ? intro.title : [intro.title]).map((l, i) => <span key={i}>{l} </span>)}</h2>
@@ -53,7 +78,7 @@ export default function PinnedChapters({ steps, visual, label = 'Chapters', flip
     </article>
   );
   return (
-    <section ref={ref} id={id} className={`lx-pin ${flip ? 'flip' : ''} ${dark ? 'lx-dark' : ''} ${className}`} style={{ '--n': total, '--per': per + 'svh', ...(objH ? { '--objh': objH + 'svh' } : {}) }} data-room={dark ? 'dark' : undefined} data-live={live || undefined}>
+    <section ref={ref} id={id} className={`lx-pin ${flip ? 'flip' : ''} ${dark ? 'lx-dark' : ''} ${className}`} style={{ '--n': total, '--per': per + 'svh', ...(objH ? { '--objh': objH + 'svh' } : {}) } as CSSProperties} data-room={dark ? 'dark' : undefined} data-live={live || undefined}>
       <div className="lx-pin-stick">
         <div className="lx-wrap lx-pin-grid">
           <div className="lx-pin-copy">

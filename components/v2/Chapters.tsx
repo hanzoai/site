@@ -13,13 +13,32 @@
    - step: screens of scroll each chapter holds (default 0.8).
    Every chapter is in the HTML; the hidden ones are inert. Needs components/v2/system.css. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import { A } from '../kit';
 import './Chapters.css';
 
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
-function Visual({ i, n, p, pinned, item, onOpen }) {
+interface ChapterItem {
+  key: string;
+  title: string;
+  to: string;
+  text: ReactNode;
+  visual: ReactNode;
+}
+
+interface VisualProps {
+  i: number;
+  n: number;
+  p: MotionValue<number>;
+  pinned: boolean | null;
+  item: ChapterItem;
+  onOpen: () => void;
+}
+
+function Visual({ i, n, p, pinned, item, onOpen }: VisualProps) {
   // chapter i wipes up over chapter i-1 in the last stretch before its turn
   const q = useTransform(p, (v) => v * n);
   const clip = useTransform(q, (v) => {
@@ -32,17 +51,24 @@ function Visual({ i, n, p, pinned, item, onOpen }) {
   const scale = useTransform(q, (v) => { const t = Math.max(0, Math.min(1, (v - i - 0.4) / 0.6)); return 1 - t * 0.06; });
   const on = pinned !== false;
   return (
-    <motion.div className="v2-ch-vis" style={on ? { clipPath: clip, scale } : { clipPath: 'none', scale: 1 }} onClick={(e) => { if (!e.target.closest("a, button")) onOpen(); }} data-cursor="">
+    <motion.div className="v2-ch-vis" style={on ? { clipPath: clip, scale } : { clipPath: 'none', scale: 1 }} onClick={(e) => { if (!(e.target as Element).closest("a, button")) onOpen(); }} data-cursor="">
       {item.visual}
     </motion.div>
   );
 }
 
-export default function Chapters({ items, label, step = 0.8, className = '' }) {
+interface ChaptersProps {
+  items: readonly ChapterItem[];
+  label?: string;
+  step?: number;
+  className?: string;
+}
+
+export default function Chapters({ items, label, step = 0.8, className = '' }: ChaptersProps) {
   const n = items.length;
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
-  const [pinned, setPinned] = useState(null);
+  const [pinned, setPinned] = useState<boolean | null>(null);
   const [at, setAt] = useState(0);
   useEffect(() => {
     const m = matchMedia('(min-width: 900px)');
@@ -54,16 +80,18 @@ export default function Chapters({ items, label, step = 0.8, className = '' }) {
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   useMotionValueEvent(p, 'change', (v) => { const k = Math.max(0, Math.min(n - 1, Math.floor(v * n + 0.3))); setAt((c) => (c === k ? c : k)); });
   const fill = useTransform(p, [0, 1], [1 / n, 1]);
-  const jump = (i) => {
-    const el = ref.current, r = el.getBoundingClientRect();
+  const jump = (i: number) => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
     const y = scrollY + r.top + ((i + 0.08) / n) * (el.offsetHeight - innerHeight);
     window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : scrollTo({ top: y, behavior: 'smooth' });
   };
-  const open = (i) => document.getElementById(`v2-ch-${items[i].key}`)?.click();
+  const open = (i: number) => document.getElementById(`v2-ch-${items[i].key}`)?.click();
   const live = pinned !== false;
 
   return (
-    <div ref={ref} className={'v2-ch ' + className} data-pinned={pinned === null ? undefined : String(pinned)} style={{ '--v2-n': n, '--v2-step': step }} role="group" aria-label={label}>
+    <div ref={ref} className={'v2-ch ' + className} data-pinned={pinned === null ? undefined : String(pinned)} style={{ '--v2-n': n, '--v2-step': step } as CSSProperties} role="group" aria-label={label}>
       <div className="v2-ch-in v2-wrap">
         <div className="v2-ch-grid">
           {items.map((it, i) => (

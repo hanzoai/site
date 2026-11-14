@@ -13,7 +13,7 @@
        slug: the model's film and poster; card: data-card key for the WebGL opener (then onOpen(e, el) opens it);
        big: Enso's size (44px title, kicker pill above it); meta: one extra line under the title (ids, context, rate);
        hush: in a long catalogue the description waits (still in the HTML) and arrives on hover or focus, on wide screens. */
-import { useRef } from 'react';
+import { useRef, type MouseEvent, type PointerEvent, type ReactNode } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { A } from '../kit';
 import { href } from '../../lib/route';
@@ -22,9 +22,9 @@ import './SpecCard.css';
 
 /* the measured tilt: about ±3° toward the pointer, flat again on leave; mouse only, never under reduced motion */
 export function useSpecTilt(big = false) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLAnchorElement>(null);
   const calm = useReducedMotion();
-  const onPointerMove = (e) => {
+  const onPointerMove = (e: PointerEvent<HTMLAnchorElement>) => {
     const el = ref.current;
     if (calm || e.pointerType !== 'mouse' || !el) return;
     const r = el.getBoundingClientRect();
@@ -37,9 +37,27 @@ export function useSpecTilt(big = false) {
   return { ref, onPointerMove, onPointerLeave };
 }
 
-export default function SpecCard({ to, title, desc, tags = [], meta, slug, play = false, big = false, hush = false, kicker, card, onOpen, onHot, className = '', label }) {
+interface SpecCardProps {
+  to: string;
+  title: ReactNode;
+  desc?: ReactNode;
+  tags?: string[];
+  meta?: ReactNode;
+  slug?: string;
+  play?: boolean;
+  big?: boolean;
+  hush?: boolean;
+  kicker?: ReactNode;
+  card?: string;
+  onOpen?: (e: MouseEvent<HTMLAnchorElement>, el: HTMLAnchorElement) => void;
+  onHot?: (v: boolean) => void;
+  className?: string;
+  label?: string;
+}
+
+export default function SpecCard({ to, title, desc, tags = [], meta, slug, play = false, big = false, hush = false, kicker, card, onOpen, onHot, className = '', label }: SpecCardProps) {
   const tilt = useSpecTilt(big);
-  const hot = (v) => onHot && onHot(v);
+  const hot = (v: boolean) => onHot && onHot(v);
   // a model this rebuild has no page for opens Hanzo's live page in a new tab: it says so (↗ and a spoken hint) and
   // makes no Morph promise
   const away = /^https?:/.test(href(to) || '');
@@ -57,7 +75,7 @@ export default function SpecCard({ to, title, desc, tags = [], meta, slug, play 
       onPointerLeave={() => { tilt.onPointerLeave(); hot(false); }}
       onFocus={() => hot(true)}
       onBlur={() => hot(false)}
-      onClick={onOpen ? (e) => onOpen(e, e.currentTarget) : undefined}
+      onClick={onOpen ? (e: MouseEvent<HTMLAnchorElement>) => onOpen(e, e.currentTarget) : undefined}
     >
       {slug && <span className="sc-media" aria-hidden="true"><ModelFilm slug={slug} play={play} /></span>}
       <span className="sc-top">

@@ -15,7 +15,7 @@
    - Desktop pins for ~75svh so the settle reads. Phones and reduced motion get the settled state with no pin.
    - travel={{ s: [from, to], y: [from, to] }} overrides the look's scale or travel for an object that needs it.
    - Put the page accent on <main style={{ '--ac': '#…' }}> (see components/v2/Launch.css). */
-import { useRef } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { motion, useScroll, useTransform, useMotionTemplate } from 'motion/react';
 import useCalm from './useCalm';
 import { EASE } from '../ui';
@@ -23,17 +23,42 @@ import { Cta } from '../kit';
 import { useWide } from './useWide';
 import './x-hamilton/Launch.css';
 
-const up = (d) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+const up = (d: number) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
 
-const LOOKS = {
+interface Look {
+  s: number[];
+  y: string[];
+  x: string[];
+  clip: number[];
+}
+
+const LOOKS: Record<'rise' | 'split' | 'side' | 'frame', Look> = {
   rise: { s: [1.08, 1], y: ['2svh', '-24svh'], x: ['0%', '0%'], clip: [0, 0] },
   split: { s: [1.06, 1], y: ['2svh', '-18svh'], x: ['0%', '0%'], clip: [0, 0] },
   side: { s: [1.08, 1], y: ['3svh', '0svh'], x: ['12%', '0%'], clip: [0, 0] },
   frame: { s: [1.08, 1], y: ['0svh', '0svh'], x: ['0%', '0%'], clip: [0, 1] },
 };
 
-export default function StageHero({ kick, title, sub, lede, acts = [], look = 'rise', travel, flip, dark, cue, thumb, cta = 'primary', children, className = '', id }) {
-  const ref = useRef(null);
+interface StageHeroProps {
+  kick?: ReactNode;
+  title: ReactNode;
+  sub?: ReactNode;
+  lede?: ReactNode;
+  acts?: string[][]; // [label, href]
+  look?: keyof typeof LOOKS;
+  travel?: Partial<Look>;
+  flip?: boolean;
+  dark?: boolean;
+  cue?: ReactNode;
+  thumb?: string;
+  cta?: string;
+  children?: ReactNode;
+  className?: string;
+  id?: string;
+}
+
+export default function StageHero({ kick, title, sub, lede, acts = [], look = 'rise', travel, flip, dark, cue, thumb, cta = 'primary', children, className = '', id }: StageHeroProps) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   const wide = useWide();
   const on = wide && !calm;
@@ -51,7 +76,7 @@ export default function StageHero({ kick, title, sub, lede, acts = [], look = 'r
   const copyO = useTransform(p, (v) => 1 - (1 - oEnd) * Math.min(1, Math.max(0, (v - o0) / (o1 - o0))));
   const cueO = useTransform(p, (v) => Math.max(0, 1 - v / 0.12));
   const copyPE = useTransform(copyO, (v) => (v < 0.2 ? 'none' : 'auto'));
-  const lines = Array.isArray(title) ? title : [title];
+  const lines: ReactNode[] = Array.isArray(title) ? title : [title];
   const objStyle = on ? (look === 'frame' ? { clipPath: clip, scale: s } : { scale: s, y, x }) : undefined;
   return (
     <section ref={ref} id={id} className={`l2-stage ${look} ${flip ? 'flip' : ''} ${dark ? 'l2-dark' : ''} ${className}`} data-room={dark ? 'dark' : undefined}>

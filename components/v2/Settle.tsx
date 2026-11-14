@@ -6,11 +6,20 @@
    - bleed: px the scaled object may run past each side of the screen (default 0: the scale is capped so nothing is cut).
    - Phones get a gentler move (half the scale change). Reduced motion: it sits in its final place.
    Owned by the Business 2 chat. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 
-export default function Settle({ children, from = 1.14, lift = 80, span, bleed = 0, className = '' }) {
-  const ref = useRef(null);
+interface SettleProps {
+  children?: ReactNode;
+  from?: number;
+  lift?: number;
+  span?: number;
+  bleed?: number;
+  className?: string;
+}
+
+export default function Settle({ children, from = 1.14, lift = 80, span, bleed = 0, className = '' }: SettleProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const [h, setH] = useState(800);
   const [phone, setPhone] = useState(false);

@@ -6,7 +6,13 @@
    in its own <span> inside <code> so the copy check (scripts/copycheck.mjs reads leaf span/p/div, not code) counts it. */
 import { Copy } from '../ui';
 
-export default function A2Paste({ name, text, api }) {
+interface A2PasteProps {
+  name: string;
+  text: string;
+  api?: string;
+}
+
+export default function A2Paste({ name, text, api }: A2PasteProps) {
   return (
     <section className="a2-wrap a2-paste" aria-label="Paste and ship">
       <div>

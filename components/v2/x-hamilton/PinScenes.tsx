@@ -10,17 +10,32 @@
      (JAMES.md: nothing above a headline). Every chapter's words stay in the HTML.
    - Phones and reduced motion: chapters stack, each with its own visual (visual(i) is drawn once per chapter), no pin.
    - before / after: optional nodes inside the section, above the track / below it. */
-import { useRef, useState } from 'react';
-import { useScroll, useMotionValueEvent } from 'motion/react';
+import { useRef, useState, type ReactNode } from 'react';
+import { useScroll, useMotionValueEvent, type MotionValue } from 'motion/react';
 import useCalm from '../useCalm';
 import { useWide } from '../useWide';
 import { scrollToY } from '../../../lib/scroll';
 import './Launch.css';
 
-const pad = (i) => String(i + 1).padStart(2, '0');
+const pad = (i: number) => String(i + 1).padStart(2, '0');
 
-export default function PinScenes({ id, kick, head, lede, items, visual, flip, dark, screens = 0.9, before, after, className = '' }) {
-  const track = useRef(null);
+interface PinScenesProps {
+  id?: string;
+  kick?: ReactNode;
+  head?: ReactNode;
+  lede?: ReactNode;
+  items: [string, ReactNode?, ReactNode?][]; // [title, body, extra]
+  visual: (at: number, progress: MotionValue<number> | null) => ReactNode;
+  flip?: boolean;
+  dark?: boolean;
+  screens?: number;
+  before?: ReactNode;
+  after?: ReactNode;
+  className?: string;
+}
+
+export default function PinScenes({ id, kick, head, lede, items, visual, flip, dark, screens = 0.9, before, after, className = '' }: PinScenesProps) {
+  const track = useRef<HTMLDivElement>(null);
   const wide = useWide();
   const calm = useCalm();
   const pin = wide && !calm;
@@ -28,7 +43,7 @@ export default function PinScenes({ id, kick, head, lede, items, visual, flip, d
   const [at, setAt] = useState(0);
   const { scrollYProgress: p } = useScroll({ target: track, offset: ['start start', 'end end'] });
   useMotionValueEvent(p, 'change', (v) => { const i = Math.min(n - 1, Math.max(0, Math.floor(v * n * 0.999 + 0.0005))); if (i !== at) setAt(i); });
-  const jump = (i) => {
+  const jump = (i: number) => {
     const el = track.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + scrollY;

@@ -9,11 +9,17 @@
    - A logo that fails to load turns into its name set in type, so the wall never shows a broken image.
    - `href` is optional: with it each logo is a link, without it a plain figure.
    Owned by the Enterprise + Pricing chat (v2 wave 1). */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import './LogoWall.css';
 
-function Logo({ name, src, hidden }) {
-  const ref = useRef(null);
+export interface LogoItem {
+  name: string;
+  src: string;
+  href?: string;
+}
+
+function Logo({ name, src, hidden }: { name: string; src: string; hidden: boolean }) {
+  const ref = useRef<HTMLImageElement>(null);
   const [bad, setBad] = useState(false);
   // an image that failed before React hydrated never fires onError for us, so check once on mount
   useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
@@ -21,8 +27,15 @@ function Logo({ name, src, hidden }) {
   return <img ref={ref} src={src} alt={hidden ? '' : name} onError={() => setBad(true)} decoding="async" />;
 }
 
-export default function LogoWall({ items, label, speed = 46, className = '' }) {
-  const row = (k) => items.map((l) => {
+interface LogoWallProps {
+  items: LogoItem[];
+  label?: string;
+  speed?: number;
+  className?: string;
+}
+
+export default function LogoWall({ items, label, speed = 46, className = '' }: LogoWallProps) {
+  const row = (k: number) => items.map((l) => {
     const hidden = k > 0;
     const inner = <Logo name={l.name} src={l.src} hidden={hidden} />;
     return l.href ? (
@@ -33,7 +46,7 @@ export default function LogoWall({ items, label, speed = 46, className = '' }) {
   });
   return (
     <div className={'v2-lw' + (className ? ' ' + className : '')} role="group" aria-label={label}>
-      <div className="v2-lw-track" style={{ '--lw-t': speed + 's' }}>
+      <div className="v2-lw-track" style={{ '--lw-t': speed + 's' } as CSSProperties}>
         <div className="v2-lw-half">{row(0)}{row(1)}</div>
         <div className="v2-lw-half" aria-hidden="true">{row(2)}{row(3)}</div>
       </div>

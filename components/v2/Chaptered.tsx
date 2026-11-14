@@ -13,13 +13,35 @@
    No kicker above a chapter title (JAMES.md bans eyebrows); the rail and the object's own counter carry the order.
    Needs components/v2/ProgramScale.css. */
 import { useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'motion/react';
 import './Chaptered.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function Chaptered({ chapters, stage, head, label, flip = false, dark = false, per = 0.9, statement = false, id, className = '' }) {
-  const ref = useRef(null);
+interface Chapter {
+  kicker?: string;
+  title: string;
+  body?: ReactNode;
+}
+
+type Stage = (i: number, still: boolean) => ReactNode;
+
+interface ChapteredProps {
+  chapters: readonly Chapter[];
+  stage: Stage;
+  head?: ReactNode;
+  label?: string;
+  flip?: boolean;
+  dark?: boolean;
+  per?: number;
+  statement?: boolean;
+  id?: string;
+  className?: string;
+}
+
+export default function Chaptered({ chapters, stage, head, label, flip = false, dark = false, per = 0.9, statement = false, id, className = '' }: ChapteredProps) {
+  const ref = useRef<HTMLElement>(null);
   const n = chapters.length;
   const [at, setAt] = useState(0);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
@@ -28,7 +50,7 @@ export default function Chaptered({ chapters, stage, head, label, flip = false, 
     const i = Math.max(0, Math.min(n - 1, Math.floor(p * n * 0.9999)));
     if (i !== at) setAt(i);
   });
-  const go = (i) => {
+  const go = (i: number) => {
     const el = ref.current;
     if (!el || getComputedStyle(el).getPropertyValue('--pinned').trim() !== '1') return;
     const top = el.getBoundingClientRect().top + window.scrollY;
@@ -36,7 +58,7 @@ export default function Chaptered({ chapters, stage, head, label, flip = false, 
     window.__lenis ? window.__lenis.scrollTo(y, { duration: 1.1 }) : window.scrollTo({ top: y, behavior: 'smooth' });
   };
   return (
-    <section ref={ref} id={id} className={'xpc' + (flip ? ' flip' : '') + (dark ? ' xp-dark' : '') + ' ' + className} style={{ '--n': n, '--per': per }} aria-label={label} {...(dark ? { 'data-room': 'dark' } : {})}>
+    <section ref={ref} id={id} className={'xpc' + (flip ? ' flip' : '') + (dark ? ' xp-dark' : '') + ' ' + className} style={{ '--n': n, '--per': per } as CSSProperties} aria-label={label} {...(dark ? { 'data-room': 'dark' } : {})}>
       <div className="xpc-pin">
         <div className="xp-wrap xpc-grid">
           <div className="xpc-words">
@@ -75,8 +97,8 @@ export default function Chaptered({ chapters, stage, head, label, flip = false, 
 }
 
 /* The phone rail: one card per chapter, snapping; the dots follow the card in view. */
-function Swipe({ chapters, stage, statement }) {
-  const ref = useRef(null);
+function Swipe({ chapters, stage, statement }: { chapters: readonly Chapter[]; stage: Stage; statement: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
   const [on, setOn] = useState(0);
   const scroll = () => {
     const el = ref.current;

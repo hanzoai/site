@@ -8,11 +8,17 @@
    Phones and reduced motion show it settled. Transform only. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
+import type { HTMLMotionProps } from 'motion/react';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function Stage({ children, className = '', from = 'fill', lift = 60, ...rest }) {
-  const ref = useRef(null);
+interface StageProps extends Omit<HTMLMotionProps<'div'>, 'ref'> {
+  from?: 'fill' | number;
+  lift?: number;
+}
+
+export default function Stage({ children, className = '', from = 'fill', lift = 60, ...rest }: StageProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const [k, setK] = useState(typeof from === 'number' ? from : 1);
   useEffect(() => {
