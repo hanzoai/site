@@ -19,7 +19,9 @@
    Beyond: choose the provider and only the one environment variable in the command changes; the container, desktop
    and tools stay identical, as Hanzo says. Every word, port and command is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, KeyboardEvent as RKeyboardEvent, PointerEvent as RPointerEvent, RefObject } from 'react';
 import { motion, AnimatePresence, animate, useInView, useMotionValue, useReducedMotion, useTransform } from 'motion/react';
+import type { MotionStyle, MotionValue } from 'motion/react';
 import { Copy, Mark, Rise, Magnetic } from '../ui';
 import { A, Cta, Img, Film } from '../kit';
 import A2Lines from '../v2/A2Lines';
@@ -33,13 +35,13 @@ import '../v2/A2.css';
 import './Operative.css';
 
 const HANDS = ['Screen Vision', 'Multimodal Models', 'Cursor Control', 'Keyboard Actions'];
-const AIM = [[0.2, 0.3], [0.62, 0.24], [0.7, 0.64], [0.34, 0.7]]; // where the cursor goes, as fractions of the screen
-const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const AIM: number[][] = [[0.2, 0.3], [0.62, 0.24], [0.7, 0.64], [0.34, 0.7]]; // where the cursor goes, as fractions of the screen
+const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
-function useLive(ref, amount = 0.2) {
+function useLive(ref: RefObject<Element | null>, amount = 0.2) {
   const seen = useInView(ref, { amount });
   const calm = useReducedMotion();
-  return [seen && !calm, calm];
+  return [seen && !calm, calm] as const;
 }
 
 /* The desktop inside the box, worked by one hand at a time; a hovered hand shows as a ghost.
@@ -52,7 +54,8 @@ const GO = 'Run it and watch'; // the window's button
 /* The signature, live-chat: three objectives taken from this page's own words. Pick one and Operative answers on
    screen: its steps stream in (the loop's verb, the hand it uses, what it works on) while the desktop above acts each
    one out. Scripted from Hanzo's text only; no call leaves the page. */
-const ASK = [
+interface Ask { q: string; btn: string; keys: string[]; steps: [string, number, string][] }
+const ASK: Ask[] = [
   { q: 'Star on GitHub', btn: 'Star on GitHub', keys: ['Star', 'on', 'GitHub'], steps: [
     ['plans', 0, 'localhost:8501'], ['plans', 1, 'Open Source on GitHub'], ['acts', 2, 'Star on GitHub'], ['looks at the result', 0, 'GitHub']] },
   { q: 'Read the Blog', btn: 'Read the Blog', keys: ['Read', 'the', 'Blog'], steps: [
@@ -61,8 +64,10 @@ const ASK = [
     ['plans', 1, 'Bash and a file editor too'], ['acts', 3, 'docker pull ghcr.io/hanzoai/operative:latest'], ['looks at the result', 0, 'Xvfb'], ['goes again', 1, 'ghcr.io/hanzoai/operative:latest']] },
 ];
 
-function Desk({ at, peek, rest, live, goal, btnLabel, keys, run }) {
-  const box = useRef(null), typed = useRef(null), chip = useRef(null), btn = useRef(null), caret = useRef(null);
+interface DeskProps { at: number; peek: number | null; rest: boolean; live: boolean; goal: string; btnLabel: string; keys: string[]; run: number }
+
+function Desk({ at, peek, rest, live, goal, btnLabel, keys, run }: DeskProps) {
+  const box = useRef<HTMLDivElement>(null), typed = useRef<HTMLSpanElement>(null), chip = useRef<HTMLDivElement>(null), btn = useRef<HTMLDivElement>(null), caret = useRef<HTMLElement>(null);
   const [aim, setAim] = useState(AIM);
   const read = useRef(() => {});
   useEffect(() => { read.current(); }, [at, peek, btnLabel]); // the caret moves as it types: measure again when a hand moves
@@ -70,7 +75,7 @@ function Desk({ at, peek, rest, live, goal, btnLabel, keys, run }) {
     const el = typed.current;
     if (!el) return;
     if (!live) { el.textContent = goal; read.current(); return; }
-    let i = 0, t;
+    let i = 0, t: ReturnType<typeof setTimeout> | undefined;
     el.textContent = '';
     const step = () => { i += 1; el.textContent = goal.slice(0, i); if (i < goal.length) t = setTimeout(step, 55); else read.current(); };
     t = setTimeout(step, 55);
@@ -79,9 +84,11 @@ function Desk({ at, peek, rest, live, goal, btnLabel, keys, run }) {
   useEffect(() => { // where each hand's cursor goes, as fractions of the screen
     const b = box.current;
     if (!b) return;
-    const at2 = (el, fx, fy) => { const r = el.getBoundingClientRect(), o = b.getBoundingClientRect(); return [clamp((r.left + r.width * fx - o.left) / o.width), clamp((r.top + r.height * fy - o.top) / o.height)]; };
+    const at2 = (el: Element, fx: number, fy: number) => { const r = el.getBoundingClientRect(), o = b.getBoundingClientRect(); return [clamp((r.left + r.width * fx - o.left) / o.width), clamp((r.top + r.height * fy - o.top) / o.height)]; };
     const next = () => {
-      const v = [AIM[0], at2(chip.current, 0.2, 0.55), at2(btn.current, 0.55, 0.6), at2(caret.current, 0.5, 0.7)];
+      const c = chip.current, bt = btn.current, ca = caret.current;
+      if (!c || !bt || !ca) return;
+      const v = [AIM[0], at2(c, 0.2, 0.55), at2(bt, 0.55, 0.6), at2(ca, 0.5, 0.7)];
       setAim((o) => (o.every((p, i) => p[0] === v[i][0] && p[1] === v[i][1]) ? o : v));
     };
     read.current = next;
@@ -108,7 +115,7 @@ function Desk({ at, peek, rest, live, goal, btnLabel, keys, run }) {
         </div>
         <div className="xov-scan" />
         <div className="xov-read" ref={chip}><Mark size={14} /><span>Multimodal Models</span></div>
-        <div className="xov-keys" key={run}>{keys.map((w, i) => <b key={w} className="x-mono" style={{ '--k': i }}>{w}</b>)}</div>
+        <div className="xov-keys" key={run}>{keys.map((w, i) => <b key={w} className="x-mono" style={{ '--k': i } as CSSProperties}>{w}</b>)}</div>
         {/* the layer is the screen's size, so a % translate is a % of the screen: the cursor moves by transform only */}
         <motion.div className={'xov-aim-w xov-ghost-w' + (peek != null && peek !== at ? ' on' : '')} animate={{ x: g[0] * 100 + '%', y: g[1] * 100 + '%' }} transition={{ duration: T.slow, ease: EMPH }}>
           <span className="xov-aim"><svg viewBox="0 0 20 20" width="22" height="22"><path d="M3 2l12 7-5.2 1.3L7 16z" fill="none" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round" /></svg></span>
@@ -122,16 +129,16 @@ function Desk({ at, peek, rest, live, goal, btnLabel, keys, run }) {
 }
 
 function Hero() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const [live, calm] = useLive(ref, 0.15);
   const [paused, setPaused] = useState(false);
-  const [peek, setPeek] = useState(null);
+  const [peek, setPeek] = useState<number | null>(null);
   const [ask, setAsk] = useState(0); // which objective
   const [shown, setShown] = useState(ASK[0].steps.length); // how many of its steps have streamed in (server: all of them)
   const [run, setRun] = useState(0); // a counter: each new run retypes the objective
   const [going, setGoing] = useState(false); // a run is streaming
   const [auto, setAuto] = useState(true); // until the visitor picks, the three objectives take turns by themselves
-  const [hand, setHand] = useState(null); // a hand chosen by its button overrides the run's
+  const [hand, setHand] = useState<number | null>(null); // a hand chosen by its button overrides the run's
   const started = useRef(false);
   const [ready, setReady] = useState(false); // before hydration (and with JS off) the desktop rests finished
   useEffect(() => setReady(true), []);
@@ -143,26 +150,26 @@ function Hero() {
   }, [live]);
   useEffect(() => { // one timeout at a time streams the next step; the pause control holds it
     if (!live || paused || !going) return;
-    let t;
+    let t: ReturnType<typeof setTimeout> | undefined;
     if (shown < steps.length) t = setTimeout(() => setShown((n) => n + 1), shown === 0 ? 900 : 1500);
     else if (auto) t = setTimeout(() => { setAsk((a) => (a + 1) % ASK.length); setShown(0); setRun((r) => r + 1); }, 3200);
     else setGoing(false);
     return () => clearTimeout(t);
   }, [live, paused, going, shown, auto, steps.length]);
-  const pick = (i) => { // the visitor asks: the run restarts on that objective (all at once under reduced motion)
+  const pick = (i: number) => { // the visitor asks: the run restarts on that objective (all at once under reduced motion)
     setAuto(false); setHand(null); setAsk(i); setRun((r) => r + 1); started.current = true;
     if (calm) { setShown(ASK[i].steps.length); setGoing(false); } else { setShown(0); setGoing(true); }
   };
-  const choose = (i) => { setHand(i); setAuto(false); setGoing(false); setShown(steps.length); };
+  const choose = (i: number) => { setHand(i); setAuto(false); setGoing(false); setShown(steps.length); };
   const at = hand ?? (shown > 0 ? steps[shown - 1][1] : 0);
   const said = shown > 0 ? steps[shown - 1] : null;
-  const tilt = (ev) => { // a pointer tilt of 2.5° at most, fine pointers only
+  const tilt = (ev: RPointerEvent<HTMLDivElement>) => { // a pointer tilt of 2.5° at most, fine pointers only
     if (calm || ev.pointerType !== 'mouse') return;
     const r = ev.currentTarget.getBoundingClientRect();
     ev.currentTarget.style.setProperty('--ry', ((ev.clientX - r.left) / r.width - 0.5) * 5 + 'deg');
     ev.currentTarget.style.setProperty('--rx', (0.5 - (ev.clientY - r.top) / r.height) * 5 + 'deg');
   };
-  const flat = (ev) => { ev.currentTarget.style.setProperty('--rx', '0deg'); ev.currentTarget.style.setProperty('--ry', '0deg'); };
+  const flat = (ev: RPointerEvent<HTMLDivElement>) => { ev.currentTarget.style.setProperty('--rx', '0deg'); ev.currentTarget.style.setProperty('--ry', '0deg'); };
   return (
     <section className="xov-hero" ref={ref} aria-labelledby="xov-h1">
       <HeroDither />
@@ -234,14 +241,14 @@ const INSIDE = [
   ['Where the model comes from', 'The API directly, AWS Bedrock, or Google Vertex — chosen with an environment variable. The container is the same in all three cases.', 'API · Bedrock · Vertex'],
 ];
 
-function Slab({ i, k, pos, on, hov }) {
+function Slab({ i, k, pos, on, hov }: { i: number; k: string; pos: MotionValue<number>; on: boolean; hov: boolean }) {
   const f = useTransform(pos, (x) => Math.max(0, 1 - Math.abs(x - i))); // how far this layer has lifted out and opened
   const s = useTransform(pos, (x) => clamp(i - x, -1, 1)); // above the open layer (+1) or below it (-1)
   const bits = k.split(' · ');
   return (
-    <motion.div className={'xov-slab' + (on ? ' on' : '') + (hov ? ' hov' : '')} style={{ '--i': i, '--f': f, '--s': s }}>
+    <motion.div className={'xov-slab' + (on ? ' on' : '') + (hov ? ' hov' : '')} style={{ '--i': i, '--f': f, '--s': s } as MotionStyle}>
       <span className={'xov-face xov-face' + i}><i /><i /><i /></span>
-      <span className="xov-slab-k x-mono">{bits.map((b, j) => <b key={b} style={{ '--j': j - (bits.length - 1) / 2 }}>{b}</b>)}</span>
+      <span className="xov-slab-k x-mono">{bits.map((b, j) => <b key={b} style={{ '--j': j - (bits.length - 1) / 2 } as CSSProperties}>{b}</b>)}</span>
     </motion.div>
   );
 }
@@ -251,7 +258,7 @@ function Slab({ i, k, pos, on, hov }) {
    section is in view. A row lifts its layer out (tap or Enter); clicking the stack presses it shut and opens it again. */
 function Inside() {
   const [ref, enter] = useEnter(0.2);
-  const stack = useRef(null);
+  const stack = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const seen = useInView(stack, { once: true, amount: 0.4 });
   const [on, setOn] = useState(0);
@@ -266,7 +273,7 @@ function Inside() {
   useEffect(() => {
     if (seen && armed.current) animate(e, 1, { duration: T.scene * 1.4, ease: EMPH, delay: 0.5 });
   }, [seen, e]);
-  const go = (k) => { setOn(k); if (calm) pos.set(k); else animate(pos, k, { duration: T.slower, ease: EMPH }); };
+  const go = (k: number) => { setOn(k); if (calm) pos.set(k); else animate(pos, k, { duration: T.slower, ease: EMPH }); };
   const again = () => { // press it shut and let it come apart again
     if (calm) return;
     animate(e, 0, { duration: T.slow, ease: INOUT }).then(() => animate(e, 1, { duration: T.scene, ease: EMPH }));
@@ -277,11 +284,11 @@ function Inside() {
       <div>
         <div className="a2-wrap a2-grid xov-inside-grid">
           <div className="xov-inside-copy">
-            <p className="a2-kick xov-fold" style={{ '--n': 0 }}>What is in the container</p>
-            <h2 id="xov-in" className="a2-headline xov-fold" style={{ '--n': 1 }}>A screen, a way to watch it, and the tools the model drives it with</h2>
+            <p className="a2-kick xov-fold" style={{ '--n': 0 } as CSSProperties}>What is in the container</p>
+            <h2 id="xov-in" className="a2-headline xov-fold" style={{ '--n': 1 } as CSSProperties}>A screen, a way to watch it, and the tools the model drives it with</h2>
             <ol className="xov-list">
               {INSIDE.map(([t], i) => (
-                <li key={t} className={'xov-fold' + (i === on ? ' on' : '')} style={{ '--n': i + 2 }}>
+                <li key={t} className={'xov-fold' + (i === on ? ' on' : '')} style={{ '--n': i + 2 } as CSSProperties}>
                   <button type="button" aria-current={i === on ? 'step' : undefined} aria-describedby={'xov-d' + i} onClick={() => go(i)}
                     onPointerEnter={(ev) => ev.pointerType === 'mouse' && setHov(i)} onPointerLeave={() => setHov(-1)}>
                     <span className="x-mono">{String(i + 1).padStart(2, '0')}</span><span className="xov-b">{t}</span>
@@ -289,12 +296,12 @@ function Inside() {
                 </li>
               ))}
             </ol>
-            <div className="xov-slot xov-fold" style={{ '--n': 8 }}>
+            <div className="xov-slot xov-fold" style={{ '--n': 8 } as CSSProperties}>
               {INSIDE.map(([t, d], i) => <p key={t} id={'xov-d' + i} className={i === on ? 'on' : ''} aria-hidden={i === on ? undefined : true}>{d}</p>)}
             </div>
-            <p className="xov-oss xov-fold" style={{ '--n': 9 }}>Open Source on <A to="https://github.com/hanzoai">GitHub</A></p>
+            <p className="xov-oss xov-fold" style={{ '--n': 9 } as CSSProperties}>Open Source on <A to="https://github.com/hanzoai">GitHub</A></p>
           </div>
-          <motion.div className="xov-stack" ref={stack} aria-hidden="true" style={{ '--e': e }} onClick={again}>
+          <motion.div className="xov-stack" ref={stack} aria-hidden="true" style={{ '--e': e } as MotionStyle} onClick={again}>
             {INSIDE.map(([t, , k], i) => <Slab key={t} i={i} k={k} pos={pos} on={i === on} hov={i === hov} />)}
             <div className="xov-base x-mono"><span>ghcr.io/hanzoai/operative:latest</span></div>
           </motion.div>
@@ -317,19 +324,19 @@ const USAGE = [
 const REQ = ['Docker. Nothing else installed on the host', 'A key for the API, Bedrock, or Vertex', 'Four ports free: 8501, 6080, 5900, 8080', 'Give the container the fewest privileges that work'];
 
 function Run() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const [live, calm] = useLive(ref, 0.35);
-  const pull = useRef(null), run = useRef(null);
+  const pull = useRef<HTMLSpanElement>(null), run = useRef<HTMLSpanElement>(null);
   const [lit, setLit] = useState(4);
   const [go, setGo] = useState(0);
   const done = useRef(-1);
   const [iris, enter] = useEnter(0.2); // entrance 1, iris: the terminal and its ports open from a circle at the centre
   useEffect(() => { // typing writes to text nodes, not React state
     if (!live || calm || done.current === go) return;
-    let i = 0, t = 0;
+    let i = 0, t: ReturnType<typeof setTimeout> | undefined;
     const all = PULL.length + RUN.length;
     setLit(0);
-    const draw = () => { if (!pull.current) return; pull.current.textContent = PULL.slice(0, i); run.current.textContent = i > PULL.length ? RUN.slice(0, i - PULL.length) : ''; };
+    const draw = () => { if (!pull.current || !run.current) return; pull.current.textContent = PULL.slice(0, i); run.current.textContent = i > PULL.length ? RUN.slice(0, i - PULL.length) : ''; };
     const typing = () => {
       const was = i;
       i = Math.min(all, i + 2);
@@ -339,7 +346,7 @@ function Run() {
     };
     draw();
     t = setTimeout(typing, 400);
-    return () => { clearTimeout(t); setLit(4); if (pull.current) { pull.current.textContent = PULL; run.current.textContent = RUN; } };
+    return () => { clearTimeout(t); setLit(4); if (pull.current && run.current) { pull.current.textContent = PULL; run.current.textContent = RUN; } };
   }, [live, calm, go]);
   return (
     <section className="a2-sec xov-run" id="get-started" ref={ref} aria-labelledby="xov-run">
@@ -395,13 +402,13 @@ const WAYS = [
 
 function Ways() {
   const [at, choose] = useState(0); // changes only when you choose
-  const [peek, setPeek] = useState(null); // a hovered provider previews its variable in the command
-  const tabs = useRef([]);
+  const [peek, setPeek] = useState<number | null>(null); // a hovered provider previews its variable in the command
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const show = peek ?? at;
   const [orbit, enter] = useEnter(0.25); // entrance 5, orbit-in: the four ways in swing round on a curve into their places
-  const key = (ev, i) => { // APG tabs: arrows, Home and End move and select
+  const key = (ev: RKeyboardEvent<HTMLButtonElement>, i: number) => { // APG tabs: arrows, Home and End move and select
     const n = WAYS.length;
-    const to = { ArrowRight: (i + 1) % n, ArrowLeft: (i + n - 1) % n, Home: 0, End: n - 1 }[ev.key];
+    const to = ({ ArrowRight: (i + 1) % n, ArrowLeft: (i + n - 1) % n, Home: 0, End: n - 1 } as Record<string, number | undefined>)[ev.key];
     if (to == null) return;
     ev.preventDefault();
     choose(to);
@@ -411,19 +418,19 @@ function Ways() {
     <section className="a2-sec xov-ways" aria-labelledby="xov-ways">
       <div className="a2-wrap" ref={orbit} data-enter={enter}>
         <div className="a2-grid xov-ways-head">
-          <h2 id="xov-ways" className="a2-headline xov-ways-h xov-orb" style={{ '--n': 0 }}>Where the model comes from</h2>
-          <p className="a2-lede xov-ways-l xov-orb" style={{ '--n': 1 }}>One environment variable decides. The container, the desktop and the tools are identical in all four cases</p>
+          <h2 id="xov-ways" className="a2-headline xov-ways-h xov-orb" style={{ '--n': 0 } as CSSProperties}>Where the model comes from</h2>
+          <p className="a2-lede xov-ways-l xov-orb" style={{ '--n': 1 } as CSSProperties}>One environment variable decides. The container, the desktop and the tools are identical in all four cases</p>
         </div>
         <div className="xov-seg" role="tablist" aria-labelledby="xov-ways">
           {WAYS.map((v, i) => (
-            <button key={v.k} ref={(el) => { tabs.current[i] = el; }} type="button" role="tab" id={'xov-tab-' + i} aria-selected={at === i} aria-controls={'xov-way-' + i} tabIndex={at === i ? 0 : -1} className="xov-orb" style={{ '--n': i + 2 }}
+            <button key={v.k} ref={(el) => { tabs.current[i] = el; }} type="button" role="tab" id={'xov-tab-' + i} aria-selected={at === i} aria-controls={'xov-way-' + i} tabIndex={at === i ? 0 : -1} className="xov-orb" style={{ '--n': i + 2 } as CSSProperties}
               onClick={() => choose(i)} onKeyDown={(ev) => key(ev, i)} onPointerEnter={(ev) => ev.pointerType === 'mouse' && setPeek(i)} onPointerLeave={() => setPeek(null)}>
               {at === i && <motion.span layoutId="xov-seg" className="xov-seg-bg" transition={MOVE} />}
               <span>{v.k}</span>
             </button>
           ))}
         </div>
-        <div className={'xov-cmd x-mono xov-orb' + (show !== at ? ' peek' : '')} style={{ '--n': 6 }} tabIndex={0} role="region" aria-labelledby="xov-ways">
+        <div className={'xov-cmd x-mono xov-orb' + (show !== at ? ' peek' : '')} style={{ '--n': 6 } as CSSProperties} tabIndex={0} role="region" aria-labelledby="xov-ways">
           <span className="xov-p">$</span> docker run{' '}
           <span className="xov-env">
             <AnimatePresence mode="popLayout" initial={false}>
@@ -432,14 +439,14 @@ function Ways() {
           </span>{' '}
           <span className="xov-same">ghcr.io/hanzoai/operative:latest</span>
         </div>
-        <div className="xov-panels xov-orb" style={{ '--n': 7 }}>
+        <div className="xov-panels xov-orb" style={{ '--n': 7 } as CSSProperties}>
           {WAYS.map((v, i) => (
             <div key={v.k} id={'xov-way-' + i} role="tabpanel" aria-labelledby={'xov-tab-' + i} tabIndex={0} hidden={at !== i} className="xov-way">
               <div className="xov-way-id">
                 <p className="xov-way-k">{v.k}{v.rec && <span className="xov-rec">Recommended</span>}</p>
                 <p className="xov-way-by">by {v.by}</p>
               </div>
-              <ol className="xov-way-pts">{v.pts.map((p, j) => <li key={p} style={{ '--j': j }}><span className="x-mono" aria-hidden="true">{String(j + 1).padStart(2, '0')}</span><span>{p}</span></li>)}</ol>
+              <ol className="xov-way-pts">{v.pts.map((p, j) => <li key={p} style={{ '--j': j } as CSSProperties}><span className="x-mono" aria-hidden="true">{String(j + 1).padStart(2, '0')}</span><span>{p}</span></li>)}</ol>
               <div className="xov-way-set">
                 <p>{v.set}</p>
                 <span className="x-mono xov-code">{'docker run ' + v.env}</span>
@@ -461,7 +468,7 @@ function Action() {
   const [live] = useLive(ref, 0.3);
   const [held, setHeld] = useState(false);
   const [k, setK] = useState(0);
-  const screen = useRef(null);
+  const screen = useRef<HTMLDivElement>(null);
   useEffect(() => { // the pause control holds the film as well as the loop
     const v = screen.current?.querySelector('video');
     if (!v) return;
@@ -509,7 +516,7 @@ const SOCIAL = [['Star on GitHub', 'https://github.com/hanzoai'], ['Join Discord
 
 /* Read before you run it, and the box closed again: the six layers press back into one image. */
 function Watch() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const [deal, enter] = useEnter(0.25); // entrance 4, deal: each row's rule draws across, then its words rise onto it
   const shut = useInView(box, { once: true, amount: 0.5 });
   return (
@@ -518,7 +525,7 @@ function Watch() {
         <div className="xov-read-b" ref={deal} data-enter={enter}>
           <h2 id="xov-read-h" className="a2-headline">Read before you run it</h2>
           <div className="a2-acts"><Cta to="https://docs.hanzo.ai" kind="quiet">Read the docs</Cta><Cta to="https://github.com/hanzoai" kind="link">View on GitHub</Cta></div>
-          <ul className="xov-social">{SOCIAL.map(([t, to], n) => <li key={t} style={{ '--n': n }}><A to={to} className="xov-soc"><span>{t}</span><i aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M4.5 11.5l7-7M5.5 4.5h6v6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></i></A></li>)}</ul>
+          <ul className="xov-social">{SOCIAL.map(([t, to], n) => <li key={t} style={{ '--n': n } as CSSProperties}><A to={to} className="xov-soc"><span>{t}</span><i aria-hidden="true"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M4.5 11.5l7-7M5.5 4.5h6v6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></i></A></li>)}</ul>
         </div>
         <div className={'xov-get' + (shut ? ' shut' : '')} ref={box}>
           <div className="xov-get-t">
@@ -527,7 +534,7 @@ function Watch() {
             <p className="xov-get-meta x-mono"><span><span>License:</span> Apache-2.0</span><A to="https://github.com/hanzoai">hanzoai</A></p>
           </div>
           <div className="xov-box" aria-hidden="true">
-            {INSIDE.map(([t], i) => <i key={t} style={{ '--i': 5 - i }} />)}
+            {INSIDE.map(([t], i) => <i key={t} style={{ '--i': 5 - i } as CSSProperties} />)}
             <p className="xov-get-cmd x-mono">docker pull <span>ghcr.io/hanzoai/operative:latest</span></p>
           </div>
         </div>

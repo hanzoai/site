@@ -12,6 +12,7 @@
    the year of commits re-lights cell by cell (state), and the charter signed with a drawn line (arrival).
    Every figure is Hanzo's, as its build read GitHub and its forge. */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, FocusEvent as RFocusEvent, KeyboardEvent as RKeyboardEvent, PointerEvent as RPointerEvent } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
 import { Count } from '../ui';
@@ -20,35 +21,39 @@ import DetailSheet from '../v2/x-pascal/DetailSheet';
 import { SnapIn, Gather, Tilt, Cascade, Ripple } from './openSource/entrances';
 import SNAP from './openSource/snapshot';
 import { OSSData, useOSS } from './openSource/live';
+import type { SnapEcosystem, SnapOrg } from './openSource/types.ts';
 import '../v2/ProofRhythm.css';
 import './OpenSource.css';
 
-const EMPH = [0.16, 1, 0.3, 1];
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const PILL = { duration: 0.3, ease: EMPH };
 /* a card leans toward the pointer, 2.5° at most (MASTER §3.1), fine pointers only */
-const lean = (e) => {
+const lean = (e: RPointerEvent<HTMLElement>) => {
   if (e.pointerType !== 'mouse') return;
   const el = e.currentTarget, r = el.getBoundingClientRect();
   el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
   el.style.setProperty('--rx', ((0.5 - (e.clientY - r.top) / r.height) * 5).toFixed(2) + 'deg');
 };
-const rest = (e) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
+const rest = (e: RPointerEvent<HTMLElement>) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
 
 /* stars and forks are drawn beside Hanzo's figures, never typed as glyphs */
 const Star = () => <svg className="xos-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l1.9 4 4.4.5-3.3 3 .9 4.4L8 11.2l-3.9 2.2.9-4.4-3.3-3 4.4-.5z" fill="currentColor" /></svg>;
 const Fork = () => <svg className="xos-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 3v2.5c0 1.4 1.1 2.5 2.5 2.5h2c1.4 0 2.5-1.1 2.5-2.5V3M8 8v5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><circle cx="4.5" cy="2.5" r="1.3" fill="currentColor" /><circle cx="11.5" cy="2.5" r="1.3" fill="currentColor" /><circle cx="8" cy="13.5" r="1.3" fill="currentColor" /></svg>;
 
-const num = (s) => parseInt(String(s).replace(/,/g, ''), 10) || 0;
+const num = (s: string | number) => parseInt(String(s).replace(/,/g, ''), 10) || 0;
 const NAMES = ['Hanzo', 'Lux', 'Zoo'];
-const clamp = (v) => Math.max(0, Math.min(1, v));
-const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const clamp = (v: number) => Math.max(0, Math.min(1, v));
+const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 /* ---------- the constellation ---------- */
+type Cluster = SnapOrg & { g: string; x: number; y: number; r: number; n: number };
+type Dot = [number, number, number, number, number]; // x, y, light, twinkle phase, cluster
+
 function build() {
   const centers = [[0, 0], [-380, -260], [330, 290]]; // Hanzo, Lux above-left of it, Zoo below-right
-  const clusters = [], dots = [];
+  const clusters: Cluster[] = [], dots: Dot[] = [];
   SNAP.orgs.forEach((g, gi) => {
-    const placed = [];
+    const placed: { x: number; y: number; r: number }[] = [];
     [...g.orgs].sort((a, b) => num(b.repos) - num(a.repos)).forEach((o) => {
       const n = num(o.repos), r = Math.sqrt(n) * 5.2 + 7;
       let x = 0, y = 0;
@@ -77,23 +82,31 @@ function build() {
 }
 
 /* The sky. On arrival the camera pulls back from inside Hanzo to all three galaxies (2.8s, once); then it drifts. */
-function Sky({ paused = false }) {
-  const wrap = useRef(null);
-  const cv = useRef(null);
-  const labs = useRef([]);
-  const hotEl = useRef(null);
+interface SkyState {
+  ox: number; oy: number; vx: number; vy: number; drag: { x: number; y: number } | null; moved: number; hot: number;
+  s: number; z: number; w: number; h: number; t: number; cx: number; cy: number; phone: boolean; base: number; redraw?: () => void;
+}
+
+function Sky({ paused = false }: { paused?: boolean }) {
+  const wrap = useRef<HTMLDivElement>(null);
+  const cv = useRef<HTMLCanvasElement>(null);
+  const labs = useRef<(HTMLDivElement | null)[]>([]);
+  const hotEl = useRef<HTMLDivElement>(null);
   const world = useMemo(build, []);
   const live = useInView(wrap, { amount: 0.05 });
   const calm = useReducedMotion();
-  const [hot, setHot] = useState(null);
-  const st = useRef({ ox: 0, oy: 0, vx: 0, vy: 0, drag: null, moved: 0, hot: -1, s: 1, z: 1, w: 0, h: 0, t: 0, cx: 0, cy: 0, phone: false });
+  const [hot, setHot] = useState<Cluster | null>(null);
+  const st = useRef<SkyState>({ ox: 0, oy: 0, vx: 0, vy: 0, drag: null, moved: 0, hot: -1, s: 1, z: 1, w: 0, h: 0, t: 0, cx: 0, cy: 0, phone: false, base: 0 });
   const born = useRef(0);
 
   useEffect(() => {
-    const c = cv.current, ctx = c.getContext('2d');
+    const c = cv.current, wr = wrap.current;
+    if (!c || !wr) return;
+    const ctx = c.getContext('2d');
+    if (!ctx) return;
     const S = st.current;
     const fit = () => {
-      const b = wrap.current.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+      const b = wr.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
       S.w = b.width; S.h = b.height;
       c.width = b.width * dpr; c.height = b.height * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -101,9 +114,9 @@ function Sky({ paused = false }) {
       S.base = S.phone ? b.width / 980 : Math.min(b.width / 1500, b.height / 880);
     };
     fit();
-    const ro = new ResizeObserver(fit); ro.observe(wrap.current);
+    const ro = new ResizeObserver(fit); ro.observe(wr);
     const shades = ['rgba(245,245,247,.26)', 'rgba(245,245,247,.5)', 'rgba(245,245,247,.76)', 'rgba(255,255,255,.98)'];
-    const draw = (t) => {
+    const draw = (t: number) => {
       S.t = t;
       if (!S.drag) { S.ox += S.vx; S.oy += S.vy; S.vx *= 0.93; S.vy *= 0.93; }
       // the camera: close inside Hanzo, pulling back to the three galaxies once, on arrival
@@ -114,7 +127,7 @@ function Sky({ paused = false }) {
       S.cx = S.w * (S.phone ? 0.5 : 0.7);
       S.cy = S.h * (S.phone ? 0.5 : 0.44);
       const drift = calm ? 0 : Math.sin(t / 5200) * 14, s = S.s;
-      const X = (x) => S.cx + (x + S.ox + drift) * s, Y = (y) => S.cy + (y + S.oy + Math.cos(t / 6100) * 8 * (calm ? 0 : 1)) * s;
+      const X = (x: number) => S.cx + (x + S.ox + drift) * s, Y = (y: number) => S.cy + (y + S.oy + Math.cos(t / 6100) * 8 * (calm ? 0 : 1)) * s;
       ctx.clearRect(0, 0, S.w, S.h);
       const sz = Math.max(1.2, 2.1 * S.base * Math.sqrt(S.z));
       const big = sz * 1.5;
@@ -138,22 +151,24 @@ function Sky({ paused = false }) {
       if (hotEl.current && S.hot >= 0) { const h = world.clusters[S.hot]; hotEl.current.style.transform = `translate(${X(h.x)}px, ${Y(h.y) - h.r * s - 14}px)`; }
     };
     let raf = 0;
-    const loop = (t) => { draw(t); raf = requestAnimationFrame(loop); };
+    const loop = (t: number) => { draw(t); raf = requestAnimationFrame(loop); };
     if (live && !calm && !paused) raf = requestAnimationFrame(loop); else draw(S.t || 0);
     S.redraw = () => draw(S.t);
     return () => { cancelAnimationFrame(raf); ro.disconnect(); };
   }, [live, calm, world, paused]);
 
-  const pick = (e) => {
-    const S = st.current, b = cv.current.getBoundingClientRect();
+  const pick = (e: RPointerEvent<HTMLCanvasElement>) => {
+    const S = st.current, canvas = cv.current;
+    if (!canvas) return -1;
+    const b = canvas.getBoundingClientRect();
     const drift = calm ? 0 : Math.sin(S.t / 5200) * 14;
     const wx = (e.clientX - b.left - S.cx) / S.s - S.ox - drift, wy = (e.clientY - b.top - S.cy) / S.s - S.oy;
     let best = -1, bd = 1e9;
     world.clusters.forEach((c, i) => { const d = Math.hypot(c.x - wx, c.y - wy); if (d < c.r + 10 && d < bd) { bd = d; best = i; } });
     return best;
   };
-  const down = (e) => { const S = st.current; S.drag = { x: e.clientX, y: e.clientY }; S.moved = 0; S.vx = S.vy = 0; };
-  const move = (e) => {
+  const down = (e: RPointerEvent<HTMLCanvasElement>) => { const S = st.current; S.drag = { x: e.clientX, y: e.clientY }; S.moved = 0; S.vx = S.vy = 0; };
+  const move = (e: RPointerEvent<HTMLCanvasElement>) => {
     const S = st.current;
     if (S.drag) {
       const dx = (e.clientX - S.drag.x) / S.s, dy = (e.clientY - S.drag.y) / S.s;
@@ -166,7 +181,7 @@ function Sky({ paused = false }) {
     const i = pick(e);
     if (i !== S.hot) { S.hot = i; setHot(i >= 0 ? world.clusters[i] : null); if (calm || paused) S.redraw?.(); }
   };
-  const up = (e) => {
+  const up = (e: RPointerEvent<HTMLCanvasElement>) => {
     const S = st.current, was = S.drag; S.drag = null;
     if (was && S.moved < 6) { const i = pick(e); if (i >= 0) window.location.assign(href('/oss/' + world.clusters[i].login)); }
   };
@@ -175,7 +190,7 @@ function Sky({ paused = false }) {
       <canvas ref={cv} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerLeave={() => { st.current.drag = null; st.current.hot = -1; setHot(null); }}
         aria-hidden="true" />
       {world.gal.map((g, i) => (
-        <div key={g.name} className="xos-gal" ref={(el) => (labs.current[i] = el)} aria-hidden="true"><b>{g.name}</b><span>{g.sub}</span></div>
+        <div key={g.name} className="xos-gal" ref={(el) => { labs.current[i] = el; }} aria-hidden="true"><b>{g.name}</b><span>{g.sub}</span></div>
       ))}
       <div className={'xos-tip' + (hot ? ' on' : '')} ref={hotEl} aria-hidden="true">
         {hot && <><b>{hot.name}</b><span>{hot.login} · {hot.repos}{hot.commits ? ' · ' + hot.commits : ''}</span></>}
@@ -236,7 +251,7 @@ const MONTHS = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', '
 // the language greys, ink first; in dark the ramp turns over onto Hanzo's neutrals so the first stays the brightest
 const LANGC = ['light-dark(#0a0a0a, var(--neutral-200))', 'light-dark(#404040, var(--neutral-300))', 'light-dark(#737373, var(--neutral-400))', 'light-dark(#a3a3a3, var(--neutral-500))', 'light-dark(#d4d4d4, var(--neutral-600))', 'light-dark(#e4e4e7, var(--neutral-700))'];
 
-function Dash({ at }) {
+function Dash({ at }: { at: number }) {
   const e = useOSS().eco[at];
   let left = 0;
   const segs = e.langs.map(([l, pc], j) => { const s = { l, t: pc, pc: +pc, left, c: LANGC[j] }; left += +pc; return s; });
@@ -250,7 +265,7 @@ function Dash({ at }) {
       <div className="xos-heat">
         <div className="xos-heat-m" aria-hidden="true">{MONTHS.map((m, i) => <span key={i}>{m}</span>)}</div>
         <div className="xos-heat-g" role="img" aria-label={e.window}>
-          {[...e.heat].map((c, i) => <i key={i} data-l={c} style={{ '--d': Math.floor(i / 7) * 9 + 'ms' }} />)}
+          {[...e.heat].map((c, i) => <i key={i} data-l={c} style={{ '--d': Math.floor(i / 7) * 9 + 'ms' } as CSSProperties} />)}
         </div>
         <div className="xos-heat-f">
           <span>Commits a day</span>
@@ -260,18 +275,18 @@ function Dash({ at }) {
       </div>
       <div className="xos-lang">
         <div className="xos-lbar" aria-hidden="true">{segs.map((s, j) => <i key={j} style={{ transform: `translateX(${s.left}%) scaleX(${s.pc / 100})`, background: s.c }} />)}</div>
-        <ul className="xos-langs">{segs.map((s, j) => <li key={at + s.l} style={{ '--j': j }}><i style={{ background: s.c }} /><span>{s.l} {s.t}%</span></li>)}</ul>
+        <ul className="xos-langs">{segs.map((s, j) => <li key={at + s.l} style={{ '--j': j } as CSSProperties}><i style={{ background: s.c }} /><span>{s.l} {s.t}%</span></li>)}</ul>
       </div>
       <ol className="xos-dash-c">
         {e.commits.slice(0, 3).map(([repo, msg, when, to], j) => (
-          <li key={at + to} style={{ '--j': j }}><A to={to}><span className="pf-mono xos-c-r">{repo}</span><span className="xos-c-m">{msg}</span><span className="pf-mono xos-c-t">{when}</span></A></li>
+          <li key={at + to} style={{ '--j': j } as CSSProperties}><A to={to}><span className="pf-mono xos-c-r">{repo}</span><span className="xos-c-m">{msg}</span><span className="pf-mono xos-c-t">{when}</span></A></li>
         ))}
       </ol>
     </figure>
   );
 }
 
-function EcoSheet({ e, i }) {
+function EcoSheet({ e, i }: { e: SnapEcosystem; i: number }) {
   const { orgs } = useOSS();
   return (
     <DetailSheet label="Read more" kicker={orgs[i].sub} title={NAMES[i]} wide>
@@ -312,8 +327,8 @@ function Publish() {
   const [at, setAt] = useState(0);
   const swapped = useRef(false);
   if (at) swapped.current = true;
-  const keys = (e) => {
-    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+  const keys = (e: RKeyboardEvent<HTMLDivElement>) => {
+    const k = ({ ArrowRight: 1, ArrowLeft: -1 } as Record<string, number | undefined>)[e.key];
     if (!k) return;
     const n = (at + k + 3) % 3;
     setAt(n);
@@ -375,12 +390,12 @@ function Totals() {
 }
 
 /* an organization's commits a month over the past year, the months Hanzo's build counts (13, the first and last partial) */
-function Months({ m }) {
+function Months({ m }: { m?: number[] }) {
   if (!m || !m.length) return null;
   const max = Math.max(1, ...m);
   return (
     <span className="xos-oc-mo" role="img" aria-label="Commits a month over the past year">
-      {m.map((v, k) => <i key={k} data-z={v ? undefined : ''} style={{ '--h': v ? Math.max(0.08, v / max) : 0.06, '--k': k }} />)}
+      {m.map((v, k) => <i key={k} data-z={v ? undefined : ''} style={{ '--h': v ? Math.max(0.08, v / max) : 0.06, '--k': k } as CSSProperties} />)}
     </span>
   );
 }
@@ -389,8 +404,8 @@ function Months({ m }) {
 function Orgs() {
   const { orgs: ORGS } = useOSS();
   const [g, setG] = useState(0);
-  const keys = (e) => {
-    const k = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+  const keys = (e: RKeyboardEvent<HTMLDivElement>) => {
+    const k = ({ ArrowRight: 1, ArrowLeft: -1 } as Record<string, number | undefined>)[e.key];
     if (!k) return;
     const n = (g + k + 3) % 3;
     setG(n);
@@ -419,7 +434,7 @@ function Orgs() {
               <p className="xos-gal-sub pf-mono">{x.sub}</p>
               <ul className="xos-ocards">
                 {top.map((o, j) => (
-                  <li key={o.login} style={{ '--k': j }}>
+                  <li key={o.login} style={{ '--k': j } as CSSProperties}>
                     <A to={'/oss/' + o.login} className="xos-ocard" onPointerMove={lean} onPointerLeave={rest}>
                       <span className="xos-oc-top"><span className="xos-oc-name" data-morph>{o.name}</span><span className="pf-mono xos-oc-login">{o.login}</span></span>
                       <span className="xos-oc-n">{o.repos}</span>
@@ -476,25 +491,26 @@ const BUILT = [
    stretch and the scroll position moves the track sideways, then the page releases. Phone and reduced motion: the
    same track is a native horizontal snap rail. The height lives in CSS, so nothing reflows when JS arrives. */
 const PINNED = '(min-width: 900px) and (prefers-reduced-motion: no-preference)';
-const goTo = (y) => (window.__lenis ? window.__lenis.scrollTo(y, { immediate: true }) : window.scrollTo(0, y));
+const goTo = (y: number) => (window.__lenis ? window.__lenis.scrollTo(y, { immediate: true }) : window.scrollTo(0, y));
 
 /* the object: Hanzo's own twelve glyphs as one mark row, drawn in ink (text presentation where the glyph has one, a flat
    silhouette where it has not); the glyph itself stays readable as text. It marks the panel in view and the credit under the pointer */
 function Built() {
-  const sec = useRef(null), stage = useRef(null), track = useRef(null);
+  const sec = useRef<HTMLElement>(null), stage = useRef<HTMLDivElement>(null), track = useRef<HTMLUListElement>(null);
   const [hot, setHot] = useState(-1);
   const [cur, setCur] = useState(0);
   useEffect(() => {
     const mq = matchMedia(PINNED);
-    const S = sec.current, T = track.current;
+    const S = sec.current, T = track.current, G = stage.current;
+    if (!S || !T || !G) return;
     let raf = 0;
     const tick = () => {
       raf = 0;
-      const lis = T.children, step = lis.length > 1 ? lis[1].offsetLeft - lis[0].offsetLeft : 1;
+      const lis = T.children as HTMLCollectionOf<HTMLElement>, step = lis.length > 1 ? lis[1].offsetLeft - lis[0].offsetLeft : 1;
       if (!mq.matches) { T.style.transform = ''; setCur(Math.round(T.scrollLeft / step)); return; }
       const r = S.getBoundingClientRect(), run = r.height - innerHeight;
       const p = run > 0 ? clamp(-r.top / run) : 0;
-      const dist = Math.max(0, T.scrollWidth - stage.current.clientWidth);
+      const dist = Math.max(0, T.scrollWidth - G.clientWidth);
       T.style.transform = `translate3d(${(-p * dist).toFixed(1)}px, 0, 0)`;
       setCur(Math.round(p * (lis.length - 1)));
     };
@@ -507,21 +523,23 @@ function Built() {
     return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', ask); window.removeEventListener('resize', ask); T.removeEventListener('scroll', ask); mq.removeEventListener('change', ask); };
   }, []);
   /* bring panel i into view: on desktop by scrolling the page to its stretch, on the rail by scrolling the rail */
-  const show = (i, smooth) => {
-    const S = sec.current, T = track.current, li = T.children[i];
+  const show = (i: number, smooth: boolean) => {
+    const S = sec.current, T = track.current, G = stage.current;
+    if (!S || !T || !G) return;
+    const li = T.children[i] as HTMLElement | undefined;
     if (!li) return;
-    if (!matchMedia(PINNED).matches) { T.scrollTo({ left: li.offsetLeft - parseFloat(getComputedStyle(T).scrollPaddingLeft || 0), behavior: smooth ? 'smooth' : 'auto' }); return; }
-    const dist = Math.max(1, T.scrollWidth - stage.current.clientWidth);
-    const want = Math.max(0, Math.min(dist, li.offsetLeft + li.offsetWidth / 2 - stage.current.clientWidth / 2));
+    if (!matchMedia(PINNED).matches) { T.scrollTo({ left: li.offsetLeft - parseFloat(getComputedStyle(T).scrollPaddingLeft || '0'), behavior: smooth ? 'smooth' : 'auto' }); return; }
+    const dist = Math.max(1, T.scrollWidth - G.clientWidth);
+    const want = Math.max(0, Math.min(dist, li.offsetLeft + li.offsetWidth / 2 - G.clientWidth / 2));
     const top = S.getBoundingClientRect().top + scrollY, run = S.offsetHeight - innerHeight;
     const y = top + (want / dist) * run;
     if (smooth && window.__lenis) window.__lenis.scrollTo(y, { duration: 0.9 }); else if (smooth) window.scrollTo({ top: y, behavior: 'smooth' }); else goTo(y);
   };
   /* keyboard: tabbing to a credit's link scrolls the page so its panel is in the stage */
-  const focus = (e) => {
-    const li = e.target.closest('.xos-tile');
-    if (!li || !matchMedia(PINNED).matches) return;
-    const i = [...track.current.children].indexOf(li);
+  const focus = (e: RFocusEvent<HTMLUListElement>) => {
+    const li = e.target.closest('.xos-tile'), T = track.current;
+    if (!li || !T || !matchMedia(PINNED).matches) return;
+    const i = [...T.children].indexOf(li);
     requestAnimationFrame(() => show(i, false));
   };
   return (
@@ -564,7 +582,7 @@ const CHARTER = [
   ['We welcome all contributors', 'Good code can come from anywhere. We maintain a contributor-friendly CONTRIBUTING.md, respond to PRs within 48 hours on active repos, and recognize every contributor.'],
 ];
 function Charter() {
-  const end = useRef(null);
+  const end = useRef<HTMLDivElement>(null);
   const signed = useInView(end, { once: true, amount: 0.6 });
   return (
     <section className="pf-sec xos-charter" aria-labelledby="xos-ch-h">
@@ -599,7 +617,7 @@ function Charter() {
 
 /* ---------- contribute, in your language (Beyond) ---------- */
 const ALL = SNAP.eco.flatMap((e, i) => e.repos.map((r) => ({ ...r, eco: NAMES[i] })));
-const LANGS = Object.entries(ALL.reduce((m, r) => ((m[r.lang] = (m[r.lang] || 0) + 1), m), {})).sort((a, b) => b[1] - a[1]).map(([l]) => l);
+const LANGS = Object.entries(ALL.reduce((m, r) => ((m[r.lang] = (m[r.lang] || 0) + 1), m), {} as Record<string, number>)).sort((a, b) => b[1] - a[1]).map(([l]) => l);
 
 function Contribute() {
   const [lang, setLang] = useState(LANGS[0]);
@@ -629,7 +647,7 @@ function Contribute() {
           </p>
           <ul className={'xos-lrepos' + (swapped.current ? ' sw' : '')} key={lang}>
             {repos.map((r, j) => (
-              <li key={r.name} style={{ '--j': j }}>
+              <li key={r.name} style={{ '--j': j } as CSSProperties}>
                 <A to={r.to}><span className="pf-mono">{r.name}</span><span className="xos-lr-m">{r.eco} · <Star />{r.stars}</span></A>
               </li>
             ))}
@@ -642,8 +660,8 @@ function Contribute() {
 
 /* the close: one centred black room in Hanzo's words, the one ask and its two quiet neighbours */
 function Close() {
-  const ref = useRef(null);
-  const [st, setSt] = useState('rest'); // the server and reduced motion show it at rest; below the fold it waits, then plays
+  const ref = useRef<HTMLElement>(null);
+  const [st, setSt] = useState<'rest' | 'wait' | 'in'>('rest'); // the server and reduced motion show it at rest; below the fold it waits, then plays
   useEffect(() => {
     const el = ref.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches || el.getBoundingClientRect().top < innerHeight * 0.9) return;

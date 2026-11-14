@@ -29,7 +29,9 @@
    neighbouring pages differ).
    V2: 8/10 calm proof with something to look at on every screen: the self-opening evidence cabinet (on phones each drawer's contents ride in under it), ruled papers that open into their pages, a statement that inks in as you read, a pinned stance stage whose index grows as each stance enters (an accordion on phones), a search that shows itself working, one ask. */
 import { useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent as RKeyboardEvent, ReactNode, RefObject } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionTemplate, useMotionValueEvent } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import { A, More } from '../kit';
 import DetailSheet from '../v2/x-pascal/DetailSheet'; // the coherent <dialog> build: main's v2/DetailSheet.jsx is the older div build against dialog-only CSS (docs/build-notes/requests/trust.md)
 import '../v2/ProofScale.css';
@@ -37,8 +39,8 @@ import '../v2/ProofRhythm.css';
 import './Trust.css';
 
 const ASK = 'Request a review or an enterprise deployment';
-const EMPH = [0.16, 1, 0.3, 1]; // deck ease-emphasis
-const REVIEW = [
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1]; // deck ease-emphasis
+const REVIEW: [string, string, string?][] = [
   ['The Data Processing Addendum', 'The processor terms in full — roles and instructions, subprocessor governance, security measures, the Standard Contractual Clause modules for EEA and UK transfers, and the U.S. state service-provider terms. Still a draft pending counsel, which the page says at the top, so read it as terms proposed rather than terms signed.', '/legal/dpa'],
   ['The subprocessor register', 'Which providers can process your data, what each one does, where it runs, and whether it may train on your content — including the model providers a routed request reaches through a gateway. Rows still being confirmed against a provider’s signed terms are marked as such rather than left to look settled.', '/legal/subprocessors'],
   ['A security questionnaire, answered', 'Send the one your process uses — SIG, CAIQ, VSA, or your own spreadsheet. We answer it against the code, and where an answer is a mechanism rather than a yes, we point at the mechanism.'],
@@ -46,10 +48,10 @@ const REVIEW = [
   ['The control detail behind this page', 'Everything summarised below, at the level a reviewer needs: the algorithms, the parameters, the failure behaviour, and what happens at each boundary. Under NDA where your process requires one.'],
   ['A framework scoped to your engagement', 'Tell us what your process runs on and what your reviewer needs to see. We scope the work with you as part of the enterprise agreement rather than pointing at a checkmark.'],
 ];
-const pad = (i) => String(i + 1).padStart(2, '0');
+const pad = (i: number) => String(i + 1).padStart(2, '0');
 
 /* client-only facts, read after mount so the first client render equals the server HTML (no hydration mismatch) */
-function useMedia(q, before) {
+function useMedia(q: string, before: boolean) {
   const [on, setOn] = useState(before);
   useEffect(() => { const m = matchMedia(q); const f = () => setOn(m.matches); f(); m.addEventListener('change', f); return () => m.removeEventListener('change', f); }, [q]);
   return on;
@@ -58,8 +60,8 @@ const useCalm = () => useMedia('(prefers-reduced-motion: reduce)', false); // CS
 const WIDE = '(min-width: 900px)';
 
 /* a heading whose lines rise out of their own masks once reached (v2/MaskLines' motion: 105% to 0, 700 ms, 60 ms apart) */
-function Lines({ as = 'h2', lines, className = '', id, amount = 0.4 }) {
-  const ref = useRef(null);
+function Lines({ as = 'h2', lines, className = '', id, amount = 0.4 }: { as?: 'h1' | 'h2'; lines: string[]; className?: string; id?: string; amount?: number }) {
+  const ref = useRef<HTMLHeadingElement>(null);
   const seen = useInView(ref, { once: true, amount });
   const calm = useCalm();
   const [ready, setReady] = useState(true); // a first visit waits for the arrival curtain to lift, or no one sees the cut-in
@@ -86,8 +88,8 @@ function Lines({ as = 'h2', lines, className = '', id, amount = 0.4 }) {
 }
 
 /* the one dark room: arrives as a rounded panel inside the gutters and opens to full bleed as you reach it (v2/SceneWipe's move) */
-function Room({ children, className = '', label }) {
-  const ref = useRef(null);
+function Room({ children, className = '', label }: { children?: ReactNode; className?: string; label?: string }) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   const wide = useMedia('(min-width: 901px)', true);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.1'] });
@@ -109,20 +111,21 @@ function Locker() {
   const [mine, setMine] = useState(false);
   const [under, setUnder] = useState(false); // the pointer is on the locker: it waits under the hand
   const calm = useReducedMotion();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const live = useInView(ref, { amount: 0.3 });
   /* phones: the open drawer's contents ride directly under it. The tray keeps its place in the flow (so nothing
      reflows); it is carried up under the open drawer and the drawers below it step down by its height (transform only). */
   const narrow = useMedia('(max-width: 899px)', false);
-  const [geo, setGeo] = useState(null);
+  const [geo, setGeo] = useState<{ under: number[]; push: number } | null>(null);
   useEffect(() => {
     if (!narrow) { setGeo(null); return; }
     const el = ref.current;
-    const tray = el?.querySelector('.xtr-tray');
+    if (!el) return;
+    const tray = el.querySelector<HTMLElement>('.xtr-tray');
     if (!tray) return;
     const measure = () => {
       const gap = parseFloat(getComputedStyle(tray).marginTop) || 0;
-      const ds = [...el.querySelectorAll('.xtr-drawer')];
+      const ds = [...el.querySelectorAll<HTMLElement>('.xtr-drawer')];
       setGeo({ under: ds.map((d) => d.offsetTop + d.offsetHeight + gap - tray.offsetTop), push: tray.offsetHeight + gap });
     };
     measure();
@@ -138,9 +141,9 @@ function Locker() {
     const t = setTimeout(() => setAt((v) => (v + 1) % 6), at < 0 ? 650 : 3400);
     return () => clearTimeout(t);
   }, [at, mine, calm, live, under]);
-  const pick = (i) => { setMine(true); setAt(i); };
-  const keys = (e) => {
-    const k = { ArrowDown: 1, ArrowUp: -1 }[e.key];
+  const pick = (i: number) => { setMine(true); setAt(i); };
+  const keys = (e: RKeyboardEvent<HTMLDivElement>) => {
+    const k = ({ ArrowDown: 1, ArrowUp: -1 } as Record<string, number | undefined>)[e.key];
     if (!k) return;
     e.preventDefault();
     const n = (Math.max(at, 0) + k + 6) % 6;
@@ -211,7 +214,7 @@ function Docs() {
         </div>
         <div className="xtr-papers">
           {/* path, title and arrow: the description is already in the cabinet's tray above, so the paper does not say it twice */}
-          {REVIEW.slice(0, 2).map(([t, , to], i) => (
+          {REVIEW.slice(0, 2).map(([t, , to = ''], i) => (
             <A key={t} to={to} className={'xtr-paper p' + i}>
               <span className="xtr-paper-k pf-mono">{to}</span>
               <b data-morph>{t}</b>
@@ -229,14 +232,14 @@ function Docs() {
 const SAY = 'We run the controls those audits examine, and this page is the evidence — every mechanism below was read in the source before it was written here. Bring your questionnaire and we will answer it against the code rather than against a summary of it.'.split(' ');
 
 /* one word of the statement: it inks in as the reader's eye reaches it (opacity only, tied to scroll) */
-function Word({ p, i, children }) {
+function Word({ p, i, children }: { p: MotionValue<number>; i: number; children?: ReactNode }) {
   const a = i / SAY.length;
   const o = useTransform(p, [a, Math.min(1, a + 6 / SAY.length)], [0.16, 1]);
   return <><motion.span className="xtr-w" style={{ opacity: o }}>{children}</motion.span>{' '}</>;
 }
 
 function Stand() {
-  const say = useRef(null);
+  const say = useRef<HTMLParagraphElement>(null);
   const { scrollYProgress } = useScroll({ target: say, offset: ['start 0.82', 'end 0.42'] });
   return (
     <section className="pf-sec xtr-stand" aria-labelledby="xtr-stand-h">
@@ -255,7 +258,9 @@ function Stand() {
 }
 
 /* ---------- the controls: a quiet list, each group's evidence in a sheet ---------- */
-const GROUPS = [
+type Control = [string, string];
+type Group = [string, string, Control[]];
+const GROUPS: Group[] = [
   ['Getting in', 'One service issues every credential. Hanzo IAM is the only thing that holds a password or runs a login, and nothing else in the stack has its own.', [
     ['Signing in is a redirect, not a form', 'An application hands you to Hanzo IAM and gets back a code. A client with no registered secret — anything running in a browser or on a laptop — must present a PKCE challenge, and only S256 is accepted. Offer the plain method and the request is refused rather than quietly downgraded.'],
     ['Passwords are hashed, and the digest says how', 'New passwords are argon2id at 64 MiB and two passes, with a random salt. The cost parameters ride inside the stored digest, so raising them later does not lock anyone out. Verification reads the scheme off the row instead of assuming one, and an unrecognised scheme fails closed.'],
@@ -284,18 +289,18 @@ const GROUPS = [
   ]],
 ];
 const ALL = GROUPS.flatMap((g) => g[2]);
-const has = (q) => ([t, d]) => !!q && (t + ' ' + d).toLowerCase().includes(q);
+const has = (q: string) => ([t, d]: Control) => !!q && (t + ' ' + d).toLowerCase().includes(q);
 
 /* open a group's sheet from outside it (an answer under the search), then bring that control into view inside it */
-const openAt = (gi, i) => {
-  document.querySelector('.xtr-g-btn-' + gi)?.click();
+const openAt = (gi: number, i: number) => {
+  document.querySelector<HTMLElement>('.xtr-g-btn-' + gi)?.click();
   setTimeout(() => document.getElementById(`xtr-c-${gi}-${i}`)?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 380);
 };
 
-function Group({ g, gi, k }) {
+function Group({ g, gi, k }: { g: Group; gi: number; k: string }) {
   const [name, lede, items] = g;
   const hit = has(k);
-  const hits = items.map((it, i) => [it, i]).filter(([it]) => hit(it));
+  const hits = items.map((it, i): [Control, number] => [it, i]).filter(([it]) => hit(it));
   return (
     <li className={'xtr-grp' + (k && !hits.length ? ' miss' : '')}>
       <span className="xtr-grp-n" aria-hidden="true">{pad(gi)}</span>
@@ -310,7 +315,7 @@ function Group({ g, gi, k }) {
             </article>
           ))}
         </DetailSheet>
-        <h2 className="xtr-grp-t" onClick={() => document.querySelector('.xtr-g-btn-' + gi)?.click()}>{name}</h2>
+        <h2 className="xtr-grp-t" onClick={() => document.querySelector<HTMLElement>('.xtr-g-btn-' + gi)?.click()}>{name}</h2>
         </div>
         <p className="xtr-grp-l">{lede}</p>
         {!k && (
@@ -340,17 +345,17 @@ function Group({ g, gi, k }) {
 /* the idle moment: once the search is 60% in view it types the placeholder's first example, lets the answer and the
    count settle, then clears. It stops for good the moment the reader touches the field; reduced motion never runs it. */
 const DEMO = 'PKCE';
-function useDemo(box) {
+function useDemo(box: RefObject<HTMLElement | null>) {
   const seen = useInView(box, { once: true, amount: 0.6 });
   const calm = useCalm();
   const [demo, setDemo] = useState('');
   const [typing, setTyping] = useState(false);
-  const timers = useRef([]);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const done = useRef(false);
   useEffect(() => {
     if (!seen || calm || done.current) return;
     done.current = true;
-    const at = (ms, f) => timers.current.push(setTimeout(f, ms));
+    const at = (ms: number, f: () => void) => timers.current.push(setTimeout(f, ms));
     let t = 400;
     at(t, () => setTyping(true));
     for (let i = 1; i <= DEMO.length; i++) { t += 150; at(t, () => setDemo(DEMO.slice(0, i))); }
@@ -360,12 +365,12 @@ function useDemo(box) {
   }, [seen, calm]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
   const stop = () => { done.current = true; timers.current.forEach(clearTimeout); setTyping(false); setDemo(''); };
-  return [demo, typing, stop];
+  return [demo, typing, stop] as const;
 }
 
 function Controls() {
   const [q, setQ] = useState('');
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const [demo, typing, stop] = useDemo(box);
   const k = (q || demo).trim().toLowerCase();
   const n = k ? ALL.filter(has(k)).length : ALL.length;
@@ -398,7 +403,7 @@ function Controls() {
 }
 
 /* ---------- where we stand: the first email, answered ---------- */
-const FACTS = [
+const FACTS: [string, ReactNode][] = [
   ['Frameworks.', <>Our controls are built to be compatible with SOC 2, and we audit them continually. The audit report is available upon request — ask and it comes back, no questionnaire first. If your review runs on a named framework, the fourth card above is how that conversation starts.</>],
   ['FIPS:', <>our code implements published standards, ML-KEM and ML-DSA among them, but implementing a standard is not the same as holding a validation, and a 140-3 validation belongs to the vendor of a module rather than to us. Nor do we run one today: signing happens in our own process, not inside an external module. If your deployment requires validated hardware custody, tell us and we will scope it with you rather than imply you already have it.</>],
   ['Passkeys.', <>Passkey credentials can be stored and managed, but <b>a passkey cannot complete a sign-in</b> — the assertion ceremony is not in the build running today, so the login screen does not offer it, which is the only honest thing a login screen can do about a method the server cannot yet perform. Second factors that do work: an authenticator app, SMS, and email, with recovery codes.</>],
@@ -406,7 +411,7 @@ const FACTS = [
 ];
 
 /* one segment of the stage's progress rail: it fills as you scroll through its stance (transform only) */
-function Seg({ p, i }) {
+function Seg({ p, i }: { p: MotionValue<number>; i: number }) {
   const s = useTransform(p, [i / 4, (i + 1) / 4], [0, 1]);
   return <i><motion.b style={{ scaleX: s }} /></i>;
 }
@@ -415,8 +420,8 @@ function Seg({ p, i }) {
    focus on the stage at a time, its name lit in the list. On phones it is an accordion, one open at a time; the closed
    bodies stay in the HTML as hidden="until-found", so find-in-page opens them. */
 function Facts() {
-  const ref = useRef(null);
-  const bodies = useRef([]);
+  const ref = useRef<HTMLElement>(null);
+  const bodies = useRef<(HTMLElement | null)[]>([]);
   const wide = useMedia(WIDE, false);
   const calm = useCalm();
   const [at, setAt] = useState(0); // the stance in focus on the stage
@@ -434,10 +439,11 @@ function Facts() {
     const offs = bodies.current.map((el, i) => { const f = () => setOpen(i); el?.addEventListener('beforematch', f); return () => el?.removeEventListener('beforematch', f); });
     return () => offs.forEach((f) => f());
   }, []);
-  const go = (i) => {
+  const go = (i: number) => {
     if (!wide) { setOpen((o) => (o === i ? -1 : i)); return; }
     setAt(i);
     const el = ref.current;
+    if (!el) return;
     const y = el.getBoundingClientRect().top + scrollY + (el.offsetHeight - innerHeight) * ((i + 0.5) / 4);
     if (window.__lenis) window.__lenis.scrollTo(y, calm ? { immediate: true } : { duration: 0.5 });
     else scrollTo({ top: y, behavior: calm ? 'auto' : 'smooth' });

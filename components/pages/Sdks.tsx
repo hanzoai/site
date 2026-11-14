@@ -9,7 +9,9 @@
    between the OpenAI and Anthropic dialects by itself (until you take over), and only the lines that change between
    them are re-set, so the difference reads at a glance (base URL, header, max_tokens). Every sample is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, PointerEvent as RPointerEvent, RefObject } from 'react';
 import { motion, AnimatePresence, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useVelocity, useTransform, useSpring } from 'motion/react';
+import type { MotionStyle } from 'motion/react';
 import { EASE, Copy } from '../ui';
 import { A, Cta, More } from '../kit';
 import NoJs from '../NoJs';
@@ -18,7 +20,7 @@ import './Sdks.css';
 
 /* The h1's line mask, a page-local copy of v2/A2Lines that reads reduced motion only after hydration (so the server
    and client markup match); with JS off the NoJs rule sets every line in place. */
-function H1Lines({ lines, id, className }) {
+function H1Lines({ lines, id, className }: { lines: string[]; id?: string; className?: string }) {
   const rm = useReducedMotion();
   const [calm, setCalm] = useState(false);
   useEffect(() => setCalm(!!rm), [rm]);
@@ -38,7 +40,7 @@ function H1Lines({ lines, id, className }) {
 }
 
 /* A section head in the v2 grammar. */
-function Head({ kicker, title, lede, id, dark }) {
+function Head({ kicker, title, lede, id, dark }: { kicker: string; title: string; lede?: string; id?: string; dark?: boolean }) {
   return (
     <header className={'xsd-head' + (dark ? ' dark' : '')}>
       <p className="a2-kick">{kicker}</p>
@@ -48,8 +50,13 @@ function Head({ kicker, title, lede, id, dark }) {
   );
 }
 
-const LANGS = [['python', '🐍', 'Python'], ['typescript', '📘', 'TypeScript'], ['curl', '🔗', 'cURL']];
-const DIALECTS = {
+type Dia = 'openai' | 'anthropic';
+type Lang = 'python' | 'typescript' | 'curl';
+/* a sample: its caption and its code */
+type Sample = [string, string];
+type Dialect = { name: string; title: string; line: string; url: string } & Record<Lang, Sample>;
+const LANGS = [['python', '🐍', 'Python'], ['typescript', '📘', 'TypeScript'], ['curl', '🔗', 'cURL']] as const;
+const DIALECTS: Record<Dia, Dialect> = {
   openai: {
     name: 'OpenAI', title: 'Use the OpenAI SDK', line: 'POST /v1/chat/completions — identical request/response to OpenAI Chat Completions.', url: 'POST https://api.hanzo.ai/v1/chat/completions',
     python: ['Point the official OpenAI SDK at the Hanzo gateway.', `from openai import OpenAI
@@ -126,7 +133,7 @@ console.log(msg.content[0].text);`],
 const PROMPT = 'Read https://hanzo.ai/skill.md and use Hanzo SDKs in my project.';
 const D = 'https://docs.hanzo.ai/docs/sdks';
 // [name, registry, install, package, package link, docs]
-const OFFICIAL = [
+const OFFICIAL: [string, string, string, string, string, string | null][] = [
   ['Python', 'PyPI', 'pip install hanzoai', 'hanzoai', 'https://pypi.org/project/hanzoai/', D + '/python'],
   ['Go', 'Go Modules', 'go get github.com/hanzoai/go-sdk', 'github.com/hanzoai/go-sdk', 'https://pkg.go.dev/github.com/hanzoai/go-sdk', D + '/go'],
   ['TypeScript', 'npm', 'npm install @hanzo/sdk', '@hanzo/sdk', 'https://www.npmjs.com/package/@hanzo/sdk', null],
@@ -135,7 +142,7 @@ const OFFICIAL = [
   ['Kotlin', 'JitPack', 'implementation("com.github.hanzo-kt:sdk:v8.0.0")', 'hanzo-kt/sdk', 'https://github.com/hanzo-kt/sdk', D + '/kotlin'],
 ];
 // [language, flagship, org, install, sdk repo, docs repo, ai library]
-const ORGS = [
+const ORGS: [string, boolean, string, string, string, string, string | null][] = [
   ['Python', true, 'hanzo-py', 'pip install hanzoai', 'hanzo-py/sdk', 'hanzoai/python-sdk', 'hanzo'],
   ['Go', false, 'hanzo-go', 'go get github.com/hanzoai/go-sdk', 'hanzo-go/sdk', 'hanzoai/go-sdk', null],
   ['TypeScript', false, 'hanzo-js', 'npm install @hanzo/sdk', 'hanzo-js/sdk', 'hanzoai/js-sdk', '@hanzo/ai'],
@@ -143,7 +150,7 @@ const ORGS = [
   ['Swift', false, 'hanzo-swift', '.package(url: "https://github.com/hanzo-swift/sdk")', 'hanzo-swift/sdk', 'hanzoai/swift-sdk', null],
   ['Kotlin', false, 'hanzo-kt', 'implementation("com.github.hanzo-kt:sdk:v8.0.0")', 'hanzo-kt/sdk', 'hanzoai/kotlin-sdk', null],
 ];
-const AI = [
+const AI: [string, string, string, string][] = [
   ['Python', 'hanzoai/python-sdk', 'pip install hanzo', 'Flagship — the most complete AI + agents library.'],
   ['Node', 'hanzo-js/ai', 'npm install @hanzo/ai', 'Models, agents, tools, memory, and MCP for TypeScript.'],
   ['Rust', 'hanzo-rs/sdk', 'cargo add hanzo', 'The AI + agents crate for Rust — crypto, DID, MCP, agents, embeddings, feature-gated.'],
@@ -151,19 +158,19 @@ const AI = [
 const MODS = ['lz4/v4', 'openai', 'openrouter', 'sdk', 'sendgrid', 'age', 'agent', 'base-ha', 'builder', 'cd', 'cek', 'ci', 'cpy3', 'csqlite', 'dashscope-go-sdk', 'dashscopego', 'dbx', 'egress', 'finance', 'flags', 'framework', 'gochimp3', 'graph', 'grpc-web', 'ingress-parser', 'insights-go', 'kafka', 'kms-operator', 'livekit', 'log', 'ltx', 'namespace', 'notify', 'o11y-foundry', 'onnxgo', 'orm', 'otel-collector', 'pdf', 'proto', 'pubsub-go', 'replicate', 'search-go', 'sqlcipher', 'sqlite', 'sqlite-vec', 'tygoja', 'vfs', 'xorm', 'yaegi', 'zip'];
 
 // a light pass of colour: comments and strings, nothing that could change the text
-function Code({ text }) {
+function Code({ text }: { text: string }) {
   return text.split(/("(?:[^"\\]|\\.)*"|#[^\n]*|\/\/[^\n]*)/).map((p, i) => (p.startsWith('"') ? <span key={i} className="xsd-s">{p}</span> : /^(#|\/\/)/.test(p) ? <span key={i} className="xsd-c">{p}</span> : p));
 }
 
 /* The console. A line that is the same in both dialects stays put; a line that differs is set again. */
 function Console() {
-  const [dia, setDia] = useState('openai');
-  const [lang, setLang] = useState('python');
+  const [dia, setDia] = useState<Dia>('openai');
+  const [lang, setLang] = useState<Lang>('python');
   const [mine, setMine] = useState(false);
-  const prev = useRef({ dia: 'openai', lang: 'python' });
+  const prev = useRef<{ dia: Dia; lang: Lang }>({ dia: 'openai', lang: 'python' });
   const first = useRef(true);
   const calm = useReducedMotion();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.4 });
   useEffect(() => {
     if (mine || calm || !seen) return;
@@ -180,7 +187,7 @@ function Console() {
     <div className="xsd-con" ref={ref}>
       <div className="xsd-con-top">
         <div className="xsd-dia" role="tablist" aria-label="Dialect">
-          {Object.entries(DIALECTS).map(([k, v]) => (
+          {(Object.entries(DIALECTS) as [Dia, Dialect][]).map(([k, v]) => (
             <button key={k} type="button" role="tab" aria-selected={dia === k} onClick={() => { setDia(k); setMine(true); }}>
               {dia === k && <motion.span layoutId="xsd-dia" className="xsd-dia-bg" transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />}
               <span>{v.name}</span>
@@ -204,7 +211,7 @@ function Console() {
       <pre key={lang} className="xsd-pre"><code>
         {code.split('\n').map((l, i) => {
           const changed = sameLang && !was.has(l);
-          return <span key={changed ? dia + lang + i : 'k' + lang + i + l} className={'xsd-l' + (changed ? ' chg' : '')} style={{ '--d': (i % 6) * 0.03 + 's' }}><Code text={l || ' '} />{'\n'}</span>;
+          return <span key={changed ? dia + lang + i : 'k' + lang + i + l} className={'xsd-l' + (changed ? ' chg' : '')} style={{ '--d': (i % 6) * 0.03 + 's' } as CSSProperties}><Code text={l || ' '} />{'\n'}</span>;
         })}
       </code></pre>
       <p className="xsd-cap">{cap}</p>
@@ -254,7 +261,7 @@ function Hero() {
 }
 
 /* Hanzo's "Paste and ship" strip (the shared A2Paste markup and styles, page-local so the prompt is one whole line) */
-function Paste({ text }) {
+function Paste({ text }: { text: string }) {
   return (
     <section className="a2-wrap a2-paste" aria-label="Paste and ship">
       <div>
@@ -273,17 +280,18 @@ function Paste({ text }) {
    hand-written AI + Agents library, and your application. It lifts apart into floating layers in 3D when it reaches
    the screen and closes again when it leaves; drag sideways across it (or swipe) to peel and close it by hand, and
    pick a layer to have it rise out of the stack and explain itself. */
-const STACK = [
+interface Layer { k: string; name: string; sub: string; glyph?: string; chips: string[] }
+const STACK: Layer[] = [
   { k: 'doc', name: 'OpenAPI', sub: 'operation ids', chips: ['models', 'agents', 'data', 'compute', 'network', 'security', 'platform', 'chain'] },
   { k: 'cloud', name: 'Full Cloud SDK', sub: 'hanzo-<lang>/sdk', glyph: '{ }', chips: ['Python', 'Go', 'TypeScript', 'Rust', 'Swift', 'Kotlin'] },
   { k: 'ai', name: 'AI + Agents', sub: 'hanzo · @hanzo/ai', glyph: '✦', chips: ['models', 'agents', 'tools', 'memory', 'MCP'] },
   { k: 'app', name: 'your application', sub: 'pip install hanzoai', chips: [] },
 ];
-const PEEL_EASE = [0.4, 0, 0.2, 1];
+const PEEL_EASE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 
 function Peel() {
-  const ref = useRef(null);
-  const scene = useRef(null);
+  const ref = useRef<HTMLElement>(null);
+  const scene = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.45 });
   const rm = useReducedMotion();
   const [calm, setCalm] = useState(false); // read after hydration, so server and client markup match
@@ -293,9 +301,9 @@ function Peel() {
   const [sel, setSel] = useState(1);
   const [mine, setMine] = useState(false); // the first touch takes over for good
   const [step, setStep] = useState(0);
-  const grab = useRef(null);
+  const grab = useRef<{ x: number; o: number; moved: boolean } | null>(null);
   useMotionValueEvent(o, 'change', (v) => setOpen(v > 0.5));
-  const to = (v, d = 0.9) => (calm ? o.set(v) : animate(o, v, { duration: d, ease: PEEL_EASE }));
+  const to = (v: number, d = 0.9) => (calm ? o.set(v) : animate(o, v, { duration: d, ease: PEEL_EASE }));
   // the stack lifts apart as it reaches the screen and closes again as it leaves, until the visitor takes over
   useEffect(() => { if (calm) { o.set(1); return; } if (!mine) to(seen ? 1 : 0); }, [seen, calm, mine]); // eslint-disable-line react-hooks/exhaustive-deps
   // once open, it walks its layers once from the bottom up, each rising out of the stack in turn
@@ -304,23 +312,23 @@ function Peel() {
     const t = setTimeout(() => { setSel(step); setStep(step + 1); }, step ? 1700 : 1000);
     return () => clearTimeout(t);
   }, [seen, mine, calm, step]);
-  const pick = (i) => { setMine(true); setSel(i); if (o.get() < 0.5) to(1, 0.5); };
-  const down = (e) => { if (e.button) return; grab.current = { x: e.clientX, o: o.get(), moved: false }; };
-  const move = (e) => {
+  const pick = (i: number) => { setMine(true); setSel(i); if (o.get() < 0.5) to(1, 0.5); };
+  const down = (e: RPointerEvent<HTMLDivElement>) => { if (e.button) return; grab.current = { x: e.clientX, o: o.get(), moved: false }; };
+  const move = (e: RPointerEvent<HTMLDivElement>) => {
     const g = grab.current;
     if (!g) return;
     const dx = e.clientX - g.x;
     if (!g.moved && Math.abs(dx) < 6) return;
     if (!g.moved) { g.moved = true; setMine(true); o.stop(); scene.current?.setPointerCapture?.(e.pointerId); }
-    o.set(Math.min(1, Math.max(0, g.o + dx / (scene.current?.offsetWidth * 0.55 || 300))));
+    o.set(Math.min(1, Math.max(0, g.o + dx / ((scene.current?.offsetWidth ?? 0) * 0.55 || 300))));
   };
-  const up = (e) => {
+  const up = (e: RPointerEvent<HTMLDivElement>) => {
     const g = grab.current;
     grab.current = null;
     if (!g) return;
     if (g.moved) { to(o.get() > 0.5 ? 1 : 0, 0.4); return; }
-    const hit = e.target.closest?.('[data-layer]');
-    if (hit) pick(+hit.dataset.layer);
+    const hit = (e.target as Element).closest?.('[data-layer]') as HTMLElement | null | undefined;
+    if (hit) pick(+(hit.dataset.layer ?? 0));
   };
   return (
     <section className="xsd-peel" aria-label="The SDK stack" ref={ref}>
@@ -328,9 +336,9 @@ function Peel() {
       <div className="a2-wrap a2-grid xsd-peel-grid">
         <div className="xsd-peel-stage">
           <div className={'xsd-peel-scene' + (calm ? ' calm' : '')} ref={scene} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={() => { grab.current = null; }} aria-hidden="true">
-            <motion.div className="xsd-peel-stack" style={{ '--o': o }}>
+            <motion.div className="xsd-peel-stack" style={{ '--o': o } as MotionStyle}>
               {STACK.map((l, i) => (
-                <div key={l.k} className={'xsd-plate p' + i + (sel === i ? ' on' : '')} style={{ '--i': i }} data-layer={i}>
+                <div key={l.k} className={'xsd-plate p' + i + (sel === i ? ' on' : '')} style={{ '--i': i } as CSSProperties} data-layer={i}>
                   <div className="xsd-plate-f">
                     <span className="xsd-plate-n x-mono">{String(i + 1).padStart(2, '0')}</span>
                     {l.chips.length > 0 && <span className="xsd-plate-c">{l.chips.map((c) => <em key={c}>{c}</em>)}</span>}
@@ -386,11 +394,11 @@ function Peel() {
 
 function Official() {
   const [k, setK0] = useState(0);
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { amount: 0.4 });
   const calm = useReducedMotion();
   const [mine, setMine] = useState(false); // the first touch takes over for good
-  const setK = (v) => { setMine(true); setK0(v); };
+  const setK = (v: number) => { setMine(true); setK0(v); };
   // scroll-tilt: the picker leans back on rotateX with the speed of the scroll and levels out when it stops
   const [tiltOn, setTiltOn] = useState(false); // after hydration and only when motion is welcome
   useEffect(() => setTiltOn(!calm), [calm]);
@@ -448,7 +456,7 @@ function Orgs() {
         <div className="xsd-table" data-enter="fold-out" role="table" aria-label="Per-language orgs">
           <div className="xsd-tr xsd-th" role="row">{['Language', 'Org', 'Install', 'sdk', 'docs', 'ai'].map((h) => <span key={h} role="columnheader">{h}</span>)}</div>
           {ORGS.map(([l, flag, org, cmd, sdk, docs, ai], i) => (
-            <div key={l} className="xsd-row" style={{ '--i': i }}>
+            <div key={l} className="xsd-row" style={{ '--i': i } as CSSProperties}>
               <a href={'https://github.com/' + org} target="_blank" rel="noopener noreferrer" className="xsd-tr" role="row">
                 <span role="cell" className="xsd-lang"><b>{l}</b>{flag && <em>Flagship</em>}<em className="ga">GA</em></span>
                 <span role="cell" className="x-mono">{org}</span>
@@ -489,13 +497,13 @@ function Flagship() {
 function Mods() {
   const [q, setQ] = useState('');
   const [ghost, setGhost] = useState(''); // the word the field has just typed by itself: its modules light in the wall
-  const ph = useRef(null);
-  const box = useRef(null);
+  const ph = useRef<HTMLSpanElement>(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   useEffect(() => {
     if (!seen || calm || q) return;
-    let i = 0, c = 0, dir = 1, t = 0;
+    let i = 0, c = 0, dir = 1, t: ReturnType<typeof setTimeout> | undefined;
     const tick = () => {
       const w = MODS[i];
       c += dir;
@@ -548,14 +556,14 @@ function Close() {
    page-local. One observer marks each [data-enter] once with data-in when a quarter of it (or of the screen) is in view;
    Sdks.css plays the entrance it names. Start states live in the CSS under html.js and prefers-reduced-motion:
    no-preference, so the server markup is final and JS off or reduced motion show everything at rest. ---------- */
-function useEnter(root) {
+function useEnter(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
-    const els = [...(root.current?.querySelectorAll('[data-enter]') || [])];
+    const els = [...(root.current?.querySelectorAll<HTMLElement>('[data-enter]') || [])];
     if (typeof IntersectionObserver === 'undefined') { els.forEach((el) => { el.dataset.in = ''; }); return; }
-    const timers = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting || (e.intersectionRatio < 0.25 && e.intersectionRect.height < innerHeight * 0.25)) return;
-      const el = e.target;
+      const el = e.target as HTMLElement;
       el.dataset.in = '';
       io.unobserve(el);
       timers.push(setTimeout(() => { el.dataset.done = ''; }, 1800));
@@ -566,7 +574,7 @@ function useEnter(root) {
 }
 
 export default function Sdks() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useEnter(root);
   return (
     <main ref={root} className="a2 xsd">

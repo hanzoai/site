@@ -9,8 +9,8 @@
 import { useEffect, useRef, useState } from 'react';
 
 export function useEnter(amount = 0.2) {
-  const ref = useRef(null);
-  const [state, setState] = useState('done');
+  const ref = useRef<HTMLDivElement>(null);
+  const [state, setState] = useState<'done' | 'wait' | 'in'>('done');
   useEffect(() => {
     const el = ref.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
@@ -25,5 +25,5 @@ export function useEnter(amount = 0.2) {
     io.observe(el.closest('section') || el); // the section, not the element: a clip-path hidden pose (the iris) has no area to intersect
     return () => io.disconnect();
   }, [amount]);
-  return [ref, state];
+  return [ref, state] as const;
 }

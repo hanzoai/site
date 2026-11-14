@@ -22,7 +22,9 @@
    Colour: none of our own (MASTER.md 3.1); organizations differ by their contour, figures and repositories.
    V2: 8/10 v6: a light, full-width year strip as the hero object (its own face: no black card, no pinned chapters, no dark close), each figure said once with the forge's shares drawn from Hanzo's numbers, zeros in a small line, repositories as numbered rows (72px on phones), siblings named by id, a quiet close with the contour and the ask.; slice D: the two text links ("On Hanzo Forge", "Every organization") draw a rule and nudge their arrow on hover, one rule only */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { ComponentType, CSSProperties, ReactNode } from 'react';
 import { motion, AnimatePresence, LayoutGroup, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import type { MotionStyle, Transition } from 'motion/react';
 import useCalm from '../../v2/useCalm';
 import NoJs from '../../NoJs';
 import { Copy, Magnetic } from '../../ui';
@@ -33,13 +35,18 @@ import FamLines from '../../v2/FamLines';
 import FamNext from '../../v2/FamNext';
 import FamGrow from '../../v2/FamGrow';
 import { ui } from '../../v2/famUi';
+import type { Figure, OrgDoc, RepoRow } from './types.ts';
 import './oss.css';
 
-const n0 = (v) => (v == null ? '—' : v.toLocaleString('en-US'));
-const num = (s) => { const v = parseFloat(String(s).replace(/,/g, '')); return Number.isFinite(v) ? v : 0; };
+/* a repository row: the captured ones, and the rest of the organization read from GitHub in the browser */
+type Row = RepoRow & { i: number };
+interface GhRepo { fork: boolean; full_name: string; html_url: string; language: string | null; stargazers_count: number; forks_count: number; description: string | null; pushed_at: string | null }
+
+const n0 = (v: number | null | undefined) => (v == null ? '—' : v.toLocaleString('en-US'));
+const num = (s: string) => { const v = parseFloat(String(s).replace(/,/g, '')); return Number.isFinite(v) ? v : 0; };
 const PAGE = 11;
-const MORPH = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // the open: 600 ms in-out, no spring (MASTER.md 3.1)
-const GLIDE = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
+const MORPH: Transition = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // the open: 600 ms in-out, no spring (MASTER.md 3.1)
+const GLIDE: Transition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
 
 /* icons: Hanzo's page names stars and forks in its own aria-labels ("3 stars", "0 forks") */
 function Star() { return <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 1.8l1.8 3.9 4.2.5-3.1 2.9.8 4.2L8 11.2l-3.7 2.1.8-4.2L2 6.2l4.2-.5z" fill="currentColor" /></svg>; }
@@ -49,14 +56,14 @@ function Bars() { return <svg viewBox="0 0 16 16" width="15" height="15" aria-hi
 function Grid() { return <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M3 3h4v4H3zM9 3h4v4H9zM3 9h4v4H3zM9 9h4v4H9z" fill="none" stroke="currentColor" strokeWidth="1.3" /></svg>; }
 function Out() { return <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M5.5 3.5h7v7M12.5 3.5 4 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
 function Arrow() { return <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>; }
-const SORTS = [['listed', 'oss_sort_pushed', Clock], ['stars', 'oss_sort_stars', Star], ['commits', 'oss_sort_commits', Bars]];
+const SORTS: [string, string, ComponentType][] = [['listed', 'oss_sort_pushed', Clock], ['stars', 'oss_sort_stars', Star], ['commits', 'oss_sort_commits', Bars]];
 
 /* a year of commits, month by month: bars that rise once; a playhead reads them where the page wants life */
-function Wave({ bars, label = 'Commits a month over the past year', className = '', play }) {
+function Wave({ bars, label = 'Commits a month over the past year', className = '', play }: { bars?: number[] | null; label?: string; className?: string; play?: boolean }) {
   if (!bars || !bars.length) return null;
   return (
-    <div className={'xos-wave ' + className + (play ? ' play' : '')} role="img" aria-label={label} style={{ '--n': bars.length }}>
-      {bars.map((h, k) => <i key={k} style={{ '--h': Math.max(0.03, h / 100), '--k': k }} />)}
+    <div className={'xos-wave ' + className + (play ? ' play' : '')} role="img" aria-label={label} style={{ '--n': bars.length } as CSSProperties}>
+      {bars.map((h, k) => <i key={k} style={{ '--h': Math.max(0.03, h / 100), '--k': k } as CSSProperties} />)}
       <b aria-hidden="true" />
     </div>
   );
@@ -65,37 +72,37 @@ function Wave({ bars, label = 'Commits a month over the past year', className = 
 /* "hanzoai/ui": the organization faint, the repository as the name */
 /* a repository's name: the real text is one piece ("org/repo", Hanzo's own line); the two-tone look (the org part
    muted) is a visual-only copy laid over it, aria-hidden, so the page's text stays exactly Hanzo's */
-function Name({ name }) {
+function Name({ name }: { name: string }) {
   const k = name.indexOf('/');
   if (k < 0) return <>{name}</>;
   return <span className="xos-nm"><span className="xos-nm-t">{name}</span><span className="xos-nm-v" aria-hidden="true"><span className="xos-org">{name.slice(0, k + 1)}</span>{name.slice(k + 1)}</span></span>;
 }
 /* "2,107 commits this year": the figure, then Hanzo's words after it */
-function Split({ s }) {
+function Split({ s }: { s?: string | null }) {
   const m = /^([\d,.]+)\s+(.*)$/.exec(s || '');
   return m ? <><b className="v2f-num">{m[1]}</b><span>{m[2]}</span></> : <span>{s}</span>;
 }
 
 /* the open card: one repository at full size, with its clone command */
-function Card({ r, onClose }) {
-  const [src, setSrc] = useState(r.href ? 'gh' : 'forge');
-  const close = useRef(null);
+function Card({ r, onClose }: { r: Row; onClose: () => void }) {
+  const [src, setSrc] = useState<'gh' | 'forge'>(r.href ? 'gh' : 'forge');
+  const close = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    const back = document.activeElement;
+    const back = document.activeElement as HTMLElement | null;
     const html = document.documentElement;
     html.classList.add('x-lock');
     window.__lenis && window.__lenis.stop();
     close.current && close.current.focus({ preventScroll: true });
     // Esc closes; Tab and Shift+Tab stay inside the card (a modal keeps focus until it is closed)
-    const esc = (e) => {
+    const esc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { onClose(); return; }
       if (e.key !== 'Tab') return;
-      const box = document.querySelector('.xos-card');
-      const f = box ? [...box.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter((el) => el.offsetParent !== null) : [];
+      const box = document.querySelector<HTMLElement>('.xos-card');
+      const f = box ? [...box.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter((el) => el.offsetParent !== null) : [];
       if (!f.length) return;
       const [first, last] = [f[0], f[f.length - 1]];
-      if (e.shiftKey && (document.activeElement === first || !box.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && (document.activeElement === last || !box.contains(document.activeElement))) { e.preventDefault(); first.focus(); }
+      if (e.shiftKey && (document.activeElement === first || !box?.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (document.activeElement === last || !box?.contains(document.activeElement))) { e.preventDefault(); first.focus(); }
     };
     addEventListener('keydown', esc);
     return () => {
@@ -103,8 +110,8 @@ function Card({ r, onClose }) {
       html.classList.remove('x-lock');
       window.__lenis && window.__lenis.start();
       // focus goes back to the row that opened the card (found by its name: the row may have re-rendered meanwhile)
-      const row = document.querySelector('.xos-open[data-row="' + CSS.escape(r.name) + '"]');
-      (row || back) && (row || back).focus && (row || back).focus({ preventScroll: true });
+      const row = document.querySelector<HTMLElement>('.xos-open[data-row="' + CSS.escape(r.name) + '"]');
+      (row || back)?.focus?.({ preventScroll: true });
     };
   }, [onClose, r.name]);
   const url = src === 'gh' ? r.href : r.forge;
@@ -139,7 +146,7 @@ function Card({ r, onClose }) {
                   /* the pill is placed by CSS, so it never slides in while the card opens */
                   <div className="xos-src" role="group" aria-label={ui('oss_clone_from')} data-at={src}>
                     <span className="xos-src-bg" aria-hidden="true" />
-                    {[['gh', 'GitHub'], ['forge', 'Hanzo Forge']].map(([k, t]) => (
+                    {([['gh', 'GitHub'], ['forge', 'Hanzo Forge']] as const).map(([k, t]) => (
                       <button key={k} type="button" aria-pressed={src === k} onClick={() => setSrc(k)}><span>{t}</span></button>
                     ))}
                   </div>
@@ -160,16 +167,16 @@ function Card({ r, onClose }) {
 
 /* the figures, each once: the lead (the strongest true figure, never a zero) goes on the strip; GitHub's others in a
    small row; the forge's own in rows. A forge figure that only restates the lead is not repeated. */
-function figures(doc) {
+function figures(doc: OrgDoc) {
   const [gh, forge] = [doc.counts.find((c) => /GitHub/.test(c.title)), doc.counts.find((c) => /Forge/.test(c.title))];
   const all = doc.counts.flatMap((c) => c.figures);
-  const pick = (re) => all.find((f) => re.test(f.label) && f.n > 0);
+  const pick = (re: RegExp) => all.find((f) => re.test(f.label) && f.n > 0);
   const lead = pick(/^commits/) || pick(/^public repositories/) || pick(/^repositories/) || all.find((f) => f.n > 0) || all[0];
   return { gh, forge, lead };
 }
 
 /* the hero object: the year, laid flat across the page */
-function Year({ doc, lead }) {
+function Year({ doc, lead }: { doc: OrgDoc; lead?: Figure }) {
   const when = doc.counts[0] && doc.counts[0].notes[0] ? doc.counts[0].notes[0].replace(/^.*read from /, '') : '';
   const names = doc.repos ? doc.repos.items.slice(0, 16).map((r) => r.name) : [];
   const live = doc.spark && doc.spark.some((v) => v > 0);
@@ -181,7 +188,7 @@ function Year({ doc, lead }) {
         <div className="xos-lead">
           <FamGrow to={1.25}>
             <b className="v2f-num v2f-fig xos-dgs" aria-label={lead.value}>
-              {[...lead.value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i }}>{c}</span></span>)}
+              {[...lead.value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i } as CSSProperties}>{c}</span></span>)}
             </b>
           </FamGrow>
           <span className="xos-lead-l">{lead.label}</span>
@@ -190,7 +197,7 @@ function Year({ doc, lead }) {
       {live
         ? <Wave bars={doc.spark} className="xos-year-w" play />
         : names.length > 0 && (
-          <div className="xos-tick" aria-hidden="true" style={{ '--n': names.length }}>
+          <div className="xos-tick" aria-hidden="true" style={{ '--n': names.length } as CSSProperties}>
             <div className="xos-tick-r">{[0, 1].map((k) => <span key={k}>{names.map((n) => <i key={n}>{n}</i>)}</span>)}</div>
           </div>
         )}
@@ -199,26 +206,26 @@ function Year({ doc, lead }) {
 }
 
 /* a figure whose digits rise out of their masks (the same move as the lead), held until its section arrives */
-function Digits({ value, className = '' }) {
+function Digits({ value, className = '' }: { value: string; className?: string }) {
   return (
     <b className={'xos-dgs ' + className} aria-label={value}>
-      {[...value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i }}>{c}</span></span>)}
+      {[...value].map((c, i) => <span key={i} className="xos-dg" aria-hidden="true"><span style={{ '--i': i } as CSSProperties}>{c}</span></span>)}
     </b>
   );
 }
 /* data-in on a section once a fifth of it is on screen: its held arrivals (digits, rows) play then, once */
-function useArrive(amount = 0.2) {
-  const ref = useRef(null);
+function useArrive<T extends HTMLElement = HTMLDivElement>(amount = 0.2) {
+  const ref = useRef<T>(null);
   const seen = useInView(ref, { once: true, amount });
-  return [ref, seen ? '' : undefined];
+  return [ref, seen ? '' : undefined] as const;
 }
 /* with scripts off every held arrival shows at rest */
 const NOJS = '.xos .xos-dg>span,.xos .xos-list>li{animation:none!important;transform:none!important;opacity:1!important}';
 
 /* one goes out as the next comes in: as you scroll on, the year strip settles back (a little smaller, lifting away)
    while the counted figures rise under it. Scroll-linked, transform only; still under reduced motion. */
-function Recede({ children }) {
-  const ref = useRef(null);
+function Recede({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start 0.35', 'end start'] });
   const scale = useTransform(p, [0, 1], [1, 0.9]);
@@ -228,23 +235,23 @@ function Recede({ children }) {
 }
 
 /* a share, drawn from two of Hanzo's own figures */
-function Share({ part, of }) {
+function Share({ part, of }: { part: number; of: number }) {
   if (!(part > 0) || !(of > 0) || part > of) return null;
   return <span className="xos-share" aria-hidden="true"><i style={{ transform: `scaleX(${(part / of).toFixed(4)})` }} /></span>;
 }
 
-export default function OrgPage({ doc }) {
+export default function OrgPage({ doc }: { doc: OrgDoc }) {
   const calm = useReducedMotion();
   const [q, setQ] = useState('');
   const [sort, setSort] = useState('listed');
   const [lang, setLang] = useState('');
   const [all2, setAll2] = useState(false);
-  const [open, setOpen] = useState(null);
-  const [more, setMore] = useState({ state: 'idle', items: [] });
+  const [open, setOpen] = useState<string | null>(null);
+  const [more, setMore] = useState<{ state: 'idle' | 'loading' | 'done' | 'failed'; items: Row[] }>({ state: 'idle', items: [] });
   const R = doc.repos;
-  const all = useMemo(() => (R ? [...R.items.map((r, i) => ({ ...r, i })), ...more.items] : []), [R, more.items]);
+  const all = useMemo<Row[]>(() => (R ? [...R.items.map((r, i) => ({ ...r, i })), ...more.items] : []), [R, more.items]);
   const langs = useMemo(() => {
-    const n = {};
+    const n: Record<string, number> = {};
     all.forEach((r) => { if (r.lang) n[r.lang] = (n[r.lang] || 0) + 1; });
     return Object.keys(n).sort((a, b) => n[b] - n[a]);
   }, [all]);
@@ -259,19 +266,20 @@ export default function OrgPage({ doc }) {
   // "Show all": every listed repository, plus (where Hanzo offers it) the rest of the organization's public ones, read
   // from GitHub in the browser (forks left out, as Hanzo counts)
   const loadAll = async () => {
+    if (!R) return;
     setMore({ state: 'loading', items: [] });
     try {
-      const got = [];
+      const got: GhRepo[] = [];
       const pages = Math.min(10, Math.ceil(parseInt((R.total || '0').replace(/,/g, ''), 10) / 100) || 1);
       for (let p = 1; p <= pages; p++) {
         const res = await fetch(`https://api.github.com/orgs/${doc.org}/repos?per_page=100&sort=pushed&page=${p}`);
-        if (!res.ok) throw new Error(res.status);
-        const j = await res.json();
+        if (!res.ok) throw new Error(String(res.status));
+        const j = (await res.json()) as GhRepo[];
         got.push(...j);
         if (j.length < 100) break;
       }
       const have = new Set(R.items.map((r) => r.name));
-      const items = got.filter((g) => !g.fork && !have.has(g.full_name)).map((g, k) => ({
+      const items = got.filter((g) => !g.fork && !have.has(g.full_name)).map((g, k): Row => ({
         name: g.full_name, href: g.html_url, forge: null, lang: g.language, stars: g.stargazers_count, forks: g.forks_count, desc: g.description || '',
         pushed: g.pushed_at ? 'Pushed ' + new Date(g.pushed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null,
         commits: '', nCommits: 0, spark: null, i: R.items.length + k,
@@ -279,17 +287,17 @@ export default function OrgPage({ doc }) {
       setMore({ state: 'done', items });
     } catch { setMore({ state: 'failed', items: [] }); }
   };
-  const showAll = () => { setAll2(true); if (R.more && more.state === 'idle') loadAll(); };
+  const showAll = () => { setAll2(true); if (R?.more && more.state === 'idle') loadAll(); };
   const longest = Math.max(...doc.name.split(/\s+/).map((w) => w.length));
   const { gh: ghC, forge: forgeC, lead } = figures(doc);
   // GitHub's figures, minus the lead, in one small row; the forge's own, minus the lead, as rows (zeros in a line)
   const ghFigs = ghC ? ghC.figures.filter((f) => f !== lead) : [];
   const commits = doc.counts.flatMap((c) => c.figures).find((f) => /^commits/.test(f.label));
   // a forge figure that says the lead's number again ("11" public repositories, then "11" repositories) drops to the small line
-  const forgeFigs = forgeC ? forgeC.figures.filter((f) => f !== lead).map((f) => (lead && f.value === lead.value && f.n > 0 ? { ...f, again: true } : f)) : [];
+  const forgeFigs = forgeC ? forgeC.figures.filter((f) => f !== lead).map((f): Figure & { again?: boolean } => (lead && f.value === lead.value && f.n > 0 ? { ...f, again: true } : f)) : [];
   const forgeRows = forgeFigs.filter((f) => f.n > 0 && !f.again);
   const forgeZero = forgeFigs.filter((f) => !(f.n > 0) || f.again);
-  const shareOf = (f) => {
+  const shareOf = (f: Figure): [number, number] | null => {
     const m = /^repositories, ([\d,]+) of them private/.exec(f.label);
     if (m) return [num(m[1]), f.n];
     if (/^of those commits/.test(f.label) && commits) return [f.n, commits.n];
@@ -303,16 +311,16 @@ export default function OrgPage({ doc }) {
     meta: [o.org, o.repos && o.repos.value + ' ' + o.repos.label, o.commits && o.commits.n > 0 && o.commits.value + ' ' + o.commits.label.replace(/,.*$/, '')].filter(Boolean).join(' · '),
   }));
   const [gh, forge, every] = doc.links;
-  const [ghRef, ghIn] = useArrive();
-  const [fgRef, fgIn] = useArrive();
-  const [listRef, listIn] = useArrive(0.05);
+  const [ghRef, ghIn] = useArrive<HTMLDivElement>();
+  const [fgRef, fgIn] = useArrive<HTMLElement>();
+  const [listRef, listIn] = useArrive<HTMLOListElement>(0.05);
   const clear = () => { setQ(''); setLang(''); };
   return (
     <main className="v2f xos">
       <NoJs css={NOJS} />
       <section className="xos-hero" aria-labelledby="xos-h1">
         <div className="v2f-wrap v2f-grid xos-top">
-          <div className="xos-top-l" style={{ '--len': longest }}>
+          <div className="xos-top-l" style={{ '--len': longest } as CSSProperties}>
             <FamLines as="h1" id="xos-h1" text={doc.name} className="v2f-display xos-h1" settle={false} data-morph-target />
           </div>
           <div className="xos-top-r">
@@ -384,10 +392,10 @@ export default function OrgPage({ doc }) {
                     <input type="search" placeholder={R.search} aria-label={'Search the repositories of ' + doc.org} value={q} onChange={(e) => setQ(e.target.value)} />
                   </label>
                 )}
-                {R.items.length > 1 && all.some((r) => r.stars > 0 || r.nCommits > 0) && (
+                {R.items.length > 1 && all.some((r) => (r.stars ?? 0) > 0 || r.nCommits > 0) && (
                   <div className="xos-seg" role="group" aria-label={ui('oss_sort')}>
                     {/* a sort that would change nothing (no stars, or no commits this year, anywhere) is not offered */}
-                    {SORTS.filter(([k]) => k === 'listed' || all.some((r) => (k === 'stars' ? r.stars : r.nCommits) > 0)).map(([k, l, Icon]) => (
+                    {SORTS.filter(([k]) => k === 'listed' || all.some((r) => ((k === 'stars' ? r.stars : r.nCommits) ?? 0) > 0)).map(([k, l, Icon]) => (
                       <button key={k} type="button" aria-pressed={sort === k} aria-label={ui(l)} onClick={() => setSort(k)}>
                         {sort === k && <motion.span layoutId="xos-seg" className="xos-seg-bg" transition={GLIDE} />}
                         <span><Icon /></span>
@@ -410,7 +418,7 @@ export default function OrgPage({ doc }) {
             <LayoutGroup>
               <ol className="xos-list" ref={listRef} data-in={listIn}>
                 {[...vis, ...all.filter((r) => !hit.has(r.name))].map((r, k) => (
-                  <motion.li key={r.name} layout={calm || all.length > 80 ? false : 'position'} transition={GLIDE} hidden={!hit.has(r.name)} className={k === 0 && vis.length > 2 && paged ? 'lead' : ''} style={{ '--k': Math.min(k, 12) }}>
+                  <motion.li key={r.name} layout={calm || all.length > 80 ? false : 'position'} transition={GLIDE} hidden={!hit.has(r.name)} className={k === 0 && vis.length > 2 && paged ? 'lead' : ''} style={{ '--k': Math.min(k, 12) } as MotionStyle}>
                     <motion.div layoutId={'xos-' + r.name} className="xos-row" transition={MORPH}>
                       <span className="xos-no x-mono" aria-hidden="true">{String(k + 1).padStart(2, '0')}</span>
                       <div className="xos-row-m">

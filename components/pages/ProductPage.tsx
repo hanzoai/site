@@ -35,6 +35,7 @@
 // Signature: one console, many states: Hanzo's "Try it" and each sentence are steps of the same panel; the request types itself, then each step turns the pane into that sentence and slides the light onto the operations it names
 // Beyond: the paragraph points at the product: each sentence lights the operations it names in Hanzo's API table
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { KeyboardEvent as RKeyboardEvent, RefObject } from 'react';
 import { useInView, motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { Copy, Magnetic, useCalm } from '../ui';
@@ -46,33 +47,35 @@ import NoJs from '../NoJs';
 import { ui } from '../v2/famUi';
 import { useEnter } from './api/enter';
 import { play } from '../../lib/sound';
+import type { Child } from './CapturedTree.ts';
+import type { Peek, Product } from './ProductsTypes.ts';
 import '../v2/fam.css';
 import './ProductPage.css';
 
 const CPS = 110; // characters a second
 const READ = 3400; // how long the walk holds each sentence, ms
-const slugOf = (h) => h.replace(/\/$/, '').split('/').pop();
-const nn = (k) => String(k).padStart(2, '0');
+const slugOf = (h: string) => h.replace(/\/$/, '').split('/').pop() ?? '';
+const nn = (k: number) => String(k).padStart(2, '0');
 /* a path breaks only after a slash, never mid-word (no characters added: <wbr> only) */
-const wb = (path) => path.split('/').map((seg, i, a) => <span key={i}>{seg}{i < a.length - 1 ? <>/<wbr /></> : null}</span>);
+const wb = (path: string) => path.split('/').map((seg, i, a) => <span key={i}>{seg}{i < a.length - 1 ? <>/<wbr /></> : null}</span>);
 
 /* Hanzo's paragraph as sentences, and which of Hanzo's operations each one names (by the words they share) */
 const STOP = new Set('the and for its one org org’s org\'s own any that with from are can each every what who how when this they their them into than then also not but has have had was were will just same way does did out per'.split(' '));
-const stems = (t) => new Set((t.toLowerCase().match(/[a-z_]{3,}/g) || []).filter((w) => !STOP.has(w)).map((w) => w.slice(0, 5)));
-const split = (t) => t.split(/(?<=[.!?]["”’)]?)\s+(?=[A-Z“"‘(])/).map((x) => x.trim()).filter(Boolean);
-function opsFor(sentence, ops) {
+const stems = (t: string) => new Set((t.toLowerCase().match(/[a-z_]{3,}/g) || []).filter((w) => !STOP.has(w)).map((w) => w.slice(0, 5)));
+const split = (t: string) => t.split(/(?<=[.!?]["”’)]?)\s+(?=[A-Z“"‘(])/).map((x) => x.trim()).filter(Boolean);
+function opsFor(sentence: string, ops: string[][]) {
   const a = stems(sentence);
   return ops.map((o, i) => [i, [...stems(o[1].replace(/[{}/]/g, ' ') + ' ' + o[2])].filter((w) => a.has(w)).length]).filter((x) => x[1] > 0).sort((x, y) => y[1] - x[1]).slice(0, 2).map((x) => x[0]);
 }
 
 /* the light in the API table: one fill per operation a sentence names, sliding between rows by transform only, so the
    table never reflows (it is drawn under the rows; a row's own hover fill still answers the pointer) */
-function Light({ group, lit }) {
-  const [rows, setRows] = useState([]);
+function Light({ group, lit }: { group: RefObject<HTMLDivElement | null>; lit: number[] }) {
+  const [rows, setRows] = useState<number[][]>([]);
   useEffect(() => {
     const g = group.current;
     if (!g) return;
-    const read = () => setRows([...g.querySelectorAll('[data-row]')].map((r) => [r.offsetTop, r.offsetHeight]));
+    const read = () => setRows([...g.querySelectorAll<HTMLElement>('[data-row]')].map((r) => [r.offsetTop, r.offsetHeight]));
     read();
     const ro = new ResizeObserver(read);
     ro.observe(g);
@@ -88,9 +91,9 @@ function Light({ group, lit }) {
 }
 
 /* ---------- the signature: the light console, ONE panel whose states are Hanzo's "Try it" and each sentence ---------- */
-function Console({ p, sents }) {
-  const root = useRef(null);
-  const group = useRef(null);
+function Console({ p, sents }: { p: Product; sents: string[] }) {
+  const root = useRef<HTMLDivElement>(null);
+  const group = useRef<HTMLDivElement>(null);
   const seen = useInView(root, { amount: 0.3 });
   const calm = useCalm();
   const [run, setRun] = useState(0);
@@ -115,22 +118,23 @@ function Console({ p, sents }) {
   useEffect(() => {
     if (calm || !seen) return;
     const el = root.current;
-    const toks = [...el.querySelectorAll('[data-t]')];
-    const rows = [...el.querySelectorAll('[data-row]')];
-    const pane = el.querySelector('.xpd-req-b');
+    if (!el) return;
+    const toks = [...el.querySelectorAll<HTMLElement>('[data-t]')];
+    const rows = [...el.querySelectorAll<HTMLElement>('[data-row]')];
+    const pane = el.querySelector<HTMLElement>('.xpd-req-b');
     if (pane) { pane.scrollTop = 0; pane.scrollLeft = 0; }
     delete el.dataset.done;
     setDone(false);
     rows.forEach((r) => r.removeAttribute('data-in'));
     toks.forEach((x) => { x.textContent = ''; });
-    const timers = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     let raf = 0;
     const t0 = performance.now() + 150;
     // the request types in 1.8 s at most (a long one types faster), and the answer lands while it types, so the API
     // table is never empty after the first second and a half
     const cps = Math.max(CPS, code.length / 1.8);
     rows.forEach((r, i) => timers.push(setTimeout(() => r.setAttribute('data-in', ''), 500 + i * 140)));
-    const tick = (now) => {
+    const tick = (now: number) => {
       let m = Math.max(0, Math.floor(((now - t0) / 1000) * cps));
       let cur = -1;
       for (let i = 0; i < toks.length; i++) {
@@ -169,21 +173,21 @@ function Console({ p, sents }) {
 
   // on a phone the table scrolls inside its own box: a lit operation below the fold is brought into that box
   useEffect(() => {
-    const box = root.current?.querySelector('.xpd-ops');
-    const row = lit.length && group.current?.querySelectorAll('[data-row]')[lit[0]];
+    const box = root.current?.querySelector<HTMLElement>('.xpd-ops');
+    const row = lit.length && group.current?.querySelectorAll<HTMLElement>('[data-row]')[lit[0]];
     if (!box || !row || box.scrollHeight <= box.clientHeight) return;
     const y = row.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - 40;
     if (y < box.scrollTop || y + row.offsetHeight > box.scrollTop + box.clientHeight) box.scrollTo({ top: Math.max(0, y), behavior: calm ? 'auto' : 'smooth' });
   }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const pick = (k) => { setHeld(true); setStep(k); };
-  const keys = (e) => {
-    const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+  const pick = (k: number) => { setHeld(true); setStep(k); };
+  const keys = (e: RKeyboardEvent<HTMLDivElement>) => {
+    const d = ({ ArrowRight: 1, ArrowLeft: -1 } as Record<string, number | undefined>)[e.key];
     if (!d) return;
     e.preventDefault();
     const k = (step + d + n + 1) % (n + 1);
     pick(k);
-    root.current?.querySelector('#xpd-step-' + p.slug + '-' + k)?.focus();
+    root.current?.querySelector<HTMLElement>('#xpd-step-' + p.slug + '-' + k)?.focus();
   };
   const replay = () => { setHeld(false); setStep(0); setRun((r) => r + 1); };
   const labels = [p.tryIt.title, ...sents.map((_, k) => nn(k + 1))];
@@ -250,13 +254,13 @@ function Console({ p, sents }) {
 
 /* Hanzo's measurements as figures: "from A to B" stands as B, "A against B" as A; the sentence stays whole.
    A result with no figure reads as a text row after the figures, never as an empty card */
-const figOf = (s) => {
+const figOf = (s: string) => {
   const to = /from ([\d.,]+%?) to ([\d.,]+%?)/.exec(s);
   if (to) return to[2];
   const vs = /([\d.,]+%?) against/.exec(s);
   return vs ? vs[1] : null;
 };
-function Measured({ m }) {
+function Measured({ m }: { m: NonNullable<Product['measured']> }) {
   const all = m.links.map((l) => { const [name, ...rest] = l.text.split(': '); return { ...l, name, rest: rest.join(': '), fig: figOf(rest.join(': ')) }; });
   const figs = all.filter((x) => x.fig), plain = all.filter((x) => !x.fig);
   return (
@@ -283,11 +287,11 @@ function Measured({ m }) {
   );
 }
 
-export default function ProductPage({ p, peek = {} }) {
+export default function ProductPage({ p, peek = {} }: { p: Product; peek?: Record<string, Peek> }) {
   const router = useRouter();
   useEnter('.xpd');
   const nums = [p.api.ops.length, p.os.length, ...(p.measured ? p.measured.links.flatMap((l) => (l.text.match(/\d[\d,]*(?:\.\d+)?/g) || []).map((x) => +x.replace(/,/g, ''))) : [])];
-  const intro = (function flat(ns) { return ns.map((x) => (typeof x === 'string' ? x : flat(x.c || []))).join(''); })(p.intro).replace(/\s+/g, ' ').trim();
+  const intro = (function flat(ns: Child[]): string { return ns.map((x) => (typeof x === 'string' ? x : flat(x.c || []))).join(''); })(p.intro).replace(/\s+/g, ' ').trim();
   const sents = split(intro);
   // the other layers are fetched while you read, so a row opens its page at once (the title flies into its h1)
   useEffect(() => {
