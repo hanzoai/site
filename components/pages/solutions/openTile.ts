@@ -3,11 +3,17 @@
    and the cover lifts itself once the route has changed (the solution pages, another chat's files, do not call
    doorway.js's useArrival). Used instead of Morph, which times out site-wide today. Reduced motion: a plain cut.
    Usage: <A to={href} data-no-morph onClick={(e) => openTile(e, href, router)}> */
+import type { MouseEvent } from 'react';
+
 const CURVE = 'cubic-bezier(.4, 0, .2, 1)'; // deck ease-in-out: things that move and stay
+const text = (n: Element) => (n.textContent ?? '').trim();
 
-export function prefetchTile(href, router) { try { router.prefetch(href); } catch { /* prefetch is a hint */ } }
+/* the part of the Next router a tile needs */
+export interface TileRouter { push(href: string): void; prefetch(href: string): void }
 
-export function openTile(e, href, router, tone = '#000') {
+export function prefetchTile(href: string, router: TileRouter) { try { router.prefetch(href); } catch { /* prefetch is a hint */ } }
+
+export function openTile(e: MouseEvent<HTMLElement>, href: string, router: TileRouter, tone = '#000') {
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { router.push(href); return; }
@@ -18,7 +24,7 @@ export function openTile(e, href, router, tone = '#000') {
   // the page opens on the picture you clicked: the destination's hero takes the tile's film (Solution.jsx reads it)
   const slug = pic && /\/([a-z0-9-]+)\.webp/.exec(pic.currentSrc || pic.src || '');
   try { if (slug) sessionStorage.setItem('hz-tile-film', JSON.stringify({ href: href.replace(/\/$/, ''), film: slug[1] })); } catch { /* storage is a nicety */ }
-  const name = tile.querySelector('.xso-tile-n, [data-open-name]');
+  const name = tile.querySelector<HTMLElement>('.xso-tile-n, [data-open-name]');
   const d = document.createElement('div');
   d.setAttribute('aria-hidden', 'true');
   const from = `inset(${r.top}px ${innerWidth - r.right}px ${innerHeight - r.bottom}px ${r.left}px round 24px)`;
@@ -31,7 +37,7 @@ export function openTile(e, href, router, tone = '#000') {
     Object.assign(img.style, { position: 'absolute', inset: '0', width: '100%', height: '100%', objectFit: 'cover', objectPosition: getComputedStyle(pic).objectPosition });
     d.appendChild(img);
   }
-  let words = null, lay = null;
+  let words: HTMLParagraphElement | null = null, lay: HTMLDivElement | null = null;
   if (name) {
     // the name is set as the destination's headline (52px, 40 on phones, the h1 column's width, so the same line
     // breaks) at the h1's place, and starts shrunk onto the card's name (FLIP): it lands exactly where the h1 will be
@@ -67,7 +73,7 @@ export function openTile(e, href, router, tone = '#000') {
     const h1 = document.querySelector('main .xs2-h1') || document.querySelector('main h1');
     if (words && h1) { const hr = h1.getBoundingClientRect(), wr = words.getBoundingClientRect(); words.animate([{ transform: getComputedStyle(words).transform }, { transform: `translate(${hr.left - wr.left}px, ${hr.top - wr.top}px)` }], { duration: 140, easing: CURVE, fill: 'forwards' }); }
     // a name that is not the h1's own words (an index tile's short name) steps aside at once, never over the h1
-    const same = words && h1 && words.textContent.trim() === h1.textContent.trim().slice(0, words.textContent.trim().length);
+    const same = words && h1 && text(words) === text(h1).slice(0, text(words).length);
     if (words) words.animate([{ opacity: 1 }, { opacity: 0 }], { duration: same ? 160 : 120, delay: same ? 120 : 0, fill: 'forwards' });
     // the h1 itself remembers it has landed (so its cut-in never replays), then the page-wide hold is lifted
     if (h1) h1.setAttribute('data-landed', '');

@@ -13,18 +13,21 @@
    - Keep the card's full text in the page as well (collapsed): the sheet is the reading view, not the only copy.
    - Transform and opacity only; reduced motion opens and closes in place. Style hooks: .v2u-back, .v2u-sheet, .v2u-x. */
 import { useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import '../v2/Unfold.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function StorySheet({ layoutId, onClose, label, onKey, children, className = '' }) {
-  const close = useRef(null);
-  const back = useRef(null);
+interface StorySheetProps { layoutId: string | null; onClose: () => void; label?: string; onKey?: (e: KeyboardEvent) => void; children?: ReactNode; className?: string }
+
+export default function StorySheet({ layoutId, onClose, label, onKey, children, className = '' }: StorySheetProps) {
+  const close = useRef<HTMLButtonElement>(null);
+  const back = useRef<HTMLElement | null>(null);
   const open = layoutId != null;
   useEffect(() => {
     if (!open) return;
-    back.current = document.activeElement;
+    back.current = document.activeElement as HTMLElement | null;
     window.__lenis?.stop();
     document.documentElement.classList.add('x-lock');
     const t = setTimeout(() => close.current?.focus({ preventScroll: true }), 60);
@@ -37,7 +40,7 @@ export default function StorySheet({ layoutId, onClose, label, onKey, children, 
   }, [open]);
   useEffect(() => {
     if (!open) return;
-    const key = (e) => { if (e.key === 'Escape') onClose(); else onKey?.(e); };
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); else onKey?.(e); };
     addEventListener('keydown', key);
     return () => removeEventListener('keydown', key);
   }, [open, onClose, onKey]);

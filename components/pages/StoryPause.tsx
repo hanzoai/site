@@ -4,7 +4,9 @@
    an icon only until James approves the word. Usage: <StoryPause paused={p} onToggle={() => setP(!p)} className="…" /> */
 import UI from '../../content/ui-strings.json';
 
-export default function StoryPause({ paused, onToggle, className = '' }) {
+interface StoryPauseProps { paused: boolean; onToggle: () => void; className?: string }
+
+export default function StoryPause({ paused, onToggle, className = '' }: StoryPauseProps) {
   return (
     <button type="button" className={'xst-pause ' + className} aria-pressed={paused} aria-label={UI.strings.pause.string} onClick={onToggle}>
       <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">

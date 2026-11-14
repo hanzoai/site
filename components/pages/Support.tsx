@@ -16,6 +16,7 @@
    Beyond: whatever you typed becomes the subject line of a ready-to-send email to support@hanzo.ai; when a finished
    word matches nothing on the page, the answer itself turns into that email, your words shown as its subject. */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, KeyboardEvent, PointerEvent } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, Go, Band } from '../kit';
 import useArrived from './company/useArrived';
@@ -23,8 +24,8 @@ import '../v2/vc-type.css';
 import './company/deck.css';
 import './Support.css';
 
-const EM = [0.16, 1, 0.3, 1]; // deck ease-emphasis
-const IO = [0.4, 0, 0.2, 1]; // deck ease-in-out
+const EM = [0.16, 1, 0.3, 1] as const; // deck ease-emphasis
+const IO = [0.4, 0, 0.2, 1] as const; // deck ease-in-out
 const DOORS = [
   { t: 'Help Center', d: 'Search answers, browse guides, and open a support ticket. The fastest path to a resolution.', go: 'Open Help Center', to: 'https://hanzo.help' },
   { t: 'Documentation', d: 'Guides, API references, and quickstarts for every product across the Hanzo Cloud.', go: 'Read the docs', to: 'https://docs.hanzo.ai' },
@@ -39,11 +40,12 @@ const DEMO2 = 'uptime'; // from System Status's own line: System Status rises in
 // JS off: every answer readable in order, the first question only, nothing waiting on an entrance
 const NOJS = { __html: '<style>.xsp-panes{display:flex!important;flex-direction:column;gap:40px}.xsp-pane{opacity:1!important;transform:none!important;visibility:visible!important;pointer-events:auto!important}.xsp-pause,.xsp-next,.xsp-q2,.xsp-tiles{display:none!important}.xsp-rail{transform:none!important}</style>' };
 
-const words = (s) => s.toLowerCase().match(/[a-z0-9]+/g) || [];
-const terms = (q) => words(q).filter((w) => w.length > 2); // one letter or two is not a search yet
+const words = (s: string) => s.toLowerCase().match(/[a-z0-9]+/g) || [];
+const terms = (q: string) => words(q).filter((w) => w.length > 2); // one letter or two is not a search yet
 // a query word matches a page word that starts with it, or (4+ letters) one it starts with: "tickets" finds "ticket"
-const hits = (w, h) => h.startsWith(w) || (w.length >= 4 && h.length >= 4 && w.startsWith(h));
-function rank(q) {
+const hits = (w: string, h: string) => h.startsWith(w) || (w.length >= 4 && h.length >= 4 && w.startsWith(h));
+interface Rank { i: number; score: number }
+function rank(q: string): Rank[] {
   const qs = terms(q);
   return DOORS.map((d, i) => {
     const hay = words(d.t + ' ' + d.d + ' ' + d.go);
@@ -53,7 +55,7 @@ function rank(q) {
 }
 
 /* A description with the words the query matched marked (the mark is drawn, so no word moves). */
-function Lit({ text, q }) {
+function Lit({ text, q }: { text: string; q: string }) {
   const qs = terms(q);
   if (!qs.length) return text;
   return text.split(/(\s+)/).map((p, k) => {
@@ -62,11 +64,11 @@ function Lit({ text, q }) {
   });
 }
 
-const Arrow = ({ back }) => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={back ? { transform: 'scaleX(-1)' } : undefined}><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Arrow = ({ back }: { back?: boolean }) => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={back ? { transform: 'scaleX(-1)' } : undefined}><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Mail = () => <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="2.5" y="4.5" width="15" height="11" rx="2" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m3 5.5 7 5.5 7-5.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /></svg>;
-const Lens = ({ size = 18 }) => <svg viewBox="0 0 20 20" width={size} height={size} aria-hidden="true"><circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m13.5 13.5 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>;
+const Lens = ({ size = 18 }: { size?: number }) => <svg viewBox="0 0 20 20" width={size} height={size} aria-hidden="true"><circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="m13.5 13.5 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>;
 
-function mailTo(subject) { return 'mailto:support@hanzo.ai' + (subject ? '?subject=' + encodeURIComponent(subject) : ''); }
+function mailTo(subject: string) { return 'mailto:support@hanzo.ai' + (subject ? '?subject=' + encodeURIComponent(subject) : ''); }
 
 /* go: at once on a return visit; 550ms after the arrival curtain starts lifting on a first visit (the top is clear). */
 function useGo() {
@@ -84,8 +86,8 @@ function useGo() {
 /* Page-local entrance: marks the section data-in the first time a quarter of it is on screen (after `gate`); the CSS
    under html.js plays that section's own entrance from there. before(el) runs just before, to aim it. */
 const ptr = { x: -1, y: -1 };
-function useEnter(gate = true, before) {
-  const ref = useRef(null);
+function useEnter<T extends HTMLElement = HTMLElement>(gate = true, before?: (el: HTMLElement) => void) {
+  const ref = useRef<T>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || !gate || el.hasAttribute('data-in')) return;
@@ -103,7 +105,7 @@ function useEnter(gate = true, before) {
 }
 
 /* 2. cursor-lens: the lens opens where the pointer last was (clamped into the lede), else at its start */
-function aimLens(el) {
+function aimLens(el: HTMLElement) {
   const r = el.getBoundingClientRect();
   const x = ptr.x < 0 ? 0 : Math.min(Math.max(ptr.x - r.left, 0), r.width);
   const y = ptr.y < 0 ? r.height / 2 : Math.min(Math.max(ptr.y - r.top, 0), r.height);
@@ -120,31 +122,31 @@ export default function Support() {
   const [pick, setPick] = useState(-1); // the way chosen on screen 2
   const [hyd, setHyd] = useState(false);
   const go = useGo();
-  const input = useRef(null);
-  const form = useRef(null);
-  const btn = useRef(null);
-  const ways = useRef([]);
+  const input = useRef<HTMLInputElement>(null);
+  const form = useRef<HTMLFormElement>(null);
+  const btn = useRef<HTMLAnchorElement | null>(null);
+  const ways = useRef<(HTMLButtonElement | null)[]>([]);
   const seen = useInView(form, { amount: 0.6 });
   const calm = useReducedMotion();
   useEffect(() => setHyd(true), []);
   useEffect(() => {
-    const m = (e) => { ptr.x = e.clientX; ptr.y = e.clientY; };
+    const m = (e: globalThis.PointerEvent) => { ptr.x = e.clientX; ptr.y = e.clientY; };
     addEventListener('pointermove', m, { passive: true });
     return () => removeEventListener('pointermove', m);
   }, []);
 
   // the five entrances, in page order
-  const e1 = useEnter(go);
-  const e2 = useEnter(go, aimLens);
-  const e3 = useEnter(go);
-  const e4 = useEnter(go);
-  const e5 = useEnter(true);
+  const e1 = useEnter<HTMLHeadingElement>(go);
+  const e2 = useEnter<HTMLParagraphElement>(go, aimLens);
+  const e3 = useEnter<HTMLDivElement>(go);
+  const e4 = useEnter<HTMLDivElement>(go);
+  const e5 = useEnter<HTMLDivElement>(true);
 
   // 1. card-deal: each word starts on the deck at the line's end and is dealt to its place
   useLayoutEffect(() => {
     const h = e1.current;
     if (!h) return;
-    const cards = [...h.querySelectorAll('.xsp-card')];
+    const cards = [...h.querySelectorAll<HTMLElement>('.xsp-card')];
     const end = cards[cards.length - 1];
     if (!end) return;
     cards.forEach((c, k) => {
@@ -155,7 +157,7 @@ export default function Support() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // 5. tilt-3d-hover: after it has levelled, the Band leans toward a fine pointer (2.5deg at most)
-  const tilt = (e) => {
+  const tilt = (e: PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
     const el = e5.current;
     if (!el || calm) return;
@@ -180,14 +182,15 @@ export default function Support() {
   // the summary: a way you point at; else the one you picked; else the best match; with words that match nothing, email
   const best = peek >= 0 ? peek : pick >= 0 ? pick : hit ? ranked[0].i : mine && typed ? 5 : 0;
   // the six ways keep Hanzo's order; your words light the matches in place (nothing jumps while you type)
-  const order = DOORS.map((_, i) => ranked.find((r) => r.i === i));
+  const order = DOORS.map((_, i) => ranked.find((r) => r.i === i) as Rank); // rank lists every way
 
   // the demo, once, after the headline has landed: type Hanzo's phrase, hold, clear, rest
   useEffect(() => {
     if (mine || calm || !seen || done || !go) return;
-    let alive = true, timer = 0;
+    let alive = true, timer: ReturnType<typeof setTimeout> | undefined;
     const el = input.current;
-    const sleep = (ms) => new Promise((r) => { timer = setTimeout(r, ms); });
+    if (!el) return;
+    const sleep = (ms: number) => new Promise<void>((r) => { timer = setTimeout(r, ms); });
     (async () => {
       await sleep(1600);
       for (let c = 1; c <= DEMO.length && alive; c++) {
@@ -224,21 +227,21 @@ export default function Support() {
     requestAnimationFrame(() => ways.current[k]?.focus({ preventScroll: true }));
   };
   const back = () => { setPeek(-1); requestAnimationFrame(() => input.current?.focus({ preventScroll: true })); };
-  const choose = (i) => { setPick(i); setPeek(-1); requestAnimationFrame(() => btn.current?.focus({ preventScroll: true })); };
-  const keys = (e, k) => {
+  const choose = (i: number) => { setPick(i); setPeek(-1); requestAnimationFrame(() => btn.current?.focus({ preventScroll: true })); };
+  const keys = (e: KeyboardEvent<HTMLButtonElement>, k: number) => {
     const n = DOORS.length;
-    const to = { ArrowRight: k + 1, ArrowLeft: k - 1, ArrowDown: k + 2, ArrowUp: k - 2, Home: 0, End: n - 1 }[e.key];
+    const to = ({ ArrowRight: k + 1, ArrowLeft: k - 1, ArrowDown: k + 2, ArrowUp: k - 2, Home: 0, End: n - 1 } as Record<string, number | undefined>)[e.key];
     if (to === undefined) { if (e.key === 'Escape') back(); return; }
     e.preventDefault();
     ways.current[Math.min(Math.max(to, 0), n - 1)]?.focus({ preventScroll: true });
   };
 
   return (
-    <main className="vc xsp" style={{ '--acc': '#0a0a0a' }} data-ask-name="Support" data-go={go || undefined}>
+    <main className="vc xsp" style={{ '--acc': '#0a0a0a' } as CSSProperties} data-ask-name="Support" data-go={go || undefined}>
       <section className="xsp-hero" aria-labelledby="xsp-h1">
         <div className="vc-grid xsp-hero-g" onFocusCapture={stop}>
           <h1 id="xsp-h1" ref={e1} className="vc-display xsp-h1 xsp-deal">
-            {H1.split(' ').map((w, k, a) => <span key={k}><span className="xsp-card" style={{ '--i': k }}>{w}</span>{k < a.length - 1 ? ' ' : ''}</span>)}
+            {H1.split(' ').map((w, k, a) => <span key={k}><span className="xsp-card" style={{ '--i': k } as CSSProperties}>{w}</span>{k < a.length - 1 ? ' ' : ''}</span>)}
           </h1>
           <p ref={e2} className="vc-lede xsp-lede xsp-lens">Answers, docs, live status, and a direct line to the team.</p>
 
@@ -301,7 +304,7 @@ export default function Support() {
                       <h2 className="xsp-answer-t">{d.t}</h2>
                       <p className="xsp-answer-d"><Lit text={d.d} q={dq} /></p>
                       <div className="xsp-answer-a">
-                        <span className="xsp-go" data-cta={'support.answer.' + (i + 1)} ref={on ? (el) => { btn.current = el?.querySelector('a'); } : undefined}>
+                        <span className="xsp-go" data-cta={'support.answer.' + (i + 1)} ref={on ? (el) => { btn.current = el?.querySelector('a') ?? null; } : undefined}>
                           <Go to={href} solid className="xsp-big">{mail && mine && typed ? 'Email support@hanzo.ai' : d.go}</Go>
                         </span>
                       </div>
@@ -309,7 +312,7 @@ export default function Support() {
                   );
                 })}
               </div>
-              <div className="xsp-tiles" aria-hidden="true">{Array.from({ length: 24 }, (_, k) => <i key={k} style={{ '--d': (k % 6) + Math.floor(k / 6) }} />)}</div>
+              <div className="xsp-tiles" aria-hidden="true">{Array.from({ length: 24 }, (_, k) => <i key={k} style={{ '--d': (k % 6) + Math.floor(k / 6) } as CSSProperties} />)}</div>
             </div>
           </div>
           <noscript dangerouslySetInnerHTML={NOJS} />

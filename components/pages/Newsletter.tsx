@@ -10,6 +10,7 @@
    0 UI hues. The form sends exactly what hanzo.ai sends: POST
    https://api.hanzo.ai/v1/marketing/subscribe {email, source, locale}. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, FormEvent, PointerEvent } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE, Mark } from '../ui';
 import { A, Cta, Tick } from '../kit';
@@ -22,13 +23,14 @@ import { track } from '../../lib/track';
 
 const LINES = ['New models and what they measured, the day they ship', 'What changed in the API, the CLI and Hanzo Dev', 'Engineering notes from the people who built it'];
 const LEDE = 'Releases, benchmarks and engineering notes, once or twice a month.';
-const ok = (e) => e.length <= 320 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-const STEPS = ['ask', 'check', 'sent'];
+const ok = (e: string) => e.length <= 320 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+const STEPS = ['ask', 'check', 'sent'] as const;
+type Step = (typeof STEPS)[number];
 
 const SOURCE = 'hanzo.ai/newsletter';
 
-async function subscribe(email) {
-  let r;
+async function subscribe(email: string) {
+  let r: Response;
   try {
     r = await fetch('https://api.hanzo.ai/v1/marketing/subscribe', {
       method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' },
@@ -42,10 +44,10 @@ async function subscribe(email) {
 
 /* The paper is the summary: it tilts toward a fine pointer (2.5° max, none on touch or reduced motion), writes the
    address as you type it, stamps itself once you have checked it, and folds into an envelope when it is sent. */
-function Issue({ step, email, hot }) {
-  const tilt = useRef(null);
+function Issue({ step, email, hot }: { step: Step; email: string; hot: number }) {
+  const tilt = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
-  const move = (e) => {
+  const move = (e: PointerEvent<HTMLDivElement>) => {
     if (calm || e.pointerType !== 'mouse' || !tilt.current) return;
     const r = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
@@ -58,18 +60,18 @@ function Issue({ step, email, hot }) {
       <div className="xnl-tilt" ref={tilt}>
       <AnimatePresence mode="wait" initial={false}>
         {!sent ? (
-          <motion.div key="paper" className={'xnl-paper' + (step === 'check' ? ' checked' : '')} initial={{ opacity: 0, y: 80, rotate: -6 }} animate={{ opacity: 1, y: 0, rotate: -3 }} exit={{ opacity: 0, y: 60, scaleY: 0.4, rotate: 0, transition: { duration: 0.45, ease: [0.76, 0, 0.24, 1] } }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
+          <motion.div key="paper" className={'xnl-paper' + (step === 'check' ? ' checked' : '')} initial={{ opacity: 0, y: 80, rotate: -6 }} animate={{ opacity: 1, y: 0, rotate: -3 }} exit={{ opacity: 0, y: 60, scaleY: 0.4, rotate: 0, transition: { duration: 0.45, ease: [0.76, 0, 0.24, 1] as const } }} transition={{ duration: 0.5, ease: EASE, delay: 0.2 }}>
             <div className="xnl-mast">
               <Sigil seed="newsletter" data={[2, 1]} className="xnl-sigil" />
               <span className="xnl-brand"><Mark size={14} /> Hanzo</span>
             </div>
             <ol className="xnl-lines xnl-bars">
-              {LINES.map((l, i) => <li key={l} className={i === hot ? 'hot' : undefined} style={{ '--i': i }}><span><i style={{ width: [92, 78, 86][i] + '%' }} /><i style={{ width: [54, 40, 22][i] + '%' }} /></span></li>)}
+              {LINES.map((l, i) => <li key={l} className={i === hot ? 'hot' : undefined} style={{ '--i': i } as CSSProperties}><span><i style={{ width: [92, 78, 86][i] + '%' }} /><i style={{ width: [54, 40, 22][i] + '%' }} /></span></li>)}
             </ol>
             <p className={'xnl-paper-to' + (email ? ' on' : '')}><span className="x-mono">To</span><b>{email}</b><span className="xnl-paper-stamp"><Mark size={14} /></span></p>
           </motion.div>
         ) : (
-          <motion.div key="env" className="xnl-env" initial={{ opacity: 0, y: -40, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
+          <motion.div key="env" className="xnl-env" initial={{ opacity: 0, y: -40, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] as const }}>
             <motion.i className="xnl-flap" initial={{ rotateX: 180 }} animate={{ rotateX: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.25 }} />
             <span className="xnl-stamp"><Mark size={18} /></span>
             <span className="xnl-to x-mono">To</span>
@@ -85,10 +87,10 @@ function Issue({ step, email, hot }) {
 /* One question at a time. Three panels on one track that slides: ask (the address), check (your answer summarised;
    Subscribe sends it, the arrow goes back), sent (Hanzo's own result line). The answer builds in the summary under
    the track and on the paper. Only the panel in view is focusable. */
-function Ask({ email, setEmail, step, setStep }) {
+function Ask({ email, setEmail, step, setStep }: { email: string; setEmail: (v: string) => void; step: Step; setStep: (s: Step) => void }) {
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
-  const field = useRef(null), send = useRef(null), done = useRef(null);
+  const field = useRef<HTMLInputElement>(null), send = useRef<HTMLElement>(null), done = useRef<HTMLParagraphElement>(null);
   const at = STEPS.indexOf(step);
   const first = useRef(true);
   useEffect(() => {
@@ -96,7 +98,7 @@ function Ask({ email, setEmail, step, setStep }) {
     const t = setTimeout(() => (step === 'ask' ? field.current : step === 'check' ? send.current : done.current)?.focus({ preventScroll: true }), 320);
     return () => clearTimeout(t);
   }, [step]);
-  const next = (e) => {
+  const next = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const v = email.trim();
     if (!ok(v)) return setErr('Enter an email address like you@example.com.');
@@ -111,7 +113,7 @@ function Ask({ email, setEmail, step, setStep }) {
     track('newsletter_refused', { source: SOURCE, status: s });
     setErr(s === 429 ? 'Too many tries from here. Try again in an hour.' : s === 400 ? 'Enter an email address like you@example.com.' : 'We could not reach our mail service. Try again in a minute.');
   };
-  const panel = (i) => ({ className: 'xnl-q' + (i === at ? ' on' : ''), style: { '--d': i - at }, inert: i !== at ? true : undefined, 'aria-hidden': i !== at || undefined });
+  const panel = (i: number) => ({ className: 'xnl-q' + (i === at ? ' on' : ''), style: { '--d': i - at } as CSSProperties, inert: i !== at ? true : undefined, 'aria-hidden': i !== at || undefined });
   return (
     <div className="xnl-formwrap" id="subscribe" data-thumb="Subscribe" data-href="#subscribe">
       <div className="xnl-track" data-step={step}>
@@ -149,7 +151,7 @@ const check = <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"
 
 export default function Newsletter() {
   const [email, setEmail] = useState('');
-  const [step, setStep] = useState('ask');
+  const [step, setStep] = useState<Step>('ask');
   const [hot, setHot] = useState(-1);
   return (
     <main className="xp xnl">
@@ -162,7 +164,7 @@ export default function Newsletter() {
               <p className="xp-lede xnl-lede">{LEDE}</p>
               {/* what each issue carries, as Hanzo lists it; pointing at one lights its line on the paper */}
               <ul className="xnl-list" onPointerLeave={() => setHot(-1)}>
-                {LINES.map((l, i) => <li key={l} style={{ '--i': i }} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setHot(i); }}>{check}{l}</li>)}
+                {LINES.map((l, i) => <li key={l} style={{ '--i': i } as CSSProperties} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setHot(i); }}>{check}{l}</li>)}
               </ul>
               <Ask email={email} setEmail={setEmail} step={step} setStep={setStep} />
             </motion.div>

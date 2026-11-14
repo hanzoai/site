@@ -12,8 +12,9 @@
      the ghost class (the page makes it visibility: hidden under .js), so a line never reflows while it types and every
      word stays in the page. */
 import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 
-export function useRun(beats, { on, calm, runKey }) {
+export function useRun(beats: number[], { on, calm, runKey }: { on: boolean; calm: boolean; runKey?: unknown }) {
   const total = beats.length;
   const [t, setT] = useState(0);
   useEffect(() => { setT(calm ? total : 0); }, [runKey, calm, total]);
@@ -25,7 +26,7 @@ export function useRun(beats, { on, calm, runKey }) {
   return t;
 }
 
-export function Shown({ text, n, ghost, caret }) {
+export function Shown({ text, n, ghost, caret }: { text: string; n: number; ghost?: string; caret?: ReactNode }) {
   const k = Math.max(0, Math.min(text.length, n));
   return (
     <>

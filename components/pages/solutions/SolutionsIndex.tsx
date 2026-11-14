@@ -18,6 +18,7 @@
    Deletes: the crimson accent, the "Solutions" kicker over the h1, the invented "All" chip, the group label on every
    tile, the endless reel loop, raw <img>/<video> (kit Img and Film), opacity:0 arrival states. */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { CSSProperties, MouseEvent, PointerEvent, RefObject } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { useRouter } from 'next/navigation';
 import { A, Img, Film } from '../../kit';
@@ -26,16 +27,17 @@ import { media } from '../../../lib/models';
 import MaskLines from '../company/MaskLines';
 import useArrived from '../company/useArrived';
 import { openTile, prefetchTile } from './openTile';
+import type { Entry, IndexDoc, Near } from './types';
 import '../../v2/vc-type.css';
 import '../company/deck.css';
 import './solutions.css';
 import './SolutionsIndex.css';
 
-const EASE = [0.16, 1, 0.3, 1];
-const pad = (n) => String(n).padStart(2, '0');
+const EASE = [0.16, 1, 0.3, 1] as const;
+const pad = (n: number) => String(n).padStart(2, '0');
 
 /* 6 + 3 + 3, then 3 + 3 + 6, rows of three like a wall of screens; a short last row shares the width */
-function span(i, n) {
+function span(i: number, n: number) {
   const last = Math.floor((n - 1) / 3) === Math.floor(i / 3) && n % 3;
   if (last) return 12 / (n % 3);
   const row = Math.floor(i / 3), p = i % 3;
@@ -43,7 +45,7 @@ function span(i, n) {
 }
 
 /* The reel walks every solution once, then rests on the first; a pause control stops it (WCAG 2.2.2). */
-function useWalk(n, box, ms) {
+function useWalk(n: number, box: RefObject<Element | null>, ms: number) {
   const [at, setAt] = useState(0);
   const [steps, setSteps] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -64,38 +66,39 @@ function useWalk(n, box, ms) {
 
 /* The wall never shows one picture more than twice, and never on two tiles in a row: a tile whose own model film is
    already used twice (or was just used) takes the next of Hanzo's nine model films. */
-const FILMS = ['kai', 'enso', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
-function spread(list) {
+const FILMS: string[] = ['kai', 'enso', 'iro', 'koe', 'koma', 'mori', 'oto', 'uta', 'zen'];
+function spread(list: (string | null | undefined)[]) {
   // the first nine tiles use all nine films once (a tile keeps its own film when it is still free); after that the
   // order repeats, so a repeat is exactly nine tiles later, never in the same or the next row
-  const used = new Set(), out = [];
+  const used = new Set<string>(), out: string[] = [];
   list.forEach((f0, i) => {
     if (i >= FILMS.length) { out.push(out[i - FILMS.length]); return; }
-    const f = f0 && !used.has(f0) ? f0 : FILMS.find((x) => !used.has(x));
+    const f = f0 && !used.has(f0) ? f0 : FILMS.find((x) => !used.has(x)) as string; // fewer than nine are used before the ninth tile
     used.add(f); out.push(f);
   });
   return out;
 }
 
-function Tile({ it, d, w, k, n }) {
+type Item = Entry & { group: string; i: number; n: number };
+function Tile({ it, d, w, k, n }: { it: Item; d: Near; w: number; k: number; n: number }) {
   const router = useRouter();
   const [hot, setHot] = useState(false);
-  const on = (e) => { prefetchTile(it.href, router); if (e.pointerType === 'mouse' && !matchMedia('(prefers-reduced-motion: reduce)').matches) setHot(true); };
+  const on = (e: PointerEvent<HTMLElement>) => { prefetchTile(it.href, router); if (e.pointerType === 'mouse' && !matchMedia('(prefers-reduced-motion: reduce)').matches) setHot(true); };
   // the wall wakes without a pointer: the one tile crossing the middle of the screen plays its film and shows its
   // jobs (one at a time, so at most this and a hovered tile play); phones get the same
-  const li = useRef(null);
+  const li = useRef<HTMLLIElement>(null);
   const [mid, setMid] = useState(false);
   useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !li.current) return;
     const io = new IntersectionObserver(([x]) => { setMid(x.isIntersecting); if (x.isIntersecting) prefetchTile(it.href, router); }, { rootMargin: '-49% -44% -49% -44%' });
     io.observe(li.current);
     return () => io.disconnect();
   }, [it.href, router]);
   return (
-    <motion.li ref={li} layout="position" className={'xso-tile w' + w + (mid ? ' mid' : '')} style={{ '--k': k }}
+    <motion.li ref={li} layout="position" className={'xso-tile w' + w + (mid ? ' mid' : '')} style={{ '--k': k } as CSSProperties}
       initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.22 } }}
       transition={{ layout: { duration: 0.3, ease: EASE }, duration: 0.3, ease: EASE }}>
-      <A to={it.href} className="xso-tile-a" data-no-morph onClick={(e) => openTile(e, it.href, router)} onPointerEnter={on} onTouchStart={() => prefetchTile(it.href, router)} onPointerLeave={(e) => { if (e.pointerType === 'mouse') setHot(false); }}>
+      <A to={it.href} className="xso-tile-a" data-no-morph onClick={(e: MouseEvent<HTMLElement>) => openTile(e, it.href, router)} onPointerEnter={on} onTouchStart={() => prefetchTile(it.href, router)} onPointerLeave={(e: PointerEvent<HTMLElement>) => { if (e.pointerType === 'mouse') setHot(false); }}>
         <span className="xso-tile-m" aria-hidden="true">
           {d.film && <Img src={media(d.film, 'webp')} alt="" w={1200} h={1500} />}
           {d.film && (hot || mid) && <Film src={media(d.film, 'webm')} w={1200} h={1500} className="xso-tile-v" />}
@@ -116,24 +119,24 @@ function Tile({ it, d, w, k, n }) {
   );
 }
 
-export default function SolutionsIndex({ doc, data }) {
+export default function SolutionsIndex({ doc, data }: { doc: IndexDoc; data: Record<string, Near> }) {
   const all = doc.groups.flatMap((g) => g.items.map((it, i) => ({ ...it, group: g.title, i, n: g.items.length })));
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const r = useWalk(all.length, box, 3800);
   const cur = all[r.at] || all[0];
-  const [group, setGroup] = useState(null);
+  const [group, setGroup] = useState<string | null>(null);
   const shown = all.filter((it) => !group || it.group === group);
   // each solution keeps one picture wherever it appears (the reel, the wall, the filter, the page it opens into):
   // assigned once, in the wall's order
-  const filmOf = useMemo(() => { const f = spread(all.map((it) => (data[it.slug] || {}).film)); return Object.fromEntries(all.map((it, i) => [it.href, f[i]])); }, [all.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  const filmOf = useMemo(() => { const f = spread(all.map((it) => (data[it.slug] || {}).film)); return Object.fromEntries(all.map((it, i): [string, string] => [it.href, f[i]])); }, [all.length]); // eslint-disable-line react-hooks/exhaustive-deps
   const film = filmOf[cur.href] || (data[cur.slug] || {}).film || doc.film;
   // the reserved room takes the film seen longest ago on the wall above it, never one of the last rows
-  const resFilm = useMemo(() => { const f = all.map((it) => filmOf[it.href]); const last = (x) => f.lastIndexOf(x); return [...FILMS].sort((a, b) => last(a) - last(b))[0]; }, [filmOf]); // eslint-disable-line react-hooks/exhaustive-deps
+  const resFilm = useMemo(() => { const f = all.map((it) => filmOf[it.href]); const last = (x: string) => f.lastIndexOf(x); return [...FILMS].sort((a, b) => last(a) - last(b))[0]; }, [filmOf]); // eslint-disable-line react-hooks/exhaustive-deps
   const words = doc.title.split(' ');
   const lines = [words.slice(0, 2).join(' '), words.slice(2, 4).join(' '), words.slice(4).join(' ')];
   const [ask, other] = doc.actions;
   return (
-    <main className="vc xso" style={{ '--acc': '#0a0a0a' }}>
+    <main className="vc xso" style={{ '--acc': '#0a0a0a' } as CSSProperties}>
       <section className="xso-hero vc-scene" aria-label={doc.label} data-ask-name={doc.label}>
         <div className="vc-grid xso-hero-g">
           <div className="xso-hero-c">

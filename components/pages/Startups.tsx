@@ -12,6 +12,7 @@
    POST https://api.hanzo.ai/v1/form/public/hanzo.startups-apply/responses with the same answers, token and hidden
    source. */
 import { useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, CSSProperties, FormEvent, KeyboardEvent, PointerEvent, ReactNode } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValue, animate } from 'motion/react';
 import { A, Tick } from '../kit';
 import LineReveal from '../v2/LineReveal';
@@ -19,24 +20,27 @@ import { ui } from '../v2/famUi';
 import '../v2/ProgramScale.css';
 import './Startups.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 const PROGRAM = [
   ['Start in minutes', 'Creating an account is free. Add funds when you are ready and pay only for what you use — no subscription, no minimums.'],
   ['Bring your own compute', 'Connect your own GPUs and machines. Run cheap on hardware you already have — we meter the platform, not your iron.'],
   ['Up to $150,000 in credits', 'For venture-backed startups. Application required, and tier-1 VC backing is required for the credits program.'],
 ];
-const STAGES = [['idea', 'Idea'], ['pre-seed', 'Pre-seed'], ['seed', 'Seed'], ['series-a', 'Series A'], ['series-b-plus', 'Series B+']];
-const TIER1 = { 'Andreessen Horowitz (a16z)': 'a16z', Sequoia: 'sequoia', Benchmark: 'benchmark', Greylock: 'greylock', Accel: 'accel', 'Founders Fund': 'founders-fund', Lightspeed: 'lightspeed', 'Index Ventures': 'index-ventures', Bessemer: 'bessemer', 'Khosla Ventures': 'khosla', 'GV (Google Ventures)': 'gv', Techstars: 'techstars' };
-const USES = [['ai', 'AI & inference', 'Models, agents, RAG, one API for every model'], ['deploy', 'Deploy', 'Apps, functions, edge, machines'], ['data', 'Data', 'Vector, SQL, KV, object storage'], ['compute', 'Compute', 'GPUs, training, batch jobs']];
-const HEARD = { Search: 'search', 'X / Twitter': 'x', LinkedIn: 'linkedin', 'A friend or colleague': 'friend', 'A Techstars connection': 'techstars-connection', 'An investor': 'investor', 'An event or conference': 'event', 'Hanzo docs or GitHub': 'docs-github', Other: 'other' };
-const EMPTY = { company: '', website: '', contactName: '', email: '', role: '', stage: '', investors: '', tier1Investors: [], amountRaised: '', teamSize: '', building: '', useCases: [], infraSpend: '', byoCompute: false, byoHardware: '', techstarsBatch: '', heardVia: '', hp: '' };
-const pad = (n) => String(n).padStart(2, '0');
-const okEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const STAGES: [string, string][] = [['idea', 'Idea'], ['pre-seed', 'Pre-seed'], ['seed', 'Seed'], ['series-a', 'Series A'], ['series-b-plus', 'Series B+']];
+const TIER1: Record<string, string> = { 'Andreessen Horowitz (a16z)': 'a16z', Sequoia: 'sequoia', Benchmark: 'benchmark', Greylock: 'greylock', Accel: 'accel', 'Founders Fund': 'founders-fund', Lightspeed: 'lightspeed', 'Index Ventures': 'index-ventures', Bessemer: 'bessemer', 'Khosla Ventures': 'khosla', 'GV (Google Ventures)': 'gv', Techstars: 'techstars' };
+const USES: [string, string, string][] = [['ai', 'AI & inference', 'Models, agents, RAG, one API for every model'], ['deploy', 'Deploy', 'Apps, functions, edge, machines'], ['data', 'Data', 'Vector, SQL, KV, object storage'], ['compute', 'Compute', 'GPUs, training, batch jobs']];
+const HEARD: Record<string, string> = { Search: 'search', 'X / Twitter': 'x', LinkedIn: 'linkedin', 'A friend or colleague': 'friend', 'A Techstars connection': 'techstars-connection', 'An investor': 'investor', 'An event or conference': 'event', 'Hanzo docs or GitHub': 'docs-github', Other: 'other' };
+interface Application { company: string; website: string; contactName: string; email: string; role: string; stage: string; investors: string; tier1Investors: string[]; amountRaised: string; teamSize: string; building: string; useCases: string[]; infraSpend: string; byoCompute: boolean; byoHardware: string; techstarsBatch: string; heardVia: string; hp: string }
+const EMPTY: Application = { company: '', website: '', contactName: '', email: '', role: '', stage: '', investors: '', tier1Investors: [], amountRaised: '', teamSize: '', building: '', useCases: [], infraSpend: '', byoCompute: false, byoHardware: '', techstarsBatch: '', heardVia: '', hp: '' };
+/* when the visitor landed, and the token that ties the answers to this visit */
+interface Session { token: string; landed: string }
+const pad = (n: number) => String(n).padStart(2, '0');
+const okEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
 // the body hanzo.ai sends, built the same way (blank answers are left out)
-function body(c, w) {
-  const t = (f, v) => (v.trim() ? [{ field: f, text: v.trim() }] : []);
-  const r = (f, a) => { const x = a.filter((e) => !!e); return x.length ? [{ field: f, choices: x }] : []; };
+function body(c: Application, w: Session) {
+  const t = (f: string, v: string) => (v.trim() ? [{ field: f, text: v.trim() }] : []);
+  const r = (f: string, a: string[]) => { const x = a.filter((e) => !!e); return x.length ? [{ field: f, choices: x }] : []; };
   return {
     token: w.token,
     answers: [...t('company', c.company), ...t('website', c.website), ...t('contact_name', c.contactName), ...t('email', c.email), ...t('role', c.role), ...r('stage', [c.stage]), ...t('investors', c.investors), ...r('tier1_investors', c.tier1Investors.map((e) => TIER1[e])), ...t('amount_raised', c.amountRaised), ...t('team_size', c.teamSize), ...t('building', c.building), ...r('use_cases', c.useCases), ...t('infra_spend', c.infraSpend), { field: 'byo_compute', boolean: c.byoCompute }, ...t('byo_hardware', c.byoCompute ? c.byoHardware : ''), ...t('techstars_batch', c.techstarsBatch), ...r('heard_via', [HEARD[c.heardVia]])],
@@ -51,7 +55,7 @@ function body(c, w) {
    always back on their own characters, so it never shows any figure but $150,000 (reduced motion: still). */
 const BOARD = '$150,000';
 function Board() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement>(null);
   const seen = useInView(ref, { amount: 0.5 });
   const calm = useReducedMotion();
   const [n, setN] = useState(0);
@@ -69,10 +73,10 @@ function Board() {
 
 function Hero() {
   // the figure card leans up to 2.5° toward a fine pointer and settles on leave (touch and reduced motion: still)
-  const tilt = useRef(null);
+  const tilt = useRef<HTMLDivElement>(null);
   const rx = useMotionValue(0), ry = useMotionValue(0);
   const fine = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const lean = (e) => {
+  const lean = (e: PointerEvent<HTMLDivElement>) => {
     const el = tilt.current; if (!el || !fine()) return;
     const r = el.getBoundingClientRect();
     rx.set(-(((e.clientY - r.top) / r.height) * 2 - 1) * 2.5); ry.set((((e.clientX - r.left) / r.width) * 2 - 1) * 2.5);
@@ -107,18 +111,18 @@ function Hero() {
    climbs by itself once while in view (start free → bring your compute → the credits), then rests on the credits;
    pointing at or focusing a rung takes it there. The credits rung carries the same split-flap figure as the hero. */
 function Ladder() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLOListElement>(null);
   const calm = useReducedMotion();
   const [at, setAt] = useState(0);
   // the rung crossing the middle of the screen is the big one (scroll climbs the ladder); pointing or focusing a rung
   // takes it there too
   useEffect(() => {
     if (calm || !ref.current) return;
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.k); }), { rootMargin: '-45% 0px -45% 0px' });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+(e.target as HTMLElement).dataset.k!); }), { rootMargin: '-45% 0px -45% 0px' });
     ref.current.querySelectorAll('li').forEach((li) => io.observe(li));
     return () => io.disconnect();
   }, [calm]);
-  const pick = (i) => setAt(i);
+  const pick = (i: number) => setAt(i);
   return (
     <section className="xp-sec tight xst-prog" aria-labelledby="xst-prog-h">
       <div className="xp-wrap">
@@ -139,12 +143,12 @@ function Ladder() {
   );
 }
 
-function Match({ c }) {
+function Match({ c }: { c: Application }) {
   const req = [c.company.trim(), c.contactName.trim(), okEmail(c.email), c.stage, c.building.trim()];
   const done = req.filter(Boolean).length;
   // until you touch the form, the card shows the program's rule by itself: the free track, then what tier-1 backing
   // turns it into, every 3.6 s while the card is on screen (it stops for good at your first answer)
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { amount: 0.5 });
   const calm = useReducedMotion();
   const blank = c.company === '' && c.contactName === '' && c.email === '' && !c.stage && c.tier1Investors.length === 0 && c.useCases.length === 0 && !c.byoCompute;
@@ -187,7 +191,7 @@ function Match({ c }) {
   );
 }
 
-function Field({ id, label, opt, req, err, children }) {
+function Field({ id, label, opt, req, err, children }: { id: string; label: string; opt?: string; req?: boolean; err?: string | null; children?: ReactNode }) {
   return (
     <div className="xst-f">
       <label htmlFor={id}><span className="xst-lt">{label}</span>{opt && <span> {opt}</span>}{req && <i aria-hidden="true"> *</i>}</label>
@@ -199,15 +203,15 @@ function Field({ id, label, opt, req, err, children }) {
 
 /* One choice from a short list, as pills on the page instead of a browser menu: an APG radio group (arrow keys move
    and choose, one tab stop), the same values the select sent. The hint is Hanzo's own placeholder, shown until chosen. */
-function Choice({ id, label, req, hint, opts, value, set, err }) {
-  const box = useRef(null);
-  const key = (e, i) => {
+function Choice({ id, label, req, hint, opts, value, set, err }: { id: string; label: string; req?: boolean; hint: string; opts: [string, string][]; value: string; set: (v: string) => void; err?: string | null }) {
+  const box = useRef<HTMLDivElement>(null);
+  const key = (e: KeyboardEvent<HTMLButtonElement>, i: number) => {
     const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
     if (!d) return;
     e.preventDefault();
     const n = (i + d + opts.length) % opts.length;
     set(opts[n][0]);
-    box.current?.querySelectorAll('[role=radio]')[n]?.focus();
+    box.current?.querySelectorAll<HTMLElement>('[role=radio]')[n]?.focus();
   };
   const cur = opts.findIndex((o) => o[0] === value);
   return (
@@ -226,33 +230,33 @@ function Choice({ id, label, req, hint, opts, value, set, err }) {
 }
 
 function Apply() {
-  const [c, setC] = useState(EMPTY);
-  const w = useRef(null);
+  const [c, setC] = useState<Application>(EMPTY);
+  const w = useRef<Session | null>(null);
   if (!w.current) w.current = { token: 's_' + (typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${Date.now()}${Math.random()}`).replace(/[^A-Za-z0-9]/g, '').slice(0, 30), landed: new Date().toISOString() };
-  useEffect(() => { w.current.landed = new Date().toISOString(); }, []); // when the visitor landed, not when the server rendered
+  useEffect(() => { w.current!.landed = new Date().toISOString(); }, []); // when the visitor landed, not when the server rendered
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
-  const [err, setErr] = useState(null);
-  const [bad, setBad] = useState(null); // the field the message belongs to: it is marked invalid and the message sits under it
-  const on = (e) => { setErr(null); setBad(null); setC({ ...c, [e.target.name]: e.target.value }); };
-  const inv = (id) => (bad === id ? { 'aria-invalid': true, 'aria-describedby': id + '-e' } : {});
-  const fe = (id) => (bad === id ? err : null);
+  const [err, setErr] = useState<string | null>(null);
+  const [bad, setBad] = useState<string | null>(null); // the field the message belongs to: it is marked invalid and the message sits under it
+  const on = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { setErr(null); setBad(null); setC({ ...c, [e.target.name]: e.target.value }); };
+  const inv = (id: string) => (bad === id ? { 'aria-invalid': true, 'aria-describedby': id + '-e' } : {});
+  const fe = (id: string) => (bad === id ? err : null);
   // the form in three steps; Next checks only the step you are on and takes you to the first field it needs
   const [step, setStep] = useState(0);
   const formTop = () => document.getElementById('apply')?.querySelector('.xst-steps')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  const go = (i) => { setErr(null); setStep(i); setTimeout(formTop, 0); };
-  const need0 = () => (!c.company.trim() ? ['company', 'Company name is required.'] : !c.contactName.trim() ? ['contactName', 'Your name is required.'] : !okEmail(c.email) ? ['email', 'A valid email is required.'] : !c.stage ? ['stage', 'Please select your company stage.'] : null);
+  const go = (i: number) => { setErr(null); setStep(i); setTimeout(formTop, 0); };
+  const need0 = (): [string, string] | null => (!c.company.trim() ? ['company', 'Company name is required.'] : !c.contactName.trim() ? ['contactName', 'Your name is required.'] : !okEmail(c.email) ? ['email', 'A valid email is required.'] : !c.stage ? ['stage', 'Please select your company stage.'] : null);
   const next = () => {
     const miss = step === 0 ? need0() : null;
     if (miss) {
       setErr(miss[1]); setBad(miss[0]);
-      setTimeout(() => (document.querySelector(`#${miss[0]} [role=radio]`) || document.getElementById(miss[0]))?.focus(), 0);
+      setTimeout(() => (document.querySelector<HTMLElement>(`#${miss[0]} [role=radio]`) || document.getElementById(miss[0]))?.focus(), 0);
       return;
     }
     go(step + 1);
   };
-  const flip = (k, v) => setC((p) => ({ ...p, [k]: p[k].includes(v) ? p[k].filter((x) => x !== v) : [...p[k], v] }));
-  const submit = async (e) => {
+  const flip = (k: 'tier1Investors' | 'useCases', v: string) => setC((p) => ({ ...p, [k]: p[k].includes(v) ? p[k].filter((x) => x !== v) : [...p[k], v] }));
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (step < 2 && document.documentElement.classList.contains('js')) { next(); return; } // Enter on an early step moves on
     const m0 = need0();
@@ -261,14 +265,14 @@ function Apply() {
     if (m) {
       // the first invalid field takes focus, so the message and the place to fix it are together
       const id = !c.company.trim() ? 'company' : !c.contactName.trim() ? 'contactName' : !okEmail(c.email) ? 'email' : !c.stage ? 'stage' : 'building';
-      setTimeout(() => (document.querySelector(`#${id} [role=radio]`) || document.getElementById(id))?.focus(), 0);
+      setTimeout(() => (document.querySelector<HTMLElement>(`#${id} [role=radio]`) || document.getElementById(id))?.focus(), 0);
       setBad(id);
       return setErr(m);
     }
     setBusy(true); setErr(null); setBad(null);
     try {
       if (!c.hp) { // a filled trap is a bot: it is thanked and nothing is sent
-        const r = await fetch('https://api.hanzo.ai/v1/form/public/hanzo.startups-apply/responses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body(c, w.current)) });
+        const r = await fetch('https://api.hanzo.ai/v1/form/public/hanzo.startups-apply/responses', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body(c, w.current!)) });
         if (!r.ok) {
           const j = await r.json().catch(() => null);
           const d = j && typeof j === 'object' && typeof j.detail === 'string' ? j.detail.replace(/^form: /, '') : '';
@@ -360,7 +364,7 @@ function Apply() {
                   <Field id="techstarsBatch" label="Techstars affiliation" opt="(optional)"><input id="techstarsBatch" name="techstarsBatch" type="text" value={c.techstarsBatch} onChange={on} placeholder="Batch / program, e.g. NYC W17" /></Field>
                 </div>
                 <div className="xst-row one">
-                  <Choice id="heardVia" label="How did you hear about us?" hint="Select one" opts={Object.keys(HEARD).map((h) => [h, h])} value={c.heardVia} set={(v) => setC((p) => ({ ...p, heardVia: p.heardVia === v ? '' : v }))} />
+                  <Choice id="heardVia" label="How did you hear about us?" hint="Select one" opts={Object.keys(HEARD).map((h): [string, string] => [h, h])} value={c.heardVia} set={(v) => setC((p) => ({ ...p, heardVia: p.heardVia === v ? '' : v }))} />
                 </div>
                 </div>
                 <div className="xst-trap" aria-hidden="true"><label htmlFor="hp">Do not fill this in</label><input id="hp" name="hp" type="text" tabIndex={-1} autoComplete="off" value={c.hp} onChange={on} /></div>
@@ -397,7 +401,7 @@ export default function Startups() {
 /* The free track as the close's object: the card the application starts on, its four uses lighting in turn the way
    metered use moves between them (idle; still under reduced motion). Every word is already on the page. */
 function Free() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.4 });
   const calm = useReducedMotion();
   const [k, setK] = useState(0);
@@ -411,13 +415,13 @@ function Free() {
       <span className="x-mono">Everyone starts free.</span>
       <b>Start in minutes</b>
       <p>Creating an account is free.</p>
-      <ul>{USES.map(([id, l], i) => <li key={id} className={i === k ? 'on' : ''}><span>{l}</span><i style={{ '--w': [64, 38, 52, 28][i] + '%' }} /></li>)}</ul>
+      <ul>{USES.map(([id, l], i) => <li key={id} className={i === k ? 'on' : ''}><span>{l}</span><i style={{ '--w': [64, 38, 52, 28][i] + '%' } as CSSProperties} /></li>)}</ul>
     </div>
   );
 }
 
 function Not() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.35'] });
   const clip = useTransform(p, [0, 1], ['inset(0px 24px round 28px)', 'inset(0px 0px round 0px)']);
   return (

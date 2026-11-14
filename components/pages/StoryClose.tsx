@@ -4,10 +4,13 @@
    (v2/Lines) instead of the kit's word blur (PLAN-COMPONENTS 2.8: no filter in animated paths), and the one solid ask
    can carry the page's sticky ask (`thumb`: data-thumb for the ask bar) and its `data-cta`.
    Usage: <StoryClose title lede action to note thumb cta="history.band" /> as the last section of <main>. */
+import type { ReactNode } from 'react';
 import { Cta } from '../kit';
 import Lines from '../v2/Lines';
 
-export default function StoryClose({ title, lede, action, to, note, thumb = false, cta }) {
+interface StoryCloseProps { title: string; lede?: ReactNode; action: ReactNode; to: string; note?: ReactNode; thumb?: boolean; cta?: string }
+
+export default function StoryClose({ title, lede, action, to, note, thumb = false, cta }: StoryCloseProps) {
   return (
     <section className="x-band xst-close v2s-room" data-room="dark">
       <div className="x-wrap">
