@@ -17,6 +17,7 @@ test('a category shows its own, a visitor\'s review leads, and All shows every o
   assert.deepEqual(PRODUCTS.map((p) => visible([], p).length), [2, 2, 2, 2, 1]);
   assert.equal(visible([], 'All').length, 9);
   const mine = entry(answers, 7);
+  assert.ok(mine);
   assert.equal(visible([mine], 'All')[0], mine);
   assert.equal(visible([mine], 'Hanzo Cloud')[0], mine);
   assert.equal(visible([mine], 'Enterprise').length, 1);
@@ -38,6 +39,7 @@ test('what localStorage holds comes back only if it is a list', () => {
 
 test('a review is sent as hanzo.ai sends it: a lead and a form response, on the gateway', () => {
   const e = entry(answers, 7);
+  assert.ok(e);
   assert.equal(API, 'https://api.hanzo.ai');
   assert.deepEqual(lead(e), { program: 'hanzo_review', name: 'Ada Lovelace', role: 'Builder', company: 'Community', product: 'Hanzo Cloud', rating: 4, title: 'Fast', review: 'It works.', source: 'hanzo.reviews' });
   assert.deepEqual(response(e, 7), {
