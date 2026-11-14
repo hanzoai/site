@@ -4,11 +4,20 @@
    Usage: <A2Grow to={1.6}><h2 className="a2-headline">…</h2></A2Grow>   (from = 1 by default; to < 1 shrinks instead)
    Transform only (origin left), so nothing reflows. Phones and reduced motion keep the resting size. */
 import { useRef } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import useNarrow from './A2Narrow';
 
-export default function A2Grow({ to = 1.6, from = 1, origin = '0% 50%', className = '', children }) {
-  const ref = useRef(null);
+interface A2GrowProps {
+  to?: number;
+  from?: number;
+  origin?: string;
+  className?: string;
+  children?: ReactNode;
+}
+
+export default function A2Grow({ to = 1.6, from = 1, origin = '0% 50%', className = '', children }: A2GrowProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const narrow = useNarrow();
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'end start'] });

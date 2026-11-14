@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import puppeteer from 'puppeteer-core';
 import { lock } from './lock.ts';
+import { why } from './why.ts';
 
 const args = process.argv.slice(2);
 const paths = args.filter((a) => a.startsWith('/'));
@@ -20,12 +21,12 @@ for (const p of paths) {
     const page = await b.newPage();
     if (m === 'd') await page.setViewport({ width: 1470, height: 900 });
     else await page.emulate({ viewport: { width: 375, height: 812, deviceScaleFactor: 1, isMobile: true, hasTouch: true }, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1' });
-    const errs = [];
+    const errs: string[] = [];
     page.on('pageerror', (e) => errs.push(e.message.slice(0, 160)));
     page.on('console', (x) => x.type() === 'error' && !/favicon|Failed to load resource/.test(x.text()) && errs.push(x.text().slice(0, 160)));
     try {
       await page.goto('http://localhost:4180' + p.replace(/\/?$/, '/'), { waitUntil: 'networkidle2', timeout: 120000 });
-      await page.evaluate(() => { localStorage.setItem('hz-consent', JSON.stringify({ necessary: true })); document.querySelectorAll('[role=dialog]').forEach((d) => /cookie/i.test(d.innerText) && d.remove()); });
+      await page.evaluate(() => { localStorage.setItem('hz-consent', JSON.stringify({ necessary: true })); document.querySelectorAll<HTMLElement>('[role=dialog]').forEach((d) => /cookie/i.test(d.innerText) && d.remove()); });
       await new Promise((r) => setTimeout(r, 1800));
       const H = await page.evaluate(() => document.documentElement.scrollHeight), V = m === 'd' ? 900 : 812;
       const step = Math.max(V * 0.9, (H - V) / Math.max(1, max - 1));
@@ -40,7 +41,7 @@ for (const p of paths) {
       const sw = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
       if (errs.length || sw > 0) bad++;
       console.log(`${p} ${m === 'd' ? 'desktop' : 'phone'}: ${n} shots, height ${H}${sw > 0 ? '  SIDEWAYS SCROLL +' + sw : ''}${errs.length ? '  errors: ' + errs.slice(0, 2).join(' | ') : ''}  -> ${dir}`);
-    } catch (e) { bad++; console.log(`${p} ${m}: FAILED ${e.message.slice(0, 120)}`); }
+    } catch (e) { bad++; console.log(`${p} ${m}: FAILED ${why(e, 120)}`); }
     finally { await page.close(); }
   }
 }

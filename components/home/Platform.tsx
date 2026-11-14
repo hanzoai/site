@@ -8,7 +8,7 @@ import { BotCardPreview, TeamCardPreview } from './ProductPreviews';
 import P from '../../content/products';
 import './platform.css';
 
-const site = (addr) => (addr.startsWith('hanzo.ai/') ? addr.slice(8) : 'https://' + addr);
+const site = (addr: string) => (addr.startsWith('hanzo.ai/') ? addr.slice(8) : 'https://' + addr);
 
 export default function Platform() {
   return (

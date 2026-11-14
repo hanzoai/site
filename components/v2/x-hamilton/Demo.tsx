@@ -6,19 +6,19 @@
      <div ref={ref}><PauseBtn paused={paused} onClick={toggle} />…</div>
    amount is how much of the object must be on screen before it runs (low, so a hero object half under the fold starts on
    arrival). Under reduced motion run is false and the object shows its final state. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEventHandler } from 'react';
 import { useInView } from 'motion/react';
 import { useCalm } from '../../ui';
 
-export function useDemo(amount = 0.05) {
-  const ref = useRef(null);
+export function useDemo<T extends HTMLElement = HTMLDivElement>(amount = 0.05) {
+  const ref = useRef<T>(null);
   const seen = useInView(ref, { amount });
   const calm = useCalm();
   const [paused, setPaused] = useState(false);
-  return [ref, seen && !calm && !paused, calm, paused, () => setPaused((p) => !p)];
+  return [ref, seen && !calm && !paused, calm, paused, () => setPaused((p) => !p)] as const;
 }
 
-export function PauseBtn({ paused, onClick, className = '' }) {
+export function PauseBtn({ paused, onClick, className = '' }: { paused: boolean; onClick: MouseEventHandler<HTMLButtonElement>; className?: string }) {
   return (
     <button type="button" className={'l2-pause ' + className} aria-pressed={paused} aria-label="Pause" onClick={onClick}>
       {paused
@@ -29,12 +29,12 @@ export function PauseBtn({ paused, onClick, className = '' }) {
 }
 
 /* Calls fn every ms while run is true, by a chain of timeouts (no interval), with the latest fn. */
-export function useTick(ms, run, fn) {
+export function useTick(ms: number, run: boolean, fn: () => void) {
   const f = useRef(fn);
   f.current = fn;
   useEffect(() => {
     if (!run) return;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const step = () => { f.current(); t = setTimeout(step, ms); };
     t = setTimeout(step, ms);
     return () => clearTimeout(t);

@@ -9,13 +9,13 @@ import Lines from './v2/Lines';
 import Chapters from './v2/Chapters';
 
 const P = PRODUCTS;
-const site = (h) => h.replace('https://hanzo.ai', '') || '/';
+const site = (h: string) => h.replace('https://hanzo.ai', '') || '/';
 
 /* Hanzo's product screen, drawn at the width it was made for and zoomed (layout, not a bitmap) to fill the frame. */
-function Screen({ html }) {
-  const ref = useRef(null);
+function Screen({ html }: { html: string }) {
+  const ref = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
-    const el = ref.current;
+    const el = ref.current!;
     const ro = new ResizeObserver(([e]) => { el.style.setProperty('--z', Math.max(0.7, Math.min(1.5, e.contentRect.width / 600)).toFixed(3)); });
     ro.observe(el);
     return () => ro.disconnect();

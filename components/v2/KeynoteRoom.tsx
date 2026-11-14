@@ -8,12 +8,21 @@
      page, never back to back.
    Reduced motion: the room is simply full width. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion, useMotionTemplate } from 'motion/react';
 import { useWide } from './KeynoteChapters';
 import './Keynote.css';
 
-export default function KeynoteRoom({ children, className = '', from = [6, 7, 24], tone = '#171717', id }) {
-  const ref = useRef(null);
+interface KeynoteRoomProps {
+  children?: ReactNode;
+  className?: string;
+  from?: readonly [number, number, number];
+  tone?: string;
+  id?: string;
+}
+
+export default function KeynoteRoom({ children, className = '', from = [6, 7, 24], tone = '#171717', id }: KeynoteRoomProps) {
+  const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const [calm, setCalm] = useState(false); // after mount, so the first render matches the server's HTML
   useEffect(() => setCalm(!!reduce), [reduce]);

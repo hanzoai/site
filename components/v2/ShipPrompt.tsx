@@ -5,12 +5,24 @@
             related={[[title, href, line?], …]} relatedTitle="Related capabilities" flip />
    Words are Hanzo's own (they are the live pages' words). The prompt is the kit's CodeBlock (copy equals display).
    Styles: ShipPrompt.css (prefix sp-). */
+import type { ReactNode } from 'react';
 import { A, CodeBlock } from '../kit';
 import './ShipPrompt.css';
 
 const arrow = <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-export default function ShipPrompt({ name, prompt, api, related, relatedTitle = 'Related capabilities', flip, children, className = '' }) {
+interface ShipPromptProps {
+  name: string;
+  prompt: string;
+  api?: string;
+  related?: string[][]; // [title, href, line?]
+  relatedTitle?: string;
+  flip?: boolean;
+  children?: ReactNode;
+  className?: string;
+}
+
+export default function ShipPrompt({ name, prompt, api, related, relatedTitle = 'Related capabilities', flip, children, className = '' }: ShipPromptProps) {
   return (
     <section className={`sp v2-sec ${flip ? 'sp-flip' : ''} ${className}`}>
       <div className="v2-wrap v2-grid sp-grid">

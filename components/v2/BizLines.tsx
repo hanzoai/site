@@ -7,13 +7,24 @@
    - otherwise: the server HTML shows the words; once the page runs, a heading that is still below the screen is set
      down in its mask and cuts in the first time it is half on screen. JS off or reduced motion: the words simply sit. */
 import { useLayoutEffect, useRef, useState } from 'react';
+import type { CSSProperties } from 'react';
 import { useInView } from 'motion/react';
 import './Biz.css';
 
 const useIso = typeof window === 'undefined' ? () => {} : useLayoutEffect;
 
-export default function BizLines({ lines, as = 'h2', className = '', delay = 0, now = false, id, style }) {
-  const ref = useRef(null);
+interface BizLinesProps {
+  lines: readonly string[];
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  className?: string;
+  delay?: number;
+  now?: boolean;
+  id?: string;
+  style?: CSSProperties;
+}
+
+export default function BizLines({ lines, as = 'h2', className = '', delay = 0, now = false, id, style }: BizLinesProps) {
+  const ref = useRef<HTMLHeadingElement>(null);
   const [armed, setArmed] = useState(false);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   useIso(() => {
@@ -23,10 +34,10 @@ export default function BizLines({ lines, as = 'h2', className = '', delay = 0, 
   const Tag = as;
   const state = now ? ' now' : armed && !seen ? ' armed' : '';
   return (
-    <Tag ref={ref} id={id} className={'bz-lines ' + className + state} style={{ ...style, '--d': delay + 's' }}>
+    <Tag ref={ref} id={id} className={'bz-lines ' + className + state} style={{ ...style, '--d': delay + 's' } as CSSProperties}>
       {lines.map((l, i) => (
         <span className="bz-line" key={i}>
-          <span style={{ '--i': i }}>{l}</span>
+          <span style={{ '--i': i } as CSSProperties}>{l}</span>
         </span>
       ))}
     </Tag>

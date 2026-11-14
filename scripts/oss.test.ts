@@ -3,9 +3,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { combine, github, said } from '../lib/oss.ts';
 
-const day = (n) => new Date(Date.UTC(2026, 10, 9) - n * 864e5).toISOString().slice(0, 10);
+const day = (n: number) => new Date(Date.UTC(2026, 10, 9) - n * 864e5).toISOString().slice(0, 10);
 const days = Object.fromEntries(Array.from({ length: 365 }, (_, i) => [day(364 - i), 1]));
-const group = (name, mirrors) => ({ name, mirrors, daily: days, active: days, latest: [{ repo: 'a/x', sha: '0123456789abcdef', at: '2026-11-09T00:00:00Z', message: 'm', url: 'https://git.hanzo.ai/a/x/commit/0123456789abcdef', ours: true }], commits: 365, merges: 5, active30: 3, orgs: 1, repos: 4, public: 3, private: 1, ours: 2, contributors: 9, people: 2, months: [1], mergeMonths: [1], oursMonths: [1] });
+const group = (name: string, mirrors: number) => ({ name, mirrors, daily: days, active: days, latest: [{ repo: 'a/x', sha: '0123456789abcdef', at: '2026-11-09T00:00:00Z', message: 'm', url: 'https://git.hanzo.ai/a/x/commit/0123456789abcdef', ours: true }], commits: 365, merges: 5, active30: 3, orgs: 1, repos: 4, public: 3, private: 1, ours: 2, contributors: 9, people: 2, months: [1], mergeMonths: [1], oursMonths: [1] });
 const index = {
   read: '2026-11-09T07:00:00Z', window: { from: day(364), to: day(0) }, months: ['2026-11'], complete: true,
   totals: { orgs: 2, repos: 4, public: 3, private: 1, active: 3, active30: 3, commits: 365, merges: 5, ours: 2, contributors: 9, people: 2, months: [1], mergeMonths: [1], oursMonths: [1] },
@@ -13,14 +13,14 @@ const index = {
   orgs: [{ name: 'a', group: 'hanzo', github: 'https://github.com/a', commits: 40, months: [40], forge: 'https://git.hanzo.ai/a' }, { name: 'gone', group: 'hanzo', github: 'https://github.com/gone' }, { name: 'z', group: 'zoo' }],
   repos: [{ repo: 'a/x', org: 'a', commits: 30, months: [30], forge: 'https://git.hanzo.ai/a/x', github: 'https://github.com/a/x' }],
 };
-const repo = (name, over = {}) => ({ full_name: 'a/' + name, name, stargazers_count: 0, forks_count: 0, fork: false, archived: false, language: 'Go', pushed_at: '2026-11-01T00:00:00Z', description: null, homepage: null, ...over });
+const repo = (name: string, over: Record<string, unknown> = {}) => ({ full_name: 'a/' + name, name, stargazers_count: 0, forks_count: 0, fork: false, archived: false, language: 'Go', pushed_at: '2026-11-01T00:00:00Z', description: null, homepage: null, ...over });
 const page1 = Array.from({ length: 100 }, (_, i) => repo('r' + i, { fork: i < 10, stargazers_count: 1 }));
 const page2 = [repo('x', { stargazers_count: 7, forks_count: 2, language: 'Rust' }), repo('y', { archived: true, stargazers_count: 99 })];
 
-function stub(calls) {
-  const json = (body, status = 200, headers = {}) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', ...headers } });
-  return async (url) => {
-    url = String(url);
+function stub(calls: string[]) {
+  const json = (body: unknown, status = 200, headers: Record<string, string> = {}) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', ...headers } });
+  return async (input: string | URL | Request) => {
+    const url = String(input);
     calls.push(url);
     if (url.includes('/orgs/gone/')) return json({ message: 'Not Found' }, 404);
     if (url.includes('/orgs/a/repos')) return url.endsWith('page=1') ? json(page1, 200, { link: '<https://api.github.com/orgs/a/repos?page=2>; rel="next", <https://api.github.com/orgs/a/repos?page=2>; rel="last"' }) : json(page2);
@@ -39,7 +39,7 @@ test('a description loses lineage and upstream names, and is left out whole when
 });
 
 test('GitHub is read page by page, forks left out of the originals, archived repositories off the cards', async () => {
-  const calls = [];
+  const calls: string[] = [];
   const real = globalThis.fetch;
   globalThis.fetch = stub(calls);
   try {
@@ -57,7 +57,7 @@ test('GitHub is read page by page, forks left out of the originals, archived rep
 });
 
 test('a push reuses a card\'s contributors and an org\'s description instead of asking again', async () => {
-  const calls = [];
+  const calls: string[] = [];
   const real = globalThis.fetch;
   globalThis.fetch = stub(calls);
   try {

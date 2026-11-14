@@ -1,11 +1,13 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'motion/react';
 import { EASE } from '../ui';
 import { More } from '../kit';
 import { Glyph } from './glyphs';
 import Usage, { Stack } from '../Usage';
 import { checkoutAbs } from '../../lib/plans';
+import type { Term } from '../../lib/plans';
 import useCommercePricing from '../../lib/useCommercePricing';
 import { asked, chose, LIST, picked, termed, viewed } from '../../lib/funnel';
 import { press } from '../../lib/press';
@@ -20,12 +22,12 @@ const ENT_FALLBACK = [
 ];
 
 /* A plan's mark at its card's head, and a line's by what it names (first match wins; a line no rule names wears the check). */
-const MARK = { Free: 'sprout', Go: 'zap', Pro: 'rocket', Dev: 'cpu', Max: 'crown', Ultra: 'gem', Ultimate: 'sparkles', Unlimited: 'infinity', Team: 'users', Enterprise: 'building-2', 'Pay as you go': 'terminal', 'Volume & Dedicated': 'building-2' };
-const GLYPHS = [[/^∞|\bunlimited\b/i, 'infinity'], [/\bterminal\b|\beditor\b|\bCLI\b|\bMCP\b|\bSDK\b/i, 'terminal'], [/\bHanzo Dev\b|\bbuild apps\b|\bcode\b/i, 'code'], [/\blimits?\b.*\bhours?\b|\bevery 5 hours\b/i, 'timer'], [/\busage\b/i, 'gauge'], [/\bautomations?\b/i, 'workflow'], [/\brequests? every day\b|\bdaily\b/i, 'calendar-clock'], [/\bguests?\b|\binvite\b/i, 'user-plus'], [/\bmeetings?\b|\bcalendar\b|\bcontacts\b|\bworkspace\b|\bmembers?\b|\bteam\b/i, 'users'], [/\bbots?\b|\bagents?\b/i, 'bot'], [/\bsupport\b|\bonboarding\b|\barchitect\b/i, 'headphones'], [/\bSSO\b|\bSAML\b|\bSCIM\b|\bRBAC\b|\baudit\b|\bHIPAA\b|\bprivacy\b|\bretention\b/i, 'settings'], [/\bVPC\b|\bcluster\b|\bon-prem\b|\bair-gapped\b/i, 'cloud'], [/\buptime\b|\bSLA\b|\bpriority\b/i, 'activity'], [/\bchat\b/i, 'message-circle'], [/\bmodels?\b|\bEnso\b|\bZen\b|\bKai\b/i, 'sparkles']];
-const glyph = (line) => GLYPHS.find(([re]) => re.test(line))?.[1] ?? 'check';
+const MARK: Record<string, string> = { Free: 'sprout', Go: 'zap', Pro: 'rocket', Dev: 'cpu', Max: 'crown', Ultra: 'gem', Ultimate: 'sparkles', Unlimited: 'infinity', Team: 'users', Enterprise: 'building-2', 'Pay as you go': 'terminal', 'Volume & Dedicated': 'building-2' };
+const GLYPHS: [RegExp, string][] = [[/^∞|\bunlimited\b/i, 'infinity'], [/\bterminal\b|\beditor\b|\bCLI\b|\bMCP\b|\bSDK\b/i, 'terminal'], [/\bHanzo Dev\b|\bbuild apps\b|\bcode\b/i, 'code'], [/\blimits?\b.*\bhours?\b|\bevery 5 hours\b/i, 'timer'], [/\busage\b/i, 'gauge'], [/\bautomations?\b/i, 'workflow'], [/\brequests? every day\b|\bdaily\b/i, 'calendar-clock'], [/\bguests?\b|\binvite\b/i, 'user-plus'], [/\bmeetings?\b|\bcalendar\b|\bcontacts\b|\bworkspace\b|\bmembers?\b|\bteam\b/i, 'users'], [/\bbots?\b|\bagents?\b/i, 'bot'], [/\bsupport\b|\bonboarding\b|\barchitect\b/i, 'headphones'], [/\bSSO\b|\bSAML\b|\bSCIM\b|\bRBAC\b|\baudit\b|\bHIPAA\b|\bprivacy\b|\bretention\b/i, 'settings'], [/\bVPC\b|\bcluster\b|\bon-prem\b|\bair-gapped\b/i, 'cloud'], [/\buptime\b|\bSLA\b|\bpriority\b/i, 'activity'], [/\bchat\b/i, 'message-circle'], [/\bmodels?\b|\bEnso\b|\bZen\b|\bKai\b/i, 'sparkles']];
+const glyph = (line: string) => GLYPHS.find(([re]) => re.test(line))?.[1] ?? 'check';
 
 /* A price that rolls to its new value: up when it rises, down when it falls. */
-function Price({ v, unit = 'USD/month' }) {
+function Price({ v, unit = 'USD/month' }: { v: number | string; unit?: string }) {
   const prev = useRef(v);
   const dir = typeof v === 'number' && typeof prev.current === 'number' && v < prev.current ? -1 : 1;
   useEffect(() => { prev.current = v; }, [v]);
@@ -43,11 +45,14 @@ function Price({ v, unit = 'USD/month' }) {
   );
 }
 
-function List({ sets, at }) {
+/** A card's lines: a heading and the lines under it. */
+interface Lines { head?: string; items: string[] }
+
+function List({ sets, at }: { sets: Lines[]; at: number }) {
   // on a phone each card's lines fold under their heading (hanzo.ai's plan cards); wider, they stay open. A card on the
   // usage slider holds every stop's lines in one cell (Stack), so a move never changes its height.
-  const box = useRef(null);
-  useEffect(() => { if (matchMedia('(max-width: 900px)').matches) box.current.open = false; }, []);
+  const box = useRef<HTMLDetailsElement>(null);
+  useEffect(() => { if (matchMedia('(max-width: 900px)').matches) box.current!.open = false; }, []);
   return (
     <details className="x-plan-l" ref={box} open>
       <summary><Stack at={at}>{sets.map((s) => s.head || 'What’s included')}</Stack></summary>
@@ -58,11 +63,19 @@ function List({ sets, at }) {
   );
 }
 
-function Plan({ name, desc, price, unit, sub, cta, href, alt, note, head, items, sets = [{ head, items }], at = 0, top, pick, solid, free, i = 0, sold }) {
+/** What a card sells, as the funnel names it: the slug, how it is taken, the way in's name, the tab and the term. */
+interface Sold { slug: string; how: string; cta: string; tab: string; every: Term }
+interface PlanProps {
+  name: string; desc: ReactNode; price?: number | string; unit?: string; sub?: ReactNode; cta?: ReactNode; href?: string;
+  alt?: [string, string]; note?: ReactNode; head?: string; items?: string[]; sets?: Lines[]; at?: number; top?: ReactNode;
+  pick?: ReactNode; solid?: boolean; free?: boolean; i?: number; sold: Sold;
+}
+
+function Plan({ name, desc, price, unit, sub, cta, href, alt, note, head, items = [], sets = [{ head, items }], at = 0, top, pick, solid, free, i = 0, sold }: PlanProps) {
   // the way in is sometimes a page of this site, whose press the page transition takes over: it is read where the
   // transition reads it (lib/press.js)
-  const way = useRef(null);
-  const help = useRef(null);
+  const way = useRef<HTMLAnchorElement>(null);
+  const help = useRef<HTMLAnchorElement>(null);
   useEffect(() => press(way.current, () => chose(sold)), [sold.slug, sold.every, sold.cta]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => (alt ? press(help.current, () => asked(sold.slug, sold.tab, alt[0])) : undefined), [alt, sold.slug, sold.tab]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
@@ -89,7 +102,7 @@ function Plan({ name, desc, price, unit, sub, cta, href, alt, note, head, items,
   );
 }
 
-function Seg({ opts, val, set, id }) {
+function Seg({ opts, val, set, id }: { opts: string[]; val: string; set: (v: string) => void; id: string }) {
   return (
     <div className="x-seg" role="tablist">
       {opts.map((o) => (
@@ -102,6 +115,9 @@ function Seg({ opts, val, set, id }) {
   );
 }
 
+/** The funnel's name for each tab. */
+const TAB: Record<string, string> = { Personal: 'individual', Team: 'team', API: 'api' };
+
 export default function Pricing() {
   const { plans: PLANS, rungs, seats: SEATS } = useCommercePricing();
   const go = checkoutAbs(PLANS.go.id);
@@ -112,11 +128,11 @@ export default function Pricing() {
   // a live catalog that sells fewer rungs than the stop stood on brings the slider down to its highest
   const at = Math.min(step, rungs.length - 1);
   const t = rungs[at];
-  const move = (k) => { setStep(k); if (k !== at) picked(rungs[k].id, 'individual'); };
+  const move = (k: number) => { setStep(k); if (k !== at) picked(rungs[k].id, 'individual'); };
   // what each card sells, as the app's funnel names it (lib/funnel.js): the slug, the tab, how it is taken and the way in's name
   const every = bill === 'Annual' ? 'year' : 'month';
-  const tabName = { Personal: 'individual', Team: 'team', API: 'api' }[tab];
-  const sale = (slug, how, label, term = 'month') => ({ slug, how, cta: label, tab: tabName, every: term });
+  const tabName = TAB[tab];
+  const sale = (slug: string, how: string, label: string, term: Term = 'month'): Sold => ({ slug, how, cta: label, tab: tabName, every: term });
   // one view per tab a reader looks at, with the prices it shows
   useEffect(() => { viewed(tabName, LIST[tabName]); }, [tabName]);
   return (

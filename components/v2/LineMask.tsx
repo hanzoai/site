@@ -9,11 +9,21 @@
    - the inView variant is armed (hidden) only after mount and only while it is still below the fold.
    Timing (MASTER part 3): translateY 105% → 0, 700 ms, ease-emphasis, 60 ms between lines.
    Reduced motion: set, no movement. Owned by Cloud 3. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
 import './LaunchType.css';
 
-export default function LineMask({ lines, as = 'h2', className = '', delay = 0, inView = false, stagger = 0.06, ...rest }) {
-  const ref = useRef(null);
+export type LineTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
+
+interface LineMaskProps extends HTMLAttributes<HTMLElement> {
+  lines: ReactNode[];
+  as?: LineTag;
+  delay?: number;
+  inView?: boolean;
+  stagger?: number;
+}
+
+export default function LineMask({ lines, as = 'h2', className = '', delay = 0, inView = false, stagger = 0.06, ...rest }: LineMaskProps) {
+  const ref = useRef<HTMLHeadingElement>(null);
   const [st, setSt] = useState(inView ? 'idle' : 'play'); // idle (visible, untouched) → armed (hidden) → play
   useEffect(() => {
     if (!inView) return;

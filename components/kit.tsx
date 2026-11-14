@@ -11,23 +11,24 @@
    - Loading, empty, error: <Skeleton lines={3} h={…} />, <Empty title action />, <Problem title detail onRetry />.
    - Media: <Img src w h alt priority /> and <Film src poster w h /> (see their notes for the performance rules). */
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import type { ComponentPropsWithRef, FocusEvent, FormEvent, HTMLAttributes, InputHTMLAttributes, KeyboardEvent, MouseEvent, ReactNode, Ref, VideoHTMLAttributes } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import { motion, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useInView, useReducedMotion, type PanInfo, type Transition } from 'motion/react';
 import { EASE, Words, Rise, Magnetic, Copy } from './ui';
 import { href } from '../lib/route';
 import { SPRING } from '../lib/motion';
 
 /* A link that stays inside the site when it can. */
-export function A({ to, children, className, ...rest }) {
-  const h = href(to);
+export function A({ to, children, className, ...rest }: Omit<ComponentPropsWithRef<'a'>, 'href'> & { to?: string }) {
+  const h = to === undefined ? undefined : href(to);
   // a bare link, no wrapper: pages lay links out as grid and flex items, and Morph and Cursor read the <a> itself
   if (h && h.startsWith('/')) return <Link href={h} className={className} {...rest}>{children}</Link>;
   const ext = h && !h.startsWith('https://hanzo.ai');
   return <a href={h} className={className} {...(ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})} {...rest}>{children}</a>;
 }
 
-export function Go({ to, children, solid, className = '' }) {
+export function Go({ to, children, solid, className = '' }: { to?: string; children?: ReactNode; solid?: boolean; className?: string }) {
   return (
     <motion.span className="x-go" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ duration: 0.2, ease: EASE }}>
       <A to={to} className={'x-btn' + (solid ? ' solid' : '') + ' ' + className}>{children}</A>
@@ -35,7 +36,7 @@ export function Go({ to, children, solid, className = '' }) {
   );
 }
 
-export function More({ to, children }) {
+export function More({ to, children }: { to?: string; children?: ReactNode }) {
   return (
     <A to={to} className="x-arrow">
       <span>{children}</span>
@@ -45,7 +46,7 @@ export function More({ to, children }) {
 }
 
 /* Section head: a small kicker, the line, one sentence. */
-export function SecHead({ kicker, title, lede, center, dark, id }) {
+export function SecHead({ kicker, title, lede, center, dark, id }: { kicker?: ReactNode; title: string; lede?: ReactNode; center?: boolean; dark?: boolean; id?: string }) {
   return (
     <header className={'x-head' + (center ? ' center' : '') + (dark ? ' dark' : '')}>
       {kicker && <Rise as="p" className="x-kick" y={10}>{kicker}</Rise>}
@@ -59,18 +60,18 @@ export function SecHead({ kicker, title, lede, center, dark, id }) {
 /* Questions that open in place. Strictly one open at a time; the first is open by default (first={-1} for none).
    Closed answers stay in the HTML as hidden="until-found", so search engines read them and the browser's Find in page
    opens the one it finds. Each question has an address (#q-what-does-a-plan-cost) that opens it on arrival. */
-const qslug = (q) => (typeof q === 'string' ? 'q-' + q.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) : undefined);
-export function Faq({ items, dark, first = 0, onOpen }) {
+const qslug = (q: ReactNode) => (typeof q === 'string' ? 'q-' + q.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) : undefined);
+export function Faq({ items, dark, first = 0, onOpen }: { items: readonly (readonly ReactNode[])[]; dark?: boolean; first?: number; onOpen?: (question: ReactNode) => void }) {
   const initOpen = first >= 0 && first < items.length ? first : -1;
   const [open, setOpen] = useState(initOpen);
   const [shut, setShut] = useState(() => new Set(items.map((_, i) => i).filter((i) => i !== initOpen)));
-  const bodies = useRef([]);
-  const show = useCallback((i) => {
+  const bodies = useRef<(HTMLDivElement | null)[]>([]);
+  const show = useCallback((i: number) => {
     setShut((s) => { const n = new Set(s); n.delete(i); return n; });
     setOpen(i);
   }, []);
   // onOpen hears each question as the reader opens it, never as it is closed
-  const toggle = (i) => {
+  const toggle = (i: number) => {
     if (open === i) { setOpen(-1); return; }
     show(i);
     onOpen?.(items[i][0]);
@@ -119,8 +120,8 @@ export function Faq({ items, dark, first = 0, onOpen }) {
 
 /* A figure on a split-flap board: each character spins through the board before it settles, left to right. */
 const FLAP = '0123456789$+M,.';
-export function Flap({ value, className = '' }) {
-  const ref = useRef(null);
+export function Flap({ value, className = '' }: { value: string; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   const calm = useReducedMotion();
   const [shown, setShown] = useState(value); // the real figure in the HTML; the board spins only in the browser
@@ -130,7 +131,7 @@ export function Flap({ value, className = '' }) {
     const chars = [...value];
     const start = performance.now();
     let raf = 0;
-    const tick = (t) => {
+    const tick = (t: number) => {
       const el = (t - start) / 1000;
       let done = true;
       setShown(chars.map((c, i) => {
@@ -152,8 +153,8 @@ export function Flap({ value, className = '' }) {
 }
 
 /* A check that draws itself once it is reached. */
-export function Tick({ delay = 0, size = 22 }) {
-  const ref = useRef(null);
+export function Tick({ delay = 0, size = 22 }: { delay?: number; size?: number }) {
+  const ref = useRef<SVGSVGElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.8 });
   return (
     <svg ref={ref} className="x-tick" viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
@@ -164,7 +165,7 @@ export function Tick({ delay = 0, size = 22 }) {
 }
 
 /* The closing band of a page: one line, one action. */
-export function Band({ title, lede, action, to, note }) {
+export function Band({ title, lede, action, to, note }: { title: string; lede?: ReactNode; action?: ReactNode; to?: string; note?: ReactNode }) {
   return (
     <section className="x-band" data-room="dark">
       <div className="x-wrap">
@@ -179,19 +180,21 @@ export function Band({ title, lede, action, to, note }) {
   );
 }
 
+interface TabItem { label: string; disabled?: boolean }
+
 /* ---------- Tabs: a gliding pill over real tab buttons ----------
    tabs: labels (strings) or { label, disabled }. value: the selected index. Arrow keys move and select, Home / End jump.
    Pair with <TabPanel id i value> so every panel stays in the server HTML (hidden ones are hidden, not removed). */
-export function Tabs({ id, tabs, value, onChange, label, size, className = '' }) {
-  const refs = useRef([]);
-  const items = tabs.map((t) => (typeof t === 'string' ? { label: t } : t));
-  const move = (from, step) => {
+export function Tabs({ id, tabs, value, onChange, label, size, className = '' }: { id: string; tabs: (string | TabItem)[]; value: number; onChange: (i: number) => void; label?: string; size?: string; className?: string }) {
+  const refs = useRef<(HTMLButtonElement | null)[]>([]);
+  const items: TabItem[] = tabs.map((t) => (typeof t === 'string' ? { label: t } : t));
+  const move = (from: number, step: number) => {
     for (let k = 1; k <= items.length; k++) {
       const j = (from + step * k + items.length * k) % items.length;
       if (!items[j].disabled) { onChange(j); refs.current[j]?.focus(); return; }
     }
   };
-  const key = (e, i) => {
+  const key = (e: KeyboardEvent, i: number) => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); move(i, 1); }
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); move(i, -1); }
     else if (e.key === 'Home') { e.preventDefault(); move(-1, 1); }
@@ -214,14 +217,14 @@ export function Tabs({ id, tabs, value, onChange, label, size, className = '' })
           onClick={() => onChange(i)}
           onKeyDown={(e) => key(e, i)}
         >
-          {value === i && <motion.span layoutId={`${id}-pill`} className="x-tab-pill" transition={SPRING.pill} aria-hidden="true" />}
+          {value === i && <motion.span layoutId={`${id}-pill`} className="x-tab-pill" transition={SPRING.pill as Transition} aria-hidden="true" />}
           <span className="x-tab-t">{t.label}</span>
         </button>
       ))}
     </div>
   );
 }
-export function TabPanel({ id, i, value, children, className = '' }) {
+export function TabPanel({ id, i, value, children, className = '' }: { id: string; i: number; value: number; children?: ReactNode; className?: string }) {
   return (
     <div role="tabpanel" id={`${id}-panel-${i}`} aria-labelledby={`${id}-tab-${i}`} hidden={value !== i} tabIndex={0} className={className}>
       {children}
@@ -231,10 +234,10 @@ export function TabPanel({ id, i, value, children, className = '' }) {
 
 /* ---------- Sheet: the bare, controlled sheet ---------- */
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
-export function Sheet({ open, onClose, title, kicker, wide = false, children, className = '' }) {
-  const [host, setHost] = useState(null);
-  const box = useRef(null);
-  const back = useRef(null);
+export function Sheet({ open, onClose, title, kicker, wide = false, children, className = '' }: { open: boolean; onClose: () => void; title?: ReactNode; kicker?: ReactNode; wide?: boolean; children?: ReactNode; className?: string }) {
+  const [host, setHost] = useState<HTMLElement | null>(null);
+  const box = useRef<HTMLDivElement>(null);
+  const back = useRef<HTMLElement | null>(null);
   const shut = useRef(onClose);
   shut.current = onClose;
   const tid = useId();
@@ -242,14 +245,14 @@ export function Sheet({ open, onClose, title, kicker, wide = false, children, cl
   const phone = typeof window !== 'undefined' && matchMedia('(max-width: 700px)').matches;
   useEffect(() => {
     if (!open) return;
-    back.current = document.activeElement;
+    back.current = document.activeElement as HTMLElement | null;
     window.__lenis?.stop();
     document.documentElement.classList.add('x-lock');
-    const t = setTimeout(() => box.current?.querySelector('.x-sheet2-x')?.focus(), 30);
-    const key = (e) => {
+    const t = setTimeout(() => box.current?.querySelector<HTMLElement>('.x-sheet2-x')?.focus(), 30);
+    const key = (e: globalThis.KeyboardEvent) => {
       if (e.key === 'Escape') { e.stopPropagation(); shut.current(); return; }
       if (e.key !== 'Tab' || !box.current) return; // keep focus inside the sheet
-      const f = [...box.current.querySelectorAll(FOCUSABLE)];
+      const f = [...box.current.querySelectorAll<HTMLElement>(FOCUSABLE)];
       if (!f.length) return;
       if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
       else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
@@ -276,8 +279,8 @@ export function Sheet({ open, onClose, title, kicker, wide = false, children, cl
             initial={phone ? { y: '100%' } : { x: '100%' }}
             animate={phone ? { y: 0 } : { x: 0 }}
             exit={phone ? { y: '100%' } : { x: '100%' }}
-            transition={SPRING.sheet}
-            {...(phone ? { drag: 'y', dragConstraints: { top: 0, bottom: 0 }, dragElastic: { top: 0, bottom: 0.6 }, onDragEnd: (_, i) => { if (i.offset.y > 90 || i.velocity.y > 600) onClose(); } } : {})}
+            transition={SPRING.sheet as Transition}
+            {...(phone ? { drag: 'y' as const, dragConstraints: { top: 0, bottom: 0 }, dragElastic: { top: 0, bottom: 0.6 }, onDragEnd: (_: unknown, i: PanInfo) => { if (i.offset.y > 90 || i.velocity.y > 600) onClose(); } } : {})}
           >
             {phone && <span className="x-grip" aria-hidden="true" />}
             <div className="x-sheet2-head">
@@ -300,7 +303,7 @@ export function Sheet({ open, onClose, title, kicker, wide = false, children, cl
 
 /* ---------- loading, empty, error ----------
    Skeleton holds the exact box the content will take, so nothing moves when it arrives. Give it the real height. */
-export function Skeleton({ lines = 0, h, w = '100%', radius, className = '', label = 'Loading' }) {
+export function Skeleton({ lines = 0, h, w = '100%', radius, className = '', label = 'Loading' }: { lines?: number; h?: number | string; w?: number | string; radius?: number | string; className?: string; label?: string }) {
   if (lines) {
     return (
       <span className={'x-skel-group ' + className} role="status" aria-label={label} style={{ display: 'block' }}>
@@ -311,7 +314,7 @@ export function Skeleton({ lines = 0, h, w = '100%', radius, className = '', lab
   return <span className={'x-skel ' + className} role="status" aria-label={label} style={{ height: h, width: w, borderRadius: radius }} />;
 }
 /* Nothing to show yet: say so in the page's (Hanzo's) words and offer the one next step. */
-export function Empty({ title, detail, action, to, center = false, className = '' }) {
+export function Empty({ title, detail, action, to, center = false, className = '' }: { title?: ReactNode; detail?: ReactNode; action?: ReactNode; to?: string; center?: boolean; className?: string }) {
   return (
     <div className={'x-state' + (center ? ' center' : '') + ' ' + className}>
       <span className="x-state-mark" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeDasharray="2.5 2.5" /></svg></span>
@@ -322,7 +325,7 @@ export function Empty({ title, detail, action, to, center = false, className = '
   );
 }
 /* Something failed: what happened, and a way on (retry, or the place it lives on hanzo.ai). role="alert" announces it. */
-export function Problem({ title, detail, onRetry, retry = 'Try again', action, to, center = false, className = '' }) {
+export function Problem({ title, detail, onRetry, retry = 'Try again', action, to, center = false, className = '' }: { title?: ReactNode; detail?: ReactNode; onRetry?: () => void; retry?: ReactNode; action?: ReactNode; to?: string; center?: boolean; className?: string }) {
   return (
     <div className={'x-state error' + (center ? ' center' : '') + ' ' + className} role="alert">
       <span className="x-state-mark" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M8 4.5v4.2M8 11.2v.3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg></span>
@@ -340,7 +343,7 @@ export function Problem({ title, detail, onRetry, retry = 'Try again', action, t
    Img: always give w and h (the box is reserved, CLS 0). `priority` only on the ONE image that is the page's LCP (it
    loads eagerly with fetchpriority=high); everything else is lazy and decodes off the main thread. First-view images
    ≤ 250 KB, AVIF or WebP where Hanzo has them. */
-export function Img({ src, alt, w, h, priority = false, sizes, className = '', style, ...rest }) {
+export function Img({ src, alt, w, h, priority = false, sizes, className = '', style, ...rest }: Omit<ComponentPropsWithRef<'img'>, 'width' | 'height'> & { w?: number | string; h?: number | string; priority?: boolean }) {
   return (
     <img
       src={src}
@@ -360,15 +363,15 @@ export function Img({ src, alt, w, h, priority = false, sizes, className = '', s
 /* Film: a muted, looping clip that plays only while it is on screen and the tab is visible, never under reduced motion
    or Data Saver (the poster stays), and never downloads before it nears the screen. Give w and h (or a .x-ratio box).
    No autoplay clip above 1.5 MB; nothing autoplays above the fold before first paint. */
-export function Film({ src, poster, w, h, label, className = '', loop = true, ...rest }) {
-  const ref = useRef(null);
+export function Film({ src, poster, w, h, label, className = '', loop = true, ...rest }: Omit<VideoHTMLAttributes<HTMLVideoElement>, 'width' | 'height' | 'src'> & { src: string; w?: number | string; h?: number | string; label?: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
   const [near, setNear] = useState(false);
   const calm = useReducedMotion();
-  const play = useCallback((v, on) => { if (!v) return; if (on) v.play?.().catch(() => {}); else v.pause?.(); }, []);
+  const play = useCallback((v: HTMLVideoElement | null, on: boolean) => { if (!v) return; if (on) v.play?.().catch(() => {}); else v.pause?.(); }, []);
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
-    const save = navigator.connection?.saveData;
+    const save = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
     let seen = false;
     const io = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) setNear(true);
@@ -405,10 +408,10 @@ export function Film({ src, poster, w, h, label, className = '', loop = true, ..
    to: a link (internal pages stay in the site); without `to` it is a <button> (onClick). id: the analytics id, sent as
    a cta_click event and written as data-cta. thumb: true makes it the page's ask (the ask bar carries its words).
    busy / disabled as on Btn. Leaving for another site (hanzo.ai/signup, the console) shows a short pressed state. */
-export function Cta({ to, onClick, children, kind = 'solid', size = 'md', id, thumb, busy, disabled, className = '', ...rest }) {
+export function Cta({ to, onClick, children, kind = 'solid', size = 'md', id, thumb, busy, disabled, className = '', ref, ...rest }: Omit<HTMLAttributes<HTMLElement>, 'onClick'> & { ref?: Ref<HTMLButtonElement>; type?: 'button' | 'submit' | 'reset'; target?: string; to?: string; onClick?: (e: MouseEvent<HTMLElement>) => void; kind?: string; size?: string; id?: string; thumb?: boolean; busy?: boolean; disabled?: boolean }) {
   const [leaving, setLeaving] = useState(false);
   const cls = kind === 'link' ? 'x-arrow' : 'x-btn' + (kind === 'solid' ? ' solid' : '') + (size === 'lg' ? ' lg' : size === 'sm' ? ' sm' : '');
-  const fire = (e) => {
+  const fire = (e: MouseEvent<HTMLElement>) => {
     dispatchEvent(new CustomEvent('hz-event', { detail: { name: 'cta_click', id, label: typeof children === 'string' ? children : undefined, path: location.pathname } }));
     if (to && /^https?:/.test(href(to) || '') && !e.metaKey && !e.ctrlKey) { setLeaving(true); setTimeout(() => setLeaving(false), 2500); }
     onClick?.(e);
@@ -419,21 +422,21 @@ export function Cta({ to, onClick, children, kind = 'solid', size = 'md', id, th
     'data-thumb': thumb ? (typeof children === 'string' ? children : '') : undefined,
     'aria-busy': busy || leaving || undefined,
     'aria-disabled': disabled || undefined,
-    onClick: disabled ? (e) => e.preventDefault() : fire,
+    onClick: disabled ? (e: MouseEvent<HTMLElement>) => e.preventDefault() : fire,
     ...rest,
   };
   const body = kind === 'link'
     ? <><span>{children}</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></>
     : children;
-  if (to && !disabled) return <A to={to} {...props}>{body}</A>;
-  return <button type="button" disabled={disabled} {...props}>{body}</button>;
+  if (to && !disabled) return <A to={to} {...props} ref={ref as unknown as Ref<HTMLAnchorElement>}>{body}</A>; // the ref is for whichever element renders: a button, or an anchor with `to`
+  return <button type="button" disabled={disabled} {...props} ref={ref}>{body}</button>;
 }
 
 /* ---------- Field: Hanzo's own input ----------
    <Field label="Work email" name="email" type="email" required autoComplete="email" hint="…" />
    48 px, 16 px text (no zoom on phones), a real <label>, hint and error tied by aria-describedby, checked on blur
    (the browser's own message), aria-invalid while wrong. as="textarea" for long answers. */
-export function Field({ label, name, type = 'text', as, hint, error, required, className = '', onBlur, ...rest }) {
+export function Field({ label, name, type = 'text', as, hint, error, required, className = '', onBlur, ...rest }: Omit<InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>, 'onBlur' | 'name' | 'type' | 'required'> & { rows?: number; label: ReactNode; name?: string; type?: string; as?: 'input' | 'textarea'; hint?: ReactNode; error?: ReactNode; required?: boolean; onBlur?: (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void }) {
   const id = useId();
   const [msg, setMsg] = useState('');
   const shown = error || msg;
@@ -452,7 +455,7 @@ export function Field({ label, name, type = 'text', as, hint, error, required, c
         aria-describedby={hint || shown ? id + '-m' : undefined}
         className="x-input2"
         onBlur={(e) => { setMsg(e.target.checkValidity() ? '' : e.target.validationMessage); onBlur?.(e); }}
-        onInput={(e) => { if (msg && e.target.checkValidity()) setMsg(''); }}
+        onInput={(e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => { if (msg && (e.target as HTMLInputElement).checkValidity()) setMsg(''); }}
         {...rest}
       />
       <span id={id + '-m'} className="x-field-msg" aria-live="polite">{shown || hint || ''}</span>
@@ -464,7 +467,7 @@ export function Field({ label, name, type = 'text', as, hint, error, required, c
    cols: [{ key, label, num, subject }]; rows: objects keyed the same. The first column is the row header (sticky).
    subject: the column being compared gets a grey tint (never a hue). A missing value renders an honest "—" with
    gap (an accessible name for it, from content/ui-strings.json when approved). caption is required (it names the table). */
-export function DataTable({ caption, cols, rows, gap = 'No value', className = '' }) {
+export function DataTable({ caption, cols, rows, gap = 'No value', className = '' }: { caption: ReactNode; cols: { key: string; label: ReactNode; num?: boolean; subject?: boolean }[]; rows: Record<string, ReactNode>[]; gap?: string; className?: string }) {
   const id = useId();
   return (
     <div className={'x-table-wrap ' + className} role="region" aria-labelledby={id} tabIndex={0}>
@@ -496,7 +499,7 @@ export function DataTable({ caption, cols, rows, gap = 'No value', className = '
    13.5/1.65 mono on a dark plate; scrolls on its own (keyboard reachable); lines starting with # or // are dimmed.
    prompt draws a "$ " that is not selectable and not copied. Copy copies exactly the displayed code, and says
    Copied only if it really copied. */
-export function CodeBlock({ code, label, prompt = false, copy = true, className = '' }) {
+export function CodeBlock({ code, label, prompt = false, copy = true, className = '' }: { code: string; label?: string; prompt?: boolean; copy?: boolean; className?: string }) {
   const lines = String(code).replace(/\n$/, '').split('\n');
   return (
     <figure className={'x-codeblock ' + className} data-room="dark">
@@ -522,8 +525,8 @@ export function CodeBlock({ code, label, prompt = false, copy = true, className 
    <Stat value="1,600+" label="open repositories" />  value is a string and is shown byte for byte; if it starts
    with a number and sits below the fold, it counts up to it once (same separators and decimals) when it arrives.
    Tabular figures and a fixed width, so nothing shifts while it counts. */
-export function Stat({ value, label, note, as = 'div', className = '' }) {
-  const ref = useRef(null);
+export function Stat({ value, label, note, as = 'div', className = '' }: { value: string; label?: ReactNode; note?: ReactNode; as?: 'div' | 'span' | 'li' | 'p' | 'dd' | 'dt'; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const [shown, setShown] = useState(value);
   const calm = useReducedMotion();
   const m = /^([^0-9]*)([0-9][0-9,]*(?:\.[0-9]+)?)(.*)$/.exec(value || '');
@@ -535,14 +538,14 @@ export function Stat({ value, label, note, as = 'div', className = '' }) {
     const target = parseFloat(num.replace(/,/g, ''));
     const dec = (num.split('.')[1] || '').length;
     const commas = num.includes(',');
-    const fmt = (v) => pre + (commas ? v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }) : v.toFixed(dec)) + post;
+    const fmt = (v: number) => pre + (commas ? v.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }) : v.toFixed(dec)) + post;
     setShown(fmt(0));
     let raf = 0;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       io.disconnect();
       const t0 = performance.now();
-      const tick = (t) => {
+      const tick = (t: number) => {
         const k = Math.min(1, (t - t0) / 1200), ease = 1 - Math.pow(1 - k, 4);
         setShown(k < 1 ? fmt(target * ease) : value);
         if (k < 1) raf = requestAnimationFrame(tick);

@@ -13,14 +13,31 @@
    Styles: IsoStack.css (--iso-acc colours a lit plate's edge, --iso-w / --iso-h the plate size, --iso-tx / --iso-tz
    turn the stack in degrees, e.g. from the pointer; it follows with a soft transition). */
 import { motion, useTransform } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import './IsoStack.css';
 
 export const BASE = 7;
 export const GAP = 40;
-export const zOf = (b, e) => b * (BASE + GAP * e);
+export const zOf = (b: number, e: number) => b * (BASE + GAP * e);
 export const LIFT = Math.sin((56 * Math.PI) / 180); // screen pixels per unit of height, at the 56° tilt
 
-function Plate({ it, b, explode, mark, onPick, onHot, i }) {
+interface IsoItem {
+  key: string;
+  n: string;
+  name: string;
+}
+
+interface PlateProps {
+  it: IsoItem;
+  b: number;
+  explode: MotionValue<number>;
+  mark?: string;
+  onPick?: (i: number) => void;
+  onHot?: (i: number) => void;
+  i: number;
+}
+
+function Plate({ it, b, explode, mark, onPick, onHot, i }: PlateProps) {
   const z = useTransform(explode, (e) => zOf(b, e));
   return (
     <motion.div
@@ -36,7 +53,20 @@ function Plate({ it, b, explode, mark, onPick, onHot, i }) {
   );
 }
 
-export default function IsoStack({ items, explode, camX, camY, camScale, tone = 'light', mark = () => '', onPick, onHot, className = '' }) {
+interface IsoStackProps {
+  items: readonly IsoItem[];
+  explode: MotionValue<number>;
+  camX?: MotionValue<number>;
+  camY?: MotionValue<number>;
+  camScale?: MotionValue<number>;
+  tone?: string;
+  mark?: (i: number) => string;
+  onPick?: (i: number) => void;
+  onHot?: (i: number) => void;
+  className?: string;
+}
+
+export default function IsoStack({ items, explode, camX, camY, camScale, tone = 'light', mark = () => '', onPick, onHot, className = '' }: IsoStackProps) {
   const N = items.length;
   return (
     <div className={'iso ' + tone + ' ' + className} aria-hidden="true">

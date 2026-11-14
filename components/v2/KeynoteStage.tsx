@@ -22,6 +22,7 @@
    Everything on the first screen arrives by CSS at first paint, without waiting for the page's script; with JS off it
    simply stands in place. Reduced motion: the object is in place. */
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { Magnetic } from '../ui';
 import { Cta } from '../kit';
@@ -34,8 +35,23 @@ const Paused = createContext(false);
 /* true while the visitor has paused the hero's live demo */
 export const useStagePause = () => useContext(Paused);
 
-export default function KeynoteStage({ kick, title, lede, acts = [], meta, look = 'split', from = 1.15, children, className = '', size = '', cta = 'hero', pause = true }) {
-  const sec = useRef(null);
+interface KeynoteStageProps {
+  kick?: ReactNode;
+  title: string | readonly string[];
+  lede?: ReactNode;
+  acts?: ReadonlyArray<readonly [label: string, to: string]>;
+  meta?: ReactNode;
+  look?: 'split' | 'side';
+  from?: number;
+  children?: ReactNode;
+  className?: string;
+  size?: string;
+  cta?: string;
+  pause?: boolean;
+}
+
+export default function KeynoteStage({ kick, title, lede, acts = [], meta, look = 'split', from = 1.15, children, className = '', size = '', cta = 'hero', pause = true }: KeynoteStageProps) {
+  const sec = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const [calm, setCalm] = useState(false); // after mount, so the first render matches the server's HTML
   useEffect(() => setCalm(!!reduce), [reduce]);
@@ -52,16 +68,16 @@ export default function KeynoteStage({ kick, title, lede, acts = [], meta, look 
           <KeynoteLines as="h1" mount className={'kn-display ' + size} lines={title} delay={0.04} />
         </div>
         <div className="kns-r">
-          {lede && <p className="kn-lede kns-in" style={{ '--d': '.3s' }}>{lede}</p>}
+          {lede && <p className="kn-lede kns-in" style={{ '--d': '.3s' } as CSSProperties}>{lede}</p>}
           {acts.length > 0 && (
-            <div className="kn-acts kns-acts kns-in" style={{ '--d': '.42s' }}>
+            <div className="kn-acts kns-acts kns-in" style={{ '--d': '.42s' } as CSSProperties}>
               {acts.map(([t, to], i) => i === 0
                 ? <Magnetic key={t} strength={0.22}><Cta to={to} id={cta} thumb size="md" kind={t === 'Try Hanzo' ? 'quiet' : 'solid'}>{t}</Cta></Magnetic>
                 : <Cta key={t} to={to} kind="link" id={cta + '-' + (i + 1)}>{t}</Cta>)}
             </div>
           )}
           {(kick || meta || pause) && (
-            <div className="kns-meta kns-in" style={{ '--d': '.54s' }}>
+            <div className="kns-meta kns-in" style={{ '--d': '.54s' } as CSSProperties}>
               {pause && (
                 <button type="button" className="kn-pause kns-pause" aria-pressed={paused} aria-label="Pause" onClick={() => setPaused((v) => !v)}>
                   {paused

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { motion, useInView, useReducedMotion, useSpring } from 'motion/react';
 import { Head, Arrow, Copy, Mark } from './ui';
 import AGENTS from '../content/agents';
@@ -11,7 +11,7 @@ import { capture, track } from '../lib/track';
    (CSS, .x-ico:hover). The setup menu below lists every one. */
 const DOCK = AGENTS.filter((a) => a.name !== 'Hanzo Dev').slice(0, 24);
 
-function Ico({ a }) {
+function Ico({ a }: { a: (typeof AGENTS)[number] }) {
   return (
     <li>
       <a href={a.href} className="x-ico" data-name={a.name} aria-label={a.name}>
@@ -21,7 +21,7 @@ function Ico({ a }) {
   );
 }
 
-function Cmd({ bin, rest, copy, onCopy }) {
+function Cmd({ bin, rest, copy, onCopy }: { bin: string; rest: string; copy: string; onCopy?: () => void }) {
   return (
     <div className="x-cmd x-mono">
       <span className="x-dim">$</span>
@@ -37,12 +37,12 @@ const ACCEL = [['Claude Code', 'dev --claude'], ['Codex', 'dev --codex'], ['Curs
 function Accel() {
   const [at, setAt] = useState(0);
   const [n, setN] = useState(ACCEL[0][1].length);
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.5 });
   const calm = useReducedMotion();
   useEffect(() => {
     if (!seen || calm) return;
-    let t, i = at, k = ACCEL[at][1].length;
+    let t: ReturnType<typeof setTimeout> | undefined, i = at, k = ACCEL[at][1].length;
     const next = () => { i = (i + 1) % ACCEL.length; k = 4; setAt(i); setN(k); t = setTimeout(type, 260); };
     const type = () => { k += 1; setN(k); if (k < ACCEL[i][1].length) t = setTimeout(type, 70); else t = setTimeout(next, 2600); };
     t = setTimeout(next, 2600);
@@ -72,22 +72,22 @@ const STEPS = [
 
 // a few colours for the script, in the page's own words: comments, strings, keywords
 const TOK = /(\/\/.*|`[^`]*`|'[^']*'|\b(?:const|await|new)\b)/;
-function Code({ text }) {
+function Code({ text }: { text: string }) {
   return text.split('\n').map((ln, i) => (
-    <span className="x-code-l" key={i} style={{ '--i': i }}>
+    <span className="x-code-l" key={i} style={{ '--i': i } as CSSProperties}>
       {ln.split(TOK).map((t, k) => (k % 2 ? <span key={k} className={t[0] === '/' ? 'c' : /^[`']/.test(t) ? 's' : 'k'}>{t}</span> : t))}
     </span>
   ));
 }
 
 function Steps() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.5 });
   const calm = useReducedMotion();
   const [on, setOn] = useState(0);
   const [mine, setMine] = useState(false);
   const [code, setCode] = useState(false);
-  const typed = useRef(null);
+  const typed = useRef<HTMLSpanElement>(null);
   // the active endpoint types itself, straight into its text node; left alone, the agent walks all four steps
   useEffect(() => {
     const full = STEPS[on][1], el = typed.current;

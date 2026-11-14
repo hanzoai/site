@@ -7,28 +7,39 @@
    - Every card's full text is in the page (collapsed with `hidden`), so nothing is lost and find-in-page works.
    - The page behind stops scrolling while a sheet is open (Lenis stops), and focus returns to the card.
    - Reduced motion: the sheet appears in place without the morph. Owned by the Business 2 chat. */
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import './OpenSheet.css';
 
-const EASE = [0.16, 1, 0.3, 1];
-const MORPH = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // Morph: 600ms in-out, no springs (MASTER 3.1)
+const EASE = [0.16, 1, 0.3, 1] as const;
+const MORPH = { duration: 0.6, ease: [0.4, 0, 0.2, 1] } as const; // Morph: 600ms in-out, no springs (MASTER 3.1)
 
-export function Sheet({ open, onClose, layoutId, title, kicker, children, wide, art }) {
-  const box = useRef(null);
+interface SheetProps {
+  open: boolean;
+  onClose: () => void;
+  layoutId?: string;
+  title?: string;
+  kicker?: ReactNode;
+  children?: ReactNode;
+  wide?: boolean;
+  art?: ReactNode;
+}
+
+export function Sheet({ open, onClose, layoutId, title, kicker, children, wide, art }: SheetProps) {
+  const box = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
-  const [host, setHost] = useState(null);
+  const [host, setHost] = useState<Element | null>(null);
   useEffect(() => setHost(document.querySelector('main.w2') || document.body), []); // inside the page, so its accent applies
   useEffect(() => {
     if (!open) return;
     window.__lenis?.stop();
     document.documentElement.classList.add('x-lock');
-    const back = document.activeElement; // focus returns here when the sheet closes
-    const k = (e) => {
+    const back = document.activeElement as HTMLElement | null; // focus returns here when the sheet closes
+    const k = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { onClose(); return; }
       if (e.key !== 'Tab' || !box.current) return; // Tab stays inside the sheet
-      const f = [...box.current.querySelectorAll('a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])')].filter((el) => el.getClientRects().length);
+      const f = [...box.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])')].filter((el) => el.getClientRects().length);
       if (!f.length) return;
       const first = f[0], last = f[f.length - 1], at = document.activeElement;
       if (!box.current.contains(at)) { e.preventDefault(); first.focus(); }
@@ -36,7 +47,7 @@ export function Sheet({ open, onClose, layoutId, title, kicker, children, wide, 
       else if (!e.shiftKey && at === last) { e.preventDefault(); first.focus(); }
     };
     addEventListener('keydown', k);
-    const t = setTimeout(() => box.current?.querySelector('button')?.focus({ preventScroll: true }), 60);
+    const t = setTimeout(() => box.current?.querySelector<HTMLButtonElement>('button')?.focus({ preventScroll: true }), 60);
     return () => { window.__lenis?.start(); document.documentElement.classList.remove('x-lock'); removeEventListener('keydown', k); clearTimeout(t); back?.focus?.({ preventScroll: true }); };
   }, [open, onClose]);
   if (!host) return null;
@@ -67,9 +78,18 @@ export function Sheet({ open, onClose, layoutId, title, kicker, children, wide, 
 /* A button that opens a sheet of detail; the detail is always in the page, collapsed. */
 /* label: Hanzo's own words only (for example the items the sheet holds); with no label the button is the "+" alone and
    its accessible name is the sheet's title. */
-export function Detail({ label, title, kicker, children, wide, className = '' }) {
+interface DetailProps {
+  label?: string;
+  title: string;
+  kicker?: ReactNode;
+  children?: ReactNode;
+  wide?: boolean;
+  className?: string;
+}
+
+export function Detail({ label, title, kicker, children, wide, className = '' }: DetailProps) {
   const [open, setOpen] = useState(false);
-  const btn = useRef(null);
+  const btn = useRef<HTMLButtonElement>(null);
   const id = useId();
   return (
     <>
@@ -82,14 +102,30 @@ export function Detail({ label, title, kicker, children, wide, className = '' })
   );
 }
 
-export function OpenCards({ items, cols = 3, className = '', dark }) {
-  const [open, setOpen] = useState(null);
-  const last = useRef(null);
+export interface OpenItem {
+  id: string;
+  k?: string;
+  t: string;
+  d?: ReactNode;
+  body?: ReactNode;
+  art?: ReactNode;
+}
+
+interface OpenCardsProps {
+  items: OpenItem[];
+  cols?: number;
+  className?: string;
+  dark?: boolean;
+}
+
+export function OpenCards({ items, cols = 3, className = '', dark }: OpenCardsProps) {
+  const [open, setOpen] = useState<string | null>(null);
+  const last = useRef<HTMLElement | null>(null);
   const it = items.find((x) => x.id === open);
   const close = () => { setOpen(null); setTimeout(() => last.current?.focus({ preventScroll: true }), 50); };
   return (
     <>
-      <ul className={'w2-oc ' + className} style={{ '--cols': cols }}>
+      <ul className={'w2-oc ' + className} style={{ '--cols': cols } as CSSProperties}>
         {items.map((x, i) => (
           <li key={x.id}>
             <motion.button type="button" className={'w2-oc-card' + (dark ? ' dark' : '')} layoutId={'oc-' + x.id} transition={MORPH}

@@ -5,9 +5,17 @@
           <BizAsk to={DOCS}>Read the docs</BizAsk>                        (close: the same words, solid)
    Props: solid (default true), thumb (data-thumb label), cta (data-cta, default "primary"), className.
    Hover, press (.98), focus and loading come from app/system.css's .x-btn states. */
+import type { AnchorHTMLAttributes } from 'react';
 import { A } from '../kit';
 
-export default function BizAsk({ to, children, solid = true, thumb, cta = 'primary', className = '', ...rest }) {
+interface BizAskProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
+  to: string;
+  solid?: boolean;
+  thumb?: string;
+  cta?: string;
+}
+
+export default function BizAsk({ to, children, solid = true, thumb, cta = 'primary', className = '', ...rest }: BizAskProps) {
   return (
     <A to={to} className={'x-btn' + (solid ? ' solid' : '') + (className ? ' ' + className : '')} data-thumb={thumb} data-cta={cta} {...rest}>
       {children}

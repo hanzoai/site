@@ -7,8 +7,15 @@
    - from: the starting scale; span: how many px of scroll it takes to settle. */
 import { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useReducedMotion } from 'motion/react';
+import type { HTMLMotionProps } from 'motion/react';
 
-export default function FamStage({ children, className = '', from = 1.12, span = 520, as = 'div', ...rest }) {
+interface FamStageProps extends Omit<HTMLMotionProps<'div'>, 'ref'> {
+  from?: number;
+  span?: number;
+  as?: 'div' | 'section';
+}
+
+export default function FamStage({ children, className = '', from = 1.12, span = 520, as = 'div', ...rest }: FamStageProps) {
   const calm = useReducedMotion();
   const { scrollY } = useScroll();
   const zoom = useMotionValue(from - 1); // the server and the first paint agree; a phone halves it after hydration
@@ -16,7 +23,7 @@ export default function FamStage({ children, className = '', from = 1.12, span =
   useEffect(() => { if (calm) setStill(true); }, [calm]);
   // reduced motion settles it after hydration too, so the server's HTML and the first client render stay identical
   useEffect(() => { zoom.set(calm ? 0 : matchMedia('(max-width: 900px)').matches ? (from - 1) / 2 : from - 1); }, [from, zoom, calm]);
-  const p = (v) => 1 - Math.min(1, Math.max(0, v / span));
+  const p = (v: number) => 1 - Math.min(1, Math.max(0, v / span));
   const scale = useTransform(() => 1 + zoom.get() * p(scrollY.get()));
   const y = useTransform(() => (zoom.get() * 600) * p(scrollY.get()));
   const Tag = motion[as];

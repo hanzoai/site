@@ -7,9 +7,9 @@ import { A } from '../components/kit';
 import { EASE } from '../components/ui';
 import '../components/pages/Lost.css';
 
-export default function PageError({ error, reset }) {
+export default function PageError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => { console.error(error); dispatchEvent(new CustomEvent('hz-event', { detail: { name: 'page_error', path: location.pathname, message: String(error?.message || '') } })); }, [error]);
-  const rise = (d) => ({ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, ease: EASE, delay: d } });
+  const rise = (d: number) => ({ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, ease: EASE, delay: d } });
   return (
     <main className="xlo" data-room="dark" data-ask="off">
       <section className="xlo-in x-wrap">

@@ -13,12 +13,32 @@
    animations under `.v2a-ch-art[data-play]`). Reduced motion: the
    chapters still change with the scroll, with no wipes. Every chapter's words are in the HTML at all times. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import './AppChapters.css';
 
-export default function AppChapters({ items, head, label, dark = false, className = '', id }) {
-  const track = useRef(null);
-  const box = useRef(null);
+interface AppChapter {
+  key: string;
+  title: string;
+  body: ReactNode;
+  more?: ReactNode;
+  icon?: ReactNode;
+  art?: ReactNode;
+  short?: string;
+}
+
+interface AppChaptersProps {
+  items: readonly AppChapter[];
+  head?: ReactNode;
+  label?: string;
+  dark?: boolean;
+  className?: string;
+  id?: string;
+}
+
+export default function AppChapters({ items, head, label, dark = false, className = '', id }: AppChaptersProps) {
+  const track = useRef<HTMLDivElement>(null);
+  const box = useRef<HTMLElement>(null);
   const [at, setAt] = useState(0);
   const n = items.length;
   const { scrollYProgress } = useScroll({ target: track, offset: ['start start', 'end end'] });
@@ -26,7 +46,7 @@ export default function AppChapters({ items, head, label, dark = false, classNam
   const fill = useTransform(scrollYProgress, (v) => Math.min(1, Math.max(0, v))); // a function, so it is never handed to a native scroll timeline
 
   // each art plays its scene when it is the current chapter (desktop) or when it comes on screen (phones)
-  const [seen, setSeen] = useState([]);
+  const [seen, setSeen] = useState<boolean[]>([]);
   const [wide, setWide] = useState(false);
   useEffect(() => {
     const m = matchMedia('(min-width: 901px)');
@@ -42,7 +62,7 @@ export default function AppChapters({ items, head, label, dark = false, classNam
     return () => { io.disconnect(); m.removeEventListener('change', f); };
   }, []);
 
-  const jump = (i) => {
+  const jump = (i: number) => {
     const t = track.current;
     if (!t) return;
     const top = t.getBoundingClientRect().top + scrollY;
@@ -54,7 +74,7 @@ export default function AppChapters({ items, head, label, dark = false, classNam
   return (
     <section className={'v2a-ch' + (dark ? ' dark' : '') + ' ' + className} data-room={dark ? 'dark' : undefined} aria-label={label} id={id} ref={box}>
       {head}
-      <div className="v2a-ch-track" ref={track} style={{ '--n': n }}>
+      <div className="v2a-ch-track" ref={track} style={{ '--n': n } as CSSProperties}>
         <div className="v2a-ch-pin">
           <div className="v2a-wrap v2a-ch-grid">
             {items.map((it, i) => (

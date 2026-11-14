@@ -11,7 +11,7 @@
      and sat on the strip's one baseline: hang is how far the logo falls below its text (a smile, a descender, a mark).
      `still` draws the list once in a row with its label beside it, where the screen holds them all (wide screens).
    - After every in-site navigation, focus moves to the new page's <main> h1 (tabindex -1, no ring, no scroll). */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { MotionConfig } from 'motion/react';
 import { animate, scroll } from 'motion';
@@ -21,7 +21,7 @@ import { onDomChange } from '../lib/domwatch';
 import { lean } from '../lib/tilt';
 
 /* One motion policy for the whole page. Scrolling is the browser's own: nothing sits between the wheel and the page. */
-export function Smooth({ children }) {
+export function Smooth({ children }: { children?: ReactNode }) {
   // every [data-tilt] card leans toward a mouse (or the phone's tilt) and a light follows it: one listener, lib/tilt.js
   useEffect(() => lean(), []);
   // every section pauses its animations while it is off screen
@@ -46,7 +46,7 @@ export function Smooth({ children }) {
     const land = () => {
       const a = document.activeElement;
       if (a && a !== document.body && !a.closest('header, nav, .x-ask') && a.isConnected) return;
-      const h = document.querySelector('main h1');
+      const h = document.querySelector<HTMLElement>('main h1');
       if (!h) { if (n++ < 30) setTimeout(land, 100); return; }
       if (!h.hasAttribute('tabindex')) h.setAttribute('tabindex', '-1');
       h.focus({ preventScroll: true });
@@ -65,7 +65,7 @@ export function Progress() {
 }
 
 // the server-rendered shell (components/Shell.jsx), read lazily so children's effects can use it on mount
-const shell = (name) => ({ get current() { return typeof document === 'undefined' ? null : document.querySelector(`[data-x-shell="${name}"]`); } });
+const shell = (name: string) => ({ get current() { return typeof document === 'undefined' ? null : document.querySelector(`[data-x-shell="${name}"]`); } });
 const HEADER = shell('header');
 const FOOTER = shell('footer');
 
@@ -104,7 +104,7 @@ export function Footer() {
   useEffect(() => {
     const f = ref.current?.querySelector('footer');
     if (!f || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const big = [...f.querySelectorAll('*')].filter((e) => parseFloat(getComputedStyle(e).fontSize) > 120 || (e.tagName === 'svg' && e.getBoundingClientRect().width > 300));
+    const big = [...f.querySelectorAll<HTMLElement | SVGElement>('*')].filter((e) => parseFloat(getComputedStyle(e).fontSize) > 120 || (e.tagName === 'svg' && e.getBoundingClientRect().width > 300));
     const el = big[0];
     if (!el) return;
     el.style.willChange = 'transform, opacity';
@@ -116,13 +116,13 @@ export function Footer() {
 
 /* An endless strip of logos. CSS drifts it (a transform on the compositor, nothing runs per frame in script); it rests under
    the pointer and on focus, turns the other way with `reverse`, and stands still under reduced motion and off screen. */
-export function Marquee({ items, label, reverse = false, view, still = false }) {
+export function Marquee({ items, label, reverse = false, view, still = false }: { items: { name: string; src: string; href?: string; w?: number; h?: number; hang?: number }[]; label: string; reverse?: boolean; view?: string; still?: boolean }) {
   // each half holds the list twice so one half is always wider than the screen
-  const row = (k) => items.map((l) => {
+  const row = (k: number) => items.map((l) => {
     const hidden = k > 0;
     return (
       <a key={k + l.name} href={l.href} className="x-logo" data-base={l.w ? '' : undefined} aria-hidden={hidden || undefined} tabIndex={hidden ? -1 : undefined} inert={hidden || undefined} title={l.name}>
-        <img src={l.src} alt={hidden ? '' : l.name} loading="lazy" width={l.w} height={l.h} style={l.w ? { marginBottom: -l.hang } : undefined} />
+        <img src={l.src} alt={hidden ? '' : l.name} loading="lazy" width={l.w} height={l.h} style={l.w ? { marginBottom: -(l.hang ?? 0) } : undefined} />
       </a>
     );
   });

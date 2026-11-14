@@ -1,7 +1,7 @@
 'use client';
 /* The last resort: if the shell itself (layout, header) fails, this whole document replaces it. Plain HTML and inline
    styles only, since nothing else can be trusted to have loaded. */
-export default function GlobalError({ reset }) {
+export default function GlobalError({ reset }: { reset: () => void }) {
   return (
     <html lang="en">
       <body style={{ margin: 0, minHeight: '100svh', display: 'grid', placeItems: 'center', background: '#0a0a0b', color: '#f5f5f7', fontFamily: 'Zen, -apple-system, BlinkMacSystemFont, system-ui, sans-serif' }}>

@@ -17,21 +17,21 @@ import './Morph.css';
 import { play } from '../lib/sound';
 import { has } from '../lib/route';
 
-const BIG = (r) => r.width >= 160 && r.height >= 90;
+const BIG = (r: DOMRect) => r.width >= 160 && r.height >= 90;
 const calm = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 const top = () => (window.__lenis ? window.__lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo(0, 0));
-const frames = (n, f) => (n ? requestAnimationFrame(() => frames(n - 1, f)) : f());
+const frames = (n: number, f: () => void): unknown => (n ? requestAnimationFrame(() => frames(n - 1, f)) : f());
 
 // the card's own picture and colour, for the stage it grows into
-function stageFor(src, link = src) {
+function stageFor(src: HTMLElement, link: HTMLElement = src) {
   const stage = document.createElement('div');
   stage.className = 'x-stage';
   stage.setAttribute('aria-hidden', 'true');
   // the card's colour is its largest painted surface (not a small pill inside it); failing that, the page behind it
-  const area = (r) => r.width * r.height;
+  const area = (r: DOMRect) => r.width * r.height;
   const full = area(src.getBoundingClientRect());
   let bg = '', best = 0;
-  for (const el of [src, ...src.querySelectorAll('*')].slice(0, 80)) {
+  for (const el of ([src, ...src.querySelectorAll('*')] as Element[]).slice(0, 80)) {
     const cs = getComputedStyle(el), a = area(el.getBoundingClientRect());
     if (a <= best || a < full * 0.5) continue;
     const grad = /gradient/.test(cs.backgroundImage) && cs.backgroundImage.match(/rgba?\([^)]+\)|#[0-9a-f]{3,8}/i); // a gradient's first colour
@@ -41,33 +41,36 @@ function stageFor(src, link = src) {
   // no readable surface (a pseudo-element or an image paints it): light text means a dark card, dark text a light one
   if (!bg) {
     const m = getComputedStyle(src).color.match(/[\d.]+/g);
-    const l = m ? (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255 : 0;
+    const l = m ? (0.2126 * +m[0] + 0.7152 * +m[1] + 0.0722 * +m[2]) / 255 : 0;
     bg = l > 0.6 ? '#0a0a0a' : '#ffffff';
   }
   stage.style.background = bg;
-  const lum = ((c) => { const m = (c || '').match(/[\d.]+/g); return m ? (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255 : 1; })(stage.style.background);
+  const lum = ((c) => { const m = (c || '').match(/[\d.]+/g); return m ? (0.2126 * +m[0] + 0.7152 * +m[1] + 0.0722 * +m[2]) / 255 : 1; })(stage.style.background);
   // the flying element may itself be the picture (data-morph on an <svg> or <img>)
-  const media = [src, ...src.querySelectorAll('img, video, canvas, svg')].find((el) => /^(img|video|canvas|svg)$/i.test(el.tagName) && area(el.getBoundingClientRect()) >= full * 0.25);
+  const media = ([src, ...src.querySelectorAll('img, video, canvas, svg')] as Element[]).find((el) => /^(img|video|canvas|svg)$/i.test(el.tagName) && area(el.getBoundingClientRect()) >= full * 0.25);
   if (media && media.tagName.toLowerCase() === 'svg') {
-    const m = media.cloneNode(true);
+    const m = media.cloneNode(true) as SVGElement;
     m.setAttribute('class', 'x-stage-m'); m.setAttribute('preserveAspectRatio', 'xMidYMid slice'); m.style.color = getComputedStyle(media).color;
     stage.appendChild(m);
   } else if (media) {
-    let m;
+    let m: HTMLCanvasElement | HTMLVideoElement | HTMLImageElement | null;
     if (media.tagName === 'CANVAS') {
-      m = document.createElement('canvas'); m.width = media.width; m.height = media.height;
-      try { m.getContext('2d').drawImage(media, 0, 0); } catch { m = null; }
+      const c = media as HTMLCanvasElement;
+      m = document.createElement('canvas'); m.width = c.width; m.height = c.height;
+      try { m.getContext('2d')!.drawImage(c, 0, 0); } catch { m = null; }
     } else if (media.tagName === 'VIDEO') {
+      const v = media as HTMLVideoElement;
       m = document.createElement('video');
-      Object.assign(m, { muted: true, playsInline: true, loop: true, autoplay: true, poster: media.poster, src: media.currentSrc || media.src });
-      if (media.currentTime) m.currentTime = media.currentTime;
+      Object.assign(m, { muted: true, playsInline: true, loop: true, autoplay: true, poster: v.poster, src: v.currentSrc || v.src });
+      if (v.currentTime) m.currentTime = v.currentTime;
     } else {
-      m = document.createElement('img'); m.src = media.currentSrc || media.src; m.alt = '';
+      const i = media as HTMLImageElement;
+      m = document.createElement('img'); m.src = i.currentSrc || i.src; m.alt = '';
     }
     if (m) { m.className = 'x-stage-m'; stage.appendChild(m); }
   }
   // the card's own title (its largest words) takes the hero's place while the page loads
-  let title = null, size = 0;
+  let title: string | null = null, size = 0;
   for (const el of link.querySelectorAll('h1, h2, h3, h4, b, strong, span, p')) { // the whole link: the title may sit beside the picture
     const t = el.textContent.trim(), fs = parseFloat(getComputedStyle(el).fontSize);
     if (t.length >= 2 && t.length <= 80 && !el.querySelector('h1, h2, h3, h4, p, div') && fs > size) { title = t; size = fs; }
@@ -83,8 +86,8 @@ function stageFor(src, link = src) {
 export default function Morph() {
   const router = useRouter();
   const path = usePathname();
-  const pending = useRef(null); // { from, done } waiting for the next page to arrive
-  const last = useRef(null);
+  const pending = useRef<{ from: string; done: () => void } | null>(null); // waiting for the next page to arrive
+  const last = useRef<string | null>(null);
 
   // the next page has arrived (its pathname is live): let it paint, then run what was waiting for it
   useEffect(() => {
@@ -98,7 +101,7 @@ export default function Morph() {
     const clear = () => { delete H.dataset.morph; delete H.dataset.dir; };
 
     // a small link, or Back/Forward: dim now, fade the new page in when it arrives
-    const turn = (from, go) => {
+    const turn = (from: string, go?: (() => void) | null) => {
       H.dataset.morph = 'leave';
       const arrive = () => {
         if (!window.__hzPop) top();
@@ -111,7 +114,7 @@ export default function Morph() {
     };
 
     // a card: it grows into the stage now; the page comes in under it; the stage settles into the hero and dissolves
-    const open = (src, from, go, link = src, forced = false) => {
+    const open = (src: HTMLElement, from: string, go: () => void, link: HTMLElement = src, forced = false) => {
       const stage = stageFor(src, link);
       if (!forced && !stage.children.length) { turn(from, go); return; }
       play('whoosh'); // a card opening into its page (JAMES rule 10)
@@ -129,12 +132,12 @@ export default function Morph() {
       const dissolve = () => {
         if (gone) return; gone = true;
         delete H.dataset.morph;
-        const hero = document.querySelector('[data-morph-target]') || document.querySelector('main > section, main > header, main > div');
+        const hero = document.querySelector<HTMLElement>('[data-morph-target]') || document.querySelector<HTMLElement>('main > section, main > header, main > div');
         // the stage settles into the hero's box, then dissolves into the page
         if (hero && document.startViewTransition && hero.getBoundingClientRect().height > 40) {
           H.dataset.morph = 'land';
           // the card's title flies onto the page's headline (it is the same words when the page is the card's page)
-          const from = stage.querySelector('.x-stage-t'), h1 = document.querySelector('main h1');
+          const from = stage.querySelector<HTMLElement>('.x-stage-t'), h1 = document.querySelector<HTMLElement>('main h1');
           const flyTitle = from && h1 && h1.getBoundingClientRect().height > 0;
           if (flyTitle) from.style.viewTransitionName = 'hz-title';
           const vt2 = document.startViewTransition(() => {
@@ -152,16 +155,16 @@ export default function Morph() {
       };
       // land once the page's headline is really visible (many pages cut it in with a line mask), or after 1.6 s
       const headlineShown = () => {
-        const h1 = document.querySelector('main h1');
+        const h1 = document.querySelector<HTMLElement>('main h1');
         if (!h1) return true;
-        for (let x = h1; x && x !== document.body; x = x.parentElement) if (+getComputedStyle(x).opacity < 0.9) return false;
+        for (let x: Element | null = h1; x && x !== document.body; x = x.parentElement) if (+getComputedStyle(x).opacity < 0.9) return false;
         const hr = h1.getBoundingClientRect();
         const line = [...h1.querySelectorAll('span, div')].find((e) => e.textContent.trim() && !e.closest('.x-sr, .sr-only') && e.getBoundingClientRect().height > 0);
         if (!line) return true;
         const lr = line.getBoundingClientRect();
         return lr.top >= hr.top - 4 && lr.bottom <= hr.bottom + 4 && +getComputedStyle(line).opacity > 0.9;
       };
-      const whenShown = (t0 = performance.now()) => (headlineShown() || performance.now() - t0 > 1600 ? dissolve() : setTimeout(() => whenShown(t0), 90));
+      const whenShown = (t0 = performance.now()): unknown => (headlineShown() || performance.now() - t0 > 1600 ? dissolve() : setTimeout(() => whenShown(t0), 90));
       pending.current = { from, done: () => { top(); grown.then(() => setTimeout(() => whenShown(), 60)); } };
       setTimeout(() => { if (!gone) { pending.current = null; grown.then(dissolve); } }, 8000); // a page that never comes: let go
     };
@@ -176,25 +179,25 @@ export default function Morph() {
     };
 
     const seen = new Set();
-    const local = (a, allowCard = false) => {
+    const local = (a: HTMLAnchorElement | null | undefined, allowCard = false) => {
       if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download') || a.closest(allowCard ? '[data-no-morph]' : '[data-no-morph],[data-card],.x-mclose')) return null;
       const u = new URL(a.href, location.href);
       // only this site's own pages move in place: hanzo.ai's sign-in pages are the app's, loaded whole
       return u.origin === location.origin && has(u.pathname) && !/\.(pdf|xml|txt|md|json|png|jpe?g|webp|svg|zip)$/i.test(u.pathname) ? u : null;
     };
     // fetch the next page while the pointer is on its way to the link
-    const warm = (e) => { const u = local(e.target.closest?.('a[href]'), true); if (u && !seen.has(u.pathname)) { seen.add(u.pathname); router.prefetch(u.pathname); } };
-    const click = (e) => {
+    const warm = (e: Event) => { const u = local((e.target as Element).closest?.<HTMLAnchorElement>('a[href]'), true); if (u && !seen.has(u.pathname)) { seen.add(u.pathname); router.prefetch(u.pathname); } };
+    const click = (e: MouseEvent) => {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      const a = e.target.closest?.('a[href]');
+      const a = (e.target as Element).closest?.<HTMLAnchorElement>('a[href]');
       const u = local(a);
-      if (!u || u.pathname === location.pathname || calm()) return;
+      if (!u || !a || u.pathname === location.pathname || calm()) return;
       e.preventDefault();
       e.stopPropagation();
       const go = () => router.push(u.pathname + u.search + u.hash, { scroll: false });
-      const own = a.matches('[data-morph]') ? a : a.querySelector('[data-morph]');
+      const own = a.matches('[data-morph]') ? a : a.querySelector<HTMLElement>('[data-morph]');
       const src = own || (!a.closest('[data-turn]') && BIG(a.getBoundingClientRect()) ? a : null);
-      if (src && document.startViewTransition) open(src, location.pathname, go, a, !!own);
+      if (src && 'startViewTransition' in document) open(src, location.pathname, go, a, !!own);
       else turn(location.pathname, go);
     };
     addEventListener('popstate', pop);

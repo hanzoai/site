@@ -5,15 +5,25 @@
    - lines: the heading broken where it should break (12-18ch). The whole text is in the server HTML.
    - delay (s), amount (how much must be in view), id. Reduced motion: the final state, no movement. JS off: legible.
    On a first visit it waits for the arrival curtain to lift (the 'hz-arrived' event), so the cut-in is seen. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import '../ProofScale.css';
-import NoJs from '../NoJs';
+import NoJs from '../../NoJs';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function MaskLines({ as = 'h2', lines, className = '', delay = 0, amount = 0.4, id, style }) {
-  const ref = useRef(null);
+interface MaskLinesProps {
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
+  lines: ReactNode[];
+  className?: string;
+  delay?: number;
+  amount?: number;
+  id?: string;
+  style?: CSSProperties;
+}
+
+export default function MaskLines({ as = 'h2', lines, className = '', delay = 0, amount = 0.4, id, style }: MaskLinesProps) {
+  const ref = useRef<HTMLHeadingElement>(null);
   const seen = useInView(ref, { once: true, amount });
   const reduce = useReducedMotion();
   // a first visit opens behind the arrival curtain (components/arrival.js): wait for it to lift, or no one sees the cut-in

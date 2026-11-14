@@ -16,7 +16,9 @@
    Phones (≤ 900 px): no pinning; each chapter is its words then its visual, played as it scrolls into view.
    JS off: every chapter stands stacked, words and visual, all legible. Reduced motion: chapters change with no transition. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion, useScroll, useTransform, useMotionValueEvent, useInView } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import { scrollToY } from '../../lib/scroll';
 import './Keynote.css';
 import './KeynoteChapters.css';
@@ -34,12 +36,33 @@ export function useWide(q = '(min-width: 900px)') {
   return w;
 }
 
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
+
+interface KeynoteItem {
+  title: ReactNode;
+  body?: ReactNode;
+  kick?: string;
+}
+
+type Visual = (i: number, on: boolean, p: MotionValue<number> | null) => ReactNode;
+type Swap = 'wipe' | 'rise' | 'scale' | 'fade';
 
 /* one chapter: its words and its visual. On phones it plays when the chapter itself is seen (the visual is clipped
    while it waits, so the chapter, not the visual, is what is watched). */
-function Chapter({ it, i, n, p, at, wide, visual, swap, count }) {
-  const ref = useRef(null);
+interface ChapterProps {
+  it: KeynoteItem;
+  i: number;
+  n: number;
+  p: MotionValue<number>;
+  at: number;
+  wide: boolean;
+  visual: Visual;
+  swap: Swap;
+  count: boolean;
+}
+
+function Chapter({ it, i, n, p, at, wide, visual, swap, count }: ChapterProps) {
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { amount: 0.25 });
   const local = useTransform(p, (v) => Math.min(1, Math.max(0, v * n - i)));
   const on = wide ? at === i : seen;
@@ -63,15 +86,27 @@ function Chapter({ it, i, n, p, at, wide, visual, swap, count }) {
   );
 }
 
-export default function KeynoteChapters({ items, visual, swap = 'wipe', side = 'left', count = false, rail = true, className = '', head, tall = 100 }) {
-  const sec = useRef(null);
+interface KeynoteChaptersProps {
+  items: readonly KeynoteItem[];
+  visual: Visual;
+  swap?: Swap;
+  side?: 'left' | 'right';
+  count?: boolean;
+  rail?: boolean;
+  className?: string;
+  head?: ReactNode;
+  tall?: number;
+}
+
+export default function KeynoteChapters({ items, visual, swap = 'wipe', side = 'left', count = false, rail = true, className = '', head, tall = 100 }: KeynoteChaptersProps) {
+  const sec = useRef<HTMLDivElement>(null);
   const n = items.length;
   const wide = useWide();
   const [at, setAt] = useState(0);
   const { scrollYProgress: p } = useScroll({ target: sec, offset: ['start start', 'end end'] });
   useMotionValueEvent(p, 'change', (v) => setAt(Math.min(n - 1, Math.max(0, Math.floor(v * n * 0.9999)))));
   const fill = useTransform(p, [0, 1], [0, 1]);
-  const go = (i) => {
+  const go = (i: number) => {
     const el = sec.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY;
@@ -80,7 +115,7 @@ export default function KeynoteChapters({ items, visual, swap = 'wipe', side = '
     scrollToY(y, { duration: 1.1 });
   };
   return (
-    <section className={`knc ${side} ${className}`} style={{ '--n': n, '--tall': tall + 'svh' }}>
+    <section className={`knc ${side} ${className}`} style={{ '--n': n, '--tall': tall + 'svh' } as CSSProperties}>
       {head && <div className="kn-wrap knc-head">{head}</div>}
       <div ref={sec} className="knc-run">
       <div className="knc-pin">

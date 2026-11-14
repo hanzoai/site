@@ -6,51 +6,57 @@
      it offers hanzo.ai/chat with your question. Any page can open it: dispatch a ⌘K keydown, as the phone thumb bar does.
    - the language menu with all of Hanzo's locales, the Log in choices, and Hanzo's cookie notice with its preferences.
    - On phones (≤ 700 px) search and the menus rise from the bottom as sheets; drag the grip down to close. */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence, useDragControls } from 'motion/react';
-import { read as readAppearance, write as writeAppearance, apply as applyAppearance, current as currentAppearance, CHANGE as APPEARANCE_CHANGE } from '@hanzo/appearance';
+import { motion, AnimatePresence, useDragControls, type HTMLMotionProps } from 'motion/react';
+import { read as readAppearance, write as writeAppearance, apply as applyAppearance, current as currentAppearance, CHANGE as APPEARANCE_CHANGE, type Preference } from '@hanzo/appearance';
 import { acceptAll, asks, consentPolicy, consentSheet, CONSENT_EVENT, declined, notice, noticed, POLICY_EVENT, readConsent, rejectAll, saveConsent } from '@hanzo/event';
 import { LOGIN, LANGS, SEARCH, COOKIES } from '../lib/header';
 import { ask } from '../lib/app';
 import { play } from '../lib/sound';
 import { track } from '../lib/track';
+import type { Shell } from './types';
 
-const EASE = [0.16, 1, 0.3, 1];
-const UP = { API: 1, CLI: 1, DNS: 1, HSM: 1, IAM: 1, IDE: 1, KMS: 1, MCP: 1, MQ: 1, UI: 1, GUI: 1, S3: 1, ZAP: 1, IDV: 1, SDKS: 'SDKs', O11Y: 'O11y' };
-const nameOf = (p) => {
-  const w = p.split('/').pop().split('-').map((x) => x.toUpperCase());
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+type Router = ReturnType<typeof useRouter>;
+// a search group's rows: label, a line under it, where it goes (lib/header.ts types a group's items as string | string[][])
+type Row = { l: string; sub: string; href: string; ai?: boolean };
+const GROUPS = SEARCH.map(([h, items]): [string, string[][]] => [h as string, items as string[][]]);
+const UP: Record<string, number | string> = { API: 1, CLI: 1, DNS: 1, HSM: 1, IAM: 1, IDE: 1, KMS: 1, MCP: 1, MQ: 1, UI: 1, GUI: 1, S3: 1, ZAP: 1, IDV: 1, SDKS: 'SDKs', O11Y: 'O11y' };
+const nameOf = (p: string) => {
+  const w = p.split('/').pop()!.split('-').map((x) => x.toUpperCase());
   return w.map((x) => (UP[x] === 1 ? x : UP[x] || x[0] + x.slice(1).toLowerCase())).join(' ');
 };
-const go = (router, href) => { if (href.startsWith('/')) router.push(href); else window.open(href, href.startsWith('https://hanzo.ai') ? '_self' : '_blank', 'noopener'); };
+const go = (router: Router, href: string) => { if (href.startsWith('/')) router.push(href); else window.open(href, href.startsWith('https://hanzo.ai') ? '_self' : '_blank', 'noopener'); };
 const CHAT = 'https://api.hanzo.ai/v1/chat/public';
 const chatLink = ask;
 
 // phones get bottom sheets that close when the grip is dragged down; read only after a tap opens one, never on the server
-function useSheet(onClose) {
+function useSheet(onClose: () => void) {
   const dc = useDragControls();
   const sheet = matchMedia('(max-width: 700px)').matches;
-  if (!sheet) return { sheet, drag: {}, grip: null };
-  const drag = { drag: 'y', dragControls: dc, dragListener: false, dragConstraints: { top: 0, bottom: 0 }, dragElastic: { top: 0, bottom: 0.7 }, onDragEnd: (_, i) => { if (i.offset.y > 90 || i.velocity.y > 600) onClose(); } };
+  if (!sheet) return { sheet, drag: {} as HTMLMotionProps<'div'>, grip: null };
+  const drag: HTMLMotionProps<'div'> = { drag: 'y', dragControls: dc, dragListener: false, dragConstraints: { top: 0, bottom: 0 }, dragElastic: { top: 0, bottom: 0.7 }, onDragEnd: (_, i) => { if (i.offset.y > 90 || i.velocity.y > 600) onClose(); } };
   return { sheet, drag, grip: <span className="x-grip" onPointerDown={(e) => dc.start(e)} aria-hidden="true" /> };
 }
 
 // Ask Hanzo: one question about the page you are on; the answer is written into `out` as it arrives (text only)
-async function askHanzo(q, out, signal, calm) {
-  const desc = document.querySelector('meta[name="description"]')?.content || '';
+async function askHanzo(q: string, out: (text: string) => void, signal: AbortSignal, calm: boolean): Promise<string> {
+  const desc = document.querySelector<HTMLMetaElement>('meta[name="description"]')?.content || '';
   const page = `The visitor is reading https://hanzo.ai${location.pathname}, the page "${document.title}"${desc ? ': ' + desc : ''}. Answer as Hanzo, briefly.`;
   const res = await fetch(CHAT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal, body: JSON.stringify({ model: 'enso-auto', messages: [{ role: 'system', content: page }, { role: 'user', content: q }] }) });
   if (!res.ok || !res.body) throw new Error('chat ' + res.status);
   const sse = /event-stream/.test(res.headers.get('content-type') || '');
   const rd = res.body.getReader(), dec = new TextDecoder();
   let buf = '', text = '';
-  const take = (lines) => { for (const l of lines) { const m = /^data:\s?(.*)/.exec(l.trim()); if (!m || m[1] === '[DONE]') continue; try { const c = JSON.parse(m[1]).choices?.[0]; text += c?.delta?.content ?? c?.message?.content ?? ''; } catch {} } };
+  const take = (lines: string[]) => { for (const l of lines) { const m = /^data:\s?(.*)/.exec(l.trim()); if (!m || m[1] === '[DONE]') continue; try { const c = JSON.parse(m[1]).choices?.[0]; text += c?.delta?.content ?? c?.message?.content ?? ''; } catch {} } };
   for (;;) {
     const { done, value } = await rd.read();
     if (done) break;
     buf += dec.decode(value, { stream: true });
     if (!sse) continue;
-    const lines = buf.split('\n'); buf = lines.pop();
+    const lines = buf.split('\n'); buf = lines.pop()!;
     take(lines); out(text);
   }
   if (sse) { take([buf]); out(text); return text; }
@@ -60,23 +66,23 @@ async function askHanzo(q, out, signal, calm) {
   return text;
 }
 
-function Palette({ onClose }) {
+function Palette({ onClose }: { onClose: () => void }) {
   const router = useRouter();
   const [q, setQ] = useState('');
-  const [pages, setPages] = useState([]);
+  const [pages, setPages] = useState<string[][]>([]);
   const [at, setAt] = useState(0);
-  const [ans, setAns] = useState(null); // { q, state: 'wait' | 'stream' | 'done' | 'error' }
-  const input = useRef(null);
-  const list = useRef(null);
-  const out = useRef(null);
-  const ctl = useRef(null);
+  const [ans, setAns] = useState<{ q: string; state: 'wait' | 'stream' | 'done' | 'error' } | null>(null);
+  const input = useRef<HTMLInputElement>(null);
+  const list = useRef<HTMLDivElement>(null);
+  const out = useRef<HTMLSpanElement>(null);
+  const ctl = useRef<AbortController | null>(null);
   const { sheet, drag, grip } = useSheet(onClose);
   useEffect(() => {
-    const back = document.activeElement; // focus returns here when search closes
+    const back = document.activeElement as HTMLElement | null; // focus returns here when search closes
     input.current?.focus(); import('../lib/search.json').then((m) => setPages(m.default));
     return () => { ctl.current?.abort(); if (back && back.isConnected) back.focus?.(); };
   }, []);
-  const ask = async (question) => {
+  const ask = async (question: string) => {
     const qq = question.trim().slice(0, 2000);
     if (!qq) return;
     track('search_performed', { search_string: question.trim(), from: 'palette' });
@@ -84,7 +90,7 @@ function Palette({ onClose }) {
     const c = (ctl.current = new AbortController());
     const timer = setTimeout(() => c.abort(), 25000);
     setAns({ q: qq, state: 'wait' });
-    const write = (t) => { if (out.current) out.current.textContent = t; if (t) setAns((a) => (a?.state === 'wait' ? { ...a, state: 'stream' } : a)); };
+    const write = (t: string) => { if (out.current) out.current.textContent = t; if (t) setAns((a) => (a?.state === 'wait' ? { ...a, state: 'stream' } : a)); };
     write('');
     try {
       const text = await askHanzo(qq, write, c.signal, matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -96,18 +102,18 @@ function Palette({ onClose }) {
   };
   const groups = useMemo(() => {
     const s = q.trim().toLowerCase();
-    const hit = (...xs) => !s || xs.some((x) => x && x.toLowerCase().includes(s));
-    const g = SEARCH.map(([h, items]) => [h, items.filter(([l, sub]) => hit(l, sub)).map(([l, sub, href]) => ({ l, sub, href }))]);
-    const ps = pages.filter(([p, t, d]) => p.split('/').length === 2 || s).filter(([p, t, d]) => hit(nameOf(p), t, d, p)).slice(0, s ? 30 : 400).map(([p, t]) => ({ l: nameOf(p), sub: t, href: p }));
-    const out = [...g.slice(0, 2), ['Pages', ps], ...g.slice(2)].filter(([, it]) => it.length);
+    const hit = (...xs: (string | undefined)[]) => !s || xs.some((x) => x && x.toLowerCase().includes(s));
+    const g = GROUPS.map(([h, items]): [string, Row[]] => [h, items.filter(([l, sub]) => hit(l, sub)).map(([l, sub, href]) => ({ l, sub, href }))]);
+    const ps: Row[] = pages.filter(([p, t, d]) => p.split('/').length === 2 || s).filter(([p, t, d]) => hit(nameOf(p), t, d, p)).slice(0, s ? 30 : 400).map(([p, t]) => ({ l: nameOf(p), sub: t, href: p }));
+    const out: [string, Row[]][] = [...g.slice(0, 2), ['Pages', ps] as [string, Row[]], ...g.slice(2)].filter(([, it]) => it.length);
     if (s) out.push(['Ask AI', [{ l: 'Ask AI: ' + q.trim(), sub: 'Answers here', href: chatLink(q.trim()), ai: true }]]);
     return out;
   }, [q, pages]);
   const flat = groups.flatMap(([, it]) => it);
   useEffect(() => setAt(0), [q]);
-  useEffect(() => { list.current?.querySelector('[data-on]')?.scrollIntoView({ block: 'nearest' }); }, [at]);
-  const pick = (x) => { if (x.ai) { ask(q); return; } onClose(); go(router, x.href); };
-  const key = (e) => {
+  useEffect(() => { list.current?.querySelector<HTMLElement>('[data-on]')?.scrollIntoView({ block: 'nearest' }); }, [at]);
+  const pick = (x: Row) => { if (x.ai) { ask(q); return; } onClose(); go(router, x.href); };
+  const key = (e: ReactKeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setAt((a) => Math.min(flat.length - 1, a + 1)); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setAt((a) => Math.max(0, a - 1)); }
     else if (e.key === 'Enter' && (e.metaKey || e.ctrlKey || ans)) { e.preventDefault(); if (!ans) ask(q); }
@@ -157,14 +163,14 @@ function Palette({ onClose }) {
   );
 }
 
-function Pop({ anchor, children, onClose, label, onPointerEnter = undefined, onPointerLeave = undefined }) {
-  const [pos, setPos] = useState(null);
+function Pop({ anchor, children, onClose, label, onPointerEnter = undefined, onPointerLeave = undefined }: { anchor: HTMLElement; children?: ReactNode; onClose: () => void; label: string; onPointerEnter?: () => void; onPointerLeave?: (e: ReactPointerEvent<HTMLDivElement>) => void }) {
+  const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
   const { sheet, drag, grip } = useSheet(onClose);
   useEffect(() => {
     const r = anchor.getBoundingClientRect();
     setPos({ top: r.bottom + 8, right: Math.max(12, innerWidth - r.right) });
-    const off = (e) => { if (!e.target.closest('.x-pop') && !anchor.contains(e.target)) onClose(); };
-    const esc = (e) => e.key === 'Escape' && (onClose(), anchor.focus());
+    const off = (e: MouseEvent) => { if (!(e.target as Element).closest('.x-pop') && !anchor.contains(e.target as Node)) onClose(); };
+    const esc = (e: KeyboardEvent) => e.key === 'Escape' && (onClose(), anchor.focus());
     addEventListener('mousedown', off);
     addEventListener('keydown', esc);
     return () => { removeEventListener('mousedown', off); removeEventListener('keydown', esc); };
@@ -179,9 +185,9 @@ function Pop({ anchor, children, onClose, label, onPointerEnter = undefined, onP
 }
 
 // keep Tab inside an open dialog; returns the keydown handler
-const trap = (e) => {
+const trap = (e: ReactKeyboardEvent<HTMLElement>) => {
   if (e.key !== 'Tab') return;
-  const f = [...e.currentTarget.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter((x) => x.offsetParent !== null);
+  const f = [...e.currentTarget.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])')].filter((x) => x.offsetParent !== null);
   if (!f.length) return;
   if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
   else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
@@ -198,21 +204,23 @@ const trap = (e) => {
    Until cloud answers nothing is drawn: this tab's last answer is used at once, and with none by 1.5s the eu rule. */
 const WAIT = 1500;
 const served = () => { const p = consentPolicy(); return p.region ? p.mode : undefined; };
-const pickOf = (c) => ({ performance: !!c.analytics, marketing: !!c.marketing, sale: !!c.ads });
-const choiceOf = (p) => ({ analytics: !!p.performance, marketing: !!p.marketing, ads: !!p.sale });
+const pickOf = (c: ReturnType<typeof readConsent>) => ({ performance: !!c.analytics, marketing: !!c.marketing, sale: !!c.ads });
+const choiceOf = (p: Record<string, boolean>) => ({ analytics: !!p.performance, marketing: !!p.marketing, ads: !!p.sale });
+
+type Mode = ReturnType<typeof consentPolicy>['mode'];
 
 function Consent() {
-  const [mode, setMode] = useState(); // the rule in force, undefined until served
+  const [mode, setMode] = useState<Mode>(); // the rule in force, undefined until served
   const [shown, setShown] = useState(false); // the eu bar or the global notice
   const [prefs, setPrefs] = useState(false);
   const [locked, setLocked] = useState(false); // the browser refused
-  const [pick, setPick] = useState({ performance: false, marketing: false, sale: false });
-  const rule = useRef();
-  const back = useRef(null);
-  const box = useRef(null);
+  const [pick, setPick] = useState<Record<string, boolean>>({ performance: false, marketing: false, sale: false });
+  const rule = useRef<Mode>(undefined);
+  const back = useRef<HTMLElement | null>(null);
+  const box = useRef<HTMLDivElement>(null);
   const front = (m = rule.current) => (m === 'eu' ? asks() : m === 'global' ? !noticed() && !declined() : false);
   const open = () => {
-    back.current = document.activeElement;
+    back.current = document.activeElement as HTMLElement | null;
     setLocked(declined());
     setPick(pickOf(readConsent()));
     setPrefs(true);
@@ -223,13 +231,13 @@ function Consent() {
   const none = () => { rejectAll(); close(); };
   const keep = (p = pick) => { saveConsent(choiceOf(p)); close(); };
   // Under an opt-out rule a switch saves as it moves.
-  const flip = (k) => setPick((p) => {
+  const flip = (k: string) => setPick((p) => {
     const next = { ...p, [k]: !p[k] };
     if (rule.current !== 'eu') saveConsent(choiceOf(next));
     return next;
   });
   useEffect(() => {
-    const decide = (m) => { rule.current = m; setMode(m); setShown(front(m)); setLocked(declined()); };
+    const decide = (m: Mode) => { rule.current = m; setMode(m); setShown(front(m)); setLocked(declined()); };
     const known = served();
     if (known) decide(known);
     const wait = known ? undefined : setTimeout(() => rule.current ?? decide('eu'), WAIT);
@@ -240,15 +248,15 @@ function Consent() {
     return () => { clearTimeout(wait); removeEventListener(POLICY_EVENT, policy); removeEventListener(CONSENT_EVENT, sync); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
-    const click = (e) => { const a = e.target.closest?.('a[href$="#choices"]'); if (a) { e.preventDefault(); open(); } };
+    const click = (e: MouseEvent) => { const a = (e.target as Element).closest?.('a[href$="#choices"]'); if (a) { e.preventDefault(); open(); } };
     addEventListener('hz-consent-open', open);
     document.addEventListener('click', click, true);
     return () => { removeEventListener('hz-consent-open', open); document.removeEventListener('click', click, true); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!prefs) return;
-    const t = setTimeout(() => box.current?.querySelector('.x-prefs-x')?.focus(), 40);
-    const esc = (e) => { if (e.key === 'Escape') close(); };
+    const t = setTimeout(() => box.current?.querySelector<HTMLElement>('.x-prefs-x')?.focus(), 40);
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
     addEventListener('keydown', esc);
     return () => { clearTimeout(t); removeEventListener('keydown', esc); back.current?.focus?.(); };
   }, [prefs]);
@@ -297,7 +305,7 @@ function Consent() {
   );
 }
 
-const HELP_LINKS = [
+const HELP_LINKS: [label: string, href: string, ext: boolean][] = [
   ['Copy page as Markdown (AI)', '#copy-markdown', false],
   ['Chat with us', '/buying-specialist', false],
   ['Get help', '/support', false],
@@ -305,20 +313,21 @@ const HELP_LINKS = [
   ['Docs', 'https://docs.hanzo.ai', true],
   ['Contact us', '/contact', false],
 ];
-const FONTS = [
+type Face = NonNullable<Preference['font']>;
+const FONTS: [Face, string][] = [
   ['default', 'Sans'],
   ['system', 'System'],
   ['serif', 'Serif'],
   ['mono', 'Mono'],
 ];
-const INSTALL_PREF = { theme: 'system' };
+const INSTALL_PREF: Preference = { theme: 'system' };
 
 function copyPageMarkdown() {
   const title = document.title || 'Hanzo AI';
-  const desc = document.querySelector('meta[name="description"]')?.content || '';
+  const desc = document.querySelector<HTMLMetaElement>('meta[name="description"]')?.content || '';
   const url = `https://hanzo.ai${location.pathname === '/' ? '' : location.pathname}`;
   const main = document.querySelector('main') || document.body;
-  const blocks = [];
+  const blocks: string[] = [];
   main.querySelectorAll('h1, h2, h3, p, li').forEach((el) => {
     if (el.closest('[aria-hidden="true"], nav, header, footer')) return;
     const t = el.textContent.replace(/\s+/g, ' ').trim();
@@ -331,14 +340,14 @@ function copyPageMarkdown() {
   navigator.clipboard?.writeText(md).catch(() => {});
 }
 
-function Corner({ lang, setLang, router }) {
+function Corner({ lang, setLang, router }: { lang: string; setLang: (code: string) => void; router: Router }) {
   const [open, setOpen] = useState(false);
   const [view, setView] = useState('main'); // 'main' | 'language' | 'font'
   const [query, setQuery] = useState('');
-  const [theme, setTheme] = useState('system');
-  const [font, setFont] = useState('default');
+  const [theme, setTheme] = useState<NonNullable<Preference['theme']>>('system');
+  const [font, setFont] = useState<Face>('default');
   const [copied, setCopied] = useState(false);
-  const rootRef = useRef(null);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const sync = () => {
@@ -353,8 +362,8 @@ function Corner({ lang, setLang, router }) {
 
   useEffect(() => {
     if (!open) return;
-    const onDown = (e) => { if (rootRef.current && !rootRef.current.contains(e.target)) setOpen(false); };
-    const onKey = (e) => {
+    const onDown = (e: MouseEvent) => { if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false); };
+    const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
       if (view !== 'main') { setView('main'); setQuery(''); }
       else setOpen(false);
@@ -365,22 +374,22 @@ function Corner({ lang, setLang, router }) {
   }, [open, view]);
 
   const close = () => { setOpen(false); setView('main'); setQuery(''); };
-  const pickTheme = (next) => {
+  const pickTheme = (next: NonNullable<Preference['theme']>) => {
     setTheme(next);
     const p = readAppearance();
     writeAppearance({ ...p, theme: next });
     applyAppearance(currentAppearance({ install: INSTALL_PREF }).pref);
   };
-  const pickFont = (next) => {
+  const pickFont = (next: Face) => {
     setFont(next);
     const p = readAppearance();
-    const updated = { ...p, font: next === 'default' ? undefined : next };
+    const updated: Preference = { ...p, font: next === 'default' ? undefined : next };
     if (next === 'default') delete updated.font;
     writeAppearance(updated);
     applyAppearance(currentAppearance({ install: INSTALL_PREF }).pref);
     setView('main');
   };
-  const pickLang = (code) => {
+  const pickLang = (code: string) => {
     setLang(code);
     try { localStorage.setItem('hz-lang', code); } catch {}
     setView('main');
@@ -574,13 +583,13 @@ function hasLiveSession() {
   }
 }
 
-export default function HeaderTools({ headerRef }) {
-  const [open, setOpen] = useState(null); // 'search' | 'lang' | 'login'
+export default function HeaderTools({ headerRef }: { headerRef: Shell }) {
+  const [open, setOpen] = useState<'search' | 'lang' | 'login' | null>(null);
   const [lang, setLang] = useState('en-US');
   const [signedIn, setSignedIn] = useState(false);
-  const anchors = useRef({});
+  const anchors = useRef<Partial<Record<'search' | 'lang' | 'login', HTMLButtonElement>>>({});
   // Log in opens under a mouse, as the menus beside it do, and stays open while the pointer is on it or its menu
-  const hover = useRef({ hold: () => {}, later: () => {} });
+  const hover = useRef<{ hold: () => void; later: () => void }>({ hold: () => {}, later: () => {} });
   const router = useRouter();
   const pathname = usePathname();
 
@@ -661,9 +670,10 @@ export default function HeaderTools({ headerRef }) {
   useEffect(() => {
     const h = headerRef.current?.querySelector('header');
     if (!h) return;
-    const offs = [];
-    const on = (el, ev, fn) => { el.addEventListener(ev, fn); offs.push(() => el.removeEventListener(ev, fn)); };
-    h.querySelectorAll('button').forEach((b) => {
+    const offs: (() => void)[] = [];
+    // the handler's event type follows from the event it is given for (the registrar hands the listener its Event)
+    const on = <T extends Event>(el: EventTarget, ev: string, fn: (e: T) => void) => { const f = fn as EventListener; el.addEventListener(ev, f); offs.push(() => el.removeEventListener(ev, f)); };
+    h.querySelectorAll<HTMLButtonElement>('button').forEach((b) => {
       const label = b.getAttribute('aria-label') || '';
       const slot = b.getAttribute('data-slot') || '';
       const text = b.textContent.trim();
@@ -672,7 +682,7 @@ export default function HeaderTools({ headerRef }) {
       anchors.current[kind] = b;
       b.setAttribute('aria-haspopup', kind === 'search' ? 'dialog' : 'menu');
       let hoverAt = 0;
-      on(b, 'click', (e) => {
+      on(b, 'click', (e: MouseEvent) => {
         e.preventDefault();
         if (kind === 'login' && b.dataset.salesLink === '1') {
           router.push('/contact-sales');
@@ -684,11 +694,11 @@ export default function HeaderTools({ headerRef }) {
         setOpen((o) => (o === kind && !fresh ? null : kind));
       });
       if (kind !== 'login') return;
-      let shut = 0;
+      let shut: ReturnType<typeof setTimeout> | undefined;
       const hold = () => clearTimeout(shut);
       const later = () => { clearTimeout(shut); shut = setTimeout(() => setOpen((o) => (o === 'login' && !b.matches(':hover') && !document.querySelector('.x-pop:hover') ? null : o)), 240); };
       hover.current = { hold, later };
-      on(b, 'pointerenter', (e) => {
+      on(b, 'pointerenter', (e: PointerEvent) => {
         if (b.dataset.salesLink === '1') return;
         if (e.pointerType !== 'mouse' || innerWidth <= 900) return;
         hold();
@@ -696,12 +706,12 @@ export default function HeaderTools({ headerRef }) {
         window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'tools' }));
         setOpen('login');
       });
-      on(b, 'pointerleave', (e) => { if (e.pointerType === 'mouse') later(); });
+      on(b, 'pointerleave', (e: PointerEvent) => { if (e.pointerType === 'mouse') later(); });
       offs.push(() => clearTimeout(shut));
     });
-    const k = (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'tools' })); setOpen((o) => (o === 'search' ? null : 'search')); } };
+    const k = (e: KeyboardEvent) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); window.dispatchEvent(new CustomEvent('hz-header-exclusive', { detail: 'tools' })); setOpen((o) => (o === 'search' ? null : 'search')); } };
     on(window, 'keydown', k);
-    on(window, 'hz-header-exclusive', (e) => { if (e.detail !== 'tools') setOpen((o) => (o === 'lang' || o === 'login' ? null : o)); });
+    on(window, 'hz-header-exclusive', (e: CustomEvent<string>) => { if (e.detail !== 'tools') setOpen((o) => (o === 'lang' || o === 'login' ? null : o)); });
     return () => offs.forEach((f) => f());
   }, [headerRef]);
 

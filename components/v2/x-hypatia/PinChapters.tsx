@@ -9,17 +9,30 @@
    - Phone (MASTER part 11, nothing floats over content): no pin; each chapter stacks as its words, then its own visual.
    - Every chapter's words (and its "01 / 06" counter) are in the HTML. Reduced motion: chapters swap without moving.
    Styles: PinChapters.css (prefix pc-). The visual is the page's own; size it to fill .pc-vis. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
 import './PinChapters.css';
 
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
-export default function PinChapters({ items, visual, label, look = 'left', total, onAt, className = '', head, foot, dark }) {
+interface PinChaptersProps {
+  items: [string, ReactNode][]; // [title, body]
+  visual: (at: number) => ReactNode;
+  label?: string;
+  look?: 'left' | 'right';
+  total?: number;
+  onAt?: (i: number) => void;
+  className?: string;
+  head?: ReactNode;
+  foot?: ReactNode;
+  dark?: boolean;
+}
+
+export default function PinChapters({ items, visual, label, look = 'left', total, onAt, className = '', head, foot, dark }: PinChaptersProps) {
   const n = items.length;
   const tot = total || n;
-  const ref = useRef(null);
-  const arts = useRef([]);
+  const ref = useRef<HTMLElement>(null);
+  const arts = useRef<(HTMLElement | null)[]>([]);
   const [at, setAt] = useState(0);
   const [wide, setWide] = useState(true);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
@@ -40,14 +53,14 @@ export default function PinChapters({ items, visual, label, look = 'left', total
   // phone: the chapter crossing the middle of the screen is the active one
   useEffect(() => {
     if (wide) return;
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(+e.target.dataset.i)), { rootMargin: '-48% 0px -48% 0px' });
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setAt(Number((e.target as HTMLElement).dataset.i))), { rootMargin: '-48% 0px -48% 0px' });
     arts.current.forEach((a) => a && io.observe(a));
     return () => io.disconnect();
   }, [wide]);
 
   useEffect(() => { onAt && onAt(at); }, [at, onAt]);
 
-  const go = (i) => {
+  const go = (i: number) => {
     const el = ref.current;
     if (!el) return;
     if (!wide) { arts.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
@@ -57,14 +70,14 @@ export default function PinChapters({ items, visual, label, look = 'left', total
   };
 
   return (
-    <section ref={ref} className={`pc pc-${look} ${dark ? 'pc-dark' : ''} ${className}`} style={{ '--n': n }} aria-label={label} data-room={dark ? 'dark' : undefined}>
+    <section ref={ref} className={`pc pc-${look} ${dark ? 'pc-dark' : ''} ${className}`} style={{ '--n': n } as CSSProperties} aria-label={label} data-room={dark ? 'dark' : undefined}>
       <div className="pc-stage">
         <div className="pc-in">
           <div className="pc-copy">
             {head}
             <div className="pc-arts">
               {items.map(([t, d], i) => (
-                <article key={t} ref={(el) => (arts.current[i] = el)} data-i={i} className="pc-art" data-on={i === at ? '' : undefined} data-past={i < at ? '' : undefined}>
+                <article key={t} ref={(el) => { arts.current[i] = el; }} data-i={i} className="pc-art" data-on={i === at ? '' : undefined} data-past={i < at ? '' : undefined}>
                   <p className="pc-n v2-kick">{pad(i + 1)} / {pad(tot)}</p>
                   <h3 className="pc-t"><span>{t}</span></h3>
                   {typeof d === 'string' ? <p className="pc-d">{d}</p> : <div className="pc-d">{d}</div>}

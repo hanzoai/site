@@ -7,10 +7,18 @@
      <StageSettle className="my-stage" over={560} from={{ rotateX: 20, scale: 1.06, y: 24 }}>{heroObject}</StageSettle>
    - over: how many pixels of scroll the settle takes (from the top of the page).
    - from: the starting pose; the end pose is always flat (0, 1, 0). */
+import type { ReactNode } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import useCalm from './useCalm';
 
-export default function StageSettle({ children, className = '', over = 560, from = {} }) {
+interface StageSettleProps {
+  children?: ReactNode;
+  className?: string;
+  over?: number;
+  from?: { rotateX?: number; scale?: number; y?: number };
+}
+
+export default function StageSettle({ children, className = '', over = 560, from = {} }: StageSettleProps) {
   const calm = useCalm();
   const { scrollY } = useScroll();
   // computed in JS (a plain range map may be handed to the browser's scroll timeline, which can misread the range)

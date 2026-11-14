@@ -10,6 +10,13 @@
    It renders one hidden, empty element: no text, no layout, nothing to tab to. */
 import { href as route } from '../../lib/route';
 
-export default function AskBar({ title, label, to, cta }) {
+interface AskBarProps {
+  title: string;
+  label: string;
+  to: string;
+  cta: string;
+}
+
+export default function AskBar({ title, label, to, cta }: AskBarProps) {
   return <span hidden aria-hidden="true" data-ask-name={title} data-thumb={label} data-href={route(to) || to} data-cta={cta} />;
 }

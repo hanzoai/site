@@ -19,14 +19,14 @@ import { onDomChange } from '../lib/domwatch';
 const HEADER_ASK = 'Try Hanzo';
 const PHONE = '(max-width: 700px)';
 const OVERLAY = '.x-cookie, .x-sheet, .x-pal, .x-pop, .x-nav-panel, .x-sheet2-wrap, [aria-modal="true"], [data-dock], .xcr-dock';
-const words = (t) => (t || '').replace(/[→↗\s]+/g, ' ').trim().toLowerCase();
-const boxOf = (el) => (el.getClientRects().length ? el : el.querySelector('a, button') || el.firstElementChild || el);
-const shown = (el) => el.isConnected && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && !el.closest('[hidden], [inert], [aria-hidden="true"]');
-const visible = (el) => { if (!shown(el)) return false; for (let x = el; x && x !== document.body; x = x.parentElement) if (+getComputedStyle(x).opacity < 0.6) return false; const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; };
+const words = (t: string | null | undefined) => (t || '').replace(/[→↗\s]+/g, ' ').trim().toLowerCase();
+const boxOf = (el: Element): Element => (el.getClientRects().length ? el : el.querySelector('a, button') || el.firstElementChild || el);
+const shown = (el: Element) => el.isConnected && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden' && !el.closest('[hidden], [inert], [aria-hidden="true"]');
+const visible = (el: Element) => { if (!shown(el)) return false; for (let x: Element | null = el; x && x !== document.body; x = x.parentElement) if (+getComputedStyle(x).opacity < 0.6) return false; const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; };
 const MEDIA = 'img, video, canvas, svg, picture, iframe, button, a, input, textarea, select, label';
 // is anything readable, tappable or boxed (a card) in the band where the bar would sit? Full-width section
 // backgrounds are only surfaces; a card's surface, text, pictures and controls are content.
-const painted = (cs) => !/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor) || parseFloat(cs.borderTopWidth) > 0 || cs.boxShadow !== 'none';
+const painted = (cs: CSSStyleDeclaration) => !/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor) || parseFloat(cs.borderTopWidth) > 0 || cs.boxShadow !== 'none';
 function covered() {
   const base = innerHeight - 10; // the bar spans base-44 … base
   for (const y of [base - 2, base - 22, base - 42, base - 54]) for (let x = 14; x < innerWidth - 8; x += 22) {
@@ -34,7 +34,7 @@ function covered() {
       if (el.closest('.x-ask')) continue;
       if (el === document.documentElement || el === document.body || el.tagName === 'MAIN') break;
       if (el.matches(MEDIA) || el.closest('button, a')) return true;
-      if ([...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) return true;
+      if ([...el.childNodes].some((n) => n.nodeType === 3 && n.textContent?.trim())) return true;
       if (el.getBoundingClientRect().width < innerWidth * 0.92 && painted(getComputedStyle(el))) return true; // a card
     }
   }
@@ -43,7 +43,7 @@ function covered() {
 
 export default function Ask() {
   const path = usePathname();
-  const [ask, setAsk] = useState(null); // { label, href }
+  const [ask, setAsk] = useState<{ label: string; href: string } | null>(null);
   const [on, setOn] = useState(false);
   const [dark, setDark] = useState(false);
 
@@ -55,16 +55,16 @@ export default function Ask() {
       stop(); setOn(false);
       if (!mq.matches) { setAsk(null); return; }
       const main = document.querySelector('main');
-      const own = main?.querySelector('[data-thumb]');
+      const own = main?.querySelector<HTMLElement>('[data-thumb]');
       if (!main || !own || main.closest('[data-ask="off"]') || main.matches('[data-ask="off"]')) { setAsk(null); return; }
-      const label = own.getAttribute('data-thumb') || own.textContent.trim();
+      const label = own.getAttribute('data-thumb') || own.textContent?.trim();
       if (!label || words(label) === words(HEADER_ASK)) { setAsk(null); return; } // the header already carries it
       const href = own.getAttribute('href') || own.querySelector('a')?.getAttribute('href') || own.dataset.href;
       if (!href) { setAsk(null); return; }
       setAsk({ label, href });
 
       const trigger = boxOf(own);
-      let typing = false, scrolling = false, rest = 0, recheck = [0, 0];
+      let typing = false, scrolling = false, rest: ReturnType<typeof setTimeout> | undefined, recheck: (ReturnType<typeof setTimeout> | undefined)[] = [];
       const twins = () => [...main.querySelectorAll('a, button, [data-thumb]')].filter((el) => el === own || words(el.getAttribute('data-thumb') || el.textContent) === words(label));
       const blockers = () => [...document.querySelectorAll('footer, .x-band, [data-ask-hide]')];
       const update = () => {
@@ -83,7 +83,7 @@ export default function Ask() {
         setDark(!!under?.closest('[data-room=dark]'));
       };
       const onScroll = () => { scrolling = true; setOn(false); clearTimeout(rest); rest = setTimeout(() => { scrolling = false; update(); }, 260); };
-      const fin = (e) => { typing = /INPUT|TEXTAREA|SELECT/.test(e.target.tagName); update(); };
+      const fin = (e: FocusEvent) => { typing = /INPUT|TEXTAREA|SELECT/.test((e.target as Element).tagName); update(); };
       const fout = () => { typing = false; setTimeout(update, 60); };
       addEventListener('scroll', onScroll, { passive: true });
       addEventListener('focusin', fin); addEventListener('focusout', fout);
@@ -99,30 +99,30 @@ export default function Ask() {
   // desktop: the header's ask slot carries the page's own ask after the hero
   useEffect(() => {
     const H = document.documentElement;
-    const btn = document.querySelector('header[data-slot=masthead] a[href="https://hanzo.ai/signup"], header[data-slot=masthead] a[data-x-ask]');
+    const btn = document.querySelector<HTMLElement>('header[data-slot=masthead] a[href="https://hanzo.ai/signup"], header[data-slot=masthead] a[data-x-ask]');
     if (!btn) return;
-    if (!btn.dataset.xAsk) { btn.dataset.xAsk = btn.textContent; btn.dataset.xHref = btn.getAttribute('href'); }
-    const restore = () => { btn.textContent = btn.dataset.xAsk; btn.setAttribute('href', btn.dataset.xHref); btn.removeAttribute('data-cta'); delete H.dataset.ask; };
+    if (!btn.dataset.xAsk) { btn.dataset.xAsk = btn.textContent ?? ''; btn.dataset.xHref = btn.getAttribute('href') ?? ''; }
+    const restore = () => { btn.textContent = btn.dataset.xAsk ?? ''; btn.setAttribute('href', btn.dataset.xHref ?? ''); btn.removeAttribute('data-cta'); delete H.dataset.ask; };
     restore();
     const mq = matchMedia('(min-width: 701px)');
     let off = () => {};
     const start = () => {
       off(); restore();
       const main = document.querySelector('main');
-      const own = main?.querySelector('[data-thumb]');
-      if (!mq.matches || !own || main.matches('[data-ask="off"]')) return;
-      const label = own.getAttribute('data-thumb') || own.textContent.trim();
+      const own = main?.querySelector<HTMLElement>('[data-thumb]');
+      if (!mq.matches || !own || !main || main.matches('[data-ask="off"]')) return;
+      const label = own.getAttribute('data-thumb') || own.textContent?.trim();
       const href = own.getAttribute('href') || own.querySelector('a')?.getAttribute('href') || own.dataset.href;
       if (!label || !href) return;
       const twins = () => [...main.querySelectorAll('a, button, [data-thumb]')].filter((el) => el === own || words(el.getAttribute('data-thumb') || el.textContent) === words(label));
-      let shown = null, t = 0;
+      let shown: boolean | null = null, t: ReturnType<typeof setTimeout> | undefined;
       const update = () => {
         const heroAsk = twins().some((el) => visible(boxOf(el)));
         const page = boxOf(own).getBoundingClientRect().bottom < 60 || !heroAsk; // the hero's ask has gone by
         if (page !== shown) {
           shown = page;
-          btn.textContent = page ? label : btn.dataset.xAsk;
-          btn.setAttribute('href', page ? href : btn.dataset.xHref);
+          btn.textContent = page ? label : btn.dataset.xAsk ?? '';
+          btn.setAttribute('href', page ? href : btn.dataset.xHref ?? '');
           if (page) btn.setAttribute('data-cta', 'header-ask'); else btn.removeAttribute('data-cta');
         }
         if (heroAsk) H.dataset.ask = 'quiet'; else delete H.dataset.ask; // one solid at a time

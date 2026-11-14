@@ -9,12 +9,17 @@
    - JS off or reduced motion: the room is simply open. It makes no stacking context, so a SpecDrawer sheet inside it
      still rises above the header. Owned by Cloud 3. */
 import { useEffect, useRef, useState } from 'react';
+import type { ComponentProps } from 'react';
 import './LaunchType.css';
 import './ClipWipe.css';
 
-export default function ClipWipe({ children, dark, className = '', id, ...rest }) {
-  const ref = useRef(null);
-  const [st, setSt] = useState('open'); // open (server, JS off) → armed (below the fold) → play
+interface ClipWipeProps extends ComponentProps<'section'> {
+  dark?: boolean;
+}
+
+export default function ClipWipe({ children, dark, className = '', id, ...rest }: ClipWipeProps) {
+  const ref = useRef<HTMLElement>(null);
+  const [st, setSt] = useState<'open' | 'armed' | 'play'>('open'); // open (server, JS off) → armed (below the fold) → play
   useEffect(() => {
     const el = ref.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;

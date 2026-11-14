@@ -5,7 +5,14 @@
           <div className="my-demo"><A2Pause paused={paused} onChange={setPaused} label="Pause the demo" /> … </div>
    Put it first inside the moving thing. It is a real button (Space and Enter), 44 px, and says what it does. A page
    stops its loop while paused; CSS loops inside the same box stop through the .a2-paused class the page sets. */
-export default function A2Pause({ paused, onChange, label = 'Pause the demo', className = '' }) {
+interface A2PauseProps {
+  paused: boolean;
+  onChange: (paused: boolean) => void;
+  label?: string;
+  className?: string;
+}
+
+export default function A2Pause({ paused, onChange, label = 'Pause the demo', className = '' }: A2PauseProps) {
   return (
     <button type="button" className={'a2-pause ' + className} aria-pressed={paused} aria-label={label} onClick={() => onChange(!paused)}>
       {paused

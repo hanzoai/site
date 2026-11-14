@@ -18,7 +18,10 @@
 // 2. --pages [/path ...]: render hanzo.ai pages in headless Chrome and keep what a visitor sees (content/live/<path>.json
 //    { text, links }, parity.py's reference). A browser job: not on James's laptop unless he asks (docs/build-notes/MASTER.md section 5).
 import { RUNS, MODELS, PRICES, PLANS_URL, shapePlan, readResearch, readModels } from '../lib/liveSources.ts';
+import type { Listed, Plan } from '../lib/liveSources.ts';
 import { estate, github, combine } from '../lib/oss.ts';
+import type { Held } from '../lib/oss.ts';
+import { why } from './why.ts';
 import { shape } from '../components/pages/openSource/shape.ts';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -36,24 +39,23 @@ async function figures() {
     return;
   }
   const fetched_at = new Date().toISOString();
-  const failed = [];
-  const res = async (url, headers = {}) => {
+  const failed: string[] = [];
+  const res = async (url: string, headers: Record<string, string> = {}) => {
     const r = await fetch(url, { headers: { 'user-agent': 'hanzo-site-live', ...headers }, signal: AbortSignal.timeout(30000) });
     if (!r.ok) throw Object.assign(new Error(`${r.status} from ${url}${r.headers.get('x-ratelimit-remaining') === '0' ? ' (rate limited)' : ''}`), { status: r.status });
     return r;
   };
-  const get = async (url, headers = {}) => (await res(url, headers)).json();
-  const text = async (url) => (await res(url)).text();
-  const int = (n) => Number.isInteger(n) && n >= 0;
-  const need = (ok, what) => { if (!ok) throw new Error('unexpected data: ' + what); };
-  const n = (x) => x.toLocaleString('en-US');
+  const get = async <T>(url: string, headers: Record<string, string> = {}): Promise<T> => (await res(url, headers)).json();
+  const int = (n: unknown) => Number.isInteger(n) && (n as number) >= 0;
+  function need(ok: unknown, what: string): asserts ok { if (!ok) throw new Error('unexpected data: ' + what); }
+  const n = (x: number) => x.toLocaleString('en-US');
 
   // Commits a day, the year's commits and merges, this week, organizations: what hanzo.ai's own calendar and tiles read.
   const GIT = 'https://api.hanzo.ai/v1/git/activity';
   const git = async () => {
-    const a = await get(GIT);
+    const a = await get<{ complete: boolean; read: string; window: { from: string; to: string }; daily: Record<string, number>; active: Record<string, number>; totals: { commits: number; merges: number; orgs: number } }>(GIT);
     need(a.complete === true, 'activity marked incomplete');
-    const days = [];
+    const days: [string, number, number][] = [];
     for (let t = Date.parse(a.window.from + 'T00:00:00Z'), end = Date.parse(a.window.to + 'T00:00:00Z'); t <= end; t += 864e5) {
       const d = new Date(t).toISOString().slice(0, 10);
       need(int(a.daily[d]) && int(a.active[d]), 'day ' + d);
@@ -72,10 +74,10 @@ async function figures() {
   const PLANS = PLANS_URL;
   const SHOWN = ['free', 'go', 'pro-3x', 'dev-5x', 'max-15x', 'ultra', 'team', 'team-premium', 'enterprise', 'enterprise-300'];
   const pricing = async () => {
-    const list = await get(PLANS);
+    const list = await get<Listed[]>(PLANS);
     need(Array.isArray(list), 'plan list');
     for (const slug of SHOWN) need(list.some((x) => x.slug === slug), 'plan ' + slug);
-    const plans = {};
+    const plans: Record<string, Plan> = {};
     for (const p of list.filter((x) => SHOWN.includes(x.slug) || ['personal', 'agency', 'white-label'].includes(x.category))) {
       need(int(p.price) && (p.priceAnnual == null || int(p.priceAnnual)), 'plan ' + p.slug);
       plans[p.slug] = shapePlan(p);
@@ -90,23 +92,23 @@ async function figures() {
   const oss = async () => {
     const index = await estate();
     const file = path.join(OUT, '_github.json');
-    let kept = null;
+    let kept: { groups: Record<string, Held>; fetched_at?: string } | null = null;
     try { kept = JSON.parse(fs.readFileSync(file, 'utf8')); } catch { /* the first read */ }
-    let gh = kept;
+    let gh: { groups: Record<string, Held>; fetched_at?: string } | null = kept;
     if (process.env.GITHUB_TOKEN) {
       try {
         gh = { ...(await github({ index, token: process.env.GITHUB_TOKEN, kept, thrifty: process.env.GITHUB_EVENT_NAME === 'push' })), fetched_at };
         fs.writeFileSync(file + '.tmp', JSON.stringify(gh) + '\n');
         fs.renameSync(file + '.tmp', file);
         console.log(`_github.json  live  ${n(Object.values(gh.groups).reduce((s, g) => s + g.stars, 0))} stars`);
-      } catch (e) { console.log(`_github.json  kept snapshot from ${kept?.fetched_at}: ${e.message}`); }
+      } catch (e) { console.log(`_github.json  kept snapshot from ${kept?.fetched_at}: ${why(e)}`); }
     } else console.log(`_github.json  kept snapshot from ${kept?.fetched_at}: no GITHUB_TOKEN`);
     need(gh, 'no GitHub read and no GITHUB_TOKEN to make one');
     const { sum, act } = combine(index, gh);
     const e = sum.estate;
     // commits a day (every group added up) and repositories active that day, as hanzo.ai's calendar draws them
     const all = Object.values(act.groups);
-    const days = [];
+    const days: [string, number, number][] = [];
     for (let t = Date.parse(act.from + 'T00:00:00Z'), end = Date.parse(act.to + 'T00:00:00Z'); t <= end; t += 864e5) {
       const d = new Date(t).toISOString().slice(0, 10);
       days.push([d, all.reduce((a, g) => a + (g.daily?.[d] ?? 0), 0), all.reduce((a, g) => a + (g.active?.[d] ?? 0), 0)]);
@@ -128,7 +130,7 @@ async function figures() {
   const research = async () => ({ source: RUNS + '&benchmark={coding.repair,decision.latency,enso.gpqa_diamond}&view=summary&limit=200', fetched_at, ...(await readResearch(get)) });
   const models = async () => ({ source: MODELS + ' and ' + PRICES, fetched_at, ...(await readModels(get)) });
 
-  const run = async (name, job, say) => {
+  const run = async <T>(name: string, job: () => Promise<T>, say: (data: T) => string) => {
     const file = path.join(OUT, name);
     try {
       const data = await job();
@@ -136,10 +138,10 @@ async function figures() {
       fs.renameSync(file + '.tmp', file); // whole file or nothing: a half-written snapshot would break the build
       console.log(`${name.padEnd(15)}live  ${say(data)}`);
     } catch (e) {
-      let was = null;
+      let was: string | null = null;
       try { was = JSON.parse(fs.readFileSync(file, 'utf8')).fetched_at; } catch {}
-      console.log(`${name.padEnd(15)}${was ? 'kept snapshot from ' + was : 'NO DATA AND NO SNAPSHOT'}: ${e.message}`);
-      failed.push(`${name}: ${e.message}`);
+      console.log(`${name.padEnd(15)}${was ? 'kept snapshot from ' + was : 'NO DATA AND NO SNAPSHOT'}: ${why(e)}`);
+      failed.push(`${name}: ${why(e)}`);
     }
   };
   await run('_git.json', git, (d) => `${n(d.commits)} commits · ${n(d.merges)} merges · ${n(d.week)} in 7 days · ${d.orgs} orgs · ${d.days.length} days ${d.window.from}…${d.window.to}`);
@@ -155,7 +157,7 @@ async function figures() {
   }
 }
 
-async function pages(paths) {
+async function pages(paths: string[]) {
   const { default: puppeteer } = await import('puppeteer-core');
   const { lock } = await import('./lock.ts');
   await lock();
@@ -164,7 +166,7 @@ async function pages(paths) {
   paths = paths.filter((p) => !fs.existsSync(path.join(OUT, (p.slice(1) || 'index') + '.json')) || process.env.FORCE);
 
   const browser = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true, args: ['--no-first-run', '--mute-audio'] });
-  const read = async (p) => {
+  const read = async (p: string) => {
     const page = await browser.newPage();
     await page.setViewport({ width: 1470, height: 900 });
     try {
@@ -172,20 +174,20 @@ async function pages(paths) {
       await new Promise((r) => setTimeout(r, 1200));
       const data = await page.evaluate(async () => {
         const main = document.querySelector('main') || document.body;
-        const seen = new Set();
-        const text = [];
+        const seen = new Set<string>();
+        const text: string[] = [];
         const grab = () => main.querySelectorAll('*').forEach((el) => {
           if (/^(SCRIPT|STYLE|NOSCRIPT|TEMPLATE)$/.test(el.tagName)) return;
           // each text node on its own, so a sentence with a link in it is read as its two halves
           for (const c of el.childNodes) {
             if (c.nodeType !== 3) continue;
-            const own = c.textContent.replace(/\s+/g, ' ').trim();
+            const own = c.textContent!.replace(/\s+/g, ' ').trim();
             if (own.length > 1 && !seen.has(own)) { seen.add(own); text.push(own); }
           }
         });
         grab();
         // open what is hidden behind a click: tabs and accordions, then read again
-        for (const b of [...main.querySelectorAll('[role=tab], summary, button[aria-expanded="false"]')].slice(0, 60)) {
+        for (const b of [...main.querySelectorAll<HTMLElement>('[role=tab], summary, button[aria-expanded="false"]')].slice(0, 60)) {
           try { b.click(); await new Promise((r) => setTimeout(r, 120)); grab(); } catch {}
         }
         const links = [...new Set([...main.querySelectorAll('a[href]')].map((a) => a.getAttribute('href')))];
@@ -195,7 +197,7 @@ async function pages(paths) {
       fs.writeFileSync(path.join(OUT, (p.slice(1) || 'index') + '.json'), JSON.stringify(data));
       return true;
     } catch (e) {
-      console.log('FAIL', p, e.message.slice(0, 80));
+      console.log('FAIL', p, why(e, 80));
       return false;
     } finally {
       await page.close();

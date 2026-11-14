@@ -13,14 +13,20 @@
      </Stage>
    `pinned` is null until the page has measured itself (first paint): keep the moving object hidden until then.
    Needs components/v2/system.css. */
-import { useEffect, useRef, useState } from 'react';
-import { useMotionValue, useReducedMotion, useScroll } from 'motion/react';
+import { useEffect, useRef, useState, type CSSProperties, type HTMLAttributes, type ReactNode } from 'react';
+import { useMotionValue, useReducedMotion, useScroll, type MotionValue } from 'motion/react';
 import './Stage.css';
 
-export default function Stage({ length = 1, below = 900, className = '', children, ...rest }) {
-  const ref = useRef(null);
+interface StageProps extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
+  length?: number;
+  below?: number;
+  children: (p: MotionValue<number>, pinned: boolean | null) => ReactNode;
+}
+
+export default function Stage({ length = 1, below = 900, className = '', children, ...rest }: StageProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
-  const [pinned, setPinned] = useState(null);
+  const [pinned, setPinned] = useState<boolean | null>(null);
   useEffect(() => {
     const m = matchMedia(`(min-width: ${below}px)`);
     const f = () => setPinned(m.matches && !calm);
@@ -31,7 +37,7 @@ export default function Stage({ length = 1, below = 900, className = '', childre
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const still = useMotionValue(1);
   return (
-    <div ref={ref} className={'v2-stage ' + className} data-pinned={pinned === null ? undefined : String(pinned)} style={{ '--v2-len': length }} {...rest}>
+    <div ref={ref} className={'v2-stage ' + className} data-pinned={pinned === null ? undefined : String(pinned)} style={{ '--v2-len': length } as CSSProperties} {...rest}>
       <div className="v2-stage-in">{children(pinned ? scrollYProgress : still, pinned)}</div>
     </div>
   );

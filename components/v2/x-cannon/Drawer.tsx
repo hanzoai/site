@@ -15,15 +15,15 @@
      it, and the page behind stops scrolling (Lenis paused; the sheet scrolls itself with data-lenis-prevent).
    - On phones it is a bottom sheet that fills the screen below the header.
    Owned by the Enterprise + Pricing chat (v2 wave 1). */
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, useAnimate, useReducedMotion } from 'motion/react';
 import './Drawer.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 const SHUT = 'inset(0px 0px 0px 0px round 28px)';
 
 // the clip that makes the sheet look exactly like the source element
-function from(src, panel) {
+function from(src: Element | null | undefined, panel: Element | null) {
   if (!src || !panel) return 'inset(40% 30% 40% 30% round 28px)';
   const a = src.getBoundingClientRect(), b = panel.getBoundingClientRect();
   const t = Math.max(0, a.top - b.top), l = Math.max(0, a.left - b.left);
@@ -31,11 +31,21 @@ function from(src, panel) {
   return `inset(${t}px ${r}px ${bt}px ${l}px round 28px)`;
 }
 
-export default function Drawer({ open, from: src, onClose, label, title, children, className = '' }) {
-  const [scope, animate] = useAnimate();
-  const back = useRef(null);
-  const closeBtn = useRef(null);
-  const last = useRef(null);
+interface DrawerProps {
+  open: boolean;
+  from?: Element | null;
+  onClose: () => void;
+  label?: string;
+  title?: string;
+  children?: ReactNode;
+  className?: string;
+}
+
+export default function Drawer({ open, from: src, onClose, label, title, children, className = '' }: DrawerProps) {
+  const [scope, animate] = useAnimate<HTMLDivElement>();
+  const back = useRef<HTMLElement | null>(null);
+  const closeBtn = useRef<HTMLButtonElement>(null);
+  const last = useRef<Element | null | undefined>(null);
   const calm = useReducedMotion();
   const [shown, setShown] = useState(false);
 
@@ -44,7 +54,7 @@ export default function Drawer({ open, from: src, onClose, label, title, childre
     if (!panel) return;
     if (open) {
       last.current = src;
-      back.current = document.activeElement;
+      back.current = document.activeElement as HTMLElement | null;
       setShown(true);
       if (calm) { panel.style.clipPath = 'none'; return; }
       panel.scrollTop = 0;
@@ -62,11 +72,11 @@ export default function Drawer({ open, from: src, onClose, label, title, childre
   useEffect(() => {
     if (!open) return;
     closeBtn.current?.focus({ preventScroll: true });
-    const key = (e) => {
+    const key = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { onClose(); return; }
       if (e.key !== 'Tab' || !scope.current) return;
       // keep Tab inside the sheet while it is open
-      const f = [...scope.current.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]')];
+      const f = [...scope.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex="0"]')];
       if (!f.length) return;
       const first = f[0], last = f[f.length - 1];
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }

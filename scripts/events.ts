@@ -8,15 +8,23 @@
 //
 // Needs a Playwright with browsers (~/.cache/ms-playwright): the one in ~/work/hanzo-inc/app/node_modules (scripts/host.ts).
 import { chromium, host, HOST } from './host.ts';
+import type { Page } from './host.ts';
+import { why } from './why.ts';
+
+declare global {
+  interface Window { dataLayer?: IArguments[] }
+}
+/** A data-layer entry: what the tag manager was told (kind, name, params). */
+type Tag = [kind: string, name: string, params?: Record<string, unknown>];
 import LIVE from '../content/live/_pricing.json' with { type: 'json' };
 
 // what Personal offers, as the build's plan list has it: Free, Go and every rung of the usage ladder it lists
-const PERSONAL = ['free', 'go', ...['pro-3x', 'dev-5x', 'max-15x', 'ultra', 'ultimate', 'unlimited'].filter((s) => LIVE.plans[s])].join();
+const PERSONAL = ['free', 'go', ...['pro-3x', 'dev-5x', 'max-15x', 'ultra', 'ultimate', 'unlimited'].filter((s) => (LIVE.plans as Record<string, unknown>)[s])].join();
 // what the client adds to an event, whatever it is about (touch, consent, the page): not the app's params
 const AMBIENT = new Set(['fbp', 'fbc', 'cid', 'gclid', 'gbraid', 'wbraid', 'fbclid', 'clicked', 'event_id', 'consent', 'tags', 'userAgent', 'url', 'internal']);
 
 const cors = { 'access-control-allow-origin': HOST, 'access-control-allow-credentials': 'true', 'access-control-allow-headers': '*', 'access-control-allow-methods': '*' };
-const json = (body, status = 200) => ({ status, body: JSON.stringify(body), headers: { ...cors, 'content-type': 'application/json' } });
+const json = (body: unknown, status = 200) => ({ status, body: JSON.stringify(body), headers: { ...cors, 'content-type': 'application/json' } });
 
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1470, height: 801 }, permissions: ['clipboard-read', 'clipboard-write'] });
@@ -27,8 +35,10 @@ await ctx.addInitScript(() => {
   navigator.sendBeacon = (url, data) => { fetch(url, { method: 'POST', body: data, keepalive: true }).catch(() => {}); return true; };
 });
 
-const sent = []; // every event the stream was sent: { event, p: properties }
-const posts = []; // every other write: { url, body }
+/** What an event carries that the checks read; the rest of its params are compared whole. */
+interface Params { target?: string; items?: { item_id?: string }[]; [key: string]: unknown }
+const sent: { event: string; p: Params }[] = []; // every event the stream was sent: { event, p: properties }
+const posts: { path: string; body: unknown }[] = []; // every other write: { path, body }
 const state = { lead: 'filed', news: 'pending' };
 
 await ctx.route(/.*/, (r) => r.abort()); // nothing else leaves the machine
@@ -57,16 +67,16 @@ await ctx.route(/googletagmanager\.com|google-analytics\.com/, (r) => r.fulfill(
 
 // node scripts/events.mjs [home bands pricing sales search forms beta]: the named parts, else all
 const only = process.argv.slice(2);
-const on = (part) => only.length === 0 || only.includes(part);
+const on = (part: string) => only.length === 0 || only.includes(part);
 
-const results = [];
-let page;
+const results: { label: string; pass: boolean; why: string }[] = [];
+let page!: Page;
 let doing = ''; // the step a page error is reported under
-const ok = (label, pass, why = '') => { results.push({ label, pass, why }); console.log(`${pass ? 'ok  ' : 'FAIL'} ${label}${pass ? '' : '  ' + why}`); };
+const ok = (label: string, pass: boolean, why = '') => { results.push({ label, pass, why }); console.log(`${pass ? 'ok  ' : 'FAIL'} ${label}${pass ? '' : '  ' + why}`); };
 
 let base = 0; // where the stream stood when the page was opened: what a page sends as it loads is read from here
 /** The visitor opens a page; nothing waits on the stream, so the batch is flushed by hand when it is asked of. */
-async function open(p, wait = 900) {
+async function open(p: string, wait = 900) {
   if (page) await page.close();
   base = sent.length;
   page = await ctx.newPage();
@@ -79,40 +89,42 @@ const flush = async () => {
   await page.evaluate(() => {
     Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' });
     document.dispatchEvent(new Event('visibilitychange'));
-    delete document.visibilityState;
+    Reflect.deleteProperty(document, 'visibilityState');
     document.dispatchEvent(new Event('visibilitychange')); // and the page is back
   });
   await page.waitForTimeout(250);
 };
 /** A press on the first (or i-th) match of a selector. A link goes nowhere. */
-const tap = (sel, i = 0) => page.evaluate(([s, k]) => {
-  const el = document.querySelectorAll(s)[k];
+const tap = (sel: string, i = 0) => page.evaluate(([s, k]: [string, number]) => {
+  const el = document.querySelectorAll<HTMLElement>(s)[k];
   if (!el) throw new Error('nothing matches ' + s + ' [' + k + ']');
   if (el.matches('a[href]')) el.addEventListener('click', (e) => e.preventDefault(), { once: true });
   el.click();
 }, [sel, i]);
-const type = async (sel, text) => { await page.locator(sel).first().fill(text); };
+const type = async (sel: string, text: string) => { await page.locator(sel).first().fill(text); };
 // the usage slider (components/Usage.tsx) moved up by the keyboard from where it stands, one stop a press
-const raise = async (sel, n) => {
+const raise = async (sel: string, n: number) => {
   await page.locator(sel + ' .x-usage input').focus();
   for (let i = 0; i < n; i++) await page.keyboard.press('ArrowRight');
   await page.waitForTimeout(500);
 };
 
-const own = (p) => Object.fromEntries(Object.entries(p).filter(([k]) => !AMBIENT.has(k)));
-const same = (got, want) => (typeof want === 'function' ? want(got) : want instanceof RegExp ? want.test(String(got)) : JSON.stringify(got) === JSON.stringify(want));
+const own = (p: Params) => Object.fromEntries(Object.entries(p).filter(([k]) => !AMBIENT.has(k)));
+/** What a check expects of a param: its value, a RegExp it matches, or a test of it. */
+type Want = string | number | boolean | RegExp | ((got: unknown) => boolean);
+const same = (got: unknown, want: Want) => (typeof want === 'function' ? want(got) : want instanceof RegExp ? want.test(String(got)) : JSON.stringify(got) === JSON.stringify(want));
 /** The event is on the stream since `from`, with exactly these param keys and these values (a RegExp or a function tests one). */
-const find = (event, want, from) => sent.slice(from).find((e) => {
+const find = (event: string, want: Record<string, Want>, from: number) => sent.slice(from).find((e) => {
   if (e.event !== event) return false;
   const have = own(e.p);
   if (JSON.stringify(Object.keys(have).sort()) !== JSON.stringify(Object.keys(want).sort())) return false;
   return Object.entries(want).every(([k, v]) => same(have[k], v));
 });
 /** Do `act`, then require the event (with no `act`, one the page sent as it loaded). Retries the flush for as long as it takes the client to send. */
-async function expects(label, event, want, act) {
+async function expects(label: string, event: string, want: Record<string, Want>, act?: () => unknown) {
   doing = label;
   const from = act ? sent.length : base;
-  try { await act?.(); } catch (e) { return ok(label, false, 'action failed: ' + String(e.message).slice(0, 140)); }
+  try { await act?.(); } catch (e) { return ok(label, false, 'action failed: ' + why(e, 140)); }
   let hit;
   for (let i = 0; i < 8 && !hit; i++) { await flush(); hit = find(event, want, from); if (!hit) await page.waitForTimeout(300); }
   if (hit) return ok(`${label}  ${event} ${JSON.stringify(own(hit.p)).slice(0, 110)}`, true);
@@ -120,7 +132,7 @@ async function expects(label, event, want, act) {
   ok(label, false, `${event} did not reach the stream with ${JSON.stringify(want, (k, v) => (v instanceof RegExp ? String(v) : typeof v === 'function' ? '[fn]' : v))}; got ${near.length ? near.join(' | ') : 'nothing of that name'}`);
 }
 /** Do `act`, then require that the event did not come. */
-async function silent(label, event, act, test = () => true) {
+async function silent(label: string, event: string, act: () => unknown, test: (p: Params) => boolean = () => true) {
   const from = sent.length;
   await act();
   await flush();
@@ -129,18 +141,18 @@ async function silent(label, event, act, test = () => true) {
   const hit = sent.slice(from).filter((e) => e.event === event && test(own(e.p)));
   ok(`${label}  (no ${event})`, hit.length === 0, hit.map((e) => JSON.stringify(own(e.p))).join(' | '));
 }
-const dataLayer = () => page.evaluate(() => (window.dataLayer || []).map((a) => Array.from(a)).filter((a) => a[0] === 'event'));
+const dataLayer = () => page.evaluate(() => (window.dataLayer || []).map((a) => Array.from(a) as Tag).filter((a) => a[0] === 'event'));
 
 /* ---------------------------------------------------------------- home */
 if (on('home')) {
 // a press on a tab or a segment of the home's plans; the cards of the tab left are still leaving for a moment, so wait them out
-const viewBand = async (name) => {
-  await page.evaluate((n) => [...document.querySelectorAll('.x-pricing .x-seg button')].find((b) => b.textContent === n).click(), name);
+const viewBand = async (name: string) => {
+  await page.evaluate((n) => [...document.querySelectorAll<HTMLElement>('.x-pricing .x-seg button')].find((b) => b.textContent === n)!.click(), name);
   await page.waitForTimeout(800);
 };
 await open('/');
 await expects('home: the hero is drawn', 'home_viewed', {});
-await expects('home: the plans are listed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === PERSONAL && v.every((i) => i.item_category === 'individual' && typeof i.price === 'number') });
+await expects('home: the plans are listed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v: unknown) => Array.isArray(v) && v.map((i) => i.item_id).join() === PERSONAL && v.every((i) => i.item_category === 'individual' && typeof i.price === 'number') });
 await expects('home: a link in the hero', 'cta_clicked', { page: '/', section: 'hero', cta: 'Continue with email', target: '/signup' }, () => tap('.x-hero .x-auth-b.solid'));
 await expects('home: a product in the grid', 'cta_clicked', { page: '/', section: 'products', cta: 'Open ↗', target: 'https://hanzo.app/chat' }, () => tap('.xp-card .x-btn.solid', 0));
 await expects('hero demo: the sidebar', 'hero_demo', { control: 'sidebar' }, () => tap('.xs-sidet'));
@@ -162,29 +174,29 @@ await expects('agents: Copy this step', 'agent_step_copied', { step: 2 }, () => 
 await expects('agents: Copy the whole script', 'agent_script_copied', { from: 'landing' }, () => tap('.x-agents .x-panel-f .x-copy', 1));
 // the plans on the home page
 const fromGo = sent.length;
-await expects('plans: Go', 'plan_clicked', { plan: 'go', interval: 'month', cta: 'Get Go', item_list_id: 'individual', items: (v) => v[0].item_id === 'go' && v[0].price === 8 }, () => tap('.x-pricing .x-plan .x-btn', 1));
-await expects('plans: Go is selected', 'plan_selected', { currency: 'USD', value: 8, items: (v) => v[0].item_id === 'go' });
-await expects('plans: Go starts the checkout', 'checkout_started', { currency: 'USD', value: 8, interval: 'month', items: (v) => v[0].item_id === 'go' });
+await expects('plans: Go', 'plan_clicked', { plan: 'go', interval: 'month', cta: 'Get Go', item_list_id: 'individual', items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'go' && v[0].price === 8 }, () => tap('.x-pricing .x-plan .x-btn', 1));
+await expects('plans: Go is selected', 'plan_selected', { currency: 'USD', value: 8, items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'go' });
+await expects('plans: Go starts the checkout', 'checkout_started', { currency: 'USD', value: 8, interval: 'month', items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'go' });
 ok('plans: and the link does not also send its own checkout moment', !sent.slice(fromGo).some((e) => e.event === 'checkout_started' && 'link_url' in e.p), '');
 ok('plans: nor a cta_clicked', !sent.slice(fromGo).some((e) => e.event === 'cta_clicked' && e.p.target?.includes('plan=go')), '');
-await expects('plans: Pro', 'plan_clicked', { plan: 'pro-3x', interval: 'month', cta: 'Get Pro', item_list_id: 'individual', items: (v) => v[0].item_id === 'pro-3x' && v[0].price === 15 }, () => tap('.x-pricing .x-plan .x-btn', 2));
+await expects('plans: Pro', 'plan_clicked', { plan: 'pro-3x', interval: 'month', cta: 'Get Pro', item_list_id: 'individual', items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'pro-3x' && v[0].price === 15 }, () => tap('.x-pricing .x-plan .x-btn', 2));
 await expects('plans: the usage ladder', 'plan_tier_picked', { plan: 'dev-5x', item_list_id: 'individual' }, () => raise('.x-pricing', 1));
-await expects('plans: the Team tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'team', items: (v) => v.map((i) => i.item_id).join() === 'team,enterprise' }, () => viewBand('Team'));
+await expects('plans: the Team tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'team', items: (v: unknown) => Array.isArray(v) && v.map((i) => i.item_id).join() === 'team,enterprise' }, () => viewBand('Team'));
 await expects('plans: the Team term', 'plan_term_changed', { plan: 'team', interval: 'month', item_list_id: 'team' }, () => viewBand('Monthly'));
-await expects('plans: Team', 'plan_clicked', { plan: 'team', interval: 'month', cta: 'Get Team', item_list_id: 'team', items: (v) => v[0].item_id === 'team' && v[0].price === 25 }, () => tap('.x-pricing .x-plan .x-btn', 0));
-await expects('plans: the API tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'api', items: (v) => v.map((i) => i.item_id).join() === 'api-payg,api-enterprise' }, () => viewBand('API'));
-await expects('plans: Pay as you go', 'plan_clicked', { plan: 'api-payg', interval: 'month', cta: 'Get API Key', item_list_id: 'api', items: (v) => v[0].item_name === 'Pay as you go' && v[0].price === 0 }, () => tap('.x-pricing .x-plan .x-btn', 0));
+await expects('plans: Team', 'plan_clicked', { plan: 'team', interval: 'month', cta: 'Get Team', item_list_id: 'team', items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'team' && v[0].price === 25 }, () => tap('.x-pricing .x-plan .x-btn', 0));
+await expects('plans: the API tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'api', items: (v: unknown) => Array.isArray(v) && v.map((i) => i.item_id).join() === 'api-payg,api-enterprise' }, () => viewBand('API'));
+await expects('plans: Pay as you go', 'plan_clicked', { plan: 'api-payg', interval: 'month', cta: 'Get API Key', item_list_id: 'api', items: (v: unknown) => Array.isArray(v) && v[0].item_name === 'Pay as you go' && v[0].price === 0 }, () => tap('.x-pricing .x-plan .x-btn', 0));
 // links to pages of this site leave the page: each is the last thing done on it
 await open('/');
 await raise('.x-pricing', 1);
-await expects('plans: the Pro card follows the ladder', 'plan_clicked', { plan: 'dev-5x', interval: 'month', cta: 'Get Dev', item_list_id: 'individual', items: (v) => v[0].item_id === 'dev-5x' }, () => tap('.x-pricing .x-plan .x-btn', 2));
+await expects('plans: the Pro card follows the ladder', 'plan_clicked', { plan: 'dev-5x', interval: 'month', cta: 'Get Dev', item_list_id: 'individual', items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'dev-5x' }, () => tap('.x-pricing .x-plan .x-btn', 2));
 await open('/');
 await viewBand('Team');
-await expects('plans: Enterprise', 'plan_clicked', { plan: 'enterprise', interval: 'year', cta: 'Get Enterprise plan', item_list_id: 'team', items: (v) => v[0].item_id === 'enterprise' }, () => tap('.x-pricing .x-plan .x-btn', 1));
+await expects('plans: Enterprise', 'plan_clicked', { plan: 'enterprise', interval: 'year', cta: 'Get Enterprise plan', item_list_id: 'team', items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'enterprise' }, () => tap('.x-pricing .x-plan .x-btn', 1));
 ok('plans: Enterprise is not a checkout', !sent.slice(base).some((e) => e.event === 'plan_selected' && e.p.items?.[0]?.item_id === 'enterprise'), '');
 await open('/');
 await viewBand('API');
-await expects('plans: Volume & Dedicated', 'plan_clicked', { plan: 'api-enterprise', interval: 'month', cta: 'Contact API Sales', item_list_id: 'api', items: (v) => v[0].item_name === 'Volume & Dedicated' }, () => tap('.x-pricing .x-plan .x-btn', 1));
+await expects('plans: Volume & Dedicated', 'plan_clicked', { plan: 'api-enterprise', interval: 'month', cta: 'Contact API Sales', item_list_id: 'api', items: (v: unknown) => Array.isArray(v) && v[0].item_name === 'Volume & Dedicated' }, () => tap('.x-pricing .x-plan .x-btn', 1));
 await open('/');
 await expects('home: a link in a band', 'cta_clicked', { page: '/', section: 'plans', cta: 'Every plan, model rate and tool price', target: '/pricing' }, () => tap('.x-pricing .x-row-links a'));
 await open('/');
@@ -197,7 +209,7 @@ await expects('hero demo: Download App', 'hero_demo', { control: 'phone-download
 if (on('bands')) {
 // `$view` names its band in `$section` (the band's data-hz-view). It is sent once per page view, the first time half of the
 // band, or what is in view of it covering half the screen, is on screen: so each band is scrolled to, on a page of its own.
-async function seen(p, ids) {
+async function seen(p: string, ids: string[]) {
   await open(p);
   for (const id of ids) {
     const there = await page.evaluate((name) => {
@@ -222,36 +234,36 @@ await seen('/investors/', ['research', 'trusted']);
 /* ---------------------------------------------------------------- pricing */
 if (on('pricing')) {
 await open('/pricing/');
-await expects('pricing: Personal is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v) => v.map((i) => i.item_id).join() === PERSONAL });
-await expects('pricing: Free', 'plan_clicked', { plan: 'free', interval: 'month', cta: 'Try Hanzo', item_list_id: 'individual', items: (v) => v[0].price === 0 }, () => tap('.xpr-card[data-id="free"] .xpr-cta'));
+await expects('pricing: Personal is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'individual', items: (v: unknown) => Array.isArray(v) && v.map((i) => i.item_id).join() === PERSONAL });
+await expects('pricing: Free', 'plan_clicked', { plan: 'free', interval: 'month', cta: 'Try Hanzo', item_list_id: 'individual', items: (v: unknown) => Array.isArray(v) && v[0].price === 0 }, () => tap('.xpr-card[data-id="free"] .xpr-cta'));
 await silent('pricing: Free is not a checkout', 'plan_selected', () => Promise.resolve(), (p) => p.items?.[0]?.item_id === 'free');
 const fromGoCard = sent.length;
-await expects('pricing: Go', 'plan_clicked', { plan: 'go', interval: 'month', cta: 'Get Go', item_list_id: 'individual', items: (v) => v[0].item_id === 'go' && v[0].price === 8 }, () => tap('.xpr-card[data-id="go"] .xpr-cta'));
-await expects('pricing: Go is selected', 'plan_selected', { currency: 'USD', value: 8, items: (v) => v[0].item_id === 'go' });
-await expects('pricing: Go starts the checkout', 'checkout_started', { currency: 'USD', value: 8, interval: 'month', items: (v) => v[0].item_id === 'go' });
+await expects('pricing: Go', 'plan_clicked', { plan: 'go', interval: 'month', cta: 'Get Go', item_list_id: 'individual', items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'go' && v[0].price === 8 }, () => tap('.xpr-card[data-id="go"] .xpr-cta'));
+await expects('pricing: Go is selected', 'plan_selected', { currency: 'USD', value: 8, items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'go' });
+await expects('pricing: Go starts the checkout', 'checkout_started', { currency: 'USD', value: 8, interval: 'month', items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'go' });
 ok('pricing: and the link does not also send its own checkout moment', !sent.slice(fromGoCard).some((e) => e.event === 'checkout_started' && 'link_url' in e.p), '');
 await expects('pricing: the usage ladder', 'plan_tier_picked', { plan: 'max-15x', item_list_id: 'individual' }, () => raise('.xpr-card[data-id="pro"]', 2));
-await expects('pricing: the Pro card follows the ladder', 'plan_clicked', { plan: 'max-15x', interval: 'month', cta: 'Get Max', item_list_id: 'individual', items: (v) => v[0].item_id === 'max-15x' && v[0].price === 95 }, () => tap('.xpr-card[data-id="pro"] .xpr-cta'));
-await expects('pricing: the Team tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'team', items: (v) => v.map((i) => i.item_id).join() === 'team,enterprise' }, () => page.evaluate(() => [...document.querySelectorAll('[role="tablist"] [role="tab"]')].find((b) => b.textContent.trim() === 'Team').click()));
-await expects('pricing: Team, by the year', 'plan_clicked', { plan: 'team', interval: 'year', cta: 'Get Team', item_list_id: 'team', items: (v) => v[0].item_id === 'team' && v[0].price === 240 }, () => tap('.xpr-card[data-id="team"] .xpr-cta'));
-await expects('pricing: Team is selected', 'plan_selected', { currency: 'USD', value: 240, items: (v) => v[0].item_id === 'team' });
-await expects('pricing: the Team term', 'plan_term_changed', { plan: 'team', interval: 'month', item_list_id: 'team' }, () => page.evaluate(() => [...document.querySelectorAll('.xpr-seg button')].find((b) => b.textContent === 'Monthly').click()));
-await expects('pricing: Enterprise', 'plan_clicked', { plan: 'enterprise', interval: 'month', cta: 'Get Enterprise plan', item_list_id: 'team', items: (v) => v[0].item_id === 'enterprise' }, () => tap('.xpr-card[data-id="ent"] .xpr-cta', 0));
+await expects('pricing: the Pro card follows the ladder', 'plan_clicked', { plan: 'max-15x', interval: 'month', cta: 'Get Max', item_list_id: 'individual', items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'max-15x' && v[0].price === 95 }, () => tap('.xpr-card[data-id="pro"] .xpr-cta'));
+await expects('pricing: the Team tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'team', items: (v: unknown) => Array.isArray(v) && v.map((i) => i.item_id).join() === 'team,enterprise' }, () => page.evaluate(() => [...document.querySelectorAll<HTMLElement>('[role="tablist"] [role="tab"]')].find((b) => b.textContent!.trim() === 'Team')!.click()));
+await expects('pricing: Team, by the year', 'plan_clicked', { plan: 'team', interval: 'year', cta: 'Get Team', item_list_id: 'team', items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'team' && v[0].price === 240 }, () => tap('.xpr-card[data-id="team"] .xpr-cta'));
+await expects('pricing: Team is selected', 'plan_selected', { currency: 'USD', value: 240, items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'team' });
+await expects('pricing: the Team term', 'plan_term_changed', { plan: 'team', interval: 'month', item_list_id: 'team' }, () => page.evaluate(() => [...document.querySelectorAll<HTMLElement>('.xpr-seg button')].find((b) => b.textContent === 'Monthly')!.click()));
+await expects('pricing: Enterprise', 'plan_clicked', { plan: 'enterprise', interval: 'month', cta: 'Get Enterprise plan', item_list_id: 'team', items: (v: unknown) => Array.isArray(v) && v[0].item_id === 'enterprise' }, () => tap('.xpr-card[data-id="ent"] .xpr-cta', 0));
 await open('/pricing/#team');
 await expects('pricing: the buying specialist', 'plan_clicked', { plan: 'enterprise', cta: 'Chat with buying specialist', item_list_id: 'team' }, () => tap('.xpr-card[data-id="ent"] .xpr-cta', 1));
 await open('/pricing/#api');
-await expects('pricing: the API tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'api', items: (v) => v.map((i) => i.item_id).join() === 'api-payg,api-enterprise' });
-await expects('pricing: Pay as you go', 'plan_clicked', { plan: 'api-payg', interval: 'month', cta: 'Get API Key', item_list_id: 'api', items: (v) => v[0].item_name === 'Pay as you go' }, () => tap('.xpr-card[data-id="payg"] .xpr-cta'));
+await expects('pricing: the API tab is viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'api', items: (v: unknown) => Array.isArray(v) && v.map((i) => i.item_id).join() === 'api-payg,api-enterprise' });
+await expects('pricing: Pay as you go', 'plan_clicked', { plan: 'api-payg', interval: 'month', cta: 'Get API Key', item_list_id: 'api', items: (v: unknown) => Array.isArray(v) && v[0].item_name === 'Pay as you go' }, () => tap('.xpr-card[data-id="payg"] .xpr-cta'));
 await open('/pricing/#api');
-await expects('pricing: Volume & Dedicated', 'plan_clicked', { plan: 'api-enterprise', interval: 'month', cta: 'Contact API Sales', item_list_id: 'api', items: (v) => v[0].item_name === 'Volume & Dedicated' }, () => tap('.xpr-card[data-id="vol"] .xpr-cta'));
+await expects('pricing: Volume & Dedicated', 'plan_clicked', { plan: 'api-enterprise', interval: 'month', cta: 'Contact API Sales', item_list_id: 'api', items: (v: unknown) => Array.isArray(v) && v[0].item_name === 'Volume & Dedicated' }, () => tap('.xpr-card[data-id="vol"] .xpr-cta'));
 await open('/pricing/#team');
-await expects('pricing: the tab the address names is the one viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'team', items: (v) => v.length === 2 });
+await expects('pricing: the tab the address names is the one viewed', 'pricing_viewed', { currency: 'USD', item_list_id: 'team', items: (v: unknown) => Array.isArray(v) && v.length === 2 });
 ok('pricing: and Personal is not counted on the way', !sent.slice(base).some((e) => e.event === 'pricing_viewed' && e.p.item_list_id === 'individual'), '');
 }
 
 /* ---------------------------------------------------------------- sales */
 if (on('sales')) {
-const SALES = async (fill) => {
+const SALES = async (fill?: () => unknown) => {
   await open('/contact-sales/');
   await type('#xcs-name', 'Ada Lovelace'); await page.keyboard.press('Enter');
   await page.waitForTimeout(450);
@@ -271,18 +283,18 @@ await SALES();
   await page.locator('.xcs-form button[type="submit"]').first().click();
   await page.waitForTimeout(1500);
   await flush();
-  const lead = posts.filter((p) => p.path === '/v1/marketing/leads').at(-1)?.body;
-  ok('sales: the lead is filed with the visit as cloud reads it', Boolean(lead) && typeof lead.visit?.tags === 'string' && typeof lead.visit?.consent === 'string' && !lead.visit.consent.startsWith('{') && lead.visit.url === HOST + '/contact-sales/', JSON.stringify(lead?.visit));
+  const lead = posts.filter((p) => p.path === '/v1/marketing/leads').at(-1)?.body as { visit?: { tags?: unknown; consent?: string; url?: string } } | undefined; // the stub's own JSON
+  ok('sales: the lead is filed with the visit as cloud reads it', !!lead && typeof lead.visit?.tags === 'string' && typeof lead.visit?.consent === 'string' && !lead.visit.consent.startsWith('{') && lead.visit.url === HOST + '/contact-sales/', JSON.stringify(lead?.visit));
   const dl = (await dataLayer()).slice(before);
   const mirrored = dl.find((a) => a[2]?.lead_id === 'lead_0123456789abcdef01234567');
-  ok('sales: sales_contacted is mirrored to the tags under the lead id', Boolean(mirrored) && mirrored[2].event_id === 'lead_0123456789abcdef01234567' && mirrored[2].lead_source === 'contact-sales' && mirrored[2].company_size === '50-249', JSON.stringify(dl.map((a) => a.slice(0, 2))));
+  ok('sales: sales_contacted is mirrored to the tags under the lead id', !!mirrored && mirrored[2]?.event_id === 'lead_0123456789abcdef01234567' && mirrored[2]?.lead_source === 'contact-sales' && mirrored[2]?.company_size === '50-249', JSON.stringify(dl.map((a) => a.slice(0, 2))));
   ok('sales: and our stream is not told twice  (no sales_contacted)', !sent.slice(from).some((e) => e.event === 'sales_contacted'), '');
 }
 state.lead = 'down';
 await SALES();
 await expects('sales: a lead that could not be filed still counts', 'sales_contacted', { lead_source: 'contact-sales', company_size: '50-249' }, () => page.locator('.xcs-form button[type="submit"]').first().click());
 state.lead = 'filed';
-await SALES(() => page.evaluate(() => { const t = document.querySelector('.xcs-trap input'); const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set; set.call(t, 'spam'); t.dispatchEvent(new Event('input', { bubbles: true })); }));
+await SALES(() => page.evaluate(() => { const t = document.querySelector<HTMLInputElement>('.xcs-trap input')!; const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!; set.call(t, 'spam'); t.dispatchEvent(new Event('input', { bubbles: true })); }));
 await expects('sales: the honeypot is counted', 'sales_trapped', { lead_source: 'contact-sales' }, () => page.locator('.xcs-form button[type="submit"]').first().click());
 }
 
@@ -313,12 +325,12 @@ await open('/careers/compiler-engineer/');
 await expects('careers: an application', 'career_application_submitted', { role: 'Compiler Engineer', department: 'Engineering', slug: 'compiler-engineer' }, async () => {
   for (const step of [0, 1, 2]) {
     await page.evaluate((k) => {
-      const set = (el, v) => { const proto = el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype; Object.getOwnPropertyDescriptor(proto, 'value').set.call(el, v); el.dispatchEvent(new Event('input', { bubbles: true })); };
-      document.querySelectorAll(`[data-step="${k}"] input:not([type="file"]):not([type="checkbox"]), [data-step="${k}"] textarea`).forEach((el) => set(el, el.type === 'email' ? 'ada@example.com' : el.type === 'url' ? 'https://example.com' : 'Ada'));
+      const set = (el: HTMLInputElement | HTMLTextAreaElement, v: string) => { const proto = el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype; Object.getOwnPropertyDescriptor(proto, 'value')!.set!.call(el, v); el.dispatchEvent(new Event('input', { bubbles: true })); };
+      document.querySelectorAll<HTMLInputElement>(`[data-step="${k}"] input:not([type="file"]):not([type="checkbox"]), [data-step="${k}"] textarea`).forEach((el) => set(el, el.type === 'email' ? 'ada@example.com' : el.type === 'url' ? 'https://example.com' : 'Ada'));
     }, step);
   }
   // three steps: each submit moves on, the last hands the application to the visitor's mail (which this browser lets go)
-  for (let k = 0; k < 3; k++) { await page.evaluate(() => document.querySelector('form.xcj-form').requestSubmit()); await page.waitForTimeout(700); }
+  for (let k = 0; k < 3; k++) { await page.evaluate(() => document.querySelector<HTMLFormElement>('form.xcj-form')!.requestSubmit()); await page.waitForTimeout(700); }
 });
 await open('/careers/compiler-engineer/');
 await silent('careers: nothing is counted before the application is sent', 'career_application_submitted', () => Promise.resolve());
@@ -383,7 +395,7 @@ await expects('apply: an option is picked', 'beta_option_picked', { program: 'be
       await page.waitForTimeout(700);
     }
   };
-  await expects('apply: Open App, once enough is answered', 'beta_continue_with_plan', { program: 'beta', step: (v) => v >= 3, total_steps: 8 }, async () => {
+  await expects('apply: Open App, once enough is answered', 'beta_continue_with_plan', { program: 'beta', step: (v: unknown) => Number(v) >= 3, total_steps: 8 }, async () => {
     for (let guard = 0; guard < 10 && !(await page.locator('.xba-app').count()); guard++) {
       const opt = page.locator('.xba-opt');
       if (await opt.count()) await opt.first().evaluate((b) => b.click()); else await page.locator('#beta-answer').first().fill('Ada');

@@ -6,15 +6,20 @@ const FACE0 = "<div class=\"is_View _width-28px _height-28px _btlr-9999px _btrr-
 const FACE = "<div class=\"is_View _width-28px _height-28px _btlr-9999px _btrr-9999px _bbrr-9999px _bblr-9999px _items-center _justify-center _btw-2px _brw-2px _borderBottomWidth-2px _borderLeftWidth-2px _btc-background _brc-background _borderBottomColor-background _borderLeftColor-background _bg-secondary _marginInlineStart--8px _bbs-solid _bts-solid _bls-solid _brs-solid\" title=\"{{login}}\"><span class=\"is_Text font_mono _col-foreground _ff-f-family _fs-f-size-1 _fw-600\" data-slot=\"text\">{{initial}}</span></div>";
 const MORE = "<span class=\"is_Text font_mono _col-muted-foreg108704142 _ff-f-family _fs-f-size-1 _marginInlineStart-8px\" data-slot=\"text\">+<!-- -->{{more}}</span>";
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-const fill = (tpl, o) => tpl.replace(/\{\{(\w+)\}\}/g, (_, k) => o[k]);
-const n = (x) => x.toLocaleString('en-US');
-const day = (iso) => { const d = new Date(iso); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`; };
+/** A repository card of content/live/_oss.json (the forge address is the one the estate lists). */
+export interface RepoCardData {
+  repo: string; forge?: string; description: string; language: string; stars: number; forks: number; commits: number;
+  months?: number[]; contributors: number; faces?: string[]; pushed: string;
+}
+const esc = (s: unknown) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const fill = (tpl: string, o: Record<string, string | number>) => tpl.replace(/\{\{(\w+)\}\}/g, (_, k: string) => String(o[k]));
+const n = (x: number) => x.toLocaleString('en-US');
+const day = (iso: string) => { const d = new Date(iso); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`; };
 
-export default function repoCard(r) {
+export default function repoCard(r: RepoCardData) {
   const shown = (r.faces || []).slice(0, 3);
   const faces = shown.map((login, i) => fill(i ? FACE : FACE0, { login: esc(login), initial: esc(login[0].toUpperCase()) })).join('')
-    + ((r.faces || []).length > 3 ? fill(MORE, { more: r.faces.length - 3 }) : '');
+    + ((r.faces || []).length > 3 ? fill(MORE, { more: r.faces!.length - 3 }) : '');
   return fill(T, {
     href: esc(r.forge), repo: esc(r.repo), desc: esc(r.description), lang: esc(r.language),
     stars: n(r.stars), forks: n(r.forks), faces, bars: bars(r.months || []),

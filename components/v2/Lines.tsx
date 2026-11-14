@@ -7,11 +7,21 @@
      <Lines as="h1" now delay={0.1} lines={[<span className="big">Pick all three.</span>]} />
    The full sentence is the heading's text (screen readers and search read it once, in order); reduced motion shows it
    still. Needs components/v2/system.css. */
-import { motion } from 'motion/react';
+import type { ReactNode } from 'react';
+import { motion, type HTMLMotionProps } from 'motion/react';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function Lines({ as = 'h2', lines, className = '', id, now = false, delay = 0, stagger = 0.06, amount = 0.6, ...rest }) {
+interface LinesProps extends Omit<HTMLMotionProps<'h2'>, 'children' | 'variants' | 'initial' | 'animate' | 'whileInView' | 'viewport'> {
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
+  lines: ReactNode[];
+  now?: boolean;
+  delay?: number;
+  stagger?: number;
+  amount?: number;
+}
+
+export default function Lines({ as = 'h2', lines, className = '', id, now = false, delay = 0, stagger = 0.06, amount = 0.6, ...rest }: LinesProps) {
   const Tag = motion[as];
   // the same props on the server and in the browser, so hydration never leaves a line hidden
   const play = now ? { initial: 'h', animate: 's' } : { initial: 'h', whileInView: 's', viewport: { once: true, amount } };

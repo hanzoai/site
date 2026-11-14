@@ -9,24 +9,43 @@
    card's hidden copy, so they are in the HTML before anything is opened. Card and panel content are yours to style.
    radius (default 16) sets the card's corner, which Motion keeps true while it morphs. */
 import { useEffect, useRef, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Close } from './BizSheet';
 import './Biz.css';
 
-const MORPH = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // Morph: 600 ms in-out, no spring (MASTER §3.1)
+const MORPH = { duration: 0.6, ease: [0.4, 0, 0.2, 1] } as const; // Morph: 600 ms in-out, no spring (MASTER §3.1)
 const Plus = () => <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>;
 
-export default function BizOpen({ items, label, className = '', cardClass = '', as = 'ul', radius = 16 }) {
-  const [open, setOpen] = useState(null);
+interface BizOpenItem {
+  id: string;
+  label?: string;
+  card: ReactNode;
+  panel: ReactNode;
+  style?: CSSProperties;
+  className?: string;
+}
+
+interface BizOpenProps {
+  items: readonly BizOpenItem[];
+  label?: string;
+  className?: string;
+  cardClass?: string;
+  as?: 'ul' | 'ol';
+  radius?: number;
+}
+
+export default function BizOpen({ items, label, className = '', cardClass = '', as = 'ul', radius = 16 }: BizOpenProps) {
+  const [open, setOpen] = useState<string | null>(null);
   const calm = useReducedMotion();
-  const cards = useRef({});
+  const cards = useRef<Record<string, HTMLButtonElement | null>>({});
   const cur = items.find((it) => it.id === open);
   useEffect(() => {
     if (!open) return;
     const back = cards.current[open];
     window.__lenis?.stop();
     document.documentElement.classList.add('x-lock');
-    const key = (e) => { if (e.key === 'Escape') setOpen(null); };
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(null); };
     addEventListener('keydown', key);
     return () => {
       removeEventListener('keydown', key);

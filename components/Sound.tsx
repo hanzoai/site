@@ -10,16 +10,16 @@ const TICK = '[role=tab], [role=switch], [role=menuitemradio], [aria-pressed], i
 
 export default function Sound() {
   useEffect(() => {
-    const click = (e) => {
+    const click = (e: MouseEvent) => {
       if (!e.isTrusted) return;
-      const t = e.target.closest?.('[data-sound], ' + ASK + ', ' + TICK);
+      const t = (e.target as Element).closest?.('[data-sound], ' + ASK + ', ' + TICK);
       if (!t) return;
       const own = t.closest('[data-sound]');
       if (own) { const n = own.getAttribute('data-sound'); if (n) play(n); return; }
       if (t.matches(TICK)) play('tick');
       else if (t.matches(ASK)) play('tap');
     };
-    const asked = (e) => play(e.detail);
+    const asked = (e: Event) => play((e as CustomEvent<string>).detail);
     // Morph and the palette announce their moments; the click layer above stays silent for those (one sound at once)
     document.addEventListener('click', click, true);
     addEventListener('hz-sound', asked);

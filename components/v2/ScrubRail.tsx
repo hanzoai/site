@@ -4,13 +4,22 @@
    Usage: <ScrubRail label="The eight facts" head={<h2>…</h2>} items={[...]} card={(item, i) => <article>…</article>} />
    Every card is in the HTML. Reduced motion: the rail still follows the scroll (it is the scroll), no other movement.
    Styles: ScrubRail.css (prefix sr-); size cards with your own class inside. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import './ScrubRail.css';
 
-export default function ScrubRail({ items, card, head, label, className = '', dark }) {
-  const sec = useRef(null);
-  const rail = useRef(null);
+interface ScrubRailProps<T> {
+  items: T[];
+  card: (item: T, i: number) => ReactNode;
+  head?: ReactNode;
+  label?: string;
+  className?: string;
+  dark?: boolean;
+}
+
+export default function ScrubRail<T>({ items, card, head, label, className = '', dark }: ScrubRailProps<T>) {
+  const sec = useRef<HTMLElement>(null);
+  const rail = useRef<HTMLOListElement>(null);
   const [dist, setDist] = useState(0);
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start start', 'end end'] });
   const x = useTransform(scrollYProgress, (p) => -dist * Math.min(1, Math.max(0, p)));
@@ -27,7 +36,7 @@ export default function ScrubRail({ items, card, head, label, className = '', da
     return () => { ro.disconnect(); removeEventListener('resize', m); };
   }, []);
   return (
-    <section ref={sec} className={`sr ${dark ? 'sr-dark' : ''} ${className}`} style={{ '--dist': dist + 'px' }} aria-label={label} data-room={dark ? 'dark' : undefined}>
+    <section ref={sec} className={`sr ${dark ? 'sr-dark' : ''} ${className}`} style={{ '--dist': dist + 'px' } as CSSProperties} aria-label={label} data-room={dark ? 'dark' : undefined}>
       <div className="sr-stage">
         {head && <div className="sr-head v2-wrap">{head}</div>}
         <div className="sr-view">

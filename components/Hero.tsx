@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type PointerEvent, type ReactNode, type RefObject } from 'react';
 import { motion, useInView, useReducedMotion, useSpring } from 'motion/react';
 import { fine, copyText } from './ui';
 import SetupMenu from './SetupMenu';
@@ -12,10 +12,10 @@ const PROMPT = 'Build maxpower: every AI I use in one place, and faster at codin
 const CMD = 'curl -fsSL https://hanzo.sh | sh';
 
 /* The halftone field behind the hero: a 3D topological wave heightfield with depth layering and normal-mapped Blinn-Phong cursor gleam. */
-function Dots({ host }) {
-  const ref = useRef(null);
+function Dots({ host }: { host: RefObject<HTMLElement | null> }) {
+  const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    const cv = ref.current, cx = cv.getContext('2d'), el = host.current;
+    const cv = ref.current!, cx = cv.getContext('2d')!, el = host.current!;
     const G = 10, R = 255, Z_SCALE = 68, LIGHT_Z = 108;
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let W = 0, H = 0, cols = 0, rows = 0, raf = 0, vis = true;
@@ -34,8 +34,8 @@ function Dots({ host }) {
     };
     tone();
 
-    const amb = [[], [], []];
-    const glm = [[], [], [], [], [], []];
+    const amb: number[][] = [[], [], []];
+    const glm: number[][] = [[], [], [], [], [], []];
 
     const draw = (now = performance.now()) => {
       const t = 0; // the field rests; a pointer lights it
@@ -195,7 +195,7 @@ function Dots({ host }) {
       }
     };
 
-    const tick = (now) => {
+    const tick = (now: number) => {
       boost *= 0.9;
       const target = inside ? Math.min(1, 0.72 + boost * 0.28) : 0;
       energy += (target - energy) * (inside ? 0.18 : 0.08);
@@ -219,7 +219,7 @@ function Dots({ host }) {
       cols = Math.ceil(W / G) + 1; rows = Math.ceil(H / G) + 1;
       draw(performance.now());
     };
-    const move = (e) => {
+    const move = (e: globalThis.PointerEvent) => {
       if (!fine(e)) return;
       const r = cv.getBoundingClientRect();
       const nx = e.clientX - r.left, ny = e.clientY - r.top;
@@ -262,8 +262,8 @@ function Dots({ host }) {
 }
 
 /* A light that follows the pointer across "Pick all three." */
-function Three({ calm }) {
-  const ref = useRef(null);
+function Three({ calm }: { calm: boolean | null }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const light = useRef({ x: -1e4, ink: 100, tx: -1e4, tink: 100, sweep: 0, frame: 0 });
   const paint = () => {
     const el = ref.current, l = light.current;
@@ -274,7 +274,7 @@ function Three({ calm }) {
   const run = () => {
     const l = light.current;
     if (l.frame) return;
-    const step = (now) => {
+    const step = (now: number) => {
       const el = ref.current;
       if (!el) { l.frame = 0; return; }
       if (l.sweep) {
@@ -294,7 +294,7 @@ function Three({ calm }) {
     l.frame = requestAnimationFrame(step);
   };
   useEffect(() => () => cancelAnimationFrame(light.current.frame), []);
-  const at = (e, ink) => {
+  const at = (e: { clientX: number }, ink: number) => {
     const el = ref.current, l = light.current;
     if (!el) return;
     l.sweep = 0;
@@ -318,15 +318,15 @@ function Three({ calm }) {
 
 
 export default function Hero() {
-  const host = useRef(null);
-  const stageRef = useRef(null);
+  const host = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   const inView = useInView(host, { amount: 0.2 });
   const live = useRef(true);
   live.current = inView;
   // the terminal's Copy copies the active CLI command it shows, and says so
   const [copied, setCopied] = useState(false);
-  const copyT = useRef(0);
+  const copyT = useRef<ReturnType<typeof setTimeout>>(undefined);
   const copy = async (cmdText = CMD) => {
     const line = typeof cmdText === 'string' && cmdText ? cmdText : CMD;
     if (!(await copyText(line))) return;
@@ -364,16 +364,16 @@ export default function Hero() {
 
   // Start populated on SSR and first paint so Desktop and Phone never flash blank white on load or loop wrap
   const [typed, setTypedState] = useState(PROMPT.length);
-  const promptEl = useRef(null);
-  const setTyped = (i) => { if (promptEl.current) promptEl.current.textContent = PROMPT.slice(0, i); if (i === 0 || i === PROMPT.length) setTypedState(i); };
+  const promptEl = useRef<HTMLSpanElement>(null);
+  const setTyped = (i: number) => { if (promptEl.current) promptEl.current.textContent = PROMPT.slice(0, i); if (i === 0 || i === PROMPT.length) setTypedState(i); };
   const [phase, setPhase] = useState(4);
   // scene -1 is the opening maxpower build; then the rest of Hanzo's day plays: one scene every 6.5 s, wrapping back to -1
   const [sc, setSc] = useState(-1);
-  const [navPick, setNavPick] = useState(null);
+  const [navPick, setNavPick] = useState<string | null>(null);
   const [side, setSide] = useState(true);
   const holdUntilRef = useRef(0);
 
-  const selectScene = (nextSc, navId = null) => {
+  const selectScene = (nextSc: number, navId: string | null = null) => {
     holdUntilRef.current = Date.now() + 12000;
     setTyped(PROMPT.length);
     setPhase(4);
@@ -396,14 +396,14 @@ export default function Hero() {
   // pointer: the three devices turn toward it, each at its own depth
   const rx = useSpring(0, { stiffness: 90, damping: 18 });
   const ry = useSpring(0, { stiffness: 90, damping: 18 });
-  const onMove = (e) => {
+  const onMove = (e: PointerEvent<HTMLElement>) => {
     if (!fine(e)) return;
-    const r = host.current.getBoundingClientRect();
+    const r = host.current!.getBoundingClientRect();
     ry.set(((e.clientX - r.left) / r.width - 0.5) * 6);
     rx.set(-((e.clientY - r.top) / r.height - 0.5) * 4);
   };
 
-  const line = (content, idx) => (
+  const line = (content: ReactNode, idx: string) => (
     <span className="x-line">
       <span className="x-line-in"><span data-line={idx}>{content}</span></span>
     </span>

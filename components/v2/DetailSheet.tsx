@@ -12,16 +12,28 @@
    Once mounted the sheet lives in a portal on <body>, so style its contents with their own classes, not ones nested
    under the page's section class. */
 import { useEffect, useId, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import './ProofScale.css';
 import './DetailSheet.css';
 import NoJs from '../NoJs';
 
-export default function DetailSheet({ label, kicker, title, children, ghost = false, className = '', wide = false, onOpen }) {
+interface DetailSheetProps {
+  label: ReactNode;
+  kicker?: ReactNode;
+  title: ReactNode;
+  children?: ReactNode;
+  ghost?: boolean;
+  className?: string;
+  wide?: boolean;
+  onOpen?: () => void;
+}
+
+export default function DetailSheet({ label, kicker, title, children, ghost = false, className = '', wide = false, onOpen }: DetailSheetProps) {
   const [open, setOpen] = useState(false);
-  const [host, setHost] = useState(null);
-  const btn = useRef(null);
-  const close = useRef(null);
+  const [host, setHost] = useState<HTMLElement | null>(null);
+  const btn = useRef<HTMLButtonElement>(null);
+  const close = useRef<HTMLButtonElement>(null);
   const id = useId();
 
   useEffect(() => setHost(document.body), []);
@@ -32,7 +44,7 @@ export default function DetailSheet({ label, kicker, title, children, ghost = fa
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = 'hidden';
     const t = setTimeout(() => close.current?.focus(), 60);
-    const key = (e) => { if (e.key === 'Escape') setOpen(false); };
+    const key = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
     addEventListener('keydown', key);
     return () => { clearTimeout(t); removeEventListener('keydown', key); l?.start(); document.documentElement.style.overflow = prev; };
   }, [open]);

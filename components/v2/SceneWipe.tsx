@@ -5,12 +5,21 @@
    Usage:  <SceneWipe className="xtr-dark" label="…">…content…</SceneWipe>
    Props: dark (default true; sets data-room="dark" so the header turns dark), tone (the room's colour, default #000),
    label (aria-label), id. Reduced motion and phones: the room is simply there, full bleed. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, useMotionTemplate, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import './ProofScale.css';
 
-export default function SceneWipe({ children, className = '', dark = true, tone = '#000', label, id }) {
-  const ref = useRef(null);
+interface SceneWipeProps {
+  children?: ReactNode;
+  className?: string;
+  dark?: boolean;
+  tone?: string;
+  label?: string;
+  id?: string;
+}
+
+export default function SceneWipe({ children, className = '', dark = true, tone = '#000', label, id }: SceneWipeProps) {
+  const ref = useRef<HTMLElement>(null);
   const r0 = useReducedMotion();
   const [reduce, setReduce] = useState(false); // read after mount, so the first render matches the server's HTML
   useEffect(() => setReduce(!!r0), [r0]);

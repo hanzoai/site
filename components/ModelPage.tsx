@@ -9,7 +9,7 @@
    Signature: the open. The card's film lands as this hero (WebGL opener), Close runs it back into the card, and the
    next model's card opens the same way; on phones a sideways swipe turns to the neighbouring model.
    Beyond: carried by each model's own body (passed as children); this shell adds none of its own. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { EASE } from './ui';
 import { useOpener } from './Opener';
@@ -20,10 +20,10 @@ import { Img } from './kit';
 import ModelFilm from './v2/ModelFilm';
 import './pages/model/Model.css';
 
-export default function ModelPage({ slug, html, children }) {
+export default function ModelPage({ slug, html, children }: { slug: string; html?: string; children?: ReactNode }) {
   const m = bySlug[slug];
   const opener = useOpener();
-  const hero = useRef(null), root = useRef(null);
+  const hero = useRef<HTMLElement>(null), root = useRef<HTMLElement>(null);
   const [ready, setReady] = useState(false);
   const { scrollYProgress: p } = useScroll({ target: hero, offset: ['start start', 'end start'] });
   const y = useTransform(p, [0, 1], ['0%', '18%']);
@@ -36,13 +36,13 @@ export default function ModelPage({ slug, html, children }) {
   const next = MODELS[(i + 1) % MODELS.length];
 
   useEffect(() => {
-    const img = hero.current.querySelector('img');
+    const img = hero.current!.querySelector('img')!;
     const done = () => setReady(true);
     if (img.complete) img.decode().then(done, done); else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
   }, []);
   useFilms(root);
 
-  const rise = (d) => ({ initial: { opacity: 0, y: 30 }, animate: ready ? { opacity: 1, y: 0 } : {}, transition: { duration: 1, ease: EASE, delay: d } });
+  const rise = (d: number) => ({ initial: { opacity: 0, y: 30 }, animate: ready ? { opacity: 1, y: 0 } : {}, transition: { duration: 1, ease: EASE, delay: d } });
 
   return (
     <main className="x-model" ref={root}>
@@ -64,7 +64,7 @@ export default function ModelPage({ slug, html, children }) {
           href="/"
           className="x-mclose"
           aria-label="Close and return to all models"
-          onClick={(e) => opener.close(e, { key: slug, src: media(slug, 'webp') })}
+          onClick={(e) => opener?.close(e, { key: slug, src: media(slug, 'webp') })}
           initial={{ opacity: 0, scale: 0.6 }} animate={ready ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.6, ease: EASE, delay: 0.5 }}
           whileHover={{ rotate: 90 }} whileTap={{ scale: 0.9 }}
         >
@@ -73,7 +73,7 @@ export default function ModelPage({ slug, html, children }) {
         <motion.span className="x-scrollcue" {...rise(0.7)} aria-hidden="true">Scroll</motion.span>
       </section>
       <div className="x-model-body">{children || <Ported html={html} />}</div>
-      <a href={'/' + next.slug} className="x-next" data-card={next.slug} onClick={(e) => opener.open(e, { el: e.currentTarget, src: media(next.slug, 'webp'), href: '/' + next.slug, key: next.slug })}>
+      <a href={'/' + next.slug} className="x-next" data-card={next.slug} onClick={(e) => opener?.open(e, { el: e.currentTarget, src: media(next.slug, 'webp'), href: '/' + next.slug, key: next.slug })}>
         <Img src={media(next.slug, 'webp')} alt="" w={1200} h={1500} />
         <ModelFilm slug={next.slug} className="mb-next-film" />
         <span className="x-next-k">Next model</span>

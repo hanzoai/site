@@ -9,11 +9,12 @@
    paint is already big) and shrinks to its 52px rest over the first 360px of scroll (transform only; nothing reflows).
    settle={false} turns it off; phones and reduced motion keep it at rest. */
 import { useEffect, useRef } from 'react';
+import type { CSSProperties, HTMLAttributes, RefObject } from 'react';
 
 /* the h1 starts big and settles: its arrival size is plain CSS (.v2f-display[data-settle], up to 72px on a desktop),
    so the server's first paint is already big and nothing pops after hydration; scroll then shrinks it to its 52px rest
    over the first 360px (transform only, origin bottom left, so nothing reflows) */
-function useSettle(ref, on) {
+function useSettle(ref: RefObject<HTMLElement | null>, on: boolean) {
   useEffect(() => {
     const el = ref.current;
     if (!on || !el || matchMedia('(max-width: 900px), (prefers-reduced-motion: reduce)').matches) return;
@@ -30,8 +31,16 @@ function useSettle(ref, on) {
   }, [ref, on]);
 }
 
-export default function FamLines({ text, as: Tag = 'h2', className = '', play = 'load', delay = 0, settle = true, ...rest }) {
-  const ref = useRef(null);
+interface FamLinesProps extends Omit<HTMLAttributes<HTMLHeadingElement>, 'children'> {
+  text?: string;
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  play?: 'load' | 'view';
+  delay?: number;
+  settle?: boolean;
+}
+
+export default function FamLines({ text, as: Tag = 'h2', className = '', play = 'load', delay = 0, settle = true, ...rest }: FamLinesProps) {
+  const ref = useRef<HTMLHeadingElement>(null);
   useSettle(ref, settle && Tag === 'h1');
   useEffect(() => {
     const el = ref.current;
@@ -51,12 +60,12 @@ export default function FamLines({ text, as: Tag = 'h2', className = '', play = 
   }, [play]);
   const words = String(text || '').split(/\s+/).filter(Boolean);
   return (
-    <Tag ref={ref} className={'v2f-lines ' + className} data-play={play} data-settle={settle && Tag === 'h1' ? '' : undefined} style={{ '--d': delay + 'ms' }} {...rest}>
+    <Tag ref={ref} className={'v2f-lines ' + className} data-play={play} data-settle={settle && Tag === 'h1' ? '' : undefined} style={{ '--d': delay + 'ms' } as CSSProperties} {...rest}>
       <span className="x-sr">{text}</span>
       <span aria-hidden="true">
         {words.map((w, i) => (
           <span key={i}>
-            <span className="v2f-w"><span style={{ '--i': i }}>{w}</span></span>
+            <span className="v2f-w"><span style={{ '--i': i } as CSSProperties}>{w}</span></span>
             {i < words.length - 1 ? ' ' : ''}
           </span>
         ))}

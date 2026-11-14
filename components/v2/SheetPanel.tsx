@@ -9,23 +9,33 @@
        {content}
      </SheetPanel>
    - head: what sits in the bar beside the close button; tone: 'light' (white sheet) or 'dark'. Styles: SheetPanel.css. */
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import './SheetPanel.css';
 
-export default function SheetPanel({ open, onClose, label, head, children, tone = 'light', className = '' }) {
-  const box = useRef(null);
-  const close = useRef(null);
-  const back = useRef(null);
+interface SheetPanelProps {
+  open: boolean;
+  onClose: () => void;
+  label: string;
+  head?: ReactNode;
+  children?: ReactNode;
+  tone?: 'light' | 'dark';
+  className?: string;
+}
+
+export default function SheetPanel({ open, onClose, label, head, children, tone = 'light', className = '' }: SheetPanelProps) {
+  const box = useRef<HTMLDivElement>(null);
+  const close = useRef<HTMLButtonElement>(null);
+  const back = useRef<HTMLElement | null>(null);
   useEffect(() => {
     if (!open) return;
-    back.current = document.activeElement;
+    back.current = document.activeElement as HTMLElement | null;
     window.__lenis?.stop();
     document.documentElement.classList.add('x-lock');
     const t = setTimeout(() => close.current?.focus({ preventScroll: true }), 60);
-    const key = (e) => {
+    const key = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { e.preventDefault(); onClose(); }
       if (e.key === 'Tab' && box.current) { // keep focus inside the sheet
-        const f = [...box.current.querySelectorAll('a[href],button:not([disabled]),input,[tabindex]:not([tabindex="-1"])')].filter((el) => !el.closest('[hidden],[inert]'));
+        const f = [...box.current.querySelectorAll<HTMLElement>('a[href],button:not([disabled]),input,[tabindex]:not([tabindex="-1"])')].filter((el) => !el.closest('[hidden],[inert]'));
         if (!f.length) return;
         const [a, z] = [f[0], f[f.length - 1]];
         if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }

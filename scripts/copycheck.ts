@@ -5,10 +5,10 @@ import fs from 'node:fs';
 
 const OUT = 'shots/copycheck';
 fs.mkdirSync(OUT, { recursive: true });
-const norm = (s) => s.toLowerCase().replace(/[’']/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
+const norm = (s: string) => s.toLowerCase().replace(/[’']/g, "'").replace(/[“”]/g, '"').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim();
 const b = await puppeteer.launch({ executablePath: process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
 
-async function text(url) {
+async function text(url: string) {
   const p = await b.newPage();
   await p.setViewport({ width: 1470, height: 900 });
   await p.goto(url, { waitUntil: 'networkidle2', timeout: 120000 }).catch(() => {});

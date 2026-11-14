@@ -4,13 +4,22 @@
    - lines: the headline split where you want it to break (the words are Hanzo's; the spaces between lines stay in the text);
    - now: play on mount (heroes); otherwise it plays when half of it is on screen;
    - delay: seconds before the first line. Reduced motion shows the lines in place. Transform only. */
-import { useRef } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function Lines({ lines, as = 'h2', className = '', now = false, delay = 0, id }) {
-  const ref = useRef(null);
+interface LinesProps {
+  lines: ReactNode[];
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
+  className?: string;
+  now?: boolean;
+  delay?: number;
+  id?: string;
+}
+
+export default function Lines({ lines, as = 'h2', className = '', now = false, delay = 0, id }: LinesProps) {
+  const ref = useRef<HTMLHeadingElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const calm = useReducedMotion();
   const go = now || seen;

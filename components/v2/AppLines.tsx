@@ -7,13 +7,24 @@
    line is clipped, so it could never be "seen" on its own). The server HTML holds every word; reduced motion
    (MotionConfig "user", set site-wide) shows the lines at rest. `soft` lists the line indexes drawn in the faint ink.
    A line may be a string or a node (e.g. a figure wrapped in its own span). */
+import type { ReactNode } from 'react';
 import { motion } from 'motion/react';
 import { EASE } from '../ui';
 import './AppLines.css';
 
 const line = { h: { y: '105%' }, s: { y: 0, transition: { duration: 0.7, ease: EASE } } }; // MASTER part 3: 700 ms, 60 ms apart
 
-export default function AppLines({ as = 'h2', lines, soft = [], view = false, delay = 0, className = '', id }) {
+interface AppLinesProps {
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  lines: readonly ReactNode[];
+  soft?: readonly number[];
+  view?: boolean;
+  delay?: number;
+  className?: string;
+  id?: string;
+}
+
+export default function AppLines({ as = 'h2', lines, soft = [], view = false, delay = 0, className = '', id }: AppLinesProps) {
   const Tag = motion[as];
   const play = { staggerChildren: 0.06, delayChildren: delay };
   const run = view

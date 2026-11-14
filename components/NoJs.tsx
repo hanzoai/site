@@ -4,7 +4,7 @@
    app/layout.jsx sets html.js before first paint whenever JavaScript runs, so the rules apply only when it does not.
    Server and client render the same string, so nothing mismatches. Works in server and client components.
    Usage: <NoJs css=".my-step{opacity:1!important}" /> (plain CSS; @media blocks and keyframes are kept as they are). */
-export function scopeNoJs(css) {
+export function scopeNoJs(css: string) {
   const src = String(css).replace(/<\/?style[^>]*>/g, '');
   let out = '', i = 0;
   while (i < src.length) {
@@ -18,6 +18,6 @@ export function scopeNoJs(css) {
   return out;
 }
 
-export default function NoJs({ css }) {
+export default function NoJs({ css }: { css: string }) {
   return <style dangerouslySetInnerHTML={{ __html: scopeNoJs(css) }} />;
 }

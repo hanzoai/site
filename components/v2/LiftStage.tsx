@@ -10,9 +10,18 @@
      moment run turns false, e.g. off screen or paused).
    Both need '../../v2/v2scale.css' (the .v2-line mask). */
 import { useEffect, useRef } from 'react';
+import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
+import type { UseScrollOptions } from 'motion/react';
 
-export function Lines({ lines, as = 'h1', className = '', delay = 0.05, gap = 0.06, id, ...rest }) {
+interface LinesProps extends Omit<HTMLAttributes<HTMLHeadingElement>, 'children'> {
+  lines: readonly ReactNode[];
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  delay?: number;
+  gap?: number;
+}
+
+export function Lines({ lines, as = 'h1', className = '', delay = 0.05, gap = 0.06, id, ...rest }: LinesProps) {
   const Tag = as;
   return (
     <Tag className={className} id={id} {...rest}>
@@ -25,12 +34,12 @@ export function Lines({ lines, as = 'h1', className = '', delay = 0.05, gap = 0.
   );
 }
 
-export function useTick(ms, run, fn) {
+export function useTick(ms: number, run: boolean, fn: () => void) {
   const f = useRef(fn);
   f.current = fn;
   useEffect(() => {
     if (!run) return;
-    let t;
+    let t: ReturnType<typeof setTimeout>;
     const step = () => { f.current(); t = setTimeout(step, ms); };
     t = setTimeout(step, ms);
     return () => clearTimeout(t);
@@ -38,8 +47,17 @@ export function useTick(ms, run, fn) {
 }
 
 /* offset: when the settle starts and ends, as useScroll offsets of the object against the viewport. */
-export function Lift({ children, from = 1.2, y = 60, round = 0, origin = '50% 0%', offset = ['start end', 'start 0.18'], className = '', style, ...rest }) {
-  const ref = useRef(null);
+interface LiftProps extends Omit<HTMLAttributes<HTMLDivElement>, 'style'> {
+  from?: number;
+  y?: number;
+  round?: number;
+  origin?: string;
+  offset?: UseScrollOptions['offset'];
+  style?: CSSProperties;
+}
+
+export function Lift({ children, from = 1.2, y = 60, round = 0, origin = '50% 0%', offset = ['start end', 'start 0.18'], className = '', style, ...rest }: LiftProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useReducedMotion();
   // phones: a gentler settle, so the object never spills past the screen's edges
   const k = useRef(1);

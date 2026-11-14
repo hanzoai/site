@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { DAYS, FROM, TO, FIRST_WEEKDAY, LAST7, WEEKS, level } from '../lib/commits';
 import O from '../content/live/_oss.json';
@@ -9,8 +9,10 @@ import { Head, Arrow, Count } from './ui';
 
 // the figures hanzo.ai's home shows, from the same snapshot (content/live/_oss.json, refreshed by scripts/live.mjs)
 const G = Object.values(O.groups);
-const sum = (k) => G.reduce((a, g) => a + g[k], 0);
-const TILES = [
+const sum = (k: 'repos' | 'stars' | 'forks') => G.reduce((a, g) => a + g[k], 0);
+// label, figure, caption, link, and the sparkline drawn above it where there is one
+type TileData = [string, number, string, string, string?];
+const TILES: TileData[] = [
   ['Commits', O.estate.commits, 'In the past year', 'https://git.hanzo.ai/explore/repos', spark(WEEKS, 'Commits a week over the past year', 28)],
   ['Merges', O.estate.merges, 'In the past year', 'https://git.hanzo.ai/explore/repos', spark(O.estate.mergeMonths, 'Merges a month over the past year', 28)],
   ['Commits', O.calendar.week, 'In the past 7 days', 'https://git.hanzo.ai/explore/repos', spark(LAST7, 'Commits a day over the past 7 days', 28)],
@@ -23,19 +25,19 @@ const CARDS = O.groups.hanzo.top.slice(0, 8).map(repoCard);
 /* Hanzo's commit calendar, rebuilt from its own numbers. Point at any day (or move with the arrow keys) for Hanzo's
    readout; the days around it swell like a lens. At rest nothing moves. */
 const LEAD = FIRST_WEEKDAY; // Hanzo's grid opens with blank days so the weeks line up (Sunday first)
-const MONTHS = (() => { const out = []; DAYS.forEach((x, i) => { if (x.d === 1 || i === 0) out.push([x.label.slice(0, 3), Math.floor((i + LEAD) / 7)]); }); return out; })();
+const MONTHS = (() => { const out: [string, number][] = []; DAYS.forEach((x, i) => { if (x.d === 1 || i === 0) out.push([x.label.slice(0, 3), Math.floor((i + LEAD) / 7)]); }); return out; })();
 
 function Calendar() {
-  const ref = useRef(null);
-  const [hot, setHot] = useState(null);
-  const pick = (e) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [hot, setHot] = useState<number | null>(null);
+  const pick = (e: PointerEvent<HTMLDivElement>) => {
     const g = e.currentTarget.getBoundingClientRect();
     const col = Math.floor(((e.clientX - g.left) / g.width) * 53), row = Math.floor(((e.clientY - g.top) / g.height) * 7);
     const i = col * 7 + row - LEAD;
     setHot(i >= 0 && i < DAYS.length ? i : null);
   };
-  const key = (e) => {
-    const d = { ArrowRight: 7, ArrowLeft: -7, ArrowDown: 1, ArrowUp: -1 }[e.key];
+  const key = (e: KeyboardEvent<HTMLDivElement>) => {
+    const d = ({ ArrowRight: 7, ArrowLeft: -7, ArrowDown: 1, ArrowUp: -1 } as Record<string, number | undefined>)[e.key];
     if (!d) return;
     e.preventDefault();
     setHot((h) => Math.max(0, Math.min(DAYS.length - 1, (h ?? DAYS.length - 1) + d)));
@@ -62,7 +64,7 @@ function Calendar() {
           const col = Math.floor((i + LEAD) / 7), row = (i + LEAD) % 7;
           const dist = hot !== null ? Math.hypot(col - hc, (row - hr) * 1.1) : 9;
           const s = hot !== null ? (dist < 0.5 ? 1.55 : dist < 2.6 ? 1 + (2.6 - dist) * 0.12 : 1) : 1;
-          return <i key={x.label} className={'l' + level(x.c) + (i === hot ? ' hot' : '')} style={{ '--s': s }} />;
+          return <i key={x.label} className={'l' + level(x.c) + (i === hot ? ' hot' : '')} style={{ '--s': s } as CSSProperties} />;
         })}
         <AnimatePresence>
           {h && (
@@ -86,7 +88,7 @@ function Calendar() {
   );
 }
 
-function Tile({ t, i }) {
+function Tile({ t, i }: { t: TileData; i: number }) {
   const [label, n, sub, href, bars] = t;
   return (
     <a href={href} className="x-tile" data-tilt="">

@@ -4,8 +4,15 @@
    Each row is a real button with aria-expanded; the answer grows from 0fr to 1fr (no height animation), and every
    answer stays in the HTML (closed ones are collapsed and inert). */
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 
-export default function A2Faq({ items, dark, first = 0 }) {
+interface A2FaqProps {
+  items: ReadonlyArray<readonly [string, ReactNode]>;
+  dark?: boolean;
+  first?: number;
+}
+
+export default function A2Faq({ items, dark, first = 0 }: A2FaqProps) {
   const [open, setOpen] = useState(first);
   return (
     <ul className={'a2-faq' + (dark ? ' dark' : '')}>

@@ -6,11 +6,21 @@
    - onView: play when it scrolls into view (default: on load). delay: seconds before the first line.
    - The full text is in the HTML (search, no-JS readers); transform only; reduced motion shows it at rest
      (MotionConfig reducedMotion="user" is global). Use it for one or two statements a page, never every heading. */
+import type { ReactNode } from 'react';
 import { motion } from 'motion/react';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function Lines({ as = 'h2', lines, className = '', delay = 0, onView = false, id }) {
+interface LinesProps {
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div';
+  lines: ReactNode[];
+  className?: string;
+  delay?: number;
+  onView?: boolean;
+  id?: string;
+}
+
+export default function Lines({ as = 'h2', lines, className = '', delay = 0, onView = false, id }: LinesProps) {
   const Tag = as;
   const play = onView
     ? { initial: 'h', whileInView: 's', viewport: { once: true, amount: 0.5 } }

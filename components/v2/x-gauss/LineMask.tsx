@@ -5,9 +5,18 @@
    Usage: <LineMask as="h1" now lines={['One risk plane', 'for accounts,']} />  (now: a hero, plays at first paint;
           otherwise it plays the first time it is scrolled to). Lines keep a trailing space so the text reads whole.
    Owned by the Business 2 chat. */
-import Shared from '../LineMask';
+import Shared, { type LineTag } from '../LineMask';
 
-export default function LineMask({ as = 'h2', lines, className = '', now = false, delay = 0, id }) {
+interface LineMaskProps {
+  as?: LineTag;
+  lines: string[];
+  className?: string;
+  now?: boolean;
+  delay?: number;
+  id?: string;
+}
+
+export default function LineMask({ as = 'h2', lines, className = '', now = false, delay = 0, id }: LineMaskProps) {
   const L = lines.map((t, i) => (i < lines.length - 1 ? t + ' ' : t));
   return <Shared as={as} id={id} className={className} lines={L} delay={delay} inView={!now} stagger={0.06} />;
 }
