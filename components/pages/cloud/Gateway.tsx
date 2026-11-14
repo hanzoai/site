@@ -33,7 +33,7 @@ import LivePause, { usePause } from '../../v2/LivePause';
 import '../../v2/v2scale.css';
 import './Gateway.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const CALLERS = ['payments-api', 'checkout-web', 'docs-site'];
 
 /* The lane: one request at a time through the gate. It arrives at the line, its token is checked, the forged header is

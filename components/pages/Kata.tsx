@@ -368,7 +368,7 @@ function Read() {
   );
 }
 
-const QA = [
+const QA: [string, string][] = [
   ['How does Kata differ from Hanzo Dev and Gen?', 'Dev is the coding agent that plans and writes whole features. Gen runs any coding agent on Hanzo’s tools and models. Kata repairs failing tests in CI: it triages each failure and lands a fix only when the suite passes.'],
   ['Which test frameworks does Kata support?', 'Kata natively supports pytest, vitest, jest, cargo test, go test, and custom test runners emitting standard TAP or JUnit XML output.'],
   ['Where can I find the open-source examples and recipes?', 'The open-source repository is at github.com/hanzoai/kata with runnable examples in Python, TypeScript, Go, Rust, and cURL, along with a standalone Rust recipes crate.'],

@@ -135,7 +135,7 @@ function Hero() {
   wide.current = useMedia(PINNED);
   const box = useRef({ a: 0, b: 1 });
   useEffect(() => {
-    const sec = ref.current && ref.current.closest('.l2-stage');
+    const sec = ref.current && ref.current.closest<HTMLElement>('.l2-stage');
     if (!sec) return;
     const m = () => { const top = sec.getBoundingClientRect().top + scrollY, end = top + sec.offsetHeight; box.current = { a: Math.max(top, end - innerHeight * 1.4), b: end - innerHeight * 0.25 }; }; // the exit runs across the hero's last stretch, so it is seen
     m(); addEventListener('resize', m);

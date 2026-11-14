@@ -14,7 +14,8 @@
    its numerals inking once, the question number (pointer) + stations that wipe their guide in the train's direction and
    answers that open (state). Fade-ups: the kit Faq. 0 UI hues. Every line and link is Hanzo's own. */
 import { useEffect, useRef, useState } from 'react';
-import type { KeyboardEvent, PointerEvent, RefObject, SyntheticEvent } from 'react';
+import type { KeyboardEvent, PointerEvent, ReactNode, RefObject, SyntheticEvent } from 'react';
+
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, More, Faq, Film, Img } from '../kit';
 import { NoJs } from '../v2/LineReveal';
@@ -23,7 +24,7 @@ import './Learn.css';
 import HeroDither from './HeroDither';
 import { capture } from '../../lib/track';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const DOCS = 'https://docs.hanzo.ai/docs/';
 const START = [
   ['Getting started', 'Install, authenticate, and make your first call. The shortest path from nothing to a working request.', DOCS + 'quickstart'],
@@ -504,7 +505,7 @@ function Questions() {
             <span className="xp-count">/ {String(QA.length).padStart(2, '0')}</span>
           </span>
         </div>
-        <div className="xlr-qa-l" onPointerOver={pick} onFocus={pick} onClick={hash}><Faq items={QA} first={-1} onOpen={(q: string) => capture('faq_opened', { q })} /></div>
+        <div className="xlr-qa-l" onPointerOver={pick} onFocus={pick} onClick={hash}><Faq items={QA} first={-1} onOpen={(q: ReactNode) => capture('faq_opened', { q })} /></div>
       </div>
     </section>
   );

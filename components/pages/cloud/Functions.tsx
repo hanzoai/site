@@ -32,7 +32,7 @@ import FnUses from './functions/FnUses';
 import FnClose from './functions/FnClose';
 import './Functions.css';
 
-const EMPH = [0.16, 1, 0.3, 1];
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const TRIGGERS = ['HTTP route', 'cron schedule', 'Kafka topic', 'RabbitMQ queue'];
 const CODE = `export async function handler(req, res) {
   // Process incoming data
