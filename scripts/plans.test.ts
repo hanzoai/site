@@ -126,7 +126,7 @@ test('the usage slider stops at every rung the catalog sells, each named by its 
 });
 
 test('a catalog without Ultimate and Unlimited stops the slider at Ultra, whatever the snapshot holds', () => {
-  const { ultimate, unlimited, ...older } = LIVE.plans;
+  const { ultimate, unlimited, ...older } = LIVE.plans as Record<string, Plan>;
   const d = derivePlans(older);
   assert.equal(d.plans.ultimate, null);
   assert.equal(d.plans.unlimited, null);
