@@ -172,7 +172,7 @@ function categoryFilmSpec(
   tags?: string[],
   exact = false,
 ): NavPreviewSpec {
-  const [pos, scale, flip] = exact ? ['50% 50%', 1.03, 1] : COMPOSITIONS[hashSeed(seed) % COMPOSITIONS.length];
+  const [pos, scale, flip]: [string, number, 1 | -1] = exact ? ['50% 50%', 1.03, 1] : COMPOSITIONS[hashSeed(seed) % COMPOSITIONS.length];
   return {
     mode: 'thematic',
     kicker,

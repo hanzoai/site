@@ -8,9 +8,39 @@ import { useEffect, useState } from 'react';
 import SNAP_PRICING from '../content/live/_pricing.json' with { type: 'json' };
 import SNAP_MODELS from '../content/live/_models.json' with { type: 'json' };
 import { PLANS_URL, shapePlan, readModels } from './liveSources.ts';
+import type { Get, Listed, Models, Plan } from './liveSources.ts';
 import { derivePlans } from './plans.ts';
+import type { Derived, Personal, Rung } from './plans.ts';
 
-const fmtRate = (n, zeroWord = 'Free') => {
+/** A model's price line: input, output, cache write and cache read, each as the table prints it. */
+export type Rates = [string, string, string, string];
+/** A row of the model tables (/pricing's Models and the home's cost card). */
+export interface Row {
+  id: string;
+  name: string;
+  tags: string[];
+  d: string;
+  chips: string[];
+  price: Rates;
+  cta: string;
+  spec?: [string, string][];
+  end?: string;
+  to?: string;
+}
+/** A family of model rows under its heading. */
+export interface Group {
+  h: string;
+  id: string;
+  d: string;
+  link: [label: string, href: string];
+  rows: Row[];
+  afterNote?: string;
+  afterCode?: string;
+}
+/** The comparison table's rows: a heading and a cell for each plan column. */
+export type Diff = [heading: string, cells: (string | null)[]][];
+
+const fmtRate = (n: number | null | undefined, zeroWord = 'Free') => {
   if (n == null || Number.isNaN(n)) return '—';
   if (n === 0) return zeroWord;
   const clean = +(+n).toPrecision(10);
@@ -18,17 +48,17 @@ const fmtRate = (n, zeroWord = 'Free') => {
   return `$${str} / MTok`;
 };
 
-const fmtCtx = (ctx) => {
+const fmtCtx = (ctx: number | null | undefined) => {
   if (!ctx || ctx <= 0) return null;
   if (ctx >= 1_000_000) return `${Math.round(ctx / 1_000_000)}M ctx`;
   return `${Math.round(ctx / 1024)}K ctx`;
 };
 
-export function buildModelGroups(modelsSnap = SNAP_MODELS) {
+export function buildModelGroups(modelsSnap: Models = SNAP_MODELS): Group[] {
   const byId = Object.fromEntries((modelsSnap.models ?? []).map((m) => [m.id, m]));
   const catById = Object.fromEntries((modelsSnap.catalog ?? []).map((c) => [c.id, c]));
 
-  const rateTuple = (id, { zeroOut = 'Free' } = {}) => {
+  const rateTuple = (id: string, { zeroOut = 'Free' }: { zeroOut?: string } = {}): Rates => {
     const m = byId[id];
     const c = catById[id];
     const p = m?.pricing;
@@ -39,10 +69,10 @@ export function buildModelGroups(modelsSnap = SNAP_MODELS) {
     return [fmtRate(inp), fmtRate(out, zeroOut), fmtRate(cw), fmtRate(cr)];
   };
 
-  const nameOf = (id, fallback) => catById[id]?.fullName || byId[id]?.name || fallback;
-  const descOf = (id, fallback) => catById[id]?.description || byId[id]?.description || fallback;
-  const ctxTag = (id, fallbackCtx) => fmtCtx(byId[id]?.context_window || catById[id]?.context || fallbackCtx);
-  const orderOf = (id, fallback) => catById[id]?.order ?? fallback;
+  const nameOf = (id: string, fallback: string) => catById[id]?.fullName || byId[id]?.name || fallback;
+  const descOf = (id: string, fallback: string) => catById[id]?.description || byId[id]?.description || fallback;
+  const ctxTag = (id: string, fallbackCtx: number) => fmtCtx(byId[id]?.context_window || catById[id]?.context || fallbackCtx);
+  const orderOf = (id: string, fallback: number) => catById[id]?.order ?? fallback;
 
   const ensoDefs = [
     {
@@ -101,14 +131,14 @@ export function buildModelGroups(modelsSnap = SNAP_MODELS) {
     };
   });
 
-  const kaiSpecs = catById.kai?.specs
+  const kaiSpecs: [string, string][] = catById.kai?.specs
     ? [
-        ...(catById.kai.specs.params ? [['Parameters:', catById.kai.specs.params]] : []),
-        ...(catById.kai.specs.arch ? [['Architecture:', catById.kai.specs.arch]] : []),
+        ...(catById.kai.specs.params ? [['Parameters:', catById.kai.specs.params] as [string, string]] : []),
+        ...(catById.kai.specs.arch ? [['Architecture:', catById.kai.specs.arch] as [string, string]] : []),
       ]
     : [['Parameters:', '322.1M encoder, 60.2M yes/no reader'], ['Architecture:', 'Encoder (mmBERT-base, 22 layers × 768)']];
 
-  const kaiRows = [
+  const kaiRows: Row[] = [
     {
       id: 'kai',
       name: nameOf('kai', 'Kai'),
@@ -173,7 +203,7 @@ export function buildModelGroups(modelsSnap = SNAP_MODELS) {
     },
   ];
 
-  const zenRows = [
+  const zenRows: Row[] = [
     ...zenDefs.map((d) => {
       const ctx = ctxTag(d.id, d.fallbackCtx);
       return {
@@ -234,18 +264,18 @@ export function buildModelGroups(modelsSnap = SNAP_MODELS) {
   ];
 }
 
-export function buildCompareDiff(plans, rungs) {
+export function buildCompareDiff(plans: Derived['plans'], rungs: Rung[]): Diff {
   // a column per plan: Free, Go, then every rung of the ladder the catalog sells (lib/plans.ts `rungs`)
   const order = [plans.free, plans.go, ...rungs];
-  const usageLine = (p, fallback) => p.features.find((f) => /usage/i.test(f)) || fallback;
-  const limitLine = (p, fallback) => {
+  const usageLine = (p: Personal, fallback: string) => p.features.find((f) => /usage/i.test(f)) || fallback;
+  const limitLine = (p: Personal, fallback: string) => {
     const raw = p.features.find((f) => /higher limits|rate limits|^no limits/i.test(f));
     if (!raw) return fallback;
     const hasPrio = p.features.some((f) => /priority queue/i.test(f));
     const short = raw.replace(/(higher limits)\s+every 5 hours and every day/i, '$1 than Go');
     return hasPrio && !/priority/i.test(short) ? `${short} & priority queue` : short;
   };
-  const capped = (r) => r.x !== '∞';
+  const capped = (r: Rung) => r.x !== '∞';
   return [
     [
       'Usage',
@@ -294,7 +324,7 @@ export function buildCompareDiff(plans, rungs) {
   ];
 }
 
-function buildState(rawPlans, modelsSnap) {
+function buildState(rawPlans: Record<string, Plan>, modelsSnap: Models) {
   const derived = derivePlans(rawPlans);
   return {
     ...derived,
@@ -306,8 +336,8 @@ function buildState(rawPlans, modelsSnap) {
 
 const INITIAL = buildState(SNAP_PRICING.plans, SNAP_MODELS);
 
-let livePromise = null;
-const getJson = async (url) => {
+let livePromise: Promise<ReturnType<typeof buildState>> | null = null;
+const getJson: Get = async (url) => {
   const r = await fetch(url, { credentials: 'omit', signal: AbortSignal.timeout(8000) });
   if (!r.ok) throw new Error(`${r.status} from ${url}`);
   return r.json();
@@ -315,11 +345,11 @@ const getJson = async (url) => {
 
 const fetchLive = () =>
   (livePromise ??= Promise.all([
-    getJson(PLANS_URL).then((list) => {
+    getJson<Listed[]>(PLANS_URL).then((list) => {
       if (!Array.isArray(list)) throw new Error('invalid plans');
       // what commerce lists now, and nothing else: a plan the page always shows falls back to the snapshot in
       // derivePlans, but a rung above Ultra stands only if this read lists it, so no stop sells a plan that is gone
-      const map = {};
+      const map: Record<string, Plan> = {};
       for (const p of list) {
         if (p?.slug && Number.isFinite(p.price)) map[p.slug] = shapePlan(p);
       }

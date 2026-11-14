@@ -8,9 +8,83 @@ export const RUNS = 'https://api.hanzo.ai/v1/research/runs?org=hanzo';
 export const MODELS = `${COMMERCE}/v1/models?id=anthropic/claude-fable-5.1,anthropic/claude-opus-5,anthropic/claude-sonnet-5.5,enso-auto,enso-flash,enso-max,enso-pro,enso-ultra,kai,openai/gpt-5.5,openai/gpt-6-astra,zen6,zen6-coder,zen6-flash,zen6-max,zen-embedding,zen-embedding-3`;
 export const PRICES = `${COMMERCE}/v1/pricing/models?id=anthropic/claude-fable-5,anthropic/claude-fable-5.1,anthropic/claude-haiku-5.5,anthropic/claude-opus-4.8,anthropic/claude-opus-5.5,anthropic/claude-sonnet-5,anthropic/claude-sonnet-5.5,deepseek/deepseek-v4-pro,openai/gpt-4o,openai/gpt-5.5,openai/gpt-5.6-sol,openai/gpt-6-sol,moonshotai/kimi-k3,x-ai/grok-4.7,z-ai/glm-5.3,enso-auto,enso-flash,enso-pro,enso-max,enso-ultra,kai,zen6-flash,zen6,zen6-coder,zen6-max,zen-embedding,zen-embedding-3,zen5,zen5-coder,zen5-mini,zen5-pro,zen-vl,zen-guard`;
 
-const need = (ok, what) => { if (!ok) throw new Error('unexpected data: ' + what); };
+/** A plan as GET /v1/billing/plans lists it (prices in cents). */
+export interface Listed {
+  slug: string;
+  name: string;
+  category: string;
+  description?: string;
+  price: number;
+  priceAnnual?: number | null;
+  interval: string;
+  perSeat?: boolean;
+  popular?: boolean;
+  features?: string[];
+  licensing?: { products?: string[]; earlyAccess?: boolean };
+  limits?: { minSeats?: number; maxMembers?: number; bots?: number; teamGuests?: number };
+}
 
-export function shapePlan(p) {
+/** One figure a benchmark run filed. */
+export interface Measure { category: string; metric: string; value: number; n?: number; of?: number | null; lo?: number; hi?: number }
+/** A benchmark run as GET /v1/research/runs lists it (view=summary). */
+export interface Run { id: string; system: string; version: string; study?: string; split?: string; ended: string; measures?: Measure[] }
+/** A model as GET /v1/models lists it. */
+interface Served {
+  id: string;
+  name?: string;
+  description?: string;
+  family?: string;
+  context_window?: number;
+  endpoint?: string;
+  pricing?: { input_per_million?: number; output_per_million?: number; rates?: { input_cache_write?: string; input_cache_read?: string } };
+}
+/** A model as GET /v1/pricing/models lists it. */
+interface Priced {
+  id?: string;
+  name: string;
+  fullName?: string;
+  description?: string;
+  family?: string;
+  order?: unknown;
+  context?: unknown;
+  endpoint?: string;
+  features?: string[];
+  specs?: { params?: string; arch?: string };
+  pricing?: { input?: number | null; output?: number | null; cacheWrite?: number | null; cacheRead?: number | null };
+}
+/** A model as the page keeps it: what /v1/models says, with the blanks filled. */
+export interface Model {
+  id: string;
+  name?: string;
+  description: string;
+  family: string;
+  context_window: number | null;
+  endpoint: string | null;
+  pricing?: Served['pricing'];
+}
+/** A model as the price list keeps it. */
+export interface Catalog {
+  id: string;
+  fullName: string;
+  description: string;
+  family: string;
+  order: number | null;
+  context: number | null;
+  endpoint: string | null;
+  features: string[];
+  specs: Priced['specs'] | null;
+  pricing: Priced['pricing'] | null;
+}
+/** What readModels answers (content/live/_models.json). */
+export interface Models { models: Model[]; catalog: Catalog[]; names: Record<string, string> }
+/** What readResearch answers: the runs behind the home's race, cost and frontier cards. */
+export interface Research { repair: Run[]; latency: Run[]; gpqa: Run[] }
+/** A GET that answers parsed JSON: the page's `fetch`, or the build's. What it answers is checked by `need` before it is read. */
+export type Get = <T>(url: string) => Promise<T>;
+
+function need(ok: boolean, what: string): asserts ok { if (!ok) throw new Error('unexpected data: ' + what); }
+
+export function shapePlan(p: Listed) {
   return {
     name: p.name,
     category: p.category,
@@ -30,8 +104,8 @@ export function shapePlan(p) {
   };
 }
 
-export async function readResearch(get) {
-  const one = async (q) => { const d = await get(`${RUNS}&${q}&view=summary&limit=200`); need(Array.isArray(d.data) && d.data.length > 0, q); return d.data; };
+export async function readResearch(get: Get): Promise<Research> {
+  const one = async (q: string) => { const d = await get<{ data: Run[] }>(`${RUNS}&${q}&view=summary&limit=200`); need(Array.isArray(d.data) && d.data.length > 0, q); return d.data; };
   const [repair, latency, gpqa] = await Promise.all([
     one('benchmark=coding.repair&category=all,vs-claude-code'),
     one('benchmark=decision.latency&metric=p50ms'),
@@ -40,9 +114,9 @@ export async function readResearch(get) {
   return { repair, latency, gpqa };
 }
 
-export async function readModels(get) {
-  const [m, p] = await Promise.all([get(MODELS), get(PRICES)]);
-  need(Array.isArray(m.data) && m.data.some((x) => x.id === 'kai' && x.pricing?.input_per_million > 0), 'models with prices');
+export async function readModels(get: Get): Promise<Models> {
+  const [m, p] = await Promise.all([get<{ data: Served[] }>(MODELS), get<{ models: Priced[] }>(PRICES)]);
+  need(Array.isArray(m.data) && m.data.some((x) => x.id === 'kai' && (x.pricing?.input_per_million ?? 0) > 0), 'models with prices');
   need(Array.isArray(p.models) && p.models.length > 0, 'pricing models');
   return {
     models: m.data.map((x) => ({
@@ -69,3 +143,6 @@ export async function readModels(get) {
     names: Object.fromEntries(p.models.map((x) => [x.id ?? x.name, x.fullName ?? x.name])),
   };
 }
+
+/** A plan as the site holds it (shapePlan's answer, and content/live/_pricing.json). */
+export type Plan = ReturnType<typeof shapePlan>;

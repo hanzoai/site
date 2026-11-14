@@ -2,7 +2,7 @@
 // Pages this site does not have (Hanzo's app, /reviews, /university...) link to hanzo.ai.
 // Each column: [heading, [label, href, flags]]; flags: B = large link, X = opens another site.
 // Investors is the footer's only (Zach, hanzo-inc/app#204): no menu lists it (scripts/investors.test.mjs).
-const parse = (cols) => cols.map((c) => {
+const parse = (cols: string[]) => cols.map((c) => {
   const [head, ...links] = c.split(';');
   return { head: head.slice(1), links: links.map((l) => { const [label, href, ...f] = l.split('|'); return { label, href, big: f.includes('B'), ext: f.includes('X') }; }) };
 });

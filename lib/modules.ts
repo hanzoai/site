@@ -42,13 +42,13 @@ const GO_ORG = new Set(['tygoja', 'lz4', 'openai', 'openrouter', 'sendgrid', 'sd
  * The REPOSITORY a module path lives in: the path's first segment, never the whole path. A major-version module is
  * hanzo.ai/lz4/v4 and its repo is lz4; the /vN suffix is part of the MODULE path by Go's own rule.
  */
-export const repoOf = (name) => {
+export const repoOf = (name: string) => {
   const repo = name.split('/')[0];
   return `https://github.com/${GO_ORG.has(repo) ? 'hanzo-go' : 'hanzoai'}/${repo}`;
 };
 
 /** The tag, defined once. `go-source` is what pkg.go.dev links "source" to. */
-export function goImport(name) {
+export function goImport(name: string) {
   const path = `hanzo.ai/${name}`;
   const repo = repoOf(name);
   return {
@@ -62,7 +62,7 @@ export function goImport(name) {
  * `go get` accepts for the module, and the one pkg.go.dev files it under. Each value is read from that repo's go.mod;
  * when a module's `module` line moves, its entry here moves in the same change.
  */
-const DECLARED = {
+const DECLARED: Record<string, string> = {
   'lz4/v4': 'hanzo.ai/lz4/v4',
   ci: 'hanzo.ai/ci',
   finance: 'hanzo.ai/finance',
@@ -78,7 +78,7 @@ const DECLARED = {
 };
 
 /** The path `go get` accepts for a module, and pkg.go.dev's name for it. */
-export const modulePathOf = (name) => DECLARED[name] ?? repoOf(name).replace(/^https:\/\//, '');
+export const modulePathOf = (name: string) => DECLARED[name] ?? repoOf(name).replace(/^https:\/\//, '');
 
 /** Modules pkg.go.dev has no page for, so their page says so instead of linking one. */
 export const UNREFERENCED = new Set(['proto']);
