@@ -11,7 +11,9 @@
    settle, pinned chapters with clip wipes (components/v2/AppScenes), line-masked headline. Accent: violet, from the
    agent's marks. The desktop's windows are drawn as shapes, not invented software. Every word and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'motion/react';
+import type { HTMLMotionProps } from 'motion/react';
 import { Copy, Magnetic, Lines, useCalm } from '../ui';
 import { A, Cta, Img } from '../kit';
 import Scenes from '../v2/AppScenes';
@@ -19,7 +21,7 @@ import '../v2/AppType.css';
 import './ComputerPage.css';
 import { play } from '../../lib/sound';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const SLIDES = [
   ['It reads pixels', 'No DOM, no accessibility tree, no selectors to maintain. A native app, a canvas, a remote desktop and a web page all look the same to it — like a screenshot.'],
   ['Mouse and keyboard', 'Mac, Windows, and Linux with an X server. On macOS the terminal asks for Screen Recording and Accessibility the first time, because those are exactly the permissions this needs.'],
@@ -42,7 +44,7 @@ const MARKS = [[9, 27.5], [37, 73], [54.2, 39.8], [75, 58.3], [82.2, 70.5], [45.
 const DWELL = 4800;
 
 /* ---------- the signature: the desktop the agent works ---------- */
-function Desktop({ at, live, small }) {
+function Desktop({ at, live, small }: { at: number; live: boolean; small?: boolean }) {
   const path = PATHS[at];
   return (
     <div className={'cp-desk m' + at + (live ? ' live' : '') + (small ? ' small' : '')} aria-hidden="true">
@@ -102,11 +104,11 @@ function Machine() {
   const [at, setAtS] = useState(0);
   const [mine, setMine] = useState(false);
   const [paused, setPaused] = useState(false);
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useCalm();
   const live = seen && !calm && !paused;
-  const pick = (i) => { setAtS(i); setMine(true); };
+  const pick = (i: number) => { setAtS(i); setMine(true); };
   useEffect(() => {
     if (mine || !live) return;
     const t = setTimeout(() => setAtS((v) => (v + 1) % SLIDES.length), DWELL);
@@ -118,8 +120,9 @@ function Machine() {
     const t = setTimeout(() => setMine(false), DWELL * 3);
     return () => clearTimeout(t);
   }, [mine, at]);
-  const key = (e, i) => {
-    const n = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!n) return;
+  const key = (e: KeyboardEvent<HTMLButtonElement>, i: number) => {
+    const arrows: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1 };
+    const n = arrows[e.key]; if (!n) return;
     const j = (i + n + SLIDES.length) % SLIDES.length; pick(j);
     e.currentTarget.closest('ol')?.children[j]?.querySelector('button')?.focus();
   };
@@ -156,8 +159,10 @@ function Machine() {
 /* The desktop arrives big and settles as you scroll (the same move as v2/AppStage), hydration-safe: the server and the
    first client render carry no motion style at all; the scroll-linked scale starts after mount, and the arrival
    is a CSS animation. Phones and reduced motion show it settled. */
-function Settle({ children, className, from = 1.08, lift = 60, ...rest }) {
-  const ref = useRef(null);
+type SettleProps = { children?: ReactNode; className?: string; from?: number; lift?: number } & Omit<HTMLMotionProps<'div'>, 'children' | 'className'>;
+
+function Settle({ children, className, from = 1.08, lift = 60, ...rest }: SettleProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   const [live, setLive] = useState(false);
   useEffect(() => {
@@ -200,7 +205,7 @@ function Hero() {
 
 /* ---------- three lenses on the desktop, pinned ---------- */
 const SAME = ['native app', 'canvas', 'remote desktop', 'web page'];
-function Pixels({ on }) {
+function Pixels({ on }: { on: boolean }) {
   return (
     <div className={'cp-vis cp-px' + (on ? ' on' : '')} aria-hidden="true">
       <div className="cp-px-grid">
@@ -218,7 +223,7 @@ function Pixels({ on }) {
   );
 }
 
-function Marks({ on }) {
+function Marks({ on }: { on: boolean }) {
   return (
     <div className={'cp-vis cp-mk' + (on ? ' on' : '')} aria-hidden="true">
       <div className="cp-mk-win">
@@ -239,7 +244,7 @@ function Marks({ on }) {
   );
 }
 
-function Hands({ on }) {
+function Hands({ on }: { on: boolean }) {
   return (
     <div className={'cp-vis cp-hd' + (on ? ' on' : '')} aria-hidden="true">
       <div className="cp-hd-os x-mono">{['Mac', 'Windows', 'Linux'].map((o) => <span key={o}>{o}</span>)}</div>
@@ -261,11 +266,11 @@ function Hands({ on }) {
   );
 }
 
-const Sub = ({ t, d }) => <div className="cp-sub"><p className="cp-sub-t">{t}</p><p className="av-body">{d}</p></div>;
+const Sub = ({ t, d }: { t: string; d: string }) => <div className="cp-sub"><p className="cp-sub-t">{t}</p><p className="av-body">{d}</p></div>;
 const LENSES = [
-  { title: SLIDES[0][0], body: <p className="av-body cp-sc-b">{SLIDES[0][1]}</p>, visual: (on) => <Pixels on={on} /> },
-  { kick: '-with-ocr · -with-som', title: SLIDES[2][0], body: <><p className="av-body cp-sc-b">{SLIDES[2][1]}</p><Sub t={SLIDES[3][0]} d={SLIDES[3][1]} /></>, visual: (on) => <Marks on={on} /> },
-  { kick: 'operate --voice', title: SLIDES[1][0], body: <><p className="av-body cp-sc-b">{SLIDES[1][1]}</p><Sub t={SLIDES[4][0]} d={SLIDES[4][1]} /></>, visual: (on) => <Hands on={on} /> },
+  { title: SLIDES[0][0], body: <p className="av-body cp-sc-b">{SLIDES[0][1]}</p>, visual: (on: boolean) => <Pixels on={on} /> },
+  { kick: '-with-ocr · -with-som', title: SLIDES[2][0], body: <><p className="av-body cp-sc-b">{SLIDES[2][1]}</p><Sub t={SLIDES[3][0]} d={SLIDES[3][1]} /></>, visual: (on: boolean) => <Marks on={on} /> },
+  { kick: 'operate --voice', title: SLIDES[1][0], body: <><p className="av-body cp-sc-b">{SLIDES[1][1]}</p><Sub t={SLIDES[4][0]} d={SLIDES[4][1]} /></>, visual: (on: boolean) => <Hands on={on} /> },
 ];
 
 /* ---------- Beyond: the pre-flight, three of Hanzo's own warnings, ticked off by you ---------- */
@@ -277,9 +282,9 @@ const CHECKS = [
 ];
 
 function Preflight() {
-  const [done, setDone] = useState([]);
+  const [done, setDone] = useState<number[]>([]);
   const all = done.length === CHECKS.length;
-  const flip = (i) => {
+  const flip = (i: number) => {
     const n = done.includes(i) ? done.filter((x) => x !== i) : [...done, i];
     setDone(n);
     if (n.length === CHECKS.length) play('done'); // all three warnings checked

@@ -5,11 +5,11 @@ import LegalDoc from './LegalDoc';
 import JsonLd from '../JsonLd';
 import { SLUGS, legalDoc, pagesIndex } from './legalData';
 
-export const legalMeta = (slug) => {
+export const legalMeta = (slug: string): { title?: string; description?: string } => {
   const m = pagesIndex()['/legal/' + slug];
   return m ? { title: m.title, description: m.description } : {};
 };
 
-export default function LegalRoute({ slug }) {
+export default function LegalRoute({ slug }: { slug: string }) {
   return <><JsonLd route={'/legal/' + slug} /><LegalDoc doc={legalDoc(slug)} peek={Object.fromEntries(SLUGS.map((x) => [x, legalDoc(x).lede]))} /></>;
 }

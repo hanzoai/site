@@ -27,7 +27,9 @@
    V2: 8/10 Motion map: race — the token board became a live race (ten volumes from zero at true ratios, replayable, Log re-scales mid-race); the pinned earn chapters, both SceneWipe rooms, the line-mask heads and the sticky contributor column are gone (earn is a plain list with its self-printing receipt); five page-local entrances (card-deal, rack-focus, focus-pull-scroll, orbit-in, letter-cascade); sections reordered hero, race, earn, beyond, contributors, close.
    Earlier, round 2: range input hydration-safe (fill on the label, suppressHydrationWarning); copy word-for-word (every visible string checked against content/live, content/pages and ui-strings: tape lines are Hanzo's own strings, the receipt prints Hanzo's card titles and rolls each card's own points, the points calculator became a scrubber over the board's own volumes, Linear/Log tabs icon-only; the +$20 PR tag kept, it is on Hanzo's card); deck greys as page tokens, 497/606 weights, deck durations, flat bars; podium and tape total in the first screen at 1470x801 and the lit block within 660px on phone; board Linear first and collapsed to three rows on phone; one receipt after the chapters on phone; scrubber result on paper with an idle climb; page-local close with line-mask h2 at 52px and data-cta leaderboard.band; hovers answer (stepper fill, reader yields to the pointer). */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { PointerEvent } from 'react';
 import { motion, AnimatePresence, animate, useInView, useReducedMotion } from 'motion/react';
+import type { AnimationPlaybackControlsWithThen } from 'motion/react';
 import { EASE } from '../ui';
 import { A, More } from '../kit';
 import DetailSheet from '../v2/x-pascal/DetailSheet';
@@ -39,25 +41,26 @@ import './Leaderboard.css';
 import HeroDither from './HeroDither';
 
 const ISSUES = 'https://github.com/search?type=issues&s=created&o=desc&q=is%3Aissue%20is%3Aopen%20label%3Abounty%20archived%3Afalse%20org%3Ahanzoai%20org%3Ahanzo-apps%20org%3Ahanzo-go%20org%3Ahanzo-js';
-const n = (v) => v.toLocaleString('en-US');
+const n = (v: number) => v.toLocaleString('en-US');
 
 // [rank, name, pts, short line, bounty pts, tokens, global rank, role, long line, move]
-const HUNTERS = [
+type Hunter = [string, string, number, string, number, number, string, string, string, string | null];
+const HUNTERS: Hunter[] = [
   ['#1', 'Zach Kelling (@zeekay)', 1510, '1 bugs · +450 bounty pts', 450, 106039884, '#1', 'Founding Maintainer · #1 Fleet', '1 verified bug reports · +450 bounty pts · 106,039,884 tokens (Global #1)', null],
   ['#2', 'zlatan mioslav (@valerypetrov)', 192, '3 bugs · +150 bounty pts · +$20 credits', 150, 4252634, '#7', 'Bug Hunter · Top 10', '3 verified bug reports · +150 bounty pts · +$20 AI credits awarded · 4,252,634 tokens (Global #7)', '▲ +5 ranks'],
   ['#3', 'Antje Worring (@zooqueen)', 252, '0 bugs · +200 bounty pts', 200, 5212081, '#3', 'Core Contributor', '0 verified bug reports · +200 bounty pts · 5,212,081 tokens (Global #3)', null],
 ];
-const fromTokens = (t) => Math.floor(t / 100000);
+const fromTokens = (t: number) => Math.floor(t / 100000);
 // the page's own totals are bounty points plus one point per 100K tokens; keep the tape honest
 if (process.env.NODE_ENV !== 'production') HUNTERS.forEach((h) => console.assert(h[4] + fromTokens(h[5]) === h[2], 'leaderboard tape does not add up for ' + h[1]));
 
-const REPORTS = [
+const REPORTS: [string, string, string][] = [
   ['hanzo-inc/cloud#index-lock', '+50 pts · +$20 AI credits', 'Reported stale .git/index.lock failure during post-turn sandbox delivery on large C++ repositories (ClickHouse PR 115724).'],
   ['hanzo-inc/cloud#repo-fallback', '+50 pts', 'Reported Try Again / follow-up repository resolution failure when Forge workspace exists alongside a GitHub fork.'],
   ['hanzo-inc/cloud#slack-thread-pr-review', '+50 pts', 'Reported Slack @Hanzo thread parent context loss and multi-repo PR review handling in channel threads.'],
 ];
 
-const ORGS = [
+const ORGS: [string, string, string, number][] = [
   ['@hanzo', 'Core Fleet', '2,152 requests', 106039884],
   ['@lux', 'Power Builder', '162 requests', 6361400],
   ['@zoo', 'Power Builder', '874 requests', 5212081],
@@ -73,7 +76,7 @@ const ORGS = [
 // [title, tags, words, the receipt line it adds: points, credits]. Tags are Hanzo's own, card for card (content/pages/
 // leaderboard.html: the merged pull request card carries "+100 pts" and "+$20 AI credits"); the receipt prints each
 // card's own title and points, so it adds no words of its own.
-const EARN = [
+const EARN: [string, string[], string, [number, number]][] = [
   ['Verified bug report', ['+50 pts', '+$20 AI credits'], 'Report a reproducible bug in Hanzo Dev, Cloud, Console, or SDKs. Earn +50 bounty points and up to $20 in AI credits.', [50, 20]],
   ['Merged bounty pull request', ['+100 pts', '+$20 AI credits'], 'Ship a merged pull request fixing an open GitHub issue labelled bounty. Earn +100 to +500 points and AI credits.', [100, 20]],
   ['Qualified referral', ['+20 pts', '+$5 AI credits'], 'Invite a builder who activates a paid plan or trial. Earn +20 leaderboard points and $5 in AI credits.', [20, 5]],
@@ -81,7 +84,7 @@ const EARN = [
 ];
 
 /* A number that rolls to its new value: the old figure leaves upward, the new one arrives from below. */
-function Roll({ v, className = '' }) {
+function Roll({ v, className = '' }: { v: string; className?: string }) {
   return (
     <span className={'xlb-roll ' + className}>
       <AnimatePresence mode="popLayout" initial={false}>
@@ -94,8 +97,8 @@ function Roll({ v, className = '' }) {
 /* A list that reads itself: while it is on screen, one row at a time is lit (every 2.8s); off screen or under reduced
    motion it rests. While the pointer is over the list the reader steps aside (no row lit by it), so the row under the
    pointer is the only one filled. Returns [ref, lit index, pointer handlers for the list]. */
-function useReader(n, every = 2800) {
-  const ref = useRef(null);
+function useReader<T extends HTMLElement = HTMLOListElement>(n: number, every = 2800) {
+  const ref = useRef<T>(null);
   const on = useInView(ref, { amount: 0.1 });
   const calm = useReducedMotion();
   const [lit, setLit] = useState(-1);
@@ -106,15 +109,15 @@ function useReader(n, every = 2800) {
     return () => clearTimeout(t);
   }, [on, calm, hold, lit, n, every]);
   const hand = {
-    onPointerEnter: (e) => { if (e.pointerType === 'mouse') setHold(true); },
+    onPointerEnter: (e: PointerEvent) => { if (e.pointerType === 'mouse') setHold(true); },
     onPointerLeave: () => setHold(false),
   };
-  return [ref, hold ? -1 : lit, hand];
+  return [ref, hold ? -1 : lit, hand] as const;
 }
 
 /* The tape: one hunter's total, added line by line. Every line is Hanzo's own string for that hunter (bounty points,
    tokens and global rank); no figure is worked out on the page. */
-function Tape({ h }) {
+function Tape({ h }: { h: Hunter }) {
   return (
     <div className="xlb-tape xlb-card" style={{ '--d': 3 }} aria-live="polite">
       <p className="xlb-tape-k pf-mono"><span>{h[0]}</span><span>{h[7]}</span></p>
@@ -136,7 +139,7 @@ function Podium() {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const calm = useReducedMotion();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement | null>(null);
   const seen = useInView(ref, { amount: 0.4 });
   useEffect(() => {
     if (mine || calm || !seen) return;
@@ -251,7 +254,7 @@ function Contributors() {
 const TOP = ORGS[0][3];
 const RACE_S = 2.6;
 // a bar's width for a token count on either scale (Log of 0 or 1 token is an empty bar)
-const width = (t, k) => (k === 'Log' ? (t <= 1 ? 0 : Math.log10(t) / Math.log10(TOP)) : t / TOP);
+const width = (t: number, k: string) => (k === 'Log' ? (t <= 1 ? 0 : Math.log10(t) / Math.log10(TOP)) : t / TOP);
 const useIsoLayout = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 /* The signature: the race. All ten volumes run on one clock p (0 to 1, the deck's in-out curve), each counter showing
@@ -264,13 +267,14 @@ function Tokens() {
   const [scale, setScale] = useState('Linear');
   const scaleRef = useRef('Linear');
   const [all, setAll] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLOListElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.3 });
-  const [readRef, lit, hand] = useReader(ORGS.length, 1500);
-  const bars = useRef([]);
-  const nums = useRef([]);
+  const [readRef, lit, hand] = useReader<HTMLDivElement>(ORGS.length, 1500);
+
+  const bars = useRef<(HTMLElement | null)[]>([]);
+  const nums = useRef<(HTMLElement | null)[]>([]);
   const p = useRef(1);
-  const run = useRef(null);
+  const run = useRef<AnimationPlaybackControlsWithThen | null>(null);
   const [phase, setPhase] = useState('rest'); // rest | wait | run
   const paint = () => {
     ORGS.forEach((o, i) => {
@@ -296,7 +300,7 @@ function Tokens() {
     return () => run.current?.stop();
   }, []);
   useEffect(() => { if (seen && phase === 'wait') { const t = setTimeout(race, 350); return () => clearTimeout(t); } }, [seen, phase]);
-  const pick = (k) => { scaleRef.current = k; setScale(k); paint(); };
+  const pick = (k: string) => { scaleRef.current = k; setScale(k); paint(); };
   return (
     <Arrive as="section" e="rack" amount={0.15} className="xlb-tok" data-room="dark" aria-label="Global token volume leaderboard">
       <div className="pf-wrap">
@@ -354,8 +358,8 @@ function Tokens() {
 
 /* The receipt beside the four ways to earn: with `print` it prints its own lines once it is reached, and the figure
    rolls to each newest line's points. */
-function Receipt({ at: given, print = false }) {
-  const ref = useRef(null);
+function Receipt({ at: given, print = false }: { at?: number; print?: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const calm = useReducedMotion();
   const [step, setStep] = useState(-1);
@@ -366,7 +370,7 @@ function Receipt({ at: given, print = false }) {
     const t = setTimeout(() => setStep((v) => v + 1), step < 0 ? 300 : 500);
     return () => clearTimeout(t);
   }, [print, seen, calm, step]);
-  const at = print ? Math.max(step, 0) : given;
+  const at = print ? Math.max(step, 0) : given ?? -1;
   // the big figure rolls to the newest line's own points, as Hanzo prints them (+50, +100, +20, +1): nothing is summed
   return (
     <div className="xlb-rcpt pf-obj" ref={ref}>
@@ -430,8 +434,9 @@ function Calc() {
   const org = ORGS[place];
   // an idle demo that runs once and ends at rest: when the scrubber is reached untouched, it climbs from #10 to
   // @hanzo's own 106,039,884 (#1), the rank rolling with each step; any touch or key hands it over
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const met = useInView(box, { once: true, amount: 0.5 });
+
   const calm = useReducedMotion();
   const [mine, setMine] = useState(false);
   useEffect(() => {
@@ -500,7 +505,14 @@ const CRYPTO_COMPUTE_BOARD = [
   { rank: '#8', agent: '0x105…38b3', handle: '@BDTung', chain: 'Base · USDC', settled: '$2,180 USDC', tokens: '1.96M tokens', tier: '1M+ Club · Lv 5' },
 ];
 
-const DEFAULT_STANDING = {
+interface StandingRow { rank: number; id: string; points: number; badges: number }
+interface Standing { total: number; locked: number; window: StandingRow[]; you?: StandingRow | null }
+interface Pulse { orgs: number; active30d: number; points24h: number; bounties30d: number }
+interface FeedRow { id: string; who: string; action: string; when: string }
+/* what the feed endpoint may send for one event (every field optional; the page falls back field by field) */
+interface FeedItem { id?: string; handle?: string; who?: string; masked?: string; label?: string; reason?: string; action?: string; points?: number; ago?: string }
+
+const DEFAULT_STANDING: Standing = {
   total: 2129,
   locked: 19,
   window: [
@@ -513,7 +525,7 @@ const DEFAULT_STANDING = {
   ],
 };
 
-const DEFAULT_PULSE = {
+const DEFAULT_PULSE: Pulse = {
   orgs: 2129,
   active30d: 418,
   points24h: 18420,
@@ -523,7 +535,7 @@ const DEFAULT_PULSE = {
 function CryptoAndStanding() {
   const [standing, setStanding] = useState(DEFAULT_STANDING);
   const [pulse, setPulse] = useState(DEFAULT_PULSE);
-  const [feed, setFeed] = useState([
+  const [feed, setFeed] = useState<FeedRow[]>([
     { id: '1', who: 'ze•••ay', action: 'settled $500 USDC on Base · +500 compute pts', when: 'just now' },
     { id: '2', who: 'va•••ov', action: 'verified bug report merged · +50 bounty pts', when: '4m ago' },
     { id: '3', who: 'lu•••fi', action: 'crossed 5M token milestone · +50 pts', when: '11m ago' },
@@ -564,7 +576,7 @@ function CryptoAndStanding() {
         const list = Array.isArray(d) ? d : Array.isArray(d?.events) ? d.events : null;
         if (!alive || !list || list.length === 0) return;
         setFeed(
-          list.slice(0, 5).map((item, idx) => ({
+          list.slice(0, 5).map((item: FeedItem, idx: number) => ({
             id: item.id || String(idx),
             who: item.handle || item.who || item.masked || 'hz•••ai',
             action: item.label || item.reason || item.action || `+${item.points || 10} pts`,

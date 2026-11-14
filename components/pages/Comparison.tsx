@@ -31,10 +31,10 @@ import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Comparison.css';
 
-const EASE = [0.16, 1, 0.3, 1]; // deck ease-emphasis: arrivals
-const IO = [0.4, 0, 0.2, 1]; // deck ease-in-out: things that move and stay
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1]; // deck ease-emphasis: arrivals
+const IO: [number, number, number, number] = [0.4, 0, 0.2, 1]; // deck ease-in-out: things that move and stay
 // [stack, [[service, image, vcpu, gb]], cents a month]
-const STACKS = [
+const RAW: [string, [string, string, number, number][], number][] = [
   ['qdrant', [['qdrant', 'qdrant/qdrant:v1.12.4', 0.25, 0.5]], 438],
   ['traefik', [['traefik', 'traefik:v3.2', 0.5, 0.5]], 657],
   ['redis', [['cache', 'redis:7-alpine', 0.5, 1]], 876],
@@ -46,10 +46,11 @@ const STACKS = [
   ['ghost', [['db', 'mysql:8', 1, 2], ['ghost', 'ghost:5-alpine', 0.5, 0.5]], 2409],
   ['n8n', [['db', 'postgres:16-alpine', 1, 2], ['n8n', 'n8nio/n8n:1.60.1', 1, 2]], 3504],
   ['ollama', [['ollama', 'ollama/ollama:0.5.4', 2, 8]], 5256],
-].map(([name, imgs, c]) => ({ name, imgs, c, cpu: imgs.reduce((a, i) => a + i[2], 0), gb: imgs.reduce((a, i) => a + i[3], 0) }));
+];
+const STACKS = RAW.map(([name, imgs, c]) => ({ name, imgs, c, cpu: imgs.reduce((a, i) => a + i[2], 0), gb: imgs.reduce((a, i) => a + i[3], 0) }));
 const ALL = STACKS.reduce((a, s) => a + s.c, 0); // 22,557 cents
-const usd = (c) => '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '/mo';
-const n = (v) => String(+v.toFixed(2));
+const usd = (c: number) => '$' + (c / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '/mo';
+const n = (v: number) => String(+v.toFixed(2));
 const MAX = Math.max(...STACKS.map((s) => s.c));
 const ASK = { label: 'Try Hanzo', to: 'https://hanzo.ai/signup', cta: 'comparison.hero' };
 // JS off: the slip stands fed out and printed, every block in place
@@ -62,11 +63,11 @@ const DUTIES = [
   ['Identity', 'Each of these has its own users and its own idea of an admin. Joining them is a project.'],
   ['On-call', 'Someone answers when it pages at 3am, and that person is on your payroll.'],
 ];
-const Arrow = ({ s = 15 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Arrow = ({ s = 15 }: { s?: number }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* The total: when the bill changes, the old figure leaves upward and the new one arrives from below. Only whole,
    real figures are ever shown (never digits rolling through numbers that are not Hanzo's). */
-function Odo({ cents, className = '' }) {
+function Odo({ cents, className = '' }: { cents: number; className?: string }) {
   const s = usd(cents);
   const fig = s.slice(0, -3), unit = s.slice(-3);
   return (
@@ -112,7 +113,7 @@ function Bill() {
   // the HTML carries every line of the bill and the full figure; once the slip is on screen it feeds out of the slot
   // and its lines print in a 60 ms stagger (CSS transition delays, no timers)
   const [fed, setFed] = useState(false);
-  const ref = useRef(null); // the feed under the slot
+  const ref = useRef<HTMLDivElement>(null); // the feed under the slot
   const seen = useInView(ref, { once: true, amount: 'some' });
   const calm = useReducedMotion();
   useEffect(() => { if (calm) setFed(true); }, [calm]);
@@ -128,8 +129,8 @@ function Bill() {
   const cents = act.reduce((a, s) => a + s.c, 0);
   const all = on.every(Boolean);
   // Beyond: images the selection runs more than once, and what the copies reserve together
-  const twice = Object.entries(act.flatMap((s) => s.imgs).reduce((a, [, img, c, g]) => { const x = (a[img] ||= { k: 0, c: 0, g: 0 }); x.k += 1; x.c += c; x.g += g; return a; }, {})).filter(([, x]) => x.k > 1);
-  const flip = (i) => setOn((o) => o.map((v, k) => (k === i ? !v : v)));
+  const twice = Object.entries(act.flatMap((s) => s.imgs).reduce<Record<string, { k: number; c: number; g: number }>>((a, [, img, c, g]) => { const x = (a[img] ||= { k: 0, c: 0, g: 0 }); x.k += 1; x.c += c; x.g += g; return a; }, {})).filter(([, x]) => x.k > 1);
+  const flip = (i: number) => setOn((o) => o.map((v, k) => (k === i ? !v : v)));
 
   return (
     <section className="xcm-hero" aria-labelledby="xcm-h1">
@@ -194,7 +195,7 @@ function Bill() {
 }
 
 /* the dark room: a receipt for what cannot be priced, one duty per screen */
-function Unpriced({ at }) {
+function Unpriced({ at }: { at: number }) {
   return (
     <div className="xcm-u" aria-hidden="true">
       <p className="xcm-u-h"><span>What you are holding</span><span className="pf-mono">{String(at + 1).padStart(2, '0')} / 05</span></p>
@@ -222,7 +223,7 @@ function Holding() {
         <h2 className="pf-head">And the part that is not a line item</h2>
         <p className="pf-lede">The machines are the cheap half. This is what you are holding once they are paid for.</p>
       </div>
-      <PinScenes className="xcm-duties" label="What you are holding" chapters={chapters} per={60} flip visual={(at) => <Unpriced at={at} />} />
+      <PinScenes className="xcm-duties" label="What you are holding" chapters={chapters} per={60} flip visual={(at: number) => <Unpriced at={at} />} />
       <div className="pf-wrap xcm-close-w">
         <p className="xcm-close">We have not costed that list, and will not: an invented engineer-hours figure would be worth less than the arithmetic you can do yourself, knowing your own team. What Hanzo replaces is the whole column — one identity, one bill, one thing that pages someone else.</p>
         <A to={ASK.to} className="pf-btn solid xcm-ask xcm-ask-d" data-cta="comparison.close">{ASK.label}<Arrow /></A>

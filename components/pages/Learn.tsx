@@ -14,6 +14,7 @@
    its numerals inking once, the question number (pointer) + stations that wipe their guide in the train's direction and
    answers that open (state). Fade-ups: the kit Faq. 0 UI hues. Every line and link is Hanzo's own. */
 import { useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent, PointerEvent, RefObject, SyntheticEvent } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, More, Faq, Film, Img } from '../kit';
 import { NoJs } from '../v2/LineReveal';
@@ -43,7 +44,8 @@ const TRY = [
    (Chat answers with Enso; Playground's window shows Iro; Hanzo Dev with Mori; Zen is Zen; MCP with Oto; Agents with
    Koma, as on /agents). Stills only: the page's two films (Zen, Kai) are the only things that play. */
 const TRY_ART = ['/models/enso.webp', '/models/iro.webp', '/models/mori.webp', '/models/zen.webp', '/models/oto.webp', '/models/koma.webp'];
-const FURTHER = [
+const FURTHER: [string, string, string][] = [
+
   ['Starters', 'A starter for each Hanzo product. Browse, fork, deploy.', '/gallery'],
   ['UI', 'Open-source, accessible React components built on @hanzo/gui primitives.', '/ui'],
   ['GUI', 'The cross-platform UI kit and design system behind every Hanzo app.', '/gui'],
@@ -70,7 +72,7 @@ function Metro() {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const calm = useReducedMotion();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.4 });
   const prev = useRef(0);
   const dir = at >= prev.current ? 1 : -1;
@@ -81,8 +83,8 @@ function Metro() {
     return () => clearTimeout(t);
   }, [at, mine, calm, seen]);
   const rest = !mine && !calm && at === START.length - 1; // the train breathes at MCP for under 5 s, then holds still
-  const keys = (e) => {
-    const d = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+  const keys = (e: KeyboardEvent) => {
+    const d = ({ ArrowRight: 1, ArrowLeft: -1 } as Record<string, number>)[e.key];
     if (!d) return;
     e.preventDefault(); setMine(true);
     const n = (at + d + START.length) % START.length; setAt(n);
@@ -158,12 +160,12 @@ const WORDS = SAY.split(' ');
 
 function Say() {
   const N = WORDS.length;
-  const ref = useRef(null);
+  const ref = useRef<HTMLParagraphElement>(null);
   const calm = useReducedMotion();
   const [read, setRead] = useState(N);
-  const [hover, setHover] = useState(null);
-  const [own, setOwn] = useState(null);
-  const pin = useRef(null);
+  const [hover, setHover] = useState<number | null>(null);
+  const [own, setOwn] = useState<number | null>(null);
+  const pin = useRef<number | null>(null);
   useEffect(() => {
     if (calm) { setRead(N); return undefined; }
     let raf = 0;
@@ -182,8 +184,8 @@ function Say() {
     return () => { window.removeEventListener('scroll', on); window.removeEventListener('resize', on); if (raf) cancelAnimationFrame(raf); };
   }, [calm, N]);
   const n = hover ?? own ?? read;
-  const set = (v) => { pin.current = window.scrollY; setOwn(Math.max(0, Math.min(N, v))); };
-  const keys = (e) => {
+  const set = (v: number) => { pin.current = window.scrollY; setOwn(Math.max(0, Math.min(N, v))); };
+  const keys = (e: KeyboardEvent) => {
     const cur = own ?? read;
     if (e.key === 'ArrowRight') set(cur + 1);
     else if (e.key === 'ArrowLeft') set(cur - 1);
@@ -217,7 +219,7 @@ function Say() {
 /* Entrances 2–5 are set by data-e on each part and played once, part by part, as each enters the screen (one observer for
    the page). Before it plays a part waits in its start pose only when JavaScript runs and motion is allowed (Learn.css);
    every animation fills backwards only, so it ends at the true layout and leaves hover and press transforms free. */
-function useEnter(root) {
+function useEnter(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const el = root.current; if (!el) return undefined;
     const parts = [...el.querySelectorAll('[data-e]')];
@@ -233,12 +235,15 @@ function useEnter(root) {
 
 /* What to try: one rail of six numbered cards. Proximity snap with a 16% peek; a mouse can throw it (drag with inertia),
    touch scrolls it natively, the arrows and the counter step it. Each card's title is carried across by the site's morph. */
+/* the mouse drag in flight: where it began, the rail's scroll then, the last pointer x and time, its speed */
+interface Drag { x: number; left: number; last: number; t: number; v: number; moved: boolean }
+
 function Rail() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLUListElement>(null);
   const [at, setAt] = useState(0);
   const [prog, setProg] = useState(0);
   const calm = useReducedMotion();
-  const drag = useRef(null);
+  const drag = useRef<Drag | null>(null);
   /* idle: when the rail is first in view, its numerals ink one after another across the cards on screen, like the train
      riding its stops (about 0.7 s each, under 5 s), then rest; any touch of the rail ends it. */
   const seen = useInView(ref, { amount: 0.6, once: true });
@@ -250,27 +255,27 @@ function Rail() {
     if (!seen || calm || touched.current || !el) return;
     const edge = el.getBoundingClientRect().right + 1;
     const n = Math.min(TRY.length, [...el.children].filter((c) => c.getBoundingClientRect().right <= edge).length);
-    let i = 0, t;
+    let i = 0, t: ReturnType<typeof setTimeout>;
     const tick = () => { if (touched.current || i >= n) { setLit(-1); return; } setLit(i++); t = setTimeout(tick, 700); };
     t = setTimeout(tick, 250);
     return () => clearTimeout(t);
   }, [seen, calm]);
-  const step = () => { const el = ref.current; const c = el?.children[0]; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(el).columnGap || 0) : 0; };
+  const step = () => { const el = ref.current; const c = el?.children[0]; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(el).columnGap || '0') : 0; };
   const onScroll = () => {
     const el = ref.current; if (!el) return;
     const max = el.scrollWidth - el.clientWidth;
     setProg(max > 0 ? el.scrollLeft / max : 0);
     const s = step(); if (s) setAt(Math.min(TRY.length - 1, Math.round(el.scrollLeft / s)));
   };
-  const go = (d) => { stop(); const el = ref.current; if (el) el.scrollBy({ left: d * step(), behavior: calm ? 'auto' : 'smooth' }); };
-  const down = (e) => {
+  const go = (d: number) => { stop(); const el = ref.current; if (el) el.scrollBy({ left: d * step(), behavior: calm ? 'auto' : 'smooth' }); };
+  const down = (e: PointerEvent) => {
     if (lit >= 0) stop();
-    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    if (e.pointerType !== 'mouse' || e.button !== 0 || !ref.current) return;
     drag.current = { x: e.clientX, left: ref.current.scrollLeft, last: e.clientX, t: performance.now(), v: 0, moved: false };
   };
-  const move = (e) => {
-    const d = drag.current; if (!d) return;
-    const el = ref.current; const dx = e.clientX - d.x;
+  const move = (e: PointerEvent) => {
+    const d = drag.current; const el = ref.current; if (!d || !el) return;
+    const dx = e.clientX - d.x;
     if (!d.moved && Math.abs(dx) > 6) { d.moved = true; el.classList.add('held'); el.setPointerCapture?.(e.pointerId); }
     if (!d.moved) return;
     const now = performance.now();
@@ -288,7 +293,7 @@ function Rail() {
     };
     requestAnimationFrame(glide);
   };
-  const click = (e) => { if (ref.current?.dataset.thrown) { e.preventDefault(); e.stopPropagation(); } };
+  const click = (e: SyntheticEvent) => { if (ref.current?.dataset.thrown) { e.preventDefault(); e.stopPropagation(); } };
   return (
     <div className="xlr-rail-scene" data-e="fold">
       <div className="xlr-rail-top">
@@ -319,7 +324,7 @@ function Rail() {
   );
 }
 
-function Rows({ items }) {
+function Rows({ items }: { items: [string, string, string][] }) {
   return (
     <ul className="xlr-rows">
       {items.map(([t, d, h]) => (
@@ -338,8 +343,8 @@ function Rows({ items }) {
 /* A Hanzo film in a card: the kit Film (plays only in view, poster under reduced motion and Save-Data) with a pause
    first in the card, since the loops run 6 and 8 s. The card's link is a sibling whose ::after covers the card, so the
    pause button is never nested inside a link. Films are 640–720px re-encodes of public/models (30 and 130 KB). */
-function Loop({ src, poster, className }) {
-  const box = useRef(null);
+function Loop({ src, poster, className }: { src: string; poster: string; className?: string }) {
+  const box = useRef<HTMLSpanElement>(null);
   const [held, setHeld] = useState(false);
   const calm = useReducedMotion();
   const once = useRef(true);
@@ -440,11 +445,13 @@ function Read() {
 
 /* One solid per screen: while the hero's or the closing "Get started" is on screen the header's ask is outlined
    (Learn.css). */
-function useHeroAsk(ref) {
+function useHeroAsk(ref: RefObject<HTMLElement | null>) {
   useEffect(() => {
-    const main = ref.current; const asks = main ? [...main.querySelectorAll('[data-cta="learn.hero"], [data-cta="learn.close"]')] : [];
+    const main = ref.current; if (!main) return;
+    const asks = [...main.querySelectorAll('[data-cta="learn.hero"], [data-cta="learn.close"]')];
     if (!asks.length) return;
-    const on = new Set();
+    const on = new Set<Element>();
+
     const io = new IntersectionObserver((list) => {
       list.forEach((e) => { if (e.isIntersecting) on.add(e.target); else on.delete(e.target); });
       if (on.size) main.setAttribute('data-ask-on', ''); else main.removeAttribute('data-ask-on');
@@ -473,17 +480,17 @@ function Close() {
    cut in by line mask as it changes; the answers are the kit's multi-open accordion (#q-slug opens one). */
 function Questions() {
   const [n, setN] = useState(1);
-  const pick = (e) => {
-    const li = e.target.closest?.('.x-faq > li'); if (!li) return;
-    const i = Array.prototype.indexOf.call(li.parentNode.children, li) + 1;
+  const pick = (e: SyntheticEvent) => {
+    const li = (e.target as Element).closest?.('.x-faq > li'); if (!li) return;
+    const i = Array.from(li.parentElement?.children ?? []).indexOf(li) + 1;
     if (i > 0) setN(i);
   };
   /* the address follows the answers: opening one writes its #q-slug, closing the one in the address clears it */
-  const hash = (e) => {
-    const b = e.target.closest?.('.x-faq > li > button'); const li = b?.parentNode; if (!li?.id) return;
+  const hash = (e: SyntheticEvent) => {
+    const b = (e.target as Element).closest?.('.x-faq > li > button'); const li = b?.parentElement; if (!li?.id) return;
     requestAnimationFrame(() => {
       const url = location.pathname + location.search;
-      if (b.getAttribute('aria-expanded') === 'true') history.replaceState(history.state, '', url + '#' + li.id);
+      if (b?.getAttribute('aria-expanded') === 'true') history.replaceState(history.state, '', url + '#' + li.id);
       else if (location.hash === '#' + li.id) history.replaceState(history.state, '', url);
     });
   };
@@ -497,14 +504,14 @@ function Questions() {
             <span className="xp-count">/ {String(QA.length).padStart(2, '0')}</span>
           </span>
         </div>
-        <div className="xlr-qa-l" onPointerOver={pick} onFocus={pick} onClick={hash}><Faq items={QA} first={-1} onOpen={(q) => capture('faq_opened', { q })} /></div>
+        <div className="xlr-qa-l" onPointerOver={pick} onFocus={pick} onClick={hash}><Faq items={QA} first={-1} onOpen={(q: string) => capture('faq_opened', { q })} /></div>
       </div>
     </section>
   );
 }
 
 export default function Learn() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useHeroAsk(ref);
   useEnter(ref);
   return (

@@ -19,6 +19,7 @@
    session landing once (time).
    Every word and link is Hanzo's; providers, regions and machine names are examples. */
 import { Fragment, useEffect, useRef, useState } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { motion, AnimatePresence, useInView } from 'motion/react';
 import useCalm from '../../v2/useCalm';
 import { EASE } from '../../ui';
@@ -33,7 +34,7 @@ import ArtCard from './ArtCard';
 const GH = 'https://github.com/hanzoai';
 const PROVIDERS = ['DigitalOcean', 'AWS', 'GCP'];
 // a phrase that wraps only at its own dots: each piece stays whole, so a line never starts with "·" and never splits a pair
-const Nw = ({ parts }) => parts.map((p, i) => <span key={i}><span className="vs2-nw">{p}</span>{i < parts.length - 1 ? ' ' : ''}</span>);
+const Nw = ({ parts }: { parts: string[] }) => parts.map((p, i) => <span key={i}><span className="vs2-nw">{p}</span>{i < parts.length - 1 ? ' ' : ''}</span>);
 const DRY = ['dry run ·', 'quote returned ·', 'spends nothing'];
 const AUDIT = ['launched ·', 'console opened ·', 'org · project'];
 
@@ -96,8 +97,8 @@ const FACTS = [
 ];
 
 /* Each tile's own picture, small on the tile and large once opened. */
-function Pic({ i }) {
-  const d = (k) => ({ '--d': k * 120 + 'ms' });
+function Pic({ i }: { i: number }) {
+  const d = (k: number) => ({ '--d': k * 120 + 'ms' });
   if (i === 0) return <div className="vs2-p0">{PROVIDERS.map((p, r) => <span key={p}><b>{p}</b><i style={d(r * 3)} /><i style={d(r * 3 + 1)} /><i className="g" style={d(r * 3 + 2)} /></span>)}</div>;
   if (i === 1) return <div className="vs2-p1"><span className="vol">volume</span><span className="img">image</span>{[1, 2, 3].map((k) => <span key={k} className="vm l2-mono" style={d(k * 2)}>train-0{k}</span>)}</div>;
   if (i === 2) return <div className="vs2-p2"><span className="k8s">cluster</span><span className="pool">node pool</span>{Array.from({ length: 6 }).map((_, k) => <i key={k} style={d(k)} />)}</div>;
@@ -108,7 +109,7 @@ function Pic({ i }) {
 
 /* Entrance 4, word-shuffle: each title's words come in out of order, from alternating sides, and swap into place.
    Offsets and delays come from the word's index (no randomness, so server and browser agree). */
-function Shuffle({ text, at = 0 }) {
+function Shuffle({ text, at = 0 }: { text: string; at?: number }) {
   const w = text.split(' ');
   return w.map((word, i) => (
     <Fragment key={i}>
@@ -121,10 +122,10 @@ function Shuffle({ text, at = 0 }) {
 /* One card of the six. Its own small picture plays its sequence once as the card arrives and again on hover. Its
    paragraph stays in the HTML, findable; the card opens it in the kit Sheet. */
 // React renders `hidden` as a boolean, so the paragraph upgrades itself to hidden="until-found" (find in page opens it)
-const untilFound = (el) => { if (el) el.setAttribute('hidden', 'until-found'); };
+const untilFound = (el: HTMLElement | null) => { if (el) el.setAttribute('hidden', 'until-found'); };
 
-function Row({ t, d, i, onOpen }) {
-  const ref = useRef(null);
+function Row({ t, d, i, onOpen }: { t: string; d: string; i: number; onOpen: (i: number) => void }) {
+  const ref = useRef<HTMLLIElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.45 });
   return (
     <li ref={ref} data-on={seen ? '' : undefined}>
@@ -169,12 +170,13 @@ function Tiles() {
   );
 }
 
-const clean = (prefix) => prefix.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 24) || 'train';
+const clean = (prefix: string) => prefix.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 24) || 'train';
 
 /* Beyond: name a fleet; see what a batch launch will create, and in which inventory. The batch lives on the page, so
    the close lands the batch named here. */
-function Name({ prefix, setPrefix, count, setCount, dry, setDry }) {
-  const sec = useRef(null);
+interface NameProps { prefix: string; setPrefix: Dispatch<SetStateAction<string>>; count: number; setCount: Dispatch<SetStateAction<number>>; dry: boolean; setDry: Dispatch<SetStateAction<boolean>> }
+function Name({ prefix, setPrefix, count, setCount, dry, setDry }: NameProps) {
+  const sec = useRef<HTMLElement>(null);
   const here = useInView(sec, { once: true, amount: 0.4 });
   const calm = useCalm();
   const armed = useRef(false);
@@ -191,7 +193,7 @@ function Name({ prefix, setPrefix, count, setCount, dry, setDry }) {
     ids.push(setTimeout(() => armed.current && setCount(2), 700), setTimeout(() => { if (armed.current) setCount(3); armed.current = false; }, 1200));
     return () => ids.forEach(clearTimeout);
   }, [here]); // eslint-disable-line react-hooks/exhaustive-deps
-  const touch = (fn) => () => { if (armed.current) { armed.current = false; setPrefix((v) => v || 'train'); } fn(); };
+  const touch = (fn: () => void) => () => { if (armed.current) { armed.current = false; setPrefix((v) => v || 'train'); } fn(); };
   const px = clean(prefix);
   return (
     // entrance 3, underline-sweep: as the section arrives, underlines sweep under its key words in turn (the heading,
@@ -237,8 +239,8 @@ function Name({ prefix, setPrefix, count, setCount, dry, setDry }) {
 /* The close's object: the batch you named, as a console session. The window opens with one tab per machine in your
    batch (your prefix, your count); the first tab is live with its prompt; the audit row writes itself under it, and the
    line says whether it was a dry run or metered. Plays once on arrival. */
-function Close({ px, count, dry }) {
-  const ref = useRef(null);
+function Close({ px, count, dry }: { px: string; count: number; dry: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.5 });
   const names = Array.from({ length: count }, (_, i) => `${px}-${String(i + 1).padStart(2, '0')}`);
   const shown = names.slice(0, 3);
@@ -259,8 +261,9 @@ function Close({ px, count, dry }) {
 }
 
 /* Entrance 5, curtain-rise: the close rises from below behind a clip, like a curtain going up. */
-function Curtain({ children }) {
-  const ref = useRef(null);
+function Curtain({ children }: { children?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+
   const seen = useInView(ref, { once: true, amount: 0.2 });
   return <div className="vs2-fin" ref={ref} data-in={seen ? '' : undefined}>{children}</div>;
 }

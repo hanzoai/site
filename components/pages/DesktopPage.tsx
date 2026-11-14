@@ -25,15 +25,17 @@ import './DesktopPage.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/apps/desktop';
 const GH = 'https://github.com/hanzoai';
-const OSES = [['mac', 'macOS', 'arm64 + intel'], ['win', 'Windows', 'x64 + arm64'], ['linux', 'Linux', 'deb + rpm + AppImage']];
-const GLIDE = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
+type Os = 'mac' | 'win' | 'linux';
+const OSES: [Os, string, string][] = [['mac', 'macOS', 'arm64 + intel'], ['win', 'Windows', 'x64 + arm64'], ['linux', 'Linux', 'deb + rpm + AppImage']];
+const GLIDE = { duration: 0.3, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] };
 
-function useOs() {
-  const [os, setOs] = useState('mac');
-  const [mine, setMine] = useState(null);
+function useOs(): [Os, (k: Os) => void, Os | null] {
+  const [os, setOs] = useState<Os>('mac');
+  const [mine, setMine] = useState<Os | null>(null);
   useEffect(() => {
-    const p = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '').toLowerCase();
-    const k = /win/.test(p) ? 'win' : /linux|x11/.test(p) && !/android/i.test(navigator.userAgent) ? 'linux' : 'mac';
+    const uad = (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData; // not in lib.dom yet
+    const p = ((uad && uad.platform) || navigator.platform || '').toLowerCase();
+    const k: Os = /win/.test(p) ? 'win' : /linux|x11/.test(p) && !/android/i.test(navigator.userAgent) ? 'linux' : 'mac';
     setOs(k); setMine(k);
   }, []);
   return [os, setOs, mine];
@@ -45,7 +47,7 @@ const MSGS = [
   ['ai', 'Wrote gateway/limit.go and a test at 100 req/min per key. Tests pass.'],
 ];
 // the run log beside the thread: Hanzo's own steps from the thread, each with its state drawn as a shape
-const STEPS = [['Read 14 files.', 5], ['gateway/limit.go', 6], ['100 req/min per key', 7], ['Tests pass.', 8]];
+const STEPS: [string, number][] = [['Read 14 files.', 5], ['gateway/limit.go', 6], ['100 req/min per key', 7], ['Tests pass.', 8]];
 
 // the file the thread names, drawn as the file: gateway/limit.go, 100 req/min per key (the visual of Hanzo's own example)
 const CODE = [
@@ -60,9 +62,9 @@ const CODE = [
 const Tick = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* ---------- the hero window: it puts itself together, then builds the limiter. s = 0..9 ---------- */
-function Window({ os }) {
-  const box = useRef(null);
-  const ask = useRef(null);
+function Window({ os }: { os: Os }) {
+  const box = useRef<HTMLDivElement>(null);
+  const ask = useRef<HTMLSpanElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const [s, setS] = useState(0); // the server draws the empty frame; with JS off every part shows (the hidden states are .js only)
@@ -70,8 +72,8 @@ function Window({ os }) {
   useEffect(() => {
     if (calm || held) { setS(9); if (ask.current) ask.current.textContent = ''; return; }
     if (!seen) return;
-    let alive = true, t = 0, first = true;
-    const wait = (ms) => new Promise((r) => { t = setTimeout(r, ms); });
+    let alive = true, t: ReturnType<typeof setTimeout> | undefined, first = true;
+    const wait = (ms: number) => new Promise<void>((r) => { t = setTimeout(r, ms); });
     (async () => {
       while (alive) {
         if (ask.current) ask.current.textContent = '';
@@ -160,7 +162,9 @@ function Window({ os }) {
   );
 }
 
-function Hero({ os, setOs, mine }) {
+type OsProps = { os: Os; setOs: (k: Os) => void; mine: Os | null };
+
+function Hero({ os, setOs, mine }: OsProps) {
   return (
     <section className="dk-hero" aria-labelledby="dk-h1">
       <div className="av-wrap dk-top">
@@ -213,7 +217,7 @@ const RUNS = [
 ];
 
 function Build() {
-  const door = useEnter(0.25);
+  const door = useEnter<HTMLDivElement>(0.25);
   return (
     <section className="av-sec dk-build" aria-labelledby="dk-build-h">
       <div className="av-wrap av-grid">
@@ -231,7 +235,7 @@ function Build() {
 
 /* ---------- the three points, one quick list; they tip into place like dominoes ---------- */
 function Points() {
-  const row = useEnter(0.3);
+  const row = useEnter<HTMLOListElement>(0.3);
   return (
     <section className="av-sec tight dk-points" aria-label="What you can build in it">
       <div className="av-wrap">
@@ -257,8 +261,8 @@ function Offline() {
   const [note, setNote] = useState(3);
   const runs = local || net;
   const cut = () => { setNet(!net); setNote(3); };
-  const pick = (v) => { setLocal(v); setNote(v ? 4 : 3); };
-  const thrown = useEnter(0.3);
+  const pick = (v: boolean) => { setLocal(v); setNote(v ? 4 : 3); };
+  const thrown = useEnter<HTMLDivElement>(0.3);
   return (
     <section className="av-sec av-dark dk-dark" data-room="dark" aria-labelledby="dk-off-h">
       <div className="av-wrap">
@@ -310,8 +314,8 @@ function Offline() {
 }
 
 /* ---------- every system: three huge rows; pick one and the window above rebuilds in it. The spec opens in a drawer. ---------- */
-function Everywhere({ os, setOs, mine }) {
-  const show = (k) => {
+function Everywhere({ os, setOs, mine }: OsProps) {
+  const show = (k: Os) => {
     setOs(k);
     const el = document.getElementById('dk-stage'); if (!el) return;
     const y = el.getBoundingClientRect().top + scrollY - 96;

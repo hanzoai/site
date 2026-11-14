@@ -26,6 +26,8 @@
    close. Entrances (realtime/RtEnter.jsx): shrink-to-card, tile-flip, card-deal, vertical-ticker, venetian-type. Deck
    greys, tweens only. */
 import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
+
 import { motion, AnimatePresence, useMotionValue, animate } from 'motion/react';
 import { A } from '../../kit';
 import { useCalm } from '../../ui';
@@ -43,11 +45,12 @@ import './Realtime.css';
 
 const KEYS = 'https://platform.hanzo.ai/api-keys';
 const DOCS = 'https://docs.hanzo.ai';
-const EASE = [0.16, 1, 0.3, 1]; // ease-emphasis: arrivals
-const IO = [0.4, 0, 0.2, 1]; // ease-in-out: things that move and stay
+type Bezier = [number, number, number, number];
+const EASE: Bezier = [0.16, 1, 0.3, 1]; // ease-emphasis: arrivals
+const IO: Bezier = [0.4, 0, 0.2, 1]; // ease-in-out: things that move and stay
 const ARRIVE = { duration: 0.3, ease: EASE };
 const GLIDE = { duration: 0.4, ease: IO };
-const QUICK = { duration: 0.15, ease: [0, 0, 0.2, 1] };
+const QUICK = { duration: 0.15, ease: [0, 0, 0.2, 1] as Bezier };
 
 /* true after hydration: collapsed detail is a JS-only presentation, so with JS off every word reads in order */
 function useMounted() {
@@ -57,7 +60,7 @@ function useMounted() {
 }
 
 /* a counter that steps every ms while run is true (a timeout chain: nothing ticks off screen or paused) */
-function useBeat(run, ms = 1000) {
+function useBeat(run: boolean, ms = 1000) {
   const [n, setN] = useState(0);
   useEffect(() => {
     if (!run) return;
@@ -78,11 +81,11 @@ const stop = await base
 
 /* ---------- the hero object: three clients on one stream ---------- */
 // a little life of one record: [action, rows shown]
-const BEATS = [['create', ['a', 'b']], ['create', ['a', 'b', 'c']], ['update', ['a', 'b*', 'c']], ['delete', ['a', 'c']]];
-const W = { a: '64%', b: '46%', c: '72%' };
+const BEATS: [string, string[]][] = [['create', ['a', 'b']], ['create', ['a', 'b', 'c']], ['update', ['a', 'b*', 'c']], ['delete', ['a', 'c']]];
+const W: Record<string, string> = { a: '64%', b: '46%', c: '72%' };
 
 function Screens() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.3);
   const [paused, pause] = usePause();
   const [i, setI] = useState(1);
   const [deny, setDeny] = useState([false, false, true]); // client 3's rule cannot read record b, until you flip it
@@ -145,7 +148,7 @@ const GIVES = [
 // the tour: when no hand has chosen, the graph walks its parts one fact at a time
 const TOUR = Array.from({ length: 8 }, (_, f) => NODES.findIndex((n) => n[2] === f)); // the first node of each fact
 
-function useSeen(ref, amount) {
+function useSeen(ref: RefObject<Element | null>, amount: number) {
   const [seen, setSeen] = useState(false);
   useEffect(() => {
     const el = ref.current; if (!el) return;
@@ -157,7 +160,7 @@ function useSeen(ref, amount) {
 }
 
 function Gives() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   const seen = useSeen(ref, 0.3);
   const [paused, pause] = usePause();
@@ -173,14 +176,14 @@ function Gives() {
     return () => clearTimeout(id);
   }, [e, run, evAt]);
   // the tour: one part every 4.8 s until a hand picks one; a node under the pointer reads out its words meanwhile
-  const [peek, setPeek] = useState(null);
+  const [peek, setPeek] = useState<number | null>(null);
   const fi = NODES[peek ?? sel][2];
   useEffect(() => {
     if (!run || mine || peek !== null) return;
     const id = setTimeout(() => setSel(TOUR[(NODES[sel][2] + 1) % TOUR.length]), 4800);
     return () => clearTimeout(id);
   }, [sel, run, mine, peek]);
-  const pick = (i) => { setSel(i); setMine(true); };
+  const pick = (i: number) => { setSel(i); setMine(true); };
   const ev = EVENTS[e];
   return (
     <section className="lx-sec rt-gives" aria-labelledby="rt-gives-h" ref={ref}>
@@ -232,7 +235,7 @@ const USES = [
   ['Dev Tooling', 'Create collaborative coding environments with real-time changes and execution.', 'dev'],
 ];
 
-function Vignette({ k }) {
+function Vignette({ k }: { k: string }) {
   if (k === 'chat') return <div className="rt-v chat"><i /><i className="me" /><i /><b>· · ·</b></div>;
   if (k === 'space') return <div className="rt-v space">{[0, 1, 2, 3].map((x) => <i key={x} />)}<u /></div>;
   if (k === 'edit') return <div className="rt-v edit">{[70, 92, 54, 80].map((w, x) => <i key={x} style={{ width: w + '%' }} />)}<u /><u className="b" /></div>;
@@ -242,8 +245,8 @@ function Vignette({ k }) {
 }
 
 function Rail() {
-  const wrap = useRef(null);
-  const track = useRef(null);
+  const wrap = useRef<HTMLDivElement>(null);
+  const track = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   // one hard stop for drag and arrows alike, measured from the track (a throw can never run past where Next stops)
   const [min, setMin] = useState(0);
@@ -252,7 +255,7 @@ function Rail() {
     m(); addEventListener('resize', m);
     return () => removeEventListener('resize', m);
   }, []);
-  const nudge = (d) => {
+  const nudge = (d: number) => {
     const w = wrap.current, t = track.current;
     if (!w || !t) return;
     const min = Math.min(0, w.offsetWidth - t.scrollWidth);
@@ -356,9 +359,9 @@ const GROW = [
   ['A stream is a response', 'Not a process, not a socket server beside the API — an HTTP response left open. They are cheap to hold, and one that goes away releases what it held without anything needing to be told.', '', 'One open response'],
   ['Isolated by tenant', "Every org's subscribers sit on that org's own broker, over that org's own data. Adding a tenant adds a broker rather than widening a shared one, so nobody's growth is anybody else's problem.", 'Blast radius', 'One tenant'],
 ];
-const ORGS = [['org a', 4], ['org b', 6], ['org c', 3], ['org d', 2]];
+const ORGS: [string, number][] = [['org a', 4], ['org b', 6], ['org c', 3], ['org d', 2]];
 
-function TenantMap({ at, n }) {
+function TenantMap({ at, n }: { at: number; n: number }) {
   const orgs = at === 2 ? ORGS : ORGS.slice(0, 3);
   const k = n % 6;
   return (
@@ -392,7 +395,8 @@ function TenantMap({ at, n }) {
 }
 
 function Grow() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive<HTMLDivElement>(0.3);
+
   const [paused, pause] = usePause();
   const run = live && !paused;
   const [at, choose] = useSteps(3, 5200, run);

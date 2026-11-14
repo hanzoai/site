@@ -19,6 +19,8 @@
    you recall it. Nothing is saved or sent. Greys only (docs/build-notes/DONE.md). Every word is Hanzo's, and the editor's text is
    Hanzo's own start script from this page. */
 import { useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
+import type { HTMLMotionProps } from 'motion/react';
 import { motion, useInView, useMotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../ui';
 import { A, Cta, Band } from '../kit';
@@ -37,7 +39,7 @@ const GH = 'https://github.com/hanzoai/ide';
 
 /* The editor shows real text: Hanzo's own start script from this page. Each memory belongs to a line of it. */
 const SCRIPT_LINES = ['# Open it in the browser', 'open https://ide.hanzo.ai', '', '# Or build the desktop app from source', 'git clone https://github.com/hanzoai/ide.git', 'cd ide', 'npm install', 'npm run tauri:dev', '', '# First launch: pick a provider, paste a key, choose a model.'];
-const MEMS = [
+const MEMS: [number, string, string][] = [
   [4, 'episodic', 'what happened'],
   [5, 'semantic', 'what is true about the project'],
   [7, 'procedural', 'how things are done here'],
@@ -45,21 +47,21 @@ const MEMS = [
 const IMPACT = [4, 5, 6, 7];
 const LAST = SCRIPT_LINES.length - 1;
 const SESSION = [['$', 'hanzo'], ['>', 'deploy the gateway to staging'], ['·', 'reading the project'], ['✓', 'gateway is on staging']];
-const ramp = (v, a, b) => Math.min(1, Math.max(0, (v - a) / (b - a)));
+const ramp = (v: number, a: number, b: number) => Math.min(1, Math.max(0, (v - a) / (b - a)));
 /* Lines: the page's own line-mask cut-in (700 ms, 60 ms apart, ease-emphasis), done in CSS so the server paint and the
    client agree under every preference (the shared A2Lines branches on reduced motion while rendering). `now` cuts in
    on first paint; otherwise when the heading reaches the screen. Reduced motion and JS off show the final lines. */
 /* Room: the dark room that enters as a rounded card inside the gutters and opens to full width as it is reached (as
    the shared A2Room), with no preference branch while rendering: phones and reduced motion open it in CSS. */
-function Room({ className = '', children, ...rest }) {
-  const ref = useRef(null);
+function Room({ className = '', children, ...rest }: Omit<HTMLMotionProps<'section'>, 'ref'>) {
+  const ref = useRef<HTMLElement>(null);
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'start 0.25'] });
   const clip = useTransform(p, (v) => { const k = 1 - Math.min(1, Math.max(0, v)); return `inset(0px ${Math.round(k * 32)}px round ${Math.round(k * 24)}px)`; });
   return <motion.section ref={ref} className={'a2-dark ide-room ' + className} data-room="dark" style={{ clipPath: clip }} {...rest}>{children}</motion.section>;
 }
 
-function Lines({ lines, as = 'h2', className = '', now, id }) {
-  const ref = useRef(null);
+function Lines({ lines, as = 'h2', className = '', now, id }: { lines: string[]; as?: 'h1' | 'h2'; className?: string; now?: boolean; id: string }) {
+  const ref = useRef<HTMLHeadingElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.3 });
   const Tag = as;
   return (
@@ -69,7 +71,7 @@ function Lines({ lines, as = 'h2', className = '', now, id }) {
   );
 }
 /* one line of shell, lightly coloured in greys: comments faint, the command word bright, URLs quieter */
-const Shell = ({ l }) => {
+const Shell = ({ l }: { l: string }) => {
   if (!l) return ' ';
   if (l.startsWith('#')) return <span className="ide-cm">{l}</span>;
   const [w, ...rest] = l.split(' ');
@@ -77,7 +79,7 @@ const Shell = ({ l }) => {
 };
 
 function Editor() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.01 }); // it starts the moment any of it is on screen, so the hero is alive at once
   const calm = useReducedMotion();
   const [t, setT] = useState(99); // the finished picture is in the HTML; the browser replays it
@@ -85,9 +87,9 @@ function Editor() {
   useEffect(() => {
     if (paused) return;
     if (!seen || calm) { setT(99); return; }
-    let alive = true, h = 0;
+    let alive = true, h: ReturnType<typeof setTimeout> | undefined;
     const end = LAST + 6;
-    const tick = (v) => { if (!alive) return; setT(v); h = setTimeout(() => tick(v >= end ? 0 : v + 1), v >= end ? 4200 : 520); };
+    const tick = (v: number) => { if (!alive) return; setT(v); h = setTimeout(() => tick(v >= end ? 0 : v + 1), v >= end ? 4200 : 520); };
     // the finished picture holds for 1.5 s, then its memories leave in order before the replay (no hard reset)
     h = setTimeout(() => tick(0), 1500);
     return () => { alive = false; clearTimeout(h); };
@@ -96,7 +98,7 @@ function Editor() {
   useEffect(() => {
     const w = ref.current;
     if (!w) return;
-    const lis = w.querySelectorAll('.ide-lines li'), chips = w.querySelectorAll('.ide-mem');
+    const lis = w.querySelectorAll<HTMLElement>('.ide-lines li'), chips = w.querySelectorAll<HTMLElement>('.ide-mem');
     const set = () => MEMS.forEach(([line], i) => {
       const c = chips[i];
       if (!c || !lis[line]) return;
@@ -162,9 +164,9 @@ function Editor() {
 /* Stage: the words first, the editor beneath the buttons (never over them); as you scroll it rises into place and
    settles from a little larger to its own size, while the words make way. */
 function Stage() {
-  const ref = useRef(null);
-  const copy = useRef(null);
-  const obj = useRef(null);
+  const ref = useRef<HTMLElement>(null);
+  const copy = useRef<HTMLDivElement>(null);
+  const obj = useRef<HTMLDivElement>(null);
   const sy = useMotionValue(0); // how far the editor rises as you scroll: it rests under the buttons in normal flow (no jump on hydration)
   const ss = useMotionValue(1); // it starts at its own size: no pop after hydration
   const narrow = useNarrow();
@@ -183,9 +185,9 @@ function Stage() {
     addEventListener('resize', m);
     return () => removeEventListener('resize', m);
   }, [sy, ss]);
-  const k = (v) => (still ? 1 : ramp(v, 0, 0.55));
-  const scale = useTransform([p, ss], ([v, s0]) => (still ? 1 : s0 + (1 - s0) * k(v)));
-  const y = useTransform([p, sy], ([v, up]) => (still ? 0 : -up * k(v)));
+  const k = (v: number) => (still ? 1 : ramp(v, 0, 0.55));
+  const scale = useTransform<number, number>([p, ss], ([v, s0]) => (still ? 1 : s0 + (1 - s0) * k(v)));
+  const y = useTransform<number, number>([p, sy], ([v, up]) => (still ? 0 : -up * k(v)));
   const fade = useTransform(p, (v) => (still ? 1 : 1 - ramp(v, 0.03, 0.19))); // gone before the rising editor reaches the words (it meets them at about 0.22); functions: an accelerated scroll fade does not clamp
   const lift = useTransform(p, (v) => (still ? 0 : -160 * ramp(v, 0, 0.3)));
   const cap = useTransform(p, (v) => (still ? 1 : ramp(v, 0.5, 0.62)));
@@ -259,9 +261,9 @@ const WHAT = [
 const GRAPH = [[50, 50, 0], [24, 26, 1], [78, 24, 1], [20, 72, 1], [80, 74, 1], [50, 12, 2], [6, 48, 2], [94, 48, 2], [50, 90, 2]];
 const EDGES = [[0, 1], [0, 2], [0, 3], [0, 4], [1, 5], [2, 5], [1, 6], [3, 6], [2, 7], [4, 7], [3, 8], [4, 8]];
 
-function Picture({ i }) {
+function Picture({ i }: { i: number }) {
   // the picture's own animations (the arrival and the short idle loops) wait until it is on screen
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
   const go = seen ? ' go' : '';
   if (i === 0) return (
@@ -302,7 +304,7 @@ function Picture({ i }) {
 }
 
 function Promises() {
-  return <A2Chapters label="What Hanzo IDE does" items={WHAT.map(([, t, d]) => ({ t, d }))} visual={(i) => <Picture i={i} />} />;
+  return <A2Chapters label="What Hanzo IDE does" items={WHAT.map(([, t, d]) => ({ t, d }))} visual={(i: number) => <Picture i={i} />} />;
 }
 
 let MID = 1;
@@ -311,14 +313,14 @@ function Teach() {
   const [text, setText] = useState('');
   const [kind, setKind] = useState(0);
   const [mems, setMems] = useState([{ id: 0, k: 0, t: 'gateway is on staging', n: 0 }]);
-  const add = (e) => {
+  const add = (e: FormEvent) => {
     e.preventDefault();
     const t = text.trim();
     if (!t) return;
     setMems((m) => [...m, { id: MID++, k: kind, t, n: 0 }].slice(-9)); // keeps the last nine, enough to show the tiers
     setText('');
   };
-  const recall = (id) => setMems((m) => m.map((x) => (x.id === id ? { ...x, n: x.n + 1 } : x)));
+  const recall = (id: number) => setMems((m) => m.map((x) => (x.id === id ? { ...x, n: x.n + 1 } : x)));
   return (
     <section className="a2-sec ide-teach" aria-labelledby="ide-teach-h">
       <div className="a2-wrap">

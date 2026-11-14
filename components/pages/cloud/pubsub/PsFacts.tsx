@@ -12,14 +12,15 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useCalm } from '../../../ui';
 import { useSnap } from './PsEnter';
 
-const EASE = [0.16, 1, 0.3, 1];
-const IO = [0.4, 0, 0.2, 1];
-const at = (delay, duration = 0.4, ease = EASE) => ({ delay, duration, ease });
-const pad = (n) => String(n).padStart(2, '0');
+type Bezier = [number, number, number, number];
+const EASE: Bezier = [0.16, 1, 0.3, 1];
+const IO: Bezier = [0.4, 0, 0.2, 1];
+const at = (delay: number, duration = 0.4, ease: Bezier = EASE) => ({ delay, duration, ease });
+const pad = (n: number) => String(n).padStart(2, '0');
 
 /* one drawing; `still` renders its final frame with no animation */
-function Fig({ i, still }) {
-  const ini = (o) => (still ? false : o);
+function Fig({ i, still }: { i: number; still: boolean }) {
+  const ini = <T,>(o: T) => (still ? false : o);
   // the one cell that fills (the consumer, the instance that answers): a class after mount, its colour from CSS so dark
   // mode has its own; the fill's delay sits on the element
   const [lit, setLit] = useState(false);
@@ -81,7 +82,7 @@ function Fig({ i, still }) {
   }
   if (i === 2) {
     // key-value: the last value per key; one key changes under a watch and its history grows by one
-    const rows = [['orders', '412', 2], ['payments', '96', 3], ['signups', '1055', 3]];
+    const rows: [string, string, number][] = [['orders', '412', 2], ['payments', '96', 3], ['signups', '1055', 3]];
     return (
       <g>
         <M.text x="14" y="36" initial={ini({ opacity: 0.35 })} animate={{ opacity: 1 }} transition={at(1.0)} className="t-ink">watch signups</M.text>
@@ -175,7 +176,7 @@ function Fig({ i, still }) {
   );
 }
 
-function Drawing({ i, still, n }) {
+function Drawing({ i, still, n }: { i: number; still: boolean; n: number }) {
   return (
     <svg viewBox="0 0 340 210" className="ps-fig" role="img" aria-label={`Drawing for fact ${n} of 6`}>
       <Fig i={i} still={still} />
@@ -183,25 +184,26 @@ function Drawing({ i, still, n }) {
   );
 }
 
-export default function PsFacts({ facts }) {
+export default function PsFacts({ facts }: { facts: [string, string][] }) {
   const calm = useCalm();
   const [mid, setMid] = useState(0); // the fact at the middle of the screen
-  const [hov, setHov] = useState(null); // the fact under the pointer, while it is there
-  const [drawn, setDrawn] = useState([]); // phones: the facts whose own drawing has come up the screen and drawn
-  const items = useRef([]);
+  const [hov, setHov] = useState<number | null>(null); // the fact under the pointer, while it is there
+  const [drawn, setDrawn] = useState<number[]>([]); // phones: the facts whose own drawing has come up the screen and drawn
+  const items = useRef<(HTMLLIElement | null)[]>([]);
   useEffect(() => {
     const io = new IntersectionObserver((es) => {
-      es.forEach((e) => { if (e.isIntersecting) setMid(+e.target.dataset.i); });
+      es.forEach((e) => { if (e.isIntersecting) setMid(+(e.target as HTMLElement).dataset.i!); });
     }, { rootMargin: '-45% 0px -50% 0px' });
     const up = new IntersectionObserver((es) => {
-      es.forEach((e) => { if (e.isIntersecting) { const i = +e.target.dataset.i; setDrawn((d) => (d.includes(i) ? d : [...d, i])); } });
+      es.forEach((e) => { if (e.isIntersecting) { const i = +(e.target as HTMLElement).dataset.i!; setDrawn((d) => (d.includes(i) ? d : [...d, i])); } });
     }, { rootMargin: '0px 0px -6% 0px' });
     items.current.forEach((el) => { if (el) { io.observe(el); up.observe(el); } });
     return () => { io.disconnect(); up.disconnect(); };
   }, []);
   const on = hov ?? mid;
-  const root = useRef(null);
+  const root = useRef<HTMLDivElement>(null);
   useSnap(root);
+
   return (
     <div className="ps-facts-in" ref={root}>
       <div className="ps-facts-l">

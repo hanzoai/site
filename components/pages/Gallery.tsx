@@ -9,6 +9,7 @@
    its link straight to its place.
    Every word is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../ui';
 import { A, Cta } from '../kit';
@@ -29,16 +30,16 @@ const FRAMES = [
   ['Searchable', 'Filter by stack, product, or use case. Live previews. Embedded code playgrounds.'],
   ['Submit Yours', 'Build a template the community will love? Open a PR — we showcase the best with a paid bounty.'],
 ];
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 const PROMPT = 'Read https://hanzo.ai/skill.md and use Hanzo Gallery in my project.';
 const GALLERY = 'https://gallery.hanzo.ai';
 const REPO = 'https://github.com/hanzo-apps/gallery';
 
 /* A small product render for each frame, drawn only from that frame's own words (aria-hidden: the words are in the caption). */
-function Render({ i, on }) {
+function Render({ i, on }: { i: number; on: boolean }) {
   return <span className="xga-app"><span className="xga-r-chrome"><i /><i /><i /></span><Body i={i} on={on} /></span>;
 }
-function Body({ i, on }) {
+function Body({ i, on }: { i: number; on: boolean }) {
   const c = 'xga-r xga-r' + i + (on ? ' on' : '');
   if (i === 0) return (
     <span className={c}>
@@ -81,14 +82,14 @@ function Body({ i, on }) {
 
 /* Stepping up to a frame: it opens large from the frame you clicked; arrows change what it shows (a crossfade), so
    closing flies back to the same frame. Escape closes, focus stays inside and comes back to the frame. */
-function Viewer({ at, stepped, origin, setAt, close }) {
-  const x = useRef(null);
-  const box = useRef(null);
+function Viewer({ at, stepped, origin, setAt, close }: { at: number; stepped: boolean; origin: string; setAt: Dispatch<SetStateAction<number>>; close: () => void }) {
+  const x = useRef<HTMLButtonElement>(null);
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     x.current?.focus();
-    const key = (e) => {
-      if (e.key === 'Tab') {
-        const f = [...box.current.querySelectorAll('button, a')], i = f.indexOf(document.activeElement);
+    const key = (e: KeyboardEvent) => {
+      if (e.key === 'Tab' && box.current) {
+        const f = [...box.current.querySelectorAll<HTMLElement>('button, a')], i = f.indexOf(document.activeElement as HTMLElement);
         e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length]?.focus();
       }
       if (e.key === 'Escape') close();
@@ -135,7 +136,7 @@ function Wall() {
   const [from, setFrom] = useState(-1);
   const [hold, setHold] = useState(false);
   const paused = usePaused();
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   useEffect(() => {
@@ -151,11 +152,11 @@ function Wall() {
   // once you step to another template, nothing on the wall shares a layout id with the viewer until it has gone:
   // the close is then a plain fade and no frame can fly from a stale box
   const [stepped, setStepped] = useState(false);
-  const step = (f) => setOpen((v) => { const n = typeof f === 'function' ? f(v) : f; if (n !== from) setStepped(true); return n; });
+  const step: Dispatch<SetStateAction<number>> = (f) => setOpen((v) => { const n = typeof f === 'function' ? f(v) : f; if (n !== from) setStepped(true); return n; });
   const close = () => { if (stepped) setLit(open); setOpen(-1); };
   const [origin, setOrigin] = useState('50% 50%');
   const gone = () => { setFrom(-1); setStepped(false); document.getElementById('xga-f' + lit)?.focus({ preventScroll: true }); }; // focus lands on the template you closed on, and the page stays put
-  const openFrom = (i, el) => {
+  const openFrom = (i: number, el: HTMLElement) => {
     const r = el.getBoundingClientRect(); // the viewer's box is centred in the screen: its origin is the frame's centre
     const w = Math.min(1100, innerWidth - 48), h = Math.min(innerHeight - 48, 640);
     setOrigin(`${Math.round(r.left + r.width / 2 - (innerWidth - w) / 2)}px ${Math.round(r.top + r.height / 2 - (innerHeight - h) / 2)}px`);
@@ -230,8 +231,8 @@ function Wall() {
 
 /* The prompt types itself into the box when you reach it; the full prompt holds the box's height, so nothing moves. */
 function Paste() {
-  const box = useRef(null);
-  const el = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
+  const el = useRef<HTMLSpanElement>(null);
   const seen = useInView(box, { once: true, amount: 0.6 });
   const calm = useReducedMotion();
   const [typing, setTyping] = useState(false);
@@ -263,7 +264,8 @@ function Paste() {
   );
 }
 
-const MOVES = [
+type Move = [label: string, text: string, ask: string, to: string, frame: number];
+const MOVES: Move[] = [
   ['Fork it', 'All templates Apache-2.0 in the hanzo-apps/gallery monorepo.', 'View on GitHub', REPO, 3],
   ['Deploy it', 'CI, secrets, and scaling preconfigured.', 'Deploy to Cloud', 'https://platform.hanzo.ai/deploy', 2],
   ['Submit yours', 'Open a PR — we showcase the best with a paid bounty.', 'View on GitHub', REPO, 5],

@@ -20,6 +20,8 @@
    Scale has rhythm (MASTER 3.1): h1 52, headings 26, figures 64, one moment per screen; deck durations, ease-emphasis, no springs.
    V2: 8/10 the table that reads itself under a 52px h1 split 8/5 with its lede and ask, verdicts only, sentences in a sheet, list rows on phones, Enso's Yes tally the one big figure, card that opens, wiped dark room closing on the one ask; deck greys, rhythm and timing, legible with JS off. */
 import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
+
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react';
 import { A } from '../kit';
 import MaskLines from '../v2/MaskLines';
@@ -30,7 +32,8 @@ import '../v2/ProofScale.css';
 import '../v2/ProofRhythm.css';
 import './Compare.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+type Bezier = [number, number, number, number];
+const EASE: Bezier = [0.16, 1, 0.3, 1];
 const COLS = ['Enso', 'OpenRouter', 'Portkey', 'LiteLLM'];
 const ROWS = [
   ['Models reachable', 'Enso: 600+. OpenRouter: 500+ (80+ providers). Portkey: 1,600+. LiteLLM: 1,800+ (140+ providers).'],
@@ -42,7 +45,8 @@ const ROWS = [
   ['Runs on your own infrastructure', 'Enso: Yes — the whole cloud is one binary and one API, on your own Kubernetes or your laptop. OpenRouter: No — a hosted service. Portkey: Self-hosting offered at enterprise tier. LiteLLM: Yes — open source, self-hosted free forever.'],
 ];
 // each row's sentence, cut into its four cells: a short verdict where the cell leads with one, and the detail after it
-const cells = (s) => COLS.map((c, i) => {
+interface CellData { v: string; d: string; t: string }
+const cells = (s: string): CellData[] => COLS.map((c, i) => {
   const from = s.indexOf(c + ': ') + c.length + 2;
   const to = i < 3 ? s.indexOf(' ' + COLS[i + 1] + ': ') : s.length;
   const txt = s.slice(from, to).replace(/\.+$/, '');
@@ -50,26 +54,26 @@ const cells = (s) => COLS.map((c, i) => {
   return m ? { v: m[1], d: m[2] || '', t: txt } : { v: '', d: txt, t: txt };
 });
 const TABLE = ROWS.map(([k, s]) => ({ k, s, c: cells(s) }));
-const pad = (i) => String(i + 1).padStart(2, '0');
+const pad = (i: number) => String(i + 1).padStart(2, '0');
 // Beyond: only rows where some cell answers Yes or No can be counted
 const YN = TABLE.map((r, i) => (r.c.some((c) => c.v === 'Yes' || c.v === 'No') ? i : -1)).filter((i) => i >= 0);
-const tone = (c) => (c.v === 'Yes' ? 'y' : c.v === 'No' ? 'n' : c.v ? 'v' : 't');
+const tone = (c: CellData) => (c.v === 'Yes' ? 'y' : c.v === 'No' ? 'n' : c.v ? 'v' : 't');
 const ASK = { label: 'Model routing APIs', to: '/compare/model-routing', cta: 'compare.hero' };
-const IO = [0.4, 0, 0.2, 1]; // deck ease-in-out: things that move and stay
+const IO: Bezier = [0.4, 0, 0.2, 1]; // deck ease-in-out: things that move and stay
 // JS off: everything that starts hidden or offset stands in place
 const NOJS = '<style>.xcp-in{opacity:1!important;transform:none!important}.xcp-mark{display:none!important}.xcp-tally-r li>i b{transform:scaleX(var(--w))!important}</style>';
 
-const Tick = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const Dash = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M4 8h8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>;
-const Mark = ({ c, s }) => (c.v === 'Yes' ? <Tick s={s} /> : c.v === 'No' ? <Dash s={s} /> : null);
-const Arrow = ({ s = 18 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const Cell = ({ c }) => (c.v ? <span className="xcp-v"><Mark c={c} s={15} />{c.v}</span> : <span className="xcp-x">{c.d}</span>);
+const Tick = ({ s = 14 }: { s?: number }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3.5 8.5l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Dash = ({ s = 14 }: { s?: number }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M4 8h8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>;
+const Mark = ({ c, s }: { c: CellData; s: number }) => (c.v === 'Yes' ? <Tick s={s} /> : c.v === 'No' ? <Dash s={s} /> : null);
+const Arrow = ({ s = 18 }: { s?: number }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Cell = ({ c }: { c: CellData }) => (c.v ? <span className="xcp-v"><Mark c={c} s={15} />{c.v}</span> : <span className="xcp-x">{c.d}</span>);
 
 /* The reading line's clock is its own progress hairline: when the hairline's CSS animation ends, the line moves on.
    No timer runs. The hairline pauses (and so does the line) while the table is off screen, while a hand moves over it
    (a resting pointer lets it go on), while a pressed row holds it, and while the pause control is pressed. Reduced
    motion: no animation, so the line stays where it is. */
-function useReader(ref) {
+function useReader(ref: RefObject<HTMLElement | null>) {
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   const [pinned, setPinned] = useState(false);
@@ -77,13 +81,13 @@ function useReader(ref) {
   const calm = useReducedMotion();
   const live = useInView(ref, { amount: 'some' });
   const run = !held && !pinned && !paused && !calm && live;
-  const rest = useRef(0);
+  const rest = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(rest.current), []);
   const hand = {
-    onPointerMove: (e) => { if (e.pointerType !== 'mouse') return; setHeld(true); clearTimeout(rest.current); rest.current = setTimeout(() => setHeld(false), 2500); },
+    onPointerMove: (e: React.PointerEvent) => { if (e.pointerType !== 'mouse') return; setHeld(true); clearTimeout(rest.current); rest.current = setTimeout(() => setHeld(false), 2500); },
     onPointerLeave: () => { clearTimeout(rest.current); setHeld(false); setPinned(false); },
   };
-  const pick = (i) => { setAt(i); setPinned(true); };
+  const pick = (i: number) => { setAt(i); setPinned(true); };
   const next = () => setAt((v) => (v + 1) % ROWS.length);
   return { at, run, hand, pick, calm, next, paused, setPaused };
 }
@@ -197,7 +201,7 @@ function Hero() {
 }
 
 /* a figure that changes in place: the old count leaves upward and the new one arrives, so only real counts are shown */
-function Fig({ v }) {
+function Fig({ v }: { v: string | number }) {
   return (
     <span className="xcp-fig">
       <AnimatePresence mode="popLayout" initial={false}>
@@ -210,13 +214,13 @@ function Fig({ v }) {
 /* ---------- Beyond: count the Yes ---------- */
 function Tally() {
   const [keep, setKeep] = useState(YN);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const r0 = useReducedMotion();
   const [calm, setCalm] = useState(false); // after mount, so the first render matches the server's HTML
   useEffect(() => setCalm(!!r0), [r0]);
   const seen = useInView(ref, { once: true, amount: 0.35 });
   const go = seen || calm;
-  const flip = (i) => setKeep((k) => (k.includes(i) ? k.filter((x) => x !== i) : [...k, i].sort()));
+  const flip = (i: number) => setKeep((k) => (k.includes(i) ? k.filter((x) => x !== i) : [...k, i].sort()));
   return (
     <section className="pf-sec xcp-tally" aria-labelledby="xcp-tally-h">
       <div className="pf-wrap xcp-tally-g" ref={ref}>

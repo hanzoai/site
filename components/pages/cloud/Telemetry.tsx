@@ -17,6 +17,8 @@
    the config builder (state) + the five entrances. Every word and link is Hanzo's; the config is a standard
    OpenTelemetry collector config with placeholders, not a Hanzo default. */
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
+
 import { motion, AnimatePresence, useInView } from 'motion/react';
 import { EASE, Copy, useCalm } from '../../ui';
 import { useDemo, PauseBtn, useTick } from '../../v2/x-hamilton/Demo';
@@ -30,7 +32,9 @@ import ArtCard from './ArtCard';
 const GH = 'https://github.com/hanzoai';
 const KINDS = ['trace', 'metric', 'log'];
 
-export function tick(s) {
+interface PipeState { t: number; held: number; out: { id: number; n: number }[]; mem: number; refused: boolean }
+
+export function tick(s: PipeState): PipeState {
   const t = s.t + 1;
   const full = s.mem >= 0.92;
   const take = full ? 0 : 1;
@@ -42,14 +46,14 @@ export function tick(s) {
 }
 
 // one Pause for the page's self-running parts: the hero collector and the span that keeps running the chapter strip
-const Hold = createContext([false, () => {}]);
+const Hold = createContext<[boolean, () => void]>([false, () => {}]);
 
 /* Stage object: spans in one at a time, out in batches, under a memory ceiling. */
 function Pipe() {
   const [ref, seen] = useDemo(0.05);
   const [paused, toggle] = useContext(Hold);
   const live = seen && !paused;
-  const [s, setS] = useState({ t: 0, held: 3, out: [{ id: -1, n: 6 }, { id: -2, n: 6 }], mem: 0.5, refused: false });
+  const [s, setS] = useState<PipeState>({ t: 0, held: 3, out: [{ id: -1, n: 6 }, { id: -2, n: 6 }], mem: 0.5, refused: false });
   const [only, setOnly] = useState(-1); // pointer: hover a signal and only that kind comes in
   useTick(420, live, () => setS(tick));
   const kind = only >= 0 ? KINDS[only] : KINDS[s.t % 3];
@@ -97,17 +101,17 @@ const FACTS = [
 ];
 
 // the collector's config, line by line, each line tagged with the fact (chapter) it belongs to
-const CFG = [
+const CFG: [string, number][] = [
   ['receivers:', 0], ['  otlp:', 0], ['    protocols:', 0], ['      grpc:', 0], ['      http:', 0], ['', -1],
   ['processors:', 2], ['  memory_limiter:', 3], ['    limit_mib: ${CEILING}', 3], ['  batch:', 2], ['', -1],
   ['exporters:', 5], ['  otlp:', 5], ['    endpoint: ${BACKEND}', 5], ['', -1],
   ['service:', 1], ['  pipelines:', 1], ['    traces:  [otlp] → [memory_limiter, batch] → [otlp]', 1], ['    metrics: [otlp] → [memory_limiter, batch] → [otlp]', 1], ['    logs:    [otlp] → [memory_limiter, batch] → [otlp]', 1],
 ];
-const BUILD = [['dist:', 4], ['  name: my-collector', 4], ['receivers:', 4], ['  - otlpreceiver', 4], ['processors:', 4], ['  - batchprocessor', 4], ['  - memorylimiterprocessor', 4], ['exporters:', 4], ['  - otlpexporter', 4]];
-const STAGES = [['OTLP in', [0]], ['pipelines', [1]], ['memory_limiter', [3]], ['batch', [2]], ['OTLP out', [5]]];
+const BUILD: [string, number][] = [['dist:', 4], ['  name: my-collector', 4], ['receivers:', 4], ['  - otlpreceiver', 4], ['processors:', 4], ['  - batchprocessor', 4], ['  - memorylimiterprocessor', 4], ['exporters:', 4], ['  - otlpexporter', 4]];
+const STAGES: [string, number[]][] = [['OTLP in', [0]], ['pipelines', [1]], ['memory_limiter', [3]], ['batch', [2]], ['OTLP out', [5]]];
 
 /* The chapter picture: the config file with the reached fact's block lit, and the pipeline strip above it. */
-function Config({ at, compact }) {
+function Config({ at, compact }: { at: number; compact?: boolean }) {
   // on phones (stacked chapters) each chapter shows only its own block, not the whole file six times
   const file = (at === 4 ? BUILD : CFG).filter(([, f]) => !compact || f === at || at === 4);
   const stop = Math.max(0, STAGES.findIndex(([, f]) => f.includes(at)));
@@ -118,15 +122,15 @@ function Config({ at, compact }) {
   useEffect(() => setUp(true), []);
   const go = up && !calm; // server HTML, JS off and reduced motion: the final frame, nothing hidden
   const [held] = useContext(Hold);
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   // after the arrival, a span keeps running the strip to the lit stage (idle) while the file is on screen, until Pause
   const flow = go && !held && seen;
-  const strip = useRef(null);
+  const strip = useRef<HTMLDivElement>(null);
   const [to, setTo] = useState(`${((dest + 0.5) / STAGES.length) * 100}%`);
   useEffect(() => { // park the span under the lit stage itself (the pills wrap and differ in width)
-    const el = strip.current, pill = el && el.querySelectorAll(':scope > span')[dest];
-    if (pill) setTo(`${((pill.offsetLeft + pill.offsetWidth / 2) / el.offsetWidth) * 100}%`);
+    const el = strip.current, pill = el && el.querySelectorAll<HTMLElement>(':scope > span')[dest];
+    if (el && pill) setTo(`${((pill.offsetLeft + pill.offsetWidth / 2) / el.offsetWidth) * 100}%`);
   }, [dest]);
   let n = 0;
   return (
@@ -140,7 +144,7 @@ function Config({ at, compact }) {
         <div className="tl2-tabs l2-mono"><span className={at !== 4 ? 'on' : ''}>config.yaml</span><span className={at === 4 ? 'on' : ''}>builder.yaml</span></div>
         <pre className="tl2-code"><code>
           {file.map(([l, f], i) => {
-            const m = l.match(/^(\s*)(-\s)?([\w${}.-]+:)?(.*)$/);
+            const m = l.match(/^(\s*)(-\s)?([\w${}.-]+:)?(.*)$/)!; // every part is optional: it always matches
             const on = f === at;
             const body = <>{m[1]}{m[2]}{m[3] && <b>{m[3]}</b>}{m[4]}{i === lastOn && <i className="tl2-caret" />}</>;
             // magnet-gather: each line starts scattered (a fixed offset per line, the same on server and client)
@@ -163,7 +167,7 @@ function Config({ at, compact }) {
 /* 2. The living graph (signature) in the one dark room. Entrance: ink-spread (an ink blot opens the room). */
 // the blot: 12 points round the centre at uneven radii, small then past the corners (same point count, so it morphs)
 const R = [1, 0.82, 1.1, 0.9, 1.05, 0.78, 1, 0.88, 1.12, 0.85, 0.96, 0.8];
-const blob = (s, cx, cy) => `polygon(${R.map((r, i) => { const a = (i / R.length) * Math.PI * 2; return `${(cx + Math.cos(a) * r * s).toFixed(1)}% ${(cy + Math.sin(a) * r * s * 1.4).toFixed(1)}%`; }).join(', ')})`;
+const blob = (s: number, cx: number, cy: number) => `polygon(${R.map((r, i) => { const a = (i / R.length) * Math.PI * 2; return `${(cx + Math.cos(a) * r * s).toFixed(1)}% ${(cy + Math.sin(a) * r * s * 1.4).toFixed(1)}%`; }).join(', ')})`;
 const INK = { '--b0': blob(4, 30, 45), '--b1': blob(190, 30, 45) };
 
 function GraphRoom() {
@@ -180,7 +184,7 @@ function GraphRoom() {
 }
 
 /* 3. The six facts. Entrance: text-mask-film (a signal film plays through the heading's letters, then it settles). */
-function FilmHead({ text, inn }) {
+function FilmHead({ text, inn }: { text: string; inn?: boolean }) {
   // the film: rows of dashes running through the letters at different speeds (transform only)
   const rows = Array.from({ length: 7 });
   return (
@@ -201,13 +205,13 @@ function FilmHead({ text, inn }) {
   );
 }
 
-function Facts({ at, onAt, wide }) {
+function Facts({ at, onAt, wide }: { at: number; onAt: (i: number) => void; wide: boolean }) {
   const [ref, inn] = useEnter(0.3);
-  const list = useRef(null);
+  const list = useRef<HTMLOListElement>(null);
   useEffect(() => {
     if (!wide || !list.current) return;
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) onAt(+e.target.dataset.k); }), { rootMargin: '-46% 0px -46% 0px' });
-    list.current.querySelectorAll(':scope > li').forEach((el) => io.observe(el));
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) onAt(+(e.target as HTMLElement).dataset.k!); }), { rootMargin: '-46% 0px -46% 0px' });
+    list.current.querySelectorAll(':scope > li').forEach((el: Element) => io.observe(el));
     return () => io.disconnect();
   }, [wide, onAt]);
   return (
@@ -234,7 +238,7 @@ function Facts({ at, onAt, wide }) {
 
 /* 4. The collector's config, read fact by fact: it steps through the six facts by itself (Pause), or tap a key.
    Entrance: magnet-gather (the file's lines are pulled together from scattered). */
-function ConfigRoom({ phone }) {
+function ConfigRoom({ phone }: { phone?: boolean }) {
   const [ref, inn] = useEnter(0.25);
   const [held, toggle] = useContext(Hold);
   const [at, setAt] = useState(0);
@@ -257,7 +261,7 @@ function ConfigRoom({ phone }) {
 }
 
 /* 5. The close. Entrance: shutter (bars close from the top and bottom, then open on it). */
-function Shutter({ children }) {
+function Shutter({ children }: { children?: ReactNode }) {
   const [ref, inn] = useEnter(0.15);
   return (
     <div className="tl2-shut" ref={ref} data-in={inn}>
@@ -274,7 +278,7 @@ function YourConfig() {
   const [sig, setSig] = useState([true, true, true]);
   const [pro, setPro] = useState([true, true]);
   const [prc, setPrc] = useState([true, true]);
-  const flip = (arr, set, i) => set(arr.map((v, k) => (k === i ? !v : v)));
+  const flip = (arr: boolean[], set: (v: boolean[]) => void, i: number) => set(arr.map((v, k) => (k === i ? !v : v)));
   const text = useMemo(() => {
     const procs = [prc[1] && 'memory_limiter', prc[0] && 'batch'].filter(Boolean);
     const L = ['receivers:', '  otlp:', '    protocols:'];
@@ -285,7 +289,7 @@ function YourConfig() {
     SIG.forEach((s, i) => { if (sig[i]) L.push(`    ${s}:`, '      receivers: [otlp]', ...(procs.length ? [`      processors: [${procs.join(', ')}]`] : []), '      exporters: [otlp]'); });
     return L.join('\n');
   }, [sig, pro, prc]);
-  const group = (label, names, arr, set) => (
+  const group = (label: string, names: string[], arr: boolean[], set: (v: boolean[]) => void) => (
     <div className="tl2-g" role="group" aria-label={label}>
       <p className="l2-mono">{label}</p>
       <div>{names.map((n, i) => <button key={n} type="button" aria-pressed={arr[i]} onClick={() => flip(arr, set, i)}><i aria-hidden="true">{arr[i] ? '✓' : ''}</i>{n}</button>)}</div>

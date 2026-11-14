@@ -6,6 +6,7 @@
    live). Same props, same markup, same CSS. Used by /crawl /dashboards /datastore /dns /edge /engine.
    Remove it and import KeynoteStage again once docs/build-notes/requests/reduced-motion-hydration.md lands in the shared file. */
 import { createContext, useContext, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Magnetic, useCalm } from '../../ui';
 import { Cta } from '../../kit';
@@ -18,8 +19,14 @@ const Paused = createContext(false);
 /* true while the visitor has paused the hero's live demo */
 export const useStagePause = () => useContext(Paused);
 
-export default function SafeStage({ kick, title, lede, acts = [], meta, look = 'split', from = 1.15, children, className = '', size = '', cta = 'hero', pause = true }) {
-  const sec = useRef(null);
+interface StageProps {
+  kick?: ReactNode; title: string[]; lede?: ReactNode; acts?: [string, string][]; meta?: ReactNode; look?: 'split' | 'side'; from?: number;
+  children?: ReactNode; className?: string; size?: string; cta?: string; pause?: boolean;
+}
+
+export default function SafeStage({ kick, title, lede, acts = [], meta, look = 'split', from = 1.15, children, className = '', size = '', cta = 'hero', pause = true }: StageProps) {
+  const sec = useRef<HTMLElement>(null);
+
   const calm = useCalm();
   const wide = useWide();
   const [paused, setPaused] = useState(false);

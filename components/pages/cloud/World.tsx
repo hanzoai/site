@@ -17,7 +17,9 @@
    or press (pointer, state) + the replay scrub (state) + a magnetic hero ask on fine pointers. Every word and link is Hanzo's; arcs, bars and the session are drawn
    examples, not measurements. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useMotionValueEvent, useInView } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import { EASE, useCalm } from '../../ui';
 import { useFrame } from './Frame';
 import StageHero from '../../v2/StageHero';
@@ -27,28 +29,30 @@ import './World.css';
 import ArtCard from './ArtCard';
 
 // points on a sphere (golden spiral), drawn as a turning globe of dots
-const PTS = Array.from({ length: 900 }, (_, i) => {
+type Vec3 = [number, number, number];
+const PTS: Vec3[] = Array.from({ length: 900 }, (_, i): Vec3 => {
   const y = 1 - (i / 899) * 2, r = Math.sqrt(1 - y * y), th = i * 2.399963;
   return [Math.cos(th) * r, y, Math.sin(th) * r];
 });
 const HUBS = [21, 130, 247, 360, 471, 590, 702, 815];
 
-function Globe({ run, calm, exit }) {
-  const cv = useRef(null);
-  const arcs = useRef([]);
+function Globe({ run, calm, exit }: { run: boolean; calm: boolean; exit: MotionValue<number> }) {
+  const cv = useRef<HTMLCanvasElement>(null);
+  const arcs = useRef<{ a: Vec3; b: Vec3; t0: number }[]>([]);
   const ang = useRef(0.24);
-  const draw = (t, dt = 0) => {
+  const draw = (t: number, dt = 0) => {
     const c = cv.current;
     if (!c) return;
     const w = c.clientWidth, h = c.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
     if (c.width !== Math.round(w * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
     const g = c.getContext('2d');
+    if (!g) return;
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, w, h);
     const e = exit ? exit.get() : 0;
     ang.current += dt * 0.12 * (1 - 0.65 * (e > 0 ? e : 0)); // the spin slows as the hero leaves
     const R = Math.min(w, h) * 0.47, cx = w / 2, cy = h / 2, a = ang.current, ca = Math.cos(a), sa = Math.sin(a), tl = 0.32;
-    const proj = ([x, y, z]) => { const X = x * ca - z * sa, Z = x * sa + z * ca; const Y = y * Math.cos(tl) - Z * Math.sin(tl), Z2 = y * Math.sin(tl) + Z * Math.cos(tl); return [cx + X * R, cy - Y * R, Z2]; };
+    const proj = ([x, y, z]: Vec3): Vec3 => { const X = x * ca - z * sa, Z = x * sa + z * ca; const Y = y * Math.cos(tl) - Z * Math.sin(tl), Z2 = y * Math.sin(tl) + Z * Math.cos(tl); return [cx + X * R, cy - Y * R, Z2]; };
     const glow = g.createRadialGradient(cx, cy, R * 0.6, cx, cy, R * 1.08);
     glow.addColorStop(0, 'rgba(163, 163, 163, 0)'); glow.addColorStop(0.9, 'rgba(163, 163, 163, .16)'); glow.addColorStop(1, 'rgba(163, 163, 163, 0)');
     g.fillStyle = glow; g.beginPath(); g.arc(cx, cy, R * 1.08, 0, 6.283); g.fill();
@@ -80,15 +84,15 @@ function Globe({ run, calm, exit }) {
   const y = useTransform(exit, [0, 1], [0, -24]);
   return <div className="wd2-globe"><motion.div className="wd2-globe-in" style={{ scale: s, y }}><canvas ref={cv} aria-hidden="true" /></motion.div></div>;
 }
-const requestIdle = (f) => setTimeout(f, 60);
-const cancelIdle = (id) => clearTimeout(id);
+const requestIdle = (f: () => void) => setTimeout(f, 60);
+const cancelIdle = (id: ReturnType<typeof setTimeout>) => clearTimeout(id);
 
 const MODELS = ['zen', 'kai', 'enso'];
-const rnd = (i) => { const x = Math.sin(i * 78.233) * 43758.5453; return x - Math.floor(x); };
-const fix = (v) => Math.round(v * 1000) / 1000; // inline style values the server and the first client render print identically
+const rnd = (i: number) => { const x = Math.sin(i * 78.233) * 43758.5453; return x - Math.floor(x); };
+const fix = (v: number) => Math.round(v * 1000) / 1000; // inline style values the server and the first client render print identically
 
 /* Latency by model, ticking; a drift alert when production leaves its baseline. */
-function Panel({ run, children }) {
+function Panel({ run, children }: { run: boolean; children?: ReactNode }) {
   const [n, setN] = useState(0);
   useTick(1200, run, () => setN((v) => v + 1));
   const drift = n % 9 >= 6;
@@ -109,7 +113,7 @@ function Panel({ run, children }) {
 }
 
 /* matches a media query once mounted (false on the server, so the first paint is the CSS's own layout) */
-function useMedia(q) {
+function useMedia(q: string) {
   const [on, setOn] = useState(false);
   useEffect(() => {
     const m = matchMedia(q);
@@ -120,7 +124,7 @@ function useMedia(q) {
   return on;
 }
 const PINNED = '(min-width: 901px) and (prefers-reduced-motion: no-preference)';
-const clamp01 = (v) => Math.max(0, Math.min(1, v));
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
 /* The hero object: the turning globe with requests arcing to the GPUs that served them, and the latency panel. Both run
    while on screen, pause together, and hold a still frame under reduced motion. On desktop, as the hero scrolls away, the
@@ -157,16 +161,16 @@ const CAPS = [
   ['Forensic Replay', 'Reconstruct any agent session step by step. Inspect tool calls, prompts, model outputs, and IO.'],
 ];
 
-const NODES = [['edge', 8, 50], ['gateway', 30, 50], ['agent', 52, 26], ['tool call', 52, 74], ['zen', 74, 36], ['kai', 74, 64], ['GPU', 93, 50]];
+const NODES: [string, number, number][] = [['edge', 8, 50], ['gateway', 30, 50], ['agent', 52, 26], ['tool call', 52, 74], ['zen', 74, 36], ['kai', 74, 64], ['GPU', 93, 50]];
 const PATH = [[0, 1], [1, 2], [2, 4], [4, 6], [1, 3], [3, 5], [5, 6]];
 
 /* While on air, the traced route swaps between zen and kai every 2s until the visitor points at a node. */
-function Topology({ live }) {
+function Topology({ live }: { live: boolean }) {
   const [hot, setHot] = useState(4);
   const [touched, setTouched] = useState(false);
   useTick(2000, live && !touched, () => setHot((h) => (h === 4 ? 5 : 4)));
-  const pick = (i) => { setTouched(true); setHot(i); };
-  const lit = (a, b) => (hot === 4 ? [[0, 1], [1, 2], [2, 4], [4, 6]] : [[0, 1], [1, 3], [3, 5], [5, 6]]).some(([x, y]) => x === a && y === b);
+  const pick = (i: number) => { setTouched(true); setHot(i); };
+  const lit = (a: number, b: number) => (hot === 4 ? [[0, 1], [1, 2], [2, 4], [4, 6]] : [[0, 1], [1, 3], [3, 5], [5, 6]]).some(([x, y]) => x === a && y === b);
   return (
     <div className="wd2-topo">
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><g>{PATH.map(([a, b]) => <line key={a + '-' + b} className={lit(a, b) ? 'on' : ''} x1={NODES[a][1]} y1={NODES[a][2]} x2={NODES[b][1]} y2={NODES[b][2]} />)}</g></svg>
@@ -182,7 +186,7 @@ const STEPS = ['prompt', 'tool call', 'IO', 'model output', 'tool call', 'model 
 
 /* Beyond: scrub a session the way Forensic Replay reconstructs one. While on air it plays itself one step every 1.5s,
    until the visitor takes the scrub. */
-function Replay({ live }) {
+function Replay({ live }: { live: boolean }) {
   const [at, setAt] = useState(2);
   const [touched, setTouched] = useState(false);
   const [ready, setReady] = useState(false); // the range input renders after mount: the server paints a still track of the same size
@@ -210,7 +214,7 @@ function Replay({ live }) {
 }
 
 /* A beat counter for the monitor on air: counts every ms while live, back to 0 (the arrival pose) once it is not. */
-function useBeat(ms, live) {
+function useBeat(ms: number, live: boolean) {
   const [n, setN] = useState(0);
   useTick(ms, live, () => setN((v) => v + 1));
   useEffect(() => { if (!live) setN(0); }, [live]);
@@ -219,10 +223,10 @@ function useBeat(ms, live) {
 
 /* Latency: while on air the P50/P95/P99 bars re-draw every 1.2s inside their own lanes (the order never changes),
    and the cost-spike dot blinks when a P99 bar runs long. */
-function Latency({ live }) {
+function Latency({ live }: { live: boolean }) {
   const n = useBeat(1200, live);
-  const at = (t, k, j) => (t ? 0.82 + rnd(t * 3 + k * 7 + j) * 0.18 : 1);
-  const w = (k, j) => at(n, k, j);
+  const at = (t: number, k: number, j: number) => (t ? 0.82 + rnd(t * 3 + k * 7 + j) * 0.18 : 1);
+  const w = (k: number, j: number) => at(n, k, j);
   let hit = 0; // the latest beat on which a P99 bar ran long: the dot re-blinks when it changes
   for (let t = n; t > 0 && !hit; t--) if (MODELS.some((m, k) => at(t, k, 2) > 0.95)) hit = t;
   return (
@@ -235,7 +239,7 @@ function Latency({ live }) {
 }
 
 /* Drift: a hollow ink ring at the line's end; while on air it sends out a pulse every 1.5s. */
-function Drift({ live }) {
+function Drift({ live }: { live: boolean }) {
   const n = useBeat(1500, live);
   return (
     <svg className="wd2-drift-c" viewBox="0 0 200 90" aria-hidden="true">
@@ -248,18 +252,18 @@ function Drift({ live }) {
 }
 
 /* Eval: while on air the pinned v2 score nudges inside its own bar every 1.5s; v1 holds. */
-function Evals({ live }) {
+function Evals({ live }: { live: boolean }) {
   const n = useBeat(1500, live);
   return <div className="wd2-ev">{['v1', 'v2'].map((v, k) => <p key={v} className={k ? 'b' : ''}><span className="l2-mono">{v}</span><s className="lane"><i style={{ width: k ? '82%' : '68%' }}><u style={k && n ? { transform: `scaleX(${fix(0.95 + rnd(n) * 0.05)})` } : undefined} /></i></s><em className="l2-mono">{k ? 'pinned' : ''}</em></p>)}</div>;
 }
 
 /* Multi-cloud: while on air each source lights its signal dot in turn, feeding the one view. */
-function Clouds({ live }) {
+function Clouds({ live }: { live: boolean }) {
   const n = useBeat(1200, live);
   return <ul className="wd2-mc">{['Hanzo Cloud', 'AWS', 'GCP', 'Azure', 'self-hosted'].map((s, k) => <li key={s} className={n && (n - 1) % 5 === k ? 'sig' : ''} style={{ '--x': GATHER[k][0] + 'px', '--y': GATHER[k][1] + 'px', '--d': k * 60 + 'ms' }}>{s}</li>)}<li className="one">One unified view</li></ul>;
 }
 
-function Pic({ i, live }) {
+function Pic({ i, live }: { i: number; live: boolean }) {
   if (i === 0) return <Topology live={live} />;
   if (i === 1) return <Latency live={live} />;
   if (i === 2) return <Drift live={live} />;
@@ -273,15 +277,15 @@ const GATHER = [[-28, -22], [18, -30], [34, 12], [-16, 26], [26, 30]]; // where 
    monitor at a time, its drawing playing once as it arrives, beside the heading and a numbered rail of all six (the rail
    jumps there). Phones and reduced motion: the six stack, each playing its moment once as it scrolls in. */
 function Room() {
-  const track = useRef(null);
-  const sec = useRef(null);
+  const track = useRef<HTMLDivElement>(null);
+  const sec = useRef<HTMLElement>(null);
   const pinned = useMedia(PINNED);
   const calm = useCalm();
   const near = useInView(sec, { amount: 0.15 });
   const [act, setAct] = useState(0);
   // phones: the six sit on a sideways snap rail; the card in view is the one on air
-  const onRail = (e) => {
-    const el = e.currentTarget, c = el.firstElementChild;
+  const onRail = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget, c = el.firstElementChild as HTMLElement | null;
     if (!c) return;
     const end = el.scrollLeft >= el.scrollWidth - el.clientWidth - 2;
     setAct(end ? CAPS.length - 1 : Math.min(CAPS.length - 1, Math.round(el.scrollLeft / (c.offsetWidth + 12))));
@@ -292,13 +296,15 @@ function Room() {
   useEffect(() => {
     if (pinned) return;
     if (calm) { setSeen(CAPS.map(() => true)); return; }
-    const els = [...track.current.querySelectorAll('.wd2-mon')];
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { const i = els.indexOf(e.target); setSeen((s) => (s[i] ? s : s.map((v, j) => v || j === i))); } }), { threshold: 0.35 });
+    if (!track.current) return;
+    const els = [...track.current.querySelectorAll<HTMLElement>('.wd2-mon')];
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { const i = els.indexOf(e.target as HTMLElement); setSeen((s) => (s[i] ? s : s.map((v, j) => v || j === i))); } }), { threshold: 0.35 });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [pinned, calm]);
-  const go = (i) => {
+  const go = (i: number) => {
     const el = track.current;
+    if (!el) return;
     const top = el.getBoundingClientRect().top + scrollY, len = el.offsetHeight - innerHeight;
     scrollTo({ top: top + len * ((i + 0.5) / CAPS.length), behavior: 'smooth' });
   };
@@ -338,7 +344,7 @@ function Room() {
 }
 
 /* One rail stop: its number, its title, and a hairline that fills as scroll passes through its monitor. */
-function RailItem({ i, t, p, on, onClick }) {
+function RailItem({ i, t, p, on, onClick }: { i: number; t: string; p: MotionValue<number>; on: boolean; onClick: () => void }) {
   const fill = useTransform(p, (v) => clamp01(v * CAPS.length - i));
   return (
     <button type="button" className={'wd2-stop' + (on ? ' on' : '')} aria-current={on ? 'step' : undefined} onClick={onClick}>
@@ -353,13 +359,15 @@ function RailItem({ i, t, p, on, onClick }) {
 function useMagnet() {
   useEffect(() => {
     if (!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const el = document.querySelector('.wd2 .l2-stage [data-cta="primary"]');
+    const el = document.querySelector<HTMLElement>('.wd2 .l2-stage [data-cta="primary"]');
     if (!el) return;
     const zone = el.parentElement;
-    const move = (e) => {
+    if (!zone) return;
+    const move = (e: PointerEvent) => {
       const r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       const near = e.clientX > r.left - 22 && e.clientX < r.right + 22 && e.clientY > r.top - 22 && e.clientY < r.bottom + 22;
-      const c = (v) => Math.max(-8, Math.min(8, v));
+      const c = (v: number) => Math.max(-8, Math.min(8, v));
+
       el.style.translate = near ? `${c((e.clientX - cx) * 0.12)}px ${c((e.clientY - cy) * 0.25)}px` : '0px 0px';
     };
     const leave = () => { el.style.translate = '0px 0px'; };

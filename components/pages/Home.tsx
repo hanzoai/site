@@ -2,6 +2,7 @@
    nine products three by three, the agents it works with, faster, cheaper, the frontier, open source, pricing, and who
    trusts us. A server component: every section is in the HTML, and the products' screens never ship as script. The only
    motion is what a pointer or the hero's demo drives. */
+import type { ComponentProps } from 'react';
 import { Marquee } from '../Chrome';
 import Hero from '../Hero';
 import Models from '../Models';
@@ -18,7 +19,7 @@ import { A } from '../kit';
 import LOGOS from '../../content/logos';
 import './Home.css';
 
-export default function Home({ figures }) {
+export default function Home({ figures }: { figures: ComponentProps<typeof FiguresProvider>['value'] }) {
   return (
     <FiguresProvider value={figures}>
     <main className="x-home">

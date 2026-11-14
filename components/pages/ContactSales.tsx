@@ -24,6 +24,7 @@
    sentences; the "01 / 05" counter; "cal.com ↗"; the numeral chips; the blinking fake caret; native title tooltips on
    the logos; raw <img>; the raw .x-btn submit; data-ask-hide on the rail; arrow keys that chose and advanced. */
 import { useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, FormEvent, MouseEvent } from 'react';
 import { mirror, visit } from '@hanzo/event';
 import { API as SEND_API, arrived, lead as leadBody, response } from './ContactSales.send';
 import { track } from '../../lib/track';
@@ -37,12 +38,14 @@ import '../v2/vc-type.css';
 import './company/deck.css';
 import './ContactSales.css';
 
-const EASE = [0.16, 1, 0.3, 1]; // deck ease-emphasis; no springs (MASTER 3.1)
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1]; // deck ease-emphasis; no springs (MASTER 3.1)
 const T = { duration: 0.3, ease: EASE };
 const API = SEND_API + '/v1/marketing/leads';
 const DRAFT = 'hz-contact-sales-draft';
 const SIZES = [['1-49', '1–49 people'], ['50-249', '50–249 people'], ['250-999', '250–999 people'], ['1000-4999', '1,000–4,999 people'], ['5000+', '5,000+ people']];
-const STEPS = [
+type Values = { name: string; email: string; company: string; size: string; need: string; website: string };
+type Step = { name: 'name' | 'email' | 'company' | 'size' | 'need'; label: string; type: string; auto?: string; req: boolean; hint?: 'text' | 'email' };
+const STEPS: Step[] = [
   { name: 'name', label: 'Full name', type: 'text', auto: 'name', req: true, hint: 'text' },
   { name: 'email', label: 'Work email', type: 'email', auto: 'email', req: true, hint: 'email' },
   { name: 'company', label: 'Company', type: 'text', auto: 'organization', req: true, hint: 'text' },
@@ -52,51 +55,53 @@ const STEPS = [
 const INCLUDES = ['Run Hanzo in your cloud, on your servers or fully offline', 'Dedicated compute, and your own models trained and hosted', 'Unlimited members, single sign-on, roles and an audit log', 'An uptime guarantee and security review in your contract', '24/7 engineering support and hands-on onboarding'];
 // JS off: every question, size and inclusion readable in order; the step controls (which need JS) step aside (PLAN 2.3)
 const NOJS = { __html: '<style>.xcs-stage{display:flex!important;flex-direction:column;gap:40px;min-height:0!important;height:auto!important}.xcs-step{position:relative!important;opacity:1!important;transform:none!important}.xcs-top,.xcs-acts,.xcs-picks,.xcs-peek{display:none!important}.xcs-in,.xcs-up{animation:none!important}.xcs .x-band .x-word,.xcs .x-band [style]{opacity:1!important;transform:none!important;filter:none!important}</style>' };
-const okEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-const two = (n) => String(n).padStart(2, '0');
+const okEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const two = (n: number) => String(n).padStart(2, '0');
 
-const Check = ({ s = 18 }) => <svg viewBox="0 0 24 24" width={s} height={s} aria-hidden="true"><path d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const Plus = ({ s = 18 }) => <svg viewBox="0 0 24 24" width={s} height={s} aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>;
+const Check = ({ s = 18 }: { s?: number }) => <svg viewBox="0 0 24 24" width={s} height={s} aria-hidden="true"><path d="M6 12.5l4 4 8-9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Plus = ({ s = 18 }: { s?: number }) => <svg viewBox="0 0 24 24" width={s} height={s} aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>;
 const ArrowR = () => <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const ArrowL = () => <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path d="M13 8H4M7.5 4.5 4 8l3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Out = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Bang = () => <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" /><path d="M12 7v6.5M12 16.6v.4" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" /></svg>;
 
 /* one POST with an 8s timeout */
-async function post(body) {
+async function post(body: string) {
   const c = new AbortController();
   const t = setTimeout(() => c.abort(), 8000);
   try { return await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, signal: c.signal }); }
   finally { clearTimeout(t); }
 }
 
-function Form({ v, setV, at, setAt, adds, toggle }) {
+type FormProps = { v: Values; setV: (v: Values) => void; at: number; setAt: (n: number) => void; adds: number[]; toggle: (i: number) => void };
+
+function Form({ v, setV, at, setAt, adds, toggle }: FormProps) {
   const [bad, setBad] = useState(-1); // the step whose answer is missing or not an email
-  const [state, setState] = useState('idle'); // idle | sending | sent | failed
+  const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'failed'>('idle'); // idle | sending | sent | failed
   const [hold, setHold] = useState(0); // the card's height when sending began, kept into the sent state
   const [peek, setPeek] = useState(-1); // the inclusion under the pointer or focus
   const [hyd, setHyd] = useState(false);
   useEffect(() => setHyd(true), []);
-  const card = useRef(null);
-  const status = useRef(null);
-  const refs = useRef({});
+  const card = useRef<HTMLDivElement>(null);
+  const status = useRef<HTMLDivElement>(null);
+  const refs = useRef<Record<string, HTMLInputElement | HTMLTextAreaElement | null>>({});
   const first = useRef(true);
   const calm = useReducedMotion();
   /* the demo: before anyone types, the conversation plays once from Hanzo's own field labels. "Full name" types into the
      first field (an aria-hidden overlay, never the field's value), lifts away, "Work email" rises, a chip lands, a rest,
      then the empty live form returns. It never submits, never writes the draft and never moves focus; the first
      pointer, key or focus on the card ends it at once. Reduced motion: no demo. */
-  const [demo, setDemo] = useState(null); // { at, text, chip } while it plays
-  const live = useRef({});
+  const [demo, setDemo] = useState<{ at: number; text: string; chip: string | null } | null>(null); // { at, text, chip } while it plays
+  const live = useRef({ v, at, adds, state });
   live.current = { v, at, adds, state };
-  const timers = useRef([]);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const done = useRef(false);
   const stopDemo = () => { done.current = true; timers.current.forEach(clearTimeout); timers.current = []; setDemo(null); };
   useEffect(() => {
     if (calm || !hyd || done.current) return;
     const el = card.current;
     if (!el) return;
-    const later = (ms, f) => timers.current.push(setTimeout(f, ms));
+    const later = (ms: number, f: () => void) => timers.current.push(setTimeout(f, ms));
     const fresh = () => { const s = live.current; return s.state === 'idle' && s.at === 0 && !s.adds.length && !Object.values(s.v).some(Boolean); };
     let tries = 0;
     const play = () => {
@@ -122,8 +127,8 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
   }, [calm, hyd]); // eslint-disable-line react-hooks/exhaustive-deps
   const shown = demo ? demo.at : at; // the step on screen (the demo only moves pictures; focus and inert follow `at`)
   // the card is sized to its one question: the stage takes the height of the step on screen and eases to the next one
-  const stepEls = useRef([]);
-  const [sh, setSh] = useState(null);
+  const stepEls = useRef<(HTMLDivElement | null)[]>([]);
+  const [sh, setSh] = useState<number | null>(null);
   useEffect(() => {
     const el = stepEls.current[shown];
     if (!el) return;
@@ -148,12 +153,12 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
     const t = setTimeout(() => status.current?.focus({ preventScroll: true }), 60);
     return () => clearTimeout(t);
   }, [state, calm]);
-  const wrong = (i) => {
+  const wrong = (i: number) => {
     const s = STEPS[i], val = v[s.name].trim();
     return (s.req && !val) || (s.name === 'email' && !okEmail(val));
   };
   const next = () => { if (wrong(at)) { setBad(at); return; } setBad(-1); if (at < STEPS.length - 1) setAt(at + 1); };
-  const submit = async (e) => {
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (state === 'sending') return;
     for (let i = 0; i < STEPS.length; i++) if (wrong(i)) { setAt(i); setBad(i); return; }
@@ -164,7 +169,7 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
     // the visit as cloud reads it (consent, the ad click, the browser ids, which tags already saw the lead), and the
     // campaign the visit arrived with
     const seen = visit();
-    let kept = null;
+    let kept: string | null = null;
     try { kept = sessionStorage.getItem('checkout.coupon'); } catch { /* no store: the address carries it */ }
     const from = arrived(location.search, kept);
     // the note: your own words, then each inclusion you added, in Hanzo's sentence, one per line (same `need` field)
@@ -173,7 +178,7 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
     const body = JSON.stringify(leadBody(answers, seen, from));
     let r = null;
     try { r = await post(body); } catch { try { r = await post(body); } catch { r = null; } } // timeout or network: one retry
-    let lead;
+    let lead: string | undefined;
     if (r && r.ok) { setState('sent'); try { sessionStorage.removeItem(DRAFT); } catch {} lead = (await r.json().catch(() => null))?.lead; }
     else setState('failed');
     // the same answers as a response to the hanzo.contact-sales form, under the lead's id when the CRM filed one
@@ -181,14 +186,14 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
     // the moment: a lead the CRM filed is stated by cloud on our stream, so the ad tags hear it under the lead's id and
     // our stream is not told twice; one that was not filed still counts
     const moment = { lead_source: 'contact-sales', company_size: v.size };
-    if (lead) mirror('sales_contacted', { ...moment, lead_id: lead }, lead, seen.tags);
+    if (lead) mirror('sales_contacted', { ...moment, lead_id: lead }, lead, typeof seen.tags === 'string' ? seen.tags : undefined);
     else track('sales_contacted', moment);
   };
-  const field = (s) => {
+  const field = (s: Step) => {
     const common = {
       id: 'xcs-' + s.name, name: s.name, value: v[s.name], required: s.req,
       'aria-invalid': bad === STEPS.indexOf(s) || undefined,
-      onChange: (e) => { setV({ ...v, [s.name]: e.target.value }); setBad(-1); },
+      onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => { setV({ ...v, [s.name]: e.target.value }); setBad(-1); },
     };
     if (s.type === 'size') return (
       <div className="xcs-sizes" role="radiogroup" aria-labelledby="xcs-l-size" aria-invalid={bad === 3 || undefined}>
@@ -208,7 +213,7 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
     );
     if (s.type === 'area') return (
       <>
-        <textarea {...common} rows={3} ref={(el) => (refs.current[s.name] = el)} />
+        <textarea {...common} rows={3} ref={(el) => { refs.current[s.name] = el; }} />
         <div className="xcs-picks" role="group" aria-labelledby="xcs-inc-h" onPointerLeave={() => setPeek(-1)}>
           {INCLUDES.map((t, i) => {
             const on = adds.includes(i);
@@ -223,7 +228,7 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
         <p className="xcs-peek" aria-hidden="true">{peek >= 0 ? INCLUDES[peek] : ''}</p>
       </>
     );
-    return <input {...common} type={s.type} inputMode={s.hint} autoComplete={s.auto} enterKeyHint="next" ref={(el) => (refs.current[s.name] = el)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); next(); } }} />;
+    return <input {...common} type={s.type} inputMode={s.hint} autoComplete={s.auto} enterKeyHint="next" ref={(el) => { refs.current[s.name] = el; }} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); next(); } }} />;
   };
   const size = SIZES.find(([k]) => k === v.size);
   const brief = [v.name.trim(), v.company.trim(), size && size[1]].filter(Boolean);
@@ -297,9 +302,9 @@ function Form({ v, setV, at, setAt, adds, toggle }) {
 
 /* the launches as a logo rail: Hanzo's own customer logos (public/logos/customers, as live shows them), each a real
    link; a logo that cannot load steps aside for its name set as type */
-function Name({ l, ghost }) {
+function Name({ l, ghost }: { l: { name: string; href: string; src: string }; ghost?: boolean }) {
   const [bad, setBad] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLImageElement>(null);
   useEffect(() => { const i = ref.current; if (i && i.complete && !i.naturalWidth) setBad(true); }, []);
   return (
     <A to={l.href} className="xcs-logo" {...(ghost ? { tabIndex: -1, 'aria-hidden': true } : {})}>
@@ -311,8 +316,8 @@ function Name({ l, ghost }) {
 function Rail() {
   const [run, setRun] = useState(true);
   const calm = useReducedMotion();
-  const box = useRef(null);
-  const track = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
+  const track = useRef<HTMLDivElement>(null);
   const live = useRef(true); // false while paused, hovered or focused
   const held = useRef(false);
   live.current = run && !held.current;
@@ -322,7 +327,7 @@ function Rail() {
     const el = track.current, wrap = box.current;
     if (!el || !wrap) return;
     let x = 0, raf = 0, last = 0, lastY = window.scrollY, boost = 0;
-    const tick = (now) => {
+    const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
       const dt = last ? Math.min(64, now - last) / 1000 : 0;
       last = now;
@@ -340,8 +345,8 @@ function Rail() {
     io.observe(wrap);
     return () => { cancelAnimationFrame(raf); io.disconnect(); };
   }, [calm]);
-  const hold = (h) => () => { held.current = h; live.current = run && !h; };
-  const cascade = useEnter('cascade');
+  const hold = (h: boolean) => () => { held.current = h; live.current = run && !h; };
+  const cascade = useEnter<HTMLHeadingElement>('cascade');
   return (
     <section className="xcs-logos" aria-labelledby="xcs-logos-h">
       <div className="vc-wrap xcs-logos-h">
@@ -369,9 +374,9 @@ function Rail() {
 /* What Enterprise includes: a plain list (no pinned scene, MOTION-MAP rule 3) that grows out of your last pointer point
    (grow-from-point). Numerals rest at 64px. Adding one, from a row or the +, stamps it: the numeral and the + land with
    a short drop, a squash and a settle (the signature); the same inclusion stamps onto the card's last step too. */
-function Includes({ adds, toggle }) {
+function Includes({ adds, toggle }: { adds: number[]; toggle: (i: number) => void }) {
   const [lit, setLit] = useState(-1);
-  const grow = useEnter('grow');
+  const grow = useEnter<HTMLOListElement>('grow');
   return (
     <section className="vc-sec xcs-inc" aria-labelledby="xcs-inc-h">
       <div className="vc-grid">
@@ -386,7 +391,7 @@ function Includes({ adds, toggle }) {
               // the whole row answers: a .98 press, and a click or tap on it adds it (the + stays the keyboard control)
               <li key={t} className={(on ? 'on' : '') + (lit === i ? ' lit' : '')}
                 onPointerEnter={() => setLit(i)} onPointerLeave={() => setLit(-1)}
-                onClick={(e) => { if (!e.target.closest('button')) toggle(i); }}>
+                onClick={(e) => { if (!(e.target as Element).closest('button')) toggle(i); }}>
                 <span className="xcs-inc-n vc-num" aria-hidden="true"><span key={on ? 'y' : 'n'} className={on ? 'xcs-stamp' : undefined}>{two(i + 1)}</span></span>
                 <span className="xcs-inc-x">
                   <span className="xcs-inc-t">{t}</span>
@@ -406,10 +411,10 @@ function Includes({ adds, toggle }) {
 }
 
 export default function ContactSales() {
-  const [v, setV] = useState({ name: '', email: '', company: '', size: '', need: '', website: '' });
+  const [v, setV] = useState<Values>({ name: '', email: '', company: '', size: '', need: '', website: '' });
   const [at, setAt] = useState(0);
-  const [adds, setAdds] = useState([]); // the inclusions you added, kept apart from your own words until you send
-  const toggle = (i) => setAdds((a) => (a.includes(i) ? a.filter((x) => x !== i) : [...a, i].sort()));
+  const [adds, setAdds] = useState<number[]>([]); // the inclusions you added, kept apart from your own words until you send
+  const toggle = (i: number) => setAdds((a) => (a.includes(i) ? a.filter((x) => x !== i) : [...a, i].sort()));
   // the draft survives a reload in this tab (PLAN 2.1); nothing leaves the browser until you press Talk to sales
   const loaded = useRef(false);
   useEffect(() => {
@@ -427,19 +432,19 @@ export default function ContactSales() {
   const sizeAt = SIZES.findIndex(([k]) => k === v.size);
   const calm = useReducedMotion();
   // the Band's "Talk to sales" glides back up to the card and puts you in the question you are on (no reload, no jump)
-  const back = (e) => {
-    const a = e.target.closest?.('.x-band a[href*="#xcs-form"]');
+  const back = (e: MouseEvent<HTMLElement>) => {
+    const a = (e.target as Element).closest?.('.x-band a[href*="#xcs-form"]');
     if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return;
     e.preventDefault();
     const card = document.getElementById('xcs-form');
     if (!card) return;
     card.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' });
-    const f = card.querySelector('.xcs-step.on input:not([type=radio]), .xcs-step.on textarea, .xcs-step.on input:checked, .xcs-step.on input[type=radio]');
+    const f = card.querySelector<HTMLElement>('.xcs-step.on input:not([type=radio]), .xcs-step.on textarea, .xcs-step.on input:checked, .xcs-step.on input[type=radio]');
     setTimeout(() => f?.focus({ preventScroll: true }), calm ? 0 : 900);
   };
   const root = useRef(null);
-  const pendulum = useEnter('pendulum');
-  const accordion = useEnter('accordion');
+  const pendulum = useEnter<HTMLDivElement>('pendulum');
+  const accordion = useEnter<HTMLDivElement>('accordion');
   useFilm(root);
   return (
     <main className="vc xcs" ref={root} style={{ '--acc': '#0a0a0a' }} data-ask-name="Talk to sales" onClickCapture={back}>

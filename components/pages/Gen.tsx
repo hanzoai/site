@@ -21,21 +21,22 @@ import usePhoneAsk from './usePhoneAsk';
 import './Gen.css';
 
 const KEYS = 'https://platform.hanzo.ai/keys';
-const AGENTS = [
+// the board and the keys both step through these: the name, and the flag that launches it
+const AGENTS: [string, string][] = [
   ['Hanzo Dev', 'dev'], ['Claude Code', 'claude'], ['Codex', 'codex'], ['Cursor', 'cursor'], ['Antigravity', 'agy'], ['Gemini CLI', 'gemini'],
   ['OpenCode', 'opencode'], ['Kilo Code', 'kilo'], ['Crush', 'crush'], ['Pi', 'pi'], ['GitHub Copilot CLI', 'copilot'], ['Amp', 'amp'],
   ['Grok Build', 'grok'], ['Goose', 'goose'], ['Aider', 'aider'], ['Hermes Agent', 'hermes'], ['Cline', 'cline'], ['Continue CLI', 'continue'],
   ['Oh My Pi', 'omp'], ['Letta Code', 'letta'], ['Kode', 'kode'], ['OpenHands', 'openhands'], ['Open Interpreter', 'interpreter'],
 ];
-const RAILS = [
+const RAILS: [string, string, string][] = [
   ['Tools', 'The Hanzo MCP toolset rides along on every agent that can take a server for one run.', '--no-mcp'],
   ['Models', 'Its model calls go to api.hanzo.ai, metered on your account, for an agent that can name another endpoint. Without the flag, an agent uses the account it is signed in to.', '--cloud --model'],
   ['Sessions', 'Signed in, a session is linked to your Hanzo account and streams to mission control as it runs, so it can be followed and picked back up.', '--resume --no-link'],
   ['Fences', 'Sessions are approved inside a sandbox; ask before each action instead. A repository’s own .mcp.json stays off until you trust it.', '--ask --project-mcp'],
 ];
-const n23 = (i) => String(i + 1).padStart(2, '0') + ' / ' + AGENTS.length;
-const flagOf = (f) => (f === 'dev' ? '' : '--' + f);
-const capOf = (name, f) => (f === 'dev' ? 'no agent named: Hanzo Dev' : `--${f}: ${name}`);
+const n23 = (i: number) => String(i + 1).padStart(2, '0') + ' / ' + AGENTS.length;
+const flagOf = (f: string) => (f === 'dev' ? '' : '--' + f);
+const capOf = (name: string, f: string) => (f === 'dev' ? 'no agent named: Hanzo Dev' : `--${f}: ${name}`);
 const EASE = 'cubic-bezier(.16,1,.3,1)';
 
 const IconPause = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M5.5 3.5v9M10.5 3.5v9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>;
@@ -45,7 +46,7 @@ const IconNext = () => <svg viewBox="0 0 16 16" width="18" height="18" aria-hidd
 
 /* ---------- the board: twelve tiles a row, two rows; a name breaks between words ---------- */
 const COLS = 12;
-function rows(name) {
+function rows(name: string) {
   const out = [''];
   name.split(' ').forEach((w) => {
     const cur = out[out.length - 1];
@@ -57,12 +58,14 @@ function rows(name) {
   return out.map((r) => r.padEnd(COLS, ' ')).join('');
 }
 
-function Board({ at, setAt, mine }) {
-  const box = useRef(null);
+interface Walk { at: number; setAt: (i: number, byHand: boolean) => void; mine: boolean }
+
+function Board({ at, setAt, mine }: Walk) {
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
-  const cells = useRef([]);
-  const flag = useRef(null);
+  const cells = useRef<(HTMLSpanElement | null)[]>([]);
+  const flag = useRef<HTMLSpanElement>(null);
   const [first] = useState(() => [rows(AGENTS[at][0]), flagOf(AGENTS[at][1])]); // the tiles are written by hand after this
   const [paused, setPaused] = useState(false);
   const [walked, setWalked] = useState(0); // it walks the 23 once, then rests on the last
@@ -74,7 +77,7 @@ function Board({ at, setAt, mine }) {
     const els = cells.current;
     const settle = () => { els.forEach((el, i) => { if (el) el.textContent = to[i]; }); if (flag.current) flag.current.textContent = fl; };
     if (!live) { settle(); return; }
-    const timers = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     els.forEach((el, i) => {
       if (!el || el.textContent === to[i]) return;
       const c = i % COLS, r = Math.floor(i / COLS);
@@ -102,7 +105,7 @@ function Board({ at, setAt, mine }) {
   }, [at, mine, live, paused, walked, setAt]);
   useEffect(() => { if (walked === AGENTS.length - 1) play('done'); }, [walked]); // the walk is over: the faint chime
   const [name, f] = AGENTS[at];
-  const step = (d) => setAt((at + d + AGENTS.length) % AGENTS.length, true);
+  const step = (d: number) => setAt((at + d + AGENTS.length) % AGENTS.length, true);
   const walking = !mine && !calm && walked < AGENTS.length - 1;
   return (
     <div className="xgn-obj av-obj" ref={box} data-morph-target="">
@@ -125,7 +128,7 @@ function Board({ at, setAt, mine }) {
         <button type="button" className="xgn-board" onClick={() => step(1)} aria-label={`${name}, ${capOf(name, f)}. Next`}>
           {[...first[0]].map((ch, i) => (
             <span key={i} className={'xgn-tile' + (i >= COLS ? ' r2' : '')} aria-hidden="true">
-              <span ref={(el) => (cells.current[i] = el)}>{ch}</span>
+              <span ref={(el) => { cells.current[i] = el; }}>{ch}</span>
             </span>
           ))}
         </button>
@@ -145,7 +148,7 @@ function Board({ at, setAt, mine }) {
   );
 }
 
-function Hero({ at, setAt, mine }) {
+function Hero({ at, setAt, mine }: Walk) {
   return (
     <section className="xgn-hero" aria-labelledby="xgn-h1">
       <div className="av-wrap av-grid xgn-hero-g">
@@ -177,20 +180,21 @@ function Index() {
 }
 
 /* ---------- install: one code window, three tabs; every line copies ---------- */
-const SESSION = [
+type Line = [cmd: string, note: string | null];
+const SESSION: Line[] = [
   ['curl -fsSL https://hanzo.sh | sh -s gen', null],
   ['gen', 'no agent named: Hanzo Dev'],
   ['gen --claude', 'Claude Code, with the Hanzo toolset attached'],
   ['gen --codex "add a test"', 'Codex, run headless on the task'],
   ['gen --claude --cloud', 'its model calls on Hanzo’s, metered on your account'],
 ];
-const TABS = [
+const TABS: [string, Line[]][] = [
   ['Install', [['curl -fsSL https://hanzo.sh | sh -s gen', '# gen alone'], ['curl -fsSL https://hanzo.sh | sh', '# or every Hanzo tool, gen included']]],
   ['Run', [['gen', '# Hanzo Dev, the default'], ['gen --claude', '# Claude Code; any agent is a flag'], ['gen --codex "add a test"', '# a task, run headless']]],
   ['terminal', SESSION],
 ];
 
-function Lns({ lines, out }) {
+function Lns({ lines, out }: { lines: Line[]; out?: boolean }) {
   return (
     <ol className="xgn-lns">
       {lines.map(([c, n], i) => (
@@ -263,7 +267,7 @@ function Two() {
 }
 
 /* ---------- agents: twenty-three keys; the one you press is the flag the board and the builder use ---------- */
-function Agents({ at, pick }) {
+function Agents({ at, pick }: { at: number; pick: (i: number) => void }) {
   return (
     <section className="av-sec xgn-agents" id="agents" aria-labelledby="xgn-ag-h">
       <div className="av-wrap av-grid">
@@ -287,21 +291,23 @@ function Agents({ at, pick }) {
 }
 
 /* ---------- Beyond: the rails, each a switch, and the exact command they make ---------- */
-const SWITCHES = [['cloud', '--cloud'], ['model', '--model enso-ultra'], ['nomcp', '--no-mcp'], ['nolink', '--no-link'], ['ask', '--ask'], ['pmcp', '--project-mcp']];
-export function build(flag, on) {
-  const parts = flag === 'dev' ? [] : ['--' + flag];
+type Switch = 'cloud' | 'model' | 'nomcp' | 'nolink' | 'ask' | 'pmcp';
+type On = Partial<Record<Switch, boolean>>;
+const SWITCHES: [Switch, string][] = [['cloud', '--cloud'], ['model', '--model enso-ultra'], ['nomcp', '--no-mcp'], ['nolink', '--no-link'], ['ask', '--ask'], ['pmcp', '--project-mcp']];
+export function build(flag: string, on: On) {
+  const parts: string[] = flag === 'dev' ? [] : ['--' + flag];
   SWITCHES.forEach(([k, f]) => { if (on[k] && (k !== 'model' || on.cloud)) parts.push(f); });
   return parts.join(' ');
 }
-const OWNS = { 0: ['nomcp'], 1: ['cloud', 'model'], 2: ['nolink'], 3: ['ask', 'pmcp'] };
+const OWNS: Record<number, Switch[]> = { 0: ['nomcp'], 1: ['cloud', 'model'], 2: ['nolink'], 3: ['ask', 'pmcp'] };
 
-function Rails({ at, pick }) {
-  const [on, setOn] = useState({ cloud: true });
+function Rails({ at, pick }: { at: number; pick: (i: number) => void }) {
+  const [on, setOn] = useState<On>({ cloud: true });
   const [name, flag] = AGENTS[at];
   const args = build(flag, on);
   const gen = ('gen ' + args).trim(), dev = ('hanzo dev ' + args).trim();
-  const flip = (k) => setOn((o) => ({ ...o, [k]: !o[k] }));
-  const step = (d) => pick((at + d + AGENTS.length) % AGENTS.length);
+  const flip = (k: Switch) => setOn((o) => ({ ...o, [k]: !o[k] }));
+  const step = (d: number) => pick((at + d + AGENTS.length) % AGENTS.length);
   return (
     <section className="av-sec xgn-rails" id="rails" aria-labelledby="xgn-rails-h">
       <div className="av-wrap av-grid">
@@ -319,7 +325,7 @@ function Rails({ at, pick }) {
                 <p className="av-body">{d}</p>
                 <span className="xgn-sw">
                   {OWNS[i].map((k) => {
-                    const s = SWITCHES.find((x) => x[0] === k);
+                    const s = SWITCHES.find((x) => x[0] === k)!; // every switch an item owns is listed above
                     const off = k === 'model' && !on.cloud;
                     const lit = !!on[k] && !off;
                     return (
@@ -409,7 +415,8 @@ function Questions() {
 }
 
 /* ---------- read on, and paste and ship ---------- */
-const READ = [
+type Link = [to: string, title: string, note?: string];
+const READ: [string, Link[]][] = [
   ['Gen', [['https://github.com/hanzoai/gen', 'hanzoai/gen', 'MIT.'], ['#agents', 'The agents'], ['#install', 'Install', 'curl -fsSL https://hanzo.sh | sh -s gen'], ['https://github.com/hanzoai/gen/releases', 'Releases']]],
   ['Dev', [['/dev', 'Hanzo Dev', 'Our agent, Gen’s default.'], ['/kai', 'Kai', 'Dev’s controller.']]],
   ['Models', [['/enso', 'Enso'], ['/models', 'Every model'], ['/cli', 'Hanzo CLI']]],
@@ -487,8 +494,8 @@ export default function Gen() {
   usePhoneAsk();
   const [at, setAtState] = useState(1);
   const [mine, setMine] = useState(false);
-  const setAt = (i, byHand) => { setAtState(i); if (byHand) setMine(true); };
-  const pick = (i) => setAt(i, true);
+  const setAt = (i: number, byHand: boolean) => { setAtState(i); if (byHand) setMine(true); };
+  const pick = (i: number) => setAt(i, true);
   return (
     <main className="av xgn" style={{ '--ac': '#737373' }}>
       <Hero at={at} setAt={setAt} mine={mine} />

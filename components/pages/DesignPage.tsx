@@ -11,6 +11,7 @@
    the before/after divider, line-masked headline, one entrance per section. Greys only; colour comes from Hanzo's model media.
    The music app is live: its spectrum dances to 124 BPM and the four synth pads play. Every word is Hanzo's; the brief is yours. */
 import { useEffect, useRef, useState } from 'react';
+import type { ElementType, KeyboardEvent, MouseEvent, RefObject } from 'react';
 import { motion, AnimatePresence, useInView, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark, useCalm } from '../ui';
 import { A, More, Cta, Img, Film } from '../kit';
@@ -18,7 +19,7 @@ import { useOpener } from '../Opener';
 import '../v2/AppType.css';
 import './DesignPage.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const TABS = ['Music App', 'Presentation', 'Ad Suite', 'Visual', 'Document', 'Video'];
 const KIND = ['app', 'deck', 'ad', 'visual', 'doc', 'video'];
 const BADGE = ['HTML5 app', '16:9 deck', 'Multi-aspect ads', 'Iro', 'Vector PDF', 'MP4'];
@@ -29,12 +30,14 @@ const DWELL = 5200;
 
 /* A synth pad: one short note in F# minor, made in the browser. */
 function useSynth() {
-  const ctx = useRef(null);
-  return (i) => {
+  const ctx = useRef<AudioContext | null>(null);
+  return (i: number) => {
     try {
-      const C = ctx.current || (ctx.current = new (window.AudioContext || window.webkitAudioContext)());
+      const AC: typeof AudioContext = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext!; // Safari before 14.1
+      const C = ctx.current || (ctx.current = new AC());
       const t = C.currentTime, o = C.createOscillator(), g = C.createGain();
-      o.type = ['sine', 'triangle', 'sawtooth', 'sine'][i];
+      const waves: OscillatorType[] = ['sine', 'triangle', 'sawtooth', 'sine'];
+      o.type = waves[i];
       o.frequency.value = [46.25, 185, 554.37, 1479.98][i];
       g.gain.setValueAtTime(0.0001, t);
       g.gain.exponentialRampToValueAtTime(i === 2 ? 0.04 : 0.1, t + 0.02);
@@ -46,18 +49,18 @@ function useSynth() {
 }
 
 /* The spectrum: 40 bands moving to a 124 BPM pulse, written straight to the bars (no React state per frame). */
-function Spectrum({ mode, live, energy }) {
-  const bars = useRef([]);
-  const wave = useRef(null);
+function Spectrum({ mode, live, energy }: { mode: number; live: boolean; energy: RefObject<number> }) {
+  const bars = useRef<(HTMLElement | null)[]>([]);
+  const wave = useRef<SVGPathElement>(null);
   useEffect(() => {
     if (!live) return;
     let raf = 0;
     const t0 = performance.now();
-    const tick = (t) => {
+    const tick = (t: number) => {
       const s = (t - t0) / 1000;
       const beat = Math.pow(Math.max(0, Math.sin(s * Math.PI * (124 / 60))), 8);
       const e = energy.current; energy.current *= 0.93;
-      const v = [];
+      const v: number[] = [];
       for (let i = 0; i < N; i++) {
         const f = i / N;
         const x = 0.18 + (1 - f) * 0.5 * beat + 0.14 * Math.sin(s * (2 + f * 5) + i) + 0.1 * Math.sin(s * 7.3 + i * 1.7) + e * (0.55 - Math.abs(f - 0.3) * 0.5);
@@ -81,13 +84,13 @@ function Spectrum({ mode, live, energy }) {
   return (
     <div className={'dz-spec' + (mode === 2 ? ' radial' : '')} aria-hidden="true">
       {Array.from({ length: N }).map((_, i) => (
-        <i key={i} ref={(el) => (bars.current[i] = el)} style={{ transform: mode === 2 ? `rotate(${i * 9}deg) translateY(-34%) scaleY(.3)` : `scaleY(${0.2 + ((i * 37) % 11) / 20})` }} />
+        <i key={i} ref={(el) => { bars.current[i] = el; }} style={{ transform: mode === 2 ? `rotate(${i * 9}deg) translateY(-34%) scaleY(.3)` : `scaleY(${0.2 + ((i * 37) % 11) / 20})` }} />
       ))}
     </div>
   );
 }
 
-function MusicApp({ live }) {
+function MusicApp({ live }: { live: boolean }) {
   const [mode, setMode] = useState(0);
   const [hit, setHit] = useState(-1);
   const energy = useRef(0);
@@ -122,7 +125,7 @@ function MusicApp({ live }) {
   );
 }
 
-function Deck({ live }) {
+function Deck({ live }: { live: boolean }) {
   const [s, setS] = useState(0);
   useEffect(() => {
     if (!live) return;
@@ -177,7 +180,7 @@ function Doc() {
   );
 }
 
-function Clip({ live }) {
+function Clip({ live }: { live: boolean }) {
   return (
     <div className="dz-film">
       <div className="dz-film-v">
@@ -190,8 +193,8 @@ function Clip({ live }) {
 
 /* ---------- the signature: one conversation, the artifact morphing in its window ---------- */
 /* Each artifact's shape inside the stage: [width share, height share, aspect]; the missing side follows the aspect. */
-const SHAPE = { app: [1, 1, 0], deck: [0.84, 0, 16 / 9], ad: [1, 0.92, 0], visual: [0, 1, 0.8], doc: [0, 1, 0.74], video: [0.88, 0, 1.6] };
-function shapeOf(k, W, H) {
+const SHAPE: Record<string, [number, number, number]> = { app: [1, 1, 0], deck: [0.84, 0, 16 / 9], ad: [1, 0.92, 0], visual: [0, 1, 0.8], doc: [0, 1, 0.74], video: [0.88, 0, 1.6] };
+function shapeOf(k: string, W: number, H: number) {
   const [fw, fh, ar] = SHAPE[k];
   let w = fw ? W * fw : 0, h = fh ? H * fh : 0;
   if (!w) w = h * ar;
@@ -201,8 +204,8 @@ function shapeOf(k, W, H) {
   const left = Math.round((W - w) / 2), top = Math.round((H - h) / 2);
   return { left, top, width: Math.round(w), height: Math.round(h), right: Math.round(W - left - w), bottom: Math.round(H - top - h) };
 }
-function useSize(ref) {
-  const [s, setS] = useState(null);
+function useSize(ref: RefObject<HTMLElement | null>) {
+  const [s, setS] = useState<[number, number] | null>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -213,15 +216,16 @@ function useSize(ref) {
   return s;
 }
 
-function Workspace({ at, pick, live, mine, calm, paused, onPause }) {
-  const frame = useRef(null);
+function Workspace({ at, pick, live, mine, calm, paused, onPause }: { at: number; pick: (i: number) => void; live: boolean; mine: boolean; calm: boolean; paused: boolean; onPause: () => void }) {
+  const frame = useRef<HTMLDivElement>(null);
   const size = useSize(frame);
   const r = size && shapeOf(KIND[at], size[0], size[1]);
   const art = [<MusicApp key="a" live={live && at === 0} />, <Deck key="d" live={live && at === 1} />, <Ads key="ad" />, <Poster key="p" />, <Doc key="doc" />, <Clip key="f" live={live && at === 5} />][at];
-  const key = (e, i) => {
-    const n = { ArrowRight: 1, ArrowLeft: -1 }[e.key]; if (!n) return;
+  const key = (e: KeyboardEvent<HTMLButtonElement>, i: number) => {
+    const arrows: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1 };
+    const n = arrows[e.key]; if (!n) return;
     const j = (i + n + TABS.length) % TABS.length; pick(j);
-    e.currentTarget.parentElement.children[j]?.focus();
+    (e.currentTarget.parentElement?.children[j] as HTMLElement | undefined)?.focus();
   };
   return (
     <div className="dz-win">
@@ -269,8 +273,8 @@ function Workspace({ at, pick, live, mine, calm, paused, onPause }) {
    Each main section arrives its own way, once, when about a third of it is in view. The server and the first render show
    the final state; the start state is set on the element after mount (data-enter="pre"), so JS-off and reduced motion
    simply show the section. */
-function useEnter(onGo) {
-  const ref = useRef(null);
+function useEnter(onGo?: (el: HTMLElement) => void) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   const go = useRef(onGo); go.current = onGo;
   useEffect(() => {
@@ -291,13 +295,13 @@ function useEnter(onGo) {
 }
 
 /* word-shuffle: each word starts where another word sits and swaps into its own place (FLIP), text unchanged */
-function Shuffle({ text, as: Tag = 'p', className }) {
+function Shuffle({ text, as: Tag = 'p', className }: { text: string; as?: ElementType; className?: string }) {
   const words = text.split(' ');
   return <Tag className={className}>{words.map((w, i) => <span key={i} className="dz-sw">{w}{i < words.length - 1 ? ' ' : ''}</span>)}</Tag>;
 }
-function shuffleIn(root) {
-  root.querySelectorAll('.dz-shuf').forEach((line, li) => {
-    const ws = [...line.querySelectorAll('.dz-sw')];
+function shuffleIn(root: HTMLElement) {
+  root.querySelectorAll<HTMLElement>('.dz-shuf').forEach((line, li) => {
+    const ws = [...line.querySelectorAll<HTMLElement>('.dz-sw')];
     if (ws.length < 2) return;
     const pos = ws.map((w) => [w.offsetLeft, w.offsetTop]);
     const perm = ws.map((_, i) => (i * 3 + 1 + li) % ws.length);
@@ -311,9 +315,9 @@ function shuffleIn(root) {
 }
 
 /* count-roll: each sheet's "0n / 06" rolls up from 00 to its value, one digit at a time */
-function rollIn(root) {
-  root.querySelectorAll('.dz-sheet-n').forEach((el, k) => {
-    const end = el.textContent;
+function rollIn(root: HTMLElement) {
+  root.querySelectorAll<HTMLElement>('.dz-sheet-n').forEach((el, k) => {
+    const end = el.textContent || '';
     const n = parseInt(end, 10);
     let v = 0;
     const step = () => {
@@ -329,38 +333,41 @@ function rollIn(root) {
    block sits over the word whose artifact is on screen, holding a white copy of the headline clipped to that word, so
    the word reads white on ink; it is measured from the text itself, and pointing at a word picks its tab. It wipes in from the top at first paint (CSS). */
 const H1 = 'Create visuals,\ndecks, docs, ads,\nvideos &\ninteractive apps';
-const H1W = [['visuals', 3], ['decks', 1], ['docs', 4], ['ads', 2], ['videos', 5], ['interactive apps', 0]];
-function Headline({ at, pick }) {
-  const box = useRef(null);
-  const txt = useRef(null);
-  const [rs, setRs] = useState(null);
+const H1W: [string, number][] = [['visuals', 3], ['decks', 1], ['docs', 4], ['ads', 2], ['videos', 5], ['interactive apps', 0]];
+type Mark = { l: number; t: number; w: number; h: number };
+function Headline({ at, pick }: { at: number; pick: (i: number) => void }) {
+  const box = useRef<HTMLHeadingElement>(null);
+  const txt = useRef<HTMLSpanElement>(null);
+  const [rs, setRs] = useState<{ W: number; r: Record<number, Mark> } | null>(null);
   useEffect(() => {
     const node = txt.current?.firstChild;
-    if (!node || !box.current) return;
+    const el = box.current;
+    if (!node || !el) return;
     const measure = () => {
-      const b = box.current.getBoundingClientRect();
-      const px = parseFloat(getComputedStyle(box.current).fontSize) * 0.06;
-      const r = { W: b.width };
+      const b = el.getBoundingClientRect();
+      const px = parseFloat(getComputedStyle(el).fontSize) * 0.06;
+      const r: Record<number, Mark> = {};
       H1W.forEach(([w, k]) => {
         const i = H1.indexOf(w);
         const g = document.createRange(); g.setStart(node, i); g.setEnd(node, i + w.length);
         const q = [...g.getClientRects()]; if (!q.length) return;
         r[k] = { l: q[0].left - b.left - px, t: q[0].top - b.top + px, w: q[q.length - 1].right - q[0].left + 2 * px, h: q[0].height - 2 * px };
       });
-      setRs(r);
+      setRs({ W: b.width, r });
     };
     measure();
-    const ro = new ResizeObserver(measure); ro.observe(box.current);
+    const ro = new ResizeObserver(measure); ro.observe(el);
     document.fonts?.ready.then(measure);
     return () => ro.disconnect();
   }, []);
-  const hit = (e) => {
-    if (!rs) return -1;
-    const b = box.current.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top;
-    const f = Object.entries(rs).find(([k, r]) => k !== 'W' && x >= r.l && x <= r.l + r.w && y >= r.t && y <= r.t + r.h);
+  const hit = (e: MouseEvent<HTMLElement>) => {
+    const b = box.current?.getBoundingClientRect();
+    if (!rs || !b) return -1;
+    const x = e.clientX - b.left, y = e.clientY - b.top;
+    const f = Object.entries(rs.r).find(([, r]) => x >= r.l && x <= r.l + r.w && y >= r.t && y <= r.t + r.h);
     return f ? +f[0] : -1;
   };
-  const r = rs && rs[at];
+  const r = rs && rs.r[at];
   return (
     <h1 id="dz-h1" ref={box} className="dz-h1" onClick={(e) => { const k = hit(e); if (k >= 0) pick(k); }} onMouseMove={(e) => { e.currentTarget.style.cursor = hit(e) >= 0 ? 'pointer' : ''; }}>
       <span ref={txt} className="dz-h1-t">{H1}</span>
@@ -378,10 +385,10 @@ function Hero() {
   const [mine, setMine] = useState(false);
   const [paused, setPaused] = useState(false);
   const calm = useCalm();
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const live = seen && !calm && !paused;
-  const pick = (i) => { setAtS(i); setMine(true); };
+  const pick = (i: number) => { setAtS(i); setMine(true); };
   useEffect(() => {
     if (mine || !live) return;
     const t = setTimeout(() => setAtS((v) => (v + 1) % TABS.length), DWELL);
@@ -416,7 +423,7 @@ function Hero() {
 }
 
 /* ---------- what it is: three pinned chapters ---------- */
-function Files({ on }) {
+function Files({ on }: { on: boolean }) {
   return (
     <div className={'dz-vis dz-files' + (on ? ' on' : '')} aria-hidden="true">
       <div className="dz-files-in">{['.mp3', '.wav', '.flac', 'PDF', 'CSV', 'JSON'].map((f, k) => <span key={f} className="x-mono" style={{ '--k': k }}>{f}</span>)}</div>
@@ -424,7 +431,7 @@ function Files({ on }) {
     </div>
   );
 }
-function Shapes({ on }) {
+function Shapes({ on }: { on: boolean }) {
   return (
     <div className={'dz-vis dz-shapes' + (on ? ' on' : '')} aria-hidden="true">
       <span className="deck"><Img src="/models/oto.webp" alt="" w={1200} h={1500} /></span>
@@ -433,7 +440,7 @@ function Shapes({ on }) {
     </div>
   );
 }
-function Eq({ on }) {
+function Eq({ on }: { on: boolean }) {
   return (
     <div className={'dz-vis dz-eqv' + (on ? ' on' : '')} aria-hidden="true">
       <div className="dz-eq-bars">{Array.from({ length: 24 }).map((_, k) => <i key={k} style={{ animationDelay: -k * 0.13 + 's', animationDuration: 0.6 + (k % 4) * 0.17 + 's' }} />)}</div>
@@ -443,15 +450,15 @@ function Eq({ on }) {
 }
 
 const STEPS = [
-  { title: 'Upload any content', body: <p className="av-body">Drop in audio (.mp3, .wav, .flac), images, video clips, PDFs, Office docs, or CSV/JSON data. Every uploaded file is wired directly into the visuals, decks, and apps you create.</p>, visual: (on) => <Files on={on} /> },
-  { title: 'Presentations, documents & ads', body: <p className="av-body">Generate 16:9 keynote slide decks, typeset brand &amp; technical documents with vector PDF export, and multi-format social and display ad campaigns.</p>, visual: (on) => <Shapes on={on} /> },
-  { title: 'Interactive music & visual apps', body: <p className="av-body">Upload a song or audio stem and build a full-blown interactive WebAudio music app with a 60fps FFT spectrum visualizer, waveform scrubber, 3-band EQ, and playable synth pads.</p>, visual: (on) => <Eq on={on} /> },
+  { title: 'Upload any content', body: <p className="av-body">Drop in audio (.mp3, .wav, .flac), images, video clips, PDFs, Office docs, or CSV/JSON data. Every uploaded file is wired directly into the visuals, decks, and apps you create.</p>, visual: (on: boolean) => <Files on={on} /> },
+  { title: 'Presentations, documents & ads', body: <p className="av-body">Generate 16:9 keynote slide decks, typeset brand &amp; technical documents with vector PDF export, and multi-format social and display ad campaigns.</p>, visual: (on: boolean) => <Shapes on={on} /> },
+  { title: 'Interactive music & visual apps', body: <p className="av-body">Upload a song or audio stem and build a full-blown interactive WebAudio music app with a 60fps FFT spectrum visualizer, waveform scrubber, 3-band EQ, and playable synth pads.</p>, visual: (on: boolean) => <Eq on={on} /> },
 ];
 
 /* ---------- the signature: before / after. The raw upload on one side, what one conversation made of it on the other;
    drag the divider (or use the arrow keys) across them. The step you choose decides what the upload became. ---------- */
-function Compare({ step }) {
-  const box = useRef(null);
+function Compare({ step }: { step: number }) {
+  const box = useRef<HTMLDivElement>(null);
   const calm = useCalm();
   const seen = useInView(box, { amount: 0.5, once: true });
   const [x, setX] = useState(50);
@@ -462,7 +469,7 @@ function Compare({ step }) {
     if (!seen || calm || hinted) return;
     setHinted(true);
     let raf = 0; const t0 = performance.now();
-    const run = (t) => {
+    const run = (t: number) => {
       const k = Math.min(1, (t - t0) / 1100);
       const e = 1 - Math.pow(1 - k, 3);
       setX(88 - 38 * e);
@@ -471,12 +478,14 @@ function Compare({ step }) {
     raf = requestAnimationFrame(run);
     return () => cancelAnimationFrame(raf);
   }, [seen, calm, hinted]);
-  const at = (e) => {
-    const r = box.current.getBoundingClientRect();
+  const at = (e: { clientX: number }) => {
+    const r = box.current?.getBoundingClientRect();
+    if (!r) return;
     setX(Math.max(4, Math.min(96, ((e.clientX - r.left) / r.width) * 100)));
   };
-  const key = (e) => {
-    const d = { ArrowLeft: -5, ArrowRight: 5, Home: -100, End: 100 }[e.key];
+  const key = (e: KeyboardEvent<HTMLButtonElement>) => {
+    const moves: Record<string, number> = { ArrowLeft: -5, ArrowRight: 5, Home: -100, End: 100 };
+    const d = moves[e.key];
     if (d === undefined) return;
     e.preventDefault();
     setX((v) => Math.max(4, Math.min(96, v + d)));
@@ -540,7 +549,7 @@ function What() {
 }
 
 /* ---------- capabilities: six sheets that stack as you scroll ---------- */
-const CAPS = [
+const CAPS: [string, string, string, string][] = [
   ['Visuals, images & posters', 'High-resolution imagery, product photography, posters, and vector brand assets powered by Iro.', 'visual', 'Powered by Iro'],
   ['Slide decks & presentations', 'Structured 16:9 slide decks with keyboard navigation, speaker flow, and vector PDF download.', 'deck', '16:9 · vector PDF'],
   ['Documents & print-ready PDFs', 'Editorial reports, brand guidelines, and one-pagers with live preview and native PDF typesetting.', 'doc', 'Native PDF typesetting'],
@@ -550,10 +559,10 @@ const CAPS = [
 ];
 
 /* Each capability's own media. In the Brief's cards (still) the clips show their posters, so at most two films play on a screen. */
-function Clip2({ m, still }) {
+function Clip2({ m, still }: { m: string; still?: boolean }) {
   return still ? <Img src={`/models/${m}.webp`} alt="" w={1200} h={1500} /> : <Film src={`/models/${m}.webm`} poster={`/models/${m}.webp`} w={1200} h={1500} />;
 }
-function CapArt({ k, still }) {
+function CapArt({ k, still }: { k: string; still?: boolean }) {
   if (k === 'visual') return <span className="dz-ca dz-ca-visual"><Clip2 m="iro" still={still} /><b>Neon<br />Horizon</b></span>;
   if (k === 'deck') return <span className="dz-ca dz-ca-deck">{[0, 1, 2].map((i) => <i key={i}><Img src={['/models/oto.webp', '/models/uta.webp', '/models/koe.webp'][i]} alt="" w={1200} h={1500} /></i>)}</span>;
   if (k === 'doc') return <span className="dz-ca dz-ca-doc">{[0, 1].map((p) => <i key={p}><b />{[90, 100, 84, 100, 62, 96, 74].map((w, j) => <em key={j} style={{ width: w + '%' }} />)}</i>)}</span>;
@@ -596,7 +605,7 @@ function Brief() {
   const title = brief.trim();
   const picked = CAPS.filter((_, i) => on[i]);
   // opposite-drift: as the section crosses the screen its two halves drift apart and meet in the middle
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   useEffect(() => {
     const el = ref.current;
@@ -643,7 +652,7 @@ function Brief() {
 }
 
 /* ---------- the dark room: every creative model; each opens into its page ---------- */
-const NODES = [
+const NODES: string[][] = [
   ['iro', 'Iro', 'Image generation and visual understanding.', 'Images'],
   ['koma', 'Koma', 'Video generation and world simulation.', 'Video'],
   ['oto', 'Oto', 'Sound generation and audio understanding.', 'Audio'],
@@ -652,10 +661,10 @@ const NODES = [
   ['mori', 'Mori', '3D generation and spatial understanding.', '3D'],
 ];
 
-function Model({ n }) {
+function Model({ n }: { n: string[] }) {
   const [slug, name, desc, kind] = n;
   const opener = useOpener();
-  const box = useRef(null);
+  const box = useRef<HTMLAnchorElement>(null);
   return (
     <li>
       <a href={'/' + slug} ref={box} className="dz-model" data-cursor="" data-cta={'design-model-' + slug}
@@ -729,7 +738,7 @@ function Repo() {
 }
 
 function Band() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 0.2'] });
   const clip = useTransform(scrollYProgress, [0, 1], ['inset(0% 3% 0% 3% round 24px)', 'inset(0% 0% 0% 0% round 0px)']);

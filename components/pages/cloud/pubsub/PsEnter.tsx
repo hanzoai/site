@@ -7,13 +7,15 @@
    child, so every arrival fires. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
+import type { HTMLMotionProps } from 'motion/react';
+import type { HTMLAttributes, ReactNode, RefObject } from 'react';
 import { useCalm } from '../../../ui'; // read after hydration, so the server frame and the first client frame match
 
 const calmNow = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* arms an entrance after mount when its element is still below the fold, then plays it on arrival */
-function useArrive(margin = '0px 0px -18% 0px') {
-  const ref = useRef(null);
+function useArrive<T extends HTMLElement = HTMLElement>(margin = '0px 0px -18% 0px') {
+  const ref = useRef<T>(null);
   const [st, setSt] = useState('idle'); // idle (final, untouched) -> armed -> play
   useEffect(() => {
     const el = ref.current;
@@ -24,12 +26,12 @@ function useArrive(margin = '0px 0px -18% 0px') {
     io.observe(el);
     return () => io.disconnect();
   }, [margin]);
-  return [ref, st];
+  return [ref, st] as const;
 }
 
 /* 1. line-draw: an outline that draws itself round its card on first paint, then the card fills (CSS only, so it
    plays from the server HTML with no hydration step; reduced motion skips it). Put inside a positioned card. */
-export function Outline({ d = 0 }) {
+export function Outline({ d = 0 }: { d?: number }) {
   return (
     <svg className="ps-ol" aria-hidden="true" style={{ '--d': d + 's' }}>
       <rect pathLength="1" />
@@ -39,10 +41,10 @@ export function Outline({ d = 0 }) {
 
 /* 2. cursor-trail: on arrival a cursor crosses the section left to right, a short trail of dots behind it, and the
    section is uncovered up to the cursor; afterwards a fine pointer moving over it leaves the same short trail */
-export function CursorTrail({ children, className = '', ...rest }) {
-  const [ref, st] = useArrive('0px 0px -22% 0px');
-  const dots = useRef([]);
-  const pts = useRef([]);
+export function CursorTrail({ children, className = '', ...rest }: HTMLAttributes<HTMLElement>) {
+  const [ref, st] = useArrive<HTMLElement>('0px 0px -22% 0px');
+  const dots = useRef<(HTMLElement | null)[]>([]);
+  const pts = useRef<[number, number][]>([]);
   const raf = useRef(0);
   const [done, setDone] = useState(false);
   const draw = () => {
@@ -65,7 +67,7 @@ export function CursorTrail({ children, className = '', ...rest }) {
     const el = ref.current; if (!el) return;
     const W = el.offsetWidth, H = el.offsetHeight;
     const t0 = performance.now();
-    const run = (now) => {
+    const run = (now: number) => {
       const p = Math.min(1, (now - t0) / 1100);
       const e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
       const x = W * e, y = H * (0.55 - 0.18 * Math.sin(e * Math.PI));
@@ -77,8 +79,9 @@ export function CursorTrail({ children, className = '', ...rest }) {
     raf.current = requestAnimationFrame(run);
     return () => cancelAnimationFrame(raf.current);
   }, [st, ref]); // eslint-disable-line react-hooks/exhaustive-deps
-  const move = (e) => {
+  const move = (e: React.PointerEvent<HTMLElement>) => {
     if (e.pointerType !== 'mouse' || calmNow() || (st === 'play' && !done)) return;
+    if (!ref.current) return;
     const r = ref.current.getBoundingClientRect();
     pts.current.push([e.clientX - r.left, e.clientY - r.top]); if (pts.current.length > 20) pts.current.shift();
     draw();
@@ -95,14 +98,14 @@ export function CursorTrail({ children, className = '', ...rest }) {
 
 /* 3. spring-snap: each fact snaps in from the right as it arrives and overshoots a little before it settles (a tween
    with an overshooting curve, not a spring: the page stays tweens-only); the held drawing snaps in from the left */
-export function useSnap(list) {
+export function useSnap(list: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const root = list.current;
     if (!root || calmNow()) return;
-    const items = [...root.querySelectorAll('[data-snap]')].filter((el) => el.getBoundingClientRect().top > innerHeight * 0.9);
+    const items = [...root.querySelectorAll<HTMLElement>('[data-snap]')].filter((el) => el.getBoundingClientRect().top > innerHeight * 0.9);
     items.forEach((el) => { el.dataset.snap = 'armed'; });
     const io = new IntersectionObserver((es) => es.forEach((e) => {
-      if (e.isIntersecting) { e.target.dataset.snap = 'play'; io.unobserve(e.target); }
+      if (e.isIntersecting) { (e.target as HTMLElement).dataset.snap = 'play'; io.unobserve(e.target); }
     }), { rootMargin: '0px 0px -12% 0px' });
     items.forEach((el) => io.observe(el));
     return () => io.disconnect();
@@ -111,8 +114,8 @@ export function useSnap(list) {
 
 /* 4. cover-slide: the quiet room rides up over the end of the facts as it comes in (scroll-linked; it overlaps only
    the facts' empty bottom padding, and with reduced motion it simply sits there) */
-export function CoverSlide({ children, className = '', ...rest }) {
-  const ref = useRef(null);
+export function CoverSlide({ children, className = '', ...rest }: Omit<HTMLMotionProps<'section'>, 'children' | 'className'> & { children?: ReactNode; className?: string }) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start 45%'] });
   const y = useTransform(scrollYProgress, [0, 1], [112, 0], { clamp: true });
@@ -124,24 +127,26 @@ export function CoverSlide({ children, className = '', ...rest }) {
 /* 5. pixel-resolve: the close's drawing arrives as coarse grey pixels that break into finer ones and clear to the
    sharp line art. The pixels are a veil laid over the art (measured, not inside the shared close), drawn only while
    it plays */
-const lum = (i, j, s) => { const x = Math.sin(i * 12.9898 + j * 78.233 + s) * 43758.5453; return x - Math.floor(x); };
+const lum = (i: number, j: number, s: number) => { const x = Math.sin(i * 12.9898 + j * 78.233 + s) * 43758.5453; return x - Math.floor(x); };
 const GREYS = 5; // five grey levels, drawn by class (Pubsub.css) so dark mode has its own
-export function PixelResolve({ children, art = '.lx-close-art' }) {
-  const [ref, st] = useArrive('0px 0px -25% 0px');
-  const [box, setBox] = useState(null);
+export function PixelResolve({ children, art = '.lx-close-art' }: { children?: ReactNode; art?: string }) {
+  const [ref, st] = useArrive<HTMLDivElement>('0px 0px -25% 0px');
+  const [box, setBox] = useState<{ left: number; top: number; width: number; height: number } | null>(null);
   const [gone, setGone] = useState(false);
   useEffect(() => {
     if (st === 'idle') return;
     const root = ref.current, a = root && root.querySelector(art);
-    if (!a) return;
+    if (!root || !a) return;
     const r = a.getBoundingClientRect(), q = root.getBoundingClientRect();
     setBox({ left: r.left - q.left, top: r.top - q.top, width: r.width, height: r.height });
     if (st !== 'play') return;
     const t = setTimeout(() => setGone(true), 1500);
     return () => clearTimeout(t);
   }, [st, ref, art]);
-  const layer = (n, s, d0) => {
-    const rows = Math.round(n * (box.height / box.width)) || n;
+  const layer = (n: number, s: number, d0: number) => {
+    if (!box) return null;
+    const rows
+ = Math.round(n * (box.height / box.width)) || n;
     return (
       <span className="ps-px-l" style={{ gridTemplateColumns: `repeat(${n}, 1fr)`, gridTemplateRows: `repeat(${rows}, 1fr)` }}>
         {Array.from({ length: n * rows }, (_, k) => {

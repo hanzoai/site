@@ -5,16 +5,20 @@
    Hanzo's own. app/not-found.jsx renders it for every unknown address; pages need nothing. */
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
+import type { MotionProps } from 'motion/react';
 import Sigil from '../Sigil';
 import { A } from '../kit';
 import { EASE } from '../ui';
 import './Lost.css';
 
-const words = (s) => s.toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 1);
-function rank(SEARCH, q, path) {
+// a page of the site: its path, title and description
+type Entry = string[];
+
+const words = (s: string) => s.toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 1);
+function rank(SEARCH: Entry[] | null, q: string, path: string) {
   const ws = words(q);
   if (!SEARCH || !ws.length) return [];
-  return SEARCH.map(([p, t, d]) => {
+  return SEARCH.map(([p, t, d]): [number, string, string, string] => {
     const hay = (p + ' ' + t).toLowerCase(), desc = (d || '').toLowerCase();
     let s = 0;
     for (const w of ws) s += (p.toLowerCase().includes(w) ? 3 : 0) + (t.toLowerCase().includes(w) ? 2 : 0) + (desc.includes(w) ? 0.5 : 0) + (hay.split(/[^a-z0-9]+/).some((x) => x.startsWith(w.slice(0, 4))) ? 0.5 : 0);
@@ -28,7 +32,7 @@ export default function Lost() {
   const [back, setBack] = useState(false);
   // the page index (lib/search.json, 150 KB) loads when this page is drawn: the root's not-found boundary rides on every
   // page, so a static import would put the index into every page's script
-  const [index, setIndex] = useState(null);
+  const [index, setIndex] = useState<Entry[] | null>(null);
   useEffect(() => { import('../../lib/search.json').then((m) => setIndex(m.default)); }, []);
   useEffect(() => {
     let p = location.pathname;
@@ -37,7 +41,7 @@ export default function Lost() {
     setBack(history.length > 1 && !!document.referrer && new URL(document.referrer).origin === location.origin);
   }, []);
   const hits = useMemo(() => rank(index, q || path.replace(/[/-]+/g, ' '), path), [index, q, path]);
-  const rise = (d) => ({ initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+  const rise = (d: number): MotionProps => ({ initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
   return (
     <main className="xlo" data-room="dark" data-ask="off">
       <div className="xlo-map" aria-hidden="true">

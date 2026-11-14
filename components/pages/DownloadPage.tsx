@@ -11,14 +11,22 @@
    that glide (layoutId), magnetic ask, line-masked headline (components/v2/x-edison/AppLines).
    Greys only. Every word, size and link is Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
+import type { Dispatch, ElementType, RefObject, SetStateAction } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
+import type { Transition } from 'motion/react';
 import { Copy, Magnetic, Mark } from '../ui';
 import { A, Cta, Img } from '../kit';
 import '../v2/AppType.css';
 import './DownloadPage.css';
 
 const GH = 'https://github.com/hanzoai/';
-const PRODUCTS = [
+type Build = [name: string, size: string, path: string]; // path is under github.com/hanzoai/
+interface Product { k: string; name: string; v: string; to?: string; d: string; builds: Build[] }
+type Os = 'mac' | 'linux' | 'linuxarm' | 'win';
+/* a build the dial points at (the tour or the pointer), with where its chip sits */
+interface Spot { x: number; y: number; p: Product; b: Build; tour?: boolean }
+
+const PRODUCTS: Product[] = [
   {
     k: 'desk', name: 'Desktop', v: 'v1.1.52', to: '/desktop',
     d: 'A native app with a global hotkey. Talk to Hanzo from any window, capture a region of the screen, and put the answer back where you were typing.',
@@ -61,27 +69,29 @@ const PRODUCTS = [
     ],
   },
 ];
-const FILE = (p) => p.split('/').pop();
-const GLIDE = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
+const FILE = (p: string) => p.split('/').pop();
+const GLIDE: Transition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
 
 /* Which build is yours. Desktop ships for macOS and Linux; on Windows the one native build is the CLI. */
 function useSystem() {
-  const [s, setS] = useState({ os: 'mac', br: 0 }); // the page ships with macOS, as hanzo.ai does
+  const [s, setS] = useState<{ os: Os; br: number }>({ os: 'mac', br: 0 }); // the page ships with macOS, as hanzo.ai does
   useEffect(() => {
-    const p = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || navigator.userAgent || '').toLowerCase();
+    const nav: Navigator & { userAgentData?: { platform?: string } } = navigator; // userAgentData is in no DOM typing yet
+    const p = ((nav.userAgentData
+ && nav.userAgentData.platform) || navigator.platform || navigator.userAgent || '').toLowerCase();
     const ua = navigator.userAgent;
     const l = ua.toLowerCase();
-    const os = /win/.test(p) ? 'win' : /linux|x11/.test(p) && !/android/.test(l) ? (/aarch64|arm/.test(l) ? 'linuxarm' : 'linux') : 'mac';
+    const os: Os = /win/.test(p) ? 'win' : /linux|x11/.test(p) && !/android/.test(l) ? (/aarch64|arm/.test(l) ? 'linuxarm' : 'linux') : 'mac';
     const br = /Edg\//.test(ua) ? 3 : /Firefox|FxiOS/.test(ua) ? 1 : /Safari/.test(ua) && !/Chrome|Chromium|CriOS|Edg/.test(ua) ? 2 : 0;
     setS({ os, br });
   }, []);
   return s;
 }
 // [label, product, build] of the one button; and which rows below are yours
-const MAIN = { mac: ['macOS', 0, 0], linux: ['Linux', 0, 1], linuxarm: ['Linux', 0, 3], win: ['Windows', 1, 2] };
-const MINE = { mac: { desk: [0], cli: [0, 1] }, linux: { desk: [1, 2], cli: [3] }, linuxarm: { desk: [3], cli: [4] }, win: { cli: [2] } };
+const MAIN: Record<Os, [string, number, number]> = { mac: ['macOS', 0, 0], linux: ['Linux', 0, 1], linuxarm: ['Linux', 0, 3], win: ['Windows', 1, 2] };
+const MINE: Record<Os, Partial<Record<string, number[]>>> = { mac: { desk: [0], cli: [0, 1] }, linux: { desk: [1, 2], cli: [3] }, linuxarm: { desk: [3], cli: [4] }, win: { cli: [2] } };
 
-const Glyph = ({ k }) => (
+const Glyph = ({ k }: { k: string }) => (
   <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
     {k === 'desk' && <><rect x="1.5" y="2.5" width="13" height="9" rx="1.6" fill="none" stroke="currentColor" strokeWidth="1.3" /><path d="M5.5 14h5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" /></>}
     {k === 'cli' && <><rect x="1.5" y="2.5" width="13" height="11" rx="1.6" fill="none" stroke="currentColor" strokeWidth="1.3" /><path d="m4.5 6.5 2 1.5-2 1.5M8 10h3.5" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" /></>}
@@ -96,13 +106,13 @@ const Down = ({ s = 16 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-
 // bottom-right, editors bottom-left; spaced so no two chips touch in the 1152 px container whichever build is the main one
 const ARC = [[182, 249], [271, 358], [17, 74], [103, 163]];
 const RX = 44, RY = 41;
-const r2 = (n) => Math.round(n * 100) / 100; // rounded: server and browser print the same style
+const r2 = (n: number) => Math.round(n * 100) / 100; // rounded: server and browser print the same style
 
 /* Headline lines rise out of their own masks. The server and the first render show the lines in place (JS off and
    reduced motion keep them there, and nothing differs at hydration); the hero plays from first paint in CSS (.js), the
    rest when half in view. */
-function Lines({ lines, as: Tag = 'h2', className = '', now = false, delay = 0, id }) {
-  const ref = useRef(null);
+function Lines({ lines, as: Tag = 'h2', className = '', now = false, delay = 0, id }: { lines: string[]; as?: ElementType; className?: string; now?: boolean; delay?: number; id?: string }) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const el = ref.current;
@@ -123,14 +133,14 @@ function Lines({ lines, as: Tag = 'h2', className = '', now = false, delay = 0, 
 /* At rest the centre reads through the builds by itself (the ray sweeping to each in turn, as pointing does), so the
    first screen stays alive and shows what pointing does. It rests while the pointer is over the dial, and never runs
    off screen, below 1200 px (no orbit there) or under reduced motion. */
-function useTour(box, out, list, setHot) {
+function useTour(box: RefObject<HTMLElement | null>, out: boolean, list: Spot[], setHot: Dispatch<SetStateAction<Spot | null>>) {
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
   const [over, setOver] = useState(false);
   const live = out && seen && !calm && !over && list.length > 0;
   useEffect(() => {
     if (!live || !matchMedia('(min-width: 1200px)').matches) return;
-    let k = 0, t = 0;
+    let k = 0, t: ReturnType<typeof setTimeout>;
     const next = () => { setHot({ ...list[k % list.length], tour: true }); k += 3; t = setTimeout(rest, 1700); };
     const rest = () => { setHot(null); t = setTimeout(next, 900); };
     t = setTimeout(next, 1200);
@@ -142,13 +152,13 @@ function useTour(box, out, list, setHot) {
 /* Below 1200 px each product's builds are a rail you swipe. When a rail first comes into view it slides a chip's width
    and back, once, so it reads as a rail and not as chips falling off the edge. (Rendered as an empty marker before
    the rail; it drives the rail that follows it.) */
-function Peek({ i }) {
-  const ref = useRef(null);
+function Peek({ i }: { i: number }) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const ul = ref.current?.parentElement?.querySelector('ul');
     if (!ul || calm || matchMedia('(min-width: 1200px)').matches) return;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting || ul.scrollWidth <= ul.clientWidth + 4) return;
       io.disconnect();
@@ -165,11 +175,11 @@ function Peek({ i }) {
   return <i ref={ref} hidden />;
 }
 
-function Dial({ os }) {
+function Dial({ os }: { os: Os }) {
   const [label, mp, mb] = MAIN[os];
   const [out, setOut] = useState(false);
-  const [hot, setHot] = useState(null);
-  const box = useRef(null);
+  const [hot, setHot] = useState<Spot | null>(null);
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => { const t = setTimeout(() => setOut(true), 160); return () => clearTimeout(t); }, []);
   let n = 0;
   const groups = PRODUCTS.map((p, pi) => {
@@ -182,7 +192,7 @@ function Dial({ os }) {
   });
   const main = PRODUCTS[mp].builds[mb];
   const shown = hot || { p: PRODUCTS[mp], b: main };
-  const [flat, setFlat] = useState([]);
+  const [flat, setFlat] = useState<Spot[]>([]);
   useEffect(() => { setFlat(groups.flatMap((g, pi) => g.map(({ b, x, y }) => ({ x, y, b, p: PRODUCTS[pi] })))); }, [os]); // eslint-disable-line react-hooks/exhaustive-deps
   const rest = useTour(box, out, flat, setHot);
   return (
@@ -224,7 +234,7 @@ function Dial({ os }) {
   );
 }
 
-function Hero({ os }) {
+function Hero({ os }: { os: Os }) {
   return (
     <section className="dl-hero" aria-labelledby="dl-h1">
       <div className="av-wrap">
@@ -239,7 +249,7 @@ function Hero({ os }) {
 }
 
 /* ---------- every build: four cards; three of them open into their own page ---------- */
-function Art({ k }) {
+function Art({ k }: { k: string }) {
   if (k === 'desk') return (
     <div className="dl-m dl-m-win" aria-hidden="true">
       <span className="dl-mw-bar"><i /><i /><i /><span className="dl-mw-t"><b>Desktop</b> — Hanzo</span></span>
@@ -278,7 +288,7 @@ function Art({ k }) {
 /* The build list arrives as its card comes into view: your system's rows first, then the rest. The server and JS-off
    show the finished list; the start state is set after mount, only for a card still below the fold. */
 function useArrive() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const el = ref.current;
@@ -291,7 +301,7 @@ function useArrive() {
   return ref;
 }
 
-function Card({ p, os, br }) {
+function Card({ p, os, br }: { p: Product; os: Os; br: number }) {
   const mine = p.k === 'ext' ? [br] : (MINE[os] || {})[p.k] || [];
   const arrive = useArrive();
   const order = [...mine, ...p.builds.map((_, j) => j).filter((j) => !mine.includes(j))];
@@ -333,7 +343,7 @@ function Card({ p, os, br }) {
   );
 }
 
-function Builds({ os, br }) {
+function Builds({ os, br }: { os: Os; br: number }) {
   return (
     <section className="av-sec dl-builds" id="builds">
       <div className="av-wrap">
@@ -348,10 +358,10 @@ function Builds({ os, br }) {
 
 /* ---------- Your kit (Beyond), the dark room: say what you use, get exactly your files ---------- */
 // [label, Desktop build index (-1: none on Windows), CLI build index]; Linux x86_64 gets the AppImage, the deb stays in Every build
-const SYSTEMS = [['macOS · Apple Silicon', 0, 0], ['macOS · Intel', 0, 1], ['Windows', -1, 2], ['Linux · x86_64', 1, 3], ['Linux · arm64', 3, 4]];
-const SYS_OF = { mac: 0, win: 2, linux: 3, linuxarm: 4 };
+const SYSTEMS: [string, number, number][] = [['macOS · Apple Silicon', 0, 0], ['macOS · Intel', 0, 1], ['Windows', -1, 2], ['Linux · x86_64', 1, 3], ['Linux · arm64', 3, 4]];
+const SYS_OF: Record<Os, number> = { mac: 0, win: 2, linux: 3, linuxarm: 4 };
 
-function Pick({ label, list, at, set, id }) {
+function Pick({ label, list, at, set, id }: { label: string; list: string[]; at: number; set: (i: number) => void; id: string }) {
   return (
     <fieldset className="dl-q">
       <legend className="av-kick">{label}</legend>
@@ -367,19 +377,16 @@ function Pick({ label, list, at, set, id }) {
   );
 }
 
-function Kit({ os, br }) {
+function Kit({ os, br }: { os: Os; br: number }) {
   const [sys, setSys] = useState(0);
   const [b, setB] = useState(0);
   const [ed, setEd] = useState(0);
   useEffect(() => { setSys(SYS_OF[os] ?? 0); }, [os]);
   useEffect(() => { setB(br); }, [br]);
   const desk = SYSTEMS[sys][1];
-  const rows = [
-    desk >= 0 && [PRODUCTS[0], PRODUCTS[0].builds[desk]],
-    [PRODUCTS[1], PRODUCTS[1].builds[SYSTEMS[sys][2]]],
-    [PRODUCTS[2], PRODUCTS[2].builds[b]],
-    [PRODUCTS[3], PRODUCTS[3].builds[ed]],
-  ].filter(Boolean);
+  const rows: [Product, Build][] = [];
+  if (desk >= 0) rows.push([PRODUCTS[0], PRODUCTS[0].builds[desk]]);
+  rows.push([PRODUCTS[1], PRODUCTS[1].builds[SYSTEMS[sys][2]]], [PRODUCTS[2], PRODUCTS[2].builds[b]], [PRODUCTS[3], PRODUCTS[3].builds[ed]]);
   return (
     <section className="av-sec av-dark dl-kit" data-room="dark" aria-labelledby="dl-kit-h">
       <div className="av-wrap av-grid">
@@ -411,7 +418,8 @@ function Kit({ os, br }) {
 }
 
 /* ---------- the one closing band: the hero's ask again ---------- */
-function End({ os }) {
+function End({ os }: { os: Os }) {
+
   const [label, mp, mb] = MAIN[os];
   return (
     <section className="x-band dl-band" aria-labelledby="dl-end-h">

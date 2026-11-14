@@ -8,6 +8,8 @@
    - reduced motion: the opened stack, flat, every layer named. Only transform and opacity move. Words are Hanzo's. */
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useScroll, useTransform, useMotionValue } from 'motion/react';
+import type { MotionValue } from 'motion/react';
+import type { ReactNode } from 'react';
 import useCalm from '../../../v2/useCalm';
 import { useWide } from '../../../v2/useWide';
 import { useEnter, scatter } from './enter';
@@ -18,15 +20,15 @@ const LAYERS = [
   { k: 'fabric', label: 'Hanzo fabric', sub: '→ sharing 3000' },
   { k: 'url', label: 'wispyfox7421.share.hanzo.ai', sub: 'open internet' },
 ];
-const clamp = (v) => Math.max(0, Math.min(1, v));
+const clamp = (v: number) => Math.max(0, Math.min(1, v));
 
-function Layer({ i, s, gap, children, k }) {
+function Layer({ i, s, gap, children, k }: { i: number; s: MotionValue<number>; gap: number; children?: ReactNode; k: string }) {
   const z = useTransform(s, (v) => (i - 1.5) * (12 + v * gap));
   const plate = useTransform(z, (v) => `translate(-50%, -50%) rotateX(60deg) rotateZ(-40deg) translateZ(${v.toFixed(1)}px)`);
   return <motion.div className={'tp-plate tp-' + k} style={{ transform: plate }}>{children}</motion.div>;
 }
 
-function Label({ i, s, gap, l }) {
+function Label({ i, s, gap, l }: { i: number; s: MotionValue<number>; gap: number; l: { label: string; sub: string } }) {
   const y = useTransform(s, (v) => -(i - 1.5) * (12 + v * gap) * 0.5);
   const o = useTransform(s, (v) => 0.45 + 0.55 * v);
   return (
@@ -39,13 +41,13 @@ function Label({ i, s, gap, l }) {
 export default function Peel() {
   const calm = useCalm();
   const wide = useWide();
-  const sec = useRef(null);
-  const [eref, ein] = useEnter(0.2);
-  const setRefs = (el) => { sec.current = el; eref.current = el; };
+  const sec = useRef<HTMLElement>(null);
+  const [eref, ein] = useEnter<HTMLElement>(0.2);
+  const setRefs = (el: HTMLElement | null) => { sec.current = el; eref.current = el; };
   const { scrollYProgress } = useScroll({ target: sec, offset: ['start end', 'end start'] });
   const extra = useMotionValue(0); // drag, desktop
   const tap = useMotionValue(0); // the phone's own open/close
-  const s = useTransform([scrollYProgress, extra, tap], ([a, b, c]) => (wide ? clamp(1 - Math.abs(a - 0.5) / 0.3 + b) : c));
+  const s = useTransform<number, number>([scrollYProgress, extra, tap], ([a, b, c]) => (wide ? clamp(1 - Math.abs(a - 0.5) / 0.3 + b) : c));
   const gap = wide ? 118 : 70;
 
   // phones: open, hold, close, hold, while seen, until tapped
@@ -60,17 +62,18 @@ export default function Peel() {
   }, []);
   useEffect(() => {
     if (wide || calm || !seen || mine) return;
-    let stop = false, c = null, t = 0;
-    const go = (to) => { if (stop) return; c = animate(tap, to, { duration: 1.1, ease: [0.4, 0, 0.2, 1] }); t = setTimeout(() => go(to ? 0 : 1), to ? 3200 : 1800); };
+    let stop = false, c: ReturnType<typeof animate> | null = null, t: ReturnType<typeof setTimeout> | undefined;
+    const go = (to: number) => { if (stop) return; c = animate(tap, to, { duration: 1.1, ease: [0.4, 0, 0.2, 1] }); t = setTimeout(() => go(to ? 0 : 1), to ? 3200 : 1800); };
     t = setTimeout(() => go(1), 500);
     return () => { stop = true; clearTimeout(t); c?.stop(); };
   }, [wide, calm, seen, mine, tap]);
   const toggle = () => { if (wide) return; setMine(true); animate(tap, tap.get() > 0.5 ? 0 : 1, { duration: 0.8, ease: [0.4, 0, 0.2, 1] }); };
 
   // desktop: drag the stack open or shut
-  const drag = useRef(null);
-  const down = (e) => { if (!wide || e.pointerType !== 'mouse' && e.pointerType !== 'pen') return; drag.current = { y: e.clientY, b: extra.get() }; e.currentTarget.setPointerCapture(e.pointerId); };
-  const move = (e) => { if (!drag.current) return; extra.set(Math.max(-1, Math.min(1, drag.current.b - (e.clientY - drag.current.y) / 220))); };
+  const drag = useRef<{ y: number; b: number } | null>(null);
+  const down = (e: React.PointerEvent<HTMLDivElement>) => { if (!wide || e.pointerType !== 'mouse' && e.pointerType !== 'pen') return; drag.current = { y: e.clientY, b: extra.get() }; e.currentTarget.setPointerCapture(e.pointerId); };
+  const move = (e: React.PointerEvent) => { if (!drag.current)
+ return; extra.set(Math.max(-1, Math.min(1, drag.current.b - (e.clientY - drag.current.y) / 220))); };
   const up = () => { if (!drag.current) return; drag.current = null; animate(extra, 0, { duration: 1.4, ease: [0.16, 1, 0.3, 1] }); };
 
   // the noise-dissolve entrance: a field of cells in the page's own white fades out in a scattered order

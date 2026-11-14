@@ -14,7 +14,10 @@ import { useFrame } from '../Frame';
 /* nodes: id, label, the fact it opens (index into GIVES), shape, and where it rests (wide 760×480, tall 360×620).
    Rests are spaced so no lit link name ever crosses a node's name; on phones the stream's seven link names are left
    unsaid (its panel says them), since seven names round one hub cannot fit 360 units without touching. */
-export const NODES = [
+type XY = [number, number];
+export type Shape = 'ev' | 'sq' | 'dot' | 'dia' | 'ring' | 'cl';
+type GraphNode = [id: string, label: string, fact: number, shape: Shape, wide: XY, tall: XY];
+export const NODES: GraphNode[] = [
   ['del', 'delete · b', 3, 'ev', [64, 58], [52, 40]],
   ['store', 'one store', 4, 'sq', [150, 190], [180, 72]],
   ['api', 'API', 4, 'dot', [80, 400], [308, 128]],
@@ -29,9 +32,9 @@ export const NODES = [
   ['c2', 'Client 2', 0, 'cl', [700, 256], [180, 568]],
   ['c3', 'Client 3', 5, 'cl', [688, 392], [300, 560]],
 ];
-const IDX = Object.fromEntries(NODES.map((n, i) => [n[0], i]));
+const IDX: Record<string, number> = Object.fromEntries(NODES.map((n, i) => [n[0], i]));
 /* links, each with the name it shows when lit */
-export const LINKS = [
+export const LINKS: [string, string, string][] = [
   ['store', 'api', 'reads'],
   ['store', 'ba', 'messages'],
   ['store', 'bb', 'messages'],
@@ -49,19 +52,22 @@ export const LINKS = [
   ['stream', 'c3', 'text/event-stream'],
 ];
 // a record's change, and the way it travels to each client (client 3 sits on org b's broker)
-export const EVENTS = [['create', 'a'], ['update', 'b'], ['delete', 'b']];
-const ROUTES = [['c1', ['store', 'ba', 'stream', 'c1']], ['c2', ['store', 'ba', 'stream', 'c2']], ['c3', ['store', 'bb', 'stream', 'c3']]];
-const SIZE = { wide: [760, 480], tall: [360, 620] };
+export const EVENTS: [string, string][] = [['create', 'a'], ['update', 'b'], ['delete', 'b']];
+const ROUTES: [string, string[]][] = [['c1', ['store', 'ba', 'stream', 'c1']], ['c2', ['store', 'ba', 'stream', 'c2']], ['c3', ['store', 'bb', 'stream', 'c3']]];
+type Mode = 'wide' | 'tall';
+const SIZE: Record<Mode, XY> = { wide: [760, 480], tall: [360, 620] };
 // client 3's rule cannot read record b: nothing about b reaches it, its delete included
-const blocked = (ev, c) => ev[1] === 'b' && c === 'c3';
+const blocked = (ev: string[], c: string) => ev[1] === 'b' && c === 'c3';
 
-export default function RtGraph({ sel, onPick, onPeek, run, calm, ev, evAt }) {
-  const svg = useRef(null);
-  const [mode, setMode] = useState('wide');
-  const [hov, setHov] = useState(null);
+interface RtGraphProps { sel: number | null; onPick: (i: number) => void; onPeek?: (i: number | null) => void; run: boolean; calm: boolean; ev: [string, string]; evAt: number }
+
+export default function RtGraph({ sel, onPick, onPeek, run, calm, ev, evAt }: RtGraphProps) {
+  const svg = useRef<SVGSVGElement>(null);
+  const [mode, setMode] = useState<Mode>('wide');
+  const [hov, setHov] = useState<number | null>(null);
   const pos = useRef(NODES.map((n) => ({ x: n[4][0], y: n[4][1], vx: 0, vy: 0 })));
   const sim = useRef({ hot: 0, drag: -1, armed: false });
-  const els = useRef({ n: [], l: [], t: [], p: [] });
+  const els = useRef<{ n: (SVGGElement | null)[]; l: (SVGLineElement | null)[]; t: (SVGTextElement | null)[]; p: (SVGCircleElement | null)[] }>({ n: [], l: [], t: [], p: [] });
   const [w, h] = SIZE[mode];
   const k = mode === 'wide' ? 4 : 5;
 
@@ -88,7 +94,7 @@ export default function RtGraph({ sel, onPick, onPeek, run, calm, ev, evAt }) {
   useEffect(() => { if (run && sim.current.armed) { sim.current.armed = false; sim.current.hot = 1; } }, [run]);
 
   // one step of the physics: a pull to each node's rest, links that keep their length, nodes that push apart
-  function step(dt) {
+  function step(dt: number) {
     const P = pos.current, S = sim.current;
     const n = P.length;
     const fx = new Array(n).fill(0), fy = new Array(n).fill(0);
@@ -123,7 +129,7 @@ export default function RtGraph({ sel, onPick, onPeek, run, calm, ev, evAt }) {
   }
 
   // write positions and the travelling records straight to the SVG (no React render per frame)
-  function write(now) {
+  function write(now: number) {
     const P = pos.current, E = els.current;
     NODES.forEach((_, i) => E.n[i]?.setAttribute('transform', `translate(${P[i].x.toFixed(1)} ${P[i].y.toFixed(1)})`));
     LINKS.forEach(([a, b], i) => {
@@ -151,17 +157,17 @@ export default function RtGraph({ sel, onPick, onPeek, run, calm, ev, evAt }) {
   useEffect(() => { if (!run) write(performance.now()); }); // a still frame whenever the loop is not running
 
   // the hand: point (lights paths), tap or Enter (also opens the node's words), and a mouse can pull a node
-  const at = (e) => {
-    const r = svg.current.getBoundingClientRect();
+  const at = (e: React.PointerEvent): XY => {
+    const r = svg.current!.getBoundingClientRect();
     return [((e.clientX - r.left) / r.width) * w, ((e.clientY - r.top) / r.height) * h];
   };
-  const down = (i) => (e) => {
+  const down = (i: number) => (e: React.PointerEvent) => {
     onPick(i);
     if (e.pointerType !== 'mouse' || calm) return;
     sim.current.drag = i; sim.current.hot = 1;
-    svg.current.setPointerCapture?.(e.pointerId);
+    svg.current?.setPointerCapture?.(e.pointerId);
   };
-  const move = (e) => {
+  const move = (e: React.PointerEvent) => {
     const S = sim.current; if (S.drag < 0) return;
     const [x, y] = at(e); const p = pos.current[S.drag];
     p.x = Math.max(16, Math.min(w - 16, x)); p.y = Math.max(16, Math.min(h - 24, y)); p.vx = 0; p.vy = 0;
@@ -171,19 +177,19 @@ export default function RtGraph({ sel, onPick, onPeek, run, calm, ev, evAt }) {
 
   const lit = hov ?? sel;
   const id = lit != null ? NODES[lit][0] : null;
-  const on = (l) => id && (l[0] === id || l[1] === id);
+  const on = (l: string[]) => id && (l[0] === id || l[1] === id);
   const near = new Set(id ? LINKS.filter(on).flatMap((l) => [l[0], l[1]]) : []);
-  const told = (c) => (blocked(ev, c) ? 'not told' : 'told');
+  const told = (c: string) => (blocked(ev, c) ? 'not told' : 'told');
 
   return (
     <svg ref={svg} className="rg" viewBox={`0 0 ${w} ${h}`} data-mode={mode} data-lit={id || undefined}
       onPointerMove={move} onPointerUp={up} onPointerCancel={up} onPointerLeave={() => { up(); setHov(null); onPeek?.(null); }}
       role="group" aria-label="The parts of one deployment, as a graph">
       <g aria-hidden="true">
-        {LINKS.map((l, i) => <line key={i} ref={(el) => (els.current.l[i] = el)} className={'rg-l' + (on(l) ? ' on' : '') + (ev[0] === 'delete' && l[1] === 'store' && l[0] === 'del' ? ' ev' : '')} />)}
-        {ROUTES.map((_, r) => <circle key={r} ref={(el) => (els.current.p[r] = el)} r="5" className="rg-rec" opacity="0" />)}
+        {LINKS.map((l, i) => <line key={i} ref={(el) => { els.current.l[i] = el; }} className={'rg-l' + (on(l) ? ' on' : '') + (ev[0] === 'delete' && l[1] === 'store' && l[0] === 'del' ? ' ev' : '')} />)}
+        {ROUTES.map((_, r) => <circle key={r} ref={(el) => { els.current.p[r] = el; }} r="5" className="rg-rec" opacity="0" />)}
         {/* a name shared by several lit links (text/event-stream to each client) is said once */}
-        {LINKS.map((l, i) => <text key={i} ref={(el) => (els.current.t[i] = el)} className={'rg-ln' + (on(l) && !(mode === 'tall' && id === 'stream') && LINKS.findIndex((m) => on(m) && m[2] === l[2]) === i ? ' on' : '')} textAnchor="middle">{l[2]}</text>)}
+        {LINKS.map((l, i) => <text key={i} ref={(el) => { els.current.t[i] = el; }} className={'rg-ln' + (on(l) && !(mode === 'tall' && id === 'stream') && LINKS.findIndex((m) => on(m) && m[2] === l[2]) === i ? ' on' : '')} textAnchor="middle">{l[2]}</text>)}
       </g>
       {NODES.map(([nid, label, fact, shape], i) => {
         const p = NODES[i][k];
@@ -191,7 +197,8 @@ export default function RtGraph({ sel, onPick, onPeek, run, calm, ev, evAt }) {
         const tx = anchor === 'start' ? -12 : anchor === 'end' ? 12 : 0;
         const isC = shape === 'cl';
         return (
-          <g key={nid} ref={(el) => (els.current.n[i] = el)} transform={`translate(${p[0]} ${p[1]})`}
+          <g key={nid} ref={(el) => { els.current.n[i] = el; }}
+ transform={`translate(${p[0]} ${p[1]})`}
             className={'rg-n ' + shape + (lit === i ? ' sel' : '') + (id && !near.has(nid) && lit !== i ? ' dim' : '') + (isC && blocked(ev, nid) ? ' no' : '')}
             tabIndex={0} role="button" aria-pressed={sel === i} aria-label={label}
             onPointerEnter={(e) => { if (e.pointerType === 'mouse') { setHov(i); onPeek?.(i); } }} onPointerLeave={() => { setHov(null); onPeek?.(null); }}

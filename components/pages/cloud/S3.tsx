@@ -36,28 +36,28 @@ import './S3.css';
 
 const API = 'https://docs.hanzo.ai/docs/openapi/s3';
 const GH = 'https://github.com/hanzoai/s3';
-const MOVE = { duration: 0.5, ease: [0.4, 0, 0.2, 1] }; // shards move and stay: ease-in-out, slower (MASTER §3.1), no spring
+const MOVE = { duration: 0.5, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }; // shards move and stay: ease-in-out, slower (MASTER §3.1), no spring
 
 /* ---------- the hero stage: an object, kept ---------- */
 const N = 14; // ten data shards, four parity
-const hash = (i) => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
-const name = (i) => (i < 10 ? 'd' + (i + 1) : 'p' + (i - 9));
+const hash = (i: number) => { const x = Math.sin(i * 12.9898) * 43758.5453; return x - Math.floor(x); };
+const name = (i: number) => (i < 10 ? 'd' + (i + 1) : 'p' + (i - 9));
 // volume centres on the field (percent), for the fan: two rows of seven to the right of the object
-const VX = (i) => 36 + ((i % 7) + 0.5) * (62 / 7);
-const VY = (i) => (i < 7 ? 27.5 : 72.5); // row centres of .s3-vols (top 6%, height 88%)
+const VX = (i: number) => 36 + ((i % 7) + 0.5) * (62 / 7);
+const VY = (i: number) => (i < 7 ? 27.5 : 72.5); // row centres of .s3-vols (top 6%, height 88%)
 
-function Shard({ i }) {
+function Shard({ i }: { i: number }) {
   return <motion.i layoutId={'s3-' + i} className={'s3-shard' + (i >= 10 ? ' p' : '')} transition={{ ...MOVE, delay: (i % 7) * 0.035 }} />;
 }
 
 function Kept() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.3);
   const [paused, pause] = usePause();
   const [phase, setPhase] = useState(0); // 0 object, 1 sharded, 2 four lost, 3 still reads
   const [cycle, setCycle] = useState(0);
-  const [pick, setPick] = useState(null); // volumes taken dark by hand; null = the loop chooses
-  const [hov, setHov] = useState(null); // the volume a fine pointer is on
-  const [no, setNo] = useState(null); // a fifth tap is refused: that tile nudges and the readout says four (the ten stay bright)
+  const [pick, setPick] = useState<Set<number> | null>(null); // volumes taken dark by hand; null = the loop chooses
+  const [hov, setHov] = useState<number | null>(null); // the volume a fine pointer is on
+  const [no, setNo] = useState<number | null>(null); // a fifth tap is refused: that tile nudges and the readout says four (the ten stay bright)
   useEffect(() => {
     if (calm) { setPhase(3); return; }
     // MASTER §4.1: it runs twice through (two different fours lost, about ten seconds), then rests reading; play replays
@@ -70,8 +70,8 @@ function Kept() {
   }, [phase, cycle, live, calm, pick, paused, hov]);
   const auto = useMemo(() => new Set(Array.from({ length: N }, (_, i) => i).sort((a, b) => hash(a + cycle * N) - hash(b + cycle * N)).slice(0, 4)), [cycle]);
   const lost = pick || auto;
-  const toggle = (i) => {
-    const next = new Set(pick || []);
+  const toggle = (i: number) => {
+    const next = new Set<number>(pick || []);
     if (!next.has(i) && next.size >= 4) { setNo(i); setTimeout(() => setNo(null), 320); return; }
     if (next.has(i)) next.delete(i); else next.add(i);
     setPick(next);
@@ -79,7 +79,8 @@ function Kept() {
   };
   const reads = phase === 3;
   const rest = !calm && (!!pick || (cycle >= 1 && phase === 3)); // settled: by hand, or after its two runs
-  const live1 = (i) => phase >= 1 && !(phase >= 2 && lost.has(i));
+  const live1 = (i: number) =>
+ phase >= 1 && !(phase >= 2 && lost.has(i));
   return (
     <div className="s3-kept" ref={ref} data-phase={phase}>
       <div className="s3-bar">

@@ -12,7 +12,9 @@ import { useDemo, PauseBtn } from '../../../v2/x-hamilton/Demo';
 import './Graph.css';
 
 // ring: 0 centre, 1 providers, 2 what a launch creates. a: angle in degrees (0 = right, clockwise). p: the parent.
-const NODES = [
+interface VNode { id: string; label: string; ring: number; a: number; p?: string; kind: string; x?: number; y?: number }
+type XY = [number, number];
+const NODES: VNode[] = [
   { id: 'api', label: 'one API', ring: 0, a: 0, kind: 'one API' },
   { id: 'aws', label: 'AWS', ring: 1, a: -35, p: 'api', kind: 'regions · sizes · GPUs' },
   { id: 'gcp', label: 'GCP', ring: 1, a: 95, p: 'api', kind: 'regions · sizes · GPUs' },
@@ -23,21 +25,21 @@ const NODES = [
   { id: 'pool', label: 'gpu-pool', ring: 2, a: 72, p: 'gcp', kind: 'node pool' },
   { id: 'k8s', label: 'cluster', ring: 2, a: 196, p: 'do', kind: 'managed Kubernetes' },
 ];
-const BY = Object.fromEntries(NODES.map((n) => [n.id, n]));
+const BY: Record<string, VNode> = Object.fromEntries(NODES.map((n) => [n.id, n]));
 const OUTER = NODES.filter((n) => n.ring === 2).map((n) => n.id);
-const R = [[0, 0], [21, 25], [40, 40]]; // ring radii in % of the stage, [x, y]
-const rad = (d) => (d * Math.PI) / 180;
+const R: XY[] = [[0, 0], [21, 25], [40, 40]]; // ring radii in % of the stage, [x, y]
+const rad = (d: number) => (d * Math.PI) / 180;
 // phones: the same graph, set out by hand for a narrow, tall stage so no two labels touch and none leaves the stage
-const PHONE = { api: [50, 47], aws: [64, 28], gcp: [74, 69], do: [28, 67], t1: [21, 9], t2: [51, 9], t3: [81, 9], pool: [73, 89], k8s: [28, 89] };
-const base = (n, narrow) => (narrow ? PHONE[n.id] : [50 + R[n.ring][0] * Math.cos(rad(n.a)), 50 + R[n.ring][1] * Math.sin(rad(n.a))]);
-const path = (id) => { const out = []; for (let n = BY[id]; n; n = n.p ? BY[n.p] : null) out.unshift(n); return out; };
-const EDGES = NODES.filter((n) => n.p).map((n) => [n.p, n.id]);
+const PHONE: Record<string, XY> = { api: [50, 47], aws: [64, 28], gcp: [74, 69], do: [28, 67], t1: [21, 9], t2: [51, 9], t3: [81, 9], pool: [73, 89], k8s: [28, 89] };
+const base = (n: VNode, narrow: boolean): XY => (narrow ? PHONE[n.id] : [50 + R[n.ring][0] * Math.cos(rad(n.a)), 50 + R[n.ring][1] * Math.sin(rad(n.a))]);
+const path = (id: string) => { const out: VNode[] = []; for (let n: VNode | null = BY[id]; n; n = n.p ? BY[n.p] : null) out.unshift(n); return out; };
+const EDGES = NODES.filter((n) => n.p).map((n): [string, string] => [n.p as string, n.id]);
 
 export default function Graph() {
   const [ref, live, calm, paused, toggle] = useDemo(0.2);
-  const stage = useRef(null);
-  const nodes = useRef({});
-  const lines = useRef({});
+  const stage = useRef<HTMLDivElement>(null);
+  const nodes = useRef<Record<string, HTMLButtonElement | null>>({});
+  const lines = useRef<Record<string, SVGLineElement | null>>({});
   const seen = useInView(stage, { once: true, amount: 0.35 });
   const still = useCalm();
   const [hot, setHot] = useState('t1');
@@ -57,12 +59,13 @@ export default function Graph() {
   useEffect(() => {
     if (still) return;
     const st = springs.current; // kept across pauses and scrolling away, so the arrival plays once
-    let raf = 0, last = 0, size = [0, 0];
+    let raf = 0, last = 0, size: XY = [0, 0];
     const el = stage.current;
+    if (!el) return;
     const ro = new ResizeObserver(([e]) => { size = [e.contentRect.width, e.contentRect.height]; });
     ro.observe(el);
     const k = 26, c = 2 * Math.sqrt(k);
-    const place = (t, dt) => {
+    const place = (t: number, dt: number) => {
       NODES.forEach((n, i) => {
         const s = st[i];
         const wait = n.ring === 0 ? 0 : n.ring === 1 ? 120 + i * 110 : 420 + i * 90;
@@ -89,12 +92,12 @@ export default function Graph() {
       EDGES.forEach(([a, b]) => {
         const l = lines.current[b];
         if (!l) return;
-        l.setAttribute('x1', BY[a].x.toFixed(2)); l.setAttribute('y1', BY[a].y.toFixed(2));
-        l.setAttribute('x2', BY[b].x.toFixed(2)); l.setAttribute('y2', BY[b].y.toFixed(2));
+        l.setAttribute('x1', BY[a].x!.toFixed(2)); l.setAttribute('y1', BY[a].y!.toFixed(2)); // set by the nodes loop above
+        l.setAttribute('x2', BY[b].x!.toFixed(2)); l.setAttribute('y2', BY[b].y!.toFixed(2));
         l.style.opacity = String(Math.min(st[NODES.indexOf(BY[a])].u, st[NODES.indexOf(BY[b])].u));
       });
     };
-    const loop = (t) => {
+    const loop = (t: number) => {
       const dt = Math.min(0.05, last ? (t - last) / 1000 : 0.016);
       last = t;
       place(t, dt);
@@ -114,7 +117,8 @@ export default function Graph() {
   }, [hot, live, mine, paused, seen]);
 
   const lit = new Set(path(hot).map((n) => n.id));
-  const pick = (id) => { setMine(true); setHot(id); };
+  const pick = (id: string) => {
+ setMine(true); setHot(id); };
   return (
     <section className="l2-sec vs2g" ref={ref} aria-label="Hanzo Visor">
       <div className="l2-wrap">

@@ -12,6 +12,7 @@
    0 UI hues. The claim form sends what hanzo.ai sends. Every word is Hanzo's; the open bounties
    are GitHub's, read live. */
 import { useEffect, useRef, useState } from 'react';
+import type { ChangeEvent, Dispatch, FormEvent, PointerEvent, SetStateAction } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
 import { A, Cta, Faq, Field } from '../kit';
 import LineReveal, { NoJs } from '../v2/LineReveal';
@@ -25,18 +26,21 @@ import '../v2/ProgramScale.css';
 import usePhoneAsk from './usePhoneAsk';
 import './Founder.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const API = 'https://api.hanzo.ai';
 const LEVELS = [
   ['Level 1', 'Founding Contributor', 'Your first merged pull request', 'A week of Pro'],
   ['Level 2', 'Founding Builder', 'Three merged pull requests, or 1,000 lines merged', 'A month of Pro, and Hanzo swag'],
 ];
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const PR_ICON = <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><circle cx="4" cy="3.5" r="1.8" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="4" cy="12.5" r="1.8" fill="none" stroke="currentColor" strokeWidth="1.4" /><circle cx="12" cy="12.5" r="1.8" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M4 5.3v5.4M12 10.7V6a2 2 0 0 0-2-2H7.5M9 2.5 7.5 4 9 5.5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 /* The hero object: a pull request that merges itself while it is on screen. */
+// the diff's lines: add, del or context, and how wide each runs (%)
+const DIFF: [string, number][] = [['', 72], ['del', 54], ['add', 80], ['add', 46], ['', 62], ['add', 70], ['', 38]];
+
 function PullRequest() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
   const [s, setS] = useState(0); // 0 open, 1 pressing, 2 merged: it merges once, the first time it is seen, and stays merged
@@ -51,7 +55,7 @@ function PullRequest() {
   }, [seen, calm]);
   const merged = s === 2;
   // a fine pointer tilts the card a little (2.5° at most); it lies flat on leave, and never under reduced motion
-  const tilt = (e) => {
+  const tilt = (e: PointerEvent) => {
     const el = box.current;
     if (!el || calm || e.pointerType !== 'mouse' || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
     const r = el.getBoundingClientRect();
@@ -63,7 +67,7 @@ function PullRequest() {
     <div className={'xfo-pr xp-obj' + (seen || calm ? ' go' : '') + (merged ? ' merged' : '')} ref={box} aria-hidden="true" onPointerMove={tilt} onPointerLeave={flat}>
       <div className="xfo-pr-top">{PR_ICON}<span className="xfo-pr-k">Founder Program</span><span className="x-mono">https://github.com/hanzoai/ui/pull/1</span></div>
       <div className="xfo-diff">
-        {[['', 72], ['del', 54], ['add', 80], ['add', 46], ['', 62], ['add', 70], ['', 38]].map(([k, w], i) => (
+        {DIFF.map(([k, w], i) => (
           <span key={i} className={k}><b>{k === 'add' ? '+' : k === 'del' ? '−' : ''}</b><i style={{ width: w + '%' }} /></span>
         ))}
       </div>
@@ -121,7 +125,7 @@ function Scene() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
   const p = useTransform(scrollYProgress, (v) => (pinned ? v : 1));
   const grow = useTransform(p, [0, 0.62], [0.57, 1], { clamp: true });
-  const count = (v) => (v < 0.12 ? 0 : v < 0.4 ? 1 : v < 0.62 ? 2 : 3);
+  const count = (v: number) => (v < 0.12 ? 0 : v < 0.4 ? 1 : v < 0.62 ? 2 : 3);
   useMotionValueEvent(p, 'change', (v) => { if (pinned) setMerged(count(v)); });
   useEffect(() => { if (pinned) setMerged(count(p.get())); }, [pinned]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -171,7 +175,7 @@ function Mine() {
   const [prs, setPrs] = useState(1); // picks up where the scene's count left the first level: one merged pull request
   const [lines, setLines] = useState(0);
   const l = prs >= 3 || (prs >= 1 && lines >= 1000) ? 1 : prs >= 1 ? 0 : -1;
-  const step = (set, v, d, max) => set(Math.max(0, Math.min(max, v + d)));
+  const step = (set: Dispatch<SetStateAction<number>>, v: number, d: number, max: number) => set(Math.max(0, Math.min(max, v + d)));
   return (
     <section className="xp-sec tight xfo-mine-s" aria-label="Founder levels">
       <div className="xp-wrap xp-grid">
@@ -195,7 +199,7 @@ function Mine() {
 
 function Repos() {
   const st = useBounties();
-  const room = useRef(null);
+  const room = useRef<HTMLElement>(null);
   const lit = useInView(room, { once: true, amount: 0.35 }); // the org names light one at a time, once, as the room enters
   const items = st.kind === 'ready' ? st.open.items.slice(0, 6) : SNAP.items;
   const say = st.kind === 'reading' ? SAY.reading : st.kind === 'unreachable' ? SAY.unreachable : SAY.none;
@@ -227,29 +231,32 @@ function Repos() {
   );
 }
 
+// the fields that must be right before a claim is sent
+const FIELDS = ['email', 'github', 'pull'] as const;
+
 /* The claim: Hanzo's fields through the kit Field. Wrong fields turn dashed and the first takes focus; nothing is sent
    until all are right. Sent and refused speak only in Hanzo's own sentences. */
 function Claim() {
   const [f, setF] = useState({ email: '', name: '', github: '', pull: '' });
-  const [st, setSt] = useState('idle'); // idle | sending | sent | refused
+  const [st, setSt] = useState<'idle' | 'sending' | 'sent' | 'refused'>('idle');
   const [tried, setTried] = useState(false);
-  const [msgs, setMsgs] = useState({});
-  const form = useRef(null);
-  const out = useRef(null);
+  const [msgs, setMsgs] = useState<Record<string, string>>({});
+  const form = useRef<HTMLFormElement>(null);
+  const out = useRef<HTMLDivElement>(null);
   const c = claim(f);
-  const on = (k) => (e) => setF((o) => ({ ...o, [k]: e.target.value }));
+  const on = (k: keyof typeof f) => (e: ChangeEvent<HTMLInputElement>) => setF((o) => ({ ...o, [k]: e.target.value }));
   useEffect(() => { if (st === 'sent' || st === 'refused') out.current?.focus(); }, [st]);
-  const send = async (e) => {
+  const send = async (e: FormEvent) => {
     e.preventDefault();
     if (st === 'sending') return;
     if (!c.ok) {
       setTried(true);
       // say why on submit, in the browser's own words for that field (no invented copy)
-      const m = {};
-      ['email', 'github', 'pull'].forEach((k) => { if (c.bad[k]) m[k] = form.current?.querySelector(`[name="${k}"]`)?.validationMessage || ''; });
+      const m: Record<string, string> = {};
+      FIELDS.forEach((k) => { if (c.bad[k]) m[k] = form.current?.querySelector<HTMLInputElement>(`[name="${k}"]`)?.validationMessage || ''; });
       setMsgs(m);
-      const first = ['email', 'github', 'pull'].find((k) => c.bad[k]);
-      form.current?.querySelector(`[name="${first}"]`)?.focus();
+      const first = FIELDS.find((k) => c.bad[k]);
+      form.current?.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
       return;
     }
     setSt('sending');
@@ -260,8 +267,8 @@ function Claim() {
       if (r.ok) track('founder_claimed', { from: 'founder' });
     } catch { setSt('refused'); }
   };
-  const bad = (k) => (tried && c.bad[k] ? 'true' : undefined);
-  const why = (k) => (tried && c.bad[k] ? msgs[k] || undefined : undefined);
+  const bad = (k: (typeof FIELDS)[number]) => (tried && c.bad[k] ? 'true' : undefined);
+  const why = (k: (typeof FIELDS)[number]) => (tried && c.bad[k] ? msgs[k] || undefined : undefined);
   return (
     <section className="xp-sec xfo-claim" id="claim" aria-labelledby="xfo-claim-h">
       <div className="xp-wrap xp-grid">

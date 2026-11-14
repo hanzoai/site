@@ -5,18 +5,19 @@
    start state is armed only after mount and only while its element is still below the fold; each observer watches an
    unclipped box, so every arrival fires. Only transform, clip-path, opacity and a text fill move: no box changes size. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 
 const calmNow = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export function useArrive(margin = '0px 0px -18% 0px', ms = 0) {
-  const ref = useRef(null);
+export function useArrive<T extends HTMLElement = HTMLElement>(margin = '0px 0px -18% 0px', ms = 0) {
+  const ref = useRef<T>(null);
   const [st, setSt] = useState('idle'); // idle (final, untouched) -> armed -> play -> idle again after ms (if given)
   useEffect(() => {
     const el = ref.current;
     if (!el || calmNow()) return;
     if (el.getBoundingClientRect().top < innerHeight * 0.82) return;
     setSt('armed');
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       setSt('play'); io.disconnect();
@@ -25,12 +26,12 @@ export function useArrive(margin = '0px 0px -18% 0px', ms = 0) {
     io.observe(el);
     return () => { io.disconnect(); clearTimeout(t); };
   }, [margin, ms]);
-  return [ref, st];
+  return [ref, st] as const;
 }
 
 /* shutter: two graphite bars meet over the figures, then part to the top and bottom edges and open on them */
-export function Shutter({ children }) {
-  const [ref, st] = useArrive('0px 0px -20% 0px');
+export function Shutter({ children }: { children?: ReactNode }) {
+  const [ref, st] = useArrive<HTMLDivElement>('0px 0px -20% 0px');
   return (
     <div ref={ref} className="s3-shut" data-shut={st}>
       {children}
@@ -41,10 +42,10 @@ export function Shutter({ children }) {
 
 /* cursor-lens: on arrival a round lens sweeps once across the prompt, magnifying it; then it follows a fine pointer
    (on touch, a tap places it for a moment). The lens holds an inert copy, scaled about the lens centre. */
-export function CursorLens({ children }) {
-  const [ref, st] = useArrive('0px 0px -25% 0px');
-  const box = useRef(null);
-  const glass = useRef(null);
+export function CursorLens({ children }: { children?: ReactNode }) {
+  const [ref, st] = useArrive<HTMLDivElement>('0px 0px -25% 0px');
+  const box = useRef<HTMLDivElement>(null);
+  const glass = useRef<HTMLDivElement>(null);
   const [wd, setWd] = useState(0);
   useEffect(() => {
     const b = box.current; if (!b) return;
@@ -52,7 +53,7 @@ export function CursorLens({ children }) {
     ro.observe(b);
     return () => ro.disconnect();
   }, []);
-  const place = (x, y, on) => {
+  const place = (x: number, y: number, on: boolean) => {
     const g = glass.current; if (!g) return;
     g.style.setProperty('--x', x + 'px'); g.style.setProperty('--y', y + 'px'); g.dataset.on = on ? '1' : '0';
   };
@@ -61,7 +62,7 @@ export function CursorLens({ children }) {
     const b = box.current, W = b.offsetWidth, H = b.offsetHeight;
     let raf = 0;
     const t0 = performance.now();
-    const run = (now) => {
+    const run = (now: number) => {
       const p = Math.min(1, (now - t0) / 1800);
       const e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
       place(W * (0.1 + 0.8 * e), H * (0.62 - 0.18 * Math.sin(e * Math.PI)), p < 1);
@@ -70,14 +71,14 @@ export function CursorLens({ children }) {
     raf = requestAnimationFrame(run);
     return () => cancelAnimationFrame(raf);
   }, [st]);
-  const onMove = (e) => {
-    if (e.pointerType !== 'mouse' || calmNow()) return;
+  const onMove = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse' || calmNow() || !box.current) return;
     const r = box.current.getBoundingClientRect();
     place(e.clientX - r.left, e.clientY - r.top, true);
   };
-  const tapT = useRef(0);
-  const onDown = (e) => {
-    if (e.pointerType === 'mouse' || calmNow()) return;
+  const tapT = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const onDown = (e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse' || calmNow() || !box.current) return;
     const r = box.current.getBoundingClientRect();
     place(e.clientX - r.left, e.clientY - r.top, true);
     clearTimeout(tapT.current);
@@ -97,16 +98,18 @@ export function CursorLens({ children }) {
 
 /* grid-wave: the close's drawing arrives under a grid of tiles that ripple away by distance from the cursor (or, with
    no pointer yet, from the drawing's centre). The grid is a veil laid over the art, drawn only while it plays. */
-const last = { x: null, y: null };
+const last: { x: number | null; y: number | null } = { x: null, y: null };
 if (typeof window !== 'undefined') addEventListener('pointermove', (e) => { last.x = e.clientX; last.y = e.clientY; }, { passive: true });
-export function GridWave({ children, art = '.lx-close-art', cols = 9 }) {
-  const [ref, st] = useArrive('0px 0px -25% 0px');
-  const [veil, setVeil] = useState(null);
+interface Veil { box: { left: number; top: number; width: number; height: number }; rows: number; ox: number; oy: number }
+export function GridWave({ children, art = '.lx-close-art', cols = 9 }: { children?: ReactNode; art?: string; cols?: number }) {
+  const [ref, st] = useArrive<HTMLDivElement>('0px 0px -25% 0px');
+  const [veil, setVeil] = useState<Veil | null>(null);
   const [gone, setGone] = useState(false);
   useEffect(() => {
     if (st === 'idle') return;
     const root = ref.current, a = root && root.querySelector(art);
-    if (!a) return;
+    if (!root || !a) return;
+
     const r = a.getBoundingClientRect(), q = root.getBoundingClientRect();
     const rows = Math.max(1, Math.round(cols * (r.height / r.width)));
     // where the wave starts, in tiles: the pointer if it is over the page, else the centre

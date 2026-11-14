@@ -5,6 +5,7 @@
    whole (docs/build-notes/COPY-RULE.md): "api.hanzo.ai" is its own element, the api tag is one element ("api /v1/search") and
    the prompt is one element holding exactly Hanzo's prompt. */
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion } from 'motion/react';
 import { A } from '../../../kit';
 import { Copy } from '../../../ui';
@@ -17,7 +18,7 @@ const ROWS = [
 ];
 const ICONS = ['M8 2v4M8 6 4 10M8 6l4 4M4 10v4M12 10v4', 'M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM1.5 8h13M8 1.5c2 2 2 11 0 13M8 1.5c-2 2-2 11 0 13', 'M3 3h3v3H3zM10 10h3v3h-3zM6 4.5h3.5v5.5', 'M2.5 3h11v4h-11zM2.5 9h11v4h-11z', 'M8 2 2.5 5v6L8 14l5.5-3V5zM2.5 5 8 8l5.5-3M8 8v6', 'M2 12l4-4 3 3 5-6', 'M5 2.5h6M3.5 6h9M2 9.5h12v4H2z', 'M8 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM2.5 14c.8-2.6 3-4 5.5-4s4.7 1.4 5.5 4'];
 
-export function SeConsole({ name, side, api }) {
+export function SeConsole({ name, side, api }: { name: ReactNode; side: [string, string][]; api?: ReactNode }) {
   const [at, setAt] = useState(0);
   return (
     <div className="l2-con">
@@ -56,7 +57,8 @@ export function SeConsole({ name, side, api }) {
   );
 }
 
-export function SePrompt({ name, prompt, api, className = '' }) {
+export function SePrompt({ name, prompt, api, className = '' }: { name: ReactNode; prompt: string; api?: ReactNode; className?: string }) {
+
   return (
     <div className={'l2-pr ' + className}>
       <div className="l2-pr-h">

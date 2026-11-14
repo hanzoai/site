@@ -23,6 +23,7 @@
    and the find feature's invented sentences (numbers now, names from content/ui-strings.json).
    V2: the cover plate turns inside one stable node (masks out, masks in; a finger pauses it), its numeral 44px so the title leads, whole first sentences only, no invented numbers; the rail keeps the reader's row a third down; Hanzo's tables fit the reading column and stack as cards on phones; one index on phones with a chevroned Contents; ink 44px clear and copy controls; print sheet; reduced motion settled at first paint */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import { motion, useMotionValueEvent, useScroll, useReducedMotion } from 'motion/react';
 import Sigil from '../Sigil';
 import { A, DataTable } from '../kit';
@@ -32,12 +33,16 @@ import { useArrival } from './doorway';
 import FamLines from '../v2/FamLines';
 import FamNext from '../v2/FamNext';
 import { ui } from '../v2/famUi';
+import type { Branch, Child } from './htmltree';
+import type { legalDoc, LegalSection } from './legalData';
 import './LegalDoc.css';
 import './LegalRoom.css';
 
 /* A page that is being read: lines of text, and a window of attention drifting down them. (Used by the /legal index.) */
 /* children (a document's own Sigil) replace the drifting window, so only one thing moves in the hero */
-export function Paper({ children }) {
+type Doc = ReturnType<typeof legalDoc>;
+
+export function Paper({ children }: { children?: ReactNode }) {
   const bars = [92, 84, 96, 60, 0, 88, 94, 70, 90, 52, 0, 96, 82, 90, 66];
   return (
     <div className="xlg-paper" aria-hidden="true">
@@ -54,9 +59,9 @@ export function Paper({ children }) {
 /* the section's copy link (a legal-local copy of DocNodes' CopyLink): 44px on every pointer, it scales in with the
    heading's hover (not an opacity-only fade), and its confirmation is a check in an ink disc to its LEFT, so it never
    leaves the screen on a phone. Names from content/ui-strings.json; no unregistered sentence. */
-function LCopy({ id }) {
+function LCopy({ id }: { id: string }) {
   const [ok, setOk] = useState(false);
-  const t = useRef(0);
+  const t = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   return (
     <button type="button" className="xlg2-cl" aria-label={ui('int_copy')} data-ok={ok || undefined}
       onClick={async () => {
@@ -75,45 +80,46 @@ function LCopy({ id }) {
 }
 
 /* counts each section's matches and lights them with the CSS Custom Highlight API where the browser has it */
-function find(art, q) {
+function find(art: RefObject<HTMLElement | null>, q: string) {
   const k = q.trim().toLowerCase();
   const hl = typeof CSS !== 'undefined' && CSS.highlights && typeof Highlight !== 'undefined';
   if (hl) CSS.highlights.delete('xlg-find');
   if (k.length < 2 || !art.current) return null;
-  const hits = {}, ranges = [];
-  art.current.querySelectorAll('section[data-s]').forEach((sec) => {
+  const hits: Record<string, number> = {}, ranges: Range[] = [];
+  art.current.querySelectorAll<HTMLElement>('section[data-s]').forEach((sec) => {
     let n = 0;
     const walk = document.createTreeWalker(sec, NodeFilter.SHOW_TEXT);
-    for (let t = walk.nextNode(); t; t = walk.nextNode()) {
+    const next = () => walk.nextNode() as Text | null; // SHOW_TEXT yields only text nodes
+    for (let t = next(); t; t = next()) {
       const low = t.data.toLowerCase();
       for (let i = low.indexOf(k); i >= 0; i = low.indexOf(k, i + k.length)) {
         n++;
         if (hl && ranges.length < 400) { const r = new Range(); r.setStart(t, i); r.setEnd(t, i + k.length); ranges.push(r); }
       }
     }
-    hits[sec.dataset.s] = n;
+    hits[sec.dataset.s!] = n; // the selector requires data-s
   });
   if (hl && ranges.length) CSS.highlights.set('xlg-find', new Highlight(...ranges));
   return hits;
 }
 
-function Rail({ toc, active, art }) {
-  const rail = useRef(null);
+function Rail({ toc, active, art }: { toc: Doc['toc']; active: string | undefined; art: RefObject<HTMLElement | null> }) {
+  const rail = useRef<HTMLElement>(null);
   // the rail follows the reader: the active row is kept inside the rail's own view
   useEffect(() => {
     const box = rail.current, a = box && box.querySelector('a[aria-current]');
-    if (!a || box.scrollHeight <= box.clientHeight || matchMedia('(max-width: 900px)').matches) return;
+    if (!box || !a || box.scrollHeight <= box.clientHeight || matchMedia('(max-width: 900px)').matches) return;
     const r = a.getBoundingClientRect(), b = box.getBoundingClientRect();
     // the active row rides about a third of the way down the rail
     box.scrollTo({ top: box.scrollTop + (r.top - b.top) - b.height / 3 + r.height / 2, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }, [active]);
   const { scrollYProgress } = useScroll({ target: art, offset: ['start 35%', 'end 65%'] });
-  const pct = useRef(null);
+  const pct = useRef<HTMLSpanElement>(null);
   useMotionValueEvent(scrollYProgress, 'change', (v) => { if (pct.current) pct.current.textContent = Math.round(Math.min(1, Math.max(0, v)) * 100) + '%'; });
-  const det = useRef(null);
+  const det = useRef<HTMLDetailsElement>(null);
   const [q, setQ] = useState('');
-  const [hits, setHits] = useState(null);
-  const inp = useRef(null);
+  const [hits, setHits] = useState<Record<string, number> | null>(null);
+  const inp = useRef<HTMLInputElement>(null);
   const clear = () => { setQ(''); setHits(find(art, '')); if (inp.current) inp.current.focus(); };
   useEffect(() => { if (matchMedia('(max-width: 900px)').matches && det.current) det.current.open = false; }, []);
   useEffect(() => () => { if (typeof CSS !== 'undefined' && CSS.highlights) CSS.highlights.delete('xlg-find'); }, []);
@@ -169,12 +175,12 @@ function Rail({ toc, active, art }) {
 
 /* Hanzo's tables, through the kit's one DataTable: every cell as written (links kept), the first column the row
    header; the caption is the section's own heading */
-const isEl = (k) => k && typeof k === 'object';
-const textOf = (n) => (isEl(n) ? n.c.map(textOf).join('') : n || '');
-function Table({ n, caption }) {
-  const rowsOf = (sec) => (sec ? sec.c.filter((r) => isEl(r) && r.t === 'tr') : []);
-  const thead = n.c.find((k) => isEl(k) && k.t === 'thead');
-  const tbody = n.c.find((k) => isEl(k) && k.t === 'tbody') || n;
+const isEl = (k: unknown): k is Branch => !!k && typeof k === 'object';
+const textOf = (n: Child | null | undefined): string => (isEl(n) ? n.c.map(textOf).join('') : n || '');
+function Table({ n, caption }: { n: Branch; caption?: string | null }) {
+  const rowsOf = (sec: Branch | undefined) => (sec ? sec.c.filter((r): r is Branch => isEl(r) && r.t === 'tr') : []);
+  const thead = n.c.find((k): k is Branch => isEl(k) && k.t === 'thead');
+  const tbody = n.c.find((k): k is Branch => isEl(k) && k.t === 'tbody') || n;
   const head = rowsOf(thead)[0];
   const heads = head ? head.c.filter(isEl).map((th) => textOf(th).replace(/\s+/g, ' ').trim()) : [];
   const body = rowsOf(tbody).filter((r) => r.c.some((k) => isEl(k) && (k.t === 'td' || k.t === 'th')) && r !== head);
@@ -184,14 +190,14 @@ function Table({ n, caption }) {
   return <DataTable caption={caption || heads.join(' · ')} cols={cols} rows={rows} className="xlg2-dt" />;
 }
 /* a section's nodes, with its tables through DataTable */
-const Prose = ({ nodes, caption }) => nodes.map((n, i) => {
+const Prose = ({ nodes, caption }: { nodes: Child[]; caption?: string | null }) => nodes.map((n, i) => {
   if (isEl(n) && n.t === 'table') return <Table key={i} n={n} caption={caption} />;
   // the heading's words sit in one span (one leaf, Hanzo's line whole) beside its copy link
   if (isEl(n) && n.t === 'h3') { const id = n.a && n.a.id; return <h3 key={i} id={id} className="xlg-hd"><span className="xlg2-h3t">{n.c.every((k) => !isEl(k)) ? n.c.join('') : <Nodes nodes={n.c} />}</span>{id && <LCopy id={id} />}</h3>; }
   return <Node key={i} n={n} />;
 });
 
-function Section({ s, i, on }) {
+function Section({ s, i, on }: { s: LegalSection; i: number; on: boolean }) {
   const [num, text] = s.title ? split(s.title) : [null, null];
   return (
     <section className="xlg-sec xlg2-sec" data-s={s.id || 'top'} data-on={on || undefined}>
@@ -210,9 +216,9 @@ function Section({ s, i, on }) {
 /* a clause's first sentence, Hanzo's own words, for the cover's preview: the first whole sentence of its first paragraph,
    ending on its full stop (not after "Inc."), short enough to show whole. Never cut at ":" or ";", never an added "…":
    when no such sentence exists the plate shows the clause's own title instead (''). */
-const plain = (nodes) => nodes.map((n) => (typeof n === 'string' ? n : n.t === 'table' ? ' ' : plain(n.c || []))).join('');
-const firstSentence = (nodes) => {
-  const p = nodes.find((n) => isEl(n) && n.t === 'p');
+const plain = (nodes: Child[]): string => nodes.map((n) => (typeof n === 'string' ? n : n.t === 'table' ? ' ' : plain(n.c || []))).join('');
+const firstSentence = (nodes: Child[]) => {
+  const p = nodes.find((n): n is Branch => isEl(n) && n.t === 'p');
   if (!p) return '';
   const t = plain(p.c).replace(/\s+/g, ' ').trim();
   const m = /^(.{24,}?[a-z0-9)"”’](?<!\bInc|\bLtd|\bCo|\be\.g|\bi\.e|\bvs)[.!?])(\s|$)/.exec(t);
@@ -222,7 +228,7 @@ const firstSentence = (nodes) => {
 
 /* the cover: the document as an object. Its contour, and a plate showing a clause (Hanzo's number, first sentence);
    hover or focus on an index row shows that clause and holds it */
-function Cover({ doc }) {
+function Cover({ doc }: { doc: Doc }) {
   // reduced motion is read after hydration, so the server's HTML and the first client render agree (the CSS already
   // holds the plate still under reduced motion before that)
   const rm = useReducedMotion();
@@ -236,8 +242,8 @@ function Cover({ doc }) {
   // the plate turns inside one stable node: the old clause masks up and out, then the next masks in from below
   // (no remount, so a swipe that starts on the card survives the turn)
   const [shown, setShown] = useState(0);
-  const read = useRef(null);
-  const leave = useRef(null); // the running mask-out, held until the next clause is in the DOM
+  const read = useRef<HTMLDivElement>(null);
+  const leave = useRef<Animation | null>(null); // the running mask-out, held until the next clause is in the DOM
   useEffect(() => {
     if (at === shown) return;
     const el = read.current;
@@ -256,7 +262,7 @@ function Cover({ doc }) {
     o.cancel();
   }, [shown]);
   const cur = secs[shown] || secs[0];
-  const pick = (k) => setAt(k);
+  const pick = (k: number) => setAt(k);
   return (
     <div className="xlg2-cover v2f-obj">
       <div className="xlg2-cover-l" aria-hidden="true">
@@ -287,24 +293,26 @@ function Cover({ doc }) {
   );
 }
 
-export default function LegalDoc({ doc, peek = {} }) {
+export default function LegalDoc({ doc, peek = {} }: { doc: Doc; peek?: Record<string, string> }) {
   useArrival();
-  const art = useRef(null);
-  const [active, setActive] = useState(doc.toc[0] && doc.toc[0].id);
+  const art = useRef<HTMLElement>(null);
+  const [active, setActive] = useState<string | undefined>(doc.toc[0] && doc.toc[0].id);
   useEffect(() => {
-    const secs = [...art.current.querySelectorAll('section[data-s]')].filter((s) => s.dataset.s !== 'top');
+    const root = art.current;
+    if (!root) return;
+    const secs = [...root.querySelectorAll<HTMLElement>('section[data-s]')].filter((s) => s.dataset.s !== 'top');
     const io = new IntersectionObserver((es) => {
-      es.forEach((e) => { if (e.isIntersecting) setActive(e.target.dataset.s); });
+      es.forEach((e) => { if (e.isIntersecting) setActive((e.target as HTMLElement).dataset.s); });
     }, { rootMargin: '-20% 0px -70% 0px' });
     secs.forEach((s) => io.observe(s));
     // phones read each table row as a card: every cell carries its column's name
-    art.current.querySelectorAll('table').forEach((t) => {
-      const heads = [...t.querySelectorAll('thead th')].map((th) => th.textContent.trim());
+    root.querySelectorAll('table').forEach((t) => {
+      const heads = [...t.querySelectorAll('thead th')].map((th) => (th.textContent || '').trim());
       t.querySelectorAll('tbody tr').forEach((tr) => [...tr.children].forEach((td, j) => { if (heads[j]) td.setAttribute('data-col', heads[j]); }));
       const w = t.closest('.x-table-wrap'); if (w) { w.setAttribute('data-cards', ''); w.setAttribute('data-cursor', ''); }
     });
     // the page's metric: a click on one of the document's own contact addresses
-    art.current.querySelectorAll('a[href^="mailto:"]').forEach((a) => a.setAttribute('data-cta', 'legal.contact.' + doc.slug));
+    root.querySelectorAll('a[href^="mailto:"]').forEach((a) => a.setAttribute('data-cta', 'legal.contact.' + doc.slug));
     return () => io.disconnect();
   }, [doc.slug]);
   const size = doc.title.length <= 14 ? '' : doc.title.length <= 26 ? ' mid' : ' small';

@@ -18,6 +18,8 @@
    view (pause first in the room), and the closing bar retypes the query and fuses its two lists once at 60% in view. The hero object runs on arrival and carries a pause control. Every word, price and link is
    Hanzo's; the query, the results and the RAG question are examples, and the streamed answer is Hanzo's own sentence. */
 import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
+
 import { motion, AnimatePresence, useInView } from 'motion/react';
 import useCalm from '../../v2/useCalm';
 import { EASE } from '../../ui';
@@ -36,7 +38,7 @@ const Q = 'Kubernets';
 const TEXT = ['Deploy to Kubernetes', 'Kubernetes ingress', 'Cluster quotas'];
 const VEC = ['Running containers in production', 'Deploy to Kubernetes', 'Scaling a service'];
 const RRF = ['Deploy to Kubernetes', 'Kubernetes ingress', 'Running containers in production', 'Cluster quotas'];
-const FROM = { 'Deploy to Kubernetes': 'text · vector', 'Kubernetes ingress': 'text', 'Running containers in production': 'vector', 'Cluster quotas': 'text' };
+const FROM: Record<string, string> = { 'Deploy to Kubernetes': 'text · vector', 'Kubernetes ingress': 'text', 'Running containers in production': 'vector', 'Cluster quotas': 'text' };
 // RAG: an example question about Hanzo's own docs; the streamed answer is Hanzo's sentence, the sources its headings
 const RAG_Q = 'How does RAG chat answer?';
 const RAG_A = 'The retrieved passages go to a model and come back as an answer with links to what it read.';
@@ -44,14 +46,14 @@ const SRC = ['RAG chat', 'How it works'];
 
 /* Entrances (MOTION-MAP /search): each main section arrives its own way, once, when it enters view. The hidden
    start states live in Search.css under html.js only, and reduced motion shows the final state. */
-function useEnter(ref, amount = 0.2) {
+function useEnter(ref: RefObject<Element | null>, amount = 0.2) {
   const seen = useInView(ref, { amount, once: true });
   return seen ? ' in' : '';
 }
 // grow-from-point: the last place the visitor pressed or pointed, in page coordinates
-const lastPoint = { x: null, y: null };
+const lastPoint: { x: number | null; y: number | null } = { x: null, y: null };
 if (typeof window !== 'undefined') {
-  const keep = (e) => { lastPoint.x = e.pageX; lastPoint.y = e.pageY; };
+  const keep = (e: PointerEvent) => { lastPoint.x = e.pageX; lastPoint.y = e.pageY; };
   window.addEventListener('pointerdown', keep, { passive: true });
   window.addEventListener('pointermove', keep, { passive: true });
 }
@@ -61,21 +63,21 @@ if (typeof window !== 'undefined') {
    left to right, like a station board. One timer drives the board; reduced motion sets the values at once. */
 const FLAP = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789·';
 const COLS = [1, 32, 13];
-const pad = (v, n) => (v + ' '.repeat(n)).slice(0, n);
-const lineOf = (row) => COLS.map((n, i) => pad(row[i] || '', n)).join('');
-function FlipBoard({ rows, calm }) {
+const pad = (v: string, n: number) => (v + ' '.repeat(n)).slice(0, n);
+const lineOf = (row: string[]) => COLS.map((n, i) => pad(row[i] || '', n)).join('');
+function FlipBoard({ rows, calm }: { rows: string[][]; calm: boolean }) {
   const want = rows.map(lineOf);
   const key = want.join('|');
   const [shown, setShown] = useState(want);
-  const left = useRef(null);
+  const left = useRef<number[][]>([]);
   useEffect(() => {
     if (calm) { setShown(want); return; }
     // each tile that changes gets a few random letters first; tiles further right wait a little longer
-    left.current = want.map((w, r) => [...w].map((ch, c) => (shown[r][c] === ch ? 0 : 2 + ((c + r * 3) % 4) + Math.floor(c / 9))));
-    let t = 0;
+    left.current = want.map((w: string, r: number) => [...w].map((ch, c) => (shown[r][c] === ch ? 0 : 2 + ((c + r * 3) % 4) + Math.floor(c / 9))));
+    let t: ReturnType<typeof setTimeout> | undefined;
     const tick = () => {
       let busy = false;
-      const next = want.map((line, r) => [...line].map((ch, c) => {
+      const next = want.map((line: string, r: number) => [...line].map((ch, c) => {
         const n = left.current[r][c];
         if (n <= 0) return ch;
         left.current[r][c] = n - 1;
@@ -91,7 +93,7 @@ function FlipBoard({ rows, calm }) {
   }, [key, calm]);
   return (
     <div className="se2-board" aria-hidden="true">
-      {shown.map((line, r) => (
+      {shown.map((line: string, r: number) => (
         <div className={'se2-board-row' + (r === 0 ? ' top' : '')} key={r}>
           {[...line].map((ch, c) => (
             <span key={c + ':' + ch} className={'se2-tile' + (c === 0 ? ' rk' : c > COLS[0] + COLS[1] - 1 ? ' src' : '')}>{ch === ' ' ? '\u00a0' : ch}</span>
@@ -103,8 +105,8 @@ function FlipBoard({ rows, calm }) {
 }
 
 /* An answer that streams in word by word (written into a text node), sources after it. */
-function Streamed({ run, big }) {
-  const out = useRef(null);
+function Streamed({ run, big }: { run: boolean; big?: boolean }) {
+  const out = useRef<HTMLSpanElement>(null);
   const [done, setDone] = useState(!run);
   useEffect(() => {
     const words = RAG_A.split(' ');
@@ -112,7 +114,7 @@ function Streamed({ run, big }) {
     let i = 0;
     setDone(false);
     if (out.current) out.current.textContent = '';
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const step = () => {
       i++;
       if (out.current) out.current.textContent = words.slice(0, i).join(' ');
@@ -136,7 +138,7 @@ function Ask() {
   const [ref, live, calm, paused, toggle] = useDemo(0.05);
   const [at, choose] = useSteps(4, 4200, live);
   const enter = useEnter(ref, 0.1);
-  const box = useRef(null);
+  const box = useRef<HTMLSpanElement>(null);
   const [typed, setTyped] = useState(true);
   useEffect(() => {
     if (calm || !live) { if (box.current) box.current.textContent = Q; setTyped(true); return; }
@@ -144,7 +146,7 @@ function Ask() {
     let i = 0;
     setTyped(false);
     if (box.current) box.current.textContent = '';
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const step = () => {
       i++;
       if (box.current) box.current.textContent = Q.slice(0, i);
@@ -194,10 +196,10 @@ const WAYS = [
 
 // a fixed scatter of documents in embedding space; the query sits among its three nearest by meaning
 const DOTS = Array.from({ length: 46 }, (_, i) => { const a = Math.sin(i * 12.9898) * 43758.5453, b = Math.sin(i * 78.233) * 12543.1; return [Math.round(60 + (a - Math.floor(a)) * 880) / 10, Math.round(80 + (b - Math.floor(b)) * 840) / 10]; });
-const NEAR = [[60, 30, 'Running containers in production'], [70, 52, 'Deploy to Kubernetes'], [44, 58, 'Scaling a service']];
+const NEAR: [number, number, string][] = [[60, 30, 'Running containers in production'], [70, 52, 'Deploy to Kubernetes'], [44, 58, 'Scaling a service']];
 
 /* Chapter 01's word: "Kubernets" as typed, then the missing "e" drops in and is underlined (once, when seen). */
-function FixWord({ run }) {
+function FixWord({ run }: { run: boolean }) {
   const [fixed, setFixed] = useState(true);
   useEffect(() => {
     if (!run) return;
@@ -209,9 +211,9 @@ function FixWord({ run }) {
 }
 
 /* One chapter's picture, for the chapter reached. */
-function Way({ at }) {
+function Way({ at }: { at: number }) {
   const calm = useCalm();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.6 });
   const [fused, setFused] = useState(false);
   useEffect(() => { if (at !== 2) return; if (calm) { setFused(true); return; } if (!seen) { setFused(false); return; } const t = setTimeout(() => setFused(true), 900); return () => clearTimeout(t); }, [at, calm, seen]);
@@ -254,7 +256,7 @@ function Way({ at }) {
 
 /* The four ways, as cards that stack at the top as you scroll past them (sticky-stack); each card keeps its picture. */
 function Ways() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const enter = useEnter(ref, 0.05);
   return (
     <section className={'l2-sec se2-ways se2-e-stack' + enter} ref={ref}>
@@ -288,7 +290,7 @@ const STEPS = [
 
 /* Page-local stepper: auto-advances every ms while live. A press holds for good (pick); hover or focus holds only
    while the pointer or focus stays (peek / leave), then the cycle resumes from that step after 1.5 s. */
-function useCycle(n, ms, live) {
+function useCycle(n: number, ms: number, live: boolean) {
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   const [peeking, setPeeking] = useState(false);
@@ -302,8 +304,8 @@ function useCycle(n, ms, live) {
   }, [at, live, held, peeking, n, ms]);
   return {
     at,
-    pick: (i) => { setAt(i); setHeld(true); },
-    peek: (i) => { setAt(i); setPeeking(true); },
+    pick: (i: number) => { setAt(i); setHeld(true); },
+    peek: (i: number) => { setAt(i); setPeeking(true); },
     leave: () => { back.current = true; setPeeking(false); },
   };
 }
@@ -314,7 +316,7 @@ const LANDING = ['Deploy to Kubernetes', 'Kubernetes ingress', 'Cluster quotas',
 /* The dark room's object is the bar itself, small, showing what each step does: documents landing in the index, the
    three callers reaching the same index, and an answer with its two linked sources. While the room is in view the steps
    take turns by themselves (4.2 s each); hover, focus or tap holds one, and the pause sits first in the room. */
-function HowBar({ at }) {
+function HowBar({ at }: { at: number }) {
   return (
     <div className="se2-hb" aria-hidden="true">
       <div className="se2-hb-bar"><svg viewBox="0 0 24 24" width="18" height="18"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg><span className="l2-mono">/v1/search</span><b className="l2-mono">one index</b></div>
@@ -364,7 +366,7 @@ function Frameworks() {
   const [ref, live] = useDemo(0.5);
   const { at, pick, peek, leave } = useCycle(FW.length, 2600, live);
   const enter = useEnter(ref, 0.3);
-  const [pt, setPt] = useState(null);
+  const [pt, setPt] = useState<React.CSSProperties | null>(null);
   useEffect(() => {
     if (!enter || !ref.current) return;
     const r = (ref.current.querySelector('.se2-e-in') || ref.current).getBoundingClientRect();
@@ -398,23 +400,23 @@ function Frameworks() {
   );
 }
 
-const PLANS = [
+const PLANS: [string, string, string[], string, string, [number, number]][] = [
   ['Build', '$99', ['5 projects', '10k docs per project', '2,500 AI chat sessions', 'Unlimited searches', 'React hook + REST API'], 'Read the docs', DOCS, [5, 10000]],
   ['Scale', '$1,450', ['25 projects', '100k docs per project', '50,000 AI chat sessions', 'Unlimited searches', 'Priority support'], 'Read the docs', DOCS, [25, 100000]],
   ['Enterprise', 'Custom', ['Unlimited projects', 'Unlimited docs', 'Unlimited AI chat sessions', 'Dedicated support + SLA'], 'Contact Sales', '/contact-sales', [Infinity, Infinity]],
 ];
 const PROJ = [1, 2, 3, 5, 8, 12, 25, 40, 80];
 const DOCN = [1000, 5000, 10000, 25000, 50000, 100000, 250000, 1000000];
-const k = (n) => (n >= 1000000 ? n / 1000000 + 'M' : n >= 1000 ? n / 1000 + 'k' : String(n));
+const k = (n: number) => (n >= 1000000 ? n / 1000000 + 'M' : n >= 1000 ? n / 1000 + 'k' : String(n));
 
 /* Beyond: set projects and docs per project; the plan whose limits cover both lights up. */
-const fillOf = (i, n) => ({ '--p': (i / (n - 1)) * 100 + '%' }); // the track fill, rendered once hydrated
+const fillOf = (i: number, n: number) => ({ '--p': (i / (n - 1)) * 100 + '%' }); // the track fill, rendered once hydrated
 
 function Pricing() {
   const [p, setP] = useState(3);
   const [d, setD] = useState(2);
-  const box = useRef(null);
-  const sec = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
+  const sec = useRef<HTMLElement>(null);
   const enter = useEnter(sec, 0.2);
   const [up, setUp] = useState(false); // the fill renders after hydration, so server and client HTML match
   useEffect(() => setUp(true), []);
@@ -424,7 +426,7 @@ function Pricing() {
   useEffect(() => {
     if (!seen || calm || touched.current) return;
     // roll from the smallest setting up to the default (5 projects, 10k docs): Build lights as the limits are reached
-    let i = 0, t = 0;
+    let i = 0, t: ReturnType<typeof setTimeout> | undefined;
     const steps = [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2], [3, 2]];
     const go = () => { if (touched.current) return; const [a, b] = steps[i]; setP(a); setD(b); i++; if (i < steps.length) t = setTimeout(go, 260); };
     t = setTimeout(go, 200);
@@ -466,15 +468,15 @@ function Pricing() {
 /* The close's object: the page ends where it began. At 60% in view the bar types "Kubernets" again, the text and
    vector lists stand side by side, then fuse into one merged rank and rest (once; reduced motion shows the rank). */
 function EndBar() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.6, once: true });
   const calm = useCalm();
-  const box = useRef(null);
+  const box = useRef<HTMLSpanElement>(null);
   const [phase, setPhase] = useState(2); // 0 typing, 1 two lists, 2 one merged rank
   useEffect(() => {
     if (!seen || calm) return;
     setPhase(0);
-    let i = 0, t = 0;
+    let i = 0, t: ReturnType<typeof setTimeout> | undefined;
     if (box.current) box.current.textContent = '';
     const step = () => {
       i++;
@@ -499,7 +501,7 @@ function EndBar() {
 }
 
 // The drawer holds live hanzo.ai/search's own example console (its rows are Hanzo copy, so they stay as they are).
-const SIDE = [['Search', '/search'], ['Chat', '/cloud/chat'], ['Bot', '/bot'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']];
+const SIDE: [string, string][] = [['Search', '/search'], ['Chat', '/cloud/chat'], ['Bot', '/bot'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']];
 
 export default function Search() {
   return (

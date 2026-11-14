@@ -9,10 +9,11 @@
    outside prefers-reduced-motion, so with JS off or reduced motion every section simply stands at its final state.
    Transform, opacity and clip only: nothing changes size, so nothing shifts. */
 import { useEffect, useRef, useState } from 'react';
+import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 
 /* true once the element is `amount` in view; then it stays true */
-export function useArrive(amount = 0.3) {
-  const ref = useRef(null);
+export function useArrive<T extends HTMLElement = HTMLElement>(amount = 0.3) {
+  const ref = useRef<T>(null);
   const [inn, setInn] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -21,19 +22,20 @@ export function useArrive(amount = 0.3) {
     io.observe(el);
     return () => io.disconnect();
   }, [amount, inn]);
-  return [ref, inn];
+  return [ref, inn] as const;
 }
 
 /* a wrapper that carries the entrance name and its arrived state; CSS does the motion */
-export function Arrive({ as: T = 'div', e, amount, className = '', children, ...rest }) {
+interface ArriveProps extends HTMLAttributes<HTMLElement> { as?: ElementType; e?: string; amount?: number }
+export function Arrive({ as: T = 'div', e, amount, className = '', children, ...rest }: ArriveProps) {
   const [ref, inn] = useArrive(amount);
   return <T ref={ref} className={className} data-ent={e} data-in={inn || undefined} {...rest}>{children}</T>;
 }
 
 /* vertical-ticker: the list sits in a window one list tall; a copy of it waits above, and the column rides up a full
    list's height and stops on the real one, like a departures ticker coming to rest. The copy is hidden from readers. */
-export function Ticker({ children, copy, className = '' }) {
-  const [ref, inn] = useArrive(0.45);
+export function Ticker({ children, copy, className = '' }: { children?: ReactNode; copy?: ReactNode; className?: string }) {
+  const [ref, inn] = useArrive<HTMLDivElement>(0.45);
   return (
     <div ref={ref} className={'nd-tk ' + className} data-ent="ticker" data-in={inn || undefined}>
       <div className="nd-tk-col">
@@ -45,7 +47,7 @@ export function Ticker({ children, copy, className = '' }) {
 }
 
 /* underline-sweep: key words underlined one after another (--k orders them) */
-export const Sweep = ({ k, children }) => <span className="nd-sw" style={{ '--k': k }}>{children}</span>;
+export const Sweep = ({ k, children }: { k: number | string; children?: ReactNode }) => <span className="nd-sw" style={{ '--k': k }}>{children}</span>;
 
 /* text-mask-film: the page draws one tile of the fabric (unlabeled dots and links, deck greys on ink) to a canvas; it
    becomes the headline's fill and pans through the letters once (about 2.6s), then the letters settle to solid ink. */
@@ -69,7 +71,7 @@ function fabricTile() {
   });
   return c.toDataURL('image/png');
 }
-export function FilmHead({ as: T = 'h2', className = '', children }) {
+export function FilmHead({ as: T = 'h2', className = '', children }: { as?: ElementType; className?: string; children?: ReactNode }) {
   const [ref, inn] = useArrive(0.8);
   const [st, setSt] = useState('');
   useEffect(() => {
@@ -86,10 +88,11 @@ export function FilmHead({ as: T = 'h2', className = '', children }) {
 
 /* side-carousel: a horizontal snapping track (proximity snap, a peek of the next card). It slides in a card's width
    from the right and settles as it arrives; Previous and Next step it a card at a time (keyboard and pointer). */
-export function Carousel({ children, label, prev = 'Previous', next = 'Next' }) {
-  const [ref, inn] = useArrive(0.3);
-  const track = useRef(null);
-  const step = (d) => {
+export function Carousel({ children, label, prev = 'Previous', next = 'Next' }: { children?: ReactNode; label?: string; prev?: string; next?: string }) {
+  const [ref, inn] = useArrive<HTMLDivElement>(0.3);
+  const track = useRef<HTMLOListElement>(null);
+  const step = (d: number) => {
+
     const el = track.current;
     if (!el) return;
     const card = el.querySelector('li');

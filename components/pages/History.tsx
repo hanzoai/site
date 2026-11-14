@@ -20,6 +20,8 @@
 // Beyond: your year: type the year you started and the card cuts to what Hanzo was building then, with its posts
 // V2: 8 Nov round 4: real customer logos on the year plates over each year's figure (said once), years never blank on scroll (entrance marker is an attribute), h1 first, Your year keeps a dimmed plate, deck tokens. Motion map: the pinned 13-year scrub and its odometer year are gone (the years are plain rows, every word, link and plate kept, the rail stays as a jump index); the statement lights word by word; five page-local entrances; the years come straight after the hero, the clippings after them
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { FocusEvent, ReactNode } from 'react';
+import type { MotionValue } from 'motion/react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
 import { A, Cta, Img, Film } from '../kit';
 import UI from '../../content/ui-strings.json';
@@ -28,25 +30,26 @@ import StoryPause from './StoryPause';
 import Lines from '../v2/Lines';
 import '../v2/system.css';
 import { YEARS, ERAS } from './historyData';
+import type { Year as YearData } from './historyData';
 import './story.css';
 import usePhoneAsk from './usePhoneAsk';
 import useHistoryEnter from './history/enter';
 import './History.css';
 import './history/enter.css';
 
-const TL = ({ to, children }) => <Cta to={to} kind="link">{children}</Cta>;
+const TL = ({ to, children }: { to: string; children: ReactNode }) => <Cta to={to} kind="link">{children}</Cta>;
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const N = YEARS.length;
 
 /* ---------- 1. the first screen ---------- */
-function EraBar({ t, k }) {
+function EraBar({ t, k }: { t: MotionValue<number>; k: number }) {
   const sx = useTransform(t, [k / ERAS.length, (k + 1) / ERAS.length], [0, 1]);
   return <i className="xhi-era-bar" aria-hidden="true"><motion.b style={{ scaleX: sx }} /></i>;
 }
 
 /* the hero's object: the twelve years run by themselves, the giant year cut in as each era's bar fills (time) */
 function Hero() {
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const t = useMotionValue(0); // the same on server and client; reduced motion jumps it to the end before first paint
@@ -57,7 +60,8 @@ function Hero() {
   // the years run by themselves (15 s, a rest, again) until paused; a pause holds the year on screen
   useEffect(() => {
     if (calm || !seen || paused) return;
-    let c, tm;
+    let c: ReturnType<typeof animate> | undefined;
+    let tm: ReturnType<typeof setTimeout> | undefined;
     const run = () => {
       const from = t.get() >= 1 ? 0 : t.get();
       c = animate(t, [from, 1], { duration: 15 * (1 - from), ease: 'linear', onComplete: () => { tm = setTimeout(run, 1600); } });
@@ -100,7 +104,7 @@ function Hero() {
 }
 
 /* ---------- 3. track record: press clippings on a rail you throw (after the years) ---------- */
-const CLIPS = [
+const CLIPS: [string, string, [string, string][]][] = [
   ['2014', 'Building business software since 2014, with AI and machine learning in commercial use from the start and GPT models in production by 2019. Founded as Crowdstart and renamed Hanzo in 2016. The first customer, SKULLY, raised $1M in about 45 hours, the fastest fully funded campaign on Indiegogo.', [['TechCrunch, 2014', 'https://techcrunch.com/2014/08/14/the-skully-smart-helmet-is-the-fastest-funded-indiegogo-campaign-to-hit-1m/'], ['SKULLY', '/customers#skully']]],
   ['120,000 ETH', 'The first blockchain-native commerce platform, 2017: the Unikrn ICO raised over 120,000 ETH across regulated jurisdictions.', [['Crunchbase News, 2017', 'https://news.crunchbase.com/startups/found-ico-makes-sense/'], ['Unikrn on Hanzo', '/customers#unikrn']]],
   ['2 went public', 'Damon Motorcycles and Triller, two of the companies Hanzo built with, listed on Nasdaq in 2024.', [['Damon (DMN)', 'https://www.nortonrosefulbright.com/en/news/95a8e26f/norton-rose-fulbright-advises-grafiti-holding-inc-in-its-business-combination-with-damon-motors-inc'], ['Triller (ILLR)', 'https://www.nasdaq.com/press-release/agba-completes-merger-triller-2024-10-15'], ['Case studies', '/customers#damon-motorcycles']]],
@@ -111,7 +115,7 @@ const CLIPS = [
 const TILT = [-1.6, 1.1, -0.6, 1.4, -1.1, 0.7];
 
 function Record() {
-  const rail = useRef(null);
+  const rail = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const [hand, setHand] = useState(false);
   const moved = useRef(0);
@@ -125,11 +129,11 @@ function Record() {
     return () => c.stop();
   }, [seen, hand, calm, x]);
   // a link reached by keyboard slides into view
-  const reveal = (e) => {
+  const reveal = (e: FocusEvent<HTMLDivElement>) => {
     if (!hand) return;
-    const card = e.target.closest('li'), box = rail.current;
+    const card = (e.target as HTMLElement).closest('li'), box = rail.current;
     if (!card || !box) return;
-    const min = Math.min(0, box.clientWidth - box.firstChild.scrollWidth);
+    const min = Math.min(0, box.clientWidth - (box.firstChild as HTMLElement).scrollWidth);
     const want = Math.max(min, Math.min(0, -(card.offsetLeft - 40)));
     animate(x, want, { type: 'spring', stiffness: 300, damping: 30 });
   };
@@ -159,7 +163,7 @@ function Record() {
 
 /* ---------- 2. the journey: the statement that lights as it is read (Signature), then the years as plain rows ---------- */
 /* the year, cut into its line: the old year rises out of the mask as the new one rises in (no rolling digits) */
-function YearCut({ at, className = '' }) {
+function YearCut({ at, className = '' }: { at: number; className?: string }) {
   return (
     <span className={'xhi-cut ' + className} aria-hidden="true">
       {YEARS.map((y, i) => <span key={y.year} className={i === at ? 'on' : i < at ? 'past' : ''}>{y.year}</span>)}
@@ -167,9 +171,9 @@ function YearCut({ at, className = '' }) {
   );
 }
 
-function Plate({ y, on, dim = false }) {
+function Plate({ y, on, dim = false }: { y: YearData; on: boolean; dim?: boolean }) {
   const p = y.pic || {};
-  const img = useRef(null);
+  const img = useRef<HTMLImageElement>(null);
   const [ok, setOk] = useState(false);
   const [k, setK] = useState(0); // the photo first; if it is not there, Hanzo's logo for that year
   const list = [p.photo, p.logo].filter(Boolean);
@@ -188,7 +192,7 @@ function Plate({ y, on, dim = false }) {
   );
 }
 
-function Year({ y, i, at }) {
+function Year({ y, i, at }: { y: YearData; i: number; at: number }) {
   const on = i === at;
   return (
     <article className={'xhi-yr' + (on ? ' on' : '')} aria-labelledby={'xhi-y' + y.year} data-y={i} data-enter="domino">
@@ -219,17 +223,17 @@ const STATEMENT = 'Built with hundreds of venture-funded startups: billions in c
 const WORDS = STATEMENT.split(' ');
 
 function Journey() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const [at, setAt] = useState(0);
   // the year nearest the middle of the screen is the one the rail marks
   useEffect(() => {
     const box = ref.current;
     if (!box) return undefined;
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.y); }), { rootMargin: '-45% 0px -45% 0px' });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(Number((e.target as HTMLElement).dataset.y)); }), { rootMargin: '-45% 0px -45% 0px' });
     box.querySelectorAll('.xhi-yr').forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
-  const jump = (i) => {
+  const jump = (i: number) => {
     const el = ref.current?.querySelector(`.xhi-yr[data-y="${i}"]`);
     if (!el) return;
     const y = el.getBoundingClientRect().top + scrollY - 96;
@@ -274,7 +278,7 @@ function Yours() {
   const y = found || (raw.length < 4 && raw ? last.current : null); // half-typed: the last year you saw stays in place
   const held = last.current; // out of range or empty: the last plate stays, dimmed, and the sentence takes the title's place
   const say = !raw ? 'Type a year.' : Number.isNaN(n) ? 'Type a year, like 2019.' : n < FIRST ? `Building business software since ${FIRST}.` : n > LAST ? 'Not written yet.' : '';
-  const step = (d) => setRaw(String(Math.min(LAST, Math.max(FIRST, (Number.isNaN(n) ? LAST : n) + d))));
+  const step = (d: number) => setRaw(String(Math.min(LAST, Math.max(FIRST, (Number.isNaN(n) ? LAST : n) + d))));
   return (
     <section className="v2s-sec xhi-you" aria-labelledby="xhi-you-h">
       <div className="v2s-wrap v2s-grid xhi-you-g">

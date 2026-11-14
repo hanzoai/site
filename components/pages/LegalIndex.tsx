@@ -11,7 +11,9 @@
    Ledger: deletes the reading lamp and its second pause (rows instead), the line-mask cut-ins, the 3-up grey
    boxes, the second black pill, the sepia accent, the invented stamp, the stage settle, the status ping. */
 import { useEffect, useRef, useState } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
+import type { Transition } from 'motion/react';
 import { play } from '../../lib/sound';
 import { A } from '../kit';
 import { Nodes } from './DocNodes';
@@ -21,15 +23,19 @@ import NoJs from '../v2/x-gauss/NoJs';
 import PlainNoJs from '../NoJs';
 import '../v2/Scale.css';
 import '../v2/x-gauss/Rhythm.css';
+import type { Branch, Child } from './htmltree';
+import type { legalIndex, LegalGroup, LegalItem } from './legalData';
 import './LegalIndex.css';
+
+type Index = ReturnType<typeof legalIndex>;
 
 const LADDER = [['service-only', 'by default'], ['private improvement'], ['research and training'], ['public commons']];
 /* Hanzo's own line for a document, as plain text (its note, without the leading dash) */
-const flat = (n) => (typeof n === 'string' ? n : n && n.c ? n.c.map(flat).join('') : '');
-const lineOf = (it) => it.note.map(flat).join('').replace(/^\s*—\s*/, '').trim();
-const slugOf = (href) => href.split('/').filter(Boolean).pop();
+const flat = (n: Child | { c: Child[] } | null | undefined): string => (typeof n === 'string' ? n : n && n.c ? n.c.map(flat).join('') : '');
+const lineOf = (it: LegalItem) => it.note.map(flat).join('').replace(/^\s*—\s*/, '').trim();
+const slugOf = (href: string) => href.split('/').filter(Boolean).pop();
 /* the first bold phrase in Hanzo's status note ("Status: draft, pending counsel."), used verbatim as the sheets' stamp */
-const firstStrong = (nodes) => {
+const firstStrong = (nodes: Child[] | undefined): string => {
   for (const n of nodes || []) {
     if (n && typeof n === 'object') { if (n.t === 'strong') return flat(n).trim(); const k = firstStrong(n.c); if (k) return k; }
   }
@@ -45,7 +51,7 @@ function useCalm() {
 }
 
 /* the page's one pause (WCAG 2.2.2): it stops the deal; the same 44px control as the shared Pause */
-function PauseBtn({ paused, set }) {
+function PauseBtn({ paused, set }: { paused: boolean; set: Dispatch<SetStateAction<boolean>> }) {
   return (
     <button type="button" className="w2-pause" style={{ position: 'relative', right: 'auto', top: 'auto' }} aria-pressed={paused} aria-label={paused ? 'Play' : 'Pause'} onClick={() => set((p) => !p)}>
       {paused
@@ -56,12 +62,12 @@ function PauseBtn({ paused, set }) {
 }
 
 /* The hero object: the documents as a stack of paper that deals itself. */
-function Stack({ docs, stamp, paused, setPaused }) {
+function Stack({ docs, stamp, paused, setPaused }: { docs: LegalItem[]; stamp: string; paused: boolean; setPaused: Dispatch<SetStateAction<boolean>> }) {
   const [ref, live] = useLive(0.3);
   const [top, setTop] = useState(0);
   const [out, setOut] = useState(-1); // the sheet leaving: it travels out on top first, then tucks under the pile
   const calm = useCalm();
-  const tuck = useRef(0);
+  const tuck = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => () => clearTimeout(tuck.current), []);
   useEvery(2600, live && !paused, () => {
     // reduced motion: a plain cut to the next sheet
@@ -85,7 +91,7 @@ function Stack({ docs, stamp, paused, setPaused }) {
             : { x: k * 24, y: k * -20, rotate: k * 2 - 2, scale: 1 - k * 0.04, opacity: back ? 0 : 1, zIndex: 20 - order[i] };
           // leaving: out on top (450ms ease-emphasis); then it slides in under the pile, seen going under before it fades
           // at the back; the next sheet comes forward 200ms after the leaving one has cleared
-          const tr = calm ? { duration: 0 }
+          const tr: Transition = calm ? { duration: 0 }
             : leaving ? { duration: 0.45, ease: [0.16, 1, 0.3, 1] }
             : order[i] === 0 ? { duration: 0.4, ease: [0.16, 1, 0.3, 1], delay: 0.2 }
             : order[i] === last ? { duration: 0.5, ease: [0.4, 0, 0.2, 1], opacity: { duration: 0.25, delay: 0.35 } }
@@ -108,11 +114,12 @@ function Stack({ docs, stamp, paused, setPaused }) {
 /* ---------- the index: every document with Hanzo's own line for it, as live lists them ----------
    8 Nov (COPY-RULE rule 4): a legal index reads at a glance, so every row shows its line (no row has to be opened to
    read it); the title is the link and the whole row answers it (hover tint, arrow nudges, press 1px). */
-function Row({ it, group }) {
+function Row({ it, group }: { it: LegalItem; group: string }) {
   const slug = slugOf(it.href);
   // Hanzo's line as written, its leading dash set faint
-  const lead = typeof it.note[0] === 'string' && /^\s*—/.test(it.note[0]);
-  const note = lead ? [it.note[0].replace(/^\s*—\s*/, ' '), ...it.note.slice(1)] : it.note;
+  const first = it.note[0];
+  const lead = typeof first === 'string' && /^\s*—/.test(first);
+  const note = typeof first === 'string' && lead ? [first.replace(/^\s*—\s*/, ' '), ...it.note.slice(1)] : it.note;
   return (
     <div className="lgi-row">
       <span className="lgi-card-k x-mono">{group}</span>
@@ -127,12 +134,12 @@ function Row({ it, group }) {
   );
 }
 
-function Catalogue({ groups }) {
+function Catalogue({ groups }: { groups: Index['groups'] }) {
   const [on, setOn] = useState('all');
   const calm = useCalm();
   const [stuck, setStuck] = useState(false);
-  const pin = useRef(null);
-  const list = useRef(null);
+  const pin = useRef<HTMLSpanElement>(null);
+  const list = useRef<HTMLDivElement>(null);
   const all = groups.flatMap((g) => g.items.map((it) => ({ ...it, g })));
   const showing = all.filter((x) => on === 'all' || x.g.id === on).map((x) => x.href);
   // the chip bar draws its hairline only once it is stuck under the header
@@ -157,7 +164,7 @@ function Catalogue({ groups }) {
     return () => removeEventListener('hashchange', pick);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groups]);
-  function choose(id, quiet) {
+  function choose(id: string, quiet?: boolean) {
     if (id === on) return;
     setOn(id);
     if (!quiet) play('tick');
@@ -208,8 +215,9 @@ function Ladder() {
 }
 
 /* Contact: the four addresses beside one last sheet from the pile; the sheet shows the address you point at or focus */
-function Contact({ contact, mail, title, stamp }) {
-  const addr = mail.c.map((li) => flat({ c: li.c.slice(1) }).trim());
+function Contact({ contact, mail, title, stamp }: { contact: LegalGroup; mail: Branch; title: string; stamp: string }) {
+  const items = mail.c.filter((li): li is Branch => typeof li !== 'string');
+  const addr = items.map((li) => flat({ c: li.c.slice(1) }).trim());
   const [at, setAt] = useState(-1);
   return (
     <section className="w2-sec lgi-contact">
@@ -223,8 +231,9 @@ function Contact({ contact, mail, title, stamp }) {
           </div>
         </div>
         <ul className="lgi-mail" onPointerLeave={() => setAt(-1)}>
-          {mail.c.map((li, i) => (
-            <li key={i} data-on={at === i || undefined} onPointerEnter={() => setAt(i)} onFocus={() => setAt(i)} onBlur={() => setAt(-1)}><span>{li.c[0]}</span><Nodes nodes={li.c.slice(1)} /></li>
+          {items.map((li, i) => (
+            <li key={i} data-on={at === i || undefined} onPointerEnter={() => setAt(i)} onFocus={() => setAt(i)} onBlur={() => setAt(-1)}><span><Nodes nodes={[li.c[0]]} /></span><Nodes nodes={li.c.slice(1)} />
+</li>
           ))}
         </ul>
       </div>
@@ -232,7 +241,7 @@ function Contact({ contact, mail, title, stamp }) {
   );
 }
 
-function How({ how }) {
+function How({ how }: { how: LegalGroup }) {
   return (
     <section className="w2-sec lgi-how">
       <div className="w2-wrap lgi-how-g">
@@ -246,7 +255,7 @@ function How({ how }) {
   );
 }
 
-export default function LegalIndex({ d }) {
+export default function LegalIndex({ d }: { d: Index }) {
   useArrival();
   const [paused, setPaused] = useState(false);
   const [first, ...status] = d.intro;
@@ -255,7 +264,7 @@ export default function LegalIndex({ d }) {
   const how = d.rest.find((g) => g.id === 'how-these-fit-together');
   const contact = d.rest.find((g) => g.id === 'contact');
   const other = d.rest.filter((g) => g !== how && g !== contact);
-  const mail = contact && contact.nodes.find((n) => n.t === 'ul');
+  const mail = contact && contact.nodes.find((n): n is Branch => typeof n !== 'string' && n.t === 'ul');
   const lines = d.title.split(' & ').map((t, i, a) => (i < a.length - 1 ? t + ' & ' : t));
   return (
     <main id="main" className="lgi w2 gx" data-ask="off">
