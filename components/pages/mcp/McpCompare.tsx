@@ -8,17 +8,22 @@
    the divider to the middle, leaving a fading trail of dots; after that, on a hover pointer, the trail follows the
    visitor's cursor across the panel. Reduced motion: the divider rests at 50%, no cursor, no trail. */
 import { useEffect, useRef, useState } from 'react';
+import type { PointerEvent, KeyboardEvent } from 'react';
 
 const N = 12; // trail dots
-const clamp = (v) => Math.max(0, Math.min(100, v));
+type Pt = [number, number];
+/* the trail's state: the pointer, its dots' places (made on first use), how long the trail stays lit, the frame request,
+   and whether the entrance or the visitor has the panel */
+interface Trail { tx: number; ty: number; pts: Pt[] | null; alive: number; raf: number; intro: boolean; user: boolean; x0?: number }
+const clamp = (v: number) => Math.max(0, Math.min(100, v));
 
-export default function McpCompare({ json, tools, client }) {
+export default function McpCompare({ json, tools, client }: { json: string; tools: string[]; client: string }) {
   const [pos, setPos] = useState(50);
   const [drag, setDrag] = useState(false);
-  const box = useRef(null);
-  const dots = useRef([]);
-  const cur = useRef(null);
-  const st = useRef({ tx: 0, ty: 0, pts: null, alive: 0, raf: 0, intro: false, user: false });
+  const box = useRef<HTMLDivElement>(null);
+  const dots = useRef<(HTMLElement | null)[]>([]);
+  const cur = useRef<HTMLSpanElement>(null);
+  const st = useRef<Trail>({ tx: 0, ty: 0, pts: null, alive: 0, raf: 0, intro: false, user: false });
 
   /* the trail: each dot eases toward the one ahead of it; the loop runs only while something is moving */
   const wake = () => {
@@ -26,16 +31,16 @@ export default function McpCompare({ json, tools, client }) {
     if (s.raf) return;
     const step = () => {
       const s2 = st.current;
-      if (!s2.pts) s2.pts = Array.from({ length: N }, () => [s2.tx, s2.ty]);
-      s2.pts.forEach((p, i) => {
-        const [ax, ay] = i ? s2.pts[i - 1] : [s2.tx, s2.ty];
+      const pts = s2.pts ?? (s2.pts = Array.from({ length: N }, (): Pt => [s2.tx, s2.ty]));
+      pts.forEach((p, i) => {
+        const [ax, ay] = i ? pts[i - 1] : [s2.tx, s2.ty];
         p[0] += (ax - p[0]) * (i ? 0.42 : 0.6);
         p[1] += (ay - p[1]) * (i ? 0.42 : 0.6);
       });
       s2.alive = Math.max(0, s2.alive - 0.018);
       dots.current.forEach((d, i) => {
         if (!d) return;
-        const [x, y] = s2.pts[i];
+        const [x, y] = pts[i];
         d.style.transform = `translate(${x}px, ${y}px) scale(${1 - i / (N * 1.4)})`;
         d.style.opacity = String(Math.min(1, s2.alive) * (1 - i / N) * 0.9);
       });
@@ -60,7 +65,7 @@ export default function McpCompare({ json, tools, client }) {
       const r = el.getBoundingClientRect();
       const t0 = performance.now(), D = 1400;
       s.tx = r.width * 0.98; s.ty = r.height * 0.78; s.pts = null;
-      const go = (now) => {
+      const go = (now: number) => {
         if (s.user) { el.classList.remove('intro'); s.intro = false; return; }
         const k = Math.min(1, (now - t0) / D);
         const e = 1 - Math.pow(1 - k, 3);
@@ -80,32 +85,33 @@ export default function McpCompare({ json, tools, client }) {
     return () => { io.disconnect(); cancelAnimationFrame(raf); cancelAnimationFrame(s.raf); s.raf = 0; };
   }, []);
 
-  const at = (e) => {
-    const r = box.current.getBoundingClientRect();
+  const at = (e: PointerEvent): [number, number, number] => {
+    const r = box.current?.getBoundingClientRect() ?? new DOMRect();
     return [e.clientX - r.left, e.clientY - r.top, r.width];
   };
-  const onDown = (e) => {
+  const onDown = (e: PointerEvent) => {
     if (e.button) return;
     st.current.user = true;
-    box.current.setPointerCapture?.(e.pointerId);
+    box.current?.setPointerCapture?.(e.pointerId);
     setDrag(true);
     if (e.pointerType === 'mouse') { const [x, , w] = at(e); setPos(clamp((x / w) * 100)); }
     st.current.x0 = e.clientX;
   };
-  const onMove = (e) => {
+  const onMove = (e: PointerEvent) => {
     const [x, y, w] = at(e);
     if (drag) setPos(clamp((x / w) * 100));
     // the trail follows a hover pointer (not a finger), once the entrance has played
     if (e.pointerType === 'mouse' && !st.current.intro && matchMedia('(hover: hover)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const s = st.current;
-      if (!s.pts) s.pts = Array.from({ length: N }, () => [x, y]);
+      if (!s.pts) s.pts = Array.from({ length: N }, (): Pt => [x, y]);
       s.tx = x; s.ty = y; s.alive = 1.2; wake();
     }
   };
   const onUp = () => setDrag(false);
-  const onKey = (e) => {
+  const onKey = (e: KeyboardEvent) => {
     const big = e.shiftKey || e.key === 'PageUp' || e.key === 'PageDown' ? 10 : 5;
-    const k = { ArrowLeft: -big, ArrowDown: -big, PageDown: -big, ArrowRight: big, ArrowUp: big, PageUp: big }[e.key];
+    const k = ({ ArrowLeft: -big, ArrowDown: -big, PageDown: -big, ArrowRight: big, ArrowUp: big, PageUp: big } as Record<string, number>)[e.key];
+
     if (k) { e.preventDefault(); st.current.user = true; setPos((p) => clamp(Math.round(p + k))); }
     else if (e.key === 'Home') { e.preventDefault(); st.current.user = true; setPos(0); }
     else if (e.key === 'End') { e.preventDefault(); st.current.user = true; setPos(100); }

@@ -12,17 +12,21 @@
 import { motion } from 'motion/react';
 import './MaskLines.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+type Tag = 'h1' | 'h2' | 'h3' | 'p' | 'div';
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const TAGS = { h1: motion.h1, h2: motion.h2, h3: motion.h3, p: motion.p, div: motion.div };
-const PLAIN = { h1: 'h1', h2: 'h2', h3: 'h3', p: 'p', div: 'div' };
+const PLAIN: Record<Tag, Tag> = { h1: 'h1', h2: 'h2', h3: 'h3', p: 'p', div: 'div' };
 const NOJS = { __html: '<style>.vc-ml-i{transform:none!important}</style>' };
 
-export default function MaskLines({ lines, as = 'h2', className = '', delay = 0, now = false, id, stagger = 0.08 }) {
+interface MaskLinesProps { lines: string[]; as?: Tag; className?: string; delay?: number; now?: boolean; id?: string; stagger?: number }
+
+export default function MaskLines({ lines, as = 'h2', className = '', delay = 0, now = false, id, stagger = 0.08 }: MaskLinesProps) {
   if (now) {
     const Tag = PLAIN[as] || 'h2';
     return (
       <Tag id={id} className={'vc-ml ' + className}>
-        {lines.map((l, i) => (
+        {lines.map((l: string, i: number) => (
+
           <span className="vc-ml-l" key={i}>
             <span className="vc-ml-i vc-ml-css" style={{ '--d': (0.5 + delay + i * stagger).toFixed(2) + 's' }}>
               {l}{i < lines.length - 1 ? ' ' : ''}
@@ -37,7 +41,8 @@ export default function MaskLines({ lines, as = 'h2', className = '', delay = 0,
     <>
       <noscript dangerouslySetInnerHTML={NOJS} />
       <Tag id={id} className={'vc-ml ' + className} initial="h" whileInView="s" viewport={{ once: true, amount: 0.5 }} variants={{ h: {}, s: { transition: { staggerChildren: stagger, delayChildren: delay } } }}>
-        {lines.map((l, i) => (
+        {lines.map((l: string, i: number) => (
+
           <span className="vc-ml-l" key={i}>
             <motion.span className="vc-ml-i" variants={{ h: { y: '120%' }, s: { y: '0%', transition: { duration: 0.8, ease: EASE } } }}>
               {l}{i < lines.length - 1 ? ' ' : ''}

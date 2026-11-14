@@ -4,28 +4,31 @@
    switch they all share. Code is always in the HTML in full. Ink and greys only: tokens differ by weight and grey
    step (every grey at 4.5:1 or better), never by hue (MASTER.md 3.1); Hanzo's lines are marked in the gutter. */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 import { Copy } from '../../ui';
 import { ui } from '../../v2/famUi';
 import { play } from '../../../lib/sound';
 import { Loose } from '../models/parts';
+import type { Child } from '../htmltree';
+import type { Code, Sample, Token } from './intData.types';
 
 /* Hanzo's rich lines (a sentence with a link or code inside): each loose run of words sits in its own span, so every
    line of Hanzo's copy is one whole element of its own (what the copy check reads), with the words unchanged */
-export function Leaf({ nodes }) {
+export function Leaf({ nodes }: { nodes?: Child[] | null }) {
   return (nodes || []).map((n, i) => (typeof n === 'string' ? <span key={i}>{n}</span> : <Loose key={i} nodes={[n]} />));
 }
 
 export const HANZO = /hanzo/i;
-export const lineText = (l) => l.map((t) => t[1]).join('');
-export const hitsOf = (code) => {
-  const lines = code ? code.lines : [];
+export const lineText = (l: Token[]) => l.map((t) => t[1]).join('');
+export const hitsOf = (code: Code | null | undefined) => {
+  const lines: Token[][] = code ? code.lines : [];
   return { hits: lines.filter((l) => HANZO.test(lineText(l))).length, of: lines.filter((l) => l.length).length };
 };
 
 /* a JSON sample that opens with // comment lines does not parse: the comment becomes a caption over the code (the
    same words), and Copy hands over only the JSON (MASTER.md part 16) */
-export function splitSample(sample) {
+export function splitSample(sample: Sample): { code: Code | null; caption: string[] } {
   const code = sample.code;
   if (!code || !/^json/i.test(sample.lang || '')) return { code, caption: [] };
   let k = 0;
@@ -38,8 +41,9 @@ export function splitSample(sample) {
 /* a press on a link to another page lands on that page's top at once. Hanzo's own stylesheet asks for smooth
    scrolling, which on a phone (no Lenis) would show the new page at the old offset and then glide it up; for the length
    of the page change only, the jump is instant. Used as onClickCapture on the page's <main>. */
-export function landAtTop(e) {
-  const a = e.target.closest && e.target.closest('a[href^="/"]');
+export function landAtTop(e: MouseEvent) {
+  const t = e.target as Element;
+  const a = t.closest && t.closest<HTMLAnchorElement>('a[href^="/"]');
   if (!a || new URL(a.href).pathname === location.pathname) return;
   const h = document.documentElement;
   h.style.scrollBehavior = 'auto';
@@ -47,7 +51,7 @@ export function landAtTop(e) {
 }
 
 /* the code itself: numbered lines, tokens set apart by weight and grey, Hanzo's lines marked in the gutter */
-export function Lines({ code, only, typed, label }) {
+export function Lines({ code, only, typed, label }: { code: Code; only: boolean; typed?: boolean; label: string }) {
   return (
     <pre className={'xig-pre' + (only ? ' only' : '')} tabIndex={0} aria-label={label} data-lenis-prevent data-swipe-own>
       <code>
@@ -55,10 +59,10 @@ export function Lines({ code, only, typed, label }) {
           const hz = HANZO.test(lineText(l));
           const h = hz ? code.lines.slice(0, j).filter((x) => HANZO.test(lineText(x))).length : 0; // its turn among Hanzo's lines
           // the line's own indent sits in its own span, so a phone can draw it as a hanging indent instead (same text)
-          const lead = lineText(l).match(/^[ \t]*/)[0];
+          const lead = lineText(l).match(/^[ \t]*/)![0]; // the pattern matches the empty string, so it always matches
           const ind = lead.length < lineText(l).length ? lead.replace(/\t/g, '    ').length : 0; // a blank line has none
           let cut = ind ? lead.length : 0;
-          const toks = cut ? l.map(([k, x]) => { const take = Math.min(cut, x.match(/^[ \t]*/)[0].length); cut -= take; return [k, x.slice(take)]; }) : l;
+          const toks = cut ? l.map(([k, x]): Token => { const take = Math.min(cut, x.match(/^[ \t]*/)![0].length); cut -= take; return [k, x.slice(take)]; }) : l;
           const style = hz || ind ? { ...(hz ? { '--h': h } : {}), ...(ind ? { '--ind': ind } : {}) } : undefined;
           return (
             <span key={j} className={'xig-ln' + (hz ? ' hz' : '')} style={style}>
@@ -74,7 +78,7 @@ export function Lines({ code, only, typed, label }) {
 
 /* the switch: dims every line that is not about Hanzo, in every window on the page. It only appears where it means
    something (some lines point at Hanzo, not all of them). */
-export function Only({ only, setOnly, code, dark }) {
+export function Only({ only, setOnly, code, dark }: { only: boolean; setOnly: (on: boolean) => void; code: Code | null; dark?: boolean }) {
   const { hits, of } = hitsOf(code);
   if (!hits || hits >= of) return null;
   return (
@@ -91,20 +95,21 @@ export function Only({ only, setOnly, code, dark }) {
 /* the hero's window: the sample is whole from the first paint except Hanzo's own lines, which type themselves in
    (CSS keeps them invisible from the first paint, so nothing blinks). Speed is by time, not frames. Stop finishes it
    at once; replay types the Hanzo lines again (WCAG 2.2.2). Reduced motion and JS off show every line. */
-export function Editor({ sample, only, setOnly, aside, name, face }) {
-  const box = useRef(null);
+export function Editor({ sample, only, setOnly, aside, name, face }: { sample: Sample; only: boolean; setOnly: (on: boolean) => void; aside: ReactNode; name: string; face: string }) {
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { once: true, amount: 0.15 });
   const calm = useReducedMotion();
-  const [state, setState] = useState('rest'); // rest (Hanzo lines waiting) → typing → done
+  const [state, setState] = useState<'rest' | 'typing' | 'done'>('rest'); // rest (Hanzo lines waiting) → typing → done
   const [run, setRun] = useState(0);
-  const stop = useRef(null);
+  const stop = useRef<(() => void) | null>(null);
   const { code, caption } = useMemo(() => splitSample(sample), [sample]);
   useEffect(() => {
     if (calm || !code) { setState('done'); return; }
     if (!seen) return;
-    const pre = box.current.querySelector('.xig-pre');
+    const pre = box.current?.querySelector('.xig-pre');
+    if (!pre) return;
     const spans = [...pre.querySelectorAll('[data-t]')];
-    const full = spans.map((s) => s.textContent);
+    const full = spans.map((s) => s.textContent || '');
     const total = full.reduce((a, t) => a + t.length, 0);
     if (!total) { setState('done'); return; }
     const parts = spans.map((s, n) => {
@@ -125,15 +130,15 @@ export function Editor({ sample, only, setOnly, aside, name, face }) {
     const t0 = performance.now() + 250;
     const finish = () => { cancelAnimationFrame(raf); caret.remove(); spans.forEach((s, n) => { s.textContent = full[n]; }); setState('done'); };
     stop.current = finish;
-    const step = (t) => {
+    const step = (t: number) => {
       const want = Math.max(0, Math.min(total, Math.round(((t - t0) / ms) * total)));
-      let left = want, at = null;
-      parts.forEach((p, n) => {
+      let left = want, at: (typeof parts)[number] | null = null;
+      for (const [n, p] of parts.entries()) {
         const take = Math.min(left, full[n].length);
         left -= take;
         if (p.typed.data.length !== take) { p.typed.data = full[n].slice(0, take); p.ghost.textContent = full[n].slice(take); }
         if (!at && take < full[n].length) at = p;
-      });
+      }
       if (at && at.ghost.previousSibling !== caret) at.ghost.before(caret);
       if (want < total) raf = requestAnimationFrame(step);
       else { finish(); play('done'); } // the demo has finished on its own: the kit's faint chime
@@ -169,7 +174,8 @@ export function Editor({ sample, only, setOnly, aside, name, face }) {
 
 /* a chapter's picture: one window. Its tabs are every sample of the chapters (the one on screen marked), so as the
    chapters change, the same window turns to its next tab and its code changes with the heading. */
-export function CodeCard({ sample, only, Loose, name, tabs, at }) {
+type LooseView = typeof Loose;
+export function CodeCard({ sample, only, Loose, name, tabs, at }: { sample: Sample; only: boolean; Loose: LooseView; name: string; tabs: string[]; at: number }) {
   const { code, caption } = useMemo(() => splitSample(sample), [sample]);
   return (
     <div className="xig-card">
@@ -178,7 +184,7 @@ export function CodeCard({ sample, only, Loose, name, tabs, at }) {
           {/* each tab takes you to its chapter (the scene's own chapter marks do the scrolling) */}
           {tabs.map((t, k) => (
             <button key={t + k} type="button" tabIndex={-1} className={'xig-tabs-i' + (k === at ? ' on' : '')} aria-current={k === at ? 'step' : undefined}
-              onClick={(e) => e.currentTarget.closest('.v2f-ch')?.querySelectorAll('.v2f-ch-nav button')[k]?.click()}>{t}</button>
+              onClick={(e) => e.currentTarget.closest('.v2f-ch')?.querySelectorAll<HTMLButtonElement>('.v2f-ch-nav button')[k]?.click()}>{t}</button>
           ))}
         </span>
         <span className="xig-card-t">{sample.title}</span>

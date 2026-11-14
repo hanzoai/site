@@ -11,34 +11,41 @@
    (time, pausable), and the dark room arriving as a widening panel (SceneWipe).
    Every word, link and line of code is Hanzo's (hanzo.ai/integrations). */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { Dispatch, KeyboardEvent as KeyEvent, MouseEvent, PointerEvent, SetStateAction } from 'react';
 import { play } from '../../../lib/sound';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import type { Transition } from 'motion/react';
 import { Copy } from '../../ui';
 import { A, More } from '../../kit';
 import { Loose } from '../models/parts';
 import Logo from './logos';
 import { landAtTop, Leaf } from './intParts';
+import type { indexDoc } from './intData';
+import type { Card, Code, Link, Preview } from './intData.types';
 import '../../v2/ProofScale.css';
 import '../../v2/ProofRhythm.css';
 import './IntegrationsIndex.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+type Doc = ReturnType<typeof indexDoc>;
+type Fam = Card & { fam: string }; // a card with the family it sits in
+
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const PILL = { duration: 0.3, ease: EASE };
 /* a card leans toward the pointer, 2.5° at most (MASTER §3.1), fine pointers only */
-const lean = (e) => {
+const lean = (e: PointerEvent<HTMLElement>) => {
   if (e.pointerType !== 'mouse') return;
   const el = e.currentTarget, r = el.getBoundingClientRect();
   el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
   el.style.setProperty('--rx', ((0.5 - (e.clientY - r.top) / r.height) * 5).toFixed(2) + 'deg');
 };
-const rest = (e) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
-const PauseIcon = ({ held }) => (held
+const rest = (e: PointerEvent<HTMLElement>) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
+const PauseIcon = ({ held }: { held: boolean }) => (held
   ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9l7-4.5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>);
 
 /* ---------- the hub ---------- */
-function Hub({ cards, base, held, setHeld }) {
-  const [hot, setHot] = useState(null);
+function Hub({ cards, base, held, setHeld }: { cards: Card[]; base: string; held: boolean; setHeld: Dispatch<SetStateAction<boolean>> }) {
+  const [hot, setHot] = useState<Card | null>(null);
   const n = cards.length;
   return (
     <div className={'xii-hub' + (hot || held ? ' held' : '')} style={{ '--n': n }}>
@@ -64,7 +71,7 @@ function Hub({ cards, base, held, setHeld }) {
 }
 
 /* ---------- the sticky local band: the page's name, the hub in miniature (19 dots, paused with the hub), the ask (quiet) ---------- */
-function Local({ n, label, ask, held }) {
+function Local({ n, label, ask, held }: { n: number; label: string; ask: Link; held: boolean }) {
   return (
     <div className="xii-local">
       <div className="pf-wrap xii-local-in">
@@ -77,10 +84,10 @@ function Local({ n, label, ask, held }) {
 }
 
 /* ---------- the starter: code as the hero object ---------- */
-function Starter({ samples, base }) {
+function Starter({ samples, base }: { samples: (Code & { lang: string })[]; base: string }) {
   const [on, setOn] = useState(0);
   const [held, setHeld] = useState(false);
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.4 });
   const arrived = useInView(box, { once: true, amount: 0.25 });
   const calm = useReducedMotion();
@@ -91,14 +98,14 @@ function Starter({ samples, base }) {
     const t = setTimeout(() => setOn((v) => (v + 1) % samples.length), 4200);
     return () => clearTimeout(t);
   }, [auto, on, samples.length]);
-  const pick = (i) => { setHeld(true); setOn(i); };
-  const keys = (e) => {
+  const pick = (i: number) => { setHeld(true); setOn(i); };
+  const keys = (e: KeyEvent) => {
     const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
     if (!d) return;
     e.preventDefault();
     const j = (on + d + samples.length) % samples.length;
     pick(j);
-    box.current.querySelectorAll('[role=tab]')[j].focus();
+    box.current?.querySelectorAll<HTMLElement>('[role=tab]')[j].focus();
   };
   return (
     <div className="xii-win" ref={box}>
@@ -140,19 +147,19 @@ function Starter({ samples, base }) {
 }
 
 /* ---------- the open card: the card grows into a sheet with its guide's headline and first sample ---------- */
-const OPEN = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // MASTER: the open is 600 ms in-out, no spring
-function Open({ c, p, onClose }) {
-  const box = useRef(null);
-  const close = useRef(null);
+const OPEN: Transition = { duration: 0.6, ease: [0.4, 0, 0.2, 1] }; // MASTER: the open is 600 ms in-out, no spring
+function Open({ c, p, onClose }: { c: Card; p?: Preview; onClose: () => void }) {
+  const box = useRef<HTMLElement>(null);
+  const close = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    const back = document.activeElement;
+    const back = document.activeElement as HTMLElement | null;
     document.documentElement.classList.add('x-lock');
     window.__lenis && window.__lenis.stop();
     close.current && close.current.focus({ preventScroll: true });
-    const key = (e) => {
+    const key = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { onClose(); return; }
       if (e.key !== 'Tab' || !box.current) return;
-      const f = [...box.current.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')];
+      const f = [...box.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')];
       if (!f.length) return;
       if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
       else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
@@ -201,31 +208,31 @@ function Open({ c, p, onClose }) {
 }
 
 /* ---------- the catalogue: chips that re-flow, cards that open ---------- */
-function Catalogue({ groups, label, previews = {} }) {
-  const [open, setOpen] = useState(null);
+function Catalogue({ groups, label, previews = {} }: { groups: Doc['groups']; label: string; previews?: Record<string, Preview> }) {
+  const [open, setOpen] = useState<Fam | null>(null);
   const shut = useCallback(() => setOpen(null), []);
   const [fam, setFam] = useState('All');
   const [q, setQ] = useState('');
   const t = q.trim().toLowerCase();
   const cards = useMemo(() => groups.flatMap((g) => g.cards.map((c) => ({ ...c, fam: g.title }))), [groups]);
-  const hit = (c) => !t || (c.name + ' ' + c.desc + ' ' + c.tag + ' ' + c.fam).toLowerCase().includes(t);
+  const hit = (c: Fam) => !t || (c.name + ' ' + c.desc + ' ' + c.tag + ' ' + c.fam).toLowerCase().includes(t);
   const shown = cards.filter((c) => (fam === 'All' || c.fam === fam) && hit(c));
-  const fams = [['All', cards.filter(hit).length], ...groups.map((g) => [g.title, g.cards.filter((c) => hit({ ...c, fam: g.title })).length])];
+  const fams: [string, number][] = [['All', cards.filter(hit).length], ...groups.map((g): [string, number] => [g.title, g.cards.filter((c) => hit({ ...c, fam: g.title })).length])];
   const calm = useReducedMotion();
   // the family lives in the URL (#frameworks), so a filtered view can be shared and opens as it was left
-  const tag = (f) => f.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const tag = (f: string) => f.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   useEffect(() => {
     const h = location.hash.slice(1), g = h && groups.find((x) => tag(x.title) === h);
     if (g) setFam(g.title);
   }, [groups]);
-  const pickFam = (f) => { setFam(f); history.replaceState(history.state, '', f === 'All' ? location.pathname + location.search : '#' + tag(f)); };
-  const gridRef = useRef(null);
+  const pickFam = (f: string) => { setFam(f); history.replaceState(history.state, '', f === 'All' ? location.pathname + location.search : '#' + tag(f)); };
+  const gridRef = useRef<HTMLUListElement>(null);
   const gridIn = useInView(gridRef, { once: true, amount: 0.05 });
   /* the signature (MOTION-MAP: h-gallery): on a desktop the catalogue pins under the header and the vertical scroll
      drives its cards sideways, one long track, then lets go. Its length is the track's overflow, measured. Phones and
      reduced motion keep the plain list. */
-  const hgRef = useRef(null);
-  const viewRef = useRef(null);
+  const hgRef = useRef<HTMLDivElement>(null);
+  const viewRef = useRef<HTMLDivElement>(null);
   const [hg, setHg] = useState(false);
   const [dist, setDist] = useState(0);
   useEffect(() => {
@@ -246,7 +253,7 @@ function Catalogue({ groups, label, previews = {} }) {
   }, [hg, shown.length]);
   const { scrollYProgress } = useScroll({ target: hgRef, offset: ['start start', 'end end'] });
   const x = useTransform(scrollYProgress, (v) => -Math.min(1, Math.max(0, v)) * dist);
-  const keys = (e) => {
+  const keys = (e: KeyEvent) => {
     const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
     if (!d) return;
     const i = (fams.findIndex(([f]) => f === fam) + d + fams.length) % fams.length;
@@ -291,7 +298,7 @@ function Catalogue({ groups, label, previews = {} }) {
               if (!on && !calm) return null;
               // each family's first guide is wide when the family has three or more (rows then fill in reading order);
               // if that would leave the last row one short, the last guide is wide too, so no row ends in a hole
-              const lead = (k) => (k === 0 || cards[k - 1].fam !== cards[k].fam) && cards.filter((x) => x.fam === cards[k].fam).length >= 3;
+              const lead = (k: number) => (k === 0 || cards[k - 1].fam !== cards[k].fam) && cards.filter((x) => x.fam === cards[k].fam).length >= 3;
               const slots = cards.length + cards.filter((_, k) => lead(k)).length;
               const wide = fam === 'All' && !t && (lead(i) || (i === cards.length - 1 && slots % 4 === 3));
               return (
@@ -299,7 +306,7 @@ function Catalogue({ groups, label, previews = {} }) {
                   {/* a plain press opens the card where it is (its guide is one press further); a modified click, a
                       middle click or no scripts follow the link straight to the guide */}
                   <A to={c.href} className="xii-card" onPointerMove={lean} onPointerLeave={rest} aria-haspopup="dialog"
-                    onClick={(e) => { if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); play('whoosh'); setOpen(c); }}>
+                    onClick={(e: MouseEvent) => { if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); play('whoosh'); setOpen(c); }}>
                     <motion.span className="xii-card-bg" layoutId={'xii-o-' + c.slug} transition={OPEN} style={{ borderRadius: 24 }} aria-hidden="true" />
                     <span className="xii-card-e" aria-hidden="true"><Logo slug={c.slug} name={c.name} /></span>
                     <span className="xii-card-fam pf-mono" aria-hidden="true">{String(cards.indexOf(c) + 1).padStart(2, '0')} / {cards.length}</span>
@@ -327,17 +334,18 @@ function Catalogue({ groups, label, previews = {} }) {
    entrance 4 (typewriter): its heading types itself out with a caret when the room is reached;
    entrance 5 (cursor-lens): a round lens sweeps across the agent prompt once as it arrives, magnifying what it passes,
    then follows the pointer over the prompt. The words are whole in the HTML all along (the server renders them typed). */
-function Paste({ doc }) {
-  const room = useRef(null);
+function Paste({ paste, ask }: { paste: NonNullable<Doc['paste']>; ask: Link }) {
+  const room = useRef<HTMLElement>(null);
   const seen = useInView(room, { once: true, amount: 0.3 });
-  const word = doc.paste.kicker;
+  const word = paste.kicker;
   const [n, setN] = useState(word.length);
-  const lens = useRef(null);
+  const lens = useRef<HTMLDivElement>(null);
   const [lensOn, setLensOn] = useState(false);
-  const place = (x, y) => { const el = lens.current; if (el) { el.style.setProperty('--lx', x + 'px'); el.style.setProperty('--ly', y + 'px'); } };
+  const place = (x: number, y: number) => { const el = lens.current; if (el) { el.style.setProperty('--lx', x + 'px'); el.style.setProperty('--ly', y + 'px'); } };
   useEffect(() => {
     if (!seen || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let k = 0, t = 0;
+    let k = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     setN(0);
     const step = () => { k++; setN(k); if (k < word.length) t = setTimeout(step, 70); };
     t = setTimeout(step, 250);
@@ -347,18 +355,19 @@ function Paste({ doc }) {
     if (el) {
       const w = el.clientWidth, h = el.clientHeight, t0 = performance.now() + 500;
       setLensOn(true);
-      const go = (now) => { const p = Math.min(1, Math.max(0, (now - t0) / 1400)); place(40 + p * (w - 80), h * 0.45); if (p < 1) raf = requestAnimationFrame(go); else setLensOn(false); };
+      const go = (now: number) => { const p = Math.min(1, Math.max(0, (now - t0) / 1400)); place(40 + p * (w - 80), h * 0.45); if (p < 1) raf = requestAnimationFrame(go); else setLensOn(false); };
       raf = requestAnimationFrame(go);
     }
     return () => { clearTimeout(t); cancelAnimationFrame(raf); };
   }, [seen, word.length]);
-  const move = (e) => {
-    if (e.pointerType !== 'mouse') return;
-    const r = lens.current.getBoundingClientRect();
+  const move = (e: PointerEvent) => {
+    const el = lens.current;
+    if (e.pointerType !== 'mouse' || !el) return;
+    const r = el.getBoundingClientRect();
     place(e.clientX - r.left, e.clientY - r.top);
     setLensOn(true);
   };
-  const code = <code><span className="xii-caret" aria-hidden="true">›</span><span>{doc.paste.code}</span></code>;
+  const code = <code><span className="xii-caret" aria-hidden="true">›</span><span>{paste.code}</span></code>;
   return (
     <section className="xii-paste" data-room="dark" aria-label={word} ref={room}>
       <div className="pf-sec">
@@ -368,11 +377,11 @@ function Paste({ doc }) {
               <span className="x-sr">{word}</span>
               <span aria-hidden="true">{word.slice(0, n)}<i className={'xii-tw-c' + (n < word.length ? ' on' : '')} /></span>
             </h2>
-            <p className="pf-lede xii-paste-l">{doc.paste.lede}</p>
-            <A to={doc.actions[0].href} className="pf-btn xii-band-ask" data-cta="integrations.band">{doc.actions[0].label}</A>
+            <p className="pf-lede xii-paste-l">{paste.lede}</p>
+            <A to={ask.href} className="pf-btn xii-band-ask" data-cta="integrations.band">{ask.label}</A>
           </div>
           <div className="xii-prompt">
-            <div className="xii-prompt-h"><span className="pf-mono">{doc.paste.label}</span><Copy text={doc.paste.code} label="Copy the agent prompt" className="xii-copy" /></div>
+            <div className="xii-prompt-h"><span className="pf-mono">{paste.label}</span><Copy text={paste.code} label="Copy the agent prompt" className="xii-copy" /></div>
             <div className="xii-prompt-b" onPointerMove={move} onPointerLeave={() => setLensOn(false)}>
               <pre tabIndex={0}>{code}</pre>
               <div className="xii-lens" ref={lens} aria-hidden="true" data-on={lensOn ? '' : undefined}><div className="xii-lens-in"><pre>{code}</pre></div></div>
@@ -384,7 +393,7 @@ function Paste({ doc }) {
   );
 }
 
-export default function IntegrationsIndex({ doc, previews }) {
+export default function IntegrationsIndex({ doc, previews }: { doc: Doc; previews?: Record<string, Preview> }) {
   const cards = doc.groups.flatMap((g) => g.cards);
   const [held, setHeld] = useState(false);
   return (
@@ -422,7 +431,7 @@ export default function IntegrationsIndex({ doc, previews }) {
       <Catalogue groups={doc.groups} label={doc.label || 'Integrations'} previews={previews} />
       </div>
 
-      {doc.paste && <Paste doc={doc} />}
+      {doc.paste && <Paste paste={doc.paste} ask={doc.actions[0]} />}
     </main>
   );
 }

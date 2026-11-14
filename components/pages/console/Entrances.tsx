@@ -12,10 +12,10 @@ import { useEffect, useRef } from 'react';
 import { useCalm } from '../../ui';
 import './Entrances.css';
 
-const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
 /* the section's own scroll, only while it is near the screen: fn(rect, vh) once per frame */
-function onScrollNear(el, fn) {
+function onScrollNear(el: Element, fn: (r: DOMRect, vh: number) => void) {
   let near = false, raf = 0;
   const run = () => { raf = 0; fn(el.getBoundingClientRect(), innerHeight); };
   const ask = () => { if (near && !raf) raf = requestAnimationFrame(run); };
@@ -28,12 +28,12 @@ function onScrollNear(el, fn) {
 
 /* 1 sticky-stack: the heading card pins under the header; the canvas card rides up and stacks over it, pushing it back */
 export function useStickyStack() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   useEffect(() => {
     const el = ref.current;
     if (!el || calm) return undefined;
-    const head = el.querySelector('.cs-cv-head'), card = el.querySelector('.cs-cv-card');
+    const head = el.querySelector<HTMLElement>('.cs-cv-head'), card = el.querySelector<HTMLElement>('.cs-cv-card');
     if (!head || !card) return undefined;
     el.classList.add('en-stack');
     const off = onScrollNear(el, (r, vh) => {
@@ -51,12 +51,12 @@ export function useStickyStack() {
 
 /* 2 depth-parallax: each layer starts lower by its depth and meets the others as the section arrives; then it lets go */
 export function useDepthParallax() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   useEffect(() => {
     const el = ref.current;
     if (!el || calm) return undefined;
-    const layers = [el.querySelector('.cs-client-copy'), ...el.querySelectorAll('.cs-facts > li')].filter(Boolean);
+    const layers = [el.querySelector<HTMLElement>('.cs-client-copy'), ...el.querySelectorAll<HTMLElement>('.cs-facts > li')].filter((l): l is HTMLElement => !!l);
     const depth = [36, 72, 150, 110, 190];
     if (el.getBoundingClientRect().top < innerHeight * 0.3) return undefined; // already read: final state
     let done = false;
@@ -74,15 +74,15 @@ export function useDepthParallax() {
 }
 
 /* plays once at ~30% in view: pre class first (set here, never on the server), then go, then clean */
-function useOnce(pre, go, ms) {
-  const ref = useRef(null);
+function useOnce(pre: string, go: string, ms: number) {
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   useEffect(() => {
     const el = ref.current;
     if (!el || calm) return undefined;
     if (el.getBoundingClientRect().top < innerHeight * 0.7) return undefined; // already on screen: final state
     el.classList.add(pre);
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       io.disconnect();
@@ -103,11 +103,11 @@ export const useSpringSnap = () => useOnce('sn-pre', 'sn-go', 1500);
 
 /* 5 velocity-skew: scroll speed leans the close; when the page stops it straightens out */
 export function useVelocitySkew() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const calm = useCalm();
   useEffect(() => {
     const el = ref.current;
-    const box = el?.querySelector('.bz-wrap');
+    const box = el?.querySelector<HTMLElement>('.bz-wrap');
     if (!el || !box || calm) return undefined;
     let near = false, raf = 0, lastY = scrollY, lastT = performance.now(), cur = 0, want = 0;
     const tick = () => {

@@ -6,11 +6,13 @@
    enter.css drops every transition. shrink-to-card is the one scroll-linked entrance: the section shrinks into a card
    as you leave it. */
 import { useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
+import type { HTMLMotionProps } from 'motion/react';
 import './enter.css';
 
-export function useEnter(amount = 0.3) {
-  const ref = useRef(null);
+export function useEnter<T extends HTMLElement = HTMLElement>(amount = 0.3) {
+  const ref = useRef<T>(null);
   useEffect(() => {
     const el = ref.current; if (!el) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.classList.add('in'); return; }
@@ -22,8 +24,10 @@ export function useEnter(amount = 0.3) {
 }
 
 // shrink-to-card: scale, corners and a grey fill follow the section out of the top of the screen
-export function ShrinkCard({ children, className = '', ...rest }) {
-  const ref = useRef(null);
+type ShrinkProps = { children?: ReactNode; className?: string } & Omit<HTMLMotionProps<'section'>, 'children' | 'className'>;
+
+export function ShrinkCard({ children, className = '', ...rest }: ShrinkProps) {
+  const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['end end', 'end start'] });
   const scale = useTransform(scrollYProgress, [0, 0.75], [1, 0.86]);
   const radius = useTransform(scrollYProgress, [0, 0.35], [0, 32]);

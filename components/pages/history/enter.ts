@@ -7,8 +7,9 @@
       which the JSX renders, so no DOM rewrite). Wheel, trackpad, keys and touch scrolling all drive it; a press on a
       word lights the statement up to that word. Reduced motion and JS off show it lit (CSS). */
 import { useEffect } from 'react';
+import type { RefObject } from 'react';
 
-export default function useHistoryEnter(root) {
+export default function useHistoryEnter(root: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const box = root.current;
     if (!box) return undefined;
@@ -35,10 +36,10 @@ export default function useHistoryEnter(root) {
       });
     };
     const ask = () => { if (!raf) raf = requestAnimationFrame(paint); };
-    const press = (e) => {
-      const w = e.target.closest?.('.xhi-w');
+    const press = (e: PointerEvent) => {
+      const w = (e.target as Element).closest?.('.xhi-w');
       const l = w && lines.find((x) => x.el.contains(w));
-      if (!l) return;
+      if (!w || !l) return;
       l.held = l.words.indexOf(w) + 1;
       ask();
     };

@@ -7,10 +7,19 @@
    - <Cascade text="…" /> and <Roll text="…" /> split a heading into letters for letter-cascade and slot-roll; the full
      words stay in the HTML once for readers (x-sr) and the letters are aria-hidden. */
 import { useRef } from 'react';
+import type { ElementType, HTMLAttributes, RefObject } from 'react';
 import { useInView } from 'motion/react';
 
-export function In({ kind, as: Tag = 'div', className = '', amount = 0.2, boxRef, children, ...rest }) {
-  const own = useRef(null);
+interface InProps extends HTMLAttributes<HTMLElement> {
+  kind: string;
+  as?: ElementType;
+  amount?: number;
+  boxRef?: RefObject<HTMLElement | null>;
+}
+
+
+export function In({ kind, as: Tag = 'div', className = '', amount = 0.2, boxRef, children, ...rest }: InProps) {
+  const own = useRef<HTMLElement>(null);
   const ref = boxRef || own; // a block that already has a ref (the race board's demo) lends it
   const seen = useInView(ref, { once: true, amount });
   // data-play too: the small CSS scenes inside a block (the Gen harness, the places' mini UIs) start with its entrance
@@ -18,7 +27,7 @@ export function In({ kind, as: Tag = 'div', className = '', amount = 0.2, boxRef
 }
 
 /* letters grouped by word (a word never breaks across lines), each letter numbered across the whole text */
-const letters = (text, cls) => {
+const letters = (text: string, cls: string) => {
   let c = 0;
   return text.split(' ').map((w, wi) => (
     <span key={wi} aria-hidden="true">
@@ -28,10 +37,11 @@ const letters = (text, cls) => {
   ));
 };
 
-export function Cascade({ text }) {
+export function Cascade({ text }: { text: string }) {
   return <><span className="x-sr">{text}</span>{letters(text, 'xdv-lc')}</>;
 }
 
-export function Roll({ text }) {
+export function Roll({ text }: { text: string }) {
+
   return <><span className="x-sr">{text}</span>{letters(text, 'xdv-sr')}</>;
 }

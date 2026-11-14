@@ -7,12 +7,15 @@
      is read: the words fill from quiet grey to ink with the scroll, and settle lit.
    - Lens: the hero's `cursor-lens`. A round lens follows a fine pointer over the headline and magnifies it (1.4x). */
 import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 import { useMotionValueEvent, useScroll } from 'motion/react';
 import './enter.css';
 
-export function useEnterAll(root, selector, deps = []) {
+export function useEnterAll(root: RefObject<HTMLElement | null>, selector: string, deps: unknown[] = []) {
   useEffect(() => {
-    const els = [...root.current.querySelectorAll(selector)].filter((e) => !e.hasAttribute('data-in'));
+    const host = root.current;
+    if (!host) return;
+    const els = [...host.querySelectorAll(selector)].filter((e) => !e.hasAttribute('data-in'));
     if (!els.length) return;
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (e.isIntersecting) { e.target.setAttribute('data-in', ''); io.unobserve(e.target); }
@@ -22,13 +25,13 @@ export function useEnterAll(root, selector, deps = []) {
   }, deps); // eslint-disable-line react-hooks/exhaustive-deps
 }
 
-export function WordLight({ text, className = '', id }) {
-  const ref = useRef(null);
+export function WordLight({ text, className = '', id }: { text: string; className?: string; id?: string }) {
+  const ref = useRef<HTMLParagraphElement>(null);
   const words = text.split(' ');
   const [lit, setLit] = useState(0);
   // lit from when the statement's top reaches 88% of the screen until its end passes 45%
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 88%', 'end 45%'] });
-  const set = (v) => setLit(Math.round(Math.max(0, Math.min(1, v)) * words.length));
+  const set = (v: number) => setLit(Math.round(Math.max(0, Math.min(1, v)) * words.length));
   useMotionValueEvent(scrollYProgress, 'change', set);
   useEffect(() => { set(scrollYProgress.get()); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
@@ -38,12 +41,13 @@ export function WordLight({ text, className = '', id }) {
   );
 }
 
-export function Lens({ lines }) {
-  const ref = useRef(null);
+export function Lens({ lines }: { lines: string[] }) {
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const lens = ref.current, host = lens.parentElement.closest('section'), h1 = host.querySelector('h1');
+    const lens = ref.current, host = lens?.parentElement?.closest('section'), h1 = host?.querySelector('h1');
+    if (!lens || !host || !h1) return;
     if (!matchMedia('(pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const move = (e) => {
+    const move = (e: PointerEvent) => {
       const r = lens.getBoundingClientRect();
       lens.style.setProperty('--lx', (e.clientX - r.left) + 'px');
       lens.style.setProperty('--ly', (e.clientY - r.top) + 'px');

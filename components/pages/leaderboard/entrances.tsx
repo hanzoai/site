@@ -6,10 +6,11 @@
    sharp). The hidden start states live in Leaderboard.css under html.js and outside prefers-reduced-motion, so with JS
    off or reduced motion every section simply stands at its final state. Transform, opacity and filter only: no layout. */
 import { useEffect, useRef, useState } from 'react';
+import type { ElementType, HTMLAttributes, ReactNode } from 'react';
 
 /* true once the element is `amount` in view; then it stays true */
-export function useArrive(amount = 0.25) {
-  const ref = useRef(null);
+export function useArrive<T extends HTMLElement = HTMLElement>(amount = 0.25) {
+  const ref = useRef<T>(null);
   const [inn, setInn] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -18,18 +19,20 @@ export function useArrive(amount = 0.25) {
     io.observe(el);
     return () => io.disconnect();
   }, [amount, inn]);
-  return [ref, inn];
+  return [ref, inn] as const;
 }
 
 /* a wrapper that carries the entrance name and its arrived state; CSS does the motion */
-export function Arrive({ as: T = 'div', e, amount, className = '', children, ...rest }) {
+interface ArriveProps extends HTMLAttributes<HTMLElement> { as?: ElementType; e: string; amount?: number }
+
+export function Arrive({ as: T = 'div', e, amount, className = '', children, ...rest }: ArriveProps) {
   const [ref, inn] = useArrive(amount);
   return <T ref={ref} className={className} data-ent={e} data-in={inn} {...rest}>{children}</T>;
 }
 
 /* letter-cascade: the heading's letters fall into place one by one. Words stay whole for wrapping; the whole line is also
    in the heading as one visually hidden span (its accessible name, and one line for the copy check). */
-export function Cascade({ as: T = 'h2', text, className = '', id }) {
+export function Cascade({ as: T = 'h2', text, className = '', id }: { as?: ElementType; text: string; className?: string; id?: string }) {
   const [ref, inn] = useArrive(0.6);
   let k = 0;
   return (
@@ -49,8 +52,9 @@ export function Cascade({ as: T = 'h2', text, className = '', id }) {
 
 /* focus-pull-scroll: as the section scrolls in, the focus moves from the background (an unlabeled field of ruled lines)
    to the subject: the field blurs, the subject sharpens. Driven by scroll; once the subject is sharp it latches there. */
-export function FocusPull({ className = '', children, field, ...rest }) {
-  const ref = useRef(null);
+export function FocusPull({ className = '', children, field, ...rest }: HTMLAttributes<HTMLDivElement> & { field?: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const el = ref.current;
     if (!el || !document.documentElement.classList.contains('js')) return;

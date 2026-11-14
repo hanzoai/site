@@ -3,12 +3,15 @@
    mismatches the server HTML under reduced motion; see docs/build-notes/requests/integrations.md). */
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
+import type { MotionStyle } from 'motion/react';
 import '../../v2/ProofScale.css';
 
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-export default function MaskLines({ as = 'h2', lines, className = '', delay = 0, amount = 0.4, id, style }) {
-  const ref = useRef(null);
+interface Props { as?: 'h1' | 'h2' | 'h3'; lines: string[]; className?: string; delay?: number; amount?: number; id?: string; style?: MotionStyle }
+
+export default function MaskLines({ as = 'h2', lines, className = '', delay = 0, amount = 0.4, id, style }: Props) {
+  const ref = useRef<HTMLHeadingElement>(null);
   const seen = useInView(ref, { once: true, amount });
   const rm = useReducedMotion();
   const [mounted, setMounted] = useState(false);

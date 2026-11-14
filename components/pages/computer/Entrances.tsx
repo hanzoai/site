@@ -7,9 +7,12 @@
    the attribute is never set. The conveyor is in the first screen, so it is a CSS animation under .js instead
    (no flash of the final state before the effect runs). Styles: ./Entrances.css. */
 import { useEffect, useRef } from 'react';
+import type { ElementType, ReactNode, RefObject } from 'react';
 import './Entrances.css';
 
-function useArrive(ref) {
+type BlockProps = { as?: ElementType; className?: string; children?: ReactNode; [attr: string]: unknown };
+
+function useArrive(ref: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const el = ref.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
@@ -26,34 +29,34 @@ function useArrive(ref) {
 }
 
 /* 1. conveyor: the desktop, then the terminal, ride in from the right on one belt */
-export function Conveyor({ as: T = 'section', className = '', children, ...rest }) {
+export function Conveyor({ as: T = 'section', className = '', children, ...rest }: BlockProps) {
   return <T className={className + ' ce-conveyor'} {...rest}>{children}</T>;
 }
 
 /* 2. squash-land: each column drops, squashes on landing and stands back up */
-export function SquashLand({ as: T = 'section', className = '', children, ...rest }) {
-  const ref = useRef(null);
+export function SquashLand({ as: T = 'section', className = '', children, ...rest }: BlockProps) {
+  const ref = useRef<HTMLElement>(null);
   useArrive(ref);
   return <T ref={ref} className={className + ' ce-squash'} {...rest}>{children}</T>;
 }
 
 /* 3. venetian-type: each line of type slides in from alternating sides */
-export function VenetianType({ as: T = 'section', className = '', children, ...rest }) {
-  const ref = useRef(null);
+export function VenetianType({ as: T = 'section', className = '', children, ...rest }: BlockProps) {
+  const ref = useRef<HTMLElement>(null);
   useArrive(ref);
   return <T ref={ref} className={className + ' ce-venetian'} {...rest}>{children}</T>;
 }
 
 /* 4. diagonal-wipe: a diagonal clip sweeps from the top-left corner across the block */
-export function DiagonalWipe({ as: T = 'section', className = '', children, ...rest }) {
-  const ref = useRef(null);
+export function DiagonalWipe({ as: T = 'section', className = '', children, ...rest }: BlockProps) {
+  const ref = useRef<HTMLElement>(null);
   useArrive(ref);
   return <T ref={ref} className={className + ' ce-wipe'} {...rest}>{children}</T>;
 }
 
 /* 5. card-deal: the headline, the line and the two asks are dealt from one deck below onto their places */
-export function CardDeal({ children, className = '' }) {
-  const ref = useRef(null);
+export function CardDeal({ children, className = '' }: { children?: ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
   useArrive(ref);
   return <div ref={ref} className={className + ' ce-deal'}>{children}</div>;
 }

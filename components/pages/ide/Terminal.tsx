@@ -7,10 +7,18 @@
    Reduced motion keeps the finished session and a pick prints at once. The transcript sits in fixed rows that never
    move (no layout shift): text only appears in them. */
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useInView } from 'motion/react';
 import A2Pause from '../../v2/A2Pause';
 
-const STEPS = [
+interface Step { note?: string; cmd: string; out: string[]; cwd?: string; wait?: number; after?: string }
+// a row of the transcript: a comment, a prompt line or an output line
+interface Row { k: 'c' | 'o' | 'p'; t: string; cwd?: string; spin?: number | boolean; caret?: boolean }
+// the step being typed (i), how many letters are typed (c), how many output lines are shown (o, -1 while it waits)
+interface Cur { i: number; c: number; o: number }
+type Pick = number | 'clear';
+
+const STEPS: Step[] = [
   { note: '# Open it in the browser', cmd: 'open https://ide.hanzo.ai', out: [] },
   { note: '# Or build the desktop app from source', cmd: 'git clone https://github.com/hanzoai/ide.git', out: ["Cloning into 'ide'..."] },
   { cmd: 'cd ide', out: [], cwd: '~/ide' },
@@ -19,16 +27,16 @@ const STEPS = [
 ];
 const ALL = [0, 1, 2, 3, 4];
 const ROWS = 13;
-const next = (ran) => {
+const next = (ran: number[]): Pick[] => {
   if (!ran.length) return [0, 1];
   const l = ran[ran.length - 1];
   return l === 4 ? ['clear'] : [l + 1];
 };
-const cwdAfter = (ran) => (ran.some((i) => STEPS[i].cwd) ? '~/ide' : '~');
+const cwdAfter = (ran: number[]) => (ran.some((i) => STEPS[i].cwd) ? '~/ide' : '~');
 
-function rows(ran, cur) {
-  const out = [];
-  const push = (ran2, i, typed, o, live) => {
+function rows(ran: number[], cur: Cur | null) {
+  const out: Row[] = [];
+  const push = (ran2: number[], i: number, typed: string, o: number, live: boolean) => {
     const s = STEPS[i];
     if (s.note) out.push({ k: 'c', t: s.note });
     out.push({ k: 'p', cwd: cwdAfter(ran2), t: typed, spin: live && typed === s.cmd && o < 0 && s.wait });
@@ -42,12 +50,12 @@ function rows(ran, cur) {
   return out;
 }
 
-export default function Terminal({ tools }) {
-  const box = useRef(null);
-  const scroller = useRef(null);
+export default function Terminal({ tools }: { tools: ReactNode }) {
+  const box = useRef<HTMLDivElement>(null);
+  const scroller = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.35 });
   const [ran, setRan] = useState(ALL); // the finished session is the server picture
-  const [cur, setCur] = useState(null);
+  const [cur, setCur] = useState<Cur | null>(null);
   const [paused, setPaused] = useState(false);
   const [auto, setAuto] = useState(false);
   const calm = useRef(false);
@@ -66,7 +74,7 @@ export default function Terminal({ tools }) {
   useEffect(() => {
     if (!cur || paused) return undefined;
     const s = STEPS[cur.i];
-    let h;
+    let h: ReturnType<typeof setTimeout>;
     if (cur.c < s.cmd.length) h = setTimeout(() => setCur({ ...cur, c: cur.c + 1 }), 30 + ((cur.c * 7) % 5) * 9);
     else if (cur.o < 0) h = setTimeout(() => setCur({ ...cur, o: 0 }), s.wait || 280);
     else if (cur.o < s.out.length) h = setTimeout(() => setCur({ ...cur, o: cur.o + 1 }), 200);
@@ -74,12 +82,12 @@ export default function Terminal({ tools }) {
     return () => clearTimeout(h);
   }, [cur, paused]);
 
-  const pick = (x) => {
+  const pick = (x: Pick) => {
     if (x === 'clear') { setRan([]); setCur(null); return; }
     if (calm.current) { setRan((r) => [...r, x]); return; }
     setCur({ i: x, c: 0, o: -1 });
   };
-  const choose = (x) => { touched.current = Date.now(); started.current = true; setAuto(true); pick(x); };
+  const choose = (x: Pick) => { touched.current = Date.now(); started.current = true; setAuto(true); pick(x); };
 
   // left alone, it picks the first choice itself (longer after the visitor chose, so the choice stays theirs)
   useEffect(() => {
@@ -98,7 +106,7 @@ export default function Terminal({ tools }) {
 
   const list = rows(ran, cur);
   const choices = cur ? next([...ran, cur.i]) : next(ran);
-  const slots = [choices[0], choices[1]];
+  const slots: (Pick | undefined)[] = [choices[0], choices[1]];
   return (
     <div className={'ide-term' + (paused ? ' a2-paused' : '')} ref={box}>
       <div className="ide-term-bar">

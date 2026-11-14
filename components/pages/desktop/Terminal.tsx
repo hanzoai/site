@@ -8,16 +8,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
 
+type Run = { p: string; cmd: string; out: string[]; ok?: string; code?: boolean; short?: string };
+type Line = { k: 'c' | 'ok' | 'o'; p?: string; t: string };
+
 const KEEP = 15; // lines kept on screen; older ones scroll off the top
 
-export default function Terminal({ runs, labelledBy }) {
-  const full = runs.flatMap((r) => [{ k: 'c', p: r.p, t: r.cmd }, ...r.out.map((t) => ({ k: r.ok === t ? 'ok' : 'o', t }))]);
+export default function Terminal({ runs, labelledBy }: { runs: Run[]; labelledBy?: string }) {
+  const full = runs.flatMap((r): Line[] => [{ k: 'c', p: r.p, t: r.cmd }, ...r.out.map((t): Line => ({ k: r.ok === t ? 'ok' : 'o', t }))]);
   const [hist, setHist] = useState(full);
-  const [typing, setTyping] = useState(null);
+  const [typing, setTyping] = useState<{ p: string; t: string } | null>(null);
   const [cur, setCur] = useState(-1);
   const [held, setHeld] = useState(false);
-  const [want, setWant] = useState(null);
-  const box = useRef(null);
+  const [want, setWant] = useState<{ i: number; fresh: boolean; n: number } | null>(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.35 });
   const calm = useReducedMotion();
   const job = useRef(0);
@@ -31,10 +34,10 @@ export default function Terminal({ runs, labelledBy }) {
   useEffect(() => {
     if (!want) return;
     const id = ++job.current;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const alive = () => id === job.current;
-    const wait = (ms) => new Promise((r) => { t = setTimeout(r, ms); });
-    const push = (l) => setHist((h) => [...h, l].slice(-KEEP));
+    const wait = (ms: number) => new Promise<void>((r) => { t = setTimeout(r, ms); });
+    const push = (l: Line) => setHist((h) => [...h, l].slice(-KEEP));
     const r = runs[want.i];
     (async () => {
       setCur(want.i);
@@ -57,7 +60,7 @@ export default function Terminal({ runs, labelledBy }) {
     return () => { clearTimeout(t); };
   }, [want]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const pick = (i) => { setHeld(false); setWant({ i, fresh: false, n: Date.now() }); };
+  const pick = (i: number) => { setHeld(false); setWant({ i, fresh: false, n: Date.now() }); };
 
   return (
     <div className="dk-term" ref={box}>

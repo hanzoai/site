@@ -32,11 +32,12 @@ import FamNext from '../../v2/FamNext';
 import { ui } from '../../v2/famUi';
 import { Editor, CodeCard, Only, landAtTop, Leaf } from './intParts';
 import Logo from './logos';
+import type { guideDoc } from './intData';
 import './guide.css';
 
-const FACES = { Infrastructure: 'term', 'Platforms & Editors': 'ide', Languages: 'mirror' };
+const FACES: Record<string, string> = { Infrastructure: 'term', 'Platforms & Editors': 'ide', Languages: 'mirror' };
 
-export default function Guide({ doc, emojis }) {
+export default function Guide({ doc, emojis }: { doc: ReturnType<typeof guideDoc>; emojis: Record<string, string> }) {
   const [only, setOnly] = useState(false);
   const name = doc.crumbs.length ? doc.crumbs[doc.crumbs.length - 1].label : doc.title;
   const many = JSON.stringify(doc.keyLine || '').includes('400+ models') ? '400+ models' : null;
@@ -78,7 +79,7 @@ export default function Guide({ doc, emojis }) {
   const near = useMemo(() => {
     if (!doc.more) return [];
     const all = doc.more.links.map((l, k) => {
-      const slug = l.href.split('/').pop();
+      const slug = l.href.split('/').pop()!;
       return { k, href: l.href, title: l.label, preview: l.desc || '', meta: l.tag || '', seed: '/integrations/' + slug, emoji: l.emoji || emojis[slug] || '', same: (l.tag || '').toLowerCase() === (doc.category || '').toLowerCase() };
     });
     return [...all.filter((x) => x.same), ...all.filter((x) => !x.same)];
