@@ -5,7 +5,12 @@ Every signed-out page of hanzo.ai: research, models, open source, products, pric
 hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
 
 - Stack: Next.js 16 static export (`output: 'export'`; URLs have no trailing slash, as on hanzo.ai: `/pricing` is `out/pricing.html`, canonical, og:url and the sitemap say `https://hanzo.ai/pricing`), React 19, Motion 12, JSX.
-  Light/dark from `@hanzo/appearance` + `@hanzo/design` tokens (docs/DARK-MODE.md).
+  Light/dark from `@hanzo/appearance`; the design variables are `@hanzo/tokens`' css (docs/DARK-MODE.md).
+  `app/layout.tsx` imports `@hanzo/tokens/css` once (colours, radii, type, spacing, data hues). `public/hanzo.css` (Hanzo's captured
+  stylesheet) keeps only the `:root`/`.light` declarations that differ from the tokens: the density, radius and type scales, and the
+  white page of `.light`; it loads after the tokens, so what it states wins. `scripts/extract.py` rewrites it whole, so drop the
+  declarations the tokens already state again after running it. The site's own roles (`--ink`, `--r`, `--room-*`) point at tokens where
+  the value is the token's; the rest (the white light page, the grey deck) are the site's.
 - Node 22.18+, pnpm via corepack (`packageManager`). `pnpm dev` (:4180), `pnpm build` (out/), `pnpm preview` (:4181),
   `pnpm test` (node --test).
 - `pnpm build` runs `scripts/live.mjs` first: figures and plan prices from api.hanzo.ai into `content/live/_*.json`;

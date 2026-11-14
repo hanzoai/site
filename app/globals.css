@@ -1,23 +1,22 @@
 /* Hanzo home, rebuilt on Next.js + Motion. Hanzo's own stylesheet (public/hanzo.css) styles their header, footer and product screens;
    everything prefixed x- is the new layer. White page, black cards, one dark room for contrast. */
 :root {
-  --ink: #0a0a0a; --soft: #6e6e73; --faint: #86868b; --line: rgba(0, 0, 0, .08); --card: #f5f5f7; --bg: #fff;
+  --ink: var(--foreground); --soft: #6e6e73; --faint: #86868b; --line: rgba(0, 0, 0, .08); --bg: #fff;
   /* dark mode (docs/DARK-MODE.md): surfaces that sit on the page, text on an ink fill, a recessed bar, a selected pill,
      and the stronger hairlines. Light values are exactly the colours these rules hard-coded before. */
   --x-raised: #fff; --x-on-ink: #fff; --x-sunk: #fafafa; --x-knob: #fff; --x-fill: #f5f5f7;
   --x-e10: rgba(0, 0, 0, .1); --x-e12: rgba(0, 0, 0, .12); --x-e15: rgba(0, 0, 0, .15);
   --x-heat: #0a0a0a; --x-cell: #e8e8ec;
-  --ease: cubic-bezier(.16, 1, .3, 1); --wrap: 1200px; --r: 24px;
+  --ease: cubic-bezier(.16, 1, .3, 1); --wrap: 1200px; --r: var(--radius-2xl);
   --sans: Zen, 'Zen Fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; --mono: 'Zen Mono', 'Zen Mono Fallback', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
-/* Dark mode (docs/DARK-MODE.md). Every page token points at Hanzo's own token from @hanzo/design (tokens/colors.css,
-   carried by hanzo.css too), so the dark palette is Hanzo's and none of it is ours. The selector is Hanzo's own,
+/* Dark mode (docs/DARK-MODE.md). Every page token points at Hanzo's own token from @hanzo/tokens (its css, imported by
+   app/layout.tsx), so the dark palette is Hanzo's and none of it is ours. The selector is Hanzo's own,
    :not(.light): dark is the default (live's server HTML says class="t_dark"), light is the .light class. */
 html:not(.light) {
-  --ink: var(--foreground); --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border);
-  --card: var(--popover); --bg: var(--background); /* --card is Hanzo's dark card, #0f0f0f, as live (read through --popover, the same
-     colour in @hanzo/design, since this rule restates --card itself) */
-  /* --x-raised is Hanzo's dark card, #0f0f0f (@hanzo/design --card and --popover; live's card background). It reads
+  --soft: var(--muted-foreground); --faint: var(--text-tertiary); --line: var(--border);
+  --bg: var(--background); /* --card is the token's own: #0f0f0f in dark, #f2f2f2 in light */
+  /* --x-raised is Hanzo's dark card, #0f0f0f (@hanzo/tokens --card and --popover; live's card background). It reads
      --popover because --card on <html> is ours (the muted fill) and would shadow Hanzo's card colour here. */
   --x-raised: var(--popover); --x-on-ink: var(--primary-foreground); --x-sunk: var(--surface-card-quiet); --x-knob: var(--secondary);
   --x-fill: var(--muted); --x-e10: var(--border); --x-e12: var(--border-control); --x-e15: var(--border-control);
