@@ -19,8 +19,12 @@
    Beyond: "Ask it as a question". Pick the question you actually have (who is on the site right now, where the drop
    is, whether anyone came back...) and the report card that answers it opens; each question is the report's own words.
    Every word, figure and link is Hanzo's; pages and referrers in the realtime list are examples (as the dashboard says). */
+import type { SceneProps } from './scene';
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import { EASE } from '../../ui';
 import { A, Cta, CodeBlock, Tabs, TabPanel } from '../../kit';
 import KeynoteStage from '../../v2/KeynoteStage';
@@ -29,33 +33,37 @@ import { KeynoteSheet } from '../../v2/KeynoteSpec';
 import KeynoteClose from '../../v2/KeynoteClose';
 import './Analytics.css';
 
-const mod = (a, n) => ((a % n) + n) % n;
+const mod = (a: number, n: number) => ((a % n) + n) % n;
 
 /* [ref, live]: live while the element is on screen and motion is allowed */
-function useSeen(amount = 0.25) {
-  const ref = useRef(null);
+function useSeen<T extends HTMLElement = HTMLDivElement>(amount = 0.25) {
+  const ref = useRef<T>(null);
   const seen = useInView(ref, { amount });
   const calm = useReducedMotion();
-  return [ref, seen && !calm];
+  return [ref, seen && !calm] as const;
 }
 /* a section's entrance: the section stands in its final state in the HTML; under .js it waits in its start state
    (Analytics.css, per entrance) until it first comes into view, then data-en plays its one entrance (CSS, < 0.9 s) */
 function useEnter(amount = 0.18) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { once: true, amount });
-  return [ref, seen ? '' : undefined];
+  return [ref, seen ? '' : undefined] as const;
 }
-function En({ className, children, ...rest }) {
+interface EnProps extends React.HTMLAttributes<HTMLElement> {
+  className: string;
+  children: ReactNode;
+}
+function En({ className, children, ...rest }: EnProps) {
   const [ref, on] = useEnter();
   return <section ref={ref} data-en={on} className={className} {...rest}>{children}</section>;
 }
 /* calls fn every ms while run is true: a chain of timeouts (no setInterval), the latest fn each time */
-function useTick(ms, run, fn) {
+function useTick(ms: number, run: boolean, fn: () => void) {
   const f = useRef(fn);
   f.current = fn;
   useEffect(() => {
     if (!run) return;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | 0 = 0;
     const next = () => { t = setTimeout(() => { f.current(); next(); }, ms); };
     next();
     return () => clearTimeout(t);
@@ -67,7 +75,7 @@ const HOURS = [12, 10, 8, 7, 9, 14, 22, 34, 48, 58, 64, 70, 76, 72, 80, 86, 78, 
 const VISITS = [['/pricing', 'google'], ['/docs/start', 'github.com'], ['/', 'newsletter'], ['/blog/launch', 'x.com'], ['/signup', 'direct']];
 /* Hanzo's three figures, exactly as printed: they settle into place (a line mask), they never count */
 const KPIS = [['Users', '127,543', '+12.4% vs last week'], ['Conversion Rate', '4.87%', '+0.8% vs last week'], ['Revenue', '$45,892', '+15.2% vs last week']];
-const pt = (h, i) => [(i / 23) * 100, 100 - h];
+const pt = (h: number, i: number) => [(i / 23) * 100, 100 - h];
 /* the board's own live switch (the demo's pause lives in the board's top strip, not under the ask) */
 const Paused = createContext(false);
 
@@ -78,15 +86,20 @@ const Paused = createContext(false);
    kick: a number; when it goes up the tile does one flap onto the character it already shows (an arrival, never
    another value). */
 const CS = ' abcdefghijklmnopqrstuvwxyz0123456789/.-,$%+';
-function route(a, b, calm) {
+function route(a: string, b: string, calm: boolean | null) {
   const ia = CS.indexOf(a), ib = CS.indexOf(b);
   if (calm || ia < 0 || ib < 0) return [b];
   const n = CS.length, dist = (ib - ia + n) % n;
-  const out = [];
+  const out: string[] = [];
   for (let k = Math.max(1, dist - 4); k <= dist; k++) out.push(CS[(ia + k) % n]);
   return out.length ? out : [b];
 }
-function Flap({ ch, d = 0, kick = 0 }) {
+interface FlapProps {
+  ch: string;
+  d?: number;
+  kick?: number;
+}
+function Flap({ ch, d = 0, kick = 0 }: FlapProps) {
   const calm = useReducedMotion();
   const [s, setS] = useState({ cur: ch, prev: ch, n: 0 });
   const shown = useRef(ch);
@@ -94,7 +107,7 @@ function Flap({ ch, d = 0, kick = 0 }) {
     if (ch === shown.current) return;
     const path = route(shown.current, ch, calm);
     let i = 0;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | 0 = 0;
     const go = () => {
       const c = path[i++];
       setS((v) => ({ cur: c, prev: v.cur, n: v.n + 1 }));
@@ -120,7 +133,15 @@ function Flap({ ch, d = 0, kick = 0 }) {
   );
 }
 /* a word or figure as tiles: the real text for readers, the tiles for the eye */
-function FlapText({ text, w = text.length, d = 0, step = 22, kick = 0, className = '' }) {
+interface FlapTextProps {
+  text: string;
+  w?: number;
+  d?: number;
+  step?: number;
+  kick?: number;
+  className?: string;
+}
+function FlapText({ text, w = text.length, d = 0, step = 22, kick = 0, className = '' }: FlapTextProps) {
   const s = text.padEnd(w, ' ').slice(0, w);
   return (
     <span className={'fl-w ' + className}>
@@ -132,15 +153,18 @@ function FlapText({ text, w = text.length, d = 0, step = 22, kick = 0, className
 /* the realtime board: each visit lands on the top row and every row flips down one (the rows never move, the tiles
    do). Hover a row to hold it while you read it; tap or press it to pin it (aria-pressed). Pause stops the board. */
 const ROWS = 5;
-function FlipBoard({ live }) {
+interface FlipBoardProps {
+  live: boolean;
+}
+function FlipBoard({ live }: FlipBoardProps) {
   const [k, setK] = useState(0);
   const [hover, setHover] = useState(-1);
-  const [pin, setPin] = useState({});
+  const [pin, setPin] = useState<Record<number, boolean>>({});
   const paused = useContext(Paused);
   useTick(2400, live && !paused, () => setK((v) => v + 1));
-  const rowAt = (j) => VISITS[mod(j - k, VISITS.length)];
-  const [frozen, setFrozen] = useState({});
-  const hold = (j, on) => setFrozen((f) => { const n = { ...f }; if (on) n[j] = n[j] || rowAt(j); else delete n[j]; return n; });
+  const rowAt = (j: number) => VISITS[mod(j - k, VISITS.length)];
+  const [frozen, setFrozen] = useState<Record<number, string[]>>({});
+  const hold = (j: number, on: boolean) => setFrozen((f) => { const n = { ...f }; if (on) n[j] = n[j] || rowAt(j); else delete n[j]; return n; });
   return (
     <div className="an-fb-board">
       <p className="an-rt-h"><i />Realtime</p>
@@ -172,8 +196,8 @@ function FlipBoard({ live }) {
 
 /* the size of a drawing area in pixels, so a line can be drawn in real pixels (an even stroke, an exact length) */
 function useBox(w0 = 600, h0 = 240) {
-  const ref = useRef(null);
-  const [box, setBox] = useState([w0, h0]);
+  const ref = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState<[number, number]>([w0, h0]);
   useEffect(() => {
     const el = ref.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
@@ -181,20 +205,20 @@ function useBox(w0 = 600, h0 = 240) {
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
-  return [ref, box];
+  return [ref, box] as const;
 }
-const px = (P, [w, h]) => P.map(([x, y]) => [+(x / 100 * w).toFixed(1), +(y / 100 * h).toFixed(1)]);
+const px = (P: number[][], [w, h]: readonly [number, number]) => P.map(([x, y]) => [+(x / 100 * w).toFixed(1), +(y / 100 * h).toFixed(1)]);
 /* a smooth curve through the points (Catmull-Rom as cubic Béziers) */
-function curve(P) {
+function curve(P: number[][]) {
   let d = `M${P[0][0]} ${P[0][1]}`;
   for (let i = 0; i < P.length - 1; i++) {
     const a = P[i - 1] || P[i], b = P[i], c = P[i + 1], e = P[i + 2] || c;
-    const f = (v) => +v.toFixed(1);
+    const f = (v: number) => +v.toFixed(1);
     d += ` C${f(b[0] + (c[0] - a[0]) / 6)} ${f(b[1] + (c[1] - a[1]) / 6)} ${f(c[0] - (e[0] - b[0]) / 6)} ${f(c[1] - (e[1] - b[1]) / 6)} ${c[0]} ${c[1]}`;
   }
   return d;
 }
-const poly = (P) => P.map(([x, y], i) => (i ? 'L' : 'M') + x + ' ' + y).join(' ');
+const poly = (P: number[][]) => P.map(([x, y], i) => (i ? 'L' : 'M') + x + ' ' + y).join(' ');
 
 /* the activity chart: the line draws itself by CSS at first paint; a hairline follows the pointer and the hour it
    points at is read out in the chart's own header (in the flow, never over the chart) */
@@ -204,7 +228,7 @@ function Activity() {
   const P = px(HOURS.map(pt), wh);
   const line = curve(P);
   const area = line + ` L${wh[0]} ${wh[1]} L0 ${wh[1]} Z`;
-  const move = (e) => {
+  const move = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType !== 'mouse') return;
     const r = e.currentTarget.getBoundingClientRect();
     setAt(Math.round(Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)) * 23));
@@ -322,19 +346,19 @@ const ARTS = [ArtRealtime, ArtJourneys, ArtFunnel, ArtEvents, ArtAttribution];
 const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 function Reports() {
-  const grid = useRef(null);
+  const grid = useRef<HTMLDivElement>(null);
   const [q, setQ] = useState(-1);
-  const ask = REPORTS.flatMap((r, i) => r.ask.map((t) => [t, i]));
-  const open = (k, i) => { setQ(k); grid.current?.querySelectorAll('.kno-card')[i]?.click(); };
+  const ask = REPORTS.flatMap((r, i) => r.ask.map((t): [string, number] => [t, i]));
+  const open = (k: number, i: number) => { setQ(k); grid.current?.querySelectorAll<HTMLElement>('.kno-card')[i]?.click(); };
   const [en, on] = useEnter(0.12);
   // idle: while the cards are seen and nobody points at them, each one plays its picture in turn, one round, then rests
   const seen = useInView(grid, { amount: 0.3 });
   const calm = useReducedMotion();
   const [held, setHeld] = useState(false);
   useEffect(() => {
-    const cards = grid.current ? [...grid.current.querySelectorAll('.kno-card')] : [];
+    const cards = grid.current ? [...grid.current.querySelectorAll<HTMLElement>('.kno-card')] : [];
     if (!seen || held || calm || !cards.length) return;
-    let k = 0, t;
+    let k = 0, t: ReturnType<typeof setTimeout> | undefined;
     const step = () => {
       cards.forEach((c, j) => c.classList.toggle('an-walk', j === k));
       k += 1;
@@ -380,7 +404,7 @@ function Reports() {
 /* ---------- the signature: from a visit to a number, built by the scroll ---------- */
 
 /* progress for a chapter picture: the scroll through it on desktop (p); on phones it builds once when seen */
-function useBuild(p, on) {
+function useBuild(p: MotionValue<number> | null | undefined, on: boolean) {
   const calm = useReducedMotion();
   // the first render matches the server's (empty) picture; reduced motion completes it right after, never by scroll
   const own = useMotionValue(0);
@@ -393,21 +417,28 @@ function useBuild(p, on) {
   return calm ? own : p || own;
 }
 /* map the build onto a sub-range so the picture is complete well before the chapter ends */
-function useSpan(src, a, b) {
+function useSpan(src: MotionValue<number>, a: number, b: number) {
   return useTransform(src, [a, b], [0, 1], { clamp: true });
 }
-function useStepsOf(src, n) {
+function useStepsOf(src: MotionValue<number>, n: number) {
   const [k, setK] = useState(() => Math.round(src.get() * n));
-  useMotionValueEvent(src, 'change', (v) => setK(Math.round(v * n)));
+  useMotionValueEvent(src, 'change', (v: number) => setK(Math.round(v * n)));
   useEffect(() => setK(Math.round(src.get() * n)), [src, n]);
   return k;
 }
 
 const STEPS = [100, 82, 76, 31, 27];
 const Drop = () => <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 9v9H9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-function Bar({ b, k, w, cliff, drop }) {
+interface BarProps {
+  b: MotionValue<number>;
+  k: number;
+  w: number;
+  cliff?: boolean;
+  drop?: MotionValue<number>;
+}
+function Bar({ b, k, w, cliff, drop }: BarProps) {
   const s = useSpan(b, k * 0.08, 0.16 + k * 0.08);
-  const sy = useTransform(s, (v) => v * w);
+  const sy = useTransform(s, (v: number) => v * w);
   return (
     <div className={'an-fb' + (cliff ? ' cliff' : '')}>
       <span className="an-fb-col"><motion.i style={{ scaleY: sy }} /></span>
@@ -415,7 +446,7 @@ function Bar({ b, k, w, cliff, drop }) {
     </div>
   );
 }
-function FunnelScene({ p, on }) {
+function FunnelScene({ p, on }: SceneProps) {
   const b = useBuild(p, on);
   const drop = useSpan(b, 0.42, 0.56);
   return (
@@ -431,7 +462,7 @@ function FunnelScene({ p, on }) {
 
 const WEEKS = 8;
 const COH = 6;
-function RetentionScene({ p, on }) {
+function RetentionScene({ p, on }: SceneProps) {
   const b = useBuild(p, on);
   const total = Array.from({ length: COH }, (_, r) => WEEKS - r).reduce((a, x) => a + x, 0);
   const s = useSpan(b, 0.04, 0.7);
@@ -459,7 +490,13 @@ function RetentionScene({ p, on }) {
 
 const TRAFFIC = [30, 38, 34, 46, 52, 48, 60, 66, 58, 72];
 const REV = [[10, 6], [14, 8], [12, 6], [18, 10], [22, 12], [18, 10], [26, 14], [30, 16], [24, 12], [34, 18]];
-function RevBar({ b, k, ch, ca }) {
+interface RevBarProps {
+  b: MotionValue<number>;
+  k: number;
+  ch: number;
+  ca: number;
+}
+function RevBar({ b, k, ch, ca }: RevBarProps) {
   const s = useSpan(b, 0.08 + k * 0.05, 0.3 + k * 0.05);
   return (
     <span className="an-rb">
@@ -468,7 +505,7 @@ function RevBar({ b, k, ch, ca }) {
     </span>
   );
 }
-function RevenueScene({ p, on }) {
+function RevenueScene({ p, on }: SceneProps) {
   const b = useBuild(p, on);
   const draw = useSpan(b, 0.02, 0.5);
   const [box, wh] = useBox(600, 400);
@@ -551,7 +588,7 @@ function AddScript() {
 
 /* ---------- if you sell something: the commerce board ---------- */
 function Commerce() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
   return (
     <div className="kn-obj an-shop" ref={ref} data-in={seen ? '' : undefined}>
@@ -562,7 +599,7 @@ function Commerce() {
       </div>
       <p className="kn-kick an-shop-s">Product Recommendations</p>
       <ul>
-        {[['Premium Headphones', 98], ['Wireless Keyboard', 85], ['Smart Watch', 79]].map(([t, v], i) => (
+        {([['Premium Headphones', 98], ['Wireless Keyboard', 85], ['Smart Watch', 79]] as const).map(([t, v], i) => (
           <li key={t} style={{ '--an-w': v / 100, '--an-i': i }}><span>{t}</span><i><b /></i><em className="kn-fig">{v}</em></li>
         ))}
       </ul>
@@ -582,7 +619,7 @@ function Apply() {
 }
 const ANOM = [[0, 30], [10, 28], [20, 29], [30, 27], [40, 28], [50, 26], [58, 8], [66, 24], [76, 27], [86, 26], [100, 27]];
 function AiPanel() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.35 });
   const [box, wh] = useBox(400, 96);
   const line = poly(px(ANOM.map(([x, y]) => [x, y * 2.5]), wh));
@@ -704,11 +741,11 @@ function ApiSheet() {
 /* ---------- security: the features as a settings panel, the audit as a document ---------- */
 const FEATS = ['End-to-end encryption', 'Data residency controls', 'Custom data retention policies', 'Role-based access control', 'Regular security audits', 'Privacy-focused data collection', 'Automated compliance monitoring'];
 function SecPanel() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLUListElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.3 });
   const [on, setOn] = useState(() => FEATS.map(() => true));
   const [touched, setTouched] = useState(false);
-  const flip = (i) => {
+  const flip = (i: number) => {
     setTouched(true);
     setOn((v) => v.map((x, j) => (j === i ? !x : x)));
     dispatchEvent(new CustomEvent('hz-sound', { detail: 'tick' }));
@@ -739,9 +776,9 @@ function AuditDoc() {
 
 /* ---------- community: the repository as an object (a contribution grid that fills in), then the resources ---------- */
 const CW = 26;
-const contrib = (c, r) => { const v = (c * 7 + r * 13 + c * r) % 11; return v < 3 ? 0 : v < 6 ? 1 : v < 9 ? 2 : 3; };
+const contrib = (c: number, r: number) => { const v = (c * 7 + r * 13 + c * r) % 11; return v < 3 ? 0 : v < 6 ? 1 : v < 9 ? 2 : 3; };
 function Repo() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.4 });
   return (
     <A to="https://github.com/hanzoai/insights" className="kn-obj an-repo">
@@ -820,13 +857,13 @@ export default function Analytics() {
             <p className="kn-lede">Secure by design, ensuring your data meets stringent compliance standards.</p>
           </div>
           <dl className="kfs-rows">
-            {[
+            {([
               ['Security Features', <SecPanel />],
               ['Security and assurance', <AuditDoc />],
               ['Data protection', <p>EU data handling, deletion, and export on request.</p>],
               ['Privacy by design', <p>Collected because it is used, not because it can be.</p>],
               ['Data Privacy Commitment', <div className="an-commit"><p>Hanzo Analytics collects what a report uses and nothing else. You choose where the data lives, how long it is kept, and who on your team can read it, and you can export or delete it on request.</p><A to="/legal/privacy" className="an-more">Read our privacy policy →</A></div>],
-            ].map(([k, v]) => <div key={k} className="kfs-row kn-grid"><dt className="kn-kick">{k}</dt><dd>{v}</dd></div>)}
+            ] as [string, ReactNode][]).map(([k, v]) => <div key={k} className="kfs-row kn-grid"><dt className="kn-kick">{k}</dt><dd>{v}</dd></div>)}
           </dl>
         </div>
       </section>

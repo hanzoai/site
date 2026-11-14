@@ -31,6 +31,7 @@
    the column rises to z 1000 (Ledger.css), so the sheet and its scrim cover the header and the splitter.
 V2: 9/10 motion-map pass: one calculator reprices the book, steps, dark room and request; five distinct entrances in map order; no pinned scenes; the request sheet opens above everything
 */
+import type React from 'react';
 import { createContext, memo, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, Fragment } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useMotionValue, animate } from 'motion/react';
 import { EASE } from '../../ui';
@@ -55,13 +56,14 @@ const STEPS = [
   ['Safe to retry', 'Send an Idempotency-Key and a repeat returns the original rather than posting again. The ledger also fingerprints what you sent, so reusing a key with different postings is caught instead of quietly accepted — which is the failure that makes retries dangerous in the first place.'],
 ];
 
-const fmt = (v) => (v < 0 ? '−' : '') + Math.abs(v).toLocaleString('en-US');
-const two = (n) => String(n).padStart(2, '0');
+const fmt = (v: number) => (v < 0 ? '−' : '') + Math.abs(v).toLocaleString('en-US');
+const two = (n: number) => String(n).padStart(2, '0');
 
 /* The calculator's one state, read by every figure on the page. u / v / f are the book's total, the merchant's share
    and the fee (the last amount above zero); units / vend / fee follow the field exactly as typed. */
-const Calc = createContext(null);
-const useCalc = () => useContext(Calc);
+type CalcState = ReturnType<typeof useCalcState>;
+const Calc = createContext<CalcState | null>(null);
+const useCalc = () => useContext(Calc)!; // every caller sits under the provider in Ledger()
 function useCalcState() {
   const [amt, setAmt] = useState('100.00');
   const [pct, setPct] = useState(95);
@@ -75,13 +77,27 @@ function useCalcState() {
 }
 
 /* the book's three transactions and its film, priced by the calculator */
-function useFilm({ u, v, f }) {
+interface Tx {
+  id: number;
+  p: [number, number, number][]; // source account, destination account, amount
+  key?: string;
+  back?: number;
+}
+interface Shot {
+  b: number[];
+  j: Tx[];
+  n: string;
+  bad?: boolean;
+  chain?: boolean;
+  hit?: number;
+}
+function useFilm({ u, v, f }: Pick<CalcState, 'u' | 'v' | 'f'>) {
   return useMemo(() => {
-    const T1 = { id: 1, p: [[0, 1, u]] };
-    const T2 = { id: 2, p: [[1, 2, v], [1, 3, f]], key: 'order_42_payout' };
-    const T3 = { id: 3, p: [[2, 1, v], [3, 1, f]], back: 2 };
+    const T1: Tx = { id: 1, p: [[0, 1, u]] };
+    const T2: Tx = { id: 2, p: [[1, 2, v], [1, 3, f]], key: 'order_42_payout' };
+    const T3: Tx = { id: 3, p: [[2, 1, v], [3, 1, f]], back: 2 };
     const B0 = [0, 0, 0, 0], B1 = [-u, u, 0, 0], B2 = [-u, 0, v, f];
-    const FILM = [
+    const FILM: Shot[][] = [
       [{ b: B0, j: [], n: '' }, { b: B1, j: [T1], n: 'new money enters through world' }, { b: B2, j: [T1, T2], n: 'one transaction, two postings' }, { b: B2, j: [T1, T2], n: 'users:001 → merchants:042 · 100 — refused whole', bad: true }],
       [{ b: B2, j: [T1, T2], n: 'each entry hashed over the one before it', chain: true }, { b: B1, j: [T1, T2, T3], n: 'a reversing transaction points back at the original', chain: true }],
       [{ b: B2, j: [T1, T2], n: 'Idempotency-Key: order_42_payout' }, { b: B2, j: [T1, T2], n: 'the repeat returns the original — transaction 2', hit: 2 }, { b: B2, j: [T1, T2], n: 'same key, different postings — caught', bad: true }],
@@ -89,14 +105,19 @@ function useFilm({ u, v, f }) {
     return { T1, T2, T3, B2, FILM };
   }, [u, v, f]);
 }
-const len = (s) => (s.length > 12 ? ' xl' : s.length > 8 ? ' l' : '');
+/* what the pointer is on: a journal row (tx) or an account (acct) */
+interface Pt {
+  tx?: number;
+  acct?: number;
+}
+const len = (s: string) => (s.length > 12 ? ' xl' : s.length > 8 ? ' l' : '');
 
 /* The book, posting by itself while it is on screen; its figures come from the calculator. */
 function Book() {
   const { FILM } = useFilm(useCalc());
-  const [ref, seen, calm] = useLive(0.2);
+  const [ref, seen, calm] = useLive<HTMLDivElement>(0.2);
   const [held, setHeld] = useState(false);
-  const [pt, setPt] = useState(null); // what the pointer is on: { tx } or { acct }
+  const [pt, setPt] = useState<Pt | null>(null);
   const kind = useRef('mouse');
   const live = seen && !held && !pt; // reading a row holds the page still under the pointer
   const [at, setAt] = useState(0);
@@ -113,25 +134,26 @@ function Book() {
   }, [f, at, live, wait, FILM]);
   const fr = FILM[at][Math.min(f, FILM[at].length - 1)];
   const lastTx = fr.j[fr.j.length - 1];
-  const touched = (t) => t.p.flatMap(([s, d]) => [s, d]);
+  const touched = (t: Tx) => t.p.flatMap(([s, d]) => [s, d]);
   // the pointer answers: a journal row lights the accounts it touched, an account lights its postings
   const ptTx = pt?.tx && fr.j.find((t) => t.id === pt.tx);
   const hot = new Set(ptTx ? touched(ptTx) : pt?.acct != null ? [pt.acct] : lastTx && !fr.bad ? touched(lastTx) : []);
-  const lit = (t) => (pt?.tx === t.id) || (pt?.acct != null && touched(t).includes(pt.acct));
+  const lit = (t: Tx) => (pt?.tx === t.id) || (pt?.acct != null && touched(t).includes(pt.acct));
   useEffect(() => { if (pt?.tx && !ptTx) setPt(null); }, [pt, ptTx]);
-  const ptAcctTx = pt?.acct != null ? fr.j.filter((t) => touched(t).includes(pt.acct)) : [];
+  const acct = pt?.acct;
+  const ptAcctTx = acct != null ? fr.j.filter((t) => touched(t).includes(acct)) : [];
   const read = ptTx ? 'tx ' + ptTx.id + ' · ' + [...new Set(touched(ptTx))].map((i) => '@' + ACC[i]).join(' · ') + ' · Σ 0'
     : pt?.acct != null ? '@' + ACC[pt.acct] + ' · ' + fmt(fr.b[pt.acct]) + (ptAcctTx.length ? ' · ' + ptAcctTx.map((t) => 'tx ' + t.id).join(', ') : '') : null;
   const note = read || fr.n;
   // one way in for every pointer: a mouse reads on hover, a tap or Enter pins the reading (tap again to let go)
-  const same = (q) => (q.tx != null ? pt?.tx === q.tx : pt?.acct === q.acct);
-  const reader = (q) => ({
+  const same = (q: Pt) => (q.tx != null ? pt?.tx === q.tx : pt?.acct === q.acct);
+  const reader = (q: Pt) => ({
     tabIndex: 0,
-    onPointerEnter: (e) => { if (e.pointerType === 'mouse') setPt(q); },
-    onPointerLeave: (e) => { if (e.pointerType === 'mouse') setPt(null); },
-    onPointerDown: (e) => { kind.current = e.pointerType; },
+    onPointerEnter: (e: React.PointerEvent) => { if (e.pointerType === 'mouse') setPt(q); },
+    onPointerLeave: (e: React.PointerEvent) => { if (e.pointerType === 'mouse') setPt(null); },
+    onPointerDown: (e: React.PointerEvent) => { kind.current = e.pointerType; },
     onClick: () => { if (kind.current !== 'mouse') setPt(same(q) ? null : q); },
-    onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPt(same(q) ? null : q); } if (e.key === 'Escape') setPt(null); },
+    onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPt(same(q) ? null : q); } if (e.key === 'Escape') setPt(null); },
     onBlur: () => setPt(null),
   });
   return (
@@ -214,7 +236,7 @@ function Hero() {
   );
 }
 
-const CODE = (c) => `# A split payment: the vendor is paid and the platform takes its cut,
+const CODE = (c: CalcState) => `# A split payment: the vendor is paid and the platform takes its cut,
 # in one transaction that lands whole or not at all.
 
 curl -X POST http://localhost:3068/v2/main/transactions \\
@@ -237,8 +259,8 @@ curl -X POST http://localhost:3068/v2/main/transactions \\
 #   )`;
 /* The highlighter splits each line into coloured tokens, so the highlighted pane is presentation only: the request is
    also in the page line by line, whole, in a visually hidden copy beside it (what a screen reader reads). */
-const SheetCode = memo(function SheetCode({ code }) {
-  const ref = useRef(null);
+const SheetCode = memo(function SheetCode({ code }: { code: string }) {
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => { ref.current?.querySelectorAll('.cf-code-body pre').forEach((p) => p.setAttribute('aria-hidden', 'true')); }, [code]);
   return (
     <div ref={ref}>
@@ -253,13 +275,13 @@ function Splitter() {
   const { amt, setAmt, pct, setPct, units, vend, fee, ok, u, v, f } = useCalc();
   // the first time it is seen, the split slides from even to Hanzo's 95 / 5 once (ease-emphasis), so the
   // postings, the Numscript and the book visibly rewrite themselves; a hand on the slider stops it, reduced motion skips it
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { once: true, amount: 0.5 });
   const calm = useReducedMotion();
   const touched = useRef(false);
   useEffect(() => {
     if (!seen || calm || touched.current) return;
-    const run = animate(50, 95, { duration: 1.2, ease: EASE, onUpdate: (x) => { if (!touched.current) setPct(Math.round(x)); } });
+    const run = animate(50, 95, { duration: 1.2, ease: EASE, onUpdate: (x: number) => { if (!touched.current) setPct(Math.round(x)); } });
     return () => run.stop();
   }, [seen, calm, setPct]);
   const book = [-u, 0, v, f];
@@ -298,7 +320,7 @@ function Splitter() {
 
 /* Entrance 2, velocity-skew. The words ride beside the splitter; the open sheet lifts their column above the header. */
 function Numscript() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useSkew(ref);
   const c = useCalc();
   const code = CODE(c);
@@ -323,7 +345,10 @@ function Numscript() {
 /* The three steps, plain: each scene sits beside its own words, priced by the calculator. */
 const Arrow = () => <svg viewBox="0 0 64 16" aria-hidden="true"><path d="M0 8h60M53 2l7 6-7 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-function Scene({ i }) {
+interface SceneProps {
+  i: number;
+}
+function Scene({ i }: SceneProps) {
   const c = useCalc();
   const { T1, T2, T3 } = useFilm(c);
   if (i === 0) return (
@@ -368,8 +393,13 @@ function Scene({ i }) {
 }
 
 /* Entrance 3, spring-snap: each step on its own, as it is reached. */
-function Step({ i, t, d }) {
-  const ref = useRef(null);
+interface StepProps {
+  i: number;
+  t: string;
+  d: string;
+}
+function Step({ i, t, d }: StepProps) {
+  const ref = useRef<HTMLLIElement>(null);
   const e = useEntrance(ref, '-18%');
   return (
     <li ref={ref} className="ld-step" data-e={e} style={{ '--dir': i % 2 ? -1 : 1 }}>
@@ -401,7 +431,10 @@ const CAPS = [
 ];
 
 /* The one dark room: the capability you pick is shown working, on the calculator's split payment. */
-function CapObject({ i }) {
+interface CapObjectProps {
+  i: number;
+}
+function CapObject({ i }: CapObjectProps) {
   const { u, v, f, pct } = useCalc();
   if (i === 0) return (
     <div className="ld-cobj">
@@ -432,12 +465,12 @@ function CapObject({ i }) {
 const CAPS_H = 'What the API gives you'.split(' ');
 /* Entrance 4, word-shuffle: the heading's words and the three tabs. */
 function Caps() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useShuffle(ref, ['.ld-caps-head h2 .ld-w', '.ld-caps-tabs > button']);
   const [i, setI0] = useState(0);
   const [moved, setMoved] = useState(false);
-  const setI = (k) => { setMoved(true); setI0(k); };
-  const key = (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setI((i + 1) % 3); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); setI((i + 2) % 3); } };
+  const setI = (k: number) => { setMoved(true); setI0(k); };
+  const key = (e: React.KeyboardEvent<HTMLDivElement>) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setI((i + 1) % 3); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); setI((i + 2) % 3); } };
   return (
     <section ref={ref} className="bz-sec ld-caps" data-room="dark" aria-labelledby="ld-caps-h">
       <div className="bz-wrap">
@@ -475,7 +508,7 @@ const Gh = () => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentCo
    Entrance 5, inertia-drag: both are thrown in from the sides and coast to a stop against their places; the receipt can
    then be grabbed, pulled sideways and thrown, and springs back (touch keeps vertical scroll: drag is x only). */
 function Get() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const e = useEntrance(ref, '-20%');
   const calm = useReducedMotion();
   const x1 = useMotionValue(0), x2 = useMotionValue(0), o = useMotionValue(1);
@@ -532,11 +565,11 @@ export default function Ledger() {
   const calc = useCalcState();
   // one solid fill per screen: while the page's own ask (hero or Band) is on screen, the header's ask draws as an
   // outline (Ledger.css, html:has(main.ld[data-ask-on]))
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   useEffect(() => {
-    const main = ref.current;
+    const main = ref.current!;
     const asks = [...main.querySelectorAll('[data-cta="ledger.hero"], [data-cta="ledger.close"]')];
-    const on = new Set();
+    const on = new Set<Element>();
     const io = new IntersectionObserver((es) => {
       es.forEach((x) => (x.isIntersecting ? on.add(x.target) : on.delete(x.target)));
       if (on.size) main.setAttribute('data-ask-on', ''); else main.removeAttribute('data-ask-on');

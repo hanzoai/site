@@ -8,13 +8,14 @@
    Each plays once when its section is about 30% on screen ([data-in] set here). Every pre-entrance state lives in
    chat-motion.css under `html.js` and prefers-reduced-motion: no-preference, so JS-off and reduced-motion visitors
    get the final state from the server HTML. Nothing here changes layout: transforms, opacity, clip-path and strokes. */
+import type { ReactNode } from 'react';
 import { Fragment, useEffect, useRef } from 'react';
 
 const calm = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Mark the element [data-in] once it is `amount` on screen, then run `onIn` (once). */
-export function useEnter(amount = 0.3, onIn) {
-  const ref = useRef(null);
+export function useEnter<T extends HTMLElement = HTMLElement>(amount = 0.3, onIn?: (el: T) => void) {
+  const ref = useRef<T>(null);
   const cb = useRef(onIn);
   cb.current = onIn;
   useEffect(() => {
@@ -34,7 +35,10 @@ export function useEnter(amount = 0.3, onIn) {
 }
 
 /* scramble: each word keeps its real text as the sizer (so nothing reflows) and decodes in an overlay above it */
-export function Scr({ text }) {
+interface ScrProps {
+  text: string;
+}
+export function Scr({ text }: ScrProps) {
   return text.split(' ').map((w, i) => (
     <Fragment key={i}>
       {i ? ' ' : ''}
@@ -44,16 +48,16 @@ export function Scr({ text }) {
 }
 
 const POOL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#%&*+=';
-export function scrambleIn(root) {
-  const words = [...root.querySelectorAll('.cht-scr-w')];
+export function scrambleIn(root: HTMLElement) {
+  const words = [...root.querySelectorAll<HTMLElement>('.cht-scr-w')];
   if (!words.length) return;
   if (calm()) { root.setAttribute('data-done', ''); return; }
-  const jobs = words.map((w, k) => ({ w, o: w.querySelector('.cht-scr-o'), s: w.querySelector('.cht-scr-s').textContent, at: k * 55 }));
+  const jobs = words.map((w, k) => ({ w, o: w.querySelector('.cht-scr-o')!, s: w.querySelector('.cht-scr-s')!.textContent!, at: k * 55 })); // Scr draws all three inside each word
   jobs.forEach((j) => j.w.setAttribute('data-run', ''));
   const t0 = performance.now();
   const DUR = 720;
   let last = 0;
-  const tick = (now) => {
+  const tick = (now: number) => {
     const t = now - t0;
     let live = false;
     if (now - last > 40) { // about 25 changes a second, so it reads as characters turning over, not noise
@@ -78,7 +82,11 @@ export function scrambleIn(root) {
 }
 
 /* underline-sweep: a key word whose underline sweeps in; `n` is its place in the sequence */
-export const Mark = ({ n, children }) => <span className="cht-ul" style={{ '--k': n }}>{children}</span>;
+interface MarkProps {
+  n: number;
+  children?: ReactNode;
+}
+export const Mark = ({ n, children }: MarkProps) => <span className="cht-ul" style={{ '--k': n }}>{children}</span>;
 
 /* line-draw: the outline the Band draws before it fills (a hairline rect, pathLength 1 so the dash is 0..1) */
 export const Outline = () => (

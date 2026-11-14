@@ -4,18 +4,19 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { load, find, findAll, textOf, slot, tag, isN } from './htmltree';
+import type { Branch, Child } from './htmltree';
 
-const T = (n) => textOf(n).replace(/\s+/g, ' ').trim();
-const ent = (s) => s.replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"');
-const links = (n, f = slot('action')) => findAll(n, (k) => k.t === 'a' && k.a && k.a.href && f(k)).map((a) => ({ label: T(a), href: a.a.href }));
-const head = (s) => ({ eyebrow: T(find(s, slot('eyebrow'))), title: T(find(s, tag('h2'))), lede: T(find(s, slot('lede'))) });
-const cards = (s) => findAll(s, tag('h3')).map((h) => {
+const T = (n: Child | null | undefined) => textOf(n).replace(/\s+/g, ' ').trim();
+const ent = (s: string) => s.replace(/&amp;/g, '&').replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"');
+const links = (n: Branch, f: (k: Branch) => unknown = slot('action')) => findAll(n, (k) => k.t === 'a' && k.a && k.a.href && f(k)).map((a) => ({ label: T(a), href: a.a!.href }));
+const head = (s: Branch) => ({ eyebrow: T(find(s, slot('eyebrow'))), title: T(find(s, tag('h2'))), lede: T(find(s, slot('lede'))) });
+const cards = (s: Branch) => findAll(s, tag('h3')).map((h) => {
   const box = findAll(s, (n) => n.t === 'div' && n.c.includes(h))[0];
   const num = find(box, (n) => n.t === 'span' && /^\d{2}$/.test(T(n)));
   return { n: num ? T(num) : '', title: T(h), text: T(find(box, (n) => n.t === 'p')) };
 });
 // the code as Hanzo's lines (each line's tokens joined), one string with real line breaks
-const lines = (pre) => find(pre, tag('code')).c.filter(isN).map((line) => textOf(line).replace(/\n$/, '')).join('\n');
+const lines = (pre: Branch) => find(pre, tag('code')).c.filter(isN).map((line) => textOf(line).replace(/\n$/, '')).join('\n');
 
 export function agentLanding() {
   const root = load('agent');
@@ -24,7 +25,7 @@ export function agentLanding() {
   const imgs = findAll(root, tag('img'));
   const [fold, paste, how, caps, sdk, close, crew, get] = findAll(root, tag('section'));
   const surface = find(fold, slot('surface'));
-  const inSurface = (n) => findAll(surface, () => true).includes(n);
+  const inSurface = (n: Branch) => findAll(surface, () => true).includes(n);
   const through = find(fold, (n) => n.t === 'div' && n.c.length > 2 && n.c.every((k) => isN(k) && k.t === 'span' && slot('text')(k)));
   const note = find(fold, (n) => n.t === 'p' && slot('text')(n) && !inSurface(n));
   const lede = find(fold, slot('lede'));
@@ -37,16 +38,16 @@ export function agentLanding() {
     fold: {
       label: T(find(fold, (n) => n.a && 'data-label' in n.a)),
       h1: T(find(fold, tag('h1'))),
-      lede: lede.c.map((k) => T(isN(k) ? k : { c: [k] })).filter(Boolean),
+      lede: lede.c.map((k) => T(k)).filter(Boolean),
       actions: links(fold, (a) => slot('action')(a) && !inSurface(a)),
       note: T(note),
       through: through.c.map(T),
       console: {
         title: T(bar),
-        nav: find(surface, tag('nav')).c.filter(isN).map((a) => ({ label: T(find(a, tag('em'))), href: a.a.href, current: !!a.a['aria-current'] })),
+        nav: find(surface, tag('nav')).c.filter(isN).map((a) => ({ label: T(find(a, tag('em'))), href: a.a!.href, current: !!a.a!['aria-current'] })),
         turns: findAll(surface, slot('surface-turn')).map(T),
         endpoint: T(find(surface, tag('code'))),
-        open: { label: T(open), href: open.a.href },
+        open: { label: T(open), href: open!.a!.href },
         caption: T(find(surface, tag('figcaption'))),
       },
     },
@@ -59,10 +60,13 @@ export function agentLanding() {
       ...head(crew),
       people: findAll(crew, (n) => n.t === 'a' && /^\/chat\?agent=/.test((n.a || {}).href || '')).map((a) => {
         const names = findAll(a, (n) => n.t === 'span' && slot('text')(n) && n.c.every((x) => typeof x === 'string')).map(T);
-        return { name: names[0], role: names[1] || '', href: a.a.href, img: pics[imgs.indexOf(find(a, tag('img')))] };
+        return { name: names[0], role: names[1] || '', href: a.a!.href, img: pics[imgs.indexOf(find(a, tag('img')))] };
       }),
       more: links(crew, (a) => slot('text')(a))[0],
     },
-    get: { title: T(find(get, tag('h2'))), lede: T(find(get, tag('p'))), license: [licKey, T(lic).replace(licKey, '').trim()], github: { label: T(gh), href: gh.a.href }, actions: links(get) },
+    get: { title: T(find(get, tag('h2'))), lede: T(find(get, tag('p'))), license: [licKey, T(lic).replace(licKey, '').trim()], github: { label: T(gh), href: gh.a!.href }, actions: links(get) },
   };
 }
+
+/* the page as the template draws it */
+export type AgentLandingData = ReturnType<typeof agentLanding>;

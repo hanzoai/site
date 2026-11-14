@@ -22,11 +22,13 @@
    Motion: the canvas (signature) + the self-driving shell + Stage (it settles as you scroll) + cards that open.
 V2: 8/10 motion map: drag-canvas — the pinned BizChapters scene is gone; its six chapters are cards on a pannable dark canvas, each beside its live module; order is hero, canvas, facts, palette, Get, close
    The v1 drag-to-reorder sidebar is gone (its words stay, with the palette). Every word and link is Hanzo's. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useInView } from 'motion/react';
 import { useCalm } from '../../ui';
 import { useRouter } from 'next/navigation';
-import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
+import { EASE_OUT_EXPO as EASE, type Bezier } from '../../../lib/motion';
 import { A, More } from '../../kit';
 import BizAsk from '../../v2/BizAsk';
 import { href } from '../../../lib/route';
@@ -35,7 +37,7 @@ import BizPaste from '../../v2/BizPaste';
 import { useScroll, useTransform } from 'motion/react';
 import '../../v2/Biz.css';
 import BizOpen from '../../v2/BizOpen';
-import PanCanvas from '../x-tender/PanCanvas';
+import PanCanvas, { type PanHandle } from '../x-tender/PanCanvas';
 import { useStickyStack, useDepthParallax, useTicker, useSpringSnap, useVelocitySkew } from '../console/Entrances';
 import './ConsolePage.css';
 
@@ -45,10 +47,10 @@ const GH = 'https://github.com/hanzoai';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
 const TEAM = 'https://hanzo.team/';
 const ARRIVE = { duration: 0.3, ease: EASE }; // deck: no springs; arrivals take ease-emphasis at 300ms
-const GLIDE = { duration: 0.3, ease: [0.4, 0, 0.2, 1] }; // things that move and stay
+const GLIDE: { duration: number; ease: Bezier } = { duration: 0.3, ease: [0.4, 0, 0.2, 1] }; // things that move and stay
 
 /* the sidebar: Hanzo's products, as the console shows them */
-const SIDE = [['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Search', '/search', 'Retrieval & answers'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']];
+const SIDE: [string, string, string?][] = [['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Search', '/search', 'Retrieval & answers'], ['Crawl', '/crawl'], ['Studio', '/studio'], ['Console', '/console'], ['Referrals', '/cloud/referrals'], ['Marketplace', '/cloud/marketplace']];
 const PICON = ['M2.5 4.5h11v7h-6l-3 2.5v-2.5h-2z', 'M5 5h6v6H5zM8 2v3M8 11v3M2 8h3M11 8h3', 'M7 2.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9ZM10.5 10.5 14 14', 'M2 8h12M8 2c2.5 2 2.5 10 0 12M8 2c-2.5 2-2.5 10 0 12', 'M2.5 4h11v8h-11zM6.5 6.5l3 1.5-3 1.5z', 'M2.5 3h11v10h-11zM2.5 6h11M5 9h3', 'M5 6a2 2 0 1 0 0-.01M11 10a2 2 0 1 0 0-.01M6.6 6.8l2.8 2.4', 'M2.5 6h11l-1 7h-9zM5 6V4.5a3 3 0 0 1 6 0V6'];
 
 /* the six modules of the shell */
@@ -61,18 +63,27 @@ const MODS = [
   { id: 'org', nav: 'Organization', t: 'Organization', w: 'organization org oidc', d: 'M3 14V3h6v11M9 6.5h4V14M2 14h12M5 5.5h2M5 8h2M5 10.5h2' },
 ];
 // the film: the module it opens next and what the palette types for it
-const DEMO = [['keys', 'keys'], ['usage', 'usage'], ['apps', 'apps'], ['models', 'models'], ['org', 'org'], ['projects', 'projects']];
+const DEMO: [string, string][] = [['keys', 'keys'], ['usage', 'usage'], ['apps', 'apps'], ['models', 'models'], ['org', 'org'], ['projects', 'projects']];
 const PROJECTS = [['gateway', 'Ready'], ['payments-api', 'Ready'], ['checkout-web', 'Building'], ['docs-site', 'Ready']];
 
-const ITEMS = [
-  ...MODS.map((m) => ({ id: m.id, name: m.nav, sub: m.t === m.nav ? 'Module' : m.t, kind: 'module', w: m.w, d: m.d })),
-  ...SIDE.map(([t, to, s], i) => ({ id: to, name: t, sub: s || to, kind: 'product', to, w: t.toLowerCase(), d: PICON[i] })),
+interface Entry {
+  id: string;
+  name: string;
+  sub: string;
+  w: string;
+  d: string;
+}
+type Mod = Entry & { kind: 'module' };
+type Product = Entry & { kind: 'product'; to: string };
+const ITEMS: (Mod | Product)[] = [
+  ...MODS.map((m): Mod => ({ id: m.id, name: m.nav, sub: m.t === m.nav ? 'Module' : m.t, kind: 'module', w: m.w, d: m.d })),
+  ...SIDE.map(([t, to, s], i): Product => ({ id: to, name: t, sub: s || to, kind: 'product', to, w: t.toLowerCase(), d: PICON[i] })),
 ];
 /* What answers a query: a name that starts with it first, then a word that does, then anything that contains it. */
-function find(q) {
+function find(q: string) {
   const s = q.trim().toLowerCase();
   if (!s) return ITEMS.map((x) => ({ x, at: -1 }));
-  const out = [];
+  const out: { x: Mod | Product; at: number; score: number; i: number }[] = [];
   ITEMS.forEach((x, i) => {
     const n = x.name.toLowerCase(), at = n.indexOf(s);
     const score = at === 0 ? 4 : x.w.split(' ').some((w) => w.startsWith(s)) ? 3 : at > 0 ? 2 : x.sub.toLowerCase().includes(s) ? 1 : 0;
@@ -80,22 +91,22 @@ function find(q) {
   });
   return out.sort((a, b) => b.score - a.score || a.i - b.i);
 }
-const Hl = ({ name, at, n }) => (at < 0 || !n ? name : <>{name.slice(0, at)}<mark>{name.slice(at, at + n)}</mark>{name.slice(at + n)}</>);
-const Ico = ({ d, s = 16 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d={d} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" strokeLinecap="round" /></svg>;
+const Hl = ({ name, at, n }: { name: string; at: number; n: number }) => (at < 0 || !n ? name : <>{name.slice(0, at)}<mark>{name.slice(at, at + n)}</mark>{name.slice(at + n)}</>);
+const Ico = ({ d, s = 16 }: { d: string; s?: number }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d={d} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" strokeLinecap="round" /></svg>;
 const Glass = () => <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M10.5 10.5 14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>;
 
 /* "/" or the palette button, anywhere on the page: the real palette comes to you, ready to type. */
 function focusFind() {
   const el = document.getElementById('cs-find-in');
   if (!el) return;
-  const box = el.closest('.cs-find-obj');
+  const box = el.closest<HTMLElement>('.cs-find-obj')!;
   if (window.__lenis) window.__lenis.scrollTo(box, { offset: -120, duration: 1.1 });
   else box.scrollIntoView({ behavior: 'smooth', block: 'center' });
   el.focus({ preventScroll: true });
 }
 
 /* A module's own moment: steps 0..n, played once each time it opens (on screen only); reduced motion shows the end. */
-function usePlay(play, n, ms, first = 500) {
+function usePlay(play: boolean, n: number, ms: number, first = 500) {
   const calm = useCalm();
   const [k, setK] = useState(0);
   useEffect(() => {
@@ -107,7 +118,7 @@ function usePlay(play, n, ms, first = 500) {
   return k;
 }
 
-function Projects({ play }) {
+function Projects({ play }: { play: boolean }) {
   const k = usePlay(play, 1, 0, 2600);
   return (
     <div className="cs-v">
@@ -123,9 +134,9 @@ function Projects({ play }) {
   );
 }
 
-function Keys({ org, play }) {
+function Keys({ org, play }: { org: string; play: boolean }) {
   const k = usePlay(play, 2, 480, 1500);
-  const [hand, setHand] = useState(null);
+  const [hand, setHand] = useState<boolean | null>(null);
   const off = hand ?? k >= 2;
   return (
     <div className="cs-v">
@@ -141,7 +152,7 @@ function Keys({ org, play }) {
   );
 }
 
-function Usage({ org, play }) {
+function Usage({ org, play }: { org: string; play: boolean }) {
   const n = usePlay(play, 6, 420, 450);
   const rows = Array.from({ length: Math.min(n, 5) }, (_, i) => n - i);
   return (
@@ -172,7 +183,7 @@ function Usage({ org, play }) {
 }
 
 const CHAIN = [['app', 'M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5H2.5zM9 9h4.5v4.5H9z'], ['identity', 'M8 2.5a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6ZM2.8 14c.7-2.4 2.8-3.8 5.2-3.8s4.5 1.4 5.2 3.8'], ['store', 'M3 4c0-1 2.2-1.8 5-1.8s5 .8 5 1.8v8c0 1-2.2 1.8-5 1.8S3 13 3 12zM3 4c0 1 2.2 1.8 5 1.8S13 5 13 4M3 8c0 1 2.2 1.8 5 1.8s5-.8 5-1.8']];
-function Apps({ play }) {
+function Apps({ play }: { play: boolean }) {
   const k = usePlay(play, 3, 520, 400);
   return (
     <div className="cs-v">
@@ -191,7 +202,7 @@ function Apps({ play }) {
   );
 }
 
-function Models({ play }) {
+function Models({ play }: { play: boolean }) {
   const k = usePlay(play, 1, 0, 1300);
   return (
     <div className="cs-v">
@@ -204,7 +215,7 @@ function Models({ play }) {
   );
 }
 
-function Org({ org, play, flip }) {
+function Org({ org, play, flip }: { org: string; play: boolean; flip: () => void }) {
   const k = usePlay(play, 1, 0, 1200);
   useEffect(() => { if (k) flip(); }, [k]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
@@ -226,7 +237,13 @@ function Org({ org, play, flip }) {
   );
 }
 
-function View({ id, ...p }) {
+interface ViewProps {
+  id: string;
+  org: string;
+  play: boolean;
+  flip: () => void;
+}
+function View({ id, ...p }: ViewProps) {
   if (id === 'keys') return <Keys {...p} />;
   if (id === 'usage') return <Usage {...p} />;
   if (id === 'apps') return <Apps {...p} />;
@@ -236,7 +253,11 @@ function View({ id, ...p }) {
 }
 
 /* The film's palette: it opens, types, the answers narrow letter by letter, Enter lands. */
-function Pal({ q, go }) {
+interface PalProps {
+  q: string;
+  go: boolean;
+}
+function Pal({ q, go }: PalProps) {
   const hits = find(q).slice(0, 5);
   return (
     <motion.div className="cs-pal" aria-hidden="true" initial={{ opacity: 0, y: -14, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.15 } }} transition={ARRIVE}>
@@ -257,8 +278,13 @@ function Pal({ q, go }) {
 }
 
 /* The shell. auto: it drives itself (the hero). Otherwise it shows the module it is given (chapters, the palette). */
-function Shell({ auto, view: want, size = 'lg' }) {
-  const [ref, live] = useLive(0.25);
+interface ShellProps {
+  auto?: boolean;
+  view?: string;
+  size?: string;
+}
+function Shell({ auto, view: want, size = 'lg' }: ShellProps) {
+  const [ref, live] = useLive<HTMLDivElement>(0.25);
   const [view, setView] = useState(want || 'projects');
   const [org, setOrg] = useState('acme');
   const [pal, setPal] = useState(false);
@@ -266,14 +292,14 @@ function Shell({ auto, view: want, size = 'lg' }) {
   const [go, setGo] = useState(false);
   const [mine, setMine] = useState(false);
   const step = useRef(0);
-  const P = (k) => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{k ? <path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /> : <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" fill="currentColor" />}</svg>;
+  const P = (k: boolean) => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">{k ? <path d="M5 3.2v9.6L12.6 8z" fill="currentColor" /> : <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" fill="currentColor" />}</svg>;
   const first = useRef(true);
   useEffect(() => { if (want) setView(want); }, [want]);
   useEffect(() => {
     if (!auto || !live || mine) return;
     const [next, word] = DEMO[step.current % DEMO.length];
-    const ts = [];
-    const at = (ms, fn) => ts.push(setTimeout(fn, ms));
+    const ts: ReturnType<typeof setTimeout>[] = [];
+    const at = (ms: number, fn: () => void) => ts.push(setTimeout(fn, ms));
     setPal(false); setGo(false);
     let t = first.current ? 700 : 3600;
     first.current = false;
@@ -287,7 +313,7 @@ function Shell({ auto, view: want, size = 'lg' }) {
   const flip = useCallback(() => setOrg((o) => (o === 'acme' ? 'globex' : 'acme')), []);
   const idx = MODS.findIndex((x) => x.id === view);
   const m = MODS[idx];
-  const open = (id) => { setMine(true); setPal(false); setView(id); };
+  const open = (id: string) => { setMine(true); setPal(false); setView(id); };
   return (
     <div ref={ref} className={'cs-win ' + size}>
       <div className="cs-bar">
@@ -354,7 +380,14 @@ function Shell({ auto, view: want, size = 'lg' }) {
 
 /* The shell starts large and settles over the first scroll (the v2/BizStage move), hydration-safe: the server and the
    first client render carry no motion style; the scroll-linked transform starts after mount. Reduced motion: settled. */
-function BizStage({ children, from = 1.14, over = 620, lift = 60, className = '' }) {
+interface BizStageProps {
+  children: ReactNode;
+  from?: number;
+  over?: number;
+  lift?: number;
+  className?: string;
+}
+function BizStage({ children, from = 1.14, over = 620, lift = 60, className = '' }: BizStageProps) {
   const calm = useCalm();
   const [on, setOn] = useState(false);
   useEffect(() => setOn(true), []);
@@ -369,10 +402,13 @@ function BizStage({ children, from = 1.14, over = 620, lift = 60, className = ''
 }
 
 /* A fine pointer leans the shell toward it, 2.5 degrees at most; flat on leave, never on touch or under reduced motion. */
-function Lean({ children }) {
-  const ref = useRef(null);
+interface LeanProps {
+  children: ReactNode;
+}
+function Lean({ children }: LeanProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const calm = useCalm();
-  const move = (e) => {
+  const move = (e: React.PointerEvent<HTMLDivElement>) => {
     if (calm || e.pointerType !== 'mouse' || !ref.current) return;
     const r = ref.current.getBoundingClientRect();
     ref.current.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
@@ -414,7 +450,7 @@ const CH = [
 /* The signature: the six chapters as cards on a dark canvas you pull around. The card nearest the middle is lit and
    its module plays; the module names above the canvas glide each card in. One organization for the whole canvas. */
 function Canvas() {
-  const pan = useRef(null);
+  const pan = useRef<PanHandle>(null);
   const ref = useStickyStack();
   const [lit, setLit] = useState('projects');
   const [org, setOrg] = useState('acme');
@@ -423,7 +459,7 @@ function Canvas() {
     <ul className="cs-cv-mods" aria-label="Modules">
       {CH.map((c) => (
         <li key={c.id}>
-          <button type="button" aria-pressed={lit === c.id} aria-label={c.k} onClick={() => pan.current?.to(c.id)}><Ico d={MODS.find((m) => m.id === c.id).d} /><span>{c.k}</span></button>
+          <button type="button" aria-pressed={lit === c.id} aria-label={c.k} onClick={() => pan.current?.to(c.id)}><Ico d={MODS.find((m) => m.id === c.id)!.d} /><span>{c.k}</span></button>
         </li>
       ))}
     </ul>
@@ -464,27 +500,27 @@ function Find() {
   const [hi, setHi] = useState(0);
   const [open, setOpen] = useState('projects');
   const [went, setWent] = useState('');
-  const inp = useRef(null);
+  const inp = useRef<HTMLInputElement>(null);
   const tk = useTicker();
   const hits = useMemo(() => find(q), [q]);
   const h = Math.min(hi, hits.length - 1);
-  const pick = (r) => {
+  const pick = (r: (typeof hits)[number] | undefined) => {
     if (!r) return;
     setWent(r.x.kind + r.x.name);
     if (r.x.kind === 'product') { const to = href(r.x.to); if (to.startsWith('/')) router.push(to); else location.href = to; } else setOpen(r.x.id);
   };
   useEffect(() => {
-    const k = (e) => {
+    const k = (e: KeyboardEvent) => {
       if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
       const a = document.activeElement;
-      if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.isContentEditable)) return;
+      if (a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || (a instanceof HTMLElement && a.isContentEditable))) return;
       e.preventDefault();
       focusFind();
     };
     addEventListener('keydown', k);
     return () => removeEventListener('keydown', k);
   }, []);
-  const key = (e) => {
+  const key = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setHi(Math.min(hits.length - 1, h + 1)); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setHi(Math.max(0, h - 1)); }
     else if (e.key === 'Enter') { e.preventDefault(); pick(hits[h]); }
@@ -547,7 +583,14 @@ with ApiClient(config) as client:
 const Gh = () => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>;
 
 /* The four facts, each a card that opens into its own page (synchronized.studio). */
-const FACTS = [
+interface Fact {
+  id: string;
+  f: string;
+  t: string;
+  d: string;
+  x?: ReactNode;
+}
+const FACTS: Fact[] = [
   { id: 'v1', f: '/v1', t: 'One API behind it', d: 'Everything on these screens is a call to api.hanzo.ai/v1, and the typed clients are generated from the same document.', x: <Code tabs={[{ k: 'app.py', code: CODE, lang: 'python' }]} mark="post_v1_chat_completions" /> },
   { id: 'oidc', f: 'OIDC', t: 'Sign in with Hanzo IAM', d: 'Sign-in is OIDC against Hanzo IAM. What you see is what your organization owns, and switching organization switches the whole page — there is no global view to fall into by accident.' },
   { id: 'org', f: 'Per-org', t: 'Data scoped to your org', d: 'A usage record per call and one balance per organization, so spend is attributed where it happened instead of totalled at the end of the month.' },
@@ -614,7 +657,7 @@ const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden=
 
 /* The close: one sentence at Display size, the one ask, one text row. */
 function End() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.5, once: true });
   const skew = useVelocitySkew();
   return (

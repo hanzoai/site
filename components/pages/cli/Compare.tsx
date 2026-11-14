@@ -4,10 +4,18 @@
    Every string is Hanzo's (the h2's own words and the tree's commands). The visitor drags the divider (pointer or finger),
    or focuses the handle and uses the arrow keys / Home / End. On first arrival the divider sweeps once to show it moves, then
    rests at the middle; any press hands it over. clip-path and transform only; reduced motion: no sweep. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 
-export default function Compare({ tree, labelledBy, go }) {
-  const box = useRef(null);
+/* a resource and its leaves: [name, [leaf, command, line][]] */
+export type Tree = [string, string[][]][];
+interface CompareProps {
+  tree: Tree;
+  labelledBy: string;
+  go: boolean;
+}
+export default function Compare({ tree, labelledBy, go }: CompareProps) {
+  const box = useRef<HTMLDivElement>(null);
   const [x, setX] = useState(50);
   const [held, setHeld] = useState(false);
   const [used, setUsed] = useState(false); // until the visitor takes the handle, a ring breathes from it
@@ -22,8 +30,8 @@ export default function Compare({ tree, labelledBy, go }) {
     const keys = [[0, 50], [700, 78], [1700, 24], [2500, 50]];
     let raf = 0;
     const t0 = performance.now();
-    const ease = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
-    const tick = (t) => {
+    const ease = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+    const tick = (t: number) => {
       if (mine.current) return;
       const dt = t - t0;
       let i = 0;
@@ -37,20 +45,20 @@ export default function Compare({ tree, labelledBy, go }) {
     return () => { clearTimeout(t); cancelAnimationFrame(raf); };
   }, [go]);
 
-  const at = (clientX) => {
-    const r = box.current.getBoundingClientRect();
+  const at = (clientX: number) => {
+    const r = box.current!.getBoundingClientRect();
     setX(Math.max(4, Math.min(96, ((clientX - r.left) / r.width) * 100)));
   };
-  const down = (e) => {
+  const down = (e: React.PointerEvent<HTMLDivElement>) => {
     // a mouse may grab anywhere; a finger only by the handle, so a vertical scroll over the panel never moves the divider
-    if (e.pointerType !== 'mouse' && !e.target.closest?.('.cli-cmp-h')) return;
+    if (e.pointerType !== 'mouse' && !(e.target as Element).closest?.('.cli-cmp-h')) return;
     mine.current = true; setUsed(true); drag.current = true; setHeld(true);
     e.currentTarget.setPointerCapture?.(e.pointerId);
     at(e.clientX);
   };
-  const move = (e) => { if (drag.current) at(e.clientX); };
+  const move = (e: React.PointerEvent<HTMLDivElement>) => { if (drag.current) at(e.clientX); };
   const up = () => { drag.current = false; setHeld(false); };
-  const key = (e) => {
+  const key = (e: React.KeyboardEvent<HTMLSpanElement>) => {
     const step = { ArrowLeft: -5, ArrowDown: -5, ArrowRight: 5, ArrowUp: 5 }[e.key];
     if (step) { e.preventDefault(); mine.current = true; setUsed(true); setX((v) => Math.max(4, Math.min(96, v + step))); }
     else if (e.key === 'Home') { e.preventDefault(); mine.current = true; setUsed(true); setX(4); }

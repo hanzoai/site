@@ -8,14 +8,21 @@
    chapter stays in the HTML; with scripts off the phone list simply stacks.
    The heading leads each chapter; its "01 / 06" caption sits under it.
    Reduced motion: every chapter at full ink, no transitions; the stage still follows the chapter you read. */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, useScroll, useMotionValueEvent, useReducedMotion } from 'motion/react';
 
-const two = (n) => String(n).padStart(2, '0');
+const two = (n: number) => String(n).padStart(2, '0');
 
-export default function FlowChapters({ items, label, stage, mini, children }) {
-  const ref = useRef(null);
-  const run = useRef(null);
+interface FlowChaptersProps {
+  items: { t: ReactNode; d: ReactNode }[];
+  label: string;
+  stage: (at: number) => ReactNode;
+  mini: (at: number) => ReactNode;
+  children?: ReactNode;
+}
+export default function FlowChapters({ items, label, stage, mini, children }: FlowChaptersProps) {
+  const ref = useRef<HTMLElement>(null);
+  const run = useRef<HTMLDivElement>(null);
   const phone = useRef(false);
   const [at, setAt] = useState(0);
   const [live, setLive] = useState(false);
@@ -24,7 +31,7 @@ export default function FlowChapters({ items, label, stage, mini, children }) {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start center', 'end center'] });
   const { scrollYProgress: runP } = useScroll({ target: run, offset: ['start start', 'end end'] });
   // phones: the scroll through the pinned run picks the chapter
-  useMotionValueEvent(runP, 'change', (v) => { if (phone.current) setAt(Math.min(n - 1, Math.max(0, Math.floor(v * n * 0.999)))); });
+  useMotionValueEvent(runP, 'change', (v: number) => { if (phone.current) setAt(Math.min(n - 1, Math.max(0, Math.floor(v * n * 0.999)))); });
   useEffect(() => {
     setLive(true);
     const mq = matchMedia('(max-width: 900px)');
@@ -32,8 +39,8 @@ export default function FlowChapters({ items, label, stage, mini, children }) {
     sync();
     mq.addEventListener('change', sync);
     // desktop: the chapter crossing the middle of the screen is the one in focus
-    const els = [...ref.current.querySelectorAll('[data-ch]')];
-    const io = new IntersectionObserver((es) => es.forEach((e) => !phone.current && e.isIntersecting && setAt(+e.target.dataset.ch)), { rootMargin: '-45% 0px -45% 0px' });
+    const els = [...ref.current!.querySelectorAll('[data-ch]')];
+    const io = new IntersectionObserver((es) => es.forEach((e) => !phone.current && e.isIntersecting && setAt(Number((e.target as HTMLElement).dataset.ch))), { rootMargin: '-45% 0px -45% 0px' });
     els.forEach((el) => io.observe(el));
     return () => { io.disconnect(); mq.removeEventListener('change', sync); };
   }, [n]);

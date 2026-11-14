@@ -21,11 +21,12 @@
    Every word and link is Hanzo's; each endpoint list sits inside an open card or a sheet.
 V2: 8/10 flip-board: an orders board whose statuses and endpoints flip tile by tile (auto, tap, processor switch) replaces the pinned journey; five entrances; sections reordered
 */
+import type React from 'react';
 import { cloneElement, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Flap from './commerce/Flap';
 import { useEnter } from './commerce/Entrances';
-import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
+import { EASE_OUT_EXPO as EASE, type Bezier } from '../../../lib/motion';
 import { A, More, Cta } from '../../kit';
 import { useLive } from '../cloud/Frame';
 import BizLines from '../../v2/BizLines';
@@ -36,9 +37,9 @@ import './Commerce.css';
 const DOCS = 'https://docs.hanzo.ai/docs/cli/commerce';
 const GH = 'https://github.com/hanzoai';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
-const two = (n) => String(n).padStart(2, '0');
+const two = (n: number) => String(n).padStart(2, '0');
 
-const STOPS = [
+const STOPS: [string, string, string][] = [
   ['Product and variant', 'A product holds the description; a variant holds the size, the colour and the price.', '/variant/{id}'],
   ['Cart', 'A cart is a real object with its own id, so someone can leave and come back.', '/cart/{id}'],
   ['Authorize', 'Hold the money when the order is placed.', '/checkout/authorize'],
@@ -46,7 +47,9 @@ const STOPS = [
   ['Refund or return', 'A return is a first-class object rather than a note in a support ticket.', '/return/{id}'],
 ];
 
-const EP = {
+/* an endpoint: path, what it does */
+type Endpoint = [string, string];
+const EP: Record<string, Endpoint[]> = {
   Commerce: [
     ['/cart', 'List all carts for the current session/user'],
     ['/cart/{id}', 'Get details for a specific cart'],
@@ -133,25 +136,33 @@ const EP = {
   ],
 };
 const GROUPS = Object.keys(EP);
-const FIND = Object.fromEntries(GROUPS.flatMap((g) => EP[g].map(([p, d]) => [p, [g, p, d]])));
-const eps = (paths) => paths.map((p) => FIND[p]);
+/* an endpoint with the group it belongs to: group, path, what it does */
+type Found = [string, string, string];
+const FIND: Record<string, Found> = Object.fromEntries(GROUPS.flatMap((g) => EP[g].map(([p, d]): [string, Found] => [p, [g, p, d]])));
+const eps = (paths: string[]) => paths.map((p) => FIND[p]);
 /* a path may only break after a slash, never inside a word ("/order/{id}/capture") */
-const brk = (s, k = '') => s.split(/(?<=\/)/).flatMap((x, i) => (i ? [<wbr key={k + 'w' + i} />, x] : [x]));
+const brk = (s: string, k = '') => s.split(/(?<=\/)/).flatMap((x, i) => (i ? [<wbr key={k + 'w' + i} />, x] : [x]));
 // an endpoint is one run of text (copy checks read it whole); CSS lets it wrap anywhere on narrow screens
-const P = ({ p }) => <span>{p}</span>;
+const P = ({ p }: { p: string }) => <span>{p}</span>;
 
 /* What the order card shows at each stop: the shape changes, the endpoint is the real one. */
 const Lock = () => <svg viewBox="0 0 24 24" width="1.4em" height="1.4em" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.4" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3" fill="none" stroke="currentColor" strokeWidth="1.7" /></svg>;
 const Box = () => <svg viewBox="0 0 24 24" width="1.4em" height="1.4em" aria-hidden="true"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z M3.5 7.5 12 12l8.5-4.5 M12 12v9" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>;
 const Back = () => <svg viewBox="0 0 24 24" width="1.4em" height="1.4em" aria-hidden="true"><path d="M9 6 4 11l5 5 M4.5 11H14a5.5 5.5 0 0 1 0 11h-2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-function Glyph({ at }) {
+interface GlyphProps {
+  at: number;
+}
+function Glyph({ at }: GlyphProps) {
   if (at === 0) return <div className="cm-g-var">{['size', 'colour', 'price'].map((t) => <span key={t}>{t}</span>)}</div>;
   if (at === 1) return <div className="cm-g-cart"><span className="x-mono">cart</span><b className="x-mono">{'{id}'}</b></div>;
   if (at === 2) return <div className="cm-g-st"><Lock /><span>held</span></div>;
   if (at === 3) return <div className="cm-g-st"><Box /><span>captured</span></div>;
   return <div className="cm-g-st"><Back /><span>return</span></div>;
 }
-function Order({ at }) {
+interface OrderProps {
+  at: number;
+}
+function Order({ at }: OrderProps) {
   return (
     <div className={'cm-order s' + at}>
       <img src="/models/zen.webp" alt="" width="104" height="104" />
@@ -167,13 +178,16 @@ function Order({ at }) {
   );
 }
 
-const PauseIcon = ({ on }) => (on
+interface PauseIconProps {
+  on: boolean;
+}
+const PauseIcon = ({ on }: PauseIconProps) => (on
   ? <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 
 /* The signature: the order rides the rail by itself while it is on screen. */
 function Rail() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.3);
   const [at, setAt] = useState(0);
   const [held, setHeld] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -185,7 +199,7 @@ function Rail() {
     const t = setTimeout(() => { first.current = false; if (held) setHeld(false); else setAt((a) => (a + 1) % 5); }, wait);
     return () => clearTimeout(t);
   }, [at, live, held, paused]);
-  const glide = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
+  const glide: { duration: number; ease: Bezier } = { duration: 0.5, ease: [0.4, 0, 0.2, 1] };
   return (
     <div className="cm-band" ref={ref}>
       <div className="bz-wrap cm-band-in">
@@ -257,14 +271,17 @@ const STOP_EP = [
 const STATUS = ['variant', 'cart', 'held', 'captured', 'return'];
 const Arrow = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
-function Board({ proc }) {
-  const [ref, live, calm] = useLive(0.3);
-  const tilt = useEnter('tilt');
+interface BoardProps {
+  proc: string;
+}
+function Board({ proc }: BoardProps) {
+  const [ref, live, calm] = useLive<HTMLElement>(0.3);
+  const tilt = useEnter<HTMLDivElement>('tilt');
   const [rows, setRows] = useState([0, 1, 2, 3]);
   const [last, setLast] = useState(2);
   const [paused, setPaused] = useState(false);
   const [held, setHeld] = useState(false);
-  const move = (r) => { setRows((o) => o.map((s, j) => (j === r ? (s + 1) % 5 : s))); setLast(r); };
+  const move = (r: number) => { setRows((o) => o.map((s, j) => (j === r ? (s + 1) % 5 : s))); setLast(r); };
   useEffect(() => {
     if (!live || paused) return;
     const t = setTimeout(() => { if (held) setHeld(false); else move((last + 1) % 4); }, held ? 6000 : 2400);
@@ -309,7 +326,7 @@ function Board({ proc }) {
   );
 }
 
-const NOUNS = [
+const NOUNS: [string, string, string[]][] = [
   ['Carts', 'A cart is a real object with its own id, so someone can leave and come back, and you can look at what they left in it.', ['/cart', '/cart/{id}', '/cart/{id}/set', '/cart/{id}/discard']],
   ['Products and variants', 'A product holds the description; a variant holds the size, the colour and the price. Stock is tracked on the variant, which is the thing people actually buy.', ['/product', '/product/{id}', '/variant', '/variant/{id}', '/collection', '/collection/{id}', '/review', '/review/{id}']],
   ['Authorize and capture', 'Two steps, not one. Hold the money when the order is placed and take it when the box ships, which is what your accountant and your customer both expect.', ['/checkout/authorize', '/checkout/capture/{id}', '/checkout/charge', '/order/{id}/capture']],
@@ -322,7 +339,7 @@ const NOUNS = [
   ['Your data, per tenant', "Each organisation's records live in its own store. Isolation is a file boundary rather than a WHERE clause somebody has to remember to write.", ['/organization/{id}', '/organization/{id}/integrations', '/user/{id}', '/account']],
 ];
 
-const EpList = ({ list, group }) => (
+const EpList = ({ list, group }: { list: Found[]; group?: boolean }) => (
   <ul className="cm-eps">
     {/* the group is named once where a run of it starts, not on every row */}
     {list.map(([g, p, d], i) => <li key={g + p}><code><P p={p} /></code><span>{d}</span>{group && <em className="x-mono">{i && list[i - 1][0] === g ? '' : g}</em>}</li>)}
@@ -332,7 +349,7 @@ const EpList = ({ list, group }) => (
 /* The ten nouns as a type index: point at one and its detail previews; open it and it becomes its endpoints. */
 function Nouns() {
   const [pv, setPv] = useState(0);
-  const over = (e) => { const li = e.target.closest?.('li'); if (li?.parentNode?.classList.contains('cm-index')) setPv([...li.parentNode.children].indexOf(li)); };
+  const over = (e: React.SyntheticEvent<HTMLDivElement>) => { const li = (e.target as Element).closest?.('li'); if (li?.parentElement?.classList.contains('cm-index')) setPv([...li.parentElement.children].indexOf(li)); };
   const [t, d, p] = NOUNS[pv];
   return (
     <section ref={useEnter('cover')} className="bz-sec cm-nouns" aria-labelledby="cm-nouns-h">
@@ -377,7 +394,7 @@ function Nouns() {
 }
 
 /* Beyond, the one dark room: type, and every group's matching endpoints answer at once. */
-function Mark({ text, q }) {
+function Mark({ text, q }: { text: string; q: string }) {
   const i = q ? text.toLowerCase().indexOf(q) : -1;
   if (i < 0) return brk(text);
   return <>{brk(text.slice(0, i), 'a')}<mark>{brk(text.slice(i, i + q.length), 'b')}</mark>{brk(text.slice(i + q.length), 'c')}</>;
@@ -387,7 +404,7 @@ const TRY = ['refund', 'cart', 'affiliate', 'store'];
 function Find() {
   const [q, setQ] = useState('refund');
   const s = q.trim().toLowerCase();
-  const res = GROUPS.map((g) => [g, s ? EP[g].filter(([p, d]) => (p + ' ' + d).toLowerCase().includes(s)) : EP[g]]);
+  const res = GROUPS.map((g): [string, Endpoint[]] => [g, s ? EP[g].filter(([p, d]) => (p + ' ' + d).toLowerCase().includes(s)) : EP[g]]);
   const n = res.reduce((a, [, l]) => a + l.length, 0);
   return (
     <section ref={useEnter('ripple')} className="bz-sec cm-find" data-room="dark" aria-labelledby="cm-find-h">
@@ -412,7 +429,7 @@ function Find() {
               <div className="cm-grp-h">
                 <b className="bz-fig">{l.length}</b>
                 <BizSheet label={g} title={`Hanzo ${g} API Endpoints`} btnClass="cm-grp-btn">
-                  <EpList list={EP[g].map(([p, d]) => [g, p, d])} />
+                  <EpList list={EP[g].map(([p, d]): Found => [g, p, d])} />
                 </BizSheet>
               </div>
               {s && l.length > 0 && (
@@ -429,7 +446,7 @@ function Find() {
   );
 }
 
-const INTEG = [
+const INTEG: [string, string[]][] = [
   ['Payment Gateways', ['Stripe', 'PayPal', 'Adyen', 'Square', 'Braintree', 'Klarna', 'Affirm', 'Apple Pay']],
   ['Marketing & CRM', ['Mailchimp', 'Klaviyo', 'HubSpot', 'Salesforce', 'Segment', 'Meta Pixel', 'Google Analytics', 'Customer.io']],
   ['Shipping & Fulfillment', ['ShipStation', 'ShipBob', 'EasyPost', 'FedEx', 'UPS', 'USPS', 'DHL', 'AfterShip']],
@@ -437,9 +454,13 @@ const INTEG = [
 ];
 
 /* The processor is a setting: switch it, and the checkout call underneath does not change. */
-function Money({ pick, setPick }) {
+interface MoneyProps {
+  pick: number;
+  setPick: React.Dispatch<React.SetStateAction<number>>;
+}
+function Money({ pick, setPick }: MoneyProps) {
   const g = INTEG[0][1];
-  const key = (e) => {
+  const key = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
     if (!d) return;
     e.preventDefault();
@@ -452,7 +473,7 @@ function Money({ pick, setPick }) {
       <div className="bz-wrap bz-grid">
         <div className="cm-money-l">
           {/* word-shuffle: each word starts where another one ends up, then swaps into place */}
-          <h2 id="cm-money-h" className="bz-headline cm-shuf">{[['Who', 2], ['takes', 3], ['the', 0], ['money', 1]].map(([w, to], i) => <span key={w} style={{ '--dx': (to - i) * 2.6 + 'em', '--i': i }}>{w}{i < 3 ? ' ' : ''}</span>)}</h2>
+          <h2 id="cm-money-h" className="bz-headline cm-shuf">{([['Who', 2], ['takes', 3], ['the', 0], ['money', 1]] as const).map(([w, to], i) => <span key={w} style={{ '--dx': (to - i) * 2.6 + 'em', '--i': i }}>{w}{i < 3 ? ' ' : ''}</span>)}</h2>
           <p className="bz-body">The processor is a setting, not an architecture. Each one gets its own webhook endpoint, so adding a second — or leaving the first — is a change here rather than a change in your checkout.</p>
         </div>
         <div className="cm-set bz-obj">
@@ -622,7 +643,7 @@ function useQuietAtClose() {
     const H = document.documentElement;
     const el = document.querySelector('[data-cta="commerce.close"]');
     if (!el) return;
-    let on = false, mine = false, t = 0;
+    let on = false, mine = false, t: ReturnType<typeof setTimeout> | undefined;
     const apply = () => { if (on) { H.dataset.ask = 'quiet'; mine = true; } else if (mine) { delete H.dataset.ask; mine = false; } };
     const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; apply(); });
     io.observe(el);

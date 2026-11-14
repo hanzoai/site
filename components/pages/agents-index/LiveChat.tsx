@@ -3,23 +3,36 @@
    on screen in real time, word by word, in the page's own words. Scripted: no request leaves the page.
    It asks the first question itself when it arrives; a chip asks the next (a tap on phones). The server HTML, JS off and
    reduced motion hold the whole conversation, every question answered; a chip then shows its answer. */
+import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCalm } from '../../ui';
 import './LiveChat.css';
 
-const top = (box, el) => el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop; // el's offset inside the log
+const top = (box: HTMLElement, el: Element) => el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop; // el's offset inside the log
 const STOP = Symbol('stop');
 const still = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export default function LiveChat({ items, head }) {
+/* one question of the conversation: n = characters of its answer shown while it types, wait = the dots before it */
+interface Turn {
+  id: string;
+  q: number;
+  n?: number;
+  wait?: boolean;
+}
+
+interface LiveChatProps {
+  items: string[][];
+  head: React.JSX.Element;
+}
+export default function LiveChat({ items, head }: LiveChatProps) {
   const calm = useCalm();
-  const all = useMemo(() => items.map((_, q) => ({ id: 'all' + q, q })), [items]);
-  const [thread, setThread] = useState(all);
+  const all = useMemo(() => items.map((_, q): Turn => ({ id: 'all' + q, q })), [items]);
+  const [thread, setThread] = useState<Turn[]>(all);
   const [cur, setCur] = useState(-1);
   const [live, setLive] = useState(false);
   const [done, setDone] = useState(() => new Set()); // the questions asked so far (their chips settle)
-  const log = useRef(null);
-  const win = useRef(null);
+  const log = useRef<HTMLDivElement>(null);
+  const win = useRef<HTMLDivElement>(null);
   const tok = useRef(0);
   const started = useRef(false);
 
@@ -28,7 +41,7 @@ export default function LiveChat({ items, head }) {
   useEffect(() => { if (!still()) setLive(true); }, []);
   useEffect(() => { if (calm && live) { tok.current++; setLive(false); setThread(all); } }, [calm, live, all]);
 
-  const ask = useCallback(async (q) => {
+  const ask = useCallback(async (q: number) => {
     setCur(q);
     const box = log.current;
     if (!live) {
@@ -41,16 +54,16 @@ export default function LiveChat({ items, head }) {
     const id = ++tok.current;
     const key = 'all' + q;
     const a = items[q][1];
-    const set = (f) => setThread((t) => t.map((m) => (m.id === key ? { ...m, ...f } : m)));
+    const set = (f: Partial<Turn>) => setThread((t) => t.map((m) => (m.id === key ? { ...m, ...f } : m)));
     // the answer in hand finishes at once; the window brings the asked question up, Hanzo types, then answers
     setThread((t) => t.map((m) => (m.id === key ? { ...m, n: 0, wait: true } : m.n !== undefined || m.wait ? { ...m, n: undefined, wait: false } : m)));
     requestAnimationFrame(() => { const el = box?.querySelector(`[data-q="${q}"]`); if (box && el) box.scrollTo({ top: top(box, el) - 12, behavior: calm ? 'auto' : 'smooth' }); });
-    const sleep = (ms) => new Promise((ok, no) => setTimeout(() => (tok.current === id ? ok() : no(STOP)), ms));
+    const sleep = (ms: number) => new Promise<void>((ok, no) => setTimeout(() => (tok.current === id ? ok() : no(STOP)), ms));
     try {
       await sleep(700);
       set({ wait: false });
       const re = /\S+\s*/g;
-      let m;
+      let m: RegExpExecArray | null;
       while ((m = re.exec(a))) {
         set({ n: m.index + m[0].length });
         await sleep(/[.:?]\s*$/.test(m[0]) ? 150 : /,\s*$/.test(m[0]) ? 70 : 36);
@@ -63,7 +76,7 @@ export default function LiveChat({ items, head }) {
   useEffect(() => {
     const el = win.current;
     if (!el || !live) return;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | undefined;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting || started.current) return;
       io.disconnect();
@@ -78,15 +91,15 @@ export default function LiveChat({ items, head }) {
   useEffect(() => {
     const box = log.current;
     const m = thread.find((x) => x.n !== undefined);
-    const el = m && box?.querySelector(`[data-q="${m.q}"]`);
+    const el = m && box?.querySelector<HTMLElement>(`[data-q="${m.q}"]`);
     if (box && el && live) { const end = top(box, el) + el.offsetHeight - box.clientHeight + 12; if (end > box.scrollTop) box.scrollTop = end; }
   }, [thread, live]);
 
   // phones: the chosen chip slides into the row's view (the row scrolls, never the page)
-  const chips = useRef(null);
+  const chips = useRef<HTMLUListElement>(null);
   useEffect(() => {
     const ul = chips.current, li = ul?.children[cur];
-    if (!ul || !li || ul.scrollWidth <= ul.clientWidth) return;
+    if (!ul || !(li instanceof HTMLElement) || ul.scrollWidth <= ul.clientWidth) return;
     ul.scrollTo({ left: Math.max(0, li.offsetLeft - 16), behavior: calm ? 'auto' : 'smooth' });
   }, [cur, calm]);
 

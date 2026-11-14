@@ -21,6 +21,8 @@
    Beyond: "What do you need?" - press the needs you have (unlimited zones, DNSSEC, role-based access, Edge DNS...) and
    the lightest plan whose own list covers them becomes the ink tile while the plans that fall short step back.
    Every word and link is Hanzo's; names and addresses in the zone are documentation examples (example.com, 192.0.2.0/24). */
+import type { MotionValue } from 'motion/react';
+import type { SceneProps } from './scene';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useTransform } from 'motion/react';
 import { EASE, useCalm } from '../../ui';
@@ -35,19 +37,19 @@ import './Dns.css';
 const PROVIDERS = ['Cloudflare', 'Route53', 'CoreDNS', 'GoDaddy', 'DigitalOcean'];
 
 /* [ref, live, calm]: live while the element is on screen and motion is allowed */
-function useSeen(amount = 0.25) {
-  const ref = useRef(null);
+function useSeen<T extends HTMLElement = HTMLDivElement>(amount = 0.25) {
+  const ref = useRef<T>(null);
   const seen = useInView(ref, { amount });
   const calm = useCalm();
-  return [ref, seen && !calm, calm];
+  return [ref, seen && !calm, calm] as const;
 }
 /* calls fn every ms while run is true: a chain of timeouts (no setInterval), the latest fn each time */
-function useTick(ms, run, fn) {
+function useTick(ms: number, run: boolean, fn: () => void) {
   const f = useRef(fn);
   f.current = fn;
   useEffect(() => {
     if (!run) return;
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | 0 = 0;
     const next = () => { t = setTimeout(() => { f.current(); next(); }, ms); };
     next();
     return () => clearTimeout(t);
@@ -105,12 +107,12 @@ function Zone() {
 /* ---------- chapters: one capability per screen ---------- */
 /* which of n steps a chapter is on: from the scroll through it on desktop (p); on phones it steps through once while
    seen and rests on the last step (no loop) */
-function useStepOf(p, n, on) {
+function useStepOf(p: MotionValue<number> | null | undefined, n: number, on: boolean) {
   const [k, setK] = useState(0);
   const calm = useCalm();
   useEffect(() => {
     if (!p) return;
-    const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n))));
+    const f = (v: number) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n))));
     f(p.get());
     return p.on('change', f);
   }, [p, n]);
@@ -125,7 +127,7 @@ function useStepOf(p, n, on) {
 }
 
 /* 01: five providers round one API, lit one by one */
-function ProvidersScene({ p, on }) {
+function ProvidersScene({ p, on }: SceneProps) {
   const k = useStepOf(p, PROVIDERS.length, on);
   const calm = useCalm();
   return (
@@ -150,7 +152,7 @@ function ProvidersScene({ p, on }) {
 
 /* 02: one query to every provider at once, merged into one view */
 const LAT = [0.42, 0.7, 0.3, 0.86, 0.56];
-function ParallelScene({ p, on }) {
+function ParallelScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 3, on);
   return (
     <div className="kn-obj dn-sc dn-sc-par" data-k={k}>
@@ -179,7 +181,7 @@ const CLI = [
   ['# Ask the control plane whether it is answering', 'hanzo dns health'],
 ];
 const CLI_CODE = CLI.map(([c, x]) => c + '\n' + x).join('\n');
-function CliScene({ p, on }) {
+function CliScene({ p, on }: SceneProps) {
   const k = useStepOf(p, CLI.length, on);
   return (
     <div className="dn-sc dn-sc-cli" data-k={k}>
@@ -189,7 +191,7 @@ function CliScene({ p, on }) {
 }
 
 /* 04: the REST API inside a pipeline */
-function ApiScene({ p, on }) {
+function ApiScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 4, on);
   const S = [['CI/CD', 'pipelines'], ['REST API', '/v1/dns'], ['Record Manager', 'Hanzo DNS Control Plane'], ['example.com', 'infrastructure code']];
   return (
@@ -203,7 +205,7 @@ function ApiScene({ p, on }) {
 }
 
 /* 05: DNSSEC, the signing key turning on its rotation schedule (scrubbed by the scroll; on phones it turns once) */
-function DnssecScene({ p, on }) {
+function DnssecScene({ p, on }: SceneProps) {
   const calm = useCalm();
   const zero = useMotionValue(0);
   const turn = useTransform(p || zero, [0, 1], [0, 300]);
@@ -226,7 +228,7 @@ function DnssecScene({ p, on }) {
 }
 
 /* 06: CoreDNS at the edge, Hanzo plugins stacked on it */
-function EdgeScene({ p, on }) {
+function EdgeScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 4, on);
   return (
     <div className="kn-obj dn-sc dn-sc-edge">
@@ -251,12 +253,15 @@ const FEATS = [
 ];
 
 /* ---------- the graphite room: where Hanzo DNS sits ---------- */
-const COLS = [
+const COLS: [string, string[]][] = [
   ['Your Applications', ['CI/CD', 'CLI', 'REST API']],
   ['Hanzo DNS Control Plane', ['Record Manager', 'DNSSEC Engine', 'Parallel Query', 'Audit Log']],
   ['DNS Providers', ['Cloudflare', 'Route53', 'CoreDNS', 'GoDaddy', 'DigitalOcean', '+ More']],
 ];
-const PauseIcon = ({ paused }) => (paused
+interface PauseIconProps {
+  paused: boolean;
+}
+const PauseIcon = ({ paused }: PauseIconProps) => (paused
   ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>);
 function Arch() {
@@ -299,7 +304,11 @@ const USES = [
 
 /* each use case is a scene the page already draws, small: the CLI writing records, the providers round one API, many
    zones lighting a few at a time. They play while the row is seen (reduced motion: their last frame). */
-function UseArt({ k, on }) {
+interface UseArtProps {
+  k: number;
+  on: boolean;
+}
+function UseArt({ k, on }: UseArtProps) {
   if (k === 0) return (
     <span className="dn-ua dn-ua-cli" data-on={on ? '' : undefined}>
       <span className="dn-ua-cmd"><b>$</b><i /></span>
@@ -321,8 +330,13 @@ function UseArt({ k, on }) {
     </span>
   );
 }
-function Use({ i, t, d }) {
-  const ref = useRef(null);
+interface UseProps {
+  i: number;
+  t: string;
+  d: string;
+}
+function Use({ i, t, d }: UseProps) {
+  const ref = useRef<HTMLLIElement>(null);
   const seen = useInView(ref, { amount: 0.6 });
   const calm = useCalm();
   return (
@@ -336,22 +350,23 @@ function Use({ i, t, d }) {
 }
 
 /* ---------- pricing, with Beyond: what do you need? ---------- */
-const PLANS = [
+/* name, what it is for, what it covers, the ask, whether it is the popular one, whether it bills monthly */
+const PLANS: [string, string, string[], string, boolean?, boolean?][] = [
   ['Starter', 'Usage-based pricing for getting started', ['Up to 5 zones', '2 DNS providers', 'CLI and API access', 'Volume-based query pricing'], 'Talk to us', false, false],
   ['Pro', 'For teams managing production DNS', ['Unlimited zones', 'All DNS providers', 'DNSSEC management', 'Audit logging', 'Priority support'], 'Talk to us', true, true],
   ['Team', 'For teams with shared DNS management', ['Everything in Pro', 'Team collaboration', 'Role-based access', 'Shared audit log', 'Priority support'], 'Talk to us', false, true],
   ['Enterprise', 'For organizations with advanced needs', ['Everything in Team', 'Edge DNS (CoreDNS)', 'Custom plugins', 'SLA guarantee', 'Dedicated support'], 'Contact Sales', false, true],
 ];
 // each need is a line from a plan's own list, word for word; the number is the first plan (index into PLANS) that carries it
-const NEEDS = [['Unlimited zones', 1], ['All DNS providers', 1], ['DNSSEC management', 1], ['Audit logging', 1], ['Team collaboration', 2], ['Role-based access', 2], ['Edge DNS (CoreDNS)', 3], ['Custom plugins', 3], ['SLA guarantee', 3]];
+const NEEDS: [string, number][] = [['Unlimited zones', 1], ['All DNS providers', 1], ['DNSSEC management', 1], ['Audit logging', 1], ['Team collaboration', 2], ['Role-based access', 2], ['Edge DNS (CoreDNS)', 3], ['Custom plugins', 3], ['SLA guarantee', 3]];
 const Down = () => <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 3v9M4.5 8.5 8 12l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 
 function Pricing() {
-  const [need, setNeed] = useState([]);
+  const [need, setNeed] = useState<number[]>([]);
   const fit = Math.max(0, ...need.map((i) => NEEDS[i][1]));
   // the ink tile (and the one solid ask among the plans): the plan that fits, or Hanzo's "Popular" one
   const ink = need.length ? fit : PLANS.findIndex((x) => x[4]);
-  const pick = (i) => setNeed((n) => (n.includes(i) ? n.filter((x) => x !== i) : [...n, i]));
+  const pick = (i: number) => setNeed((n) => (n.includes(i) ? n.filter((x) => x !== i) : [...n, i]));
   return (
     <section className="kn-sec dn-price">
       <div className="kn-wrap">
@@ -388,7 +403,7 @@ function Pricing() {
 }
 
 export default function Dns() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useArrivals(root);
   return (
     <main className="kn dn" ref={root}>

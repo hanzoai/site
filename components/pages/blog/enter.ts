@@ -6,19 +6,20 @@
    5 diagonal-wipe (the closing band).
    Start states are scoped to html.js (set before first paint whenever scripts run) and to no-preference motion, so the
    server HTML, JS-off and reduced-motion visitors always see everything. Markup is the same on server and client. */
+import type React from 'react';
 import { useEffect } from 'react';
 
-export function useEnter(root) {
+export function useEnter(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const host = root.current;
     if (!host || typeof IntersectionObserver === 'undefined') return;
-    const items = [...host.querySelectorAll('[data-enter]')];
+    const items = [...host.querySelectorAll<HTMLElement>('[data-enter]')];
     let px = innerWidth / 2;
-    const track = (e) => { px = e.clientX; };
+    const track = (e: PointerEvent) => { px = e.clientX; };
     addEventListener('pointermove', track, { passive: true });
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting) return;
-      const t = e.target;
+      const t = e.target as HTMLElement;
       // the list arrives leaning toward wherever the pointer last was
       if (t.dataset.enter === 'tilt') t.style.setProperty('--tx', ((px / innerWidth - 0.5) * 24).toFixed(1) + 'deg');
       t.classList.add('in');
@@ -30,13 +31,13 @@ export function useEnter(root) {
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const fine = matchMedia('(pointer: fine)').matches;
     const tilts = items.filter((t) => t.dataset.enter === 'tilt');
-    const lean = (e) => {
-      const row = e.target.closest?.('.xbl-row'); if (!row) return;
+    const lean = (e: PointerEvent) => {
+      const row = (e.target as Element).closest?.<HTMLElement>('.xbl-row'); if (!row) return;
       const r = row.getBoundingClientRect();
       row.style.setProperty('--hx', (((e.clientX - r.left) / r.width - 0.5) * 6).toFixed(2) + 'deg');
       row.style.setProperty('--hy', ((0.5 - (e.clientY - r.top) / r.height) * 6).toFixed(2) + 'deg');
     };
-    const settle = (e) => { const row = e.target.closest?.('.xbl-row'); if (row) { row.style.removeProperty('--hx'); row.style.removeProperty('--hy'); } };
+    const settle = (e: PointerEvent) => { const row = (e.target as Element).closest?.<HTMLElement>('.xbl-row'); if (row) { row.style.removeProperty('--hx'); row.style.removeProperty('--hy'); } };
     if (fine && !calm) tilts.forEach((t) => { t.addEventListener('pointermove', lean); t.addEventListener('pointerout', settle); });
     return () => {
       io.disconnect(); removeEventListener('pointermove', track);

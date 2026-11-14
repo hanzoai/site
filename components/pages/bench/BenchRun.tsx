@@ -26,6 +26,8 @@
    Ledger: deletes the crumb/kicker eyebrow over the title, the per-member accent, the invented "Source", "Table", "Chart",
    "Previous", "Next" labels (icons with names from content/ui-strings.json), and the duplicated readout rail.
    V2: 8/10 hero card on the first screen beside a display title and one magnetic ask, 0-hue ink system, chapters with Hanzo-worded sheets, sticky ask, sibling rail that drags, source room without invented labels */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { motion, LayoutGroup, AnimatePresence, useInView, useReducedMotion } from 'motion/react';
 import { EASE } from '../../ui';
@@ -43,12 +45,14 @@ import FamDrawer from '../../v2/FamDrawer';
 import FamNext from '../../v2/FamNext';
 import FamGrow from '../../v2/FamGrow';
 import FamRoom from '../../v2/FamRoom';
+import type { Branch, Child } from '../htmltree';
+import type { Block as Part, TextBlock, TagBlock, BarsChart, BenchDoc, Card, Chart, Peek, Section } from './types';
 import './bench.css';
 
-const SPRING = { type: 'spring', stiffness: 300, damping: 30 };
-const textOf = (n) => (n && typeof n === 'object' ? n.c.map(textOf).join('') : n || '');
-const measure = (s) => /^[~<>≈$]?\s*\d/.test(String(s).trim()) || /^[—–-]?$/.test(String(s).trim());
-const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
+const SPRING = { type: 'spring', stiffness: 300, damping: 30 } as const;
+const textOf = (n: Child | null | undefined): string => (n && typeof n === 'object' ? n.c.map(textOf).join('') : n || '');
+const measure = (s: string) => /^[~<>≈$]?\s*\d/.test(String(s).trim()) || /^[—–-]?$/.test(String(s).trim());
+const clean = (s?: string | null) => String(s || '').replace(/\s+/g, ' ').trim();
 
 /* the playhead: one index the card and every chapter read. It walks the rows once (a demo plays and rests,
    PLAN-COMPONENTS 2.9) and comes back to Hanzo's first row; the card's pause control stops or replays it. It ticks
@@ -56,19 +60,20 @@ const clean = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 /* The playhead only lights rows; the card's big figure stays on Hanzo's own row (the page's claim) unless the reader
    picks a row, and a pick stops the walk for good. */
 function makeWalk() {
-  let i = 0, n = 1, id = 0, hold = 0, left = 0, on = false, pin = -1;
-  const subs = new Set();
+  let i = 0, n = 1, hold = 0, left = 0, on = false, pin = -1;
+  let id: ReturnType<typeof setInterval> | undefined;
+  const subs = new Set<() => void>();
   const emit = () => subs.forEach((f) => f());
   const stop = () => { clearInterval(id); on = false; emit(); };
   return {
     get: () => i,
     pinned: () => pin,
     playing: () => on,
-    sub: (f) => { subs.add(f); return () => subs.delete(f); },
-    set: (k, pause = 0) => { i = k; if (pause) hold = Date.now() + pause; emit(); },
-    pick: (k) => { clearInterval(id); on = false; pin = k; i = k; emit(); },
+    sub: (f: () => void) => { subs.add(f); return () => subs.delete(f); },
+    set: (k: number, pause = 0) => { i = k; if (pause) hold = Date.now() + pause; emit(); },
+    pick: (k: number) => { clearInterval(id); on = false; pin = k; i = k; emit(); },
     stop,
-    start: (count) => {
+    start: (count: number) => {
       n = Math.max(1, count);
       clearInterval(id);
       if (n < 2) return () => {};
@@ -82,13 +87,14 @@ function makeWalk() {
     },
   };
 }
-const useAt = (walk) => useSyncExternalStore(walk.sub, walk.get, () => 0);
-const usePin = (walk) => useSyncExternalStore(walk.sub, walk.pinned, () => -1);
-const usePlaying = (walk) => useSyncExternalStore(walk.sub, walk.playing, () => false);
+type Walk = ReturnType<typeof makeWalk>;
+const useAt = (walk: Walk) => useSyncExternalStore(walk.sub, walk.get, () => 0);
+const usePin = (walk: Walk) => useSyncExternalStore(walk.sub, walk.pinned, () => -1);
+const usePlaying = (walk: Walk) => useSyncExternalStore(walk.sub, walk.playing, () => false);
 
 /* Hanzo's own row: the first row that names Hanzo or one of its models, else the table's first row */
 const HANZO = /hanzo|\bzen|enso|\bkai/i;
-function anchorOf(c) {
+function anchorOf(c: Chart | null) {
   if (!c) return 0;
   const labels = c.kind === 'trend' ? c.points.map((p) => p.who) : c.kind === 'one' ? [c.label] : c.rows.map((r) => r.label);
   const k = labels.findIndex((l) => HANZO.test(String(l)));
@@ -96,34 +102,37 @@ function anchorOf(c) {
 }
 
 /* what the card reads at row i: [row, figure, what the figure is]; on a multi-column table, the column in view */
-function readout(c, i, col = 0) {
+/* [row, figure, what the figure is] */
+type Reading = [row: string, figure: string, what: string];
+function readout(c: Chart | null, i: number, col = 0): Reading | null {
   if (!c) return null;
   if (c.kind === 'trend') { const p = c.points[i % c.points.length]; return [p.who, p.val, p.when]; }
   if (c.kind === 'versus') { const r = c.rows[i % c.rows.length]; return [r.label, r.a.s, c.heads[0]]; }
   if (c.kind === 'bars') { const r = c.rows[i % c.rows.length]; const k = Math.min(col, r.cells.length - 1); return [r.label, r.cells[k].s, c.cols[k].name]; }
   return [c.label, c.s, c.head];
 }
-const rowsOf = (c) => (!c ? 0 : c.kind === 'trend' ? c.points.length : c.kind === 'one' ? 1 : c.rows.length);
+const rowsOf = (c: Chart | null) => (!c ? 0 : c.kind === 'trend' ? c.points.length : c.kind === 'one' ? 1 : c.rows.length);
 
 /* bar widths: to scale from zero, or on a log scale when the figures span orders of magnitude; inv turns a width back
    into the figure it stands for (the race's counters read it) */
-function scaleOf(vals) {
-  const v = vals.filter((x) => x != null && x > 0);
+interface Scale { w: (x: number | null) => number; inv: (p: number) => number }
+function scaleOf(vals: (number | null)[]): Scale {
+  const v = vals.filter((x): x is number => x != null && x > 0);
   if (!v.length) return { w: () => 0, inv: () => 0 };
   const lo = Math.min(...v), hi = Math.max(...v);
   if (hi / lo > 50) {
     const a = Math.log10(lo), b = Math.log10(hi), k = b - a + 0.25;
-    return { w: (x) => (x > 0 ? (Math.log10(x) - a + 0.25) / k : 0), inv: (p) => (p > 0 ? Math.pow(10, p * k + a - 0.25) : 0) };
+    return { w: (x: number | null) => (x != null && x > 0 ? (Math.log10(x) - a + 0.25) / k : 0), inv: (p: number) => (p > 0 ? Math.pow(10, p * k + a - 0.25) : 0) };
   }
-  return { w: (x) => (x > 0 ? x / hi : 0), inv: (p) => p * hi };
+  return { w: (x: number | null) => (x != null && x > 0 ? x / hi : 0), inv: (p: number) => p * hi };
 }
-const scaler = (vals) => scaleOf(vals).w;
+const scaler = (vals: (number | null)[]) => scaleOf(vals).w;
 
 /* ---------- the race: every lane leaves the start together on one clock, at the true ratio of its figure, and stops
    on its own value; the counters on the lanes (and the card's big figure) count with it ---------- */
 const NUMRE = /\d[\d,]*(?:\.\d+)?/;
 const FS = ' '; // figure space: a counting number keeps its finished width (tabular numerals), nothing jumps
-function counted(s, f) {
+function counted(s: string, f: number) {
   const m = NUMRE.exec(s);
   if (!m || f >= 1) return s;
   const raw = m[0], n = parseFloat(raw.replace(/,/g, ''));
@@ -134,28 +143,31 @@ function counted(s, f) {
   if (t.length < raw.length) t = FS.repeat(raw.length - t.length) + t;
   return s.slice(0, m.index) + t + s.slice(m.index + raw.length);
 }
-const setText = (el, s) => { if (el && el.firstChild && el.firstChild.nodeType === 3 && el.firstChild.nodeValue !== s) el.firstChild.nodeValue = s; };
-const clock = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+const setText = (el: Element | null, s: string) => { if (el && el.firstChild && el.firstChild.nodeType === 3 && el.firstChild.nodeValue !== s) el.firstChild.nodeValue = s; };
+const clock = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
 /* the lanes of the card as it is drawn now: [element, final width, counter element, figure, fraction(p)] */
-function lanesOf(box, c, col) {
-  const out = [];
+interface Bare { i: number; bar: HTMLElement | null; w: number; frac: (p: number) => number; val?: undefined; s?: undefined }
+interface Counted { i: number; bar: HTMLElement | null; w: number; frac: (p: number) => number; val: HTMLElement | null; s: string }
+type Lane = Bare | Counted;
+function lanesOf(box: HTMLElement, c: Chart, col: number) {
+  const out: Lane[] = [];
   if (c.kind === 'bars') {
     const sc = scaleOf(c.rows.map((r) => r.cells[col].v));
-    box.querySelectorAll('.xbr-bars li').forEach((li, i) => {
+    box.querySelectorAll<HTMLElement>('.xbr-bars li').forEach((li, i) => {
       const cell = c.rows[i] && c.rows[i].cells[col];
       if (!cell) return;
       const w = Math.max(0.004, sc.w(cell.v));
-      out.push({ i, bar: li.querySelector('.xbr-bar'), w, val: li.querySelector('.xbr-v'), s: cell.s, frac: (p) => p });
+      out.push({ i, bar: li.querySelector<HTMLElement>('.xbr-bar'), w, val: li.querySelector<HTMLElement>('.xbr-v'), s: cell.s, frac: (p) => p });
     });
   } else if (c.kind === 'versus') {
-    box.querySelectorAll('.xbr-bars li').forEach((li, i) => {
+    box.querySelectorAll<HTMLElement>('.xbr-bars li').forEach((li, i) => {
       const r = c.rows[i];
       if (!r) return;
       const hi = Math.max(r.a.v, r.b.v) || 1;
-      [['a', '.ba', '.va'], ['b', '.bb', '.vb']].forEach(([k, b, v]) => {
+      ([['a', '.ba', '.va'], ['b', '.bb', '.vb']] satisfies ['a' | 'b', string, string][]).forEach(([k, b, v]) => {
         const w = Math.max(0.004, r[k].v / hi);
-        out.push({ i: k === 'a' ? i : -1, bar: li.querySelector('.xbr-bar' + b), w, val: li.querySelector('.xbr-v' + v), s: r[k].s, frac: (p) => p });
+        out.push({ i: k === 'a' ? i : -1, bar: li.querySelector<HTMLElement>('.xbr-bar' + b), w, val: li.querySelector<HTMLElement>('.xbr-v' + v), s: r[k].s, frac: (p) => p });
       });
     });
   } else if (c.kind === 'one') {
@@ -163,26 +175,26 @@ function lanesOf(box, c, col) {
     const n = m ? parseFloat(m[0].replace(/,/g, '')) : 1;
     const unit = Math.pow(10, Math.ceil(Math.log10(n || 1)));
     const w = Math.max(0.004, n / unit);
-    out.push({ i: 0, bar: box.querySelector('.xbr-one-k'), w, val: box.querySelector('.xbr-one-v'), s: c.s, frac: (p) => p });
-    out.push({ i: -1, bar: box.querySelector('.xbr-one-u'), w: 1, frac: () => 1 });
+    out.push({ i: 0, bar: box.querySelector<HTMLElement>('.xbr-one-k'), w, val: box.querySelector<HTMLElement>('.xbr-one-v'), s: c.s, frac: (p) => p });
+    out.push({ i: -1, bar: box.querySelector<HTMLElement>('.xbr-one-u'), w: 1, frac: () => 1 });
   }
   return out;
 }
 
 /* run the race once over the card in `box`; returns a function that stops it at the finish */
-function runRace(box, c, col, own, done) {
+function runRace(box: HTMLElement, c: Chart, col: number, own: number, done: () => void) {
   const trend = c.kind === 'trend';
   const D = trend ? 2300 : c.kind === 'one' ? 2400 : 2700;
   let raf = 0, t0 = 0, over = false;
-  const ro = () => { const els = box.querySelectorAll('.xbr-ro-v'); const el = els[els.length - 1]; return el && el.getAttribute('data-k') === String(own) ? el : null; };
-  let frame;
+  const ro = () => { const els = box.querySelectorAll<HTMLElement>('.xbr-ro-v'); const el = els[els.length - 1]; return el && el.getAttribute('data-k') === String(own) ? el : null; };
+  let frame: (p: number) => void;
   if (trend) {
     const n = c.points.length, span = c.hi - c.lo || 1;
-    const X = (i) => (n > 1 ? (i / (n - 1)) * 100 : 50), Y = (v) => ((v - c.lo) / span) * 100;
-    const lis = [...box.querySelectorAll('.xbr-tr-pts li')];
+    const X = (i: number) => (n > 1 ? (i / (n - 1)) * 100 : 50), Y = (v: number) => ((v - c.lo) / span) * 100;
+    const lis = [...box.querySelectorAll<HTMLElement>('.xbr-tr-pts li')];
     const path = box.querySelector('.xbr-tr-line path');
     // the revisions rise off the axis together along their dates; the line between them takes its shape as they climb
-    frame = (p) => {
+    frame = (p: number) => {
       const cur = c.points.map((pt) => c.lo + p * (pt.v - c.lo));
       lis.forEach((li, i) => { li.style.bottom = Y(cur[i]) + '%'; setText(li.querySelector('.xbr-tr-val'), counted(c.points[i].val, p)); });
       if (path) path.setAttribute('d', cur.map((v, i) => (i ? 'L' : 'M') + X(i).toFixed(2) + ' ' + (100 - Y(v)).toFixed(2)).join(' '));
@@ -191,12 +203,12 @@ function runRace(box, c, col, own, done) {
     };
   } else {
     const lanes = lanesOf(box, c, col);
-    frame = (p) => {
+    frame = (p: number) => {
       lanes.forEach((l) => {
-        if (l.bar) l.bar.style.setProperty('--xbr-r', p * l.w);
+        if (l.bar) l.bar.style.setProperty('--xbr-r', String(p * l.w));
         if (l.val) setText(l.val, counted(l.s, p >= 1 ? 1 : l.frac(p)));
       });
-      const r = ro(), o = lanes.find((l) => l.i === own);
+      const r = ro(), o = lanes.find((l): l is Counted => l.i === own && l.val !== undefined);
       if (r && o) setText(r, counted(o.s, p >= 1 ? 1 : o.frac(p)));
     };
   }
@@ -208,7 +220,7 @@ function runRace(box, c, col, own, done) {
     done();
   };
   frame(0);
-  const tick = (t) => {
+  const tick = (t: number) => {
     if (!t0) t0 = t;
     const k = Math.min(1, (t - t0) / D);
     frame(clock(k));
@@ -217,18 +229,23 @@ function runRace(box, c, col, own, done) {
   raf = requestAnimationFrame(tick);
   return end;
 }
-const isLog = (vals) => { const v = vals.filter((x) => x != null && x > 0); return v.length > 1 && Math.max(...v) / Math.min(...v) > 50; };
+const isLog = (vals: (number | null)[]) => { const v = vals.filter((x): x is number => x != null && x > 0); return v.length > 1 && Math.max(...v) / Math.min(...v) > 50; };
 
 /* the card's figure: Hanzo's own row, huge; a row the reader points at or picks takes its place. It rolls only when
    the reader changes the row or the column, never by itself. */
 /* the row being read: the one the reader points at, else the one they picked, else Hanzo's own */
-function useLook(c, walk) {
+function useLook(c: Chart | null, walk: Walk) {
   const pin = usePin(walk);
   const [hover, setHover] = useState(-1);
-  useEffect(() => { const f = (e) => setHover(e.detail); addEventListener('xbr-hover', f); return () => removeEventListener('xbr-hover', f); }, []);
+  useEffect(() => { const f = (e: Event) => { if (e instanceof CustomEvent) setHover(e.detail); }; addEventListener('xbr-hover', f); return () => removeEventListener('xbr-hover', f); }, []);
   return hover >= 0 ? hover : pin >= 0 ? pin : anchorOf(c);
 }
-function Readout({ c, walk, col = 0 }) {
+interface ReadoutProps {
+  c: Chart | null;
+  walk: Walk;
+  col?: number;
+}
+function Readout({ c, walk, col = 0 }: ReadoutProps) {
   const k = useLook(c, walk);
   const r = readout(c, k, col);
   if (!r) return null;
@@ -244,11 +261,17 @@ function Readout({ c, walk, col = 0 }) {
     </div>
   );
 }
-const hoverRow = (k) => dispatchEvent(new CustomEvent('xbr-hover', { detail: k }));
+const hoverRow = (k: number) => dispatchEvent(new CustomEvent('xbr-hover', { detail: k }));
 
 /* stop the race and the playhead, or run the race again (WCAG 2.2.2: anything that moves for more than 5 s can be
    stopped) */
-function Walker({ walk, racing, onStop, onReplay }) {
+interface WalkerProps {
+  walk: Walk;
+  racing: boolean;
+  onStop: () => void;
+  onReplay: () => void;
+}
+function Walker({ walk, racing, onStop, onReplay }: WalkerProps) {
   const walking = usePlaying(walk);
   const calm = useReducedMotion();
   const playing = racing || walking;
@@ -266,8 +289,13 @@ function Walker({ walk, racing, onStop, onReplay }) {
    true ratios of the page's figures (on a log scale where they span orders of magnitude), then settle on Hanzo's
    value; Kai's revisions climb off the axis together along their dates; a single figure counts up against its own
    unit. The replay control runs it again; reduced motion shows the finish. ---------- */
-function Turn({ c, walk, slug }) {
-  const box = useRef(null);
+interface TurnProps {
+  c: Chart;
+  walk: Walk;
+  slug: string;
+}
+function Turn({ c, walk, slug }: TurnProps) {
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const [chart, setChart] = useState(false);
@@ -275,21 +303,21 @@ function Turn({ c, walk, slug }) {
   const [armed, setArmed] = useState(false); // lanes held on the start line, then racing
   const [won, setWon] = useState(0);
   const turned = useRef(false);
-  const stopRace = useRef(null);
+  const stopRace = useRef<(() => void) | null>(null);
   const walkAt = useAt(walk);
   const pin = usePin(walk);
   const at = pin >= 0 ? pin : walkAt;
   const own = anchorOf(c);
   const n = rowsOf(c);
-  const timers = useRef([]);
-  const later = (f, ms) => timers.current.push(setTimeout(f, ms));
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const later = (f: () => void, ms: number) => timers.current.push(setTimeout(f, ms));
   useEffect(() => () => { timers.current.forEach(clearTimeout); stopRace.current && stopRace.current(); }, []);
   // the race: arm (lanes back to the start), let the card turn or the dots fall to the axis, then run on one clock
   const race = (k = col) => {
     stopRace.current && stopRace.current();
     timers.current.forEach(clearTimeout); timers.current = [];
     walk.stop();
-    if (box.current) box.current.querySelectorAll('.xbr-bar').forEach((b) => b.style.removeProperty('--xbr-r'));
+    if (box.current) box.current.querySelectorAll<HTMLElement>('.xbr-bar').forEach((b) => b.style.removeProperty('--xbr-r'));
     setChart(true);
     setArmed(true);
     later(() => {
@@ -314,7 +342,7 @@ function Turn({ c, walk, slug }) {
   const view = (
     <div className="xbr-turn-v" role="group" aria-label="View">
       <span className="xbr-turn-vb" aria-hidden="true" style={{ transform: chart ? 'translateX(100%)' : 'none' }} />
-      {[['table', false], ['chart', true]].map(([k, v]) => (
+      {([['table', false], ['chart', true]] satisfies [string, boolean][]).map(([k, v]) => (
         <button key={k} type="button" aria-pressed={chart === v} aria-label={ui(k)} onClick={() => { turned.current = true; if (v) { if (!chart) race(); } else { halt(); setChart(false); } }}>
           {v ? <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M3 16.5h14M5.5 14V9M10 14V5M14.5 14v-3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
             : <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>}
@@ -322,14 +350,14 @@ function Turn({ c, walk, slug }) {
       ))}
     </div>
   );
-  const pick = (i) => { hoverRow(-1); walk.pick(i); };
-  const near = (i) => (e) => { if (e.pointerType === 'mouse') hoverRow(i); };
+  const pick = (i: number) => { hoverRow(-1); walk.pick(i); };
+  const near = (i: number) => (e: React.PointerEvent) => { if (e.pointerType === 'mouse') hoverRow(i); };
   const away = () => hoverRow(-1);
 
-  let body = null;
+  let body: ReactNode = null;
   if (c.kind === 'trend') {
     const n = c.points.length, span = c.hi - c.lo || 1;
-    const X = (i) => (n > 1 ? (i / (n - 1)) * 100 : 50), Y = (v) => ((v - c.lo) / span) * 100;
+    const X = (i: number) => (n > 1 ? (i / (n - 1)) * 100 : 50), Y = (v: number) => ((v - c.lo) / span) * 100;
     const d = c.points.map((p, i) => (i ? 'L' : 'M') + X(i).toFixed(2) + ' ' + (100 - (armed ? 0 : Y(p.v))).toFixed(2)).join(' ');
     body = (
       <div className={'xbr-tr' + (chart ? ' chart' : '') + (armed ? ' racing' : '')}>
@@ -405,7 +433,7 @@ function Turn({ c, walk, slug }) {
   return (
     <figure ref={box} id={id} className={'xbr-turn v2f-obj' + (c.kind === 'one' ? ' one' : '')}>
       <figcaption className="xbr-turn-h">
-        <span className="v2f-kick">{c.metric || c.title}</span>
+        <span className="v2f-kick">{(c.kind === 'trend' && c.metric) || c.title}</span>
         {c.kind !== 'one' && <div className="xbr-turn-ctl"><Walker walk={walk} racing={armed} onStop={halt} onReplay={() => race(col)} />{view}</div>}
       </figcaption>
       <div className="xbr-turn-g">
@@ -419,11 +447,16 @@ function Turn({ c, walk, slug }) {
 /* ---------- a chapter whose table is the card's own: its figures are said once (on the card); the chapter shows what
    they are made of instead, and the table itself waits in the chapter's sheet ---------- */
 const OF = /^(\d[\d,]*) of (\d[\d,]*)$/;
-const num = (s) => parseInt(String(s).replace(/,/g, ''), 10);
+const num = (s: string) => parseInt(String(s).replace(/,/g, ''), 10);
 /* the column whose every cell reads "x of y" (gpqa: "184 of 198"): the questions themselves */
-const partsCol = (c) => (c && c.kind === 'bars' ? c.cols.findIndex((_, j) => c.rows.every((r) => OF.test(String(r.cells[j].s || '').trim()) && num(String(r.cells[j].s).split(' of ')[1]) <= 400)) : -1);
-function Parts({ c, walk, j }) {
-  const box = useRef(null);
+const partsCol = (c: Chart | null) => (c && c.kind === 'bars' ? c.cols.findIndex((_, j) => c.rows.every((r) => OF.test(String(r.cells[j].s || '').trim()) && num(String(r.cells[j].s).split(' of ')[1]) <= 400)) : -1);
+interface PartsProps {
+  c: BarsChart;
+  walk: Walk;
+  j: number;
+}
+function Parts({ c, walk, j }: PartsProps) {
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.35, once: true });
   const k = useLook(c, walk) % c.rows.length;
   const r = c.rows[k];
@@ -443,23 +476,23 @@ function Parts({ c, walk, j }) {
   );
 }
 /* every other card table: its rows as squares whose area is the figure, nested from one corner (Hanzo's row in ink) */
-function Scale({ c, walk }) {
-  const box = useRef(null);
+function Scale({ c, walk }: { c: Chart | null; walk: Walk }) {
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.35, once: true });
   const k = useLook(c, walk);
-  let sq = [], keys = null;
-  if (c.kind === 'versus') {
+  let sq: { s: number; t: string }[] = [], keys: [string, string][] | null = null;
+  if (c?.kind === 'versus') {
     const r = c.rows[k % c.rows.length];
     const hi = Math.max(r.a.v, r.b.v) || 1;
     sq = [{ s: Math.sqrt(r.b.v / hi), t: 'b' }, { s: Math.sqrt(r.a.v / hi), t: 'a' }];
     keys = [[c.heads[0], 'a'], [c.heads[1], 'b']];
-  } else if (c.kind === 'bars') {
+  } else if (c?.kind === 'bars') {
     const vals = c.rows.map((r) => r.cells[0].v);
     const w = scaler(vals);
     const own = anchorOf(c);
     sq = c.rows.map((r, i) => ({ s: Math.sqrt(Math.max(0, w(r.cells[0].v))), t: i === k % c.rows.length ? 'a' : i === own ? 'o' : 'n' })).sort((p, q) => q.s - p.s);
   } else return null;
-  const r = readout(c, k);
+  const r = readout(c, k)!;
   return (
     <div ref={box} className={'xbr-ch-v xbr-scale' + (c.kind === 'bars' ? ' xbr-bars-sq' : '')} data-seen={seen ? '' : undefined} aria-hidden="true">
       <div className="xbr-scale-b">
@@ -476,54 +509,57 @@ function Scale({ c, walk }) {
 /* a captured table, drawn in the new design; every cell stays, wide ones scroll inside their own frame */
 /* a captured table, as the kit's one DataTable: every cell as Hanzo wrote it (links included), the first column the row
    header, figures in tabular numerals; the caption is the section it belongs to (Hanzo's own heading) */
-const isEl = (k) => k && typeof k === 'object';
-function headsOf(n) {
-  const thead = n.c.find((k) => isEl(k) && k.t === 'thead');
-  const tr = thead && thead.c.find((r) => isEl(r) && r.t === 'tr');
+const isEl = (k: Child | null | undefined): k is Branch => !!k && typeof k === 'object';
+function headsOf(n: Branch) {
+  const thead = n.c.find((k): k is Branch => isEl(k) && k.t === 'thead');
+  const tr = thead && thead.c.find((r): r is Branch => isEl(r) && r.t === 'tr');
   return tr ? tr.c.filter(isEl).map((th) => clean(textOf(th))) : [];
 }
-function Table({ n, caption }) {
-  const rowsOf = (sec) => (sec ? sec.c.filter((r) => isEl(r) && r.t === 'tr') : []);
-  const thead = n.c.find((k) => isEl(k) && k.t === 'thead');
-  const tbody = n.c.find((k) => isEl(k) && k.t === 'tbody') || n;
+function Table({ n, caption }: { n: Branch; caption?: string }) {
+  const rowsOf = (sec: Branch | undefined) => (sec ? sec.c.filter((r): r is Branch => isEl(r) && r.t === 'tr') : []);
+  const thead = n.c.find((k): k is Branch => isEl(k) && k.t === 'thead');
+  const tbody = n.c.find((k): k is Branch => isEl(k) && k.t === 'tbody') || n;
   const head = rowsOf(thead)[0];
   const heads = head ? head.c.filter(isEl).map((th) => clean(textOf(th))) : [];
   const body = rowsOf(tbody).filter((r) => r.c.some((k) => isEl(k) && k.t === 'td'));
   const width = Math.max(heads.length, ...body.map((r) => r.c.filter(isEl).length));
-  const cols = Array.from({ length: width }, (_, j) => ({ key: 'c' + j, label: heads[j] || '', num: j > 0 && body.every((r) => { const c = r.c.filter(isEl)[j]; return !c || measure(clean(textOf(c)), true); }) }));
-  const rows = body.map((r) => Object.fromEntries(r.c.filter(isEl).map((td, j) => ['c' + j, <Nodes key={j} nodes={td.c} />])));
+  const cols = Array.from({ length: width }, (_, j) => ({ key: 'c' + j, label: heads[j] || '', num: j > 0 && body.every((r) => { const c = r.c.filter(isEl)[j]; return !c || measure(clean(textOf(c))); }) }));
+  const rows = body.map((r) => Object.fromEntries(r.c.filter(isEl).map((td, j): [string, ReactNode] => ['c' + j, <Nodes key={j} nodes={td.c} />])));
   return <DataTable caption={caption || heads.join(' · ')} cols={cols} rows={rows} className="xbr-dt" />;
 }
 
 /* a command, as the kit's one CodeBlock: copies exactly what it shows, the "$ " is drawn, not copied */
-function Cmd({ text }) {
+function Cmd({ text }: { text: string }) {
   return <CodeBlock code={text} prompt className="xbr-code" />;
 }
 
 /* one block of a section, as Hanzo wrote it */
-function Block({ b }) {
+const isText = (b: Part): b is TextBlock => b.t === 'text';
+function Block({ b }: { b: Part }) {
+  if (isText(b)) return <p className="xbr-small">{b.s}</p>;
   const n = b.n;
-  if (b.t === 'text') return <p className="xbr-small">{b.s}</p>;
   if (b.t === 'table') return <Table n={n} />;
   if (b.t === 'code' || b.t === 'pre') return <Cmd text={clean(textOf(n))} />;
   if (b.t === 'p') {
-    const els = n.c.filter((k) => k && typeof k === 'object');
+    const els = n.c.filter(isEl);
     if (els.length === 1 && els[0].t === 'code' && !clean(n.c.filter((k) => typeof k === 'string').join(''))) return <Cmd text={clean(textOf(els[0]))} />;
-    const day = n.c.length === 1 && typeof n.c[0] === 'string' && n.c[0].match(DAY);
-    if (day) return <p className="xbr-p">{n.c[0].slice(0, day.index + day[1].length)}<ListDay />{n.c[0].slice(day.index + day[0].length)}</p>;
+    const only = n.c.length === 1 ? n.c[0] : null;
+    const day = typeof only === 'string' && only.match(DAY);
+    if (day && typeof only === 'string') return <p className="xbr-p">{only.slice(0, (day.index ?? 0) + day[1].length)}<ListDay />{only.slice((day.index ?? 0) + day[0].length)}</p>;
     return <p className="xbr-p"><Nodes nodes={n.c} /></p>;
   }
   if (b.t === 'h3') return <h3 className="xbr-h3"><Nodes nodes={n.c} /></h3>;
   if (b.t === 'dl') return <Facts n={n} />;
-  if (b.t === 'a') return <A to={n.a.href} className="x-arrow xbr-a"><span><Nodes nodes={n.c} /></span></A>;
+  if (b.t === 'a') return <A to={n.a!.href} className="x-arrow xbr-a"><span><Nodes nodes={n.c} /></span></A>;
   if (b.t === 'span') return <span className="xbr-chip"><Nodes nodes={n.c} /></span>;
   return <div className="xbr-p"><Nodes nodes={[n]} /></div>;
 }
-function Blocks({ blocks }) {
+function Blocks({ blocks }: { blocks: Part[] }) {
   // runs of chips (Conditions) sit together as one list
-  const out = [];
+  const out: (Part | Part[])[] = [];
   blocks.forEach((b) => {
-    if (b.t === 'span' && out.length && Array.isArray(out[out.length - 1])) out[out.length - 1].push(b);
+    const last = out[out.length - 1];
+    if (b.t === 'span' && out.length && Array.isArray(last)) last.push(b);
     else out.push(b.t === 'span' ? [b] : b);
   });
   return out.map((b, i) => (Array.isArray(b)
@@ -532,9 +568,9 @@ function Blocks({ blocks }) {
 }
 
 /* the intro's facts: dataset, licence, introduced by, harness, our papers */
-function Facts({ n }) {
-  const rows = [];
-  n.c.forEach((k) => { if (k && k.t === 'dt') rows.push([k, null]); else if (k && k.t === 'dd' && rows.length) rows[rows.length - 1][1] = k; });
+function Facts({ n }: { n: Branch }) {
+  const rows: [Branch, Branch | null][] = [];
+  n.c.forEach((k) => { if (isEl(k) && k.t === 'dt') rows.push([k, null]); else if (isEl(k) && k.t === 'dd' && rows.length) rows[rows.length - 1][1] = k; });
   return (
     <dl className="xbr-facts">
       {rows.map(([dt, dd], i) => <div key={i}><dt><Nodes nodes={dt.c} /></dt><dd>{dd && <Nodes nodes={dd.c} />}</dd></div>)}
@@ -543,30 +579,32 @@ function Facts({ n }) {
 }
 
 /* the facts as a strip under the stage: its rules draw across, one after another, when it is reached */
-function FactsStrip({ n }) {
-  const box = useRef(null);
+function FactsStrip({ n }: { n: Branch }) {
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.4, once: true });
   return (
-    <section ref={box} className="xbr-facts-s" data-seen={seen ? '' : undefined} aria-label={clean(textOf(n.c.find((k) => k && k.t === 'dt')))}>
+    <section ref={box} className="xbr-facts-s" data-seen={seen ? '' : undefined} aria-label={clean(textOf(n.c.find((k) => isEl(k) && k.t === 'dt')))}>
       <div className="v2f-wrap"><Facts n={n} /></div>
     </section>
   );
 }
 
 /* ---------- beyond: ask the source ---------- */
-const ISO = (s) => (s ? s.replace('T', ' ').replace(/:\d\dZ$/, ' UTC') : '');
+const ISO = (s?: string) => (s ? s.replace('T', ' ').replace(/:\d\dZ$/, ' UTC') : '');
 const Play = () => <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M7 4.5v11l9-5.5z" fill="currentColor" /></svg>;
 const Braces = () => <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M7 3.5C5 3.5 5 5 5 6.5S4.5 9 3 10c1.5 1 2 2 2 3.5s0 3 2 3M13 3.5c2 0 2 1.5 2 3s.5 2.5 2 3.5c-1.5 1-2 2-2 3.5s0 3-2 3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>;
 /* the reply, typed out once it arrives (time, not scroll): the runs' ids appear a character at a time into text nodes */
-function Typed({ text, delay = 0 }) {
-  const ref = useRef(null);
+function Typed({ text, delay = 0 }: { text: string; delay?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const el = ref.current;
     if (!el || calm) return;
+    const node = el.firstChild;
+    if (!node) return;
     let i = 0, raf = 0, t0 = 0;
-    const tick = (t) => { if (!t0) t0 = t + delay; if (t >= t0) { i = Math.min(text.length, Math.floor((t - t0) / 14)); el.firstChild.nodeValue = text.slice(0, i); } if (i < text.length) raf = requestAnimationFrame(tick); };
-    el.firstChild.nodeValue = '';
+    const tick = (t: number) => { if (!t0) t0 = t + delay; if (t >= t0) { i = Math.min(text.length, Math.floor((t - t0) / 14)); node.nodeValue = text.slice(0, i); } if (i < text.length) raf = requestAnimationFrame(tick); };
+    node.nodeValue = '';
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [text, delay, calm]);
@@ -576,32 +614,46 @@ function Typed({ text, delay = 0 }) {
 /* the reply as the page already transcribes it: the run ids the page links, then its own figures. It types itself once
    when the room is reached (a demo that plays and rests); a press replays it and, only if api.hanzo.ai answers within
    6 s, swaps in the raw record. A failed read never shows: the transcribed reply stays (MASTER part 17). */
-function snapOf(doc) {
+function snapOf(doc: BenchDoc) {
   const c = doc.chart;
   const rows = !c ? [] : c.kind === 'trend' ? c.points.map((p) => [p.who, p.val]) : c.kind === 'one' ? [[c.label, c.s]]
     : c.kind === 'versus' ? c.rows.map((r) => [r.label, r.a.s]) : c.rows.map((r) => [r.label, r.cells[0].s]);
   return { ids: (doc.source && doc.source.ids) || [], rows: rows.slice(0, 8) };
 }
-function Source({ doc }) {
+/* a run record as api.hanzo.ai returns it */
+interface Run {
+  id: string;
+  split?: string;
+  system?: string;
+  questions?: number | null;
+  answered?: number;
+  commit?: string;
+  ended?: string;
+  completion?: string | number;
+  measures?: { category?: string; metric: string; value: string | number }[];
+}
+type Reply = { k: 'idle' | 'ok'; n: number } | { k: 'live'; n: number; runs: Run[] };
+function Source({ doc }: { doc: BenchDoc }) {
   const src = doc.source;
   const calm = useReducedMotion();
-  const room = useRef(null);
+  const room = useRef<HTMLDivElement>(null);
   const seen = useInView(room, { amount: 0.35, once: true });
   const snap = useMemo(() => snapOf(doc), [doc]);
-  const [st, setSt] = useState({ k: 'idle', n: 0 });
+  const [st, setSt] = useState<Reply>({ k: 'idle', n: 0 });
   useEffect(() => { if (seen && src) setSt((s) => (s.k === 'idle' ? { k: 'ok', n: 1 } : s)); }, [seen, src]);
   const ask = async () => {
+    if (!src) return;
     setSt((s) => ({ k: 'ok', n: s.n + 1 }));
     const ab = new AbortController();
     const t = setTimeout(() => ab.abort(), 6000);
     try {
       const r = await fetch(src.url, { headers: { accept: 'application/json' }, signal: ab.signal });
       if (!r.ok) return;
-      const j = await r.json();
-      const all = Array.isArray(j.data) ? j.data : [];
+      const j: { data?: unknown } = await r.json();
+      const all: Run[] = Array.isArray(j.data) ? j.data : [];
       // a benchmark-wide query answers with every run; keep the runs this page links, in its order
       const want = src.ids.length > 1 ? src.ids : null;
-      const runs = want ? want.map((id) => all.find((x) => x.id === id)).filter(Boolean) : all.slice(0, 6);
+      const runs = want ? want.map((id) => all.find((x) => x.id === id)).filter((x): x is Run => x !== undefined) : all.slice(0, 6);
       if (runs.length) setSt((s) => ({ k: 'live', n: s.n, runs }));
     } catch { /* unreachable: the transcribed reply stays */ } finally { clearTimeout(t); }
   };
@@ -644,7 +696,7 @@ function Source({ doc }) {
                     <li key={r.id} style={{ '--k': i }}>
                       <p className="xbr-run-id x-mono"><Typed text={r.id} delay={i * 120} /></p>
                       <dl className="xbr-run-k x-mono">
-                        {[['split', r.split], ['system', r.system], ['questions', r.questions != null ? r.answered + ' / ' + r.questions : ''], ['commit', (r.commit || '').slice(0, 10)], ['ended', ISO(r.ended)], ['completion', r.completion]].filter((x) => x[1]).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
+                        {([['split', r.split], ['system', r.system], ['questions', r.questions != null ? r.answered + ' / ' + r.questions : ''], ['commit', (r.commit || '').slice(0, 10)], ['ended', ISO(r.ended)], ['completion', r.completion]] satisfies [string, string | number | undefined][]).filter((x) => x[1]).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}
                       </dl>
                       <ul className="xbr-run-m x-mono">
                         {(r.measures || []).filter((m) => m.category === 'all' || !m.category).slice(0, 8).map((m, k) => <li key={k}><span>{m.metric}</span><b>{m.value}</b></li>)}
@@ -663,21 +715,27 @@ function Source({ doc }) {
 }
 
 /* the closing parts of a paper page: Build on Hanzo Cloud, previous / next, related, every other benchmark */
-const linkOf = (b) => b.t === 'a' && b.n.a && b.n.a.href;
-const isPager = (b) => (linkOf(b) && /^(Previous|Next)/.test(clean(textOf(b.n)))) || (linkOf(b) && b.n.a.href === '/benchmarks' && /Board/.test(textOf(b.n)));
+type LinkBlock = TagBlock & { n: { a: Record<string, string> } };
+const linkOf = (b: Part): b is LinkBlock => b.t === 'a' && !!b.n?.a?.href;
+const isPager = (b: Part): b is LinkBlock => (linkOf(b) && /^(Previous|Next)/.test(clean(textOf(b.n)))) || (linkOf(b) && b.n.a.href === '/benchmarks' && /Board/.test(textOf(b.n)));
 /* the page's one ask, in Hanzo's words: a paper page's own "Start on Hanzo Cloud", else the header's "Try Hanzo" */
-export function askOf(tail) {
-  const first = tail.find((b) => linkOf(b) && !isPager(b));
+export function askOf(tail: Part[]) {
+  const first = tail.find((b): b is LinkBlock => linkOf(b) && !isPager(b));
   return first ? { label: clean(textOf(first.n)), href: first.n.a.href } : { label: 'Try Hanzo', href: 'https://hanzo.ai/signup' };
 }
-function Tail({ tail, near, peek }) {
+interface TailProps {
+  tail: Part[];
+  near: Card[];
+  peek: Record<string, Peek>;
+}
+function Tail({ tail, near, peek }: TailProps) {
   const pager = tail.filter(isPager);
-  const ctaEnd = tail.findIndex((b) => pager.includes(b));
+  const ctaEnd = tail.findIndex((b) => isPager(b));
   const cta = tail.length ? tail.slice(0, ctaEnd < 0 ? 3 : ctaEnd) : [];
-  const rest = tail.slice((ctaEnd < 0 ? 3 : ctaEnd)).filter((b) => !pager.includes(b));
-  const parts = (n) => n.c.filter((k) => k && typeof k === 'object').map((k) => clean(textOf(k)));
-  const slugOf = (h) => h.split('/').filter(Boolean).pop();
-  const cards = (pager.length ? pager.map((b) => {
+  const rest = tail.slice((ctaEnd < 0 ? 3 : ctaEnd)).filter((b) => !isPager(b));
+  const parts = (n: Branch) => n.c.filter(isEl).map((k) => clean(textOf(k)));
+  const slugOf = (h: string) => h.split('/').filter(Boolean).pop() ?? '';
+  const cards = (pager.length ? pager.map((b): Card => {
     const p = parts(b.n);
     const dir = /^Previous/.test(p[0]) ? 'prev' : /^Next/.test(p[0]) ? 'next' : null;
     // the pager's own words stay in the page: "Previous"/"Next" ride as the card's hidden prefix, the title is the card
@@ -715,25 +773,31 @@ function Tail({ tail, near, peek }) {
 }
 
 /* a section's first words, its picture (its own first table) and the rest, for a chapter */
-function splitSection(s) {
+function splitSection(s: Section) {
   const lead = s.blocks.find((b) => b.t === 'p' || b.t === 'text');
-  const table = s.blocks.find((b) => b.t === 'table');
+  const table = s.blocks.find((b): b is TagBlock => b.t === 'table');
   const rest = s.blocks.filter((b) => b !== lead && b !== table);
   return { lead, table, rest };
 }
-const firstWords = (bs) => { for (const b of bs) { const t = clean(b.s || textOf(b.n)); if (t) return t; } return ''; };
+const firstWords = (bs: Part[]) => { for (const b of bs) { const t = clean(b.s || textOf(b.n)); if (t) return t; } return ''; };
 
-export default function BenchRun({ doc, near = [], peek = {} }) {
+interface BenchRunProps {
+  doc: BenchDoc;
+  near?: Card[];
+  peek?: Record<string, Peek>;
+}
+export default function BenchRun({ doc, near = [], peek = {} }: BenchRunProps) {
   const walk = useMemo(makeWalk, []);
   const calm = useReducedMotion();
   const c = doc.chart;
   useEffect(() => (calm || !c ? undefined : walk.start(rowsOf(c))), [walk, calm, c]);
-  const seedData = (c && c.kind === 'trend' ? c.points.map((p) => p.v) : c && c.kind === 'versus' ? c.rows.map((r) => r.a.v) : c && c.kind === 'bars' ? c.rows.map((r) => r.cells[0].v) : []).filter((v) => v != null).concat(doc.figures.map((f) => parseFloat(String(f).replace(/,/g, '')))).slice(0, 7);
-  const facts = doc.intro.find((b) => b.t === 'dl');
-  const introCode = doc.intro.find((b) => b.t === 'code');
+  const seeds: (number | null)[] = c && c.kind === 'trend' ? c.points.map((p) => p.v) : c && c.kind === 'versus' ? c.rows.map((r) => r.a.v) : c && c.kind === 'bars' ? c.rows.map((r) => r.cells[0].v) : [];
+  const seedData = seeds.filter((v): v is number => v != null).concat(doc.figures.map((f) => parseFloat(String(f).replace(/,/g, '')))).slice(0, 7);
+  const facts = doc.intro.find((b): b is TagBlock => b.t === 'dl');
+  const introCode = doc.intro.find((b): b is TagBlock => b.t === 'code');
   const introRest = doc.intro.filter((b) => b !== facts && b !== introCode);
   // short sections (Conditions, Hardware, Source, Reproduce) read as a spec list; long ones become chapters
-  const short = (s) => !s.blocks.some((b) => b.t === 'table') && s.blocks.reduce((k, b) => k + clean(textOf(b.n) || b.s).length, 0) < 420;
+  const short = (s: Section) => !s.blocks.some((b) => b.t === 'table') && s.blocks.reduce((k, b) => k + clean(textOf(b.n) || b.s).length, 0) < 420;
   const longs = doc.sections.filter((s) => !short(s));
   const specs = doc.sections.filter(short);
   const size = doc.title.length <= 16 ? '' : doc.title.length <= 30 ? ' mid' : ' small';
@@ -744,14 +808,14 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
   const pj = partsCol(c);
   // a chapter with no table gets a real object, not a decorative field: the card's runs as nested squares, unless a
   // chapter already draws them (the card's own table section, where no "x of y" column turns it into questions)
-  const isDup = (s) => { const t = splitSection(s).table; return !!(t && c && c.kind !== 'one' && c.kind !== 'trend' && c.title === s.title); };
+  const isDup = (s: Section) => { const t = splitSection(s).table; return !!(t && c && c.kind !== 'one' && c.kind !== 'trend' && c.title === s.title); };
   const scaleAt = c && (c.kind === 'bars' || c.kind === 'versus') && !(pj < 0 && longs.some(isDup)) ? longs.findIndex((s) => !splitSection(s).table) : -1;
-  const chapter = (s, k) => {
+  const chapter = (s: Section, k: number) => {
     const { lead: l, table, rest } = splitSection(s);
     // the card already reads this section's table: say its figures once there; the table itself goes in the sheet
     const dup = isDup(s);
     const sheet = dup ? s.blocks.filter((b) => b !== l) : rest;
-    const heads = dup ? headsOf(table.n).join(' · ') : '';
+    const heads = dup && table ? headsOf(table.n).join(' · ') : '';
     return {
       key: s.title,
       name: s.title,
@@ -762,7 +826,7 @@ export default function BenchRun({ doc, near = [], peek = {} }) {
           {!!sheet.length && <FamDrawer preview={firstWords(rest) || heads} title={s.title}><div className="xbr-sheet-b"><Blocks blocks={sheet} /></div></FamDrawer>}
         </div>
       ),
-      visual: dup ? (pj >= 0 ? <Parts c={c} walk={walk} j={pj} /> : <Scale c={c} walk={walk} />)
+      visual: dup ? (pj >= 0 && c?.kind === 'bars' ? <Parts c={c} walk={walk} j={pj} /> : <Scale c={c} walk={walk} />)
         : table ? (
           <div className="xbr-ch-v v2f-obj"><Table n={table.n} caption={s.title} /></div>
         ) : k === scaleAt ? <Scale c={c} walk={walk} /> : (

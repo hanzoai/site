@@ -20,6 +20,7 @@
    Beyond: "Delegate it yourself": choose where your grant sits and where you write the agent's, and see whether it can
    be delegated, with Hanzo's own sentence on why. Built only from the path rule on this page.
    Every word and link is Hanzo's; the demo's labels (caller, location, can, grant, target) are UI. */
+import type React from 'react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { motion, useDragControls, useReducedMotion } from 'motion/react';
 import { Count } from '../../ui';
@@ -35,26 +36,30 @@ import './Authz.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/projects/hanzoai/authz';
 const GH = 'https://github.com/hanzoai/authz';
-const MOVE = [0.4, 0, 0.2, 1];
+const MOVE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 
 /* Hanzo's example path, one level per row: each location prefixes the ones under it */
 const LOC = ['acme', 'acme/prod', 'acme/prod/web', 'the app or site under that'];
 /* callers, and the location their grant sits at */
-const WHO = [['org-wide member', 0], ['workspace member', 1], ['agent, delegated', 2], ['invite-only project', 3]];
+const WHO: [string, number][] = [['org-wide member', 0], ['workspace member', 1], ['agent, delegated', 2], ['invite-only project', 3]];
 /* the requests that arrive by themselves: [caller, target] */
-const SCRIPT = [[1, 2], [1, 0], [0, 3], [2, 1], [3, 3], [2, 2]];
+const SCRIPT: [number, number][] = [[1, 2], [1, 0], [0, 3], [2, 1], [3, 3], [2, 2]];
 const EVERY = 4600; // ms per request; the CSS fill in the request bar runs the same time
 const HOP = 0.4;
-const covers = (g, t) => t >= g;
+const covers = (g: number, t: number) => t >= g;
 
 /* where each node sits inside the graph, from layout (offsets ignore the Stage's scale) */
-function useGeo(box) {
-  const [geo, setGeo] = useState(null);
+/* a node's box inside the graph, and the graph's own */
+interface Rect { x: number; y: number; w: number; h: number }
+interface Geo { W: number; H: number; who: Rect[]; loc: Rect[] }
+
+function useGeo(box: React.RefObject<HTMLDivElement | null>) {
+  const [geo, setGeo] = useState<Geo | null>(null);
   useLayoutEffect(() => {
     const el = box.current;
     if (!el) return;
-    const pos = (n) => { let x = 0, y = 0, e = n; while (e && e !== el) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return { x, y, w: n.offsetWidth, h: n.offsetHeight }; };
-    const read = () => setGeo({ W: el.offsetWidth, H: el.offsetHeight, who: [...el.querySelectorAll('[data-who]')].map(pos), loc: [...el.querySelectorAll('[data-loc]')].map(pos) });
+    const pos = (n: HTMLElement) => { let x = 0, y = 0, e: HTMLElement | null = n; while (e && e !== el) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent as HTMLElement | null; /* an element's offset parent is one */ } return { x, y, w: n.offsetWidth, h: n.offsetHeight }; };
+    const read = () => setGeo({ W: el.offsetWidth, H: el.offsetHeight, who: [...el.querySelectorAll<HTMLElement>('[data-who]')].map(pos), loc: [...el.querySelectorAll<HTMLElement>('[data-loc]')].map(pos) });
     read();
     const ro = new ResizeObserver(read);
     ro.observe(el);
@@ -63,13 +68,13 @@ function useGeo(box) {
   }, [box]);
   return geo;
 }
-const whoPath = (G, i, g) => {
+const whoPath = (G: Geo, i: number, g: number) => {
   const a = G.who[i], b = G.loc[g];
   if (!a || !b) return '';
   const ax = a.x + a.w, ay = a.y + a.h / 2, bx = b.x, by = b.y + b.h / 2, dx = (bx - ax) / 2;
   return `M${ax} ${ay} C${ax + dx} ${ay} ${bx - dx} ${by} ${bx} ${by}`;
 };
-const treePath = (G, i, j) => {
+const treePath = (G: Geo, i: number, j: number) => {
   const a = G.loc[i], b = G.loc[j];
   if (!a || !b) return '';
   const x = a.x + Math.max(8, Math.min(24, b.x - a.x - 14));
@@ -84,25 +89,25 @@ function Check() {
   const [calm, setCalm] = useState(false); // read after mount, so the first render (delays) matches the server's HTML
   useEffect(() => setCalm(!!reduce), [reduce]);
   const paused = useStagePause();
-  const [mine, setMine] = useState(null);
+  const [mine, setMine] = useState<[number, number] | null>(null);
   const [step] = useSteps(SCRIPT.length, EVERY, live && !mine && !paused);
   const [w, t] = mine || SCRIPT[step];
   const g = WHO[w][1];
   const ok = covers(g, t);
   const walk = ok ? t - g : 0;
   const key = w + '-' + t;
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const G = useGeo(box);
-  const d = (i) => (calm ? 0 : i * HOP);
+  const d = (i: number) => (calm ? 0 : i * HOP);
   const land = d(3 + walk);
-  const lit = (i) => ok && i >= g && i <= t;
-  const pick = (nw, nt) => setMine([nw, nt]);
+  const lit = (i: number) => ok && i >= g && i <= t;
+  const pick = (nw: number, nt: number) => setMine([nw, nt]);
   /* the last answer stays on the panel, in the quiet grey, while the next check walks; the new one cuts in over it */
-  const prev = useRef({ key, ok, before: null });
+  const prev = useRef<{ key: string; ok: boolean; before: boolean | null }>({ key, ok, before: null });
   if (prev.current.key !== key) prev.current = { key, ok, before: prev.current.ok };
   const before = prev.current.before;
   /* hovering a request mark names it in the bar (pointer only; the bar's own label returns on leave) */
-  const [peek, setPeek] = useState(null);
+  const [peek, setPeek] = useState<number | null>(null);
   return (
     <div className="kn-obj az-obj" ref={ref}>
       <div className={'az-bar' + (mine ? ' held' : '')}>
@@ -212,7 +217,13 @@ const DEC = [
 const SEG = ['acme', 'prod', 'web', 'app or site'];
 
 /* Beyond: write a delegation yourself. Allowed when the agent's grant sits at or under yours. */
-function Pick({ label, at, set, id }) {
+interface PickProps {
+  label: string;
+  at: number;
+  set: React.Dispatch<React.SetStateAction<number>>;
+  id: string;
+}
+function Pick({ label, at, set, id }: PickProps) {
   const calm = useReducedMotion();
   return (
     <div className="az-pk" role="radiogroup" aria-label={label}>

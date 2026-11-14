@@ -3,11 +3,20 @@
    are filed only for a signed-in applicant, who is not on this site; a visitor's answers are the form response. */
 export const API = 'https://api.hanzo.ai';
 
+/* a question the program asks, and what the applicant answered (a line, a list of choices, or nothing) */
+export interface Ask { id: string }
+export type Answer = string | string[] | null | undefined;
+export type Answers = Record<string, Answer>;
+export interface Filing {
+  url: string;
+  body: { token: string; answers: { field: string; text: string }[]; hidden: { program: string; source: string } };
+}
+
 /* an answer as a line: a list of choices reads as one, a missing answer as nothing */
-export const said = (v) => (Array.isArray(v) ? v.join(', ') : (v ?? '').trim());
+export const said = (v: Answer) => (Array.isArray(v) ? v.join(', ') : (v ?? '').trim());
 
 /* the POST for a program's answers: its address and body, or null where nothing was answered (nothing is sent) */
-export function filing(program, asks, got, now = Date.now()) {
+export function filing(program: string, asks: Ask[], got: Answers, now = Date.now()): Filing | null {
   const answers = asks.filter((a) => said(got[a.id])).map((a) => ({ field: a.id, text: said(got[a.id]).slice(0, 2000) }));
   if (!answers.length) return null;
   return {

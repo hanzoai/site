@@ -39,7 +39,7 @@ const STEPS = [
   ['Pay as you go', 'Each call is billed from your balance at its model’s rate in GET /v1/pricing.'],
 ];
 const LAST = STEPS.length - 1;
-const n2 = (i) => String(i + 1).padStart(2, '0') + ' / 05';
+const n2 = (i: number) => String(i + 1).padStart(2, '0') + ' / 05';
 // the requests each step makes, exactly as Hanzo's agent prompt spells them out
 const CALLS = [
   ['GET https://hanzo.id/v1/iam/web3/nonce?chain=evm&address=<address>', 'POST https://hanzo.id/v1/iam/web3/verify', 'POST https://hanzo.id/v1/iam/oauth/token'],
@@ -48,7 +48,9 @@ const CALLS = [
   ['GET https://api.hanzo.ai/v1/billing/crypto/options', 'POST https://api.hanzo.ai/v1/billing/crypto/deposit {"chain":"base","token":"usdc","amountCents":2000}', 'GET https://api.hanzo.ai/v1/billing/crypto/deposit/<id>'],
   ['GET /v1/pricing'],
 ];
-const split = (c) => { const at = c.indexOf(' '); return [c.slice(0, at), c.slice(at + 1)]; };
+const split = (c: string) => { const at = c.indexOf(' '); return [c.slice(0, at), c.slice(at + 1)]; };
+// useDemo's clock: resolves after ms of time spent playing (see components/v2/AppDemo.tsx)
+type Sleep = (ms: number) => Promise<void>;
 const RM = '(prefers-reduced-motion: reduce)';
 const still = () => typeof matchMedia === 'function' && matchMedia(RM).matches;
 
@@ -59,7 +61,13 @@ const ICON = {
   play: <path d="M5 3.2v9.6L12.6 8 5 3.2Z" fill="currentColor" />,
   replay: <path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />,
 };
-function Ctl({ state, onClick, dark, className = '' }) {
+interface CtlProps {
+  state: string;
+  onClick: () => void;
+  dark?: boolean;
+  className?: string;
+}
+function Ctl({ state, onClick, dark, className = '' }: CtlProps) {
   const calm = useCalm();
   const done = state === 'done' || state === 'idle';
   const k = done ? 'replay' : state === 'pause' ? 'play' : 'pause';
@@ -71,7 +79,12 @@ function Ctl({ state, onClick, dark, className = '' }) {
 }
 
 /* A request line that writes itself: the whole line holds its place (so nothing grows), the written part lies over it. */
-function Req({ c, shown, caret }) {
+interface ReqProps {
+  c: string;
+  shown?: number;
+  caret: boolean;
+}
+function Req({ c, shown, caret }: ReqProps) {
   const [verb, body] = split(c);
   const full = shown === undefined;
   const part = full ? body : body.slice(0, shown);
@@ -84,17 +97,17 @@ function Req({ c, shown, caret }) {
   );
 }
 // what a step's request j shows: undefined = all of it, a number = that many characters, 0 = not yet
-const shownOf = (i, j, at, done, cur) => (i <= done || i < at ? undefined : i > at ? 0 : j < cur.j ? undefined : j > cur.j ? 0 : cur.k);
+const shownOf = (i: number, j: number, at: number, done: number, cur: { j: number; k: number; }) => (i <= done || i < at ? undefined : i > at ? 0 : j < cur.j ? undefined : j > cur.j ? 0 : cur.k);
 
 /* 1. The agent at work: the five steps as a numbered terminal. It starts at 01 / 05 and writes itself once, then rests.
    JS off shows the final frame (every step ticked, the last one open) by CSS. */
 function Run() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const [at, setAt] = useState(0);
   const [done, setDone] = useState(-1);
   const [cur, setCur] = useState({ j: 0, k: 0 });
   const from = useRef(0);
-  const demo = useDemo(box, async (sleep) => {
+  const demo = useDemo(box, async (sleep: Sleep) => {
     const f = from.current;
     from.current = 0;
     setDone(f - 1); setAt(f); setCur({ j: 0, k: 0 });
@@ -115,14 +128,14 @@ function Run() {
   // reduced motion: the final frame, at once
   useEffect(() => { if (demo.calm) { setAt(LAST); setDone(LAST); setCur({ j: 99, k: 0 }); } }, [demo.calm]);
   // the cursor sits where the run is writing, and rests blinking after the open step's last request
-  const caretAt = (i) => {
+  const caretAt = (i: number) => {
     const n = CALLS[i].length;
     if (i <= done || cur.j >= n) return n - 1;
     return cur.k > 0 ? cur.j : cur.j - 1;
   };
   // a step chosen by hand: the run goes on from there (the steps before it ticked, the ones after it not yet);
   // under reduced motion it simply opens that step
-  const pick = (i) => {
+  const pick = (i: number) => {
     if (demo.calm) { setAt(i); setDone(i - 1); setCur({ j: 99, k: 0 }); return; }
     from.current = i; setAt(i); setDone(i - 1); setCur({ j: 0, k: 0 }); demo.replay();
   };
@@ -193,11 +206,14 @@ function Hero() {
   );
 }
 
-const Docs = ({ id }) => <Cta to="https://docs.hanzo.ai/docs/agents" kind="link" id={id}>Read the docs</Cta>;
+interface DocsProps {
+  id: string;
+}
+const Docs = ({ id }: DocsProps) => <Cta to="https://docs.hanzo.ai/docs/agents" kind="link" id={id}>Read the docs</Cta>;
 
 /* 2. Install: Hanzo's first line writes itself once, large, with Copy; then the rest of its lines arrive as quiet rows. */
 function Install() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const lines = INSTALL.split('\n');
   const [first, ...rest] = lines;
   const [cmd0, note0] = first.split(/(?=#)/);
@@ -207,7 +223,7 @@ function Install() {
   const [writing, setWriting] = useState(false);
   // the server HTML has every line; a moving browser rewinds them before they are reached (this sits below the fold)
   useEffect(() => { if (!still()) { setK(0); setShown(0); } }, []);
-  useDemo(ref, async (sleep) => {
+  useDemo(ref, async (sleep: Sleep) => {
     setK(0); setShown(0); setWriting(true);
     await sleep(300);
     for (let i = 1; i <= cmd.length; i++) { setK(i); await sleep(i === 3 || i === 6 || i === 9 ? 140 : 70); }
@@ -255,7 +271,7 @@ function Install() {
 
 /* A small highlighter for the script: comments, strings, keywords, numbers. */
 const TOK = /(\/\/.*$)|('(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|\b(import|from|const|await|new|as)\b|\b(\d+)\b/g;
-function hl(line) {
+function hl(line: string) {
   const out = [];
   let last = 0;
   line.replace(TOK, (m, c, s, k, n, i) => {
@@ -274,15 +290,15 @@ function hl(line) {
 function Script() {
   const lines = useMemo(() => SCRIPT.split('\n'), []);
   const chunks = useMemo(() => {
-    const f = (p) => lines.findIndex((l) => l.startsWith(p));
+    const f = (p: string) => lines.findIndex((l) => l.startsWith(p));
     const s = [0, f('// 2.'), f('// 3.'), f('// 4.'), lines.length - 1];
     return s.map((a, i) => [a, i < LAST ? s[i + 1] - 1 : lines.length - 1]);
   }, [lines]);
   const calm = useCalm();
   const [view, setView] = useState(0);
-  const [band, setBand] = useState(null);
-  const code = useRef(null);
-  const rows = useRef([]);
+  const [band, setBand] = useState<{ y: number; h: number } | null>(null);
+  const code = useRef<HTMLDivElement>(null);
+  const rows = useRef<(HTMLSpanElement | null)[]>([]);
   const [va, vb] = chunks[view];
 
   useEffect(() => {
@@ -290,7 +306,7 @@ function Script() {
     if (a && b) setBand({ y: a.offsetTop, h: b.offsetTop + b.offsetHeight - a.offsetTop });
   }, [va, vb]);
 
-  const jump = (i) => {
+  const jump = (i: number) => {
     setView(i); setTyp({ j: 0, k: 0 });
     const c = code.current, row = rows.current[chunks[i][0]];
     if (c && row) c.scrollTo({ top: Math.max(0, row.offsetTop - 18), behavior: calm ? 'auto' : 'smooth' });
@@ -298,10 +314,10 @@ function Script() {
 
   // the scene follows the scroll (no pin): as the file passes, each step takes the stage in turn; a click holds a
   // step until the scroll crosses into the next one
-  const ed = useRef(null);
+  const ed = useRef<HTMLDivElement>(null);
   const last = useRef(0);
   const { scrollYProgress } = useScroll({ target: ed, offset: ['start 0.7', 'end 0.4'] });
-  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+  useMotionValueEvent(scrollYProgress, 'change', (p: number) => {
     const i = Math.max(0, Math.min(LAST, Math.floor(p * STEPS.length)));
     if (i !== last.current) { last.current = i; jump(i); }
   });
@@ -313,7 +329,7 @@ function Script() {
   useEffect(() => {
     if (!seen || calm) { if (calm) setTyp({ j: 99, k: 0 }); return; }
     const calls = CALLS[view];
-    let j = 0, k = 0, t;
+    let j = 0, k = 0, t: ReturnType<typeof setTimeout> | undefined;
     const tick = () => {
       k += 3;
       if (k >= split(calls[j])[1].length) { j += 1; k = 0; if (j >= calls.length) { setTyp({ j: 99, k: 0 }); return; } setTyp({ j, k }); t = setTimeout(tick, 160); return; }
@@ -325,10 +341,10 @@ function Script() {
   const typed = typ.j >= 99;
 
   // phones: the index is a row of pills; the chosen step slides into its view (the row scrolls, never the page)
-  const index = useRef(null);
+  const index = useRef<HTMLOListElement>(null);
   useEffect(() => {
     const ol = index.current, li = ol?.children[view];
-    if (!ol || !li || ol.scrollWidth <= ol.clientWidth) return;
+    if (!ol || !(li instanceof HTMLElement) || ol.scrollWidth <= ol.clientWidth) return;
     ol.scrollTo({ left: Math.max(0, li.offsetLeft - 16), behavior: calm ? 'auto' : 'smooth' });
   }, [view, calm]);
 
@@ -361,7 +377,7 @@ function Script() {
             <i className="agt-band" style={band ? { transform: `translateY(${band.y}px)`, height: band.h, opacity: 1 } : { opacity: 0 }} aria-hidden="true" />
             <pre><code>
               {lines.map((l, i) => (
-                <span key={i} ref={(el) => (rows.current[i] = el)} className={'agt-ln agx-v' + (i >= va && i <= vb ? ' cur' : '')} style={ven(i + 4, 26, 24)}>
+                <span key={i} ref={(el) => { rows.current[i] = el; }} className={'agt-ln agx-v' + (i >= va && i <= vb ? ' cur' : '')} style={ven(i + 4, 26, 24)}>
                   <span className="agt-num" aria-hidden="true">{i + 1}</span>
                   <span className="agt-src">{l ? hl(l) : ' '}</span>
                   {'\n'}
@@ -390,13 +406,13 @@ function Script() {
 /* 4. The agent prompt, as one block an agent keeps: it streams into its card once (with a pause), then rests whole in
    a scroll region you can read with the keys. Copy always copies all of it. */
 function Prompt() {
-  const paper = useRef(null);
-  const body = useRef(null);
-  const caret = useRef(null);
+  const paper = useRef<HTMLDivElement>(null);
+  const body = useRef<HTMLDivElement>(null);
+  const caret = useRef<HTMLElement>(null);
   const follow = useRef(true);
   const [n, setN] = useState(PROMPT.length);
   useEffect(() => { if (!still()) setN(0); }, []);
-  const demo = useDemo(paper, async (sleep) => {
+  const demo = useDemo(paper, async (sleep: Sleep) => {
     follow.current = true;
     setN(0);
     if (body.current) body.current.scrollTop = 0;
@@ -480,7 +496,7 @@ function Proof() {
 
 /* 7. The Band's live thing: the five steps tick once more beside the ask as it arrives. */
 function Ticks() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLSpanElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.8 });
   const [n, setN] = useState(STEPS.length);
   useEffect(() => { if (!still()) setN(0); }, []);

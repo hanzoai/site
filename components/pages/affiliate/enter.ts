@@ -7,9 +7,10 @@
    - The three below the fold hide their start state only under `.xaf-enter`, a class added here after mount (server
      and client render the same markup, and JS off shows everything). One IntersectionObserver plays each once at ~25%.
    - Reduced motion: no class, no listeners, every section in its final state. */
+import type React from 'react';
 import { useEffect } from 'react';
 
-export function useEntrances(root) {
+export function useEntrances(root: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const main = root.current;
     if (!main || typeof IntersectionObserver === 'undefined') return;
@@ -28,7 +29,7 @@ export function useEntrances(root) {
 
     // depth-parallax and focus-pull, scroll-linked once they have arrived: the hero's three layers drift at their own
     // speeds as you scroll, and the hero (now the background) goes soft while the link band rises into focus
-    const hero = main.querySelector('[data-enter="depth"]');
+    const hero = main.querySelector<HTMLElement>('[data-enter="depth"]');
     let raf = 0;
     const paint = () => {
       raf = 0;

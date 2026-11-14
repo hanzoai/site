@@ -15,6 +15,7 @@
    itself, with no words but Hanzo's.
    Motion: the one-question slide (state, pointer/touch/keys) + the link writing itself (time, idle) + the link leaning
    to the pointer (pointer) + the rule diagrams (idle) + five page-local entrances. Copy is Hanzo's only; 0 UI hues. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Copy, Mark, useTilt } from '../ui';
@@ -28,12 +29,12 @@ import './affiliate/enter.css';
 const MAIL = 'mailto:hello@hanzo.ai?subject=Affiliate%20application';
 const LINK = 'https://hanzo.ai/?aff=<code>';
 const RULES = ['first touch', 'one affiliate per org', 'never your own'];
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 
 /* The hero object, in its own section: the affiliate link itself. It writes itself once from the first paint, then
    rests with its code marked; it leans toward the pointer. */
 function Link() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { once: true, amount: 0.4 });
   const tilt = useTilt(2.5, 'rgba(255,255,255,0)');
   return (
@@ -91,7 +92,10 @@ function Hero() {
 }
 
 /* Each step's object: the request, the reply, the code, the org landing on the link. */
-function Stage({ at }) {
+interface StageProps {
+  at: number;
+}
+function Stage({ at }: StageProps) {
   const views = [
     <div className="xaf-s xaf-req" key="0">
       <div className="xaf-req-top"><span className="xaf-verb">POST</span><span>/v1/affiliate/apply</span></div>
@@ -132,16 +136,16 @@ function Flow() {
   const [at, setAt] = useState(0);
   const [max, setMax] = useState(0);
   const [ready, setReady] = useState(false);
-  const x0 = useRef(null);
+  const x0 = useRef<number | null | null>(null);
   const n = STEPS.length;
   useEffect(() => { setReady(true); }, []);
-  const go = (i) => { const j = Math.max(0, Math.min(n - 1, i)); setAt(j); setMax((m) => Math.max(m, j)); };
-  const keys = (e) => {
+  const go = (i: number) => { const j = Math.max(0, Math.min(n - 1, i)); setAt(j); setMax((m) => Math.max(m, j)); };
+  const keys = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); go(at + 1); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); go(at - 1); }
   };
-  const down = (e) => { x0.current = e.clientX; };
-  const up = (e) => {
+  const down = (e: React.PointerEvent<HTMLDivElement>) => { x0.current = e.clientX; };
+  const up = (e: React.PointerEvent<HTMLDivElement>) => {
     if (x0.current == null) return;
     const dx = e.clientX - x0.current; x0.current = null;
     if (Math.abs(dx) > 48) go(at + (dx < 0 ? 1 : -1));
@@ -188,9 +192,13 @@ function Flow() {
 }
 
 /* The rule, drawn: each of Hanzo's three rules as a diagram with no words but the link. They play themselves. */
-function Diagram({ k, play }) {
-  const T = { duration: 1.1, ease: [0.76, 0, 0.24, 1] };
-  const run = (d) => (play ? { pathLength: 1, opacity: 1, transition: { ...T, delay: d } } : { pathLength: 1, opacity: 1, transition: { duration: 0 } });
+interface DiagramProps {
+  k: number;
+  play: boolean;
+}
+function Diagram({ k, play }: DiagramProps) {
+  const T = { duration: 1.1, ease: [0.76, 0, 0.24, 1] as [number, number, number, number] };
+  const run = (d: number) => (play ? { pathLength: 1, opacity: 1, transition: { ...T, delay: d } } : { pathLength: 1, opacity: 1, transition: { duration: 0 } });
   const from = { pathLength: 0, opacity: 0 };
   return (
     <svg className="xaf-dia" viewBox="0 0 520 300" aria-hidden="true">
@@ -222,7 +230,7 @@ function Diagram({ k, play }) {
 function Rule() {
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
-  const box = useRef(null);
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.4 });
   const calm = useReducedMotion();
   useEffect(() => {
@@ -264,7 +272,7 @@ function Close() {
 }
 
 export default function Affiliate() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useEntrances(root);
   return (
     <main className="xp xaf" data-ask-name="Affiliates" ref={root}>

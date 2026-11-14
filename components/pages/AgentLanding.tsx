@@ -12,12 +12,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useInView } from 'motion/react';
 import { Rise } from '../ui';
 import { A, Cta, CodeBlock } from '../kit';
+import type { AgentLandingData } from './agentLandingData';
 import './AgentLanding.css';
 
 const READ = 3200; // how long each turn holds the light, ms
 
-function Console({ c }) {
-  const box = useRef(null);
+function Console({ c }: { c: AgentLandingData['fold']['console'] }) {
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.5 });
   const [step, setStep] = useState(0);
   const [held, setHeld] = useState(false);
@@ -52,8 +53,12 @@ function Console({ c }) {
   );
 }
 
-function Head({ h, level = 2 }) {
-  const H = 'h' + level;
+interface HeadProps {
+  h: { eyebrow: string; title: string; lede: string };
+  level?: 1 | 2 | 3 | 4 | 5 | 6;
+}
+function Head({ h, level = 2 }: HeadProps) {
+  const H = `h${level}` as const;
   return (
     <Rise className="xal-head">
       {h.eyebrow && <p className="x-kick">{h.eyebrow}</p>}
@@ -63,7 +68,7 @@ function Head({ h, level = 2 }) {
   );
 }
 
-export default function AgentLanding({ d }) {
+export default function AgentLanding({ d }: { d: AgentLandingData }) {
   const { fold, paste, how, caps, sdk, close, crew, get } = d;
   return (
     <div className="xal">

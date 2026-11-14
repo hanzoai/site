@@ -7,8 +7,8 @@
    Movement is transform, clip-path and opacity only (CSS keyframes in Commerce.css under [data-enter]). */
 import { useEffect, useRef } from 'react';
 
-export function useEnter(kind) {
-  const ref = useRef(null);
+export function useEnter<T extends HTMLElement = HTMLElement>(kind: string) {
+  const ref = useRef<T>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;

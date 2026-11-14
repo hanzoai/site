@@ -6,8 +6,8 @@
 import { useEffect, useRef } from 'react';
 import './enter.css';
 
-export function useEnter(margin = '0px 0px -18% 0px') {
-  const ref = useRef(null);
+export function useEnter<T extends HTMLElement = HTMLDivElement>(margin = '0px 0px -18% 0px') {
+  const ref = useRef<T>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -19,7 +19,11 @@ export function useEnter(margin = '0px 0px -18% 0px') {
   return ref;
 }
 
-export function Roll({ text, className = '' }) {
+interface RollProps {
+  text: string;
+  className?: string;
+}
+export function Roll({ text, className = '' }: RollProps) {
   let k = 0;
   return (
     <b className={'xce-roll ' + className}>

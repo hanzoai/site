@@ -11,6 +11,7 @@
    Motion: signature = the compare slider (cli/Compare.jsx); the hero terminal still types Hanzo's own session (approved, kept).
    Entrances: cli/enter.jsx + enter.css. Supporting: the tree's gliding selection (layoutId, 300 ms), the added script block and
    claim windows that wipe in (clip), the script line count roll. Colour: Hanzo's deck greys only. Every word is Hanzo's. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { EASE, Copy, Mark } from '../ui';
@@ -18,6 +19,7 @@ import { A, Cta } from '../kit';
 import { play } from '../../lib/sound';
 import Lines from './cli/Cut';
 import Compare from './cli/Compare';
+import type { Tree } from './cli/Compare';
 import { Enter, Trail } from './cli/enter';
 import './cli/enter.css';
 import '../v2/AppType.css';
@@ -31,12 +33,17 @@ const INSTALL = 'curl -fsSL https://hanzo.sh | sh';
 
 /* ---------- the hero: the first screen is one terminal; Hanzo's example session types and streams in it ----------
    Every line keeps its full text as an invisible ghost, so a line being typed never changes its height. */
-function Session({ onDone, paused, runKey }) {
-  const box = useRef(null);
+interface SessionProps {
+  onDone: React.Dispatch<React.SetStateAction<boolean>>;
+  paused: boolean;
+  runKey: number;
+}
+function Session({ onDone, paused, runKey }: SessionProps) {
+  const box = useRef<HTMLUListElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
-  const rows = useRef([]);
-  const spin = useRef(null);
+  const rows = useRef<(HTMLSpanElement | null)[]>([]);
+  const spin = useRef<HTMLSpanElement>(null);
   const hold = useRef(paused);
   hold.current = paused;
   const ran = useRef(-1);
@@ -49,9 +56,9 @@ function Session({ onDone, paused, runKey }) {
     if (calm) { fill(); setN(SESSION.length + 1); setLive(true); return; }
     if (!seen || ran.current === runKey) return;
     ran.current = runKey;
-    let alive = true, t = 0;
-    const sleep = (ms) => new Promise((r) => { t = setTimeout(r, ms); });
-    const wait = async (ms) => { await sleep(ms); while (alive && hold.current) await sleep(150); };
+    let alive = true, t: ReturnType<typeof setTimeout> | 0 = 0;
+    const sleep = (ms: number) => new Promise((r) => { t = setTimeout(r, ms); });
+    const wait = async (ms: number) => { await sleep(ms); while (alive && hold.current) await sleep(150); };
     const run = async () => {
       rows.current.forEach((el, i) => { if (el && i < 2) el.textContent = ''; });
       setN(1);
@@ -61,7 +68,7 @@ function Session({ onDone, paused, runKey }) {
       else await wait(350);
       for (let i = 0; i < SESSION.length && alive; i++) {
         setN(i + 1);
-        const el = rows.current[i], txt = SESSION[i][1];
+        const el = rows.current[i]!, txt = SESSION[i][1];
         if (i < 2) {
           await wait(i ? 380 : 60);
           for (let k = 1; k <= txt.length && alive; k++) { el.textContent = txt.slice(0, k); await wait(i ? 38 + (k % 5) * 6 : 95); }
@@ -82,7 +89,7 @@ function Session({ onDone, paused, runKey }) {
           <span className="cli-p" aria-hidden={i > 1 ? 'true' : undefined}>{p}</span>
           <span className="cli-tx">
             <span className="cli-ghost" aria-hidden="true">{t}</span>
-            <span className="cli-typed"><span ref={(el) => (rows.current[i] = el)}>{t}</span>{((i === n - 1 && i < 2) || (i === SESSION.length - 1 && n > SESSION.length)) && <span className="cli-caret" aria-hidden="true" />}</span>
+            <span className="cli-typed"><span ref={(el) => { rows.current[i] = el; }}>{t}</span>{((i === n - 1 && i < 2) || (i === SESSION.length - 1 && n > SESSION.length)) && <span className="cli-caret" aria-hidden="true" />}</span>
           </span>
           {i === 2 && <span className={'cli-spin' + (n === 3 ? ' on' : '')} ref={spin} aria-hidden="true">{SPIN[0]}</span>}
         </li>
@@ -167,7 +174,7 @@ function Paste() {
 }
 
 /* ---------- the resource tree: open a resource like a folder; the command it prints fills the pane ---------- */
-const TREE = [
+const TREE: Tree = [
   ['auth', [['login', 'hanzo auth login', 'Sign in. Interactive picker, or name a provider.'], ['show', 'hanzo auth show', 'hanzo auth show says which one is answering right now.']]],
   ['usage', [['summary', 'hanzo usage summary', 'What did that cost, and what is left']]],
   ['billing', [['balance', 'hanzo billing balance', 'What did that cost, and what is left']]],
@@ -180,15 +187,19 @@ const TREE = [
 ];
 const TOUR = [[0, 0], [5, 0], [3, 0], [6, 0], [4, 0], [8, 1], [1, 0]];
 
-function Print({ cmd, desc }) {
-  const ref = useRef(null);
+interface PrintProps {
+  cmd: string;
+  desc: string;
+}
+function Print({ cmd, desc }: PrintProps) {
+  const ref = useRef<HTMLSpanElement>(null);
   const calm = useReducedMotion();
   const first = useRef(cmd); // the first command is the server frame: its description is in the HTML at full opacity
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     if (calm) { el.textContent = cmd; return; }
-    let i = 0, t = 0;
+    let i = 0, t: ReturnType<typeof setTimeout> | 0 = 0;
     el.textContent = '';
     const step = () => { el.textContent = cmd.slice(0, ++i); if (i < cmd.length) t = setTimeout(step, 26); };
     t = setTimeout(step, 90);
@@ -214,13 +225,13 @@ function Tree() {
   // fixed row slots: every folder starts open, so the self-running tour never opens or collapses a row (no reflow, no layout shift);
   // it only moves the selection and scrolls the tree's own pane to it. A press still opens and closes folders by hand.
   const [open, setOpen] = useState(() => new Set(TREE.map((_, r) => r)));
-  const pane = useRef(null);
+  const pane = useRef<HTMLUListElement>(null);
   const [over, setOver] = useState(false);
   const [sel, setSel] = useState([0, 0]);
   const [mine, setMine] = useState(false);
   const [k, setK] = useState(0);
   const [paused, setPaused] = useState(false);
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.35 });
   const rm = useReducedMotion();
   const [up, setUp] = useState(false);
@@ -232,13 +243,13 @@ function Tree() {
     const t = setTimeout(() => {
       const nk = k + 1, [r, c] = TOUR[nk];
       setK(nk); setSel([r, c]);
-      const ul = pane.current, li = ul?.querySelectorAll(':scope > li')[r];
+      const ul = pane.current, li = ul?.querySelectorAll<HTMLElement>(':scope > li')[r];
       if (ul && li) ul.scrollTo({ top: Math.max(0, li.offsetTop - 12), behavior: 'smooth' }); // the pane scrolls, never the page
     }, 3800);
     return () => clearTimeout(t);
   }, [k, touring, seen, paused, over]);
-  const toggle = (r) => { setMine(true); setOpen((o) => { const s = new Set(o); s.has(r) ? s.delete(r) : s.add(r); return s; }); };
-  const pick = (r, c) => { setMine(true); setSel([r, c]); };
+  const toggle = (r: number) => { setMine(true); setOpen((o) => { const s = new Set(o); s.has(r) ? s.delete(r) : s.add(r); return s; }); };
+  const pick = (r: number, c: number) => { setMine(true); setSel([r, c]); };
   const [res, cmds] = TREE[sel[0]];
   const [leaf, cmd, desc] = cmds[sel[1]];
   return (
@@ -300,8 +311,14 @@ const WHAT = [
   ['hanzo api', 'No raw-path escape hatch', 'There is no hanzo api verb and no URL to hand-write. Every cloud capability arrives as a typed subcommand, which is what keeps the CLI and the API from disagreeing.'],
 ];
 
-function Claim({ c, t, d, i }) {
-  const ref = useRef(null);
+interface ClaimProps {
+  c: string;
+  t: string;
+  d: string;
+  i: number;
+}
+function Claim({ c, t, d, i }: ClaimProps) {
+  const ref = useRef<HTMLLIElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   return (
     <li ref={ref} className={(i === 2 ? 'no ' : '') + (seen ? 'in' : '')} style={{ '--n': c.length + 2 }}>
@@ -349,13 +366,13 @@ const CAPS = [
 ];
 
 function Caps() {
-  const rail = useRef(null);
+  const rail = useRef<HTMLUListElement>(null);
   const [edge, setEdge] = useState([true, false]);
   const onScroll = () => {
     const el = rail.current; if (!el) return;
     setEdge([el.scrollLeft < 8, el.scrollLeft + el.clientWidth > el.scrollWidth - 8]);
   };
-  const go = (d) => {
+  const go = (d: number) => {
     const el = rail.current; if (!el) return;
     const card = el.querySelector('li');
     el.scrollBy({ left: d * ((card?.offsetWidth || 360) + 20), behavior: 'smooth' });
@@ -409,7 +426,13 @@ hanzo billing balance`;
 const BASE = SCRIPT.split('\n\n');
 const EXTRA = CAPS.filter(([c]) => c.startsWith('hanzo ')).map(([c, t]) => ['# ' + t + '\n' + c, t, c]);
 
-function Block({ b, i, added, last }) {
+interface BlockProps {
+  b: string;
+  i: number;
+  added: boolean;
+  last: boolean;
+}
+function Block({ b, i, added, last }: BlockProps) {
   const [c, ...lines] = b.split('\n');
   const calm = useReducedMotion();
   const body = (
@@ -429,34 +452,38 @@ function Block({ b, i, added, last }) {
 
 /* the script's line count rolls to its value: from 0 as the window arrives (in step with the blocks wiping in), then from the old
    count to the new one each time a block is added or removed. The true value is in the HTML; tabular numerals, fixed ch width. */
-function Roll({ value, go }) {
-  const ref = useRef(null);
-  const from = useRef(null);
+interface RollProps {
+  value: number;
+  go: boolean;
+}
+function Roll({ value, go }: RollProps) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const from = useRef<number | null>(null);
   const calm = useReducedMotion();
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (calm || !go) { el.textContent = value; if (go) from.current = value; return; }
+    if (calm || !go) { el.textContent = String(value); if (go) from.current = value; return; }
     const a = from.current ?? 0, b = value, t0 = performance.now(), dur = a === 0 ? 900 : 400;
     from.current = b;
     let raf = 0;
-    const tick = (t) => {
+    const tick = (t: number) => {
       const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(a + (b - a) * e);
+      el.textContent = String(Math.round(a + (b - a) * e));
       if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
-    return () => { cancelAnimationFrame(raf); el.textContent = b; };
+    return () => { cancelAnimationFrame(raf); el.textContent = String(b); };
   }, [value, go, calm]);
   return <span ref={ref} className="cli-roll">{value}</span>;
 }
 
 function Start() {
-  const [add, setAdd] = useState([]);
+  const [add, setAdd] = useState<number[]>([]);
   const blocks = [...BASE, ...add.map((i) => EXTRA[i][0])];
-  const flip = (i) => setAdd((a) => (a.includes(i) ? a.filter((x) => x !== i) : [...a, i]));
+  const flip = (i: number) => setAdd((a) => (a.includes(i) ? a.filter((x) => x !== i) : [...a, i]));
   const lines = blocks.join('\n\n').split('\n').length;
-  const win = useRef(null);
+  const win = useRef<HTMLDivElement>(null);
   const arrived = useInView(win, { once: true, amount: 0.3 });
   return (
     // entrance 4, curtain-rise: the builder and its script rise from below behind a clip
@@ -533,7 +560,7 @@ const PLACES = ['A local repo', 'a CI job', 'a machine you sshed into', 'a fix a
 
 function Band() {
   // one caret, stepping down the four places while the band is on screen: one mover in the viewport, not four
-  const ref = useRef(null);
+  const ref = useRef<HTMLUListElement>(null);
   const seen = useInView(ref, { amount: 0.4 });
   const calm = useReducedMotion();
   const [at, setAt] = useState(0);
@@ -542,7 +569,7 @@ function Band() {
     const t = setTimeout(() => setAt((a) => (a + 1) % PLACES.length), 2400);
     return () => clearTimeout(t);
   }, [seen, calm, at]);
-  const host = useRef(null);
+  const host = useRef<HTMLElement>(null);
   const [run, setRun] = useState(false);
   return (
     // entrance 5, cursor-trail: a trail of carets sweeps across once and uncovers the band, then follows a fine pointer

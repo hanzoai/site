@@ -9,13 +9,21 @@ import { useTick } from '../../../v2/x-hamilton/Demo';
 const FLOW = ['trigger', 'GitHub', 'Postgres', 'Slack', 'done'];
 
 /* step through 0..len-1 every ms while run; calm pins the last frame */
-function useSeq(len, ms, run, calm) {
+function useSeq(len: number, ms: number, run: boolean, calm: boolean) {
   const [i, setI] = useState(0);
   useTick(ms, run, () => setI((v) => (v + 1) % len));
   return calm ? len - 1 : i;
 }
 
-const Check = ({ on }) => (
+interface MiniProps {
+  run: boolean;
+  calm: boolean;
+}
+
+interface CheckProps {
+  on: boolean;
+}
+const Check = ({ on }: CheckProps) => (
   <svg className={'au2-ck' + (on ? ' on' : '')} viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
     <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" strokeWidth="1.2" />
     <path d="M4.8 8.3 7 10.4l4.2-4.6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -24,7 +32,7 @@ const Check = ({ on }) => (
 
 /* 0 Durable execution: the record fills a tick per step, the pod is rescheduled, the ticks stay and the run goes on. */
 const D0 = [0, 1, 2, 3, -3, -3, 4, 5, 5, 5];
-function Durable({ run, calm }) {
+function Durable({ run, calm }: MiniProps) {
   const s = D0[useSeq(D0.length, 700, run, calm)];
   const n = Math.abs(s);
   const cut = s < 0;
@@ -43,7 +51,7 @@ function Durable({ run, calm }) {
 
 /* 1 The catalog is in the binary: GET /v1/pieces answers from the build itself, line by line. */
 const LIST = ['Slack', 'GitHub', 'Notion', 'Gmail', 'Stripe', 'Postgres'];
-function Catalog({ run, calm }) {
+function Catalog({ run, calm }: MiniProps) {
   const s = useSeq(LIST.length + 4, 450, run, calm);
   const n = Math.min(LIST.length, s);
   return (
@@ -56,7 +64,7 @@ function Catalog({ run, calm }) {
 
 /* 2 Triggers: two ways in, one run object, one history. */
 const SRC = ['POST trigger', '/v1/runs'];
-function Triggers({ run, calm }) {
+function Triggers({ run, calm }: MiniProps) {
   const s = useSeq(8, 900, run, calm);
   const from = s % 2;
   const hist = Array.from({ length: Math.min(4, s + 1) }, (_, k) => s - k).filter((v) => v >= 0);
@@ -75,7 +83,7 @@ function Triggers({ run, calm }) {
 
 /* 3 Watch it live: the run's own events arrive over the stream while the canvas follows. */
 const EV = FLOW.flatMap((f) => [['step.started', f], ['step.done', f]]);
-function Live({ run, calm }) {
+function Live({ run, calm }: MiniProps) {
   const s = useSeq(EV.length + 3, 520, run, calm);
   const n = Math.min(EV.length, s + 1);
   const at = Math.min(FLOW.length, Math.floor(n / 2));
@@ -93,11 +101,11 @@ function Live({ run, calm }) {
 
 /* 4 Draft, then publish: the draft gains a step; callers keep the published flow until it is published. */
 const P4 = [0, 1, 1, 2, 3, 3, 3];
-function Publish({ run, calm }) {
+function Publish({ run, calm }: MiniProps) {
   const s = P4[useSeq(P4.length, 800, run, calm)];
   const draft = s >= 1 ? FLOW.slice(0, 4) : FLOW.slice(0, 3);
   const pub = s >= 3 ? FLOW.slice(0, 4) : FLOW.slice(0, 3);
-  const col = (k, items, cls) => (
+  const col = (k: string, items: string[], cls: string) => (
     <div className={'au2-col ' + cls}>
       <p>{k}</p>
       <ol>{items.map((f, j) => <li key={f} className={j === 3 && cls === 'd' && s < 3 ? 'new' : j === 3 ? 'in' : ''}>{f}</li>)}</ol>
@@ -113,7 +121,7 @@ function Publish({ run, calm }) {
 }
 
 /* 5 Connections, not pasted keys: the flow names a connection; Hanzo IAM says who may touch it, Hanzo KMS opens it. */
-function Keys({ run, calm }) {
+function Keys({ run, calm }: MiniProps) {
   const s = useSeq(6, 850, run, calm);
   return (
     <div className="au2-m5 l2-mono">
@@ -129,7 +137,7 @@ function Keys({ run, calm }) {
 }
 
 const ALL = [Durable, Catalog, Triggers, Live, Publish, Keys];
-export default function Mini({ i, run, calm }) {
+export default function Mini({ i, run, calm }: MiniProps & { i: number }) {
   const C = ALL[i];
   return <C run={run} calm={calm} />;
 }

@@ -9,10 +9,12 @@
    GPU column says so beside its figure. Until the price list answers the page says it is reading; if it does not
    answer, the page says so and shows nothing in its place (an older number would only be somebody else's).
    Arithmetic: ./savings.js. Sources: ./sources.mjs, ./use.js. */
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Skeleton, Problem } from '../../kit';
 import LIVE from '../../../content/live/_pricing.json' with { type: 'json' };
 import { usePricing, useServed } from './use';
+import type { Listed, PriceList, Served, Usage } from './types';
 import { HOURS, amount, at, day, labs, millions, ours, percent, rate, saves, totals, usd } from './savings';
 import './Savings.css';
 
@@ -23,7 +25,10 @@ const SEAT = LIVE.plans.team;
 const TEAM = SEAT ? { name: SEAT.name, priceMonthly: SEAT.price, maxMembers: SEAT.maxMembers } : null;
 
 /** What a section draws until api.hanzo.ai answers: the two cards' boxes, held, and one line saying what is being read. */
-function Reading({ what }) {
+interface ReadingProps {
+  what: string;
+}
+function Reading({ what }: ReadingProps) {
   return (
     <div className="xcs" data-slot="savings" data-api="loading">
       <div className="xcs-card" aria-live="polite">
@@ -36,7 +41,10 @@ function Reading({ what }) {
 }
 
 /** The backend did not answer: said plainly, with nothing standing in for the numbers. */
-function Unreachable({ what }) {
+interface UnreachableProps {
+  what: string;
+}
+function Unreachable({ what }: UnreachableProps) {
   return (
     <div className="xcs-gone" data-api="unreachable">
       <Problem
@@ -56,7 +64,12 @@ export default function Savings() {
   return <Calculator doc={pricing.data} served={served.state === 'ready' ? served.data : null} />;
 }
 
-function Field({ id, label, children }) {
+interface FieldProps {
+  id: string;
+  label: string;
+  children: ReactNode;
+}
+function Field({ id, label, children }: FieldProps) {
   return (
     <div className="xcs-field">
       <label htmlFor={id}>{label}</label>
@@ -66,7 +79,13 @@ function Field({ id, label, children }) {
 }
 
 /** A native select with its chevron, which the platform no longer draws. */
-function Choice({ id, value, onChange, children }) {
+interface ChoiceProps {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  children: ReactNode;
+}
+function Choice({ id, value, onChange, children }: ChoiceProps) {
   return (
     <span className="xcs-choice">
       <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>{children}</select>
@@ -75,12 +94,26 @@ function Choice({ id, value, onChange, children }) {
   );
 }
 
-function Amount({ id, value, onChange, step = 1 }) {
+interface AmountProps {
+  id: string;
+  value: number;
+  onChange: (value: number) => void;
+  step?: number;
+}
+function Amount({ id, value, onChange, step = 1 }: AmountProps) {
   return <input id={id} className="xcs-in" type="number" inputMode="decimal" min={0} step={step} value={String(value)} onChange={(e) => onChange(amount(e.target.value))} />;
 }
 
 /** One of the three totals: its name, its figure, what it saves against list, and what it assumes. */
-function Total({ slot, name, figure, unit, saving, children }) {
+interface TotalProps {
+  slot: string;
+  name: string;
+  figure: string;
+  unit: string;
+  saving?: number | null;
+  children: ReactNode;
+}
+function Total({ slot, name, figure, unit, saving, children }: TotalProps) {
   return (
     <div className="xcs-total" data-figure={slot}>
       <div className="xcs-total-h">
@@ -97,32 +130,36 @@ function Total({ slot, name, figure, unit, saving, children }) {
   );
 }
 
-function Calculator({ doc, served }) {
+interface CalculatorProps {
+  doc: PriceList;
+  served: Served[] | null;
+}
+function Calculator({ doc, served }: CalculatorProps) {
   const offered = labs(doc);
   const choices = offered.all;
   const skus = ours(doc);
   const racks = doc.gpu;
 
   // The example the page opens with: the dearest featured model, half a billion tokens in and a tenth of that out.
-  const [mode, setMode] = useState('tokens');
-  const [rows, setRows] = useState(() => (choices[0] ? [{ model: choices[0].id, mTokIn: 500, mTokOut: 50, spend: 5000, share: 10 }] : []));
+  const [mode, setMode] = useState<'tokens' | 'spend'>('tokens');
+  const [rows, setRows] = useState<Usage[]>(() => (choices[0] ? [{ model: choices[0].id, mTokIn: 500, mTokOut: 50, spend: 5000, share: 10 }] : []));
   const [people, setPeople] = useState(50);
   const [sku, setSku] = useState(() => skus.find((m) => m.name === 'enso-auto')?.name ?? skus[0]?.name ?? '');
   const [rack, setRack] = useState(() => racks[0]?.gpu ?? '');
   const [count, setCount] = useState(1);
   const config = racks.find((g) => g.gpu === rack) ?? racks[0];
-  const [hourly, setHourly] = useState(null);
+  const [hourly, setHourly] = useState<number | null>(null);
   const hour = hourly ?? config?.price ?? 0;
 
   if (!choices.length || !skus.length) return <Unreachable what="the models the price list prices" />;
 
   const mine = skus.find((m) => m.name === sku) ?? skus[0];
-  const set = (i, patch) => setRows((rs) => rs.map((r, k) => (k === i ? { ...r, ...patch } : r)));
+  const set = (i: number, patch: Partial<Usage>) => setRows((rs) => rs.map((r, k) => (k === i ? { ...r, ...patch } : r)));
   const { usage, total, listed, onCloud, seats, cloud, fleet, point, kept } = totals({ rows, mode, choices, mine, team: TEAM, people, count, hour, served });
 
   // The Hanzo Cloud column's first sentence, which runs on into the seats where Team prices them.
   const same = `The same ${millions(total.input)} tokens in and ${millions(total.output)} out on ${mine.fullName ?? mine.name} at ${rate(at(mine).input)} in and ${rate(at(mine).output)} out per million: ${usd(onCloud)}`;
-  const seated = (n, plan, seat, all) => `${same}, plus ${n.toLocaleString('en-US')} ${n === 1 ? 'member' : 'members'} on ${plan} at ${seat} a member a month: ${all}.`;
+  const seated = (n: number, plan: string, seat: string, all: string) => `${same}, plus ${n.toLocaleString('en-US')} ${n === 1 ? 'member' : 'members'} on ${plan} at ${seat} a member a month: ${all}.`;
   const alone = `${same}.`;
   const gpu = config?.gpu ?? 'GPU';
 
@@ -144,7 +181,7 @@ function Calculator({ doc, served }) {
 
   const listNote = `${usage.map((u) => `${u.m.name} at ${rate(u.m.pricing.input)} in and ${rate(u.m.pricing.output)} out per million tokens`).join('; ')}, the provider's rate as our price list carries it. Seats on a provider's own plans are not priced here.`;
 
-  const option = (m) => <option key={m.id} value={m.id}>{m.name}</option>;
+  const option = (m: Listed) => <option key={m.id} value={m.id}>{m.name}</option>;
 
   return (
     <div className="xcs" data-slot="savings" data-api="ready">
@@ -174,7 +211,7 @@ function Calculator({ doc, served }) {
               ) : (
                 <>
                   <Field id={`xcs-spend-${i}`} label="Spend, dollars"><Amount id={`xcs-spend-${i}`} value={r.spend} onChange={(v) => set(i, { spend: v })} step={100} /></Field>
-                  <Field id={`xcs-share-${i}`} label="Output share of tokens, %"><Amount id={`xcs-share-${i}`} value={r.share} onChange={(v) => set(i, { share: Math.min(100, v) })} /></Field>
+                  <Field id={`xcs-share-${i}`} label="Output share of tokens, %"><Amount id={`xcs-share-${i}`} value={r.share} onChange={(v: number) => set(i, { share: Math.min(100, v) })} /></Field>
                 </>
               )}
             </div>
@@ -195,7 +232,7 @@ function Calculator({ doc, served }) {
 
         <div className="xcs-more">
           <div className="xcs-pair">
-            <Field id="xcs-people" label="People"><Amount id="xcs-people" value={people} onChange={(v) => setPeople(Math.floor(v))} /></Field>
+            <Field id="xcs-people" label="People"><Amount id="xcs-people" value={people} onChange={(v: number) => setPeople(Math.floor(v))} /></Field>
             <Field id="xcs-sku" label="On Hanzo Cloud, moved to">
               <Choice id="xcs-sku" value={mine.name} onChange={setSku}>
                 {skus.map((m) => <option key={m.name} value={m.name}>{m.fullName ?? m.name}</option>)}
@@ -209,7 +246,7 @@ function Calculator({ doc, served }) {
                   {racks.map((g) => <option key={g.gpu} value={g.gpu}>{`${g.gpu}, ${g.vram}`}</option>)}
                 </Choice>
               </Field>
-              <Field id="xcs-count" label="How many"><Amount id="xcs-count" value={count} onChange={(v) => setCount(Math.max(1, Math.floor(v)))} /></Field>
+              <Field id="xcs-count" label="How many"><Amount id="xcs-count" value={count} onChange={(v: number) => setCount(Math.max(1, Math.floor(v)))} /></Field>
               <Field id="xcs-hour" label="An hour of it, dollars"><Amount id="xcs-hour" value={hour} onChange={setHourly} step={0.01} /></Field>
             </div>
           ) : null}

@@ -12,8 +12,8 @@ import { useLayoutEffect, useRef, useState } from 'react';
 
 const useIso = typeof window === 'undefined' ? () => {} : useLayoutEffect;
 
-export function useEnter() {
-  const ref = useRef(null);
+export function useEnter<T extends HTMLElement = HTMLElement>() {
+  const ref = useRef<T>(null);
   const [st, setSt] = useState('');
   useIso(() => {
     const el = ref.current;
@@ -29,5 +29,5 @@ export function useEnter() {
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  return [ref, st];
+  return [ref, st] as const;
 }

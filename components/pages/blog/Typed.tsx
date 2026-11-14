@@ -1,6 +1,10 @@
 /* The typewriter entrance's markup: a title split into letters (words kept whole so lines still break at spaces).
    The text reads exactly as Hanzo's; enter.css types the letters out with a caret once [data-enter="type"] gets .in. */
-export default function Typed({ text, from = 0 }) {
+interface TypedProps {
+  text: string;
+  from?: number;
+}
+export default function Typed({ text, from = 0 }: TypedProps) {
   let c = from;
   const words = text.split(' ');
   return words.map((w, wi) => (

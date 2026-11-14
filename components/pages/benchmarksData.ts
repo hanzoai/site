@@ -1,11 +1,14 @@
 /* Every figure on /benchmarks, as Hanzo publishes it (hanzo.ai/benchmarks and its research API, api.hanzo.ai/v1/research/runs).
    Display strings are Hanzo's exact strings; raw numbers ride beside them for sorting and drawing. */
 
+import type { Link, Suite, SuiteRow, Shortlist, Memory, ToolSet, Hardware, Context, Lap, Scenario, Shelved, Facet, Product } from './benchmarks/types';
+
 const RUN = 'https://api.hanzo.ai/v1/research/runs?org=hanzo&id=';
-export const runUrl = (id) => RUN + id;
+export const runUrl = (id: string) => RUN + id;
 
 /* GPQA Diamond, 198 questions: accuracy against $ per 1,000 questions. kind: router | single | reported */
-export const GPQA = [
+type GpqaRow = [name: string, acc: number, cost: number, kind: string, aria: string, src?: string];
+export const GPQA = ([
   ['DeepSeek V4 Pro', 76.3, 1.05, 'single', 'DeepSeek V4 Pro 0423 76.3%, a single model tested on the same 198 GPQA Diamond questions, $1.05 per 1,000 of them'],
   ['Sonnet 5', 77.8, 42.91, 'single', 'Claude Sonnet 5 77.8%, a single model tested on the same 198 GPQA Diamond questions, $42.91 per 1,000 of them'],
   ['Fable 5', 82.8, 14.95, 'single', 'Claude Fable 5 82.8%, a single model tested on the same 198 GPQA Diamond questions, $14.95 per 1,000 of them'],
@@ -23,10 +26,11 @@ export const GPQA = [
   ['Enso Flash', 95.5, 3.26, 'router', 'Enso Flash at $3.26 per 1,000, its cost on new questions: 95.5% · questions it has seen'],
   ['Enso', 96.5, 10.03, 'router', 'Enso at $10.03 per 1,000, its cost on new questions: 96.5% · questions it has seen'],
   ['Enso Ultra', 98.0, 14.76, 'router', 'Enso Ultra at $14.76 per 1,000, its cost on new questions: 98.0% · questions it has seen'],
-].map(([name, acc, cost, kind, aria, src]) => ({ name, acc, cost, kind, aria, src }));
+] satisfies GpqaRow[]).map(([name, acc, cost, kind, aria, src]) => ({ name, acc, cost, kind, aria, src }));
 
 /* The 12 runs of the frontier board: [system, accuracy, cost $, tag, date, pareto] */
-export const RUNS = [
+type RunRow = [sys: string, acc: string, cost: string, tag: string, date: string, pareto: boolean];
+export const RUNS = ([
   ['enso', '92.9%', '$5.58', 'frontier', '2026-07-19', true],
   ['gpt-5.6-sol', '91.9%', '$4.08', 'frontier', '2026-07-19', true],
   ['opus-5.5', '90.9%', '$3.78', 'fill', '2026-10-16', true],
@@ -39,10 +43,11 @@ export const RUNS = [
   ['claude-5-sonnet', '77.8%', '$5.66', 'frontier', '2026-07-19', false],
   ['deepseek-v4-pro', '74.2%', '$0.203', 'frontier', '2026-07-19', false],
   ['gpt-4o', '54.5%', '$1.58', 'frontier', '2026-07-19', false],
-].map(([sys, acc, cost, tag, date, pareto]) => ({ sys, acc, cost, tag, date, pareto, a: parseFloat(acc), c: parseFloat(cost.slice(1)) }));
+] satisfies RunRow[]).map(([sys, acc, cost, tag, date, pareto]) => ({ sys, acc, cost, tag, date, pareto, a: parseFloat(acc), c: parseFloat(cost.slice(1)) }));
 
 /* Every system on GPQA Diamond: [system, correct, run cost, tag, date] — accuracy is correct / 198 */
-export const SYSTEMS = [
+type SystemRow = [sys: string, n: number, cost: string, tag: string, date: string];
+export const SYSTEMS = ([
   ['enso', 184, '$5.58', 'frontier', '2026-07-19'],
   ['enso-ultra', 184, '$20.20', 'frontier', '2026-07-19'],
   ['gpt-5.6-sol', 182, '$4.08', 'frontier', '2026-07-19'],
@@ -56,14 +61,14 @@ export const SYSTEMS = [
   ['claude-5-sonnet', 154, '$5.66', 'frontier', '2026-07-19'],
   ['deepseek-v4-pro', 147, '$0.203', 'frontier', '2026-07-19'],
   ['gpt-4o', 108, '$1.58', 'frontier', '2026-07-19'],
-].map(([sys, n, cost, tag, date]) => ({ sys, n, cost, tag, date, acc: ((n / 198) * 100).toFixed(1) + '%', c: parseFloat(cost.slice(1)), run: runUrl(`enso.gpqa_diamond-test-${tag}-${sys}`) }));
+] satisfies SystemRow[]).map(([sys, n, cost, tag, date]) => ({ sys, n, cost, tag, date, acc: ((n / 198) * 100).toFixed(1) + '%', c: parseFloat(cost.slice(1)), run: runUrl(`enso.gpqa_diamond-test-${tag}-${sys}`) }));
 
 const HF = 'https://huggingface.co/datasets/';
 const TREE = 'https://github.com/hanzoai/benchmarks/tree/main/decision';
-const H = (s) => [`${s}-harness-kai-1.4.c1856a77-kai`, `${s}-harness-20260917-jev`];
+const H = (s: string) => [`${s}-harness-kai-1.4.c1856a77-kai`, `${s}-harness-20260917-jev`];
 
 /* The Decision Suite, 16 tasks: name, data (links or a line), note, kai, jev, [kai run, jev run], re-run, bar values 0..1 */
-export const SUITE = [
+export const SUITE: Suite[] = ([
   { t: 'AG News', data: [['fancyzhx/ag_news', HF + 'fancyzhx/ag_news']], kai: '93.8%', jev: '86.0%', runs: H('jev.ag_news'), re: TREE },
   { t: 'DAIR Emotion', data: [['dair-ai/emotion', HF + 'dair-ai/emotion']], kai: '92.3%', jev: '60.3%', runs: H('jev.emotion'), re: TREE },
   { t: 'Banking77', data: [['mteb/banking77', HF + 'mteb/banking77']], kai: '88.0%', jev: '83.5%', runs: H('jev.banking77_full'), re: TREE },
@@ -80,9 +85,9 @@ export const SUITE = [
   { t: 'Same request three times, identical answers', line: 'support, cancellation and severity requests the suite generates', note: 'Identical: Kai 4,200 of 4,200, Jev 1,858 of 4,200.', kai: '100.0%', jev: '44.2%', runs: ['decision.stability-all-hijack-kai-1.4', 'decision.stability-all-hijack-jev-1.13'], re: TREE + '/stability' },
   { t: 'False alarms on real benign prompts (in the wild), lower is better', low: true, data: [['TrustAIRLab/in-the-wild-jailbreak-prompts', HF + 'TrustAIRLab/in-the-wild-jailbreak-prompts']], note: 'Its regular prompts, each asked whether it is an attack. Flagged: Kai 83 of 600, Jev 126 of 600.', kai: '13.8%', jev: '21.0%', runs: ['jailbreak.wild-clean-h-kai-1.4', 'jailbreak.wild-clean-h-jev-1.13'], re: TREE + '/jailbreak-suite' },
   { t: 'Cost & deployment, per million input tokens', cost: true, note: 'Kai: $0.021 / M input tokens on api.hanzo.ai; on your own hardware (Enterprise): a cached decision in process in 0.3 ms (GPU) to 2 ms (CPU) — over 50× faster than a hosted call\'s 133 ms; a cold decision in 23–70 ms (2–6×). Jev: $0.042 / M; hosted API only, p50 133 ms per call.', kai: '$0.021 / M', jev: '$0.042 / M', bars: [0.5, 1] },
-].map((r) => ({ ...r, bars: r.bars || [parseFloat(r.kai) / 100, parseFloat(r.jev) / 100] }));
+] satisfies SuiteRow[]).map((r) => ({ ...r, bars: r.bars || [parseFloat(r.kai) / 100, parseFloat(r.jev) / 100] }));
 
-export const COST_LINKS = [
+export const COST_LINKS: Link[] = [
   ['the model list', 'https://api.hanzo.ai/v1/models'],
   ['Enterprise', '/enterprise'],
   ['GPU timing', RUN + 'decision.latency-window2-dgx.cuda.f32.q8.tall-kai'],
@@ -91,7 +96,8 @@ export const COST_LINKS = [
 ];
 
 /* Kai against Jev, suite by suite: accuracy (Hanzo's strings and lead) and calibration error (ECE, from the same runs) */
-export const BOARD = [
+type BoardRow = [t: string, kai: string, jev: string, lead: string, ke: number, je: number];
+export const BOARD = ([
   ['AG News', '93.8%', '86.0%', '+7.8 pp', 0.0221, 0.1023],
   ['DAIR Emotion', '92.3%', '60.3%', '+32.0 pp', 0.033, 0.2795],
   ['Banking77', '88.0%', '83.5%', '+4.5 pp', 0.0936, 0.0729],
@@ -103,7 +109,7 @@ export const BOARD = [
   ['Model routing', '99.8%', '97.7%', '+2.0 pp', 0.0023, 0.0138],
   ['Typed decisions', '74.6%', '73.6%', '+1.0 pp', 0.1398, 0.0472],
   ['MASSIVE, 51 languages', '90.7%', '89.0%', '+1.7 pp', 0.0635, 0.0638],
-].map(([t, kai, jev, lead, ke, je]) => ({ t, kai, jev, lead, ke, je, k: parseFloat(kai), j: parseFloat(jev), l: parseFloat(lead) }));
+] satisfies BoardRow[]).map(([t, kai, jev, lead, ke, je]) => ({ t, kai, jev, lead, ke, je, k: parseFloat(kai), j: parseFloat(jev), l: parseFloat(lead) }));
 
 export const YESNO = [
   ['A question and its paraphrase, mean |Δp| over 20 pairs', '0.124', '0.151'],
@@ -127,7 +133,7 @@ export const FAMILIES = [
   ['bridge', '300', '58.0%', '98.9%', '2'],
 ];
 
-export const SHORTLIST = [
+export const SHORTLIST: Shortlist[] = [
   { t: 'Every request', foot: '6,608 requests · 2,928 tools · Recall@32: a right tool among the first 32', rows: [['Recall@32', 73.6, 93.6], ['nDCG@10', 51.6, 72.3], ['Top-1', 41.4, 55.5]] },
   { t: 'Requests for a Hanzo service', foot: '670 requests · a service scored as the best of its operations', rows: [['Recall@32', 15.5, 99.9], ['nDCG@10', 3.5, 81.5], ['Top-1', 0.0, 51.0]] },
 ];
@@ -143,7 +149,7 @@ export const AGENTS = [
 ];
 
 /* Agent tools: four handler tables */
-export const TOOLS = [
+export const TOOLS: ToolSet[] = [
   {
     h: 'Shell commands an agent should not run unasked', bench: 'mcp.command', split: 'hermes',
     note: 'Split hermes: hermes-jev-skills evals/gate/fixtures.jsonl (MIT), 118 made-up commands. The rules were frozen and read once (1 of 65 allowed: a metadata-endpoint fetch); that class and a bare `rm -rf /` were fixed after, so this run is not held out',
@@ -172,7 +178,7 @@ export const TOOLS = [
 
 /* Evidence behind the rows */
 export const CHOICE = [['Accuracy, 4 options', '94.3%', '90.5%'], ['Accuracy, 16 options', '92.0%', '85.3%'], ['Accuracy, 77 options', '88.0%', '84.3%']];
-export const MASSIVE = [
+export const MASSIVE: [language: string, kai: number, jev: number][] = [
   ['af', 88, 87], ['am', 86, 85], ['ar', 92, 87], ['az', 94, 88], ['bn', 89, 86], ['cy', 86, 76], ['da', 91, 88], ['en', 95, 92],
   ['fi', 96, 89], ['fr', 92, 90], ['hy', 88, 84], ['is', 85, 84], ['jv', 84, 75], ['km', 85, 81], ['kn', 90, 87], ['lv', 89, 85],
   ['mn', 86, 84], ['ms', 93, 92], ['my', 94, 89], ['nb', 91, 86], ['nl', 93, 90], ['pt', 92, 90], ['ro', 96, 94], ['ru', 98, 94],
@@ -180,13 +186,13 @@ export const MASSIVE = [
 ];
 
 /* Zen 6 */
-export const HW = [
+export const HW: Hardware[] = [
   ['NVIDIA Grace-Blackwell · NVFP4 + Latent Sparse Attention (D-LSA)', '~3,665 tok/s', 3665, '~70 tok/s', 70],
   ['AMD Strix Halo · 4-bit build', '1,150–1,452 tok/s', 1150, '~37 tok/s', 37],
   ['Apple silicon · MLX build', '500–690 tok/s', 500, '64–81 tok/s', 64],
 ];
 /* context length, hardware · method, prefill, decode (x = speed-up against full attention) */
-export const LSA = [
+export const LSA: Context[] = [
   ['8K', '8K tokens (Hanzo Engine live) · NVIDIA Grace-Blackwell GB10 · D-LSA GPU Cache', '5.53× (3,665.5 tok/s)', 5.53, '4.92× (70.0 tok/s)', 4.92],
   ['32K', '32K tokens · NVIDIA Grace-Blackwell GB10 · D-LSA (Flat)', '8.58× (4.28 ms)', 8.58, '4.39× (0.135 ms)', 4.39],
   ['64K', '64K tokens · NVIDIA Grace-Blackwell GB10 · D-LSA (Flat)', '12.17× (6.71 ms)', 12.17, '6.46× (0.111 ms)', 6.46],
@@ -198,7 +204,7 @@ export const LSA = [
 ];
 
 /* Agent harness: memory panels (baseline, Hanzo) */
-export const MEMORY = [
+export const MEMORY: Memory[] = [
   { t: 'MemoryAgentBench', to: '/benchmarks/memoryagentbench', foot: 'substring EM · pooled over the dev haystack and the three test haystacks, and the largest alone · reader: none, embedder zenlm/zen-embedding-0.6b',
     rows: [['single-hop, plain resolver', 95.5, 'single-hop, typed search', 98.3], ['multi-hop, plain resolver', 56.8, 'multi-hop, typed search', 84.5], ['262k multi-hop, plain', 33.0, '262k multi-hop, typed', 67.0]] },
   { t: 'LoCoMo', to: '/benchmarks/locomo', foot: 'test split · zen-embedding-0.6b · k=20 · ALL = every annotated evidence turn in the top 20',
@@ -208,8 +214,8 @@ export const MEMORY = [
 ];
 
 /* The race: three agents on one target query, five scenarios (Hanzo's CodeRace figures) */
-const L = (latency, ms, turns, tokens, savings, detail) => ({ latency, ms, turns, tokens, savings, detail });
-export const RACE = [
+const L = (latency: string, ms: number, turns: number, tokens: number, savings: string, detail: string): Lap => ({ latency, ms, turns, tokens, savings, detail });
+export const RACE: Scenario[] = [
   { title: 'Subsystem Logic (State Tracking & Auth)', target: 'Workspace state diffing & hashing logic',
     hanzo: L('0.7 ms', 0.7, 1, 398, '98.4%', 'In-process Trigram + Tree-Sitter AST context bundle (0 daemons)'),
     rag: L('202 ms', 202, 1, 382, '98.5%', 'Qdrant Vector DB container + Ollama mxbai-embed-large (10 GB)'),
@@ -279,9 +285,9 @@ export const PAPERS = [
 
 /* The shelf: the rows Hanzo's page lists before "Show all", from its build snapshot */
 const ZEN = 'Zen 6 throughput & Latent Sparse Attention';
-const LSAROW = (id, sys, kind, val, base) => [`zen-6.lsa.${id}.${kind}`, '/benchmarks/zen-6', ZEN, `Zen 6 · ${sys} vs Full Attention`, 'Zen 6', 'Throughput & subquadratic long-context attention', kind === 'prefill' ? 'D-LSA Prefill speedup' : 'D-LSA Decode speedup', val, base, 'Win', 'Nov 4, 2026'];
-const TPUT = (id, sys, kind, val) => [`zen-6.${id}.${kind}`, '/benchmarks/zen-6', ZEN, `Zen 6 · ${sys}`, 'Zen 6', 'Throughput & subquadratic long-context attention', kind === 'prefill' ? 'Prefill throughput' : 'Decode throughput', val, 'no baseline', 'Unscored', 'Nov 4, 2026'];
-export const SHELF = [
+const LSAROW = (id: string, sys: string, kind: string, val: string, base: string) => [`zen-6.lsa.${id}.${kind}`, '/benchmarks/zen-6', ZEN, `Zen 6 · ${sys} vs Full Attention`, 'Zen 6', 'Throughput & subquadratic long-context attention', kind === 'prefill' ? 'D-LSA Prefill speedup' : 'D-LSA Decode speedup', val, base, 'Win', 'Nov 4, 2026'];
+const TPUT = (id: string, sys: string, kind: string, val: string) => [`zen-6.${id}.${kind}`, '/benchmarks/zen-6', ZEN, `Zen 6 · ${sys}`, 'Zen 6', 'Throughput & subquadratic long-context attention', kind === 'prefill' ? 'Prefill throughput' : 'Decode throughput', val, 'no baseline', 'Unscored', 'Nov 4, 2026'];
+export const SHELF: Shelved[] = ([
   LSAROW('10m-h200', 'D-LSA (Tree) · 10M tokens (NVIDIA H200)', 'prefill', '72.40×', 'baseline 1.00×'),
   LSAROW('10m-h200', 'D-LSA (Tree) · 10M tokens (NVIDIA H200)', 'decode', '42.50×', 'baseline 1.00×'),
   LSAROW('1m-gb10', 'D-LSA (Tree) · 1M tokens (NVIDIA Grace-Blackwell GB10)', 'prefill', '46.29× (26.40 ms)', 'baseline 1.00× (1,222.10 ms)'),
@@ -306,10 +312,10 @@ export const SHELF = [
   TPUT('apple-silicon', 'Apple silicon', 'prefill', '500–690 tok/s'),
   TPUT('apple-silicon', 'Apple silicon', 'decode', '64–81 tok/s'),
   ['kai-ag-news.accuracy.kai-1-4-c1856a77', '/benchmarks/kai-ag-news', 'AG News', 'kai-1.4 · c1856a77 vs Jev', 'Kai', 'Decision harness', 'Accuracy', '93.8%', 'baseline 86.0%', 'Win', 'Oct 16, 2026'],
-].map(([id, to, t, sys, product, category, measure, val, base, result, date], i) => ({ id, to, t, sys, product, category, measure, val, base, result, date, status: 'Live', i, v: parseFloat(val.replace(/[~,]/g, '')) || 0 }));
+] satisfies string[][]).map(([id, to, t, sys, product, category, measure, val, base, result, date], i) => ({ id, to, t, sys, product, category, measure, val, base, result, date, status: 'Live', i, v: parseFloat(val.replace(/[~,]/g, '')) || 0 }));
 
 /* Hanzo's facets for the whole library of 166 results */
-export const FACETS = [
+export const FACETS: Facet[] = [
   ['Product', 'product', [['Kai', 120], ['Zen 6', 26], ['Agent harness', 8], ['Agent platform', 12]]],
   ['Category', 'category', [['Decision harness', 115], ['Throughput & subquadratic long-context attention', 23], ['Platform, agents, and sandboxes', 9], ['Memory and retrieval', 6], ['Capability', 3], ['Cost and start-up', 3], ['Engine prefill vs llama.cpp', 3], ['Latency', 2]], '2 more'],
   ['Measure', 'measure', [['Accuracy', 67], ['Calibration error (ECE)', 51], ['D-LSA Decode speedup', 8], ['D-LSA Prefill speedup', 8], ['Decode throughput', 3], ['Prefill throughput', 3], ['Prefill throughput vs llama.cpp', 3], ['substring EM', 3]], '20 more'],
@@ -318,7 +324,7 @@ export const FACETS = [
   ['Status', 'state', [['Live', 48], ['Frozen', 23], ['Superseded', 95]]],
   ['Result', 'result', [['Win', 146], ['Unscored', 20]]],
 ];
-export const VIEWS = [
+export const VIEWS: Link[] = [
   ['Live results', '?state=live#all'],
   ['Kai, every revision', '?product=Kai&category=Decision%20harness&measure=Accuracy&order=name#all'],
   ['Superseded runs', '?state=superseded#all'],
@@ -327,7 +333,7 @@ export const VIEWS = [
 ];
 
 /* Every benchmark page, by product */
-export const PAGES = [
+export const PAGES: Product[] = [
   ['Enso', '?product=Enso#all', [['GPQA-Diamond', '/benchmarks/gpqa']]],
   ['Kai', '?product=Kai#all', [['AG News', '/benchmarks/kai-ag-news'], ['DAIR Emotion', '/benchmarks/kai-dair-emotion'], ['Banking77', '/benchmarks/kai-banking77'], ['Support triage', '/benchmarks/kai-support-triage'], ['Email spam', '/benchmarks/kai-email-spam'], ['Phishing', '/benchmarks/kai-phishing'], ['Toxicity', '/benchmarks/kai-toxicity'], ['RAG relevance', '/benchmarks/kai-rag-relevance'], ['Model routing', '/benchmarks/kai-model-routing'], ['Typed decisions', '/benchmarks/kai-typed-decisions'], ['MASSIVE', '/benchmarks/kai-massive'], ['Choosing among many options', '/benchmarks/kai-choice-size'], ['Latency of one decision', '/benchmarks/kai-latency']]],
   ['Zen 6', '?product=Zen%206#all', [['Zen 6 throughput & Latent Sparse Attention', '/benchmarks/zen-6'], ['Engine prefill on CUDA vs llama.cpp', '/benchmarks/inference']]],

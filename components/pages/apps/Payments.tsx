@@ -22,6 +22,8 @@
 V2: 8/10 on the deck: h1 52, headings 26, figures 64; one phone runs the checkout on the first screen at both sizes, the calculator is the one black room under it; slice D: methods beside Hanzo's three lines (a method lights its line), tax cards draw their tick and cut VAT/GST in on arrival with their three lines at rest, tighter bands; five motion-map entrances (stretch-scroll, curtain-rise, word-shuffle, side-carousel, stack-drop)
 */
 // Signature: a live calculator, "Move a percentage first": amount, payments, the split and the soft-decline share reprice every figure on the page at once, from Hanzo's own figures and the visitor's inputs.
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState, Fragment } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { EASE_OUT_EXPO as EASE } from '../../../lib/motion';
@@ -37,7 +39,7 @@ const API = 'https://docs.hanzo.ai/docs/openapi';
 const QUICK = 'https://docs.hanzo.ai/docs/quickstart';
 const GH = 'https://github.com/hanzoai';
 const DEPLOY = 'https://platform.hanzo.ai/deploy';
-const two = (n) => String(n).padStart(2, '0');
+const two = (n: number) => String(n).padStart(2, '0');
 
 const METHODS = ['Visa', 'Mastercard', 'Amex', 'PayPal', 'Apple Pay', 'Google Pay', 'iDEAL', 'Bancontact', 'SOFORT'];
 const STEPS = [
@@ -55,8 +57,8 @@ const Check = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden=
    entrance plays (Payments.css, "entrances"); only under html.js, so with JS off nothing is ever hidden. Reduced
    motion (or no IntersectionObserver) sets data-in at once, and the CSS keeps every final state there. */
 const still = () => typeof IntersectionObserver === 'undefined' || matchMedia('(prefers-reduced-motion: reduce)').matches;
-function useEnter(threshold = 0.15, onIn) {
-  const ref = useRef(null);
+function useEnter<T extends HTMLElement = HTMLElement>(threshold = 0.15, onIn?: (el: T) => void) {
+  const ref = useRef<T>(null);
   const f = useRef(onIn);
   f.current = onIn;
   useEffect(() => {
@@ -74,14 +76,14 @@ function useEnter(threshold = 0.15, onIn) {
    relaxes to 1 by the time the room's top reaches 55% of the screen. Set on the client only, so the server render
    and JS off are the final state; nothing under reduced motion. */
 function useStretch() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || still()) return undefined;
     let raf = 0;
     const set = () => {
       raf = 0;
-      const top = el.parentElement.getBoundingClientRect().top, h = innerHeight;
+      const top = el.parentElement!.getBoundingClientRect().top, h = innerHeight;
       const p = Math.min(1, Math.max(0, (h - top) / (h * 0.45)));
       const e = 1 - (1 - p) * (1 - p) * (1 - p);
       el.style.transform = p >= 1 ? '' : `scaleY(${(1 + 0.12 * (1 - e)).toFixed(4)})`;
@@ -99,13 +101,19 @@ function useStretch() {
 /* 3 word-shuffle: a heading whose words sit in each other's places until it is reached, then swap home. The words are
    real text in order (server, JS off, screen readers); only transforms move, measured on the client. */
 const SHUF = [3, 5, 0, 6, 1, 7, 2, 4];
-function Shuffle({ as: Tag = 'h2', text, id, className }) {
+interface ShuffleProps {
+  as?: 'h1' | 'h2' | 'h3';
+  text: string;
+  id: string;
+  className: string;
+}
+function Shuffle({ as: Tag = 'h2', text, id, className }: ShuffleProps) {
   const words = text.split(' ');
-  const ref = useRef(null);
+  const ref = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || still()) return undefined;
-    const ws = [...el.querySelectorAll('.pay-w')];
+    const ws = [...el.querySelectorAll<HTMLElement>('.pay-w')];
     if (el.getBoundingClientRect().top < innerHeight * 0.85) return undefined; // already on screen: leave it be
     const place = () => {
       const r = ws.map((w) => w.getBoundingClientRect());
@@ -134,7 +142,7 @@ function Shuffle({ as: Tag = 'h2', text, id, className }) {
 }
 
 /* What the phone's screen shows at each of the four steps. */
-function Screen({ at, live }) {
+function Screen({ at, live }: { at: number; live: boolean }) {
   const [m, setM] = useState(0);
   const [picked, setPicked] = useState(true);
   useEffect(() => {
@@ -143,7 +151,7 @@ function Screen({ at, live }) {
     const ts = PICK.map((v, i) => setTimeout(() => { setM(v); if (i === PICK.length - 1) setPicked(true); }, 150 + i * 620));
     return () => ts.forEach(clearTimeout);
   }, [at, live]);
-  const inn = (d) => ({ initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.45, ease: EASE, delay: d } });
+  const inn = (d: number) => ({ initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.45, ease: EASE, delay: d } });
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div key={at} className="pay-scr" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12, transition: { duration: 0.2 } }} transition={{ duration: 0.45, ease: EASE }}>
@@ -184,14 +192,22 @@ function Screen({ at, live }) {
 }
 
 /* The phone: the merchant, the amount, the step's screen and the Pay button that ends on `succeeded`. */
-const PauseIcon = ({ on }) => (on
+const PauseIcon = ({ on }: { on: boolean }) => (on
   ? <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 
 const USD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
-const usd = (cents) => USD.format(cents / 100);
+const usd = (cents: number) => USD.format(cents / 100);
 
-function Phone({ at, live, big, held, onHold, amt = 2000 }) {
+interface PhoneProps {
+  at: number;
+  live: boolean;
+  big?: boolean;
+  held?: boolean;
+  onHold: (() => void) | null;
+  amt?: number;
+}
+function Phone({ at, live, big, held = false, onHold, amt = 2000 }: PhoneProps) {
   const calm = useReducedMotion();
   const [ok, setOk] = useState(false);
   useEffect(() => {
@@ -217,7 +233,7 @@ function Phone({ at, live, big, held, onHold, amt = 2000 }) {
   );
 }
 
-function Tracker({ at, pick, run }) {
+function Tracker({ at, pick, run }: { at: number; pick: (i: number) => void; run: boolean }) {
   return (
     <div className="pay-track">
       <p className="pay-track-k"><span>A payment, routed</span><span className="x-mono">{two(at + 1)} / 04</span></p>
@@ -235,8 +251,11 @@ function Tracker({ at, pick, run }) {
   );
 }
 
-function Hero({ amt }) {
-  const [ref, live] = useLive(0.25);
+interface HeroProps {
+  amt: number;
+}
+function Hero({ amt }: HeroProps) {
+  const [ref, live] = useLive<HTMLElement>(0.25);
   const rm = useReducedMotion();
   const [calm, setCalm] = useState(false); // read after hydration, so the pause button renders the same on server and client
   useEffect(() => setCalm(!!rm), [rm]);
@@ -271,7 +290,11 @@ function Hero({ amt }) {
 }
 
 /* What sits behind the one integration: the four steps the phone runs, as plain rows (the pinned chapters are gone). */
-const Note = ({ t, d }) => <div className="pay-note"><p className="pay-note-t">{t}</p><p>{d}</p></div>;
+interface NoteProps {
+  t: string;
+  d: string;
+}
+const Note = ({ t, d }: NoteProps) => <div className="pay-note"><p className="pay-note-t">{t}</p><p>{d}</p></div>;
 const CH = [
   <Note key="w" t="Normalized webhooks" d="Every processor announces a settlement differently. You subscribe to one event shape and keep it when you add or drop a provider." />,
   null,
@@ -303,7 +326,7 @@ function Behind() {
   );
 }
 
-const code = (amt) => `// Take a payment. You do not name the processor.
+const code = (amt: number) => `// Take a payment. You do not name the processor.
 const payment = await hanzo.payments.create({
   amount: ${amt},
   currency: 'usd',
@@ -320,11 +343,15 @@ console.log(payment.connector); // 'adyen'`;
 /* The code pane, page-local so each of Hanzo's code tokens stays one piece of text (the shared pane splits
    "payment.status" and "// 'succeeded'" into finer spans): a line is its command word, its plain code, its strings
    and its trailing comment, each a flat span; the comment that ends in `mark` is picked out. Styled by Frame.css. */
-function PayCode({ text, mark }) {
-  const line = (l) => {
+interface PayCodeProps {
+  text: string;
+  mark: string;
+}
+function PayCode({ text, mark }: PayCodeProps) {
+  const line = (l: string) => {
     const at = l.indexOf('//');
     const src = at < 0 ? l : l.slice(0, at), com = at < 0 ? '' : l.slice(at);
-    const out = [];
+    const out: React.JSX.Element[] = [];
     src.split(/('[^']*')/).forEach((p, i) => {
       if (!p) return;
       if (i % 2) { out.push(<span key={'s' + i} className="s">{p}</span>); return; }
@@ -345,7 +372,10 @@ function PayCode({ text, mark }) {
 const PIPE = ['Approval rates, cost and latency compared across processors, on one screen.', '3D Secure where the issuer asks for it, without a second integration.', 'Open source, so the routing logic is readable before you trust it.'];
 const DEV = [['Easy to Implement', 'Quick integration with just a few lines of code, with SDKs for all major programming languages.'], ['Comprehensive Documentation', 'Detailed guides, API reference, and code examples to help you integrate Hanzo Payments quickly.'], ['Explore Our APIs', 'Get started with quickstart guides, examples, and developer tools.']];
 
-function OneApi({ amt }) {
+interface OneApiProps {
+  amt: number;
+}
+function OneApi({ amt }: OneApiProps) {
   return (
     <section className="bz-sec pay-api" aria-labelledby="pay-api-h">
       <div className="bz-wrap bz-grid">
@@ -376,7 +406,9 @@ function OneApi({ amt }) {
   );
 }
 
-const FEATS = [
+/* a feature: title, text, an optional tag */
+type Feat = [string, string, string?];
+const FEATS: Feat[] = [
   ['Checkout Interface', 'Fully customizable checkout UI that matches your brand and maximizes conversions.', 'Customizable checkout flow'],
   ['Global Reach', 'Regional processors are connectors like any other, so entering a market is a routing rule rather than a new integration.'],
   ['Mobile Optimized', 'Responsive checkout flows designed for high conversion on all devices and screen sizes.'],
@@ -389,8 +421,8 @@ const KIND = [0, 0, 0, 0, 0, 0, 1, 1, 1];
 const CO_LINES = ['Cards, wallets, bank debits, buy-now-pay-later and crypto', 'Local methods handled by whichever processor supports them best', 'The method someone expects to see, in the country they are in'];
 
 function Checkout() {
-  const [ref, live] = useLive(0.4);
-  const ride = useEnter(0.5);
+  const [ref, live] = useLive<HTMLElement>(0.4);
+  const ride = useEnter<HTMLDivElement>(0.5);
   const [kind, setKind] = useState(-1);
   const [lit, setLit] = useState(false); // the methods light one by one the first time the list is reached, then stay
   useEffect(() => { if (live) setLit(true); }, [live]);
@@ -425,14 +457,16 @@ function Checkout() {
 }
 
 const Shield = () => <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6 10 14v16c0 14 9.5 24 22 28 12.5-4 22-14 22-28V14z" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round" /><path className="pay-tick" pathLength="1" d="M22 32l7 7 13-14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const TAX = [
+/* a tax card: id, title, text, its three lines, its glyph */
+type TaxCard = [string, string, string, string[], ReactNode];
+const TAX: TaxCard[] = [
   ['tax', 'Automated Tax Management', 'Automatically handle VAT, GST, and regional taxes (including sales tax).', ['Real-time tax rate calculation', 'Tax exemption handling', 'Automated tax reporting'], <span className="pay-glyph bz-fig" key="g"><span className="pay-vg">VAT</span><br /><span className="pay-vg">GST</span></span>],
   ['fraud', 'Fraud Protection', 'Automatic fraud detection and prevention built-in to protect your business.', ['Machine learning fraud detection', 'Adaptive risk rules', 'Chargeback protection'], <span className="pay-glyph shield" key="g"><Shield /></span>],
 ];
 
 /* on arrival, once: VAT then GST cut in, the shield's tick draws, and each card's three lines tick in under it */
 function Tax() {
-  const [ref, live] = useLive(0.35);
+  const [ref, live] = useLive<HTMLElement>(0.35);
   const [inn, setInn] = useState(false);
   useEffect(() => { if (live) setInn(true); }, [live]);
   return (
@@ -483,9 +517,18 @@ const RANK2 = (() => {
   for (let i = 99; i > 0; i--) { s = (s * 9301 + 49297) % 233280; const j = Math.floor((s / 233280) * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
   return a;
 })();
-const fmtN = (n) => n.toLocaleString('en-US');
+const fmtN = (n: number) => n.toLocaleString('en-US');
 
-function Field({ k, unit, value, onChange, onBlur, mode, label }) {
+interface FieldProps {
+  k: string;
+  unit?: string;
+  value: string;
+  onChange: (v: string) => void;
+  onBlur: () => void;
+  mode: 'decimal' | 'numeric';
+  label: string;
+}
+function Field({ k, unit, value, onChange, onBlur, mode, label }: FieldProps) {
   return (
     <label className="pay-calc-f">
       <span className="x-mono">{k}</span>
@@ -498,7 +541,11 @@ function Field({ k, unit, value, onChange, onBlur, mode, label }) {
   );
 }
 
-function Move({ amt, setAmt }) {
+interface MoveProps {
+  amt: number;
+  setAmt: React.Dispatch<React.SetStateAction<number>>;
+}
+function Move({ amt, setAmt }: MoveProps) {
   const [pct, setPct] = useState(20);
   const [act, setAct] = useState(false);
   const [n, setN] = useState(100);
@@ -509,8 +556,8 @@ function Move({ amt, setAmt }) {
   const stretch = useStretch();
   const from = prev.current;
   useEffect(() => { prev.current = pct; }, [pct]);
-  const onAmt = (v) => { const s = v.replace(/[^\d.]/g, ''); setAmtS(s); const c = Math.round(parseFloat(s) * 100); if (c > 0 && c <= 100000000) setAmt(c); };
-  const onN = (v) => { const s = v.replace(/\D/g, '').slice(0, 7); setNS(s); const k = parseInt(s, 10); if (k > 0) setN(k); };
+  const onAmt = (v: string) => { const s = v.replace(/[^\d.]/g, ''); setAmtS(s); const c = Math.round(parseFloat(s) * 100); if (c > 0 && c <= 100000000) setAmt(c); };
+  const onN = (v: string) => { const s = v.replace(/\D/g, '').slice(0, 7); setNS(s); const k = parseInt(s, 10); if (k > 0) setN(k); };
   // the plan: shares of the payments, their value, and how many fall through to the backup instead of to a customer
   const n2 = Math.round((n * pct) / 100), n1 = n - n2;
   const k = Math.round((n1 * dec) / 100);
@@ -561,7 +608,7 @@ function Move({ amt, setAmt }) {
   );
 }
 
-const CASES = [
+const CASES: [string, string, string[]][] = [
   ['Selling in several countries', 'You sell in more than one country and each one wants a different payment method. Add the connector, write the rule, leave the checkout alone.', ['Local methods', 'Currency routing', 'One checkout', 'Rules per country']],
   ['Recovering declines', 'Renewals fail for reasons that have nothing to do with the customer. Retrying through a second processor turns some of those failures back into payments.', ['Retry on a second processor', 'Decline reasons', 'Renewal recovery', 'Rules per code']],
   ['Leaving a processor', 'The reason nobody switches is the rewrite. When the integration is here, moving is a routing change, and you can move a percentage first.', ['Move a percentage first', 'No checkout rewrite', 'The same API', 'Roll back at once']],

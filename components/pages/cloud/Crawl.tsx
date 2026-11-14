@@ -25,6 +25,7 @@
 //   Unlimited pages); the plan whose allowance that is gets ringed in the sheet and its crawlers and price read out.
 //   Only Hanzo's numbers ever show: the slider has three stops and nothing in between.
 // Every word, price and link is Hanzo's; example.com and its pages are an example.
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, animate, useInView, useMotionValue, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import { A, Cta } from '../../kit';
@@ -40,10 +41,13 @@ import './Crawl.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/openapi/crawl/';
 const GH = 'https://github.com/hanzoai';
-const pad = (n) => String(n).padStart(2, '0');
-const MOVE = [0.4, 0, 0.2, 1];
+const pad = (n: number) => String(n).padStart(2, '0');
+const MOVE: [number, number, number, number] = [0.4, 0, 0.2, 1];
 
-const PauseIcon = ({ on }) => on
+interface PauseIconProps {
+  on: boolean;
+}
+const PauseIcon = ({ on }: PauseIconProps) => on
   ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>;
 
@@ -54,7 +58,10 @@ const SAMPLES = [
   { path: '/pricing/faq', md: [['h', '# Pricing FAQ'], ['h', '## Plans'], ['p', '1. Build'], ['p', '2. Scale']], title: 'Pricing FAQ' },
 ];
 
-function Wire({ big }) {
+interface WireProps {
+  big?: boolean;
+}
+function Wire({ big }: WireProps) {
   return (
     <div className={'cr-wf' + (big ? ' big' : '')}>
       <div className="cr-wf-nav cr-chrome"><b /><i /><i /><i /><i /></div>
@@ -76,7 +83,7 @@ function Wire({ big }) {
 }
 
 function Reader() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.25 });
   const calm = useCalm();
   const paused = useStagePause();
@@ -135,7 +142,8 @@ const BEATS = [
 ];
 
 // the example site, in a 400 x 300 box: [x, y, parent, path, when in the spread 0..1, minor]
-const SITE = [
+/* a page of the site: x, y, the index of the page it links from (-1 for the root), its path, when it is found, minor */
+const SITE: [number, number, number, string, number, number?][] = [
   [200, 34, -1, 'example.com', 0],
   // spaced so no two labels touch at 1470 or 375 (each pair's centres are wider apart than half their labels)
   [80, 104, 0, '/docs', 0.08], [200, 108, 0, '/blog', 0.14], [322, 104, 0, '/pricing', 0.2],
@@ -145,7 +153,10 @@ const SITE = [
 const META = [290, 290];
 const LANES = [['/docs/start', 0], ['/docs/api', 0], ['/blog/launch', 0], ['/app', 1], ['/pricing', 0], ['/pricing/faq', 0]];
 
-function CrawlMap({ beat }) {
+interface CrawlMapProps {
+  beat: number;
+}
+function CrawlMap({ beat }: CrawlMapProps) {
   return (
     <div className="cr-map-in" data-beat={beat}>
       {/* 01: the page in hand loses its chrome */}
@@ -199,16 +210,16 @@ function CrawlMap({ beat }) {
 }
 
 function Scene() {
-  const run = useRef(null);
-  const box = useRef(null);
+  const run = useRef<HTMLDivElement>(null);
+  const box = useRef<HTMLDivElement>(null);
   const wide = useWide();
   const calm = useCalm();
   const p = useMotionValue(0);
-  const p6 = useTransform(p, (v) => v * 6);
+  const p6 = useTransform(p, (v: number) => v * 6);
   const [beat, setBeat] = useState(0);
   const { scrollYProgress } = useScroll({ target: run, offset: ['start start', 'end end'] });
   useMotionValueEvent(scrollYProgress, 'change', (v) => { if (wide) p.set(v); });
-  useMotionValueEvent(p, 'change', (v) => setBeat(Math.min(5, Math.max(0, Math.floor(v * 6 * 0.9999)))));
+  useMotionValueEvent(p, 'change', (v: number) => setBeat(Math.min(5, Math.max(0, Math.floor(v * 6 * 0.9999)))));
   useEffect(() => { if (wide) p.set(scrollYProgress.get()); }, [wide]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // phones: the same scene, once through by itself while it is seen (pausable), or by tap
@@ -230,14 +241,14 @@ function Scene() {
   }, [k, wide, seen, mine, calm, hold]);
 
   // the stage leans toward a fine pointer, 2.5 degrees at most (none on touch or under reduced motion)
-  const lean = (e) => {
+  const lean = (e: React.PointerEvent<HTMLDivElement>) => {
     if (calm || e.pointerType !== 'mouse') return;
     const el = e.currentTarget, r = el.getBoundingClientRect();
     el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
     el.style.setProperty('--rx', (((e.clientY - r.top) / r.height - 0.5) * -5).toFixed(2) + 'deg');
   };
-  const unlean = (e) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
-  const go = (i) => {
+  const unlean = (e: React.PointerEvent<HTMLDivElement>) => { e.currentTarget.style.setProperty('--rx', '0deg'); e.currentTarget.style.setProperty('--ry', '0deg'); };
+  const go = (i: number) => {
     if (!wide) { setMine(true); setK(i); return; }
     const el = run.current;
     if (!el) return;
@@ -294,8 +305,11 @@ function Scene() {
 }
 
 /* ---------- How it works: each step gets its own small object, played once as the row is reached ---------- */
-function StepArt({ k }) {
-  const ref = useRef(null);
+interface StepArtProps {
+  k: string;
+}
+function StepArt({ k }: StepArtProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const on = useInView(ref, { amount: 0.7, once: true });
   return (
     <div ref={ref} className={'cr-sa cr-sa-' + k} data-on={on ? '' : undefined} aria-hidden="true">
@@ -316,7 +330,12 @@ function StepArt({ k }) {
   );
 }
 // pointing at a step (or focusing into it) plays its object again
-function Step({ k, t, d }) {
+interface StepProps {
+  k: string;
+  t: string;
+  d: string;
+}
+function Step({ k, t, d }: StepProps) {
   const [n, setN] = useState(0);
   return (
     <div className="cr-step" onPointerEnter={(e) => e.pointerType === 'mouse' && setN((v) => v + 1)}>
@@ -327,7 +346,7 @@ function Step({ k, t, d }) {
 }
 
 /* ---------- Beyond: which plan covers it (three stops, Hanzo's three allowances, nothing in between) ---------- */
-const PLANS = [
+const PLANS: [string, string, string[], string, string][] = [
   ['Build', '$49', ['50,000 pages/month', '5 concurrent crawlers', 'JavaScript rendering', 'Markdown + structured output', 'REST API access'], 'Read the docs', DOCS],
   ['Scale', '$499', ['500,000 pages/month', '25 concurrent crawlers', 'Priority JS rendering', 'LLM-based extraction', 'Direct Search + Vector integration'], 'Read the docs', DOCS],
   ['Enterprise', 'Custom', ['Unlimited pages', 'Unlimited concurrent crawlers', 'Dedicated rendering pool', 'Custom extraction schemas', 'Dedicated support + SLA'], 'Contact Sales', '/contact-sales'],
@@ -335,14 +354,18 @@ const PLANS = [
 // each plan's first line, split into its figure and its unit (the same words, in the same order)
 const STOPS = PLANS.map(([, , pts]) => { const i = pts[0].indexOf(' '); return [pts[0].slice(0, i), pts[0].slice(i + 1)]; });
 
-function Fit({ at, set }) {
-  const track = useRef(null);
-  const thumb = useRef(null);
-  const pick = (x) => {
-    const r = track.current.getBoundingClientRect();
+interface FitProps {
+  at: number;
+  set: React.Dispatch<React.SetStateAction<number>>;
+}
+function Fit({ at, set }: FitProps) {
+  const track = useRef<HTMLDivElement>(null);
+  const thumb = useRef<HTMLSpanElement>(null);
+  const pick = (x: number) => {
+    const r = track.current!.getBoundingClientRect();
     set(Math.max(0, Math.min(2, Math.round(((x - r.left) / r.width) * 2))));
   };
-  const key = (e) => {
+  const key = (e: React.KeyboardEvent<HTMLSpanElement>) => {
     const k = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[e.key];
     if (k) { e.preventDefault(); set(Math.max(0, Math.min(2, at + k))); }
     else if (e.key === 'Home') { e.preventDefault(); set(0); }
@@ -411,7 +434,7 @@ const ICONS = ['M8 2v4M8 6 4 10M8 6l4 4M4 10v4M12 10v4', 'M8 1.5a6.5 6.5 0 1 0 0
 const REL = [['Chat', '/cloud/chat', 'Conversational AI'], ['Bot', '/bot', 'Multi-agent platform'], ['Search', '/search', 'Retrieval & answers']];
 
 function Desk() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.5, once: true });
   const calm = useCalm();
   const [done, setDone] = useState(false);
@@ -480,7 +503,7 @@ function Send() {
 }
 
 export default function Crawl() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useArrivals(root);
   return (
     <main className="kn cr" ref={root}>

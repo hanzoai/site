@@ -5,9 +5,9 @@
    a quarter of it is on screen. Reduced motion never arms. A section already on screen at load is left as it is. */
 import { useEffect, useRef, useState } from 'react';
 
-export function useEnter(amount = 0.25) {
-  const ref = useRef(null);
-  const [st, setSt] = useState(undefined);
+export function useEnter<T extends HTMLElement = HTMLElement>(amount = 0.25) {
+  const ref = useRef<T>(null);
+  const [st, setSt] = useState<'wait' | 'go' | undefined>(undefined);
   useEffect(() => {
     const el = ref.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -17,21 +17,26 @@ export function useEnter(amount = 0.25) {
     io.observe(el);
     return () => io.disconnect();
   }, [amount]);
-  return [ref, st];
+  return [ref, st] as const;
 }
 
 /* scramble: the statement's characters arrive as noise and decode, left to right, in about a second. The real words
    are always in the accessible name; the noise is drawn into aria-hidden spans only while it plays. */
 const NOISE = '#%&*+=/<>0123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-export function Scramble({ lines, className, go }) {
+interface ScrambleProps {
+  lines: string[];
+  className: string;
+  go?: 'wait' | 'go';
+}
+export function Scramble({ lines, className, go }: ScrambleProps) {
   const text = lines.join(' ');
-  const [out, setOut] = useState(null);
+  const [out, setOut] = useState<string | null>(null);
   useEffect(() => {
     if (go !== 'wait' && go !== 'go') return;
     if (go === 'wait') { setOut(text.replace(/\S/g, '·')); return; }
     const t0 = performance.now(), dur = 1100;
-    let raf;
-    const tick = (t) => {
+    let raf = 0;
+    const tick = (t: number) => {
       const k = Math.min(1, (t - t0) / dur);
       const n = Math.floor(k * text.length);
       setOut(k >= 1 ? null : text.slice(0, n) + text.slice(n).replace(/\S/g, () => NOISE[(Math.random() * NOISE.length) | 0]));
@@ -55,7 +60,7 @@ export function Scramble({ lines, className, go }) {
 export function Pixels() {
   const coarse = Array.from({ length: 6 * 4 });
   const fine = Array.from({ length: 16 * 10 });
-  const d = (i, n, k) => ((i * 7919) % n) / n * k; // a fixed scatter, the same on server and client
+  const d = (i: number, n: number, k: number) => ((i * 7919) % n) / n * k; // a fixed scatter, the same on server and client
   return (
     <div className="tpx" aria-hidden="true">
       <div className="tpx-g c">{coarse.map((_, i) => <i key={i} style={{ animationDelay: d(i, 24, 420) + 'ms' }} />)}</div>

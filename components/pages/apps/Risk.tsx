@@ -10,6 +10,7 @@
    Motion budget: signature = the live dial; supporting = Settle, Chapters (PinChapters), Open (sheets). No springs.
    Colour: none (JAMES.md, 0 UI hues); the hot side of the dial is ink, status reads by shape and word. Every self-running
    demo has a pause control. One dark room: "Your data, your model". Every word and link is Hanzo's. */
+import type React from 'react';
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { EASE, Magnetic } from '../../ui';
@@ -27,7 +28,9 @@ import { OrbitIn, InkSpread, SquashLand, VelocitySkew, DepthParallax } from '../
 import './Risk.css';
 
 // illustrative weights for the dial (not measured, not a customer result)
-const STAGES = [
+/* a stage: its field value, its name, and the signals that score it (name, weight) */
+type Stage = [string, string, [string, number][]];
+const STAGES: Stage[] = [
   ['signup', 'Signup and onboarding', [['several customers acting as one', 34], ['free-trial abuse', 21], ['account sharing', 12]]],
   ['payment', 'Payment', [['card testing', 38], ['velocity counters', 19], ['bot-driven payment abuse', 15]]],
   ['post-purchase', 'Ongoing and post-purchase', [['payout fraud', 30], ['negative balances', 16], ['disputes', 11]]],
@@ -35,17 +38,17 @@ const STAGES = [
 const LINE = 50;
 
 /* Runs a short sequence once each time its section comes into view (0 … n-1, ms apart), then rests on `rest`. */
-function useRun(n, ms, on, rest) {
+function useRun(n: number, ms: number, on: boolean, rest: number) {
   const [i, setI] = useState(rest);
   const [go, setGo] = useState(false);
   useEffect(() => { if (on) { setI(0); setGo(true); } else setGo(false); }, [on]);
   useEvery(ms, on && go, () => { if (i >= n - 1) { setGo(false); setI(rest); } else setI(i + 1); });
-  return [i, setI, go];
+  return [i, setI, go] as const;
 }
 
 /* The hero object: a gauge on the left, the decision and its reasons on the right. */
 function Dial() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive<HTMLDivElement>(0.3);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const [st, setSt] = useState(1);
   const [off, setOff] = useState([false, false, false]); // a signal set back to neutral
@@ -63,8 +66,8 @@ function Dial() {
   const hot = score >= LINE;
   const act = hot ? 'summon a person' : 'allow';
   const rot = -90 + (score / 100) * 180;
-  const pick = (i) => { setMine(true); setSt(i); setOff([false, false, false]); };
-  const flip = (i) => { setMine(true); setOff((o) => o.map((v, k) => (k === i ? !v : v))); };
+  const pick = (i: number) => { setMine(true); setSt(i); setOff([false, false, false]); };
+  const flip = (i: number) => { setMine(true); setOff((o) => o.map((v, k) => (k === i ? !v : v))); };
   return (
     <div className="rk-dial" ref={ref}>
       <div className="rk-dial-l">
@@ -83,7 +86,7 @@ function Dial() {
         </div>
       </div>
       <div className="rk-dial-r">
-        <div className="rk-stage-row"><div className="rk-stage" role="tablist" aria-label="Stage" onKeyDown={(e) => { const n = { ArrowRight: (st + 1) % 3, ArrowLeft: (st + 2) % 3, Home: 0, End: 2 }[e.key]; if (n === undefined) return; e.preventDefault(); pick(n); e.currentTarget.children[n]?.focus(); }}>
+        <div className="rk-stage-row"><div className="rk-stage" role="tablist" aria-label="Stage" onKeyDown={(e) => { const n = { ArrowRight: (st + 1) % 3, ArrowLeft: (st + 2) % 3, Home: 0, End: 2 }[e.key]; if (n === undefined) return; e.preventDefault(); pick(n); (e.currentTarget.children[n] as HTMLElement | undefined)?.focus(); }}>
           {STAGES.map(([k], i) => (
             <button key={k} type="button" role="tab" aria-selected={st === i} tabIndex={st === i ? 0 : -1} onClick={() => pick(i)}>
               <span>{k}</span>
@@ -128,7 +131,7 @@ function Hero() {
 /* Where this is today: the lede said once, as a statement, with the two faces as objects under it. Their long words open
    from the + into sheets. */
 function Faces() {
-  const [ref, live] = useLive(0.2);
+  const [ref, live] = useLive<HTMLElement>(0.2);
   return (
     <section className={'w2-sec rk-say' + (live ? ' on' : '')} aria-labelledby="rk-today" ref={ref}>
       <div className="w2-wrap">
@@ -174,7 +177,7 @@ const LIFE = [
 const FACTS = ['a registration in your organization', 'a credential of a known class', 'a live session', 'metered usage'];
 
 /* Chapter 1 visual: an alert becoming a case, step by step, with the five-year clock. */
-function CaseFile({ on }) {
+function CaseFile({ on }: { on: boolean }) {
   const [k, setK] = useState(CASE.length);
   useEffect(() => { if (on) setK(0); }, [on]);
   useEvery(1100, on, () => setK((v) => (v >= CASE.length + 2 ? 0 : v + 1)));
@@ -197,7 +200,7 @@ function CaseFile({ on }) {
 }
 
 /* Chapter 2 visual: the three stages on one track, the same call at each one. */
-function Track({ on }) {
+function Track({ on }: { on: boolean }) {
   const [at, choose] = useSteps(3, 2400, on);
   return (
     <div className="rk-track w2-object">
@@ -218,7 +221,7 @@ function Track({ on }) {
 }
 
 /* Chapter 3 visual: four facts about our own platform; with all four a caller is an agent, with none it is anonymous. */
-function Lanes({ on }) {
+function Lanes({ on }: { on: boolean }) {
   const [has, setHas] = useState([true, true, true, true]);
   const [mine, setMine] = useState(false);
   const [n, setN] = useState(0);
@@ -286,8 +289,12 @@ function Chapters() {
 }
 
 /* One chapter: its words beside its own stepping object, which runs while it is in view (pause in the card's corner). */
-function ChapterRow({ c, i }) {
-  const [ref, live] = useLive(0.35);
+interface ChapterRowProps {
+  c: { t: string; b: React.JSX.Element; };
+  i: number;
+}
+function ChapterRow({ c, i }: ChapterRowProps) {
+  const [ref, live] = useLive<HTMLElement>(0.35);
   const [paused, pauseBtn] = usePause({ right: 12, top: 12 });
   const V = [CaseFile, Track, Lanes][i];
   return (
@@ -313,7 +320,10 @@ const ON = [
 ];
 
 /* A small object per subject: accounts acting as one, a transaction meeting its decision, usage climbing, a dispute's record. */
-function OnArt({ i }) {
+interface OnArtProps {
+  i: number;
+}
+function OnArt({ i }: OnArtProps) {
   if (i === 0) return <span className="rk-art acc"><i /><i /><i /><i /><b /></span>;
   if (i === 1) return <span className="rk-art tx"><i /><em /><b>action</b></span>;
   if (i === 2) return <span className="rk-art ab">{[30, 44, 38, 62, 80, 96].map((h, k) => <i key={k} style={{ height: h + '%' }} />)}</span>;
@@ -321,7 +331,7 @@ function OnArt({ i }) {
 }
 
 function DecidesOn() {
-  const [ref, live] = useLive(0.15);
+  const [ref, live] = useLive<HTMLElement>(0.15);
   return (
     <section className={'w2-sec rk-on' + (live ? ' on' : '')} ref={ref}>
       <div className="w2-wrap">
@@ -336,7 +346,7 @@ function DecidesOn() {
 }
 
 function Model() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive<HTMLElement>(0.3);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   return (
     <section className={'w2-sec rk-model w2-dark' + (live && !paused ? ' on' : '')} data-room="dark" ref={ref}>
@@ -367,7 +377,7 @@ const RULES = [['Custom rules', 'Write rules over your own fields in the same vo
 /* Rules, lists and suppression as one object: three steps on one card. The rule reads your fields, a list hits, the hit
    is recorded as suppressed rather than dropped. The step's own words swap under the card, one at a time. */
 function Rules() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive<HTMLElement>(0.3);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
@@ -384,7 +394,7 @@ function Rules() {
           <p className="rk-dev">In development.</p>
         </div>
         <div className={'rk-rule s' + at} data-depth="1.6">
-          <div className="rk-rule-tabs" role="tablist" aria-label="Rules, lists and suppression" onKeyDown={(e) => { const k = { ArrowRight: (at + 1) % 3, ArrowLeft: (at + 2) % 3, Home: 0, End: 2 }[e.key]; if (k === undefined) return; e.preventDefault(); setMine(true); setAt(k); e.currentTarget.children[k]?.focus(); }}>
+          <div className="rk-rule-tabs" role="tablist" aria-label="Rules, lists and suppression" onKeyDown={(e) => { const k = { ArrowRight: (at + 1) % 3, ArrowLeft: (at + 2) % 3, Home: 0, End: 2 }[e.key]; if (k === undefined) return; e.preventDefault(); setMine(true); setAt(k); (e.currentTarget.children[k] as HTMLElement | undefined)?.focus(); }}>
             {RULES.map(([t], i) => (
               <button key={t} type="button" role="tab" aria-selected={at === i} tabIndex={at === i ? 0 : -1} onClick={() => { setMine(true); setAt(i); }}><h3>{t}</h3></button>
             ))}
@@ -410,7 +420,7 @@ function Rules() {
 
 /* Platforms: the declare stack is the screen; the paragraph on why the two planes stay apart opens from its words. */
 function Platforms() {
-  const [ref, live] = useLive(0.25);
+  const [ref, live] = useLive<HTMLElement>(0.25);
   const [d] = useRun(5, 1100, live, 4);
   return (
     <section className="w2-sec rk-platsec" ref={ref}>
@@ -443,7 +453,7 @@ const TIERS = [
 
 /* How it connects, drawn: your system sends what it knows, Risk returns a decision; the processor is never touched. */
 function Flow() {
-  const [ref, live] = useLive(0.2);
+  const [ref, live] = useLive<HTMLDivElement>(0.2);
   return (
     <div className={'rk-flow' + (live ? ' on' : '')} ref={ref} aria-hidden="true">
       <span className="rk-flow-n x-mono">your system</span>
@@ -456,9 +466,9 @@ function Flow() {
 }
 
 function ConnectPlans() {
-  const [ref] = useLive(0.1);
+  const [ref] = useLive<HTMLElement>(0.1);
   const [mine, setMine] = useState(false);
-  const [lref, llive] = useLive(0.6);
+  const [lref, llive] = useLive<HTMLOListElement>(0.6);
   const [tier, setTier] = useRun(4, 1400, llive && !mine, 3);
   return (
     <section className="w2-sec rk-plans" ref={ref}>
@@ -500,7 +510,7 @@ function ConnectPlans() {
 }
 
 function Not() {
-  const [ref, live] = useLive(0.2);
+  const [ref, live] = useLive<HTMLElement>(0.2);
   const [g] = useRun(3, 1200, live, -1);
   return (
     <section className="w2-sec rk-not" ref={ref}>

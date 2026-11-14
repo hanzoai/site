@@ -3,29 +3,33 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { load, find, findAll, textOf, slot, tag, isN } from '../htmltree';
+import type { Branch, Child, Meta } from '../htmltree';
+import type { Glyph, Local, Page, Pair, Preview, Product } from './types';
 
 const ROOT = process.cwd();
-let IDX;
-const idx = () => (IDX ||= JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'pages.json'), 'utf8')));
-export const metaOf = (route) => idx()[route];
+let IDX: Record<string, Meta> | undefined;
+const idx = (): Record<string, Meta> => (IDX ||= JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'pages.json'), 'utf8')));
+export const metaOf = (route: string): Meta | undefined => idx()[route];
 export const MEMBERS = () => Object.keys(idx()).filter((p) => /^\/cloud\/[^/]+$/.test(p)).map((p) => p.split('/')[2]);
-const clean = (s) => (s || '').replace(/\s+/g, ' ').trim();
-const txt = (n) => clean(textOf(n));
-const leaves = (n) => (isN(n) ? n.c.flatMap(leaves) : [clean(n)]).filter(Boolean);
-const kids = (n) => (isN(n) ? n.c.filter(isN) : []);
+const clean = (s: string) => (s || '').replace(/\s+/g, ' ').trim();
+const txt = (n: Child | null | undefined) => clean(textOf(n));
+const leaves = (n: Child): string[] => (isN(n) ? n.c.flatMap(leaves) : [clean(n)]).filter(Boolean);
+const kids = (n: Child | null | undefined) => (isN(n) ? n.c.filter(isN) : []);
+/* the attributes of an element the finders matched on its attributes */
+const attr = (n: Branch): Record<string, string> => n.a || {};
 // each service of hanzo.ai's shared example project has its own note, which its browser draws (its server copy does
 // not carry them): Hanzo's words from its shared console (live, 8 Nov)
-const ROW_NOTE = {
+const ROW_NOTE: Record<string, string> = {
   gateway: 'Every request enters here, so the limiter does too.',
   'payments-api': 'The service the session above is changing.',
   'checkout-web': 'A build is running from the last commit on main.',
   'docs-site': 'Static, published by the same pipeline as the rest.',
 };
-const live = (slug) => {
+const live = (slug: string): { text: string[]; links: string[] } => {
   try { return JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'live', 'cloud', slug + '.json'), 'utf8')); } catch { return { text: [], links: [] }; }
 };
 
-function product(root, slug) {
+function product(root: Branch, slug: string): Product {
   const secs = findAll(root, tag('section'));
   const fold = secs.find((s) => s.a && s.a['data-slot'] === 'fold') || secs[0];
   const h1 = find(fold, tag('h1'));
@@ -38,15 +42,15 @@ function product(root, slug) {
   const about = secs.find((s) => s !== fold && s !== ship && !find(s, slot('leaf')) && !find(s, slot('eyebrow')));
   const rel = secs.find((s) => find(s, slot('leaf')));
   const lab = find(fold, (n) => n.a && 'data-label' in n.a);
-  const doc = {
+  const doc: Product = {
     slug, kind: 'product',
     crumb: nav ? kids(nav).filter((n) => txt(n) !== '/').map((n) => ({ label: txt(n), href: n.a && n.a.href })) : [],
     label: txt(lab), name: txt(h1),
     lede: txt(after.find((n) => n.a && n.a['data-slot'] === 'lede')),
-    actions: findAll(col, (n) => n.t === 'a' && n.a && n.a['data-slot'] === 'action').map((a) => ({ label: txt(a), href: a.a.href })),
-    badges: (after.find((n) => n.t === 'div' && !find(n, tag('a')) && find(n, tag('span'))) || { c: [] }).c.filter(isN).map(txt).filter(Boolean),
+    actions: findAll(col, (n) => n.t === 'a' && n.a && n.a['data-slot'] === 'action').map((a) => ({ label: txt(a), href: attr(a).href })),
+    badges: kids(after.find((n) => n.t === 'div' && !find(n, tag('a')) && find(n, tag('span')))).map(txt).filter(Boolean),
     meta: (() => { const dl = find(col, tag('dl')); return dl ? findAll(dl, tag('dt')).map((dt, i) => ({ k: txt(dt), v: txt(findAll(dl, tag('dd'))[i]) })) : []; })(),
-    window: null, ship: null, desc: [], features: [], motto: '', related: null, live: [],
+    window: null, ship: null, desc: [], features: [], motto: '', related: null, live: [], liveLinks: [],
   };
   if (win) {
     const bar = kids(win)[0];
@@ -55,15 +59,15 @@ function product(root, slug) {
     const inNav = new Set(findAll(win, tag('nav')).flatMap((v) => findAll(v, tag('a'))));
     const out = findAll(win, (n) => n.t === 'a' && n.a && n.a.href && !inNav.has(n));
     doc.window = {
-      title: title ? title.c.filter((c) => !isN(c)).map(clean).filter(Boolean) : [doc.name],
-      siblings: [...inNav].map((a) => ({ label: txt(a), href: a.a.href, current: a.a['aria-current'] === 'page' })),
+      title: title ? title.c.filter((c): c is string => !isN(c)).map(clean).filter(Boolean) : [doc.name],
+      siblings: [...inNav].map((a) => ({ label: txt(a), href: attr(a).href, current: attr(a)['aria-current'] === 'page' })),
       // three kinds of example on hanzo.ai: a project's services, a conversation with the agent, or a CLI session
       rows: findAll(win, slot('surface-row')).map((b) => { const name = txt(find(b, slot('surface-name'))); return { name, state: txt(findAll(b, (n) => n.t === 'span' && n.a && n.a['data-slot'] === 'text').pop()), note: ROW_NOTE[name] || '' }; }),
       turns: findAll(win, slot('surface-turn')).map(txt),
       lines: findAll(win, slot('surface-line')).map((b) => { const [g, ...rest] = leaves(b); return { g, text: rest.join(' ') }; }),
       caption: txt(find(win, (n) => n.t === 'p')),
       host: code ? code.c.filter((c) => !isN(c) || c.t === 'span').map((c) => clean(textOf(c))).filter(Boolean) : [],
-      console: out.length ? { label: txt(out[out.length - 1]), href: out[out.length - 1].a.href } : null,
+      console: out.length ? { label: txt(out[out.length - 1]), href: attr(out[out.length - 1]).href } : null,
       note: txt(find(fig, tag('figcaption'))),
     };
   }
@@ -86,15 +90,15 @@ function product(root, slug) {
   if (rel) {
     doc.related = {
       eyebrow: txt(find(rel, slot('eyebrow'))),
-      more: findAll(rel, slot('more')).map((a) => ({ href: a.a.href, label: txt(a) })),
-      items: findAll(rel, slot('leaf')).map((a) => ({ href: a.a.href, label: txt(find(a, slot('lift'))), desc: txt(find(a, (n) => n.t === 'span' && n.a && n.a['data-slot'] === 'text')) })),
+      more: findAll(rel, slot('more')).map((a) => ({ href: attr(a).href, label: txt(a) })),
+      items: findAll(rel, slot('leaf')).map((a) => ({ href: attr(a).href, label: txt(find(a, slot('lift'))), desc: txt(find(a, (n) => n.t === 'span' && n.a && n.a['data-slot'] === 'text')) })),
     };
   }
   return doc;
 }
 
 // /cloud/local is a different page on hanzo.ai: a boot story and a terminal session, so it keeps its own shape
-function local(root, slug) {
+function local(root: Branch, slug: string): Local {
   const fold = find(root, (n) => n.t === 'section' && n.a && n.a['data-slot'] === 'fold');
   const boot = find(root, (n) => n.t === 'section' && n.a && n.a.id === 'boot');
   const grids = findAll(boot, slot('grid'));
@@ -105,7 +109,7 @@ function local(root, slug) {
     boot: {
       id: 'boot', eyebrow: txt(find(boot, slot('eyebrow'))), title: txt(find(boot, slot('title'))), lede: txt(findAll(boot, slot('lede'))[0]),
       figures: kids(grids[1]).map((d) => ({ value: txt(find(d, tag('span'))), label: txt(find(d, tag('p'))) })),
-      actions: findAll(boot, (n) => n.t === 'a' && n.a && n.a['data-slot'] === 'action').map((a) => ({ label: txt(a), href: a.a.href })),
+      actions: findAll(boot, (n) => n.t === 'a' && n.a && n.a['data-slot'] === 'action').map((a) => ({ label: txt(a), href: attr(a).href })),
       cwd: txt(findAll(boot, (n) => n.t === 'span' && n.a && n.a['data-slot'] === 'text' && txt(n).startsWith('~'))[0]),
       lines: lines.map((l) => {
         const sp = kids(l);
@@ -113,28 +117,29 @@ function local(root, slug) {
         return { cmd, text: txt(cmd ? sp[1] : sp[0]), time: !cmd && sp[1] ? txt(sp[1]) : '' };
       }),
     },
+    live: [], liveLinks: [],
   };
 }
 
 // every product page that names its Google Cloud counterpart, for the finder; read once per build
-let PAIRS;
-export function googlePairs() {
-  return (PAIRS ||= MEMBERS().map((s) => cloudDoc(s)).filter((d) => d.kind === 'product').flatMap((d) => {
+let PAIRS: Pair[] | undefined;
+export function googlePairs(): Pair[] {
+  return (PAIRS ||= MEMBERS().map((s) => cloudDoc(s)).filter((d): d is Product => d.kind === 'product').flatMap((d) => {
     const g = d.meta.find((m) => m.k === 'Google Cloud');
     const api = d.meta.find((m) => m.k === 'API');
     return g ? [{ slug: d.slug, name: d.name, google: g.v, api: api ? api.v : '', group: d.label }] : [];
   }));
 }
 
-const DOCS = {};
-export function cloudDoc(slug) {
+const DOCS: Record<string, Page> = {};
+export function cloudDoc(slug: string): Page {
   if (DOCS[slug]) return DOCS[slug];
   const root = load('cloud/' + slug);
   const doc = slug === 'local' ? local(root, slug) : product(root, slug);
   // lines hanzo.ai draws in the browser that its server copy does not carry (the console's note on the running session)
   const html = clean(textOf(root));
   const L = live(slug);
-  const hrefs = new Set(findAll(root, (n) => n.t === 'a' && n.a && n.a.href).map((a) => a.a.href));
+  const hrefs = new Set(findAll(root, (n) => n.t === 'a' && n.a && n.a.href).map((a) => attr(a).href));
   doc.live = L.text.map(clean).filter((t) => t.length > 12 && !html.includes(t));
   // where hanzo.ai's browser sends the console button today (its server copy says /home)
   doc.liveLinks = L.links.filter((h) => /^https?:/.test(h) && !hrefs.has(h));
@@ -143,11 +148,11 @@ export function cloudDoc(slug) {
 
 /* a product's family on hanzo.ai (its breadcrumb group); JAMES 7 rules out per-product hues, so a page is told apart
    by its own Sigil, its own console and its own words, never by a colour */
-export const groupOf = (doc) => (doc.kind === 'local' ? 'Local' : (doc.crumb[1] && doc.crumb[1].label) || doc.label);
+export const groupOf = (doc: Page) => (doc.kind === 'local' ? 'Local' : (doc.crumb[1] && doc.crumb[1].label) || doc.label);
 
 /* the numbers that shape a product's Sigil: its own figures (a family size, a feature count, numbers in its words) */
-const nums = (s) => (String(s).match(/\d+(?:\.\d+)?/g) || []).map(Number);
-export function sigilOf(slug) {
+const nums = (s: string) => (String(s).match(/\d+(?:\.\d+)?/g) || []).map(Number);
+export function sigilOf(slug: string): Glyph {
   const d = cloudDoc(slug);
   const data = d.kind === 'local'
     ? d.boot.figures.flatMap((f) => nums(f.value))
@@ -156,10 +161,10 @@ export function sigilOf(slug) {
 }
 /* what a neighbour shows when you point at it (a console sibling, a family pill, a related row): that product's own
    name, status, endpoint, lede and Google Cloud pair, read from its own page. Only /cloud/* products have one. */
-export function previewsOf(doc) {
+export function previewsOf(doc: Page): Record<string, Preview> {
   if (doc.kind !== 'product') return {};
   const hrefs = new Set([...(doc.window ? doc.window.siblings.map((s) => s.href) : []), ...(doc.related ? doc.related.items.map((i) => i.href) : [])]);
-  const out = {};
+  const out: Record<string, Preview> = {};
   for (const h of hrefs) {
     const m = /^\/cloud\/([^/#?]+)$/.exec(h || '');
     if (!m || !MEMBERS().includes(m[1])) continue;
@@ -173,9 +178,9 @@ export function previewsOf(doc) {
 }
 
 /* a related card shows the picture its page opens with, so the card can open into that page */
-export function relatedSigils(doc) {
-  if (!doc.related) return {};
-  return Object.fromEntries(doc.related.items.map((it) => {
+export function relatedSigils(doc: Page): Record<string, Glyph> {
+  if (doc.kind !== 'product' || !doc.related) return {};
+  return Object.fromEntries(doc.related.items.map((it): [string, Glyph] => {
     const m = /^\/cloud\/([^/#?]+)$/.exec(it.href);
     return [it.href, m && MEMBERS().includes(m[1]) ? sigilOf(m[1]) : { seed: it.href, data: [] }];
   }));

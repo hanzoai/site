@@ -27,6 +27,8 @@
    flip in as tiles), pull-back ("What you get": starts zoomed in and pulls back to the whole grid), venetian-type (the
    close: each line of type slides in from alternating sides).
    Every word and link is Hanzo's; example rows are blank bars and ids, never invented data. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent } from 'motion/react';
 import useCalm from '../../v2/useCalm';
@@ -42,14 +44,14 @@ import './Base.css';
 const DOCS = 'https://docs.hanzo.ai/docs/projects/hanzoai/base';
 const GH = 'https://github.com/hanzoai/base';
 const FIELDS = [['title', 'text'], ['body', 'text'], ['author', 'relation'], ['published', 'bool']];
-const hex = (n) => ((n * 2654435761) >>> 0).toString(16).padStart(8, '0').slice(0, 8);
+const hex = (n: number) => ((n * 2654435761) >>> 0).toString(16).padStart(8, '0').slice(0, 8);
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
 /* Entrances (MOTION-MAP rule 7): each main section arrives its own way, once, when it first comes into view. The
    server HTML is the final state; after mount a section below the fold is armed (data-arm: its start state, set in
    Base.css per entrance) and data-in plays it back to rest. Reduced motion and JS off: nothing is armed. */
-function useEntrance() {
-  const ref = useRef(null);
+function useEntrance<T extends HTMLElement = HTMLElement>() {
+  const ref = useRef<T>(null);
   const calm = useCalm();
   useEffect(() => {
     const el = ref.current;
@@ -74,7 +76,7 @@ function Admin() {
   const [view, setView] = useState(0);
   const [n, setN] = useState(9);
   // pointer: the row under the cursor shows its own record path in the address pill
-  const [hov, setHov] = useState(null);
+  const [hov, setHov] = useState<number | null>(null);
   const run = live && view === 0 && !paused && hov === null;
   useEffect(() => {
     if (!run) return;
@@ -135,23 +137,29 @@ const PILLARS = [
 ];
 
 /* the map's layout, in its own units: [x, y, w, h] per part. Wide is landscape, narrow is portrait (phones). */
-const MAP = {
+/* a part's box: [x, y, w, h] */
+interface Layout { W: number; H: number; n: Record<string, number[]> }
+const MAP: { wide: Layout; narrow: Layout } = {
   wide: { W: 1200, H: 700, n: { coll: [470, 20, 260, 214], admin: [30, 50, 330, 220], data: [840, 40, 330, 200], bin: [480, 290, 240, 160], iam: [30, 440, 330, 190], live: [840, 400, 330, 250], file: [470, 520, 260, 150] } },
   narrow: { W: 600, H: 1080, n: { coll: [160, 10, 280, 214], admin: [10, 270, 280, 200], data: [310, 270, 280, 200], bin: [180, 510, 240, 160], iam: [10, 710, 280, 180], live: [310, 710, 280, 230], file: [160, 950, 280, 120] } },
 };
-const at = (r) => ({ left: r[0], top: r[1], width: r[2], height: r[3] });
-const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-const clamp = (v) => Math.max(0, Math.min(1, v));
+const at = (r: number[]) => ({ left: r[0], top: r[1], width: r[2], height: r[3] });
+const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const clamp = (v: number) => Math.max(0, Math.min(1, v));
 
 /* The signature: the whole system as one map; scroll zooms into the collection, which fills the screen and declares
    itself. One transform on the map (scale + translate), written straight to the DOM from the scroll position. */
-function ZoomMap({ name, setName }) {
-  const run = useRef(null);
-  const stage = useRef(null);
-  const map = useRef(null);
-  const say0 = useRef(null);
-  const say = useRef(null);
-  const geo = useRef(null);
+interface ZoomMapProps {
+  name: string;
+  setName: React.Dispatch<React.SetStateAction<string>>;
+}
+function ZoomMap({ name, setName }: ZoomMapProps) {
+  const run = useRef<HTMLDivElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
+  const map = useRef<HTMLDivElement>(null);
+  const say0 = useRef<HTMLDivElement>(null);
+  const say = useRef<HTMLDivElement>(null);
+  const geo = useRef<{ s0: number; s1: number; fc: number[]; f0: number[]; f1: number[]; } | null>(null);
   const ent = useEntrance();
   const wide = useWide();
   const calm = useCalm();
@@ -159,7 +167,7 @@ function ZoomMap({ name, setName }) {
   const L = wide ? MAP.wide : MAP.narrow;
   const { scrollYProgress: p } = useScroll({ target: run, offset: ['start start', 'end end'] });
 
-  const paint = useCallback((v) => {
+  const paint = useCallback((v: number) => {
     const g = geo.current;
     if (!g || !map.current) return;
     const t = calm ? 0 : ease(clamp(v / 0.6));
@@ -169,8 +177,8 @@ function ZoomMap({ name, setName }) {
     map.current.style.transform = `translate3d(${fx - g.fc[0] * s}px, ${fy - g.fc[1] * s}px, 0) scale(${s})`;
     if (calm) return;
     const o = clamp((v - 0.6) / 0.1);
-    if (say.current) { say.current.style.opacity = o; say.current.toggleAttribute('data-on', o > 0.5); }
-    if (say0.current) say0.current.style.opacity = 1 - clamp(v / 0.2);
+    if (say.current) { say.current.style.opacity = String(o); say.current.toggleAttribute('data-on', o > 0.5); }
+    if (say0.current) say0.current.style.opacity = String(1 - clamp(v / 0.2));
   }, [calm]);
 
   // measure the stage and work out the two cameras: the whole map, and the collection filling the screen
@@ -205,7 +213,7 @@ function ZoomMap({ name, setName }) {
   };
   const onFocusName = () => { if (!calm && p.get() < 0.6) zoomIn(); };
 
-  const line = (k) => {
+  const line = (k: string) => {
     const a = L.n.bin, b = L.n[k];
     return <line key={k} x1={a[0] + a[2] / 2} y1={a[1] + a[3] / 2} x2={b[0] + b[2] / 2} y2={b[1] + b[3] / 2} />;
   };
@@ -287,11 +295,17 @@ function ZoomMap({ name, setName }) {
 }
 
 /* Data, Auth and Files: plain rows, each beside its own drawing (the old build-up's tiles, built) */
-function PilRow({ children }) {
-  const ent = useEntrance();
+interface PilRowProps {
+  children: ReactNode;
+}
+function PilRow({ children }: PilRowProps) {
+  const ent = useEntrance<HTMLDivElement>();
   return <div className="kn-grid bs-pil-r" ref={ent}>{children}</div>;
 }
-function Pillars({ coll }) {
+interface PillarsProps {
+  coll: string;
+}
+function Pillars({ coll }: PillarsProps) {
   const [ref, live] = useLive(0.3);
   return (
     <section className="kn-sec bs-pil" ref={ref}>
@@ -335,7 +349,7 @@ function Pillars({ coll }) {
 }
 
 /* the capability cards' art: small, still drawings of each idea */
-const Art = {
+const Art: Record<string, () => React.JSX.Element> = {
   schema: () => (
     <div className="bs-art a-schema"><div className="bs-art-card"><b>schema</b>{[60, 44, 52].map((w, i) => <i key={i} style={{ width: w + '%' }} />)}</div><span className="bs-art-arr" /><code>/records</code></div>
   ),
@@ -355,7 +369,7 @@ const Art = {
     <div className="bs-art a-fn"><div className="bs-art-box"><b>function</b><span>read a record</span><span>read a list</span></div><p>{['network', 'filesystem', 'shell'].map((x) => <s key={x}>{x}</s>)}</p></div>
   ),
 };
-const CAPS = [
+const CAPS: [string, string, string][] = [
   ['schema', 'The schema is the API', 'Define a collection and its records are addressable the same second, with an admin UI to browse and edit them. Nothing is scaffolded into your repo, so there is nothing to regenerate when the schema moves.'],
   ['stream', 'One stream, no polling', 'Subscribe over server-sent events and records arrive as they change. A browser cannot put a header on that request, so the stream is opened with a short-lived grant minted on an ordinary authenticated call — your access token never travels in a URL.'],
   ['rules', 'Rules run before the count', 'An access rule is a predicate on the collection, folded into the query ahead of paging and ahead of the count — so a row you may not read is not counted either. With nobody signed in, a rule naming the caller matches nothing.'],
@@ -365,21 +379,21 @@ const CAPS = [
 ];
 
 function Caps() {
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const ent = useEntrance();
   const calm = useCalm();
   // each card's drawing acts out its idea once as the card comes 60% into view, then rests (hover replays it)
   useEffect(() => {
     if (calm || !box.current || typeof IntersectionObserver === 'undefined') return;
-    const timers = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting) return;
       io.unobserve(e.target);
-      const el = e.target;
+      const el = e.target as HTMLElement;
       timers.push(setTimeout(() => { el.dataset.play = ''; }, 120));
       timers.push(setTimeout(() => { delete el.dataset.play; }, 1500));
     }), { threshold: 0.6 });
-    box.current.querySelectorAll('.kno-card').forEach((c) => io.observe(c));
+    box.current.querySelectorAll<HTMLElement>('.kno-card').forEach((c) => io.observe(c));
     return () => { io.disconnect(); timers.forEach(clearTimeout); };
   }, [calm]);
   return (
@@ -407,7 +421,10 @@ const PROJ = [
 
 /* Run the binary's object: the same Base in four places. Pick (or hover) a place and its row answers the same records
    path, with the collection you named carried down; the example project's apps read it. */
-function Deploy({ coll }) {
+interface DeployProps {
+  coll: string;
+}
+function Deploy({ coll }: DeployProps) {
   const [ref, live] = useLive(0.4);
   const [on, setOn] = useState(0);
   const [hand, setHand] = useState(false);
@@ -425,7 +442,7 @@ function Deploy({ coll }) {
     const t = setTimeout(() => setBuilt(true), 4200);
     return () => clearTimeout(t);
   }, [live, built]);
-  const pick = (i) => { setHand(true); setOn(i); };
+  const pick = (i: number) => { setHand(true); setOn(i); };
   const seed = on * 977 + coll.length * 31;
   return (
     <div className="bs-dep" ref={ref}>
@@ -477,7 +494,10 @@ function Deploy({ coll }) {
   );
 }
 
-function Run({ coll }) {
+interface RunProps {
+  coll: string;
+}
+function Run({ coll }: RunProps) {
   const ent = useEntrance();
   return (
     <section className="kn-sec bs-run" ref={ent}>
@@ -520,7 +540,7 @@ const REL = [['Base docs →', DOCS], ['Datastore', '/datastore', 'Analytical co
 export default function Base() {
   const [name, setName] = useState('posts');
   const coll = name || 'posts';
-  const closeEnt = useEntrance();
+  const closeEnt = useEntrance<HTMLDivElement>();
   useOwnAsk();
   return (
     <main className="kn bs">

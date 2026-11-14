@@ -22,6 +22,7 @@
 // Signature: a magazine cover that turns itself: the headline wipes and a silver curtain crosses the art plate as it changes
 // Beyond: the publishing strip: a bar per month counted from Hanzo's own post dates that narrows the contents to a month
 // V2: 8/10 motion map: signature word-light (the masthead lede lights word by word; pointer, tap and arrow keys take the light), entrances ink-spread (cover plate), typewriter (on-site titles), pendulum (publishing strip), tilt-3d-hover (contents), diagonal-wipe (band); no pinned month headings, no scroll-linked band, old row/card reveals removed. Round 6: phone month bars fit the column (9 equal columns, no rail), active All 24 outlined not filled, one All 24 control, tighter cover-to-films gap. Round 5: masthead cuts in by CSS from first paint, the cover plate's first contour frame is server SVG (BlogIndexFrame), header outlined from first paint while the page's solid is on screen (no flip), phone strip scrolls inside the column with All 24 under it, card art clipped to its radius, big card fills the column, AnimatePresence popLayout. Round 4: JS off shows one cover story (NoJs, no <noscript>); one solid per screen (masthead "Read the latest" solid on desktop where the header quiets, outlined on phones beside the header's solid); the on-site trio plays Hanzo's own films (Zen, Enso, Kai) so four real visuals show with the cover; the contents show one month at a time, the bars swap it in and out, All 24 opens all; the count sits under Contents; trio tilt, count-up, idle bar sweep and row arrival kept
+import type React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useAnimate, useInView, useReducedMotion } from 'motion/react';
 import { A, Cta, Film, Img } from '../kit';
@@ -58,7 +59,7 @@ const ART: Record<string, string> = {
   gpu: '/images/categories/cloud.webp',
 };
 const Arr = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const EASE = [0.16, 1, 0.3, 1];
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const B = 'https://hanzo.blog/';
 const POSTS = [
   ['commerce', 'October 26, 2026', 'Optimizing for Headless Commerce in the Era of Agentic LLMs', 'Buyers are becoming agents. What it takes to be readable, signable and payable by an LLM with no human in the loop, and what Hanzo ships for it today.', 'headless-commerce-agentic-llms/'],
@@ -85,21 +86,28 @@ const POSTS = [
   ['pricing', 'February 27, 2026', 'AI Transcription 85% Cheaper Than OpenAI: Multimodal Pricing for Bot Developers', "Hanzo Bot delivers speech-to-text at $0.0009/minute — 85% cheaper than OpenAI Whisper — plus image generation at the industry's lowest price of $0.00013/step.", '2026-02-27-multimodal-pricing/'],
   ['pricing', 'February 27, 2026', 'Hanzo Pricing Deep Dive: Every Model, Every Plan, Every Comparison', 'The comprehensive breakdown of Hanzo pricing across AI models, cloud compute, GPU access, and tools — with head-to-head comparisons against every major competitor.', '2026-02-27-pricing-deep-dive/'],
 ].map(([tag, date, title, desc, path]) => ({ tag, date, title, desc, to: B + path, month: date.split(' ')[0] }));
+type Post = (typeof POSTS)[number];
 const COVER = POSTS.slice(0, 6);
 /* each on-site post shows Hanzo's own film for the first model it is about (as its /blog/<slug> plate and keep-reading cards do) */
 const HERE = [['The Next Frontier Will Be Synthesis', '/blog/synthesis', 'zen'], ['A New Pareto Frontier', '/blog/pareto-frontier', 'enso'], ['Kai 1: Decisions, Not Completions', '/blog/kai-decision-models', 'kai']];
 const MONTHS = ['February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October'];
-const pad = (n) => String(n).padStart(2, '0');
+const pad = (n: number) => String(n).padStart(2, '0');
 const HOLD = 6.5;
 const calmNow = () => typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* the number of posts counts up once when the contents are reached, large, then settles to its 64px rest */
-function Count({ n, label, go, from }) {
+interface CountProps {
+  n: number;
+  label: string;
+  go: boolean;
+  from: number | null;
+}
+function Count({ n, label, go, from }: CountProps) {
   const [v, setV] = useState(n);
   useEffect(() => {
     if (!go || from == null || calmNow()) { setV(n); return; }
     let raf = 0; const t0 = performance.now();
-    const step = (t) => { const k = Math.min(1, (t - t0) / 1100); setV(Math.round(from + (n - from) * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(step); };
+    const step = (t: number) => { const k = Math.min(1, (t - t0) / 1100); setV(Math.round(from + (n - from) * (1 - Math.pow(1 - k, 3)))); if (k < 1) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
   }, [go, n, from]);
@@ -118,7 +126,7 @@ function Cover() {
   const [hold, setHold] = useState(false);
   const [paused, setPaused] = useState(false);
   const how = useRef('auto'); // the timer turns the page with the curtain; a hand cuts straight to its story
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.35 });
   const calm = useReducedMotion();
   const run = seen && !hold && !calm && !paused;
@@ -132,7 +140,7 @@ function Cover() {
   // the server's static first frame of the plate stays until the living canvas has drawn its own (its effect runs first)
   const [live, setLive] = useState(false);
   useEffect(() => setLive(true), []);
-  const pick = (i) => { how.current = 'hand'; setAt(i); setHold(true); };
+  const pick = (i: number) => { how.current = 'hand'; setAt(i); setHold(true); };
   // the cinematic moment: as the timer turns the page, the plate swings back on its spine like a cover turning, and the
   // new art settles in behind the silver curtain
   const [plate, turn] = useAnimate();
@@ -230,14 +238,14 @@ function Hero() {
 
 /* ---------- 2. the posts that live on this site: each opens into its page ---------- */
 /* fine pointers only: the art plate tilts up to 2.5 degrees toward the hand, and settles when it leaves */
-const tilt = (e) => {
+const tilt = (e: React.PointerEvent<HTMLElement>) => {
   if (e.pointerType !== 'mouse') return;
-  const el = e.currentTarget.querySelector('.xbl-here-art'); if (!el) return;
+  const el = e.currentTarget.querySelector<HTMLElement>('.xbl-here-art'); if (!el) return;
   const r = el.getBoundingClientRect();
   el.style.setProperty('--rx', ((0.5 - (e.clientY - r.top) / r.height) * 5).toFixed(2) + 'deg');
   el.style.setProperty('--ry', (((e.clientX - r.left) / r.width - 0.5) * 5).toFixed(2) + 'deg');
 };
-const untilt = (e) => { const el = e.currentTarget.querySelector('.xbl-here-art'); if (el) { el.style.removeProperty('--rx'); el.style.removeProperty('--ry'); } };
+const untilt = (e: React.PointerEvent<HTMLElement>) => { const el = e.currentTarget.querySelector<HTMLElement>('.xbl-here-art'); if (el) { el.style.removeProperty('--rx'); el.style.removeProperty('--ry'); } };
 
 function Here() {
   return (
@@ -260,8 +268,14 @@ function Here() {
 }
 
 /* ---------- 3. the contents, in one frame: the publishing strip and the count beside a pane that holds every post ---------- */
-function Strip({ m, setM, months, top }) {
-  const ref = useRef(null);
+interface StripProps {
+  m: string | null;
+  setM: (month: string | null) => void;
+  months: [string, number][];
+  top: number;
+}
+function Strip({ m, setM, months, top }: StripProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   return (
     <div className="xbl-strip-w">
@@ -283,23 +297,23 @@ function Strip({ m, setM, months, top }) {
 }
 
 function Contents() {
-  const [m, setM] = useState(null);
+  const [m, setM] = useState<string | null>(null);
   const months = useMemo(() => {
-    const c = {};
+    const c: Record<string, number> = {};
     POSTS.forEach((p) => { c[p.month] = (c[p.month] || 0) + 1; });
-    return MONTHS.map((k) => [k, c[k] || 0]);
+    return MONTHS.map((k): [string, number] => [k, c[k] || 0]);
   }, []);
   const top = Math.max(...months.map(([, n]) => n));
   const groups = useMemo(() => {
-    const g = [];
+    const g: [string, Post[]][] = [];
     POSTS.forEach((p) => { const last = g[g.length - 1]; if (last && last[0] === p.month) last[1].push(p); else g.push([p.month, [p]]); });
     return g;
   }, []);
-  const pane = useRef(null);
-  const head = useRef(null);
+  const pane = useRef<HTMLDivElement>(null);
+  const head = useRef<HTMLDivElement>(null);
   const headSeen = useInView(head, { once: true, amount: 0.5 });
   // a month from the strip filters the pane to it (the other months stay in the page, hidden); All opens every month again
-  const choose = (k) => { setM(k); const el = pane.current; if (el) el.scrollTo({ top: 0, behavior: calmNow() ? 'auto' : 'smooth' }); };
+  const choose = (k: string | null) => { setM(k); const el = pane.current; if (el) el.scrollTo({ top: 0, behavior: calmNow() ? 'auto' : 'smooth' }); };
   return (
     <section className="xbl-sec xbl-contents" aria-labelledby="xbl-c-h">
       <div className="v2s-wrap xbl-c-g">
@@ -342,7 +356,7 @@ function Contents() {
 }
 
 export default function BlogIndex() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useEnter(root);
   return (
     <main id="main" className="xbl v2s" ref={root}>

@@ -4,10 +4,10 @@ import { PLANS, SEATS, teamCart } from '../../lib/plans.ts';
 
 // Hanzo's seat prices (its pricing page and the specialist's own figures), from lib/plans.js
 export const P = { std: SEATS.standard.year, stdMo: SEATS.standard.month, prem: SEATS.premium.year, premMo: SEATS.premium.month, ent: SEATS.enterprise.year, save: SEATS.saving };
-export const r2 = (v) => Math.round(v * 100) / 100;
-export const usd = (v) => '$' + v.toLocaleString('en-US', { maximumFractionDigits: 2 });
+export const r2 = (v: number) => Math.round(v * 100) / 100;
+export const usd = (v: number) => '$' + v.toLocaleString('en-US', { maximumFractionDigits: 2 });
 
-export const BRIEF = (name) => [
+export const BRIEF = (name: string) => [
   'You are the Hanzo AI Buying Specialist on hanzo.ai. Help visitors and customers choose the right Hanzo plan, calculate exact pricing, and start plan selection or book a sales call.', '',
   'Authoritative Hanzo Plan & Pricing Catalog (from commerce.hanzo.ai):',
   '1. Personal Plans (individual, monthly self-serve at /pricing?tab=personal):',
@@ -31,7 +31,11 @@ export const BRIEF = (name) => [
 ].join('\n');
 
 /* Hanzo's own written answers: used for the quote card, and as the answer when the endpoint cannot be reached. */
-export function written(q, name) {
+/** The quote a written answer files on the sheet. */
+export interface Quote { plan: string; seats: number; monthlyTotal: number | null; annualTotal: number; savings: number | null; checkoutUrl: string }
+/** One line of the conversation; an answer may carry the quote it proposed. */
+export interface Message { role: 'user' | 'assistant'; content: string; quote?: Quote }
+export function written(q: string, name: string): { content: string; quote?: Quote } {
   const o = q.toLowerCase();
   const sm = r2(P.std / 12), pm = r2(P.prem / 12), em = r2(P.ent / 12);
   const w = o.match(/\b(\d+)\s*(people|developers?|engineers?|members?|seats?|devs?|users?)?\b/);

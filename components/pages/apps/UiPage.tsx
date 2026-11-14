@@ -13,6 +13,8 @@
    Motion budget: signature = the self-using board; supporting = Stage (a page-local settle), the chapter board (the chapter in
    the middle of the screen drives one real board), magnetic primary. No springs. Colour: none (0 UI hues); the token demo
    retunes between deck greys. Pauses sit in the token panel's bar, the chapter head row and the terminal bar. One dark room: "From init to UI in 60 seconds". Every word and link is Hanzo's. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { EASE, Copy, Magnetic } from '../../ui';
@@ -29,17 +31,31 @@ import './UiPage.css';
 import ArtCard from '../cloud/ArtCard';
 
 const GH = 'https://github.com/hanzoai/ui';
-const ACCENTS = [['graphite', '#404040'], ['steel', '#525252'], ['silver', '#737373']]; // deck greys: the board never shows a second ink pill beside the ask
+const ACCENTS: [string, string][] = [['graphite', '#404040'], ['steel', '#525252'], ['silver', '#737373']]; // deck greys: the board never shows a second ink pill beside the ask
 const SCRIPT = ['menu', 'idle', 'dialog', 'idle', 'retune', 'idle'];
 
-function Board({ tok, setTok, mine, setMine, paused, hold }) {
-  const [ref, live] = useLive(0.3);
+/* the design tokens the hero board is tuned by: accent (index into ACCENTS), radius in px, density */
+interface Tok {
+  a: number;
+  r: number;
+  d: number;
+}
+interface BoardProps {
+  tok: Tok;
+  setTok: React.Dispatch<React.SetStateAction<Tok>>;
+  mine: boolean;
+  setMine: (v: boolean) => void;
+  paused: boolean;
+  hold: boolean;
+}
+function Board({ tok, setTok, mine, setMine, paused, hold }: BoardProps) {
+  const [ref, live] = useLive<HTMLDivElement>(0.3);
   const [k, setK] = useState(0);
   const [menu, setMenu] = useState(false);
   const [dlg, setDlg] = useState(false);
-  const [own, setOwn] = useState(null); // 'menu' | 'dialog' only when the visitor opened it; the script never takes focus
+  const [own, setOwn] = useState<string | null>(null); // 'menu' | 'dialog' only when the visitor opened it; the script never takes focus
   const [focus, setFocus] = useState(0);
-  const ship = useRef(null), opts = useRef(null), box = useRef(null), items = useRef([]);
+  const ship = useRef<HTMLButtonElement>(null), opts = useRef<HTMLButtonElement>(null), box = useRef<HTMLDivElement>(null), items = useRef<(HTMLElement | null)[]>([]);
   const run = live && !mine && !paused && !hold; // the script holds while focus is on the board
   // the board wakes inside the first second: its first real act (the menu opens, the ring lands on Options) about
   // 600 ms after it is first seen, then the 1.5 s rhythm takes over
@@ -63,7 +79,7 @@ function Board({ tok, setTok, mine, setMine, paused, hold }) {
   useEffect(() => {
     if (!dlg || own !== 'dialog') return;
     const t = setTimeout(() => box.current?.querySelector('button')?.focus(), 30);
-    const key = (e) => {
+    const key = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { setDlg(false); ship.current?.focus(); }
       if (e.key === 'Tab') { e.preventDefault(); box.current?.querySelector('button')?.focus(); }
     };
@@ -72,13 +88,13 @@ function Board({ tok, setTok, mine, setMine, paused, hold }) {
   }, [dlg, own]);
   const closeDlg = () => { const mineDlg = own === 'dialog'; setDlg(false); setOwn(null); if (mineDlg) ship.current?.focus(); };
   // the DropdownMenu: arrows move between items, Esc closes and returns to the trigger
-  const menuKey = (e, i) => {
+  const menuKey = (e: React.KeyboardEvent<HTMLLIElement>, i: number) => {
     const n = { ArrowDown: 1, ArrowUp: -1 }[e.key];
     if (n) { e.preventDefault(); items.current[(i + n + 3) % 3]?.focus(); }
     if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setMenu(false); setOwn(null); opts.current?.focus(); }
   };
   useEffect(() => { if (menu && own === 'menu') setTimeout(() => items.current[0]?.focus(), 30); }, [menu, own]);
-  const R = (i) => (focus === i && !mine && !hold ? ' ui-ring' : '');
+  const R = (i: number) => (focus === i && !mine && !hold ? ' ui-ring' : '');
   const style = { '--ua': ACCENTS[tok.a][1], '--ur': tok.r + 'px', '--ud': tok.d };
   return (
     <div className="ui-board" ref={ref} style={style}>
@@ -115,17 +131,23 @@ function Board({ tok, setTok, mine, setMine, paused, hold }) {
   );
 }
 
-function Tokens({ tok, setTok, setMine, pauseBtn }) {
-  const set = (p) => { setMine(true); setTok((t) => ({ ...t, ...p })); };
-  const swKey = (e) => {
+interface TokensProps {
+  tok: Tok;
+  setTok: React.Dispatch<React.SetStateAction<Tok>>;
+  setMine: (v: boolean) => void;
+  pauseBtn: ReactNode;
+}
+function Tokens({ tok, setTok, setMine, pauseBtn }: TokensProps) {
+  const set = (p: Partial<Tok>) => { setMine(true); setTok((t) => ({ ...t, ...p })); };
+  const swKey = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
     if (!d) return;
     e.preventDefault();
     const n = (tok.a + d + ACCENTS.length) % ACCENTS.length;
     set({ a: n });
-    e.currentTarget.parentElement.querySelectorAll('button')[n]?.focus();
+    e.currentTarget.parentElement!.querySelectorAll('button')[n]?.focus();
   };
-  const [hov, setHov] = useState(null); // the swatch under the pointer or focus names its token
+  const [hov, setHov] = useState<number | null>(null); // the swatch under the pointer or focus names its token
   const shownSw = ACCENTS[hov ?? tok.a];
   return (
     <div className="ui-tok">
@@ -145,7 +167,12 @@ function Tokens({ tok, setTok, setMine, pauseBtn }) {
 /* Stage: the hero settles 10px as the first screen scrolls away. Page-local, not the shared Settle: it renders the
    same style on the server and on the first client render, and reads reduced motion only after mount (the shared one
    reads it during render, which breaks hydration under reduced motion; requested in docs/build-notes/requests/ui.md). */
-function Stage({ children, from = 1, lift = 10 }) {
+interface StageProps {
+  children: ReactNode;
+  from?: number;
+  lift?: number;
+}
+function Stage({ children, from = 1, lift = 10 }: StageProps) {
   const [m, setM] = useState({ h: 800, calm: false });
   useEffect(() => {
     const q = matchMedia('(prefers-reduced-motion: reduce)');
@@ -162,14 +189,14 @@ function Stage({ children, from = 1, lift = 10 }) {
 }
 
 function Hero() {
-  const [tok, setTok] = useState({ a: 0, r: 14, d: 1 });
+  const [tok, setTok] = useState<Tok>({ a: 0, r: 14, d: 1 });
   const [mine, setMineRaw] = useState(false);
   const [poke, setPoke] = useState(0);
-  const setMine = (v) => { setMineRaw(v); setPoke((n) => n + 1); };
+  const setMine = (v: boolean) => { setMineRaw(v); setPoke((n) => n + 1); };
   // focus on the stage holds the board's script, so a keyboard visitor is never interrupted (a click already makes it theirs)
-  const stage = useRef(null);
+  const stage = useRef<HTMLDivElement>(null);
   const [hold, setHold] = useState(false);
-  const leave = (next) => { if (!stage.current?.contains(next)) setHold(false); };
+  const leave = (next: (EventTarget & Element) | null) => { if (!stage.current?.contains(next)) setHold(false); };
   // after 8 s without a touch (and nothing held) the board goes back to using itself, so it never sits dead
   useEffect(() => { if (!mine || hold) return undefined; const t = setTimeout(() => setMineRaw(false), 8000); return () => clearTimeout(t); }, [mine, poke, hold]);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
@@ -209,7 +236,12 @@ const PROPS = [
 /* The chapters act on one real board (the same object, changing), not on drawings of it. Desktop: the board sticks
    on the left while the six chapters scroll past on the right; the chapter in the middle of the screen drives it.
    Phone: the board sits on top and the chapters are a swipe rail under it (scroll-snap, 16% peek). */
-const SHOW_TOK = [{ r: 14, a: 0, n: 'graphite' }, { r: 4, a: 1, n: 'steel' }, { r: 22, a: 2, n: 'silver' }];
+interface ShowTok {
+  r: number;
+  a: number;
+  n: string;
+}
+const SHOW_TOK: ShowTok[] = [{ r: 14, a: 0, n: 'graphite' }, { r: 4, a: 1, n: 'steel' }, { r: 22, a: 2, n: 'silver' }];
 const APPS = ['chat', 'console', 'cloud'];
 
 const PRODUCTS = ['chat.hanzo.ai', 'platform.hanzo.ai', 'every Hanzo dashboard'];
@@ -222,7 +254,16 @@ const SHEET = 45; // cells of the one atomic stylesheet
    The close shows the hero board itself, settled small with its tokens at rest, one product row lit at a time. */
 const STOPS = [['Ship it', '.button'], ['Options ▾', '<DropdownMenu />'], ['Field', '.field'], ['Panel', '.panel']];
 
-function Body({ at, t, tok, app, menu, dlg, ring }) {
+interface BodyProps {
+  at: number;
+  t: number;
+  tok: ShowTok;
+  app: string;
+  menu: boolean;
+  dlg: boolean;
+  ring: number;
+}
+function Body({ at, t, tok, app, menu, dlg, ring }: BodyProps) {
   // 01: the two real components open side by side, named; the class-only parts sit as one quiet row
   if (at === 0) return (
     <div className="uc-v uc-pair">
@@ -310,7 +351,7 @@ function Body({ at, t, tok, app, menu, dlg, ring }) {
   return null;
 }
 
-function ShowBoard({ at, run, bare }) {
+function ShowBoard({ at, run, bare }: { at: number; run: boolean; bare?: boolean }) {
   const [t, setT] = useState(0);
   useEffect(() => setT(0), [at]);
   useEvery(at === 1 ? 700 : 1400, run, () => setT((v) => v + 1));
@@ -351,8 +392,14 @@ function ShowBoard({ at, run, bare }) {
 /* The six chapters as plain, quick cards (no pinned scene: /ui is not a `split` page). Each card carries its own small
    board in that chapter's state, running only while the card is on screen. They arrive by magnet-gather. */
 const SCATTER = [[-120, 60, -6], [140, -40, 5], [-80, 120, 4], [110, 90, -5], [-150, -30, 3], [90, 140, -4]];
-function Card({ i, t, d, paused }) {
-  const [ref, live] = useLive(0.3);
+interface CardProps {
+  i: number;
+  t: string;
+  d: string;
+  paused: boolean;
+}
+function Card({ i, t, d, paused }: CardProps) {
+  const [ref, live] = useLive<HTMLLIElement>(0.3);
   const [gx, gy, gr] = SCATTER[i];
   return (
     <li ref={ref} className="uc-ch ux-card" style={{ '--i': i, '--gx': gx + 'px', '--gy': gy + 'px', '--gr': gr + 'deg' }}>
@@ -401,7 +448,7 @@ const SHELL = 'npx @hanzo/ui init\nnpx @hanzo/ui add button dialog dropdown-menu
 const RET = LINES.findIndex((l) => l.includes('return <Button>'));
 
 function Init() {
-  const [ref, live, calm] = useLive(0.4);
+  const [ref, live, calm] = useLive<HTMLElement>(0.4);
   const [paused, pauseBtn] = usePause({ position: 'relative', right: 'auto', top: 'auto' });
   const [k, setK] = useState(LINES.length); // the HTML carries every line; it types once when first seen
   const [ran, setRan] = useState(false);
@@ -414,12 +461,12 @@ function Init() {
     if (!live || calm || counted.current) return undefined;
     counted.current = true;
     let raf = 0; const t0 = performance.now();
-    const step = (now) => { const p = Math.min(1, (now - t0) / 1100); setSec(Math.round(60 * (1 - Math.pow(1 - p, 3)))); if (p < 1) raf = requestAnimationFrame(step); };
+    const step = (now: number) => { const p = Math.min(1, (now - t0) / 1100); setSec(Math.round(60 * (1 - Math.pow(1 - p, 3)))); if (p < 1) raf = requestAnimationFrame(step); };
     raf = requestAnimationFrame(step);
     return () => { cancelAnimationFrame(raf); setSec(60); };
   }, [live, calm]);
   const [sent, setSent] = useState(false);
-  const sentT = useRef(0);
+  const sentT = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const ship = () => { setSent(true); clearTimeout(sentT.current); sentT.current = setTimeout(() => setSent(false), 1800); };
   useEffect(() => () => clearTimeout(sentT.current), []);
   return (
@@ -449,7 +496,7 @@ function Init() {
 /* The close: the paste prompt and the Get UI strip come first as quiet proof (on paper), then the page ends on one
    band, its line and its one ask beside the hero board settled small, then the footer. */
 function Stop() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive<HTMLElement>(0.3);
   return (
     <section className="w2-sec ui-stop" ref={ref}>
       <div className="w2-wrap">

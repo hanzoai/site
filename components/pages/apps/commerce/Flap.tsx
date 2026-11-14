@@ -6,7 +6,12 @@ import { useEffect, useRef, useState } from 'react';
 
 const ABC = " abcdefghijklmnopqrstuvwxyz{}/'ABCDEFGHIJKLMNOPQRSTUVWXYZ.0123456789";
 
-function Cell({ ch, i, calm }) {
+interface CellProps {
+  ch: string;
+  i: number;
+  calm: boolean | null;
+}
+function Cell({ ch, i, calm }: CellProps) {
   const [c, setC] = useState(ch);
   const [n, setN] = useState(0);
   const now = useRef(ch);
@@ -15,7 +20,7 @@ function Cell({ ch, i, calm }) {
     if (calm) { now.current = ch; setC(ch); return; }
     const from = Math.max(0, ABC.indexOf(now.current));
     const steps = 3 + (i % 3);
-    const ts = [];
+    const ts: ReturnType<typeof setTimeout>[] = [];
     for (let k = 1; k <= steps; k++) {
       const v = k === steps ? ch : ABC[(from + k * 7) % ABC.length];
       ts.push(setTimeout(() => { now.current = v; setC(v); setN((x) => x + 1); }, i * 26 + k * 62));
@@ -25,7 +30,13 @@ function Cell({ ch, i, calm }) {
   return <span className="cm-fl"><span key={n} className={'cm-fl-c' + (n ? ' go' : '')}>{c === ' ' ? ' ' : c}</span></span>;
 }
 
-export default function Flap({ text, len, calm, className = '' }) {
+interface FlapProps {
+  text: string;
+  len: number;
+  calm: boolean | null;
+  className?: string;
+}
+export default function Flap({ text, len, calm, className = '' }: FlapProps) {
   const s = String(text).slice(0, len).padEnd(len, ' ');
   return (
     <span className={'cm-flap ' + className}>

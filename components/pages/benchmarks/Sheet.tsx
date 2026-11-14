@@ -5,6 +5,7 @@
    button shut it, Tab stays inside, and focus goes back to its (+) without scrolling. The page never moves: the
    scroll is held with overflow on <html>, and every focus call uses preventScroll.
    The sheet's contents stay in the server HTML (parity). Once mounted it lives in a portal on <body>. */
+import type { ReactNode } from 'react';
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import NoJs from '../../NoJs';
@@ -12,12 +13,21 @@ import NoJs from '../../NoJs';
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 const NOJS = '.xbm-sh{position:static!important;visibility:visible!important;pointer-events:auto!important;margin:24px 0}.xbm-sh-scrim,.xbm-sh-x,.xbm-plus{display:none!important}.xbm-sh-panel{position:static!important;transform:none!important;width:auto!important;max-height:none!important;box-shadow:none!important;border:1px solid rgba(0,0,0,.08)}';
 
-export default function Sheet({ label, kicker, title, children, ghost = false, wide = false, id: bid }) {
+interface SheetProps {
+  label: string;
+  kicker?: string;
+  title: string;
+  children: ReactNode;
+  ghost?: boolean;
+  wide?: boolean;
+  id?: string;
+}
+export default function Sheet({ label, kicker, title, children, ghost = false, wide = false, id: bid }: SheetProps) {
   const [open, setOpen] = useState(false);
-  const [host, setHost] = useState(null);
-  const btn = useRef(null);
-  const panel = useRef(null);
-  const x = useRef(null);
+  const [host, setHost] = useState<Element | null>(null);
+  const btn = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  const x = useRef<HTMLButtonElement>(null);
   const id = useId();
 
   // the sheet lives inside <main> (fixed to the viewport all the same), so its words stay part of the page; on the
@@ -32,10 +42,10 @@ export default function Sheet({ label, kicker, title, children, ghost = false, w
     const prev = html.style.overflow;
     html.style.overflow = 'hidden';
     const t = setTimeout(() => x.current?.focus({ preventScroll: true }), 40);
-    const key = (e) => {
+    const key = (e: KeyboardEvent) => {
       if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); setOpen(false); return; }
       if (e.key !== 'Tab' || !panel.current) return;
-      const f = [...panel.current.querySelectorAll(FOCUSABLE)].filter((n) => n.offsetParent !== null);
+      const f = [...panel.current.querySelectorAll<HTMLElement>(FOCUSABLE)].filter((n) => n.offsetParent !== null);
       if (!f.length) return;
       const a = document.activeElement;
       if (e.shiftKey && (a === f[0] || !panel.current.contains(a))) { e.preventDefault(); f[f.length - 1].focus({ preventScroll: true }); }

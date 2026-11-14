@@ -7,7 +7,9 @@ const { measure, benchDoc, figureOf } = await import('./benchData.ts');
 
 assert.deepEqual(measure('92.9%'), { v: 92.9, dim: '%' });
 assert.deepEqual(measure('$5.58'), { v: 5.58, dim: '$' });
-assert.equal(measure('0.13 ms').dim, 't'); assert.ok(Math.abs(measure('0.13 ms').v - 0.00013) < 1e-12); // time in seconds
+const ms = measure('0.13 ms');
+assert.ok(ms);
+assert.equal(ms.dim, 't'); assert.ok(Math.abs(ms.v - 0.00013) < 1e-12); // time in seconds
 assert.deepEqual(measure('~977 GB at that assumption'), { v: 977e9, dim: 'b' });
 assert.deepEqual(measure('184 of 198'), { v: 184, dim: '' });
 assert.equal(measure('Jev 86.0%'), null);                                   // words first: not a figure, unless loose
@@ -16,13 +18,14 @@ assert.equal(measure('frontier · 2026-07-19'), null);                       // 
 assert.equal(measure('—'), null);
 
 const kai = benchDoc('kai-ag-news').chart;
-assert.equal(kai.kind, 'trend');
+assert.ok(kai && kai.kind === 'trend');
 assert.deepEqual(kai.ticks, ['85%', '91%', '96%']);                         // hanzo.ai's own axis labels
-assert.equal(kai.base.s, 'Jev 86.0%');
-assert.equal(benchDoc('fleet').chart.kind, 'versus');                       // Hanzo, measured against the published figure
+assert.equal(kai.base?.s, 'Jev 86.0%');
+assert.equal(benchDoc('fleet').chart?.kind, 'versus');                       // Hanzo, measured against the published figure
 const gpqa = benchDoc('gpqa').chart;
-assert.equal(gpqa.rows.find((r) => r.label === 'deepseek-v4-pro').cells[2].s, '$0.203'); // the live re-priced run cost
-assert.equal(benchDoc('sandbox').chart.kind, 'one');
+assert.ok(gpqa && gpqa.kind === 'bars');
+assert.equal(gpqa.rows.find((r) => r.label === 'deepseek-v4-pro')?.cells[2].s, '$0.203'); // the live re-priced run cost
+assert.equal(benchDoc('sandbox').chart?.kind, 'one');
 assert.equal(figureOf(benchDoc('gpqa')), '92.9%');                          // a sibling card's figure: Hanzo's own row
 assert.equal(figureOf(benchDoc('fleet')), '477 bytes');
 console.log('bench data: OK');

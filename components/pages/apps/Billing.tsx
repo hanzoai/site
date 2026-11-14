@@ -20,6 +20,7 @@
    highlight in the history (pointer, state); one reveal style on the page (the h1's line-mask cut-in). Every word and
    link is Hanzo's; customer, meter and price names are the examples Hanzo's own code uses, and the input values are
    the visitor's own (example starting values, not Hanzo prices). */
+import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, animate, useMotionValue, useTransform } from 'motion/react';
 import { EASE } from '../../ui';
@@ -38,21 +39,30 @@ const STEPS = ['Draft', 'Preview', 'Issued'];
 /* figures, formatted the same on the server and in the browser */
 const NUM = new Intl.NumberFormat('en-US');
 const CMP = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 });
-const usd = (v) => '$' + new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.max(0, v));
-const unitUsd = (v) => '$' + v.toFixed(4);
-const pct = (v) => (Number.isInteger(v) ? v : v.toFixed(1)) + '%';
+const usd = (v: number) => '$' + new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.max(0, v));
+const unitUsd = (v: number) => '$' + v.toFixed(4);
+const pct = (v: number) => (Number.isInteger(v) ? v : v.toFixed(1)) + '%';
 
+/* what the visitor sets: usage in events, the unit price, the base fee, a discount and tax in percent */
+interface Plan {
+  usage: number;
+  unit: number;
+  base: number;
+  disc: number;
+  tax: number;
+}
 /* the visitor's inputs: [key, name on the invoice, min, max, step, format] */
-const INPUTS = [
-  ['usage', 'api_requests', 0, 1000000, 5000, (v) => NUM.format(Math.round(v))],
+type Input = [keyof Plan, string, number, number, number, (v: number) => string];
+const INPUTS: Input[] = [
+  ['usage', 'api_requests', 0, 1000000, 5000, (v: number) => NUM.format(Math.round(v))],
   ['unit', 'price_api_metered', 0.0005, 0.01, 0.0005, unitUsd],
   ['base', 'Subscription', 0, 200, 5, usd],
   ['disc', 'discount', 0, 50, 5, pct],
   ['tax', 'Tax', 0, 25, 0.5, pct],
 ];
-const START = { usage: 120000, unit: 0.002, base: 20, disc: 0, tax: 8 };
+const START: Plan = { usage: 120000, unit: 0.002, base: 20, disc: 0, tax: 8 };
 
-function price(p) {
+function price(p: Plan) {
   const metered = p.usage * p.unit;
   const pre = p.base + metered;
   const off = (pre * p.disc) / 100;
@@ -61,7 +71,7 @@ function price(p) {
 }
 
 /* A figure that rolls to its new value (motion value, no re-render per frame). */
-function Fig({ v, fmt, className = '' }) {
+function Fig({ v, fmt, className = '' }: { v: number; fmt: (v: number) => string; className?: string }) {
   const calm = useCalm();
   const mv = useMotionValue(v);
   const txt = useTransform(mv, fmt);
@@ -72,8 +82,14 @@ function Fig({ v, fmt, className = '' }) {
 const Stamp = () => <motion.b className="bl2-stamp" initial={{ opacity: 0, scale: 1.5, rotate: -16 }} animate={{ opacity: 1, scale: 1, rotate: -8 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>Issued</motion.b>;
 
 /* Signature: the live calculator. */
-function Calc({ plan, set, stage, setStage }) {
-  const [ref, live, calm] = useLive(0.4);
+interface CalcProps {
+  plan: Plan;
+  set: React.Dispatch<React.SetStateAction<Plan>>;
+  stage: number;
+  setStage: (n: number) => void;
+}
+function Calc({ plan, set, stage, setStage }: CalcProps) {
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.4);
   const touched = useRef(false);
   const [demo, setDemo] = useState(0); // the one glide on arrival: 0 → 12 steps
   const DEMO = [120000, 150000, 185000, 225000, 270000, 320000, 360000, 390000, 410000, 420000, 425000, 425000];
@@ -82,7 +98,7 @@ function Calc({ plan, set, stage, setStage }) {
     set((p) => ({ ...p, usage: DEMO[demo] }));
     setDemo((d) => d + 1);
   });
-  const change = (k, v) => {
+  const change = (k: keyof Plan, v: number) => {
     touched.current = true;
     set((p) => ({ ...p, [k]: v }));
     if (stage === 2) setStage(1); // a changed invoice is a new preview
@@ -109,8 +125,8 @@ function Calc({ plan, set, stage, setStage }) {
         </div>
         <ul className="bl2-ci-lines">
           <li><span className="bl2-ci-k">Subscription<em className="l2-mono">price_api_metered</em></span><Fig v={plan.base} fmt={usd} className="bl2-ci-v l2-mono" /></li>
-          <li><span className="bl2-ci-k">api_requests<em className="l2-mono"><Fig v={plan.usage} fmt={(v) => '× ' + NUM.format(Math.round(v))} /> · {unitUsd(plan.unit)}</em></span><Fig v={r.metered} fmt={usd} className="bl2-ci-v l2-mono" /></li>
-          <li className={plan.disc ? '' : 'off'}><span className="bl2-ci-k">discount<em className="l2-mono">{pct(plan.disc)}</em></span><Fig v={r.off} fmt={(v) => '−' + usd(v)} className="bl2-ci-v l2-mono" /></li>
+          <li><span className="bl2-ci-k">api_requests<em className="l2-mono"><Fig v={plan.usage} fmt={(v: number) => '× ' + NUM.format(Math.round(v))} /> · {unitUsd(plan.unit)}</em></span><Fig v={r.metered} fmt={usd} className="bl2-ci-v l2-mono" /></li>
+          <li className={plan.disc ? '' : 'off'}><span className="bl2-ci-k">discount<em className="l2-mono">{pct(plan.disc)}</em></span><Fig v={r.off} fmt={(v: number) => '−' + usd(v)} className="bl2-ci-v l2-mono" /></li>
           <li><span className="bl2-ci-k">Tax<em className="l2-mono">calculated on the invoice · {pct(plan.tax)}</em></span><Fig v={r.tax} fmt={usd} className="bl2-ci-v l2-mono" /></li>
         </ul>
         <div className="bl2-ci-f">
@@ -123,7 +139,7 @@ function Calc({ plan, set, stage, setStage }) {
   );
 }
 
-const LINES = [
+const LINES: [string, string | null, string][] = [
   ['Subscription', 'price_api_metered', 'A plan says what someone gets. A price says what it costs.'],
   ['api_requests', null, 'The invoice reads the meter at the end of the period, so nobody has to add up rows by hand.'],
   ['Tax', 'calculated on the invoice', 'Line items assembled from the subscription and the meters, with tax calculated on the invoice itself.'],
@@ -131,7 +147,10 @@ const LINES = [
 
 /* The running machine: events → meter → invoice, one period after another, only while seen. It meters the usage the
    calculator is set to: each event carries one eighteenth of it. */
-function Machine({ usage }) {
+interface MachineProps {
+  usage: number;
+}
+function Machine({ usage }: MachineProps) {
   const [ref, live, calm, paused, toggle] = useDemo(0.25);
   const [n, setN] = useState(7);
   const [ev, setEv] = useState(7);
@@ -198,7 +217,7 @@ function Machine({ usage }) {
 
 /* Beyond: publish a new price; existing subscribers stay on theirs, new sign-ups take the new one. */
 function Prices() {
-  const [ref, live] = useLive(0.4);
+  const [ref, live] = useLive<HTMLDivElement>(0.4);
   const [subs, setSubs] = useState([0, 0, 0, 0, 1, 1]);
   const [prices, setPrices] = useState(2);
   const [mine, setMine] = useState(false);
@@ -226,14 +245,17 @@ function Prices() {
 }
 
 /* Meters: the calculator's usage as one period of 18 cells; it refills whenever the usage changes. */
-function MeterFill({ usage }) {
-  const [ref, live] = useLive(0.4);
+interface MeterFillProps {
+  usage: number;
+}
+function MeterFill({ usage }: MeterFillProps) {
+  const [ref, live] = useLive<HTMLDivElement>(0.4);
   const target = Math.round((usage / INPUTS[0][3]) * PERIOD);
   const [k, setK] = useState(0);
   useTick(45, live && k !== target, () => setK((c) => c + Math.sign(target - c)));
   return (
     <div className="bl2-mf" ref={ref} aria-hidden="true">
-      <p className="bl2-mf-k l2-mono"><span>Meter · api_requests</span><Fig v={usage} fmt={(v) => CMP.format(Math.round(v))} className="l2-fig" /></p>
+      <p className="bl2-mf-k l2-mono"><span>Meter · api_requests</span><Fig v={usage} fmt={(v: number) => CMP.format(Math.round(v))} className="l2-fig" /></p>
       <div className="bl2-mf-slots">{Array.from({ length: PERIOD }).map((_, i) => <i key={i} className={i < k ? 'on' : ''} />)}</div>
       <p className="bl2-mf-f l2-mono"><span>billing.usage.record</span><span>open</span></p>
     </div>
@@ -241,7 +263,10 @@ function MeterFill({ usage }) {
 }
 
 /* Invoices: the same Draft / Preview / Issued stage the calculator's invoice shows. */
-function IssueSteps({ s }) {
+interface IssueStepsProps {
+  s: number;
+}
+function IssueSteps({ s }: IssueStepsProps) {
   return (
     <div className="bl2-is" aria-hidden="true">
       <p className="bl2-is-k l2-mono"><span>Invoice</span><span>cus_abc123</span></p>
@@ -265,7 +290,11 @@ const OBJECTS = [
 ];
 
 /* The objects, as plain quick rows (no pin): the running machine first, then each object beside its own small thing. */
-function Objects({ plan, stage }) {
+interface ObjectsProps {
+  plan: Plan;
+  stage: number;
+}
+function Objects({ plan, stage }: ObjectsProps) {
   const things = [<Prices key="p" />, <MeterFill key="m" usage={plan.usage} />, <IssueSteps key="s" s={stage} />];
   return (
     <section className="l2-sec bl2-objs bl2-e bl2-e-orbit">
@@ -294,8 +323,11 @@ function Objects({ plan, stage }) {
 }
 
 /* The close: one object, this period's invoice at the calculator's figures, issued once as it arrives. */
-function Closing({ plan }) {
-  const [ref, live, calm] = useLive(0.5);
+interface ClosingProps {
+  plan: Plan;
+}
+function Closing({ plan }: ClosingProps) {
+  const [ref, live, calm] = useLive<HTMLDivElement>(0.5);
   const [done, setDone] = useState(false);
   useEffect(() => { if (calm) setDone(true); }, [calm]);
   useTick(1400, live && !done, () => setDone(true));
@@ -325,7 +357,7 @@ const CAPS = [
   ['Coupons and discounts', 'Apply one to a subscription or to a single invoice. A discount is an object on the invoice rather than an adjusted number, so the reason the total changed is still legible.'],
   ['Webhooks', 'The provider tells us a payment settled and we tell you. One endpoint per provider, so adding a second processor does not mean a second integration on your side.'],
 ];
-const HISTORY = [[1, 'discount', 'on the invoice'], [2, 'payment settled', 'from the provider'], [2, 'webhook', 'to your endpoint'], [0, 'credit', 'against the balance'], [0, 'refund', 'of a settled payment']];
+const HISTORY: [number, string, string][] = [[1, 'discount', 'on the invoice'], [2, 'payment settled', 'from the provider'], [2, 'webhook', 'to your endpoint'], [0, 'credit', 'against the balance'], [0, 'refund', 'of a settled payment']];
 
 function History() {
   const [pick, setPick] = useState(-1);
@@ -423,12 +455,12 @@ function useEntrances() {
 const TILES = Array.from({ length: 128 }, (_, i) => ((i * 37 + (i >> 4) * 53) % 128) * 3.5);
 
 export default function Billing() {
-  const [plan, setPlan] = useState(START);
+  const [plan, setPlan] = useState<Plan>(START);
   const [stage, setStage] = useState(1);
-  const set = useCallback((f) => setPlan(f), []);
+  const set = useCallback((f: React.SetStateAction<Plan>) => setPlan(f), []);
   useEntrances();
   useEffect(() => { // the code pane scrolls sideways on narrow screens rather than breaking a token, so it is a focusable region
-    const pre = document.querySelector('.bl2-start-r .cf-code pre');
+    const pre = document.querySelector<HTMLElement>('.bl2-start-r .cf-code pre');
     if (pre) { pre.tabIndex = 0; pre.setAttribute('role', 'region'); pre.setAttribute('aria-label', 'typescript'); }
   }, []);
   return (

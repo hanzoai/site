@@ -27,6 +27,7 @@
    rows), state (the lit row glides by layoutId), scroll (the stage settles, the name settles, opposite-drift),
    arrival (the name's line mask, the five entrances). Coverage: docs/build-notes/coverage/cloud.md. */
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Copy, Mark } from '../../ui';
 import { A, Band, Cta } from '../../kit';
@@ -35,33 +36,44 @@ import StageSettle from '../../v2/StageSettle';
 import useCalm from '../../v2/useCalm';
 import RowsOpen, { useMounted } from './RowsOpen';
 import { ENTRANCES, Enter, Letters } from './entrances';
+import type { Kind as Entrance } from './entrances';
 import './cloudfam.css';
 import './entrances.css';
+import type { Endpoint, Figure, Glyph, Kin, Link, Local, Pair, Preview, Product, Sibling, Story, Surface } from './types';
 
-const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const Arrow = ({ s = 14 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Check = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const VARIANT = { Compute: 'stage', Infrastructure: 'stage', AI: 'wide', Apps: 'wide', Observe: 'wide', Dev: 'wide', Science: 'path', Web3: 'path', Data: 'path', Security: 'field', Network: 'field', Local: 'stage' };
-const POSE = { stage: { rotateX: 12, scale: 1.04, y: 0 }, wide: { rotateX: 0, scale: 0.9, y: 0 }, path: { rotateX: 0, scale: 0.96, y: 0 }, field: { rotateX: 8, scale: 0.94, y: 0 } };
+const VARIANT: Record<string, string> = { Compute: 'stage', Infrastructure: 'stage', AI: 'wide', Apps: 'wide', Observe: 'wide', Dev: 'wide', Science: 'path', Web3: 'path', Data: 'path', Security: 'field', Network: 'field', Local: 'stage' };
+const POSE: Record<string, { rotateX: number; scale: number; y: number }> = { stage: { rotateX: 12, scale: 1.04, y: 0 }, wide: { rotateX: 0, scale: 0.9, y: 0 }, path: { rotateX: 0, scale: 0.96, y: 0 }, field: { rotateX: 8, scale: 0.94, y: 0 } };
 
 /* status told by shape, not colour: Generally available is a filled dot, Beta a half dot, a family name a ring */
-const shape = (label) => (/^Generally available$/i.test(label) ? 'ga' : /^Beta$/i.test(label) ? 'beta' : 'fam');
-const Chip = ({ label, className = '' }) => <span className={'xcf-chip ' + shape(label) + ' ' + className}><i aria-hidden="true" /><span>{label}</span></span>;
+const shape = (label: string) => (/^Generally available$/i.test(label) ? 'ga' : /^Beta$/i.test(label) ? 'beta' : 'fam');
+interface ChipProps {
+  label: string;
+  className?: string;
+}
+const Chip = ({ label, className = '' }: ChipProps) => <span className={'xcf-chip ' + shape(label) + ' ' + className}><i aria-hidden="true" /><span>{label}</span></span>;
 
 /* the product's place in its family, from its own console sidebar: the one figure every member has (01 / 08 Compute) */
-function figureOf(doc) {
+interface Place {
+  n: string;
+  of: string;
+  label: string;
+}
+function figureOf(doc: Product): Place | null {
   const s = doc.window ? doc.window.siblings : [];
   const i = s.findIndex((x) => x.current);
   if (s.length < 2 || i < 0) return null;
   return { n: String(i + 1).padStart(2, '0'), of: String(s.length).padStart(2, '0'), label: (doc.crumb[1] && doc.crumb[1].label) || doc.label };
 }
 /* the command the product's own prompt starts with, else its own endpoint call */
-const cmdOf = (doc) => (doc.ship ? (doc.ship.prompt.split('Start with: ')[1] || doc.ship.api.join(' ')) : '');
+const cmdOf = (doc: Product) => (doc.ship ? (doc.ship.prompt.split('Start with: ')[1] || doc.ship.api.join(' ')) : '');
 
 /* the typing: the whole prompt is always in flow (faint), and each character moves from the faint part into the
    white part, so the lines wrap the same from first paint to last character (no React state per character) */
-function typing(el, rest, text, cps, alive) {
-  return new Promise((done) => {
+function typing(el: HTMLElement, rest: HTMLElement | null, text: string, cps: number, alive: () => boolean) {
+  return new Promise<boolean>((done) => {
     let i = 0;
     el.textContent = '';
     if (rest) rest.textContent = text;
@@ -75,11 +87,20 @@ function typing(el, rest, text, cps, alive) {
   });
 }
 
-const PauseIcon = ({ on }) => (on
+interface PauseIconProps {
+  on: boolean;
+}
+const PauseIcon = ({ on }: PauseIconProps) => (on
   ? <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5 3.5v9M11 3.5v9" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
   : <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor" /></svg>);
 
-const Fig = ({ fig, sibs, peek, label }) => (
+interface FigProps {
+  fig: Place;
+  sibs: Sibling[];
+  peek: string | null;
+  label: string;
+}
+const Fig = ({ fig, sibs, peek, label }: FigProps) => (
   <div className="xcf-fig">
     <Chip label={label} />
     <p className="xcf-fig-n"><b>{fig.n}</b><span>/ {fig.of}</span></p>
@@ -89,7 +110,11 @@ const Fig = ({ fig, sibs, peek, label }) => (
 );
 
 /* a neighbour's own words, shown while you point at it */
-const Peek = ({ s, p }) => (
+interface PeekProps {
+  s: Sibling;
+  p: Preview | undefined;
+}
+const Peek = ({ s, p }: PeekProps) => (
   <div className="xcf-peek" aria-hidden="true">
     {p && p.label && <Chip label={p.label} />}
     <p className="xcf-peek-n">{p ? p.name : s.label}</p>
@@ -98,23 +123,30 @@ const Peek = ({ s, p }) => (
   </div>
 );
 
-function Console({ doc, v, fig, previews, sigil }) {
-  const w = doc.window;
-  const box = useRef(null);
-  const typed = useRef(null);
-  const ghost = useRef(null);
+interface ConsoleProps {
+  doc: Product;
+  w: Surface;
+  v: string;
+  fig: Place | null;
+  previews: Record<string, Preview>;
+  sigil: Glyph;
+}
+function Console({ doc, w, v, fig, previews, sigil }: ConsoleProps) {
+  const box = useRef<HTMLElement>(null);
+  const typed = useRef<HTMLSpanElement>(null);
+  const ghost = useRef<HTMLSpanElement>(null);
   const seen = useInView(box, { amount: 0.12 }); // starts on the first screen, phones included, within a second
   const calm = useCalm();
   const prompt = (doc.ship && doc.ship.prompt) || '';
   const cmd = cmdOf(doc);
-  const google = (doc.meta.find((m) => m.k === 'Google Cloud') || {}).v;
+  const google = doc.meta.find((m) => m.k === 'Google Cloud')?.v;
   // the shared example project (services, or the CLI deploying it) is never the hero: it opens from its own note
   const hasEx = !!(w.rows.length || w.lines.length);
-  const body = w.turns.length ? 'turns' : doc.features.length && v !== 'path' ? 'feats' : 'bare';
+  const body: string = w.turns.length ? 'turns' : doc.features.length && v !== 'path' ? 'feats' : 'bare';
   const n = body === 'turns' ? w.turns.length : body === 'lines' ? w.lines.length : body === 'feats' ? doc.features.length : google ? 3 : 2;
   // the session, played once: turns and lines arrive, lines are then searched one by one, features and the terminal light in turn
   const tl = useMemo(() => {
-    const r = (k) => Array.from({ length: k }, (_, i) => i);
+    const r = (k: number) => Array.from({ length: k }, (_, i) => i);
     if (body === 'turns') return r(n).map((i) => ({ shown: i + 1, lit: -1 }));
     if (body === 'lines') return [...r(n).map((i) => ({ shown: i + 1, lit: -1 })), ...r(n).map((i) => ({ shown: n, lit: i })), { shown: n, lit: -1 }];
     if (body === 'feats') return [...r(n).map((i) => ({ shown: n, lit: i })), { shown: n, lit: 0 }];
@@ -122,7 +154,7 @@ function Console({ doc, v, fig, previews, sigil }) {
   }, [body, n]);
   const [step, setStep] = useState(tl.length - 1); // first paint: the settled session, every line there (no black void)
   const [run, setRun] = useState(true); // the pause control
-  const [peek, setPeek] = useState(null);
+  const [peek, setPeek] = useState<string | null>(null);
   const [ex, setEx] = useState(false); // the example project, open on demand
   const [lit, setLit] = useState(0); // the example project's picked service
   const played = useRef(false);
@@ -247,11 +279,14 @@ function Console({ doc, v, fig, previews, sigil }) {
 }
 
 /* /cloud/local: the boot, as a terminal session that plays once on screen and settles */
-function Boot({ boot }) {
-  const box = useRef(null);
+interface BootProps {
+  boot: Story;
+}
+function Boot({ boot }: BootProps) {
+  const box = useRef<HTMLElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useCalm();
-  const refs = useRef([]);
+  const refs = useRef<(HTMLSpanElement | null)[]>([]);
   const [shown, setShown] = useState(boot.lines.length);
   const [on, setOn] = useState(true);
   const played = useRef(false);
@@ -268,7 +303,8 @@ function Boot({ boot }) {
       for (let i = 0; i < boot.lines.length && live(); i++) {
         const l = boot.lines[i];
         setShown(i + 1);
-        if (l.cmd && refs.current[i] && l.text) await typing(refs.current[i], null, l.text, 30, live);
+        const el = refs.current[i];
+        if (l.cmd && el && l.text) await typing(el, null, l.text, 30, live);
         await wait(l.cmd ? 260 : 420);
       }
     })();
@@ -297,17 +333,22 @@ function Boot({ boot }) {
 }
 
 /* Beyond: the Google Cloud service you use now, and its Hanzo counterpart */
-function Finder({ pairs, here, e }) {
+interface FinderProps {
+  pairs: Pair[];
+  here: string;
+  e: Entrance;
+}
+function Finder({ pairs, here, e }: FinderProps) {
   const [q, setQ] = useState('');
   const [lit, setLit] = useState(0);
   const [held, setHeld] = useState(false);
-  const box = useRef(null);
+  const box = useRef<HTMLDivElement>(null);
   const seen = useInView(box, { amount: 0.3 });
   const calm = useReducedMotion();
   const still = useCalm();
   const list = useMemo(() => {
     const k = q.trim().toLowerCase();
-    const all = [...pairs].sort((a, b) => (b.slug === here) - (a.slug === here));
+    const all = [...pairs].sort((a, b) => Number(b.slug === here) - Number(a.slug === here));
     return k ? all.filter((p) => (p.google + ' ' + p.name + ' ' + p.api).toLowerCase().includes(k)) : all;
   }, [q, pairs, here]);
   const SHOWN = 6; // with no query: this page's pair and five more; every row stays in the HTML, the rest hidden
@@ -362,8 +403,12 @@ function Finder({ pairs, here, e }) {
 }
 
 /* Hanzo's genesis line, a quiet strip: its two sentences move from Air to Book weight once */
-function Motto({ text, e }) {
-  const ref = useRef(null);
+interface MottoProps {
+  text: string;
+  e: Entrance;
+}
+function Motto({ text, e }: MottoProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, amount: 0.6 });
   const parts = text.split(/(?<=\.)\s+/);
   return (
@@ -376,14 +421,20 @@ function Motto({ text, e }) {
   );
 }
 
-function Prompt({ text }) {
+interface PromptProps {
+  text: string;
+}
+function Prompt({ text }: PromptProps) {
   const at = text.indexOf('Start with: ');
   if (at < 0) return text;
   return <>{text.slice(0, at)}<span className="xcf-pr-k">Start with: </span><b>{text.slice(at + 12)}</b></>;
 }
 
 /* the prompt's route, drawn from its own words (the skill manifest it reads, the agent, the endpoint) */
-const Route = ({ ship }) => {
+interface RouteProps {
+  ship: Endpoint;
+}
+const Route = ({ ship }: RouteProps) => {
   const url = (ship.prompt.match(/https?:\/\/\S+?\.md/) || [''])[0];
   return (
     <div className="xcf-route">
@@ -396,8 +447,11 @@ const Route = ({ ship }) => {
   );
 };
 /* the endpoint: the Paste and ship prompt on the left, its route as the object on the right */
-function Ship({ doc, e }) {
-  const s = doc.ship;
+interface ShipProps {
+  ship: Endpoint;
+  e: Entrance;
+}
+function Ship({ ship: s, e }: ShipProps) {
   return (
     <Enter kind={e} className="xcf-sec xcf-ship" aria-labelledby="xcf-ship-h">
       <div className="xcf-wrap xcf-ship-g">
@@ -419,16 +473,22 @@ function Ship({ doc, e }) {
 }
 
 /* the signature's section: the family's name and this product's own words on the left, the rows that open on the right */
-function Family({ doc, previews, e }) {
-  const sibs = doc.window ? doc.window.siblings : [];
-  if (sibs.length < 2) return null;
+interface FamilyProps {
+  doc: Product;
+  previews: Record<string, Preview>;
+  e: Entrance;
+}
+function Family({ doc, previews, e }: FamilyProps) {
+  const win = doc.window;
+  const sibs = win ? win.siblings : [];
+  if (!win || sibs.length < 2) return null;
   const fam = doc.crumb[1] ? doc.crumb[1].label : doc.label;
   const source = doc.actions.find((a) => /github\.com/.test(a.href));
-  const api = (doc.meta.find((m) => m.k === 'API') || {}).v || '';
-  const google = (doc.meta.find((m) => m.k === 'Google Cloud') || {}).v || '';
+  const api = doc.meta.find((m) => m.k === 'API')?.v || '';
+  const google = doc.meta.find((m) => m.k === 'Google Cloud')?.v || '';
   const own = {
     preview: { name: doc.name, label: doc.label, lede: doc.lede, api, google },
-    features: doc.features, cmd: cmdOf(doc), console: doc.window.console && { label: doc.window.console.label, href: doc.liveLinks[0] || doc.window.console.href },
+    features: doc.features, cmd: cmdOf(doc), console: win.console && { label: win.console.label, href: doc.liveLinks[0] || win.console.href },
   };
   return (
     <Enter kind={e} className="xcf-sec xcf-famsec" aria-labelledby="xcf-fam-h">
@@ -448,7 +508,10 @@ function Family({ doc, previews, e }) {
 
 /* the hero's three facts, every one Hanzo's own line: the endpoint, the Google Cloud pair (else the Start with
    command), and the two badges */
-function Facts({ doc }) {
+interface FactsProps {
+  doc: Product;
+}
+function Facts({ doc }: FactsProps) {
   const api = doc.meta.find((m) => m.k === 'API');
   const g = doc.meta.find((m) => m.k === 'Google Cloud');
   const cmd = cmdOf(doc);
@@ -461,7 +524,11 @@ function Facts({ doc }) {
   );
 }
 
-const Acts = ({ list, slug }) => (
+interface ActsProps {
+  list: Link[];
+  slug: string;
+}
+const Acts = ({ list, slug }: ActsProps) => (
   <div className="xcf-acts">
     {list.map((a, i) => (i
       ? <Cta key={a.href} to={a.href} kind="quiet" id={'cloud.' + slug + '.hero-' + i}>{a.label}</Cta>
@@ -473,16 +540,26 @@ const Acts = ({ list, slug }) => (
 const NOJS = '.xcf-turns li,.xcf-lines li,.xcf-tlines li{opacity:1!important;transform:none!important}.xcf-motto-t span{font-weight:497!important}.xcf-mask>span{animation:none!important}.xro-p{grid-template-rows:1fr!important}.xro-pi{opacity:1!important;transform:none!important}.x-band .x-word,.x-band p,.x-band-act{opacity:1!important;transform:none!important;filter:none!important}';
 
 /* the name rests at 52 to 64px (MASTER 3.1): a short name arrives at 64 and settles to 52 as the stage settles */
-function Name({ name, small }) {
+interface NameProps {
+  name: string;
+  small: boolean;
+}
+function Name({ name, small }: NameProps) {
   const calm = useCalm();
   const { scrollY } = useScroll();
   const big = !small && name.length <= 12;
-  const s = useTransform(scrollY, (v) => 1 - (1 - 52 / 64) * Math.min(1, Math.max(0, v / 480)));
+  const s = useTransform(scrollY, (v: number) => 1 - (1 - 52 / 64) * Math.min(1, Math.max(0, v / 480)));
   return <motion.h1 id="xcf-h1" className={'xcf-display' + (big ? ' s-l' : '')} style={calm || !big ? undefined : { scale: s }}><span className="xcf-mask"><span>{name}</span></span></motion.h1>;
 }
 
 /* related: a rail of rows; pointing at one previews that product (its endpoint, status, lede) without moving the rows */
-function Related({ rel, cards, previews, e }) {
+interface RelatedProps {
+  rel: Kin;
+  cards: Record<string, Glyph>;
+  previews: Record<string, Preview>;
+  e: Entrance;
+}
+function Related({ rel, cards, previews, e }: RelatedProps) {
   const [at, setAt] = useState(0);
   const it = rel.items[at];
   const p = previews[it.href];
@@ -528,7 +605,11 @@ function Related({ rel, cards, previews, e }) {
 
 /* /cloud/local's boot story: its heading block, then its three figures as rows that open onto the boot lines that
    prove them (the figure's own line, and the commands and output up to the one whose time it is) */
-function BootHead({ boot, e }) {
+interface BootHeadProps {
+  boot: Story;
+  e: Entrance;
+}
+function BootHead({ boot, e }: BootHeadProps) {
   return (
     <Enter kind={e} id={boot.id} className="xcf-sec xcf-boot" aria-labelledby="xcf-boot-h">
       <div className="xcf-wrap xcf-boot-head">
@@ -541,8 +622,8 @@ function BootHead({ boot, e }) {
     </Enter>
   );
 }
-const lead = (s) => { const m = /^\d+(?:\.\d+)?/.exec(s || ''); return m ? Math.floor(Number(m[0])) : null; };
-function proofOf(boot, f) {
+const lead = (s: string | undefined) => { const m = /^\d+(?:\.\d+)?/.exec(s || ''); return m ? Math.floor(Number(m[0])) : null; };
+function proofOf(boot: Story, f: Figure) {
   const L = boot.lines.filter((l) => l.text);
   const n = lead(f.value);
   const hit = n === null ? -1 : L.findIndex((l) => l.time && lead(l.time) === n);
@@ -551,9 +632,9 @@ function proofOf(boot, f) {
   while (from > 0 && !L[from].cmd) from--;
   return L.slice(from, hit + 1);
 }
-function BootRows({ boot, e }) {
+function BootRows({ boot, e }: BootHeadProps) {
   const [at, setAt] = useState(0);
-  const dwell = useRef(0);
+  const dwell = useRef<ReturnType<typeof setTimeout>>(undefined);
   const mounted = useMounted();
   useEffect(() => () => clearTimeout(dwell.current), []);
   const lc = e === 'letter-cascade';
@@ -597,7 +678,7 @@ function BootRows({ boot, e }) {
 }
 
 /* the order of the sections after the hero, by first screen (MOTION-MAP rule 2: no fixed sequence) */
-const ORDER = {
+const ORDER: Record<string, string[]> = {
   stage: ['family', 'ship', 'finder', 'related', 'motto'],
   wide: ['family', 'finder', 'related', 'ship', 'motto'],
   path: ['ship', 'family', 'related', 'finder', 'motto'],
@@ -605,26 +686,35 @@ const ORDER = {
   local: ['boothead', 'bootrows'],
 };
 
-export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, previews = {} }) {
+interface CloudProductProps {
+  doc: Product | Local;
+  pairs: Pair[];
+  group: string;
+  sigil: Glyph;
+  cards?: Record<string, Glyph>;
+  previews?: Record<string, Preview>;
+}
+export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, previews = {} }: CloudProductProps) {
   const isLocal = doc.kind === 'local';
+  const prod = doc.kind === 'product' ? doc : null;
   const ask = isLocal ? doc.boot.actions[doc.boot.actions.length - 1] : doc.actions[0];
   const v = VARIANT[group] || 'stage';
   const rest = isLocal ? doc.boot.actions.filter((a) => a !== ask) : doc.actions.slice(1);
   const fig = isLocal ? null : figureOf(doc);
   // the sections after the hero, in this group's order, each with its entrance in the map's order (on /cloud/local
   // the hero's terminal takes the first); the closing Band takes the next one when there are fewer than five
-  const SEC = {
-    family: (e) => <Family doc={doc} previews={previews} e={e} />,
-    ship: (e) => doc.ship && <Ship doc={doc} e={e} />,
+  const SEC: Record<string, (e: Entrance) => ReactNode> = {
+    family: (e) => prod && <Family doc={prod} previews={previews} e={e} />,
+    ship: (e) => prod && prod.ship && <Ship ship={prod.ship} e={e} />,
     finder: (e) => <Finder pairs={pairs} here={doc.slug} e={e} />,
-    related: (e) => <Related rel={doc.related} cards={cards} previews={previews} e={e} />,
-    motto: (e) => <Motto text={doc.motto} e={e} />,
-    boothead: (e) => <BootHead boot={doc.boot} e={e} />,
-    bootrows: (e) => <BootRows boot={doc.boot} e={e} />,
+    related: (e) => prod && prod.related && <Related rel={prod.related} cards={cards} previews={previews} e={e} />,
+    motto: (e) => prod && <Motto text={prod.motto} e={e} />,
+    boothead: (e) => doc.kind === 'local' && <BootHead boot={doc.boot} e={e} />,
+    bootrows: (e) => doc.kind === 'local' && <BootRows boot={doc.boot} e={e} />,
   };
-  const has = {
-    family: !!(doc.window && doc.window.siblings.length > 1), ship: !!doc.ship, finder: pairs.some((p) => p.slug === doc.slug),
-    related: !!doc.related, motto: !!doc.motto, boothead: isLocal, bootrows: isLocal,
+  const has: Record<string, boolean> = {
+    family: !!(prod && prod.window && prod.window.siblings.length > 1), ship: !!(prod && prod.ship), finder: pairs.some((p) => p.slug === doc.slug),
+    related: !!(prod && prod.related), motto: !!(prod && prod.motto), boothead: isLocal, bootrows: isLocal,
   };
   const secs = ORDER[isLocal ? 'local' : v].filter((k) => has[k]);
   const E = isLocal ? ENTRANCES.slice(1) : ENTRANCES;
@@ -640,25 +730,25 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, pre
             <div className="xcf-head-r">
               {doc.lede && <p className="xcf-lede">{doc.lede}</p>}
               <Acts list={isLocal ? [ask, ...rest] : doc.actions} slug={doc.slug} />
-              {!!(doc.crumb && doc.crumb.length) && (
+              {!!(prod && prod.crumb.length) && prod && (
                 <nav className="xcf-crumb" aria-label="Breadcrumb">
-                  {doc.crumb.map((c, i) => <span key={i}>{i > 0 && <i aria-hidden="true">/</i>}{c.href ? <A to={c.href} className="x-link">{c.label}</A> : <span>{c.label}</span>}</span>)}
+                  {prod.crumb.map((c, i) => <span key={i}>{i > 0 && <i aria-hidden="true">/</i>}{c.href ? <A to={c.href} className="x-link">{c.label}</A> : <span>{c.label}</span>}</span>)}
                 </nav>
               )}
               {isLocal && <Chip label={doc.label} />}
             </div>
           </div>
         </div>
-        {v === 'path' && doc.window && (
+        {v === 'path' && prod && prod.window && (
           <div className="xcf-wrap xcf-path-w">
-            <p className="xcf-path-hero" aria-hidden="true"><span className="xcf-mask"><span>{doc.window.host[0]}</span></span><span className="xcf-mask b"><span>{doc.window.host[1]}</span></span><i className="xcf-pulse" /></p>
-            {fig && <Fig fig={fig} sibs={doc.window.siblings} peek={null} label={doc.label} />}
+            <p className="xcf-path-hero" aria-hidden="true"><span className="xcf-mask"><span>{prod.window.host[0]}</span></span><span className="xcf-mask b"><span>{prod.window.host[1]}</span></span><i className="xcf-pulse" /></p>
+            {fig && <Fig fig={fig} sibs={prod.window.siblings} peek={null} label={doc.label} />}
           </div>
         )}
         <div className="xcf-wrap xcf-stage-w">
-          {v === 'path' && <Facts doc={doc} />}
+          {v === 'path' && prod && <Facts doc={prod} />}
           <StageSettle className="xcf-stage" over={560} from={POSE[v]}>
-            {isLocal ? <Enter as="div" kind={ENTRANCES[0]}><Boot boot={doc.boot} /></Enter> : doc.window && <Console doc={doc} v={v} fig={fig} previews={previews} sigil={sigil} />}
+            {isLocal ? <Enter as="div" kind={ENTRANCES[0]}><Boot boot={doc.boot} /></Enter> : doc.window && <Console doc={doc} w={doc.window} v={v} fig={fig} previews={previews} sigil={sigil} />}
           </StageSettle>
         </div>
         {!isLocal && v !== 'path' && <div className="xcf-wrap"><Facts doc={doc} /></div>}
@@ -674,7 +764,7 @@ export default function CloudProduct({ doc, pairs, group, sigil, cards = {}, pre
         to={ask.href}
         note={(
           <span className="xcf-band-n">
-            {doc.window && <code className="xcf-band-host">{doc.window.host.map((h, i) => <span key={i} className={i ? 'xcf-path' : ''}>{h}</span>)}<i className="xcf-pulse" aria-hidden="true" /></code>}
+            {prod && prod.window && <code className="xcf-band-host">{prod.window.host.map((h, i) => <span key={i} className={i ? 'xcf-path' : ''}>{h}</span>)}<i className="xcf-pulse" aria-hidden="true" /></code>}
             {rest.map((a) => <A key={a.href} to={a.href} className="x-link xcf-band-l">{a.label}<Arrow /></A>)}
           </span>
         )}

@@ -5,23 +5,38 @@
    streams, the postings, the balances, the wallet and the close all re-plan at once and always balance.
    Sliders are page-drawn (no browser control): pointer, touch (horizontal drag; vertical still scrolls) and keyboard
    (arrows, Page Up/Down, Home/End), role="slider" with value text. The labels are Hanzo's own account names. */
+import type React from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { createContext, useContext, useMemo, useRef, useState } from 'react';
 
-export const fmt = (v) => v.toLocaleString('en-US');
+export const fmt = (v: number) => v.toLocaleString('en-US');
 export const DEF = { a: 10000, p0: 90, p1: 5 };
-const Ctx = createContext(null);
 
-export function split({ a, p0, p1 }) {
+interface Split {
+  a: number;
+  p0: number;
+  p1: number;
+}
+export interface Calc extends Split {
+  parts: [number, number, number];
+  set: (k: keyof Split, x: number) => void;
+}
+const Ctx = createContext<Calc | null>(null);
+
+export function split({ a, p0, p1 }: Split): [number, number, number] {
   const m = Math.round((a * p0) / 100);
   const f = Math.round((a * p1) / 100);
   return [m, f, a - m - f]; // remaining: whatever is left, so the three always meet the amount
 }
 
-export function CalcProvider({ children }) {
-  const [s, setS] = useState(DEF);
+interface CalcProviderProps {
+  children: ReactNode;
+}
+export function CalcProvider({ children }: CalcProviderProps) {
+  const [s, setS] = useState<Split>(DEF);
   const v = useMemo(() => {
     const parts = split(s);
-    return { ...s, parts, set: (k, x) => setS((o) => {
+    return { ...s, parts, set: (k: keyof Split, x: number) => setS((o) => {
       const n = { ...o, [k]: x };
       if (n.p0 + n.p1 > 100) { if (k === 'p0') n.p1 = 100 - n.p0; else n.p0 = 100 - n.p1; }
       return n;
@@ -29,18 +44,28 @@ export function CalcProvider({ children }) {
   }, [s]);
   return <Ctx.Provider value={v}>{children}</Ctx.Provider>;
 }
-export const useCalc = () => useContext(Ctx) || { ...DEF, parts: split(DEF), set: () => {} };
+export const useCalc = (): Calc => useContext(Ctx) || { ...DEF, parts: split(DEF), set: () => {} };
 
-function Slider({ label, value, min, max, step, onChange, show, big }) {
-  const tr = useRef(null);
+interface SliderProps {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (v: number) => void;
+  show: (v: number) => string;
+  big?: boolean;
+}
+function Slider({ label, value, min, max, step, onChange, show, big }: SliderProps) {
+  const tr = useRef<HTMLDivElement>(null);
   const drag = useRef(false);
   const f = (value - min) / (max - min);
-  const at = (x) => {
-    const r = tr.current.getBoundingClientRect();
+  const at = (x: number) => {
+    const r = tr.current!.getBoundingClientRect();
     const k = Math.min(1, Math.max(0, (x - r.left) / r.width));
     onChange(Math.round((min + k * (max - min)) / step) * step);
   };
-  const key = (e) => {
+  const key = (e: React.KeyboardEvent<HTMLSpanElement>) => {
     const d = { ArrowRight: step, ArrowUp: step, ArrowLeft: -step, ArrowDown: -step, PageUp: step * 10, PageDown: -step * 10 }[e.key];
     if (d !== undefined) { e.preventDefault(); onChange(Math.min(max, Math.max(min, value + d))); }
     else if (e.key === 'Home') { e.preventDefault(); onChange(min); }
@@ -64,7 +89,10 @@ function Slider({ label, value, min, max, step, onChange, show, big }) {
 const ACC = ['@merchants:042', '@fees:processing', '@platform:revenue'];
 
 /* The calculator panel: three sliders on the left, the transaction they write on the right. */
-export function Calculator({ Postings }) {
+interface CalculatorProps {
+  Postings: ComponentType<{ on: boolean }>;
+}
+export function Calculator({ Postings }: CalculatorProps) {
   const c = useCalc();
   const [m, f, r] = c.parts;
   return (

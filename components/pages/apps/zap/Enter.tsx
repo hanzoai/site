@@ -3,13 +3,14 @@
    pendulum. Page-local, each its own build, never one shared reveal. Every section is complete in the server HTML and
    with JS off; an entrance arms only after hydration, only for a section still below the fold, and never under reduced
    motion (useArm). Transform, opacity and clip-path only. */
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useVelocity } from 'motion/react';
 
 /* rest (final state, server and JS off) → armed (hidden, waiting below the fold) → play (the entrance runs once) */
 export function useArm(amount = 0.25) {
-  const ref = useRef(null);
-  const [s, setS] = useState('rest');
+  const ref = useRef<HTMLDivElement>(null);
+  const [s, setS] = useState<'rest' | 'armed' | 'play'>('rest');
   useEffect(() => {
     const el = ref.current;
     if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -19,18 +20,22 @@ export function useArm(amount = 0.25) {
     io.observe(el);
     return () => io.disconnect();
   }, [amount]);
-  return [ref, s];
+  return [ref, s] as const;
 }
 
 /* 1 · velocity-skew: rises in leaning, then leans with the speed of the scroll and straightens when it stops */
-export function VSkew({ children, className = '' }) {
+interface VSkewProps {
+  children: ReactNode;
+  className?: string;
+}
+export function VSkew({ children, className = '' }: VSkewProps) {
   const [ref, s] = useArm(0.15);
   // reduced motion is read after mount, never during render, so the server and the first client render match
   const calm = useRef(true);
   useEffect(() => { calm.current = matchMedia('(prefers-reduced-motion: reduce)').matches; }, []);
   const { scrollY } = useScroll();
   const v = useVelocity(scrollY);
-  const skewY = useTransform(v, (x) => (calm.current ? 0 : Math.max(-2.5, Math.min(2.5, -x / 1200))));
+  const skewY = useTransform(v, (x: number) => (calm.current ? 0 : Math.max(-2.5, Math.min(2.5, -x / 1200))));
   return (
     <div ref={ref} className={'zp-e-skew ' + className} data-e={s}>
       <motion.div style={{ skewY, transformOrigin: '50% 0' }}>{children}</motion.div>
@@ -39,7 +44,10 @@ export function VSkew({ children, className = '' }) {
 }
 
 /* 2 · page-curl: the white page above curls away from its bottom-left corner and shows the room underneath */
-export function Curl({ children }) {
+interface CurlProps {
+  children: ReactNode;
+}
+export function Curl({ children }: CurlProps) {
   const [ref, s] = useArm(0.3);
   return (
     <div ref={ref} className="zp-e-curl" data-e={s}>
@@ -52,19 +60,22 @@ export function Curl({ children }) {
 
 /* 3 · cursor-trail: a trail runs across the room and the packets come in as it passes them; afterwards, on a fine
    pointer, the trail follows the cursor across the room. Touch screens get the one sweep only. */
-export function Trail({ children }) {
+interface TrailProps {
+  children: ReactNode;
+}
+export function Trail({ children }: TrailProps) {
   const [ref, s] = useArm(0.2);
-  const dots = useRef([]);
+  const dots = useRef<(HTMLElement | null)[]>([]);
   const N = 10;
   useEffect(() => {
     const el = ref.current; if (!el) return;
-    el.querySelectorAll('.zp-packets > li').forEach((li, i) => li.style.setProperty('--i', i));
+    el.querySelectorAll<HTMLElement>('.zp-packets > li').forEach((li, i) => li.style.setProperty('--i', String(i)));
   }, [ref]);
   useEffect(() => {
     const el = ref.current; if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const pts = Array.from({ length: N }, () => ({ x: -40, y: 0 }));
     let tx = -40, ty = 0, raf = 0, until = 0, sweep = s === 'play' ? performance.now() : 0, shown = false;
-    const draw = (t) => {
+    const draw = (t: number) => {
       const W = el.clientWidth, H = el.clientHeight;
       if (sweep) {
         const k = Math.min(1, (t - sweep) / 1300);
@@ -78,7 +89,7 @@ export function Trail({ children }) {
     const kick = () => { shown = true; if (!raf) raf = requestAnimationFrame(draw); };
     if (sweep) kick();
     const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-    const move = (e) => { const r = el.getBoundingClientRect(); tx = e.clientX - r.left; ty = e.clientY - r.top; until = performance.now() + 450; kick(); };
+    const move = (e: PointerEvent) => { const r = el.getBoundingClientRect(); tx = e.clientX - r.left; ty = e.clientY - r.top; until = performance.now() + 450; kick(); };
     if (fine) el.addEventListener('pointermove', move);
     return () => { cancelAnimationFrame(raf); el.removeEventListener('pointermove', move); };
   }, [s, ref]);
@@ -91,13 +102,20 @@ export function Trail({ children }) {
 }
 
 /* 4 · drop-in: falls in from above and settles with a small bounce (eased keyframes, no spring) */
-export function Drop({ children, className = '' }) {
+interface DropProps {
+  children: ReactNode;
+  className?: string;
+}
+export function Drop({ children, className = '' }: DropProps) {
   const [ref, s] = useArm(0.25);
   return <div ref={ref} className={'zp-e-drop ' + className} data-e={s}>{children}</div>;
 }
 
 /* 5 · pendulum: hangs from its top edge, swings in and settles */
-export function Swing({ children }) {
+interface SwingProps {
+  children: ReactNode;
+}
+export function Swing({ children }: SwingProps) {
   const [ref, s] = useArm(0.3);
   return <div ref={ref} className="zp-e-swing" data-e={s}>{children}</div>;
 }

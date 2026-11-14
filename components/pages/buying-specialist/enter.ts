@@ -8,9 +8,10 @@
    One IntersectionObserver plays each once at ~25% in view by adding .in. The start states live in enter.css under
    html.js and prefers-reduced-motion: no-preference, so the server HTML, JS off and reduced motion all show the final
    state, and the markup is the same on server and client. */
+import type React from 'react';
 import { useEffect, useState } from 'react';
 
-export function useEnter(rootRef) {
+export function useEnter(rootRef: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
@@ -26,12 +27,12 @@ export function useEnter(rootRef) {
 
 /* count-roll: the figure starts at zero and rolls to its value in ~10 steps over 700 ms once the element is 25% in
    view; afterwards it simply follows the value. Server HTML and reduced motion show the value itself. */
-export function useRollIn(ref, value) {
-  const [p, setP] = useState(null); // null = done (show the value)
+export function useRollIn(ref: React.RefObject<Element | null>, value: number) {
+  const [p, setP] = useState<number | null>(null); // null = done (show the value)
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches || typeof IntersectionObserver === 'undefined' || !ref.current) return;
     setP(0);
-    let t = 0;
+    let t: ReturnType<typeof setTimeout> | 0 = 0;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       io.disconnect();

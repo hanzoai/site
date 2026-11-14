@@ -7,15 +7,16 @@
    5 inertia-drag  Get Ledger: useEntrance + Motion inertia in Ledger.jsx (thrown in, then draggable)
    Every one plays once. Server HTML and JS off: everything sits in its true place. Reduced motion, or a section that is
    already on screen (or above it) when the page runs: no entrance, the final layout at once. Transform/opacity only. */
+import type React from 'react';
 import { useEffect, useLayoutEffect, useState } from 'react';
 
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 const calmNow = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
-const below = (el) => el.getBoundingClientRect().top > innerHeight * 0.92;
+const below = (el: HTMLElement) => el.getBoundingClientRect().top > innerHeight * 0.92;
 
 /* 'off' -> nothing happens; 'armed' -> set down in its start pose (it is below the screen); 'go' -> it entered, plays once */
-export function useEntrance(ref, inset = '-22%') {
-  const [s, setS] = useState('off');
+export function useEntrance(ref: React.RefObject<HTMLElement | null>, inset = '-22%') {
+  const [s, setS] = useState<'off' | 'armed' | 'go'>('off');
   useIso(() => {
     const el = ref.current;
     if (!el || calmNow() || !below(el)) return;
@@ -30,7 +31,7 @@ export function useEntrance(ref, inset = '-22%') {
 /* velocity-skew: while a scroll listener keeps the current speed, the section's [data-skew] pieces start leaning by the
    speed it came in at (never less than a readable 4deg), follow the speed while it is moving and ease back to straight
    once the scroll stops. Then the inline transform is removed, so the true layout is all that is left. */
-export function useSkew(ref) {
+export function useSkew(ref: React.RefObject<HTMLElement | null>) {
   useEffect(() => {
     const root = ref.current;
     if (!root || calmNow() || !below(root)) return;
@@ -41,14 +42,14 @@ export function useSkew(ref) {
       y = scrollY; t = now;
     };
     addEventListener('scroll', onScroll, { passive: true });
-    const els = [...root.querySelectorAll('[data-skew]')];
-    const clamp = (n) => Math.max(-9, Math.min(9, n));
+    const els = [...root.querySelectorAll<HTMLElement>('[data-skew]')];
+    const clamp = (n: number) => Math.max(-9, Math.min(9, n));
     const run = () => {
       const start = performance.now();
       let skew = clamp(-v * 4.5);
       if (Math.abs(skew) < 4) skew = v < 0 ? 4 : -4;
       let still = 0;
-      const tick = (now) => {
+      const tick = (now: number) => {
         if (now - t > 90) v *= 0.8; // no scroll event for a moment: the speed falls away
         const target = clamp(-v * 4.5);
         skew += (target - skew) * 0.09;
@@ -68,11 +69,11 @@ export function useSkew(ref) {
 /* word-shuffle: each group (the heading's words, the tab buttons) is set down in the wrong slots (word i sits where word
    i + half the group sits), invisible; on entering, the pieces appear one by one in a scrambled order, then all swap
    into their own places on a slight overshoot. Measured with no transforms on, so the end is exactly the layout. */
-export function useShuffle(ref, groups) {
+export function useShuffle(ref: React.RefObject<HTMLElement | null>, groups: string[]) {
   useIso(() => {
     const root = ref.current;
     if (!root || calmNow() || !below(root)) return;
-    const sets = groups.map((sel) => [...root.querySelectorAll(sel)]).filter((g) => g.length > 1);
+    const sets = groups.map((sel) => [...root.querySelectorAll<HTMLElement>(sel)]).filter((g) => g.length > 1);
     const place = () => sets.forEach((g) => {
       const r = g.map((el) => el.getBoundingClientRect());
       const n = g.length, off = Math.ceil(n / 2);
@@ -84,7 +85,7 @@ export function useShuffle(ref, groups) {
       });
     });
     place();
-    const timers = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return;
       io.disconnect();

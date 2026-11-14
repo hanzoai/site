@@ -19,6 +19,8 @@
 // Beyond: "What runs on yours": pick the machine you have and see what Edge uses on it and which Zen model fits, each
 //   answer built from Hanzo's own lines.
 // Every word and link is Hanzo's; the field and the stream are drawn, not measured, and show no numbers.
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useScroll, useTransform, useMotionTemplate, useReducedMotion } from 'motion/react';
 import { useWide } from '../../v2/KeynoteChapters';
@@ -30,13 +32,16 @@ import KeynoteClose from '../../v2/KeynoteClose';
 import KeynoteLines from '../../v2/KeynoteLines';
 import './Edge.css';
 
-const pad = (n) => String(n).padStart(2, '0');
-const EMPH = [0.16, 1, 0.3, 1];
+const pad = (n: number) => String(n).padStart(2, '0');
+const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const Off = () => (
   <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" className="eg-off-i"><path d="M2 8.5a15 15 0 0 1 20 0M5.5 12a10 10 0 0 1 13 0M9 15.5a5 5 0 0 1 6 0" /><circle cx="12" cy="19" r="1.3" /><path d="M3 3l18 18" className="cut" /></svg>
 );
-const PauseIcon = ({ on }) => on
+interface PauseIconProps {
+  on: boolean;
+}
+const PauseIcon = ({ on }: PauseIconProps) => on
   ? <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4.5 3v10l8.5-5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><rect x="4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /><rect x="9.4" y="3" width="2.6" height="10" rx="1" fill="currentColor" /></svg>;
 
@@ -44,7 +49,7 @@ const PauseIcon = ({ on }) => on
 // the stream is Hanzo's own words, one token per server-sent event
 const TOKENS = 'There is no request, so there is nothing to be slow. Nothing is uploaded'.split(' ');
 function Local() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { amount: 0.25 });
   const calm = useCalm();
   const paused = useStagePause();
@@ -91,10 +96,16 @@ const FACTS = [
 ];
 const SAID = ['Where it runs', 'There is no request', 'After that, offline'];
 const KINDS = [['macOS', 'Apple Silicon and Intel'], ['Linux', 'x86 and ARM'], ['WebAssembly', 'modern browsers']];
-const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const rnd = (i: number) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
 
-function useField(canvas, wrap) {
-  const st = useRef({ pts: [], w: 0, h: 0, dpr: 1, rings: [], t0: 0, mode: 0, last: 0, ink: '10, 10, 10', inkAt: 0 });
+/* a machine in the field: its home, where it gathers, where it is now, its kind, how lit it is, how far from the top centre */
+interface Pt { hx: number; hy: number; gx: number; gy: number; x: number; y: number; k: number; lit: number; f: number }
+/* a prompt answered where it landed: the machine and the moment */
+interface Ring { p: Pt; b: number }
+interface Dots { pts: Pt[]; w: number; h: number; dpr: number; rings: Ring[]; t0: number; mode: number; last: number; ink: string; inkAt: number; kind?: number }
+
+function useField(canvas: React.RefObject<HTMLCanvasElement | null>, wrap: React.RefObject<HTMLDivElement | null>) {
+  const st = useRef<Dots>({ pts: [], w: 0, h: 0, dpr: 1, rings: [], t0: 0, mode: 0, last: 0, ink: '10, 10, 10', inkAt: 0 });
   useEffect(() => {
     const el = wrap.current, cv = canvas.current;
     if (!el || !cv) return;
@@ -107,7 +118,7 @@ function useField(canvas, wrap) {
       const gap = r.width < 600 ? 26 : 34;
       const cols = Math.floor((r.width - 40) / gap), rows = Math.floor((r.height - 40) / gap);
       const ox = (r.width - (cols - 1) * gap) / 2, oy = (r.height - (rows - 1) * gap) / 2;
-      const pts = [];
+      const pts: Pt[] = [];
       for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
         const i = y * cols + x;
         const hx = ox + x * gap + (rnd(i) - 0.5) * gap * 0.5, hy = oy + y * gap + (rnd(i + 99) - 0.5) * gap * 0.5;
@@ -136,7 +147,7 @@ function useField(canvas, wrap) {
 }
 
 /* one frame of the field, ink on white: a lit machine is darker and larger, a ring is ink fading out */
-function draw(s, cv, t, mode, calm) {
+function draw(s: Dots, cv: HTMLCanvasElement, t: number, mode: number, calm: boolean) {
   const c = cv.getContext('2d');
   if (!c) return;
   const { w, h, dpr, pts } = s;
@@ -193,15 +204,15 @@ function draw(s, cv, t, mode, calm) {
 }
 
 function Field() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLElement>(null);
   const seen = useInView(ref, { amount: 0.3 });
   const calm = useCalm();
   const [hold, setHold] = useState(false);
   const [at, setAt] = useState(0);
   const [mine, setMine] = useState(false);
   const live = seen && !calm && !hold;
-  const wrap = useRef(null);
-  const canvas = useRef(null);
+  const wrap = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
   const s = useField(canvas, wrap);
   const mode = useRef(0);
   mode.current = at;
@@ -225,7 +236,7 @@ function Field() {
   useEffect(() => {
     if (!live) return;
     let raf = 0;
-    const loop = (now) => { if (canvas.current) draw(s.current, canvas.current, now / 1000, mode.current, false); raf = requestAnimationFrame(loop); };
+    const loop = (now: number) => { if (canvas.current) draw(s.current, canvas.current, now / 1000, mode.current, false); raf = requestAnimationFrame(loop); };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
   }, [live, s]);
@@ -283,7 +294,10 @@ const RUNTIME = [
   ['The prompt never leaves', 'Nothing is uploaded and there is no key to leak. The prompt and the output stay in the process that made them, which is the whole reason to run a model here.', 'Nothing is uploaded'],
 ];
 
-function Art({ i }) {
+interface ArtProps {
+  i: number;
+}
+function Art({ i }: ArtProps) {
   if (i === 0) return <div className="eg-art a0"><p><b>localhost</b><span>:port</span></p><i /></div>;
   if (i === 1) return <div className="eg-art a1">{['Q4_K', 'Q5_K', 'Q8_0'].map((q, k) => <p key={q} style={{ '--w': 0.5 + k * 0.25 }}><b>{q}</b><i /></p>)}<em>Q4_K_M · about 2.5GB</em></div>;
   if (i === 2) return <div className="eg-art a2">{[['Metal', 'Apple Silicon'], ['CUDA', 'NVIDIA'], ['AVX2', 'AVX-512']].map(([a, b], k) => <p key={a} className={k === 0 ? 'on' : ''}><b>{a}</b><span>{b}</span></p>)}</div>;
@@ -304,11 +318,11 @@ const YOURS = [
 const ICON = ['M5 4h14v10H5zM3 18h18', 'M3 7h18v10H3zM7 7V4M17 7V4M7 17v3M17 17v3', 'M7 7h10v10H7zM10 4v3M14 4v3M10 17v3M14 17v3M4 10h3M4 14h3M17 10h3M17 14h3', 'M7 3h10v18H7zM11 18h2', 'M4 6h16v12H4zM8 10h2v4H8zM13 10h3', 'M3 5h18v14H3zM3 9h18'];
 
 /* the kit's open cards shut on Esc without handing focus back: give it back to the card that opened */
-function useEscReturn(sel) {
+function useEscReturn(sel: string) {
   useEffect(() => {
-    const k = (e) => {
+    const k = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
-      const c = document.querySelector(sel + ' .kno-card[aria-expanded="true"]');
+      const c = document.querySelector<HTMLElement>(sel + ' .kno-card[aria-expanded="true"]');
       if (c) setTimeout(() => c.focus({ preventScroll: true }), 80);
     };
     window.addEventListener('keydown', k);
@@ -318,9 +332,9 @@ function useEscReturn(sel) {
 
 function Yours() {
   const [at, setAt] = useState(0);
-  const btns = useRef([]);
+  const btns = useRef<(HTMLButtonElement | null)[]>([]);
   const [name, uses, model, line] = YOURS[at];
-  const key = (e, i) => {
+  const key = (e: React.KeyboardEvent<HTMLButtonElement>, i: number) => {
     const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
     if (!k) return;
     e.preventDefault();
@@ -361,7 +375,7 @@ function Yours() {
 }
 
 /* ---------- when to reach for it: the dark room ---------- */
-const WHEN = [
+const WHEN: [string, string, string[]][] = [
   ['Apps that work with no signal', 'The model is a file on disk, so the feature does not stop existing when the connection does.', ['A desktop app that drafts and summarizes without a round trip', 'Field tools on a laptop, on a site with no coverage', 'Anything that has to keep working on a plane']],
   ['Text that cannot leave the building', 'Some prompts are a legal problem the moment they cross a network boundary. This is the answer to those.', ['Clinical and legal text processed on the workstation that holds it', 'On-premise deployments with no egress at all', 'Personal data handled on the device it belongs to']],
   ['Inside the browser tab', 'The WebAssembly build runs the model in the page, with nothing behind it — so a visitor costs you bandwidth once and compute never.', ['A demo that does not bill per visitor', 'An assistant inside a web app you already ship', 'Classification done client-side, before anything is uploaded']],
@@ -370,8 +384,12 @@ const WHEN = [
 
 /* The dark room opens out of a rounded window as it scrolls in (as the kit's KeynoteRoom does), but hydration-safe:
    the server and the first render agree, and reduced motion drops the clip only after mount. */
-function Room({ children, className = '' }) {
-  const ref = useRef(null);
+interface RoomProps {
+  children: ReactNode;
+  className?: string;
+}
+function Room({ children, className = '' }: RoomProps) {
+  const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const wide = useWide();
   const [ready, setReady] = useState(false);
@@ -394,11 +412,11 @@ function Room({ children, className = '' }) {
    of the screen, or the one you point at). */
 function When() {
   const [at, setAt] = useState(0);
-  const items = useRef([]);
+  const items = useRef<(HTMLLIElement | null)[]>([]);
   const calm = useCalm();
   useEffect(() => {
-    const els = items.current.filter(Boolean);
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(+e.target.dataset.i); }), { rootMargin: '-45% 0px -45% 0px' });
+    const els = items.current.filter((el): el is HTMLLIElement => !!el);
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) setAt(Number((e.target as HTMLElement).dataset.i)); }), { rootMargin: '-45% 0px -45% 0px' });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);

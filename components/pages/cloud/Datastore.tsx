@@ -21,6 +21,9 @@
    the port settles onto a board, digit by digit from behind a mask (only the true digits ever show), with Hanzo's
    line on who connects that way.
    Every word and link is Hanzo's; the example table's cells carry no values. */
+import type { MotionValue } from 'motion/react';
+import type { SceneProps } from './scene';
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useScroll, useMotionValueEvent, useInView } from 'motion/react';
 import { useCalm } from '../../ui';
@@ -40,14 +43,14 @@ const EXAMPLES = [
   { cols: ['ts', 'path', 'duration_ms'], sql: 'SELECT path, quantile(0.99)(duration_ms) FROM events WHERE ts > now() - 3600 GROUP BY path' },
   { cols: ['plan', 'user_id'], sql: 'SELECT plan, uniq(user_id) FROM events GROUP BY plan' },
 ];
-const shade = (a, b) => Math.abs(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453) % 1;
+const shade = (a: number, b: number) => Math.abs(Math.sin(a * 12.9898 + b * 78.233) * 43758.5453) % 1;
 
 /* [ref, live, calm]: live while seen and motion is allowed (hydration-safe: useCalm is false on the first render) */
-function useLive(amount = 0.2) {
-  const ref = useRef(null);
+function useLive<T extends HTMLElement = HTMLDivElement>(amount = 0.2) {
+  const ref = useRef<T>(null);
   const seen = useInView(ref, { amount });
   const calm = useCalm();
-  return [ref, seen && !calm, calm];
+  return [ref, seen && !calm, calm] as const;
 }
 
 /* The hero object: the query console, as hanzo.ai runs it. It steps through Hanzo's four example queries (3.2 s each)
@@ -57,14 +60,14 @@ function Query() {
   const [ref, live, calm] = useLive(0.3);
   const paused = useStagePause();
   const [m, setM] = useState(0);
-  const [mine, setMine] = useState(null);
+  const [mine, setMine] = useState<string[] | null>(null);
   useEffect(() => {
     if (mine || !live || calm || paused) return;
     const t = setInterval(() => setM((x) => (x + 1) % EXAMPLES.length), 3200);
     return () => clearInterval(t);
   }, [mine, live, calm, paused]);
   const reads = mine ?? EXAMPLES[m].cols;
-  const toggle = (c) => {
+  const toggle = (c: string) => {
     const cur = mine ?? EXAMPLES[m].cols;
     setMine(cur.includes(c) ? cur.filter((x) => x !== c) : [...cur, c]);
   };
@@ -100,12 +103,12 @@ function Query() {
 
 /* which of n steps a chapter is on: from the scroll through it on desktop (p); on phones it steps once through by
    itself while seen, then rests (a step a second at most, so it ends inside 5 s) */
-function useStepOf(p, n, on) {
+function useStepOf(p: MotionValue<number> | null | undefined, n: number, on: boolean) {
   const [k, setK] = useState(0);
   const calm = useCalm();
   useEffect(() => {
     if (!p) return;
-    const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n))));
+    const f = (v: number) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n))));
     f(p.get());
     return p.on('change', f);
   }, [p, n]);
@@ -145,7 +148,7 @@ function ColScene() {
 }
 
 /* 02: add a node and the parts spread; small parts merge in the background */
-function ShardScene({ p, on }) {
+function ShardScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 3, on);
   const nodes = k === 0 ? 2 : 3;
   const per = k === 0 ? 6 : 4;
@@ -167,7 +170,7 @@ function ShardScene({ p, on }) {
 }
 
 /* 03: a Raft quorum inside the server; a replica that fell behind catches up part by part */
-function RaftScene({ p, on }) {
+function RaftScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 5, on);
   return (
     <div className="kn-obj ds-sc ds-s-raft">
@@ -187,7 +190,7 @@ function RaftScene({ p, on }) {
 }
 
 /* 04: local NVMe, or object storage under query nodes; an old partition expiring */
-function DiskScene({ p, on }) {
+function DiskScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 2, on);
   return (
     <div className="kn-obj ds-sc ds-s-disk">
@@ -228,8 +231,13 @@ const SCENES = [ColScene, ShardScene, RaftScene, DiskScene, ShapeScene, ProtoSce
 
 /* What it does: six facts on one sideways rail (no second pinned run before the exploded table). Each card's picture
    plays while the card is seen; the rail snaps card by card, drags with a mouse, and steps with the arrows. */
-function Fact({ i, t, d }) {
-  const ref = useRef(null);
+interface FactProps {
+  i: number;
+  t: string;
+  d: string;
+}
+function Fact({ i, t, d }: FactProps) {
+  const ref = useRef<HTMLLIElement>(null);
   const on = useInView(ref, { amount: 0.6 });
   const S = SCENES[i];
   return (
@@ -242,42 +250,43 @@ function Fact({ i, t, d }) {
   );
 }
 function Facts() {
-  const track = useRef(null);
-  const drag = useRef(null);
+  const track = useRef<HTMLOListElement>(null);
+  const drag = useRef<{ x: number; l: number; moved: boolean } | null>(null);
   const [at, setAt] = useState(0);
   const [ends, setEnds] = useState([true, false]);
+  const first = (el: HTMLElement) => el.firstElementChild as HTMLElement | null; // the rail's children are its cards
   const read = () => {
     const el = track.current;
     if (!el) return;
-    const w = el.firstElementChild?.offsetWidth || 1;
+    const w = first(el)?.offsetWidth || 1;
     setAt(Math.min(DOES.length - 1, Math.round(el.scrollLeft / (w + 24))));
     setEnds([el.scrollLeft < 8, el.scrollLeft > el.scrollWidth - el.clientWidth - 8]);
   };
-  const step = (d) => {
-    const el = track.current;
-    const w = el.firstElementChild.offsetWidth + 24;
+  const step = (d: number) => {
+    const el = track.current!;
+    const w = first(el)!.offsetWidth + 24;
     el.scrollBy({ left: d * w, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
-  const down = (e) => {
+  const down = (e: React.PointerEvent<HTMLOListElement>) => {
     if (e.pointerType !== 'mouse' || e.button !== 0) return;
-    const el = track.current;
+    const el = track.current!;
     drag.current = { x: e.clientX, l: el.scrollLeft, moved: false };
     el.setAttribute('data-drag', '');
   };
-  const move = (e) => {
+  const move = (e: React.PointerEvent<HTMLOListElement>) => {
     const g = drag.current;
     if (!g) return;
     const dx = e.clientX - g.x;
     if (Math.abs(dx) > 4) g.moved = true;
-    track.current.scrollLeft = g.l - dx;
+    track.current!.scrollLeft = g.l - dx;
   };
   const up = () => {
     const g = drag.current;
     if (!g) return;
     drag.current = null;
-    const el = track.current;
+    const el = track.current!;
     el.removeAttribute('data-drag');
-    const w = el.firstElementChild.offsetWidth + 24;
+    const w = first(el)!.offsetWidth + 24;
     el.scrollTo({ left: Math.round(el.scrollLeft / w) * w, behavior: 'smooth' });
   };
   return (
@@ -309,11 +318,11 @@ const SPEED = [
   ['Compression chosen per column', 'A rising timestamp compresses as deltas. A repeated label compresses as a dictionary. A general-purpose compressor runs over whatever is left.', 'Less data on disk is also less data on the wire once the query is spread across nodes.'],
 ];
 const AT = [0.2, 0.4, 0.66, 1];
-const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
 function Explode() {
-  const run = useRef(null);
-  const obj = useRef(null);
+  const run = useRef<HTMLDivElement>(null);
+  const obj = useRef<HTMLDivElement>(null);
   const wide = useWide();
   const calm = useCalm();
   const seen = useInView(run, { amount: 0.2 });
@@ -321,7 +330,7 @@ function Explode() {
   const [hand, setHand] = useState(false);
   const scrub = wide && !calm;
   const { scrollYProgress: p } = useScroll({ target: run, offset: ['start start', 'end end'] });
-  const apply = (s) => {
+  const apply = (s: number) => {
     const el = obj.current;
     if (!el) return;
     const ex = clamp01((s - 0.05) / 0.13);
@@ -330,7 +339,7 @@ function Explode() {
     el.style.setProperty('--cz', clamp01((s - 0.77) / 0.1).toFixed(3));
     el.toggleAttribute('data-apart', ex > 0.5);
   };
-  useMotionValueEvent(p, 'change', (v) => { if (!scrub) return; apply(v); setSt(Math.min(3, Math.floor(v * 4 * 0.9999))); });
+  useMotionValueEvent(p, 'change', (v: number) => { if (!scrub) return; apply(v); setSt(Math.min(3, Math.floor(v * 4 * 0.9999))); });
   const shown = calm && !hand ? 3 : st;
   useEffect(() => { scrub ? apply(p.get()) : apply(AT[shown]); }, [scrub, shown, p]);
   // phones: the four states play once by themselves while seen, then rest on the last
@@ -339,9 +348,9 @@ function Explode() {
     const t = setTimeout(() => setSt((x) => Math.min(3, x + 1)), 1100);
     return () => clearTimeout(t);
   }, [scrub, calm, hand, seen, st]);
-  const go = (i) => {
+  const go = (i: number) => {
     if (!scrub) { setSt(i); setHand(true); return; }
-    const el = run.current;
+    const el = run.current!;
     const top = el.getBoundingClientRect().top + window.scrollY;
     scrollToY(top + ((el.offsetHeight - window.innerHeight) * (i + 0.6)) / 4);
   };
@@ -399,7 +408,7 @@ const INDUSTRIES = ['Web and app analytics', 'E-commerce and finance', 'Time ser
 /* the twelve industries as a wall the scan passes over: one row at a time is read (in order while seen, or the row
    under the pointer), its blocks light the way the hero's column files do */
 function Who() {
-  const [ref, live] = useLive(0.3);
+  const [ref, live] = useLive<HTMLOListElement>(0.3);
   const [at, setAt] = useState(0);
   const [hot, setHot] = useState(-1);
   useEffect(() => {
@@ -437,7 +446,10 @@ const WAYS = [
 
 /* the port board: one tile per character; on a change each true digit drops in from behind its tile's mask, 60 ms
    apart. No other digit is ever drawn (the value is in the HTML; the motion is a clip, not a count). */
-function Board({ value }) {
+interface BoardProps {
+  value: string;
+}
+function Board({ value }: BoardProps) {
   return (
     <p className="ds-board">
       <span className="x-sr">{value}</span>
@@ -475,7 +487,7 @@ function Ways() {
 }
 
 export default function Datastore() {
-  const root = useRef(null);
+  const root = useRef<HTMLElement>(null);
   useArrivals(root);
   return (
     <main className="kn ds" ref={root}>

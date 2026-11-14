@@ -13,9 +13,12 @@
    Beyond: "One binary, three verbs": choose the verb, name a Hugging Face model and whether you want the built-in UI,
    and the one line to run is written for you to copy, with Hanzo's sentence on what it does.
    Every word, figure and link is Hanzo's; the scenes are drawn, not measured, and show no numbers. */
+import type { SceneProps } from './scene';
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useInView, useMotionValue, useTransform } from 'motion/react';
+import type { MotionValue } from 'motion/react';
 import { EASE, Copy, useCalm } from '../../ui';
 import { Field } from '../../kit';
 import { useLive, useSteps, useFrame } from './Frame';
@@ -28,11 +31,11 @@ import './Engine.css';
 const VERBS = ['run', 'serve', 'bench'];
 
 /* which of n steps a chapter is on: from the scroll through it on desktop (p), or by itself while seen on phones */
-function useStepOf(p, n, on) {
+function useStepOf(p: MotionValue<number> | null | undefined, n: number, on: boolean) {
   const [k, setK] = useState(0);
   const calm = useCalm();
   useEffect(() => {
-    if (p) { const f = (v) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
+    if (p) { const f = (v: number) => setK(Math.min(n - 1, Math.max(0, Math.floor(v * n)))); f(p.get()); return p.on('change', f); }
     if (!on || calm) return;
     const t = setTimeout(() => setK((x) => (x + 1) % n), 1500);
     return () => clearTimeout(t);
@@ -53,8 +56,12 @@ function Run() {
 }
 
 /* serve: continuous batching. Eight slots; a request holds a slot for its own length and a new one takes it at once. */
-function Lanes({ live, n = 8 }) {
-  const ref = useRef(null);
+interface LanesProps {
+  live: boolean;
+  n?: number;
+}
+function Lanes({ live, n = 8 }: LanesProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const slots = useRef(Array.from({ length: n }, (_, i) => ({ left: 0.3 + i * 0.37, len: 1.4 + ((i * 7) % 5) * 0.5 })));
   useFrame(live, (t, dt) => {
     const el = ref.current;
@@ -62,7 +69,7 @@ function Lanes({ live, n = 8 }) {
     slots.current.forEach((s, i) => {
       s.left -= dt;
       if (s.left <= 0) { s.len = 1.2 + Math.random() * 2.8; s.left = s.len; }
-      const bar = el.children[i]?.firstChild;
+      const bar = el.children[i]?.firstChild as HTMLElement | null | undefined; // the lane's bar
       if (bar) bar.style.transform = `scaleX(${Math.max(0, s.left / s.len)})`;
     });
   });
@@ -122,7 +129,7 @@ const DECK = [
 ];
 
 /* 01: the three verbs, one lit at a time as you scroll through the chapter */
-function VerbsScene({ p, on }) {
+function VerbsScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 3, on);
   const say = ['Chat with a model', 'put it behind an HTTP API', 'or measure it'];
   return (
@@ -138,7 +145,7 @@ function VerbsScene({ p, on }) {
 }
 
 /* 02: batching lanes, and the KV cache on disk */
-function ServeScene({ on }) {
+function ServeScene({ on }: { on: boolean }) {
   return (
     <div className="kn-obj ink en-sc en-sc-serve">
       <p className="en-sc-k">continuous batching</p>
@@ -150,7 +157,7 @@ function ServeScene({ on }) {
 
 /* 03: five modalities into one process; the lines draw as you scroll */
 const MODS = ['Vision', 'audio', 'speech', 'image', 'embeddings'];
-function ModScene({ p, on }) {
+function ModScene({ p, on }: SceneProps) {
   return (
     <div className="kn-obj en-sc en-sc-mod">
       <ul className="en-mods">{MODS.map((m) => <li key={m}>{m}</li>)}</ul>
@@ -167,7 +174,7 @@ function ModScene({ p, on }) {
 /* 04, the signature: a block of weights re-quantized as you scroll, 8 bits down to 2 */
 const BITS = [8, 6, 5, 4, 3, 2];
 const W = Array.from({ length: 16 * 10 }, (_, i) => (Math.sin(i * 12.9898) * 43758.5453) % 1).map((x) => Math.abs(x));
-function QuantScene({ p, on }) {
+function QuantScene({ p, on }: SceneProps) {
   const b = BITS[useStepOf(p, BITS.length, on)];
   const steps = Math.min(2 ** b, 24);
   const still = useMotionValue(1);
@@ -192,7 +199,7 @@ function QuantScene({ p, on }) {
 }
 
 /* 05: the same command on three kinds of silicon */
-function SiliconScene({ p, on }) {
+function SiliconScene({ p, on }: SceneProps) {
   const k = useStepOf(p, 3, on);
   const S = [['CUDA', 'FlashAttention · multi-GPU tensor parallelism'], ['Metal', 'Apple Silicon'], ['CPU', 'plain CPU']];
   return (
@@ -220,7 +227,7 @@ function UiScene() {
 
 const SCENES = [VerbsScene, ServeScene, ModScene, QuantScene, SiliconScene, UiScene];
 
-const SAY = {
+const SAY: Record<string, string> = {
   run: 'Chat with a model.',
   serve: 'Put it behind an HTTP API. The built-in UI at /ui shows reasoning, code execution and plots inline.',
   'serve --no-ui': 'Pass --no-ui and it is a plain API server.',
@@ -238,7 +245,10 @@ function useCommand() {
   return { verb, setVerb, model, setModel, ui, setUi, plain, cmd };
 }
 
-function Write({ c }) {
+interface WriteProps {
+  c: { verb: string; setVerb: React.Dispatch<React.SetStateAction<string>>; model: string; setModel: React.Dispatch<React.SetStateAction<string>>; ui: boolean; setUi: React.Dispatch<React.SetStateAction<boolean>>; plain: boolean; cmd: string; };
+}
+function Write({ c }: WriteProps) {
   const { verb, setVerb, model, setModel, ui, setUi, plain, cmd } = c;
   return (
     <section className="kn-sec en-write">
@@ -262,15 +272,18 @@ function Write({ c }) {
 }
 
 /* Hover or focus a chapter number and its title previews under the rail (desktop, pinned layout only). */
-function RailTip({ host }) {
-  const [rail, setRail] = useState(null);
-  const [tip, setTip] = useState(null);
+interface RailTipProps {
+  host: React.RefObject<HTMLDivElement | null>;
+}
+function RailTip({ host }: RailTipProps) {
+  const [rail, setRail] = useState<Element | null>(null);
+  const [tip, setTip] = useState<{ i: number; x: number } | null>(null);
   useEffect(() => {
     const nav = host.current?.querySelector('.knc-rail');
     if (!nav) return;
     setRail(nav);
     const bs = [...nav.querySelectorAll('button')];
-    const show = (e) => { const i = bs.indexOf(e.currentTarget); setTip({ i, x: e.currentTarget.offsetLeft }); };
+    const show = (e: FocusEvent | PointerEvent) => { const b = e.currentTarget as HTMLButtonElement; setTip({ i: bs.indexOf(b), x: b.offsetLeft }); };
     const hide = () => setTip(null);
     bs.forEach((b) => { b.addEventListener('pointerenter', show); b.addEventListener('focus', show); b.addEventListener('pointerleave', hide); b.addEventListener('blur', hide); });
     return () => bs.forEach((b) => { b.removeEventListener('pointerenter', show); b.removeEventListener('focus', show); b.removeEventListener('pointerleave', hide); b.removeEventListener('blur', hide); });
@@ -283,8 +296,11 @@ function RailTip({ host }) {
 }
 
 /* The close's payoff: the command you wrote above types itself in once, when the close arrives. */
-function Typed({ cmd }) {
-  const ref = useRef(null);
+interface TypedProps {
+  cmd: string;
+}
+function Typed({ cmd }: TypedProps) {
+  const ref = useRef<HTMLParagraphElement>(null);
   const seen = useInView(ref, { amount: 0.6, once: true });
   const calm = useCalm();
   const [n, setN] = useState(0);
@@ -308,7 +324,7 @@ function Typed({ cmd }) {
 
 export default function Engine() {
   const c = useCommand();
-  const host = useRef(null);
+  const host = useRef<HTMLDivElement>(null);
   return (
     <main className="kn en">
       <KeynoteStage

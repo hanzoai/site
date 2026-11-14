@@ -10,14 +10,21 @@ export const FTE = 220_000; // a fully loaded engineer, used for both the glue r
 export const REF_E = 100; // the reference deployment the analyst priced against
 export const REF_D = 30;
 
-export const WEIGHT = { full: 1, partial: 0.5, experimental: 0.25, roadmap: 0 };
-export const COV_LABEL = { full: 'full', partial: 'partial 50%', experimental: 'experimental 25%', roadmap: 'roadmap 0%' };
-export const EV_LABEL = { verified: 'verified', gap: 'verified gap', internal: 'internal production', attested: 'management-attested', repo: 'repository-verified' };
-export const COV_CYCLE = ['full', 'partial', 'experimental', 'roadmap'];
+/* how much of a category Hanzo replaces, and how well that can be shown */
+export type Cov = 'full' | 'partial' | 'experimental' | 'roadmap';
+export type Evidence = 'verified' | 'gap' | 'internal' | 'attested' | 'repo';
+
+export const WEIGHT: Record<Cov, number> = { full: 1, partial: 0.5, experimental: 0.25, roadmap: 0 };
+export const COV_LABEL: Record<Cov, string> = { full: 'full', partial: 'partial 50%', experimental: 'experimental 25%', roadmap: 'roadmap 0%' };
+export const EV_LABEL: Record<Evidence, string> = { verified: 'verified', gap: 'verified gap', internal: 'internal production', attested: 'management-attested', repo: 'repository-verified' };
+export const COV_CYCLE: Cov[] = ['full', 'partial', 'experimental', 'roadmap'];
 
 /* name, what it replaces, the Hanzo services, k = the analyst's default in $k a year at the reference deployment,
    basis = s (per seat) / e (per engineer) / f (platform fee), coverage, evidence */
-export const ROWS = [
+/* a category of vendor spend: per seat (s), per engineer (e) or a platform fee (f) */
+export interface Row { name: string; replaces: string; hanzo: string; k: number; basis: 's' | 'e' | 'f'; cov: Cov; ev: Evidence }
+
+export const ROWS: Row[] = [
   { name: 'SSO & workforce identity', replaces: 'Okta / Auth0', hanzo: 'iam · zero-trust · authz', k: 10, basis: 's', cov: 'full', ev: 'internal' },
   { name: 'Customer identity (product)', replaces: 'Auth0 B2C', hanzo: 'iam (multi-tenant, per-org CEK)', k: 14, basis: 'f', cov: 'full', ev: 'internal' },
   { name: 'Secrets & KMS', replaces: 'Vault Cloud', hanzo: 'kms', k: 11, basis: 'e', cov: 'full', ev: 'internal' },
@@ -67,7 +74,7 @@ export const AI_ROW = ROWS.length - 1;
 /* One chip per vendor that shows up on a real bill, several per category: [name, index of the ROWS line it maps to].
    A category counts while any of its vendors is selected; the counter counts vendors, not categories. 107 chips, the
    same 107 dependencies the reference deployment consolidated. */
-export const VENDORS = [
+export const VENDORS: [string, number][] = [
   ['Okta', 0], ['Auth0', 0], ['JumpCloud', 0], ['Clerk', 1], ['Firebase Auth', 1], ['Vault', 2], ['AWS KMS', 2],
   ['Doppler', 2], ['Datadog', 3], ['New Relic', 3], ['Grafana Cloud', 3], ['Splunk', 3], ['Sentry', 4], ['Rollbar', 4],
   ['LaunchDarkly', 5], ['Split', 5], ['Amplitude', 6], ['Mixpanel', 6], ['Heap', 6], ['Segment', 7], ['RudderStack', 7],
@@ -101,19 +108,20 @@ export const SECOND_ORDER = [
 ];
 
 // $1.051M above a million, $941k below it; a negative figure leads with a true minus
-export const money = (n) => {
+export const money = (n: number) => {
   const a = Math.abs(n);
   const sign = n < 0 ? '\u2212' : '';
   if (a >= 1e6) return `${sign}$${(a / 1e6).toFixed(3).replace(/\.?0+$/, '')}M`;
   return `${sign}$${Math.round(a / 1e3).toLocaleString('en-US')}k`;
 };
-export const dollars = (n) => `${n < 0 ? '\u2212' : ''}$${Math.round(Math.abs(n)).toLocaleString('en-US')}`;
+export const dollars = (n: number) => `${n < 0 ? '\u2212' : ''}$${Math.round(Math.abs(n)).toLocaleString('en-US')}`;
 
 // the controls a visitor opens the page with: the analyst's reference deployment
 export const DEFAULTS = { E: 100, Dp: 30, cloud: 15, infraPct: 60, glueFte: 1.5, opsFte: 0.5, retained: 0, fee: 0, migration: 0, migYears: 3 };
 
 // The AI sub-calculator is off by default, so the headline stays the analyst's figure until a visitor prices their own bill.
-export const AI_DEFAULTS = {
+export interface Ai { spend: number; routable: number; selfHost: number; ensoSave: number; zenCost: number; frontier: number; overhead: number; gpuUtil: number; batch: number }
+export const AI_DEFAULTS: Ai = {
   spend: 10, // $k a month
   routable: 60, // % of addressable spend that can move to a cheaper model
   selfHost: 50, // % of routed spend that can run on Zen
@@ -126,7 +134,7 @@ export const AI_DEFAULTS = {
 };
 
 /* [key, label, min, max, step] of the sub-calculator's nine sliders, in the order the page shows them */
-export const AI_CONTROLS = [
+export const AI_CONTROLS: [keyof Ai, string, number, number, number][] = [
   ['spend', 'AI spend / month ($k)', 0, 500, 1],
   ['frontier', 'Must stay frontier (%)', 0, 100, 5],
   ['routable', 'Routable to cheaper models (%)', 0, 100, 5],
@@ -139,7 +147,7 @@ export const AI_CONTROLS = [
 ];
 
 // the eligible saving on the AI bill, a year: frontier pass-through is never counted
-export const aiSaving = (ai) => {
+export const aiSaving = (ai: Ai) => {
   const annual = ai.spend * 1000 * 12;
   const passthrough = annual * (ai.frontier / 100);
   const addressable = annual - passthrough;
@@ -153,9 +161,18 @@ export const aiSaving = (ai) => {
 };
 
 // the grade a coverage chip takes when clicked: full, partial, experimental, roadmap, and round again
-export const nextCov = (c) => COV_CYCLE[(COV_CYCLE.indexOf(c) + 1) % COV_CYCLE.length];
+export const nextCov = (c: Cov) => COV_CYCLE[(COV_CYCLE.indexOf(c) + 1) % COV_CYCLE.length];
 
-export const initial = () => ({
+export interface State {
+  E: number; Dp: number; cloud: number; infraPct: number; glueFte: number; opsFte: number;
+  retained: number; fee: number; migration: number; migYears: number;
+  cov: Cov[];
+  price: Record<number, number>;
+  von: boolean[];
+  aiOn: boolean;
+  ai: Ai;
+}
+export const initial = (): State => ({
   ...DEFAULTS,
   cov: ROWS.map((r) => r.cov),
   price: {}, // a visitor's own figures, $k a year, by row
@@ -167,7 +184,7 @@ export const initial = () => ({
 /* The whole model. `s` is the page's state (initial() has every field): the six controls, the three deductions and
    their years, the coverage grade of each row, the prices a visitor typed over, the vendors selected, and the AI
    sub-calculator. Four tiers come out: gross, run-rate, fully adjusted and three-year value. */
-export function model(s) {
+export function model(s: State) {
   const D = Math.round((s.E * s.Dp) / 100);
   const saving = aiSaving(s.ai);
   const on = ROWS.map((_, i) => VENDORS.some(([, c], k) => c === i && s.von[k]));

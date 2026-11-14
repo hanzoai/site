@@ -16,6 +16,7 @@
    files that open into their page (state, BizOpen); the switches and gates answer the hand. Every word and link is Hanzo's.
 V2: 8/10 deck scale (h1 52, headings 26, the views figure 64 as the one big thing), the live reading room beside the title at both sizes, five chapters, the folder tree whose files open into their page, one dark room to share it ten ways, plans as a ladder; deck greys, outline-or-raise, no springs, nothing floating, one ask (hero, the site's bar, close)
 */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { A, More, Cta } from '../../kit';
@@ -29,7 +30,7 @@ import './Dataroom.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/cli/dataroom';
 const REPO = 'https://github.com/hanzoai/dataroom';
-const two = (n) => String(n).padStart(2, '0');
+const two = (n: number) => String(n).padStart(2, '0');
 
 const Lock = () => <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>;
 const FileI = () => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 1.5h6l3 3v10h-9z M9.5 1.5v3h3" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" /></svg>;
@@ -48,7 +49,11 @@ const SL = [
   <><rect className="k" x="14" y="12" width="56" height="7" rx="2" /><path className="g" d="M80 28V92M30 60H130" /><circle className="l" cx="52" cy="76" r="4" /><circle className="l" cx="62" cy="44" r="4" /><circle className="l" cx="104" cy="78" r="4" /><circle className="a" cx="112" cy="40" r="6" /></>,
   <><rect className="k" x="14" y="12" width="30" height="7" rx="2" /><rect className="k" x="14" y="34" width="84" height="22" rx="3" /><rect className="l" x="14" y="66" width="70" height="5" rx="2" /><rect className="l" x="14" y="77" width="52" height="5" rx="2" /><circle className="a" cx="132" cy="46" r="12" /></>,
 ];
-const Slide = ({ n, className = '' }) => <svg className={'dr-sl ' + className} viewBox="0 0 160 100" aria-hidden="true">{SL[n % 10]}</svg>;
+interface SlideProps {
+  n: number;
+  className?: string;
+}
+const Slide = ({ n, className = '' }: SlideProps) => <svg className={'dr-sl ' + className} viewBox="0 0 160 100" aria-hidden="true">{SL[n % 10]}</svg>;
 
 /* The signature: one visit, start to finish, while the room is on screen. Step 0 opens the link, 1–10 read a page each,
    11 comes back to page 7, 12 holds; then the next visit, and the views keep ticking. */
@@ -57,12 +62,21 @@ const READ = [0.62, 0.4, 0.74, 0.52, 0.36, 0.84, 0.94, 0.46, 0.3, 0.2];
 const BEAT = [1100, ...READ.map((r) => 560 + r * 900), 2000, 2800];
 const BACK = 6;
 
-const PauseI = ({ held }) => (held
+interface PauseIProps {
+  held: boolean;
+}
+const PauseI = ({ held }: PauseIProps) => (held
   ? <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor" /></svg>
   : <svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M3 1.5h2v9H3zM7 1.5h2v9H7z" fill="currentColor" /></svg>);
 
+interface FeedItem {
+  id: string;
+  b: string;
+  t: string;
+  hot?: boolean;
+}
 function Live() {
-  const [ref, seen] = useLive(0.25);
+  const [ref, seen] = useLive<HTMLDivElement>(0.25);
   const calm = useCalm(); // hydration-safe: false on the server and first paint, then the visitor's setting
   const [held, setHeld] = useState(false);
   const live = seen && !held;
@@ -79,11 +93,12 @@ function Live() {
   const far = s === 0 ? 0 : Math.min(s, PAGES);
   const views = visit * (PAGES + 1) + far + (twice ? 1 : 0); // page views: one per page read, the re-read too
   const o = s === 0 ? 0 : Math.max(0, Math.min(7, (cur < 0 ? BACK : cur) - 1));
-  const feed = [
+  const visits: (false | FeedItem)[] = [
     twice && { id: 'b' + visit, b: 'came back', t: 're-read page 7', hot: true },
     s >= 1 && { id: 'r' + visit, b: 'page ' + far, t: s <= PAGES ? 'reading now' : 'how far they got' },
     { id: 'o' + visit, b: 'verified email', t: 'opened the link' },
-  ].filter(Boolean);
+  ];
+  const feed = visits.filter((e): e is FeedItem => !!e);
   return (
     <div className="dr-live bz-obj" ref={ref}>
       <div className="dr-live-bar">
@@ -135,7 +150,7 @@ function Live() {
 /* Hanzo's picture on this page: the Zen film (its poster first; still under reduced motion). */
 function ZenFilm() {
   const calm = useCalm();
-  const ref = useRef(null);
+  const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => { const v = ref.current; if (!v) return; if (calm) v.pause(); else v.play?.().catch(() => {}); }, [calm]);
   return (
     <span className="dr-film-m" aria-hidden="true">
@@ -174,11 +189,11 @@ const STEPS = [
   ['See what they read', 'Time spent on each page, how far they got, and whether they came back.'],
   ['Change your mind', 'Access can change after the link has gone, which an emailed PDF never allowed.'],
 ];
-const TREE = [['Deck.pdf', 0], ['Financials', 1], ['Legal', 1], ['NDA.pdf', 0]];
+const TREE: [string, number][] = [['Deck.pdf', 0], ['Financials', 1], ['Legal', 1], ['NDA.pdf', 0]];
 const GATES = ['A password', 'A verified email', 'An NDA to accept', 'An expiry date', 'Downloads off'];
 
-function Room({ at }) {
-  const on = (i) => 'dr-sc' + (at === i ? ' on' : '');
+function Room({ at }: { at: number }) {
+  const on = (i: number) => 'dr-sc' + (at === i ? ' on' : '');
   return (
     <div className="dr-room bz-obj">
       <div className="dr-room-bar">
@@ -300,9 +315,15 @@ function Files() {
 
 /* Beyond, the one dark room: the link's settings, and what the person opening it meets. */
 const SETS = [['password', 'A password'], ['email', 'A verified email'], ['nda', 'An NDA to accept'], ['expiry', 'An expiry date'], ['nodl', 'Downloads off'], ['wm', 'Watermark']];
-const GATE = { password: ['Enter the password', 'Unlock'], email: ['Enter the code sent to your email', 'Verify'], nda: ['Accept the NDA', 'Accept'] };
+const GATE: Record<string, [string, string]> = { password: ['Enter the password', 'Unlock'], email: ['Enter the code sent to your email', 'Verify'], nda: ['Accept the NDA', 'Accept'] };
 
-function Gate({ k, mail, i, go }) {
+interface GateProps {
+  k: string;
+  mail: string;
+  i: number;
+  go: () => void;
+}
+function Gate({ k, mail, i, go }: GateProps) {
   const [t, b] = GATE[k];
   return (
     <motion.div className={'dr-gate' + (i ? ' back' : '')} style={{ zIndex: 10 - i }} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: i * 14, scale: 1 - i * 0.045 }} exit={{ opacity: 0, x: 120, rotate: 5, transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] } }} transition={{ duration: 0.3, ease: EASE }}>
@@ -317,11 +338,11 @@ function Gate({ k, mail, i, go }) {
 }
 
 function Ten() {
-  const [on, setOn] = useState({ email: true, nda: true, nodl: true, wm: true });
+  const [on, setOn] = useState<Record<string, boolean>>({ email: true, nda: true, nodl: true, wm: true });
   const [mail, setMail] = useState('');
-  const [past, setPast] = useState([]);
+  const [past, setPast] = useState<string[]>([]);
   const me = mail.trim() || 'you@example.com';
-  const flip = (k) => { setOn((o) => ({ ...o, [k]: !o[k] })); if (GATE[k]) setPast([]); };
+  const flip = (k: string) => { setOn((o) => ({ ...o, [k]: !o[k] })); if (GATE[k]) setPast([]); };
   const gates = ['password', 'email', 'nda'].filter((k) => on[k] && !past.includes(k));
   const any = ['password', 'email', 'nda'].some((k) => on[k]);
   return (
@@ -367,7 +388,9 @@ function Ten() {
   );
 }
 
-const PLANS = [
+/* a plan: name, price, blurb, [call to action, link], features */
+type Plan = [string, string, string, [string, string], string[]];
+const PLANS: Plan[] = [
   ['Free', '$0', 'Get started with document sharing and analytics.', ['Get on GitHub', 'https://github.com/hanzoai/'], ['1 team member', '50 links', '50 documents', 'Unlimited visitors', 'Page-by-page analytics', 'Community support']],
   ['Pro', '$25', 'For professionals who need branding and more capacity.', ['Contact Sales', '/contact-sales'], ['Unlimited links', '100 documents', 'Large file uploads', 'Custom branding', 'Video support', 'Folder organization']],
   ['Business', '$59', 'For teams that need custom domains and advanced access controls.', ['Contact Sales', '/contact-sales'], ['Everything in Pro', '3 team members', '1,000 documents', 'Custom domain', 'Email verification', 'Allow/block lists', 'Screenshot protection', 'Webhooks']],
@@ -380,14 +403,14 @@ const PLANS = [
 function Plans() {
   const [at, setAt] = useState(0);
   const mine = useRef(false);
-  const [ref, live] = useLive(0.45);
+  const [ref, live] = useLive<HTMLDivElement>(0.45);
   useEffect(() => {
     if (!live || mine.current) return undefined;
     const ts = [1, 2, 3, 2].map((k, i) => setTimeout(() => { if (!mine.current) setAt(k); }, 1400 + i * 1700));
     return () => ts.forEach(clearTimeout);
   }, [live]);
-  const pick = (i) => { mine.current = true; setAt(i); };
-  const key = (e) => {
+  const pick = (i: number) => { mine.current = true; setAt(i); };
+  const key = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const d = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
     if (!d) return;
     e.preventDefault();

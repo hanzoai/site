@@ -4,18 +4,19 @@
    The server HTML is always the final state. After mount (and never under reduced motion) a section is marked
    data-ent="arm" (its start state, set by Auto.css); when a fifth of it is on screen it becomes data-ent="in" and plays.
    Entrances move by transform, filter, clip-path and opacity only, and end in the section's normal state. */
+import type { ReactNode } from 'react';
 import { useEffect, useRef } from 'react';
 
 const calmNow = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* scroll-tilt: the section starts tilted back on rotateX; each frame it levels out over ~900 ms (or as it scrolls fully in,
    whichever is sooner), while scroll speed adds a lean in the direction of travel; it settles at 0 and stops. */
-function tilt(el) {
+function tilt(el: HTMLElement) {
   let raf = 0;
   let last = scrollY;
   let cur = 14;
   const t0 = performance.now();
-  const step = (t) => {
+  const step = (t: number) => {
     const r = el.getBoundingClientRect();
     const byScroll = Math.min(1, Math.max(0, (innerHeight - r.top) / (innerHeight * 0.75)));
     const byTime = Math.min(1, (t - t0) / 900);
@@ -32,8 +33,15 @@ function tilt(el) {
   return () => cancelAnimationFrame(raf);
 }
 
-export function Enter({ as: Tag = 'div', kind, className = '', threshold = 0.2, children, ...rest }) {
-  const ref = useRef(null);
+interface EnterProps {
+  as?: 'div' | 'section';
+  kind: string;
+  className?: string;
+  threshold?: number;
+  children: ReactNode;
+}
+export function Enter({ as: Tag = 'div', kind, className = '', threshold = 0.2, children, ...rest }: EnterProps) {
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (!el || calmNow()) return;
@@ -56,7 +64,11 @@ export function Enter({ as: Tag = 'div', kind, className = '', threshold = 0.2, 
    .js (so there is no flash and nothing to hydrate); the offsets and the order are fixed per word. */
 const OFF = [[1.1, -0.35], [-1.2, 0.3], [0.7, 0.4], [-0.6, -0.4], [1.3, 0.2], [-0.9, -0.3], [0.5, 0.35]];
 const ORDER = [3, 0, 5, 1, 6, 2, 4];
-export function Shuffle({ text, start = 0 }) {
+interface ShuffleProps {
+  text: string;
+  start?: number;
+}
+export function Shuffle({ text, start = 0 }: ShuffleProps) {
   const words = text.split(' ');
   return words.flatMap((w, i) => {
     const n = start + i;

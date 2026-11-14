@@ -8,6 +8,7 @@
      tokens (--b-line2 at rest, --b-ink under the pointer), so there is no hue and no literal colour here.
    Usage: <MagnetGrid stage={ref to the element that receives the pointer} onRipple={() => ...} label="Design System" />
    Page-local to /brand. */
+import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 
 const GAP = 26;        // px between dots
@@ -19,9 +20,18 @@ const LIFE = 1500;     // ripple life, ms
 const AMP = 14;        // ripple push, px
 const BAND = 34;       // ripple band width, px
 
-export default function MagnetGrid({ stage, onRipple, label }) {
-  const wrap = useRef(null);
-  const cv = useRef(null);
+interface MagnetGridProps {
+  stage: React.RefObject<HTMLElement | null>;
+  onRipple?: () => void;
+  label: string;
+}
+/* a dot of the field and where the pointer and the ripples have pushed it; a ripple's centre and birth */
+interface Dot { x: number; y: number; dx: number; dy: number; k: number }
+interface Ring { x: number; y: number; t: number }
+
+export default function MagnetGrid({ stage, onRipple, label }: MagnetGridProps) {
+  const wrap = useRef<HTMLDivElement>(null);
+  const cv = useRef<HTMLCanvasElement>(null);
   const [live, setLive] = useState(false);
   const api = useRef({ ripple: () => {} });
   const cb = useRef(onRipple);
@@ -35,17 +45,17 @@ export default function MagnetGrid({ stage, onRipple, label }) {
     const ctx = c.getContext('2d');
     if (!ctx) return undefined;
     // the tokens, resolved by the browser to rgb(r, g, b) / rgba(r, g, b, a) (dark mode: Hanzo's tokens can carry alpha)
-    const parse = (v) => {
+    const parse = (v: string) => {
       const m = v.match(/\d+(\.\d+)?/g);
       return m ? [...m.slice(0, 3).map(Number), m[3] != null ? Number(m[3]) : 1] : [212, 212, 212, 1];
     };
-    const resolve = (name) => { const e = document.createElement('i'); e.style.color = `var(${name})`; host.appendChild(e); const c = getComputedStyle(e).color; e.remove(); return parse(c); };
-    let rest, ink;
+    const resolve = (name: string) => { const e = document.createElement('i'); e.style.color = `var(${name})`; host.appendChild(e); const c = getComputedStyle(e).color; e.remove(); return parse(c); };
+    let rest: number[] = [], ink: number[] = [];
     const read = () => { rest = resolve('--mg-rest'); ink = resolve('--mg-ink'); };
     read();
-    let W = 0, H = 0, dpr = 1, dots = [], raf = 0, seen = true;
+    let W = 0, H = 0, dpr = 1, dots: Dot[] = [], raf = 0, seen = true;
     const ptr = { x: 0, y: 0, on: false };
-    const rings = [];
+    const rings: Ring[] = [];
 
     const build = () => {
       const r = host.getBoundingClientRect();
@@ -70,7 +80,7 @@ export default function MagnetGrid({ stage, onRipple, label }) {
       }
     };
 
-    const step = (now) => {
+    const step = (now: number) => {
       raf = 0;
       let busy = false;
       for (let i = rings.length - 1; i >= 0; i--) if (now - rings[i].t > LIFE) rings.splice(i, 1);
@@ -98,19 +108,20 @@ export default function MagnetGrid({ stage, onRipple, label }) {
     };
     const kick = () => { if (!raf && !calm && seen) raf = requestAnimationFrame(step); };
 
-    const local = (e) => { const r = host.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
-    const move = (e) => {
+    const local = (e: PointerEvent): [number, number] => { const r = host.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    const move = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return;
       [ptr.x, ptr.y] = local(e); ptr.on = true; kick();
     };
     const leave = () => { ptr.on = false; kick(); };
-    const ripple = (x, y) => {
+    const ripple = (x: number, y: number) => {
       if (calm) { onRipple(); return; }
       rings.push({ x, y, t: performance.now() }); if (rings.length > 4) rings.shift();
       onRipple(); kick();
     };
-    const down = (e) => {
-      if (e.button > 0 || (e.target.closest && e.target.closest('a,button:not(.xbr-mg),input'))) return;
+    const down = (e: PointerEvent) => {
+      const target = e.target as Element; // a pointer event on the stage lands on an element
+      if (e.button > 0 || (target.closest && target.closest('a,button:not(.xbr-mg),input'))) return;
       const [x, y] = local(e); ripple(x, y);
     };
     api.current.ripple = () => ripple(W * 0.5, H * 0.5);
@@ -132,7 +143,7 @@ export default function MagnetGrid({ stage, onRipple, label }) {
     };
   }, [stage]);
 
-  const key = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); api.current.ripple(); } };
+  const key = (e: React.KeyboardEvent<HTMLDivElement>) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); api.current.ripple(); } };
   return (
     <div ref={wrap} className={'xbr-mg' + (live ? ' live' : '')} role="button" tabIndex={0} aria-label={label} onKeyDown={key}>
       <canvas ref={cv} aria-hidden="true" />

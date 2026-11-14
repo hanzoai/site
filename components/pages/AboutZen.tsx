@@ -3,10 +3,15 @@
    split screen). Six principles, each with its line, in a 3 × 2 index; a hand on one lifts it into ink. The section
    enters with `letter-cascade` (components/pages/about/enter.css): the heading's and the principles' letters fall into
    place one by one. The letters are aria-hidden; each name is read once from a visually hidden copy. Styles in About.css. */
+import type { ReactNode } from 'react';
 import { Cta } from '../kit';
 
-const Link2 = ({ to, children }) => <Cta to={to} kind="link">{children}</Cta>;
-const pad = (n) => String(n).padStart(2, '0');
+interface Link2Props {
+  to: string;
+  children: ReactNode;
+}
+const Link2 = ({ to, children }: Link2Props) => <Cta to={to} kind="link">{children}</Cta>;
+const pad = (n: number) => String(n).padStart(2, '0');
 
 const ZEN = [
   ['Enable the Underdog', 'Enable others to win. Democratize technology so small businesses and startups can compete with industry giants.'],
@@ -18,7 +23,11 @@ const ZEN = [
 ];
 
 /* letters for the cascade: a running index (--k) so they fall one after another across the whole name */
-function Letters({ text, from = 0 }) {
+interface LettersProps {
+  text: string;
+  from?: number;
+}
+function Letters({ text, from = 0 }: LettersProps) {
   return (
     <>
       <span className="x-vh">{text}</span>

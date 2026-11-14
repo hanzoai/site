@@ -4,10 +4,16 @@
    <Enter kind="noise" as="section" className="…">…</Enter> adds `.in` once, when the element first scrolls into view
    (IntersectionObserver, play once). The initial states live in enter.css under `.js` only, so JS off and the server HTML
    show the final state; reduced motion shows the final state at once (CSS). Transform / opacity / clip-path / filter only. */
+import type React from 'react';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 
-export const Enter = forwardRef(function Enter({ kind, as: Tag = 'div', className = '', onIn, children, ...rest }, outer) {
-  const ref = useRef(null);
+interface EnterProps extends React.HTMLAttributes<HTMLElement> {
+  kind: string;
+  as?: 'div' | 'section';
+  onIn?: () => void;
+}
+export const Enter = forwardRef<HTMLElement, EnterProps>(function Enter({ kind, as: Tag = 'div', className = '', onIn, children, ...rest }, outer) {
+  const ref = useRef<HTMLElement | null>(null);
   const [inn, setIn] = useState(false);
   const cb = useRef(onIn);
   cb.current = onIn;
@@ -22,7 +28,7 @@ export const Enter = forwardRef(function Enter({ kind, as: Tag = 'div', classNam
     io.observe(el);
     return () => io.disconnect();
   }, []);
-  const set = (el) => { ref.current = el; if (typeof outer === 'function') outer(el); else if (outer) outer.current = el; };
+  const set = (el: HTMLElement | null) => { ref.current = el; if (typeof outer === 'function') outer(el); else if (outer) outer.current = el; };
   return <Tag ref={set} className={'cli-e ' + (inn ? 'in ' : '') + className} data-e={kind} {...rest}>{children}</Tag>;
 });
 
@@ -30,17 +36,24 @@ export const Enter = forwardRef(function Enter({ kind, as: Tag = 'div', classNam
    (left to right, in step with the section's clip reveal), so phones and keyboards get the entrance too; afterwards it follows
    a fine pointer and fades when the pointer rests. Fixed-size, absolutely placed, transform and opacity only. */
 const N = 9;
-export function Trail({ host, run }) {
-  const box = useRef(null);
+interface Point { x: number; y: number }
+/* the run-once pass left to right when the section arrives */
+interface Sweep { t0: number; dur: number; x0: number; x1: number; y: number; amp: number }
+interface TrailProps {
+  host: React.RefObject<HTMLElement | null>;
+  run: boolean;
+}
+export function Trail({ host, run }: TrailProps) {
+  const box = useRef<HTMLSpanElement>(null);
   useEffect(() => {
     const el = box.current, hostEl = host.current;
     if (!el || !hostEl) return;
     const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (calm) return;
-    const dots = [...el.children];
+    const dots = [...el.querySelectorAll<HTMLElement>('i')]; // the trail's carets
     const pts = dots.map(() => ({ x: -40, y: -40 }));
-    let target = null, raf = 0, idle = 0, last = performance.now(), auto = null;
-    const frame = (t) => {
+    let target: Point | null = null, raf = 0, idle = 0, last = performance.now(), auto: Sweep | null = null;
+    const frame = (t: number) => {
       if (auto) {
         const p = Math.min(1, (t - auto.t0) / auto.dur), e = 1 - Math.pow(1 - p, 3);
         target = { x: auto.x0 + (auto.x1 - auto.x0) * e, y: auto.y + Math.sin(p * Math.PI * 2) * auto.amp };
@@ -48,8 +61,9 @@ export function Trail({ host, run }) {
         last = t;
       }
       if (target) {
+        const head = target;
         pts.forEach((pt, i) => {
-          const lead = i === 0 ? target : pts[i - 1];
+          const lead = i === 0 ? head : pts[i - 1];
           const k = i === 0 ? 0.5 : 0.42;
           pt.x += (lead.x - pt.x) * k; pt.y += (lead.y - pt.y) * k;
           dots[i].style.transform = `translate3d(${pt.x}px, ${pt.y}px, 0)`;
@@ -61,7 +75,7 @@ export function Trail({ host, run }) {
       raf = requestAnimationFrame(frame);
     };
     const wake = () => { if (!raf) raf = requestAnimationFrame(frame); };
-    const move = (e) => {
+    const move = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse') return;
       const r = hostEl.getBoundingClientRect();
       const p = { x: e.clientX - r.left, y: e.clientY - r.top };

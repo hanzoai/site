@@ -19,6 +19,8 @@
    Motion: the running canvas (signature) + line-masked headings + sticky chapters + nodes that open into their page.
 V2: 8/10 round 5: the six-step chain is told twice only (the hero graph and the playground); chapter 03 opens one node, the node that caused it, with a strange answer drawn broken, no six-step list; the pinned stage fills and centres in the screen on desktop and phone (no dead band under it); the hero graph fills its screen with its pause and counter under node 06 inside the graph, and reduced motion shows the run finished (06 / 06, no pause); the playground's returned value is 32px, centred, with a running bar instead of an empty slot; received and returned never share the slot for a frame; Previous/Next fill and Documentation draws its underline on hover; done steps read white on graphite; the Keys chips fit at 375; the Python sheet says "Python class" once and no opened card repeats its chapter; the closing line rests at 26–32px; deck greys on this page
    Every word and link is Hanzo's. */
+import type React from 'react';
+import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { Copy } from '../../ui';
@@ -49,22 +51,23 @@ const NODES = [
   { t: 'output parsers', r: 'Models', o: 'REST endpoint' },
 ];
 // where each node sits on a canvas (% of its width and height): desktop, then phone
-const LAY = {
+type Pt = [number, number];
+const LAY: Record<'hero' | 'snake' | 'mini', Pt[][]> = {
   hero: [[[52, 25], [70, 17], [88, 28], [87, 57], [69, 51], [52, 62]], [[25, 37], [75, 37], [75, 54], [25, 54], [25, 71], [75, 71]]],
   snake: [[[17, 18], [50, 18], [83, 18], [83, 64], [50, 64], [17, 64]], [[22, 16], [78, 16], [78, 50], [22, 50], [22, 84], [78, 84]]],
   // the phone's pinned mini-graph: two rows of three, compact nodes
   mini: [[[17, 27], [50, 27], [83, 27], [83, 73], [50, 73], [17, 73]], [[17, 27], [50, 27], [83, 27], [83, 73], [50, 73], [17, 73]]],
 };
-const two = (n) => String(n).padStart(2, '0');
-const r1 = (v) => Math.round(v * 10) / 10;
+const two = (n: number) => String(n).padStart(2, '0');
+const r1 = (v: number) => Math.round(v * 10) / 10;
 // the run, in steps: 2i = node i runs, 2i + 1 = its output travels to node i + 1, 11 = the run is done
 const END = 11;
-const STEP_MS = (s) => (s === END ? 2600 : s % 2 ? 950 : 900);
+const STEP_MS = (s: number) => (s === END ? 2600 : s % 2 ? 950 : 900);
 
 /* One edge between two nodes: leave on the side that faces the next node, a soft S between, and the points a pulse rides. */
-function edge([ax, ay], [bx, by], nw, nh) {
+function edge([ax, ay]: Pt, [bx, by]: Pt, nw: number, nh: number) {
   const dx = bx - ax, dy = by - ay;
-  let p0, p3, c1, c2;
+  let p0: Pt, p3: Pt, c1: Pt, c2: Pt;
   if (Math.abs(dx) - nw / 2 > Math.abs(dy) - nh / 2) {
     const sx = Math.sign(dx) || 1;
     p0 = [ax + (sx * nw) / 2, ay]; p3 = [bx - (sx * nw) / 2, by];
@@ -76,7 +79,7 @@ function edge([ax, ay], [bx, by], nw, nh) {
     const k = Math.max(28, Math.abs(p3[1] - p0[1]) / 2);
     c1 = [p0[0], p0[1] + sy * k]; c2 = [p3[0], p3[1] - sy * k];
   }
-  const at = (t) => [0, 1].map((j) => (1 - t) ** 3 * p0[j] + 3 * (1 - t) ** 2 * t * c1[j] + 3 * (1 - t) * t * t * c2[j] + t ** 3 * p3[j]);
+  const at = (t: number) => [0, 1].map((j) => (1 - t) ** 3 * p0[j] + 3 * (1 - t) ** 2 * t * c1[j] + 3 * (1 - t) * t * t * c2[j] + t ** 3 * p3[j]);
   const pts = Array.from({ length: 25 }, (_, i) => at(i / 24));
   // two stacked nodes close together: their port heads would fuse into one blob, so the short wire draws without them
   const short = Math.hypot(p3[0] - p0[0], p3[1] - p0[1]) < 30;
@@ -84,7 +87,7 @@ function edge([ax, ay], [bx, by], nw, nh) {
 }
 
 /* The run: it steps by itself while on (and on screen); reduced motion shows it finished. */
-function useRun(live, calm, on = true) {
+function useRun(live: boolean, calm: boolean | null, on = true) {
   const [s, setS] = useState(0);
   useEffect(() => { if (calm) setS(END); }, [calm]);
   useEffect(() => {
@@ -92,19 +95,35 @@ function useRun(live, calm, on = true) {
     const t = setTimeout(() => setS((v) => (v >= END ? 0 : v + 1)), STEP_MS(s));
     return () => clearTimeout(t);
   }, [s, live, on]);
-  return [s, setS];
+  return [s, setS] as const;
 }
-const nodeOf = (s) => (s >= END ? 5 : Math.floor(s / 2));
+const nodeOf = (s: number) => (s >= END ? 5 : Math.floor(s / 2));
 
 /* The graph on a canvas. s is the run's step; lit picks out one node; pick makes nodes tappable. */
-function Graph({ lay, s, lit = -1, pulse = true, pick, upto = 5, cls = '' }) {
-  const box = useRef(null);
-  const [dim, setDim] = useState(null);
+interface GraphProps {
+  lay: keyof typeof LAY;
+  s: number;
+  lit?: number;
+  pulse?: boolean;
+  pick?: (k: number) => void;
+  upto?: number;
+  cls?: string;
+}
+interface Dim {
+  w: number;
+  h: number;
+  nw: number;
+  nh: number;
+  phone: boolean;
+}
+function Graph({ lay, s, lit = -1, pulse = true, pick, upto = 5, cls = '' }: GraphProps) {
+  const box = useRef<HTMLDivElement>(null);
+  const [dim, setDim] = useState<Dim | null>(null);
   useEffect(() => {
-    const el = box.current;
+    const el = box.current!;
     const mq = matchMedia('(max-width: 900px)');
     const m = () => {
-      const n = el.querySelector('.fl-node');
+      const n = el.querySelector<HTMLElement>('.fl-node')!;
       setDim({ w: el.clientWidth, h: el.clientHeight, nw: n.offsetWidth, nh: n.offsetHeight, phone: mq.matches });
     };
     m();
@@ -113,7 +132,7 @@ function Graph({ lay, s, lit = -1, pulse = true, pick, upto = 5, cls = '' }) {
     return () => ro.disconnect();
   }, []);
   const L = LAY[lay][dim?.phone ? 1 : 0];
-  const P = dim ? L.map(([x, y]) => [(x / 100) * dim.w, (y / 100) * dim.h]) : [];
+  const P = dim ? L.map(([x, y]): Pt => [(x / 100) * dim.w, (y / 100) * dim.h]) : [];
   const E = dim ? P.slice(1).map((b, i) => edge(P[i], b, dim.nw, dim.nh)) : [];
   const go = s < END && s % 2 ? (s - 1) / 2 : -1;
   const Tag = pick ? 'button' : 'div';
@@ -155,7 +174,10 @@ function Graph({ lay, s, lit = -1, pulse = true, pick, upto = 5, cls = '' }) {
   );
 }
 
-const Ico = ({ k }) => (
+interface IcoProps {
+  k: string;
+}
+const Ico = ({ k }: IcoProps) => (
   <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
     {k === 'play' && <path d="M5 3.2v9.6L12.6 8z" fill="currentColor" />}
     {k === 'pause' && <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" fill="currentColor" />}
@@ -166,14 +188,14 @@ const Ico = ({ k }) => (
 
 /* The first screen is the canvas: the run travels it, the title sits among the nodes. */
 function Hero() {
-  const [ref, live, calm] = useLive(0.2);
+  const [ref, live, calm] = useLive<HTMLElement>(0.2);
   const [hold, setHold] = useState(false);
   const [s, setS] = useRun(live, calm, !hold);
   // reduced motion is known only in the browser; taken after mount so the server HTML and first render match
   const [still, setStill] = useState(false);
   useEffect(() => setStill(!!calm), [calm]);
   // tap or click a node: the run holds there, that node lit with what it returned
-  const pick = (k) => { setHold(true); setS(2 * k + 1); };
+  const pick = (k: number) => { setHold(true); setS(2 * k + 1); };
   return (
     <section ref={ref} className="fl-hero" aria-labelledby="fl-h1">
       <Graph lay="hero" s={s} lit={hold ? nodeOf(s) : -1} pick={pick} />
@@ -225,12 +247,16 @@ function Chapters() {
 }
 
 /* What a node returned, arriving the way a run streams it: letter by letter, once; reduced motion shows it whole. */
-function Typed({ text, calm }) {
+interface TypedProps {
+  text: string;
+  calm: boolean | null;
+}
+function Typed({ text, calm }: TypedProps) {
   const [n, setN] = useState(0);
   useEffect(() => {
     if (calm) { setN(text.length); return; }
     setN(0);
-    let k = 0, t;
+    let k = 0, t: ReturnType<typeof setTimeout> | undefined;
     const step = () => { k += 1; setN(k); if (k < text.length) t = setTimeout(step, 28); };
     t = setTimeout(step, 60);
     return () => clearTimeout(t);
@@ -241,13 +267,13 @@ function Typed({ text, calm }) {
 /* Beyond, in the one dark room: the playground, led by its inspector. Play, pause, next, previous, or pick a node;
    what it received and what it returned are the object here, not another copy of the canvas. */
 function Playground() {
-  const [ref, live, calm] = useLive(0.3);
+  const [ref, live, calm] = useLive<HTMLElement>(0.3);
   const [play, setPlay] = useState(true);
   const [s, setS] = useRun(live, calm, play);
   const i = nodeOf(s);
   const done = s > 2 * i;
-  const to = (n) => { setPlay(false); setS(Math.max(0, Math.min(END, n))); };
-  const node = (k) => to(2 * k + 1); // a node, run and returned
+  const to = (n: number) => { setPlay(false); setS(Math.max(0, Math.min(END, n))); };
+  const node = (k: number) => to(2 * k + 1); // a node, run and returned
   const next = () => (s >= END ? to(1) : to(s % 2 ? s + 2 : s + 1));
   const prev = () => to(s % 2 ? s - 2 : s - 1);
   // the one place the playground appears; its heading is the chapter "Step through it" just above, so it adds none
@@ -309,14 +335,24 @@ const Gh = () => <svg viewBox="0 0 16 16" width="16" height="16" fill="currentCo
 
 /* Four facts, each a node on the strip that opens into its own page (synchronized.studio). */
 /* The two commands, as the terminal at the close shows them. */
-const Term = ({ copy }) => (
+interface TermProps {
+  copy?: boolean;
+}
+const Term = ({ copy }: TermProps) => (
   <div className="fl-term">
     <div className="fl-term-bar"><span aria-hidden="true"><i /><i /><i /></span>{copy && <Copy text={'uv pip install hanzoflow\nuv run hanzoflow run'} />}</div>
     <pre className="x-mono"><span className="fl-cmd"><i>$</i>uv pip install hanzoflow</span>{'\n'}<span className="fl-cmd"><i>$</i>uv run hanzoflow run</span>{'\n'}<span className="fl-out">→ 127.0.0.1:7860<span className="fl-caret" /></span></pre>
   </div>
 );
 
-const FACTS = [
+interface Fact {
+  id: string;
+  f: string;
+  t: string;
+  d?: ReactNode;
+  x?: ReactNode;
+}
+const FACTS: Fact[] = [
   // the opened cards show their own object only; the sentences they would repeat are already on the page above
   { id: 'py', f: 'Python', t: 'Every component', x: <div className="fl-pylib-w"><div className="fl-pylib" aria-hidden="true">{['Models', 'vector stores', 'document loaders', 'text splitters', 'output parsers', 'memory', 'retrievers', 'toolkits'].map((t) => <span key={t}><b>{t}</b></span>)}</div><p className="fl-pylib-k x-mono">Python class</p></div> },
   { id: 'rest', f: 'REST', t: 'Or JSON, or MCP', x: <Ways /> },
@@ -325,13 +361,13 @@ const FACTS = [
 ];
 
 /* The edges between the fact nodes, measured from where the cards actually sit (desktop; phones use a rule). */
-function useWires(ref) {
-  const [w, setW] = useState({ d: [], h: 0 });
+function useWires(ref: React.RefObject<HTMLDivElement | null>) {
+  const [w, setW] = useState<{ d: string[]; h: number }>({ d: [], h: 0 });
   useEffect(() => {
-    const el = ref.current;
+    const el = ref.current!;
     const m = () => {
       const box = el.getBoundingClientRect();
-      const P = [...el.querySelectorAll('.fl-fact')].map((c) => { const r = c.getBoundingClientRect(); return { o: [r.right - box.left, r.top - box.top + r.height / 2], i: [r.left - box.left, r.top - box.top + r.height / 2] }; });
+      const P = [...el.querySelectorAll('.fl-fact')].map((c): { o: Pt; i: Pt } => { const r = c.getBoundingClientRect(); return { o: [r.right - box.left, r.top - box.top + r.height / 2], i: [r.left - box.left, r.top - box.top + r.height / 2] }; });
       const d = P.slice(1).map((p, k) => { const a = P[k].o, b = p.i, mx = (a[0] + b[0]) / 2; return `M${a.map(r1)} C${r1(mx)},${r1(a[1])} ${r1(mx)},${r1(b[1])} ${b.map(r1)}`; });
       setW({ d, h: box.height });
     };
@@ -344,9 +380,9 @@ function useWires(ref) {
 }
 
 function Facts() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const w = useWires(ref);
-  const [sec, live] = useLive(0.4);
+  const [sec, live] = useLive<HTMLElement>(0.4);
   const [big, setBig] = useState(0);
   const [hand, setHand] = useState(false);
   // one figure is the moment at a time: it walks the wire by itself while seen; a pointer or focus takes it over
@@ -355,7 +391,7 @@ function Facts() {
     const t = setTimeout(() => setBig((b) => (b + 1) % FACTS.length), 2400);
     return () => clearTimeout(t);
   }, [big, live, hand]);
-  const take = (e) => { const c = e.target.closest?.('.fl-facts > li'); if (!c) return; setHand(true); setBig([...c.parentNode.children].indexOf(c)); };
+  const take = (e: React.SyntheticEvent<HTMLDivElement>) => { const c = (e.target as Element).closest?.('.fl-facts > li'); if (!c) return; setHand(true); setBig([...c.parentNode!.children].indexOf(c)); };
   return (
     <section ref={sec} className="bz-sec fl-facts-sec" aria-label="Hanzo Flow">
       <div ref={ref} className="bz-wrap fl-strip" onPointerOver={(e) => e.pointerType === 'mouse' && take(e)} onPointerLeave={() => setHand(false)} onFocus={take} onBlur={() => setHand(false)}>
