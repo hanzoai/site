@@ -1,6 +1,114 @@
 // Unified high-res visual & preview resolver for Hanzo AI header menus, model/product previews, and dark-cinema plates.
+// Every single one of the 108 header mega-menu options resolves to its own globally unique animation:
+//   - 20 bespoke pre-rendered 30fps dark-cinema .webm films (VID:*)
+//   - 33 bespoke live animated miniature product & developer workspaces (LIVE:*)
+//   - 55 bespoke real-time 60fps WebGL2 dark-cinema 3D sculptures (GL:*)
 
 export type NavPreviewMode = 'model' | 'product' | 'thematic';
+
+export const CINEMA_SCENE_IDS = [
+  // Company (11)
+  'company-blog',
+  'company-reviews',
+  'company-careers',
+  'company-news',
+  'company-brand',
+  'company-philosophy',
+  'company-contact',
+  'blog-commerce',
+  'blog-bounds',
+  'blog-kai',
+  'blog-archive',
+  // Research (4)
+  'research-models',
+  'research-benchmarks',
+  'research-compare',
+  'research-hips',
+  // Products -> Creative AI (6)
+  'prod-video',
+  'prod-images',
+  'prod-3d',
+  'prod-sfx',
+  'prod-voice',
+  'prod-music',
+  // Solutions (21)
+  'sol-enterprise',
+  'sol-customers',
+  'sol-contact-sales',
+  'sol-finance',
+  'sol-sales',
+  'sol-marketing',
+  'sol-operations',
+  'sol-design',
+  'sol-cyber',
+  'sol-finserv',
+  'sol-healthcare',
+  'sol-law',
+  'sol-retail',
+  'sol-government',
+  'sol-education',
+  'sol-content',
+  'sol-research',
+  'sol-agents',
+  'sol-reserved',
+  'sol-startups',
+  'sol-partners',
+  // Developers (1)
+  'dev-integrations',
+  // Learn & University (12)
+  'learn-coding',
+  'learn-guides',
+  'learn-cookbook',
+  'learn-docs',
+  'learn-support',
+  'learn-university',
+  'uni-agentic-coding',
+  'uni-rl',
+  'uni-systems',
+  'uni-practitioner',
+  'uni-architect',
+  'uni-marketing',
+] as const;
+
+export type CinemaSceneId = (typeof CINEMA_SCENE_IDS)[number];
+
+export const LIVE_SCENE_IDS = [
+  'desktop',
+  'machines',
+  'models-catalog',
+  'llms-stream',
+  'kai-decisions',
+  'enso-routing',
+  'hanzo-app',
+  'hanzo-cli',
+  'hanzo-dev',
+  'hanzo-mcp',
+  'hanzo-skills',
+  'platform-overview',
+  'platform-api',
+  'platform-playground',
+  'platform-gateway',
+  'platform-agents',
+  'platform-base',
+  'install-cli',
+  'install-extension',
+  'install-ide',
+  'install-downloads',
+  'install-releases',
+  'sol-calculator',
+  'dev-docs',
+  'dev-openapi',
+  'dev-quickstart',
+  'dev-hf',
+  'dev-headless',
+  'dev-apikeys',
+  'dev-accelerate',
+  'dev-examples',
+  'dev-github',
+  'dev-status',
+] as const;
+
+export type LiveSceneId = (typeof LIVE_SCENE_IDS)[number];
 
 export interface NavPreviewSpec {
   mode: NavPreviewMode;
@@ -9,12 +117,21 @@ export interface NavPreviewSpec {
   video?: string;
   screen?: string;
   windowBar?: string;
-  live?: 'desktop' | 'machines';
+  live?: LiveSceneId;
+  gl?: CinemaSceneId;
   summary?: string;
   tags?: string[];
   pos?: string;
   scale?: number;
   flip?: 1 | -1;
+}
+
+export function navAnimationKey(spec: NavPreviewSpec): string {
+  if (spec.gl) return `GL:${spec.gl}`;
+  if (spec.live) return `LIVE:${spec.live}`;
+  if (spec.video) return `VID:${spec.video}`;
+  if (spec.screen) return `SCREEN:${spec.screen}`;
+  return `STILL:${spec.poster}`;
 }
 
 export interface PlateSpec {
@@ -76,7 +193,6 @@ const CATEGORY_PLATES = {
   kanoaAthlete: '/customers/kanoa/athlete.webp',
 } as const;
 
-// Seamless 30fps dark-cinema category films (public/categories/<slug>.{webp,webm,mp4})
 export type CategoryFilmSlug =
   | 'company'
   | 'research'
@@ -103,17 +219,6 @@ const MODEL_META: Record<string, { kicker: string; tags: string[]; slug: string 
   uta: { slug: 'uta', kicker: 'Creative AI', tags: ['Music', 'Stems'] },
 };
 
-const COMPOSITIONS: ReadonlyArray<[string, number, 1 | -1]> = [
-  ['50% 48%', 1.04, 1],
-  ['46% 43%', 1.11, 1],
-  ['54% 53%', 1.09, 1],
-  ['48% 57%', 1.13, 1],
-  ['53% 42%', 1.12, 1],
-  ['47% 50%', 1.08, 1],
-  ['55% 46%', 1.12, 1],
-  ['50% 40%', 1.1, 1],
-];
-
 const PLATE_COMPOSITIONS: ReadonlyArray<[string, number, 1 | -1]> = [
   ['50% 48%', 1.04, 1],
   ['45% 42%', 1.14, 1],
@@ -134,7 +239,7 @@ export function hashSeed(input: string): number {
   return h >>> 0;
 }
 
-function modelSpec(key: string, override?: Partial<NavPreviewSpec>): NavPreviewSpec {
+function vidModel(key: string, summary?: string): NavPreviewSpec {
   const m = MODEL_META[key] || MODEL_META.enso;
   return {
     mode: 'model',
@@ -142,296 +247,216 @@ function modelSpec(key: string, override?: Partial<NavPreviewSpec>): NavPreviewS
     poster: `/models/${m.slug}.webp`,
     video: `/models/${m.slug}.webm`,
     tags: m.tags,
+    summary,
     pos: '50% 50%',
     scale: 1.03,
     flip: 1,
-    ...override,
   };
 }
 
-function productSpec(
-  kicker: string,
-  screen: string,
-  windowBar: string,
-  film: CategoryFilmSlug = 'products',
-  tags?: string[],
-): NavPreviewSpec {
+function vidCat(kicker: string, film: CategoryFilmSlug, tags: string[], summary?: string): NavPreviewSpec {
   return {
-    mode: 'product',
+    mode: 'thematic',
     kicker,
     poster: `/categories/${film}.webp`,
     video: `/categories/${film}.webm`,
-    screen,
+    tags,
+    summary,
+    pos: '50% 50%',
+    scale: 1.03,
+    flip: 1,
+  };
+}
+
+function glScene(
+  gl: CinemaSceneId,
+  kicker: string,
+  tags: string[],
+  poster = '/categories/company.webp',
+  mode: 'thematic' | 'model' = 'thematic',
+  summary?: string,
+): NavPreviewSpec {
+  return {
+    mode,
+    gl,
+    kicker,
+    poster,
+    tags,
+    summary,
+    pos: '50% 50%',
+    scale: 1.03,
+    flip: 1,
+  };
+}
+
+function liveWin(
+  live: LiveSceneId,
+  kicker: string,
+  windowBar: string,
+  tags: string[],
+  backdrop: CategoryFilmSlug = 'products',
+  summary?: string,
+): NavPreviewSpec {
+  return {
+    mode: 'product',
+    live,
+    kicker,
+    poster: `/categories/${backdrop}.webp`,
     windowBar,
     tags,
+    summary,
     pos: '50% 50%',
     scale: 1.06,
     flip: 1,
   };
 }
 
-function categoryFilmSpec(
-  kicker: string,
-  film: CategoryFilmSlug,
-  seed: string,
-  tags?: string[],
-  exact = false,
-): NavPreviewSpec {
-  const [pos, scale, flip]: [string, number, 1 | -1] = exact ? ['50% 50%', 1.03, 1] : COMPOSITIONS[hashSeed(seed) % COMPOSITIONS.length];
-  return {
-    mode: 'thematic',
-    kicker,
-    poster: `/categories/${film}.webp`,
-    video: `/categories/${film}.webm`,
-    tags,
-    pos,
-    scale,
-    flip,
-  };
-}
+// Canonical 1-to-1 animation mapping across all 108 menu options (zero shared videos, zero static stills)
+const NAV_SPECS: Record<string, NavPreviewSpec> = {
+  // ==================== 1. COMPANY (12) ====================
+  'Company>Explore Company>About Us': vidCat('Company', 'company', ['Pareto Frontier', 'Since 2014']),
+  'Company>Explore Company>Blog': glScene('company-blog', 'Editorial', ['Engineering', 'Essays'], '/categories/research.webp'),
+  'Company>Explore Company>Reviews': glScene('company-reviews', 'Customer Proof', ['Verified', 'Outcomes'], '/categories/company.webp'),
+  'Company>Explore Company>Careers': glScene('company-careers', 'Careers', ['Remote-first', 'Builders'], '/categories/company.webp'),
+  'Company>Explore Company>News': glScene('company-news', 'Press & Media', ['Newsroom', 'Launches'], '/categories/company.webp'),
+  'Company>Resources>Brand Guidelines': glScene('company-brand', 'Identity', ['Design System', 'Marks'], '/categories/company.webp'),
+  'Company>Resources>Philosophy': glScene('company-philosophy', 'First Principles', ['Zen Balance', 'Open Stack'], '/categories/company.webp'),
+  'Company>Resources>Contact': glScene('company-contact', 'Global Reach', ['Direct', '24/7'], '/categories/company.webp'),
+  'Company>Blog>Optimizing for Headless Commerce in the Era of Agentic LLMs': glScene('blog-commerce', 'Featured Essay', ['Agentic Commerce'], '/categories/solutions.webp'),
+  'Company>Blog>Your AI is Planning To Kill You': glScene('blog-bounds', 'Safety Essay', ['Bounded Loops', 'Kai'], '/categories/safety.webp'),
+  'Company>Blog>Kai 1: Decisions, Not Completions': glScene('blog-kai', 'Research Essay', ['Calibrated', 'Decisions'], '/models/kai.webp'),
+  'Company>Blog>All articles': glScene('blog-archive', 'Full Archive', ['All Posts', 'Chronicle'], '/categories/research.webp'),
 
-function stillThematicSpec(
-  kicker: string,
-  poster: string,
-  seed: string,
-  tags?: string[],
-): NavPreviewSpec {
-  const [pos, scale, flip] = COMPOSITIONS[hashSeed(seed) % COMPOSITIONS.length];
-  return {
-    mode: 'thematic',
-    kicker,
-    poster,
-    tags,
-    pos,
-    scale,
-    flip,
-  };
-}
+  // ==================== 2. RESEARCH (18) ====================
+  'Research>Releases>Enso': vidModel('enso'),
+  'Research>Releases>Kai': vidModel('kai'),
+  'Research>Releases>Zen 6': vidModel('zen'),
+  'Research>Releases>Zen 7': vidModel('zen-7'),
+  'Research>Creative AI>Koma': vidModel('koma'),
+  'Research>Creative AI>Iro': vidModel('iro'),
+  'Research>Creative AI>Mori': vidModel('mori'),
+  'Research>Creative AI>Oto': vidModel('oto'),
+  'Research>Creative AI>Koe': vidModel('koe'),
+  'Research>Creative AI>Uta': vidModel('uta'),
+  'Research>Explore Research>All models': glScene('research-models', 'Model Taxonomy', ['Foundation', 'Multimodal'], '/categories/research.webp', 'model'),
+  'Research>Explore Research>Benchmarks': glScene('research-benchmarks', 'Evaluation', ['GPQA', 'SWE-bench'], '/categories/research.webp'),
+  'Research>Explore Research>Overview': vidCat('Explore Research', 'research', ['Papers', 'Architectures']),
+  'Research>Explore Research>Compare': glScene('research-compare', 'Head-to-Head', ['Quality', 'Latency'], '/categories/research.webp'),
+  'Research>Explore Research>Open source': vidCat('Open Ecosystem', 'open-source', ['1,700+ Repos', 'Apache 2.0'], '1,700+ open-source repositories across foundation models, MCP, and cloud.'),
+  'Research>Explore Research>Specifications': glScene('research-hips', 'Specifications', ['HIP Standards', 'Protocols'], '/categories/developers.webp'),
+  'Research>Safety>Security': vidCat('Safety', 'safety', ['Zero-Trust', 'SOC 2 · KMS']),
+  'Research>Safety>Trust & transparency': vidCat('Safety', 'trust', ['Attested', 'SOC 2 · KMS'], 'Enterprise compliance, KMS key isolation, access controls, and continuous audits.'),
+
+  // ==================== 3. PRODUCTS (28) ====================
+  'Products>AI Models>All models': liveWin('models-catalog', 'AI Models', 'platform.hanzo.ai/models', ['400+ Models', '1 Key'], 'cloud'),
+  'Products>AI Models>LLMs': liveWin('llms-stream', 'Language Models', 'zen-7 · stream', ['128k Context', 'Reasoning'], 'research'),
+  'Products>AI Models>Decisions': liveWin('kai-decisions', 'Decision Engine', 'kai-1 · decide', ['Calibrated', 'Policy'], 'safety'),
+  'Products>AI Models>Routing': liveWin('enso-routing', 'Semantic Router', 'enso · router', ['Auto-Route', '-70% Cost'], 'cloud'),
+
+  'Products>Creative AI>Video': glScene('prod-video', 'Video Studio', ['Cinema', '60fps'], '/models/koma.webp', 'model'),
+  'Products>Creative AI>Images': glScene('prod-images', 'Image Studio', ['Photoreal', 'Brand Safe'], '/models/iro.webp', 'model'),
+  'Products>Creative AI>3D': glScene('prod-3d', 'Spatial 3D', ['Meshes', 'PBR'], '/models/mori.webp', 'model'),
+  'Products>Creative AI>Sound effects': glScene('prod-sfx', 'Foley & SFX', ['Spatial', '48 kHz'], '/models/oto.webp', 'model'),
+  'Products>Creative AI>Voice': glScene('prod-voice', 'Speech Synthesis', ['Realtime', 'Cloning'], '/models/koe.webp', 'model'),
+  'Products>Creative AI>Music': glScene('prod-music', 'Music & Stems', ['Multi-track', 'Lossless'], '/models/uta.webp', 'model'),
+
+  'Products>Apps and tools>Hanzo App': liveWin('hanzo-app', 'Apps & Tools', 'hanzo.app', ['Web', 'Full-Stack'], 'products'),
+  'Products>Apps and tools>Hanzo CLI': liveWin('hanzo-cli', 'Command Line', 'hanzo — zsh', ['Single Binary', 'Cloud'], 'developers'),
+  'Products>Apps and tools>Hanzo Dev': liveWin('hanzo-dev', 'Agentic Coding', 'hanzo dev', ['Worktrees', 'Auto-PR'], 'developers'),
+  'Products>Apps and tools>MCP': liveWin('hanzo-mcp', 'Model Context', 'hanzo-mcp', ['260+ Tools', 'JSON-RPC'], 'developers'),
+  'Products>Apps and tools>Skills': liveWin('hanzo-skills', 'Agent Skills', 'hanzo skills', ['Composable', 'Verified'], 'developers'),
+
+  'Products>API Platform>Overview': liveWin('platform-overview', 'API Platform', 'platform.hanzo.ai', ['99.99% SLA', 'Global'], 'cloud'),
+  'Products>API Platform>API': liveWin('platform-api', 'Unified API', 'api.hanzo.ai/v1', ['OpenAI Spec', 'SSE'], 'cloud'),
+  'Products>API Platform>Playground': liveWin('platform-playground', 'Workbench', 'platform.hanzo.ai/play', ['A/B Arena', 'Tuning'], 'cloud'),
+  'Products>API Platform>Gateway': liveWin('platform-gateway', 'AI Gateway', 'gateway.hanzo.ai', ['Cache', 'Zero-Drop'], 'cloud'),
+  'Products>API Platform>Agents': liveWin('platform-agents', 'Cloud Agents', 'hanzo.bot', ['24/7 Runs', 'MicroVM'], 'cloud'),
+  'Products>API Platform>Base': liveWin('platform-base', 'Hanzo Base', 'base.hanzo.ai', ['Postgres', 'pgvector'], 'cloud'),
+  'Products>API Platform>Machines': liveWin('machines', 'Compute', 'api.hanzo.ai/v1/compute', ['H100 GPU', 'Bare Metal'], 'cloud', 'Rent dedicated H100 GPU clusters by the hour with live API quotes and NVMe.'),
+
+  'Products>Install>CLI': liveWin('install-cli', 'Install', 'curl hanzo.sh | sh', ['macOS', 'Linux · Win'], 'developers'),
+  'Products>Install>Desktop app': liveWin('desktop', 'Install', 'Hanzo Desktop', ['macOS', 'Win · Linux'], 'developers', 'Run local models, MCP tools, and agents natively on macOS, Windows, and Linux.'),
+  'Products>Install>Browser extension': liveWin('install-extension', 'Install', 'hanzo://extension', ['Chrome', 'Brave'], 'products'),
+  'Products>Install>IDE': liveWin('install-ide', 'Install', 'hanzo-ide', ['VS Code', 'JetBrains'], 'developers'),
+  'Products>Install>All downloads': liveWin('install-downloads', 'Install', 'hanzo.ai/download', ['Signed', 'Universal'], 'products'),
+  'Products>Install>Release notes': liveWin('install-releases', 'Releases', 'hanzoai/cli · releases', ['Cosign', 'Changelog'], 'developers'),
+
+  // ==================== 4. SOLUTIONS (25) ====================
+  'Solutions>Explore Solutions>All solutions': vidCat('Solutions', 'solutions', ['Sovereign Cloud', 'SLA']),
+  'Solutions>Explore Solutions>Enterprise': glScene('sol-enterprise', 'Enterprise', ['VPC', 'Zero-Trust'], '/categories/solutions.webp'),
+  'Solutions>Explore Solutions>Customer stories': glScene('sol-customers', 'Case Studies', ['Production', 'ROI'], '/categories/solutions.webp'),
+  'Solutions>Explore Solutions>Contact sales': glScene('sol-contact-sales', 'Advisory', ['Custom SLA', 'Architects'], '/categories/solutions.webp'),
+
+  'Solutions>Teams>Finance': glScene('sol-finance', 'Teams', ['Auditable', 'Forecasting'], '/categories/solutions.webp'),
+  'Solutions>Teams>Data': vidCat('Teams', 'cloud', ['Pipelines', 'Datastore']),
+  'Solutions>Teams>Sales': glScene('sol-sales', 'Teams', ['Pipeline', 'Velocity'], '/categories/solutions.webp'),
+  'Solutions>Teams>Marketing': glScene('sol-marketing', 'Teams', ['Omnichannel', 'Attribution'], '/categories/solutions.webp'),
+  'Solutions>Teams>Operations': glScene('sol-operations', 'Teams', ['Automation', '24/7 Ops'], '/categories/solutions.webp'),
+  'Solutions>Teams>Engineering': vidCat('Teams', 'engineering', ['Agents', 'Sandboxes'], 'Agents that plan, edit, and open PRs — backed by unified models and sandboxes.'),
+  'Solutions>Teams>Design': glScene('sol-design', 'Teams', ['Generative', 'Brand Safe'], '/categories/solutions.webp'),
+
+  'Solutions>Industries>Cybersecurity': glScene('sol-cyber', 'Industries', ['Threat Defense', 'SOC'], '/categories/safety.webp'),
+  'Solutions>Industries>Financial services': glScene('sol-finserv', 'Industries', ['Low Latency', 'Compliant'], '/categories/solutions.webp'),
+  'Solutions>Industries>Healthcare': glScene('sol-healthcare', 'Industries', ['HIPAA BAA', 'Clinical'], '/categories/safety.webp'),
+  'Solutions>Industries>Law': glScene('sol-law', 'Industries', ['Zero Retention', 'Citations'], '/categories/safety.webp'),
+  'Solutions>Industries>Retail': glScene('sol-retail', 'Industries', ['Commerce', 'Inventory'], '/categories/solutions.webp'),
+  'Solutions>Industries>Government': glScene('sol-government', 'Industries', ['Air-Gapped', 'Sovereign'], '/categories/safety.webp'),
+  'Solutions>Industries>Education': glScene('sol-education', 'Industries', ['Campus', 'Research'], '/categories/learn.webp'),
+
+  'Solutions>Use cases>Content creation': glScene('sol-content', 'Use Cases', ['Multi-aspect', 'Studio'], '/categories/solutions.webp'),
+  'Solutions>Use cases>Research': glScene('sol-research', 'Use Cases', ['Discovery', 'Synthesis'], '/categories/research.webp'),
+  'Solutions>Use cases>Agents': glScene('sol-agents', 'Use Cases', ['Swarm', 'Bounded'], '/categories/cloud.webp'),
+
+  'Solutions>Programs>Reserved tier': glScene('sol-reserved', 'Programs', ['Dedicated H100', 'Locked'], '/categories/cloud.webp'),
+  'Solutions>Programs>Startups': glScene('sol-startups', 'Programs', ['Cloud Credits', 'Velocity'], '/categories/company.webp'),
+  'Solutions>Programs>Partner network': glScene('sol-partners', 'Programs', ['Rev Share', 'Co-Sell'], '/categories/company.webp'),
+  'Solutions>Programs>Cost calculator': liveWin('sol-calculator', 'TCO Estimator', 'hanzo.ai/calculator', ['Save 70%+', 'Live Quote'], 'solutions'),
+
+  // ==================== 5. DEVELOPERS (12) ====================
+  'Developers>Explore Developers>Documentation': liveWin('dev-docs', 'Documentation', 'docs.hanzo.ai', ['Guides', '⌘K Search'], 'developers'),
+  'Developers>Explore Developers>API reference': liveWin('dev-openapi', 'API Reference', 'docs.hanzo.ai/openapi', ['OpenAPI 3.1', 'Schemas'], 'developers'),
+  'Developers>Explore Developers>Quickstart': liveWin('dev-quickstart', 'Quickstart', 'quickstart.ts', ['2 Minutes', 'SDK'], 'developers'),
+  'Developers>Explore Developers>SDKs': vidCat('Developers', 'developers', ['TS · Py · Go', 'Open Source']),
+  'Developers>Explore Developers>Open models': liveWin('dev-hf', 'Open Weights', 'huggingface.co/zenlm', ['Apache 2.0', 'Safetensors'], 'research'),
+
+  'Developers>Resources>Agents sign up free': liveWin('dev-headless', 'Headless Signup', 'POST /v1/agents/signup', ['$5 Credit', 'Ed25519'], 'developers'),
+  'Developers>Resources>API keys': liveWin('dev-apikeys', 'Credentials', 'platform.hanzo.ai/keys', ['Scoped RBAC', 'Spend Caps'], 'cloud'),
+  'Developers>Resources>Claude Code, Codex, Cursor': liveWin('dev-accelerate', 'Accelerator', 'platform.hanzo.ai/accel', ['3.4× Faster', '-58% Cost'], 'developers'),
+  'Developers>Resources>Integrations': glScene('dev-integrations', 'Ecosystem', ['260+ Connectors', 'Webhooks'], '/categories/developers.webp'),
+  'Developers>Resources>Examples': liveWin('dev-examples', 'Starter Gallery', 'hanzo.ai/gallery', ['Templates', '1-Click'], 'products'),
+
+  'Developers>Community>GitHub': liveWin('dev-github', 'Open Source', 'github.com/hanzoai', ['1,700+ Repos', 'Apache 2.0'], 'open-source'),
+  'Developers>Community>Status': liveWin('dev-status', 'Telemetry', 'status.hanzo.ai', ['99.99% Uptime', 'Global Edge'], 'cloud'),
+
+  // ==================== 6. LEARN (13) ====================
+  'Learn>Research & Guides>Overview': vidCat('Learn', 'learn', ['Courses', 'Guides']),
+  'Learn>Research & Guides>Coding agents': glScene('learn-coding', 'Agentic Guides', ['Worktrees', 'Guardrails'], '/categories/developers.webp'),
+  'Learn>Research & Guides>Guides': glScene('learn-guides', 'Architecture', ['Patterns', 'Production'], '/categories/learn.webp'),
+  'Learn>Research & Guides>Cookbook': glScene('learn-cookbook', 'Cookbook', ['Notebooks', 'Recipes'], '/categories/learn.webp'),
+
+  'Learn>Support>Documentation': glScene('learn-docs', 'Reference Codex', ['Full Stack', 'Searchable'], '/categories/learn.webp'),
+  'Learn>Support>Help center': glScene('learn-support', 'Support', ['24/7 Engineers', 'SLA'], '/categories/learn.webp'),
+
+  'Learn>Education>Education': glScene('learn-university', 'Hanzo University', ['Tracks', 'Certified'], '/categories/learn.webp'),
+  'Learn>Education>Agentic coding': glScene('uni-agentic-coding', 'University Track', ['Multi-Agent', 'Labs'], '/categories/developers.webp'),
+  'Learn>Education>Reinforcement learning': glScene('uni-rl', 'University Track', ['GRPO & RLHF', 'Open Weights'], '/categories/research.webp'),
+  'Learn>Education>Systems engineering': glScene('uni-systems', 'University Track', ['CUDA & Metal', 'Kernels'], '/categories/developers.webp'),
+  'Learn>Education>AI practitioner': glScene('uni-practitioner', 'University Track', ['Routing', 'Evaluation'], '/categories/learn.webp'),
+  'Learn>Education>AI architect': glScene('uni-architect', 'University Track', ['Sovereign VPC', 'KMS'], '/categories/cloud.webp'),
+  'Learn>Education>Agentic marketing': glScene('uni-marketing', 'University Track', ['Creative AI', 'Campaigns'], '/categories/solutions.webp'),
+};
 
 export function resolveNavPreview(
   menu: string,
   head: string,
   link: { label: string; href: string; ext?: boolean },
 ): NavPreviewSpec {
-  const href = link.href || '/';
-  const lower = href.toLowerCase();
-  const clean = lower.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
+  const exact = NAV_SPECS[`${menu}>${head}>${link.label}`];
+  if (exact) return exact;
 
-  // 1. Flagship & Creative AI Models (seamless 30fps /models/*.webm loops)
-  if (clean === '/enso') return modelSpec('enso');
-  if (clean === '/kai' || lower.includes('introducing-kai')) return modelSpec('kai');
-  if (clean === '/zen') return modelSpec('zen');
-  if (clean === '/zen/7') return modelSpec('zen-7');
-  if (clean === '/koma') return modelSpec('koma');
-  if (clean === '/iro') return modelSpec('iro');
-  if (clean === '/mori') return modelSpec('mori');
-  if (clean === '/oto') return modelSpec('oto');
-  if (clean === '/koe') return modelSpec('koe');
-  if (clean === '/uta') return modelSpec('uta');
-  if (clean === '/models') {
-    return modelSpec('enso', { kicker: 'Model Catalog', tags: ['400+ Models', '1 Key'] });
-  }
-  if (lower.includes('huggingface.co/zenlm')) {
-    return modelSpec('zen', { kicker: 'Open Weights', tags: ['Hugging Face', 'Apache 2.0'] });
-  }
-
-  // 2. Products, Apps, CLI, API Platform, & Developer Docs (UI Window Mockup + Animated Cinema Backdrop)
-  if (lower.includes('hanzo.app')) {
-    return productSpec('Apps & Tools', '/shots/app-builder-1440.webp', 'hanzo.app', 'products', ['Web', 'Desktop']);
-  }
-  if (clean === '/desktop') {
-    return {
-      ...productSpec('Install', '/shots/chat-1440.webp', 'Hanzo Desktop', 'developers', ['macOS', 'Win', 'Linux']),
-      live: 'desktop',
-      summary: 'Run local models, MCP tools, and agents natively on macOS, Windows, and Linux.',
-    };
-  }
-  if (clean === '/extension') {
-    return productSpec('Install', '/home/products/app-dark.webp', 'hanzo://extension', 'products', ['Chrome', 'Brave']);
-  }
-  if (clean === '/dev' || clean === '/ide' || lower.includes('/accelerate') || lower.includes('/docs/coding')) {
-    return productSpec(
-      clean === '/ide' ? 'Install' : 'Agentic Coding',
-      '/home/products/dev-dark.webp',
-      clean === '/ide' ? 'hanzo-ide' : 'hanzo dev',
-      'developers',
-      ['Multi-agent', 'Worktrees'],
-    );
-  }
-  if (clean === '/cli' || clean === '/download' || lower.includes('hanzoai/cli')) {
-    return productSpec(
-      head || 'Command Line',
-      '/home/products/cli-dark.webp',
-      'hanzo — zsh',
-      'developers',
-      ['Single Binary', 'Cloud'],
-    );
-  }
-  if (clean === '/mcp' || clean === '/skills' || clean === '/integrations') {
-    return productSpec(
-      head || 'Tooling',
-      '/home/products/mcp-dark.webp',
-      clean === '/skills' ? 'hanzo skills' : 'hanzo-mcp',
-      'developers',
-      ['MCP', 'Connectors'],
-    );
-  }
-  if (clean === '/api' || clean === '/gateway' || lower.includes('/api-keys')) {
-    return productSpec(
-      'API Platform',
-      '/home/products/api-dark.webp',
-      'api.hanzo.ai/v1',
-      'cloud',
-      ['Unified Key', 'Low Latency'],
-    );
-  }
-  if (clean === '/machines') {
-    return {
-      ...productSpec('Compute', '/shots/docs-api-1440.webp', 'api.hanzo.ai/v1/compute', 'cloud', ['H100 GPU', 'Bare Metal']),
-      live: 'machines',
-      summary: 'Rent dedicated H100 GPU clusters by the hour with live API quotes and NVMe.',
-    };
-  }
-  if (clean === '/platform' || clean === '/playground' || clean === '/base') {
-    return productSpec(
-      'API Platform',
-      '/shots/docs-api-1440.webp',
-      clean === '/playground' ? 'platform.hanzo.ai/playground' : 'platform.hanzo.ai',
-      'cloud',
-      ['Serverless', 'GPU'],
-    );
-  }
-  if (clean === '/agents' || clean === '/solutions/agents') {
-    return productSpec(
-      'Autonomous Agents',
-      '/shots/bots-1440-dark.webp',
-      'hanzo.bot',
-      'cloud',
-      ['24/7 Runs', 'Sandboxed'],
-    );
-  }
-  if (lower.includes('docs.hanzo.ai/docs/guides') || lower.includes('cookbook')) {
-    return categoryFilmSpec('Guides & Cookbook', 'learn', href, ['Patterns', 'Recipes']);
-  }
-  if (lower.includes('docs.hanzo.ai')) {
-    return productSpec(
-      'Documentation',
-      '/shots/docs-api-1440.webp',
-      'docs.hanzo.ai',
-      'developers',
-      ['OpenAPI', 'Quickstart'],
-    );
-  }
-
-  // 3. Thematic Category & Column Loops (seamless 30fps /categories/*.webm films)
-  // Company
-  if (clean === '/about') return categoryFilmSpec('Company', 'company', href, ['Pareto Frontier', 'Since 2014'], true);
-  if (clean === '/philosophy') return categoryFilmSpec('Resources', 'company', href, ['First Principles', 'Open Stack']);
-  if (clean === '/brand') return categoryFilmSpec('Resources', 'company', href, ['Design System', 'Identity']);
-  if (clean === '/contact') return categoryFilmSpec('Resources', 'company', href, ['Global', 'Direct']);
-  if (clean === '/careers') return categoryFilmSpec('Company', 'company', href, ['Remote-first', 'Engineering']);
-  if (clean === '/press') return categoryFilmSpec('Company', 'company', href, ['Newsroom', 'Media']);
-  if (lower.includes('/reviews')) return stillThematicSpec('Customer Proof', CATEGORY_PLATES.damonReveal, href, ['Verified', 'Production']);
-  if (lower.includes('headless-commerce')) return categoryFilmSpec('Featured Essay', 'solutions', href, ['Agentic Commerce'], true);
-  if (lower.includes('planning-to-kill-you')) return categoryFilmSpec('Safety Essay', 'safety', href, ['Deterministic Bounds'], true);
-  if (clean === '/blog') return categoryFilmSpec('Journal', 'research', href, ['Engineering', 'Research'], true);
-
-  // Research & Safety
-  if (clean === '/benchmarks') return categoryFilmSpec('Explore Research', 'research', href, ['GPQA', 'SWE-bench'], true);
-  if (clean === '/research') return categoryFilmSpec('Explore Research', 'research', href, ['Papers', 'Architectures']);
-  if (clean === '/compare') return categoryFilmSpec('Explore Research', 'research', href, ['Quality', 'Cost']);
-  if (lower.includes('hips.hanzo.ai')) return categoryFilmSpec('Specifications', 'developers', href, ['HIP Standards', 'Protocols'], true);
-  if (clean === '/open-source') {
-    return {
-      ...categoryFilmSpec('Open Ecosystem', 'open-source', href, ['1,700+ Repos', 'Apache 2.0'], true),
-      summary: '1,700+ open-source repositories across foundation models, MCP, and cloud.',
-    };
-  }
-  if (clean === '/security') {
-    return categoryFilmSpec('Safety', 'safety', href, ['Zero-Trust', 'SOC 2 · KMS'], true);
-  }
-  if (clean === '/trust') {
-    return {
-      ...categoryFilmSpec('Safety', 'trust', href, ['Attested', 'SOC 2 · KMS'], true),
-      summary: 'Enterprise compliance, KMS key isolation, access controls, and continuous audits.',
-    };
-  }
-
-  // Solutions
-  if (clean === '/customers') return stillThematicSpec('Customer Stories', CATEGORY_PLATES.damonRider, href, ['Case Studies', 'Impact']);
-  if (clean === '/solutions/finance' || clean === '/solutions/financial-services' || lower.includes('/calculator')) {
-    return categoryFilmSpec(head || 'Finance', 'solutions', href, ['Calibrated', 'Auditable']);
-  }
-  if (clean === '/solutions/cybersecurity' || clean === '/solutions/law' || clean === '/solutions/government') {
-    return categoryFilmSpec(head || 'Regulated', 'safety', href, ['Air-Gapped', 'Sovereign']);
-  }
-  if (clean === '/solutions/engineering') {
-    return {
-      ...categoryFilmSpec(head || 'Teams', 'engineering', href, ['Agents', 'Sandboxes'], true),
-      summary: 'Agents that plan, edit, and open PRs — backed by unified models and sandboxes.',
-    };
-  }
-  if (clean === '/solutions/data' || clean === '/solutions/operations') {
-    return categoryFilmSpec(head || 'Infrastructure', 'cloud', href, ['High Throughput', 'VPC']);
-  }
-  if (clean === '/solutions/design' || clean === '/solutions/marketing' || clean === '/solutions/content-creation' || clean === '/solutions/retail') {
-    return modelSpec(clean === '/solutions/content-creation' ? 'koma' : 'iro', {
-      kicker: head || 'Creative',
-      tags: ['Brand Safe', 'Multi-modal'],
-    });
-  }
-  if (clean === '/solutions/education') {
-    return categoryFilmSpec('Industries', 'learn', href, ['Research', 'Campus']);
-  }
-  if (clean === '/solutions/research') {
-    return categoryFilmSpec('Use Cases', 'research', href, ['Evaluation', 'Compute']);
-  }
-  if (clean === '/startups') {
-    return categoryFilmSpec('Programs', 'company', href, ['Cloud Credits', 'Velocity']);
-  }
-  if (menu === 'Solutions') {
-    return categoryFilmSpec(head || 'Solutions', 'solutions', href, ['Sovereign Cloud', 'SLA'], clean === '/solutions');
-  }
-
-  // Developers
-  if (clean === '/sdks' || lower.includes('github.com/hanzoai')) {
-    return categoryFilmSpec(head || 'Developers', 'developers', href, ['TS · Py · Go', 'Open Source'], clean === '/sdks');
-  }
-  if (lower.includes('status.hanzo.ai')) {
-    return categoryFilmSpec('Infrastructure', 'cloud', href, ['Live Uptime', 'Edge'], true);
-  }
-  if (clean === '/gallery') {
-    return modelSpec('koma', { kicker: 'Showcase', tags: ['Templates', 'Live Apps'] });
-  }
-
-  // Learn & University
-  if (lower.includes('agentic-coding') || lower.includes('systems-engineering')) {
-    return categoryFilmSpec('University', 'developers', href, ['Hands-on', 'Systems']);
-  }
-  if (lower.includes('reinforcement-learning')) {
-    return categoryFilmSpec('University', 'research', href, ['RLHF & GRPO', 'Labs']);
-  }
-  if (lower.includes('ai-architect')) {
-    return categoryFilmSpec('University', 'cloud', href, ['Sovereign VPC', 'Architecture']);
-  }
-  if (lower.includes('agentic-marketing')) {
-    return modelSpec('iro', { kicker: 'University', tags: ['Creative Pipelines'] });
-  }
-  if (menu === 'Learn' || lower.includes('university') || clean === '/learn' || clean === '/support') {
-    return categoryFilmSpec(head || 'Learn', 'learn', href, ['Courses', 'Guides'], clean === '/learn');
-  }
-
-  // Fallback by top-level menu
-  const menuFallbacks: Record<string, [string, CategoryFilmSlug]> = {
-    Company: ['Company', 'company'],
-    Research: ['Research', 'research'],
-    Products: ['Platform', 'cloud'],
-    Solutions: ['Solutions', 'solutions'],
-    Developers: ['Developers', 'developers'],
-    Learn: ['Learn', 'learn'],
-  };
-  const [fbKick, fbFilm] = menuFallbacks[menu] || ['Hanzo AI', 'company'];
-  return categoryFilmSpec(fbKick, fbFilm, href);
+  // Deterministic fallback if a new nav link is ever added dynamically
+  const idx = hashSeed(`${menu}|${head}|${link.label}|${link.href}`) % CINEMA_SCENE_IDS.length;
+  return glScene(CINEMA_SCENE_IDS[idx], head || menu || 'Hanzo AI', ['Hanzo AI']);
 }
 
 const FALLBACK_POOL = [

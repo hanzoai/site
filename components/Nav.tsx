@@ -11,8 +11,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence, type MotionStyle } from 'motion/react';
 import { NAV, MENUS } from '../lib/nav';
 import { LOGIN } from '../lib/header';
-import { resolveNavPreview, resolveNavDescription } from '../lib/visuals';
-import { Mark } from './ui';
+import { resolveNavPreview, resolveNavDescription, navAnimationKey } from '../lib/visuals';
+import StageCinemaGL from './nav/StageCinemaGL';
+import StageLiveWin from './nav/StageLiveWin';
 import type { Shell } from './types';
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -48,225 +49,9 @@ function Columns({ name, onGo, onPeek }: { name: string; onGo?: () => void; onPe
   ));
 }
 
-function DesktopStageWin({ title }: { title: string }) {
-  const [phase, setPhase] = useState<{ sc: 0 | 1; step: 0 | 1 | 2 }>({ sc: 0, step: 0 });
-  useEffect(() => {
-    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (calm) {
-      setPhase({ sc: 0, step: 2 });
-      return;
-    }
-    let alive = true;
-    let t: ReturnType<typeof setTimeout> | undefined;
-    const wait = (ms: number) => new Promise<void>((r) => { t = setTimeout(r, ms); });
-    (async () => {
-      let sc: 0 | 1 = 0;
-      while (alive) {
-        setPhase({ sc, step: 0 });
-        await wait(520); if (!alive) return;
-        setPhase({ sc, step: 1 });
-        await wait(1150); if (!alive) return;
-        setPhase({ sc, step: 2 });
-        await wait(2700); if (!alive) return;
-        sc = sc === 0 ? 1 : 0;
-      }
-    })();
-    return () => { alive = false; clearTimeout(t); };
-  }, []);
-
-  const { sc, step } = phase;
-  const done = step === 2;
-
-  return (
-    <div className="x-nav-win x-nav-win-dk">
-      <div className="x-nav-win-bar">
-        <span className="x-nav-win-dots"><i /><i /><i /></span>
-        <span className="x-nav-win-title">{title}</span>
-        <span className="x-ndk-chip">
-          <i className="x-ndk-dot" />
-          <span>{sc === 0 ? 'zen-6 · Local' : '3 agents · Local'}</span>
-        </span>
-      </div>
-      <div className="x-ndk">
-        <div className="x-ndk-side">
-          <div className="x-ndk-head">
-            <span className="x-ndk-mark"><Mark size={8} /></span>
-            <span>{sc === 0 ? 'Agents' : 'Worktrees'}</span>
-          </div>
-          <div className="x-ndk-item">{sc === 0 ? '▾ gateway' : '▾ workspace'}</div>
-          <div className={`x-ndk-item ind${step >= 1 ? ' on' : ''}`}>
-            <span>{sc === 0 ? 'limit.go' : 'auth.go'}</span>
-            {step >= 1 && <b>{sc === 0 ? '+12' : 'ok'}</b>}
-          </div>
-          <div className="x-ndk-item">{sc === 0 ? '▾ payments' : '▾ mcp'}</div>
-          <div className="x-ndk-gpu">
-            <span>{sc === 0 ? 'Metal · 84t/s' : '0ms · offline'}</span>
-            <span className={`x-ndk-bars${done ? '' : ' run'}`}><i /><i /><i /></span>
-          </div>
-        </div>
-
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={sc}
-            className="x-ndk-main"
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.24, ease: EASE }}
-          >
-            <div className="x-ndk-prompt">
-              <span className="x-ndk-you">▶</span>
-              <span>{sc === 0 ? 'Add 100/min rate limit to /v1/pay' : 'Audit auth, routes & tests locally'}</span>
-            </div>
-
-            {sc === 0 ? (
-              <div className="x-ndk-code">
-                {step === 1 && <span className="x-ndk-sheen" />}
-                <div className="x-ndk-ln"><em>1</em>func Limit(h Handler) {'{'}</div>
-                <motion.div
-                  className="x-ndk-ln add"
-                  initial={{ opacity: 0.25, x: -4 }}
-                  animate={{ opacity: step >= 1 ? 1 : 0.3, x: step >= 1 ? 0 : -4 }}
-                  transition={{ duration: 0.28, ease: EASE }}
-                >
-                  <em>+</em>return rate.PerKey(100, h)
-                  {step === 1 && <i className="x-ndk-cur" />}
-                </motion.div>
-                <div className="x-ndk-ln"><em>3</em>{'}'}</div>
-              </div>
-            ) : (
-              <div className="x-ndk-lanes">
-                {([
-                  ['zen-6', 'gateway/auth.go', 0],
-                  ['kai-1', 'policy bounds', 0.1],
-                  ['mcp', 'git · 13 tools', 0.2],
-                ] as const).map(([tag, sub, delay]) => (
-                  <div className="x-ndk-lane" key={tag}>
-                    <b>{tag}</b>
-                    <span className="x-ndk-bar">
-                      <motion.i
-                        initial={{ scaleX: 0.18 }}
-                        animate={{ scaleX: step === 0 ? 0.38 : step === 1 ? 0.78 : 1 }}
-                        transition={{ duration: 0.45, ease: EASE, delay }}
-                      />
-                    </span>
-                    <em>{done ? '✓ ok' : sub}</em>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="x-ndk-foot">
-              <span className={`x-ndk-stat${done ? ' ok' : ''}`}>
-                {done ? (
-                  <>✓ {sc === 0 ? '14 tests pass' : 'All checks pass'}</>
-                ) : (
-                  <><i className="x-ndk-spin" />{sc === 0 ? 'Writing gateway/limit.go…' : 'Running 3 worktrees…'}</>
-                )}
-              </span>
-              <span className="x-ndk-meta">{sc === 0 ? '18ms · local' : 'private · GPU'}</span>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-}
-
-const MACHINE_TIERS = [
-  { label: '1x H100', cards: 1, vram: '80 GB HBM3', rate: '$3.48', link: 'PCIe 5 · 7 GB/s', fill: 0.34 },
-  { label: '2x H100', cards: 2, vram: '160 GB HBM3', rate: '$6.96', link: 'NVLink · 900 GB/s', fill: 0.66 },
-  { label: '4x H100', cards: 4, vram: '320 GB HBM3', rate: '$13.92', link: 'NVLink · 3.6 TB/s', fill: 1.0 },
-] as const;
-
-/* Live miniature Hanzo Machines cluster & H100 rack preview matching /machines */
-function MachinesStageWin({ title }: { title: string }) {
-  const [idx, setIdx] = useState(0);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setIdx(2);
-      return;
-    }
-    const id = setInterval(() => setIdx((v) => (v + 1) % MACHINE_TIERS.length), 1950);
-    return () => clearInterval(id);
-  }, []);
-
-  const tier = MACHINE_TIERS[idx];
-
-  return (
-    <div className="x-nav-win x-nav-win-dk x-nav-win-mc">
-      <div className="x-nav-win-bar">
-        <span className="x-nav-win-dots"><i /><i /><i /></span>
-        <span className="x-nav-win-title">{title}</span>
-        <span className="x-ndk-chip">
-          <i className="x-ndk-dot" />
-          <span>{tier.label}</span>
-        </span>
-      </div>
-      <div className="x-nmc">
-        <div className="x-nmc-rack" aria-hidden="true">
-          {[0, 1, 2, 3].map((i) => {
-            const on = i < tier.cards;
-            return (
-              <div key={i} className={`x-nmc-blade${on ? ' on' : ''}`} style={{ transitionDelay: `${i * 55}ms` }}>
-                <b>H100</b>
-                <span className="x-nmc-fins">
-                  <i /><i /><i /><i /><i /><i />
-                </span>
-                <span className="x-nmc-led" />
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="x-nmc-main">
-          <div className="x-nmc-tabs">
-            {MACHINE_TIERS.map((t, i) => (
-              <span key={t.label} className={`x-nmc-tab${i === idx ? ' on' : ''}`}>
-                {t.label.split(' ')[0]}
-              </span>
-            ))}
-            <em className="x-nmc-verb">POST /machines</em>
-          </div>
-
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={tier.label}
-              className="x-nmc-quote"
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.22, ease: EASE }}
-            >
-              <div className="x-nmc-price">
-                <strong>{tier.rate}</strong>
-                <span>/ h</span>
-                <em>{tier.vram}</em>
-              </div>
-              <div className="x-nmc-meter">
-                <motion.i
-                  initial={{ scaleX: 0.2 }}
-                  animate={{ scaleX: tier.fill }}
-                  transition={{ duration: 0.42, ease: EASE }}
-                />
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          <div className="x-ndk-foot">
-            <span className="x-ndk-stat ok">✓ Ready · {tier.cards * 80} GB</span>
-            <span className="x-ndk-meta">{tier.link}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* The menu's stage: a high-resolution dark-cinema preview of the link under the pointer or focus — matching Hanzo's
-   flagship model cards (looping film + poster + kicker + tags), product window mockups (macOS dark-glass chrome +
-   live product UI), and thematic 3D category sculptures across all six menus. */
+   flagship model cards (looping film + poster + kicker + tags), live animated miniature product & developer workspaces,
+   and bespoke real-time 60fps WebGL2 dark-cinema 3D sculptures across all 108 menu options. */
 let INDEX: Map<string, [string, string]> | null = null;
 function Stage({ menu, head, l, onGo }: { menu: string; head?: string; l?: NavLink; onGo?: () => void }) {
   const router = useRouter();
@@ -282,7 +67,7 @@ function Stage({ menu, head, l, onGo }: { menu: string; head?: string; l?: NavLi
   // the index keeps the first ~120 characters of Hanzo's description: end on a whole word with an ellipsis
   const d = spec.summary || (raw && raw.length >= 115 ? raw.slice(0, raw.lastIndexOf(' ')).replace(/[,;:.]$/, '') + '…' : raw);
   const where = local ? 'hanzo.ai' + path : l.href.replace(/^https?:\/\//, '').replace(/\/$/, '');
-  const mediaKey = `${spec.mode}|${spec.poster}|${spec.video || ''}|${spec.screen || ''}|${spec.live || ''}|${spec.pos || ''}`;
+  const mediaKey = navAnimationKey(spec);
 
   const onMove = (e: ReactPointerEvent<HTMLElement>) => {
     if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -311,6 +96,7 @@ function Stage({ menu, head, l, onGo }: { menu: string; head?: string; l?: NavLi
       ref={stageRef}
       className={`x-nav-stage x-nav-stage-${spec.mode}`}
       data-mode={spec.mode}
+      data-anim-key={mediaKey}
       aria-hidden="true"
       onClick={visit}
       onPointerMove={onMove}
@@ -330,7 +116,11 @@ function Stage({ menu, head, l, onGo }: { menu: string; head?: string; l?: NavLi
             '--st-flip': String(spec.flip || 1),
           } as MotionStyle}
         >
-          <img className="x-nav-stage-bg" src={spec.poster} alt="" decoding="async" draggable={false} />
+          {spec.gl ? (
+            <StageCinemaGL scene={spec.gl} />
+          ) : (
+            <img className="x-nav-stage-bg" src={spec.poster} alt="" decoding="async" draggable={false} />
+          )}
           {spec.video && (
             <video
               className="x-nav-stage-vid"
@@ -346,10 +136,8 @@ function Stage({ menu, head, l, onGo }: { menu: string; head?: string; l?: NavLi
               <source src={spec.video.replace(/\.webm$/, '.mp4')} type="video/mp4" />
             </video>
           )}
-          {spec.mode === 'product' && spec.live === 'desktop' ? (
-            <DesktopStageWin title={spec.windowBar || where} />
-          ) : spec.mode === 'product' && spec.live === 'machines' ? (
-            <MachinesStageWin title={spec.windowBar || where} />
+          {spec.mode === 'product' && spec.live ? (
+            <StageLiveWin scene={spec.live} title={spec.windowBar || where} />
           ) : spec.mode === 'product' && spec.screen ? (
             <div className="x-nav-win">
               <div className="x-nav-win-bar">
@@ -374,7 +162,7 @@ function Stage({ menu, head, l, onGo }: { menu: string; head?: string; l?: NavLi
       </div>
 
       <AnimatePresence mode="popLayout" initial={false}>
-        <motion.div key={l.href} className="x-nav-stage-t" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3, ease: EASE }}>
+        <motion.div key={`${head || ''}|${l.label}|${l.href}`} className="x-nav-stage-t" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3, ease: EASE }}>
           <b>
             <span>{l.label}</span>
             <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
