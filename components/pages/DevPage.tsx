@@ -534,7 +534,7 @@ const WAYS = [
 const SIGNIN = 'dev login                 # pick an account: Hanzo is the default\ndev login --hanzo         # straight to your Hanzo account\ndev login --with-api-key  # or paste a Hanzo API key, hidden';
 
 /* Dev's latest release: app/dev/page.jsx reads it from GitHub at build; RELEASE is the last one seen (8 Nov) */
-const RELEASE = 'v0.7.10';
+const RELEASE = 'v0.7.20';
 
 function Setup({ release }: { release?: string }) {
   const [way, setWay] = useState(0);

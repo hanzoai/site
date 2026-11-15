@@ -331,7 +331,7 @@ function Everywhere({ os, setOs, mine }: OsProps) {
             <dl className="av-spec dk-spec">
               <dt>Systems</dt><dd>{OSES.map(([k, n, a]) => <span key={k} className="dk-spec-os"><b>{n}</b> <span className="x-mono">{a}</span></span>)}</dd>
               <dt>Installers</dt><dd>Native installers for macOS (Apple Silicon + Intel), Windows, and Linux.</dd>
-              <dt>Version</dt><dd><span className="x-mono">v1.1.52</span> · <A to="/download">Every build</A></dd>
+              <dt>Version</dt><dd><span className="x-mono">v1.1.55</span> · <A to="/download">Every build</A></dd>
               <dt>Models</dt><dd>Point one agent at a model running on your machine and another at one on Hanzo Cloud.</dd>
               <dt>Offline</dt><dd>With a local model pinned, an agent keeps running when the connection goes.</dd>
               <dt>Account</dt><dd>If the model is a local one, the whole thing runs without an account.</dd>

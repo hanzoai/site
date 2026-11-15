@@ -1,6 +1,6 @@
 'use client';
 // Signature: One button that knows your OS sits at the centre of a four-quadrant dial, and every other build fans out of it onto the orbit, grouped by product; point at one and a ray runs from your button to it while the centre reads its file and size
-// Beyond: Your kit: the page already guessed your system and browser; confirm them and your editor, and it lists exactly your files, one per product, each with its own size and link (no Desktop on Windows, as Hanzo ships it)
+// Beyond: Your kit: the page already guessed your system and browser; confirm them and your editor, and it lists exactly your files across Desktop, CLI, Dev, Bot, Team, IDE, browser, and editor
 // Persona: someone who already chose Hanzo and wants the right file for their machine, fast
 // Goal: get the build for this system in one click, or any other build in two
 // CTA: "Download for <your system>": the hero's one solid with data-thumb, repeated by the closing band
@@ -21,36 +21,42 @@ import './DownloadPage.css';
 
 const GH = 'https://github.com/hanzoai/';
 type Build = [name: string, size: string, path: string]; // path is under github.com/hanzoai/
-interface Product { k: string; name: string; v: string; to?: string; d: string; builds: Build[] }
+interface Product { k: string; name: string; v: string; to?: string; d: string; cmds?: string[]; all?: string; builds: Build[] }
 type Os = 'mac' | 'linux' | 'linuxarm' | 'win';
 /* a build the dial points at (the tour or the pointer), with where its chip sits */
 interface Spot { x: number; y: number; p: Product; b: Build; tour?: boolean }
 
 const PRODUCTS: Product[] = [
   {
-    k: 'desk', name: 'Desktop', v: 'v1.1.52', to: '/desktop',
+    k: 'desk', name: 'Desktop', v: 'v1.1.55', to: '/desktop',
     d: 'A native app with a global hotkey. Talk to Hanzo from any window, capture a region of the screen, and put the answer back where you were typing.',
+    all: GH + 'desktop/releases/latest',
     builds: [
-      ['macOS', '600 MB', 'desktop/releases/download/v1.1.52/Hanzo.Desktop_1.1.52_universal.dmg'],
-      ['Linux (AppImage)', '732 MB', 'desktop/releases/download/v1.1.52/Hanzo.Desktop_1.1.52_amd64.AppImage'],
-      ['Linux (deb)', '568 MB', 'desktop/releases/download/v1.1.52/Hanzo.Desktop_1.1.52_amd64.deb'],
-      ['Linux (arm64)', '701 MB', 'desktop/releases/download/v1.1.52/Hanzo.Desktop_1.1.52_aarch64.AppImage'],
+      ['macOS', '602 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_universal.dmg'],
+      ['Windows', '480 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_x64-setup.exe'],
+      ['Linux (AppImage)', '634 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_amd64.AppImage'],
+      ['Linux (deb)', '566 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_amd64.deb'],
+      ['Linux (arm64)', '632 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_arm64.AppImage'],
+      ['Windows (Portable)', '573 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_x64-portable.zip'],
     ],
   },
   {
-    k: 'cli', name: 'Hanzo CLI', v: 'v8.5.910', to: '/cli',
+    k: 'cli', name: 'Hanzo CLI', v: 'v8.5.927', to: '/cli',
     d: 'The coding agent, in your terminal. It reads the repo you are in, writes and runs code, and drives every product of the Hanzo cloud from one binary.',
+    cmds: ['curl -fsSL hanzo.sh | sh', 'irm hanzo.sh/install.ps1 | iex', 'npm i -g hanzo'],
+    all: GH + 'cli/releases/latest',
     builds: [
-      ['macOS (Apple Silicon)', '7 MB', 'cli/releases/download/v8.5.910/hanzo-darwin-arm64.tar.gz'],
-      ['macOS (Intel)', '7 MB', 'cli/releases/download/v8.5.910/hanzo-darwin-amd64.tar.gz'],
-      ['Windows', '8 MB', 'cli/releases/download/v8.5.910/hanzo-windows-amd64.tar.gz'],
-      ['Linux (x86_64)', '6 MB', 'cli/releases/download/v8.5.910/hanzo-linux-amd64.tar.gz'],
-      ['Linux (arm64)', '6 MB', 'cli/releases/download/v8.5.910/hanzo-linux-arm64.tar.gz'],
+      ['macOS (Apple Silicon)', '7.4 MB', 'cli/releases/latest/download/hanzo-darwin-arm64.tar.gz'],
+      ['macOS (Intel)', '7.7 MB', 'cli/releases/latest/download/hanzo-darwin-amd64.tar.gz'],
+      ['Windows', '7.1 MB', 'cli/releases/latest/download/hanzo-windows-amd64.tar.gz'],
+      ['Linux (x86_64)', '7.3 MB', 'cli/releases/latest/download/hanzo-linux-amd64.tar.gz'],
+      ['Linux (arm64)', '6.9 MB', 'cli/releases/latest/download/hanzo-linux-arm64.tar.gz'],
     ],
   },
   {
     k: 'ext', name: 'Browser extension', v: 'v1.9.31', to: '/extension',
     d: 'Ask Hanzo about the page you are on. It reads the tab for context, captures what you select, and runs agents from the toolbar.',
+    all: GH + 'extension/releases/latest',
     builds: [
       ['Chrome', '976 KB', 'extension/releases/download/v1.9.31/hanzo-ai-chrome-v1.9.31.zip'],
       ['Firefox', '956 KB', 'extension/releases/download/v1.9.31/hanzo-ai-firefox-v1.9.31.zip'],
@@ -61,18 +67,79 @@ const PRODUCTS: Product[] = [
   {
     k: 'ed', name: 'Editors', v: 'v1.9.31',
     d: 'Completions, chat and agentic edits where you already write code. One extension, every editor that takes one.',
+    all: GH + 'extension/releases/latest',
     builds: [
-      ['VS Code', '1 MB', 'extension/releases/download/v1.9.31/hanzo-ai-vscode-v1.9.31.vsix'],
-      ['Cursor', '1 MB', 'extension/releases/download/v1.9.31/hanzo-ai-cursor-v1.9.31.vsix'],
-      ['Windsurf', '1 MB', 'extension/releases/download/v1.9.31/hanzo-ai-windsurf-v1.9.31.vsix'],
-      ['JetBrains', '3 MB', 'extension/releases/download/v1.9.31/hanzo-ai-jetbrains-v1.9.31.zip'],
+      ['VS Code', '1.5 MB', 'extension/releases/download/v1.9.31/hanzo-ai-vscode-v1.9.31.vsix'],
+      ['Cursor', '1.5 MB', 'extension/releases/download/v1.9.31/hanzo-ai-cursor-v1.9.31.vsix'],
+      ['Windsurf', '1.5 MB', 'extension/releases/download/v1.9.31/hanzo-ai-windsurf-v1.9.31.vsix'],
+      ['Antigravity', '1.5 MB', 'extension/releases/download/v1.9.31/hanzo-ai-antigravity-v1.9.31.vsix'],
+      ['JetBrains', '3.1 MB', 'extension/releases/download/v1.9.31/hanzo-ai-jetbrains-v1.9.31.zip'],
+    ],
+  },
+  {
+    k: 'ide', name: 'Hanzo IDE', v: 'v0.1.0', to: '/ide',
+    d: 'The native AI-first workspace built around repositories, agent diffs, inline reviews, and integrated terminal tools.',
+    all: GH + 'ide/releases/latest',
+    builds: [
+      ['Windows', '35 MB', 'ide/releases/download/v0.1.0/Hanzo_IDE_0.1.0_x64-setup.exe'],
+    ],
+  },
+  {
+    k: 'dev', name: 'Hanzo Dev', v: 'v0.7.20', to: '/dev',
+    d: 'Standalone autonomous software engineering agent. Multi-file edits, sandboxes, and automated verification in one binary.',
+    cmds: ['curl -fsSL hanzo.sh | sh', 'npm i -g @hanzo/dev'],
+    all: GH + 'dev/releases/latest',
+    builds: [
+      ['macOS (Apple Silicon)', '106 MB', 'dev/releases/download/v0.7.20/dev-darwin-arm64.tar.gz'],
+      ['macOS (Intel)', '112 MB', 'dev/releases/download/v0.7.20/dev-darwin-amd64.tar.gz'],
+      ['Windows', '122 MB', 'dev/releases/download/v0.7.20/dev-windows-amd64.tar.gz'],
+      ['Linux (x86_64)', '118 MB', 'dev/releases/download/v0.7.20/dev-linux-amd64.tar.gz'],
+      ['Linux (arm64)', '112 MB', 'dev/releases/download/v0.7.20/dev-linux-arm64.tar.gz'],
+    ],
+  },
+  {
+    k: 'bot', name: 'Hanzo Bot', v: 'v2026.6.7', to: '/bot',
+    d: 'Multi-channel AI gateway and desktop control surface for Slack, Discord, Telegram, WhatsApp, and local workflows.',
+    cmds: ['npm i -g @hanzo/bot'],
+    all: GH + 'bot/releases/latest',
+    builds: [
+      ['Windows', '3.5 MB', 'bot/releases/download/v2026.6.7/Hanzo_Bot_2026.6.7_x64-setup.exe'],
+    ],
+  },
+  {
+    k: 'team', name: 'Hanzo Team', v: 'v1.0.0', to: '/team',
+    d: 'Shared native workspace for coordinating multi-agent tasks, shared repositories, approvals, and live status across your organization.',
+    all: GH + 'team/releases/latest',
+    builds: [
+      ['Windows', '17 MB', 'team/releases/download/v1.0.0/Hanzo_Team_1.0.0_x64-setup.exe'],
+    ],
+  },
+  {
+    k: 'forge', name: 'Hanzo Forge', v: 'v1.0.0', to: 'https://hanzo.codes',
+    d: 'Self-hostable Git forge, code review, CI pipelines, and package registry powering hanzo.codes.',
+    all: GH + 'forge/releases/latest',
+    builds: [
+      ['Windows (Archive)', '70 MB', 'forge/releases/download/v1.0.0/forge-windows-amd64.tar.gz'],
+      ['Windows (Binary)', '160 MB', 'forge/releases/download/v1.0.0/hanzo-forge.exe'],
+    ],
+  },
+  {
+    k: 'node', name: 'Hanzo Node', v: 'v0.2.5', to: '/node',
+    d: 'Decentralized AI compute and network daemon connecting local GPUs, inference, and agent identity to the Hanzo network.',
+    all: GH + 'node/releases/latest',
+    builds: [
+      ['macOS (Apple Silicon)', '2.7 MB', 'node/releases/download/v0.2.5/hanzod-darwin-arm64.tar.gz'],
+      ['macOS (Intel)', '2.8 MB', 'node/releases/download/v0.2.5/hanzod-darwin-amd64.tar.gz'],
+      ['Windows', '2.7 MB', 'node/releases/download/v0.2.5/hanzod-windows-amd64.tar.gz'],
+      ['Linux (x86_64)', '2.8 MB', 'node/releases/download/v0.2.5/hanzod-linux-amd64.tar.gz'],
+      ['Linux (arm64)', '2.8 MB', 'node/releases/download/v0.2.5/hanzod-linux-arm64.tar.gz'],
     ],
   },
 ];
 const FILE = (p: string) => p.split('/').pop();
 const GLIDE: Transition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
 
-/* Which build is yours. Desktop ships for macOS and Linux; on Windows the one native build is the CLI. */
+/* Which build is yours. Desktop ships natively for macOS, Windows, and Linux. */
 function useSystem() {
   const [s, setS] = useState<{ os: Os; br: number }>({ os: 'mac', br: 0 }); // the page ships with macOS, as hanzo.ai does
   useEffect(() => {
@@ -88,8 +155,13 @@ function useSystem() {
   return s;
 }
 // [label, product, build] of the one button; and which rows below are yours
-const MAIN: Record<Os, [string, number, number]> = { mac: ['macOS', 0, 0], linux: ['Linux', 0, 1], linuxarm: ['Linux', 0, 3], win: ['Windows', 1, 2] };
-const MINE: Record<Os, Partial<Record<string, number[]>>> = { mac: { desk: [0], cli: [0, 1] }, linux: { desk: [1, 2], cli: [3] }, linuxarm: { desk: [3], cli: [4] }, win: { cli: [2] } };
+const MAIN: Record<Os, [string, number, number]> = { mac: ['macOS', 0, 0], linux: ['Linux', 0, 2], linuxarm: ['Linux', 0, 4], win: ['Windows', 0, 1] };
+const MINE: Record<Os, Partial<Record<string, number[]>>> = {
+  mac: { desk: [0], cli: [0, 1], dev: [0, 1], node: [0, 1] },
+  linux: { desk: [2, 3], cli: [3], dev: [3], node: [3] },
+  linuxarm: { desk: [4], cli: [4], dev: [4], node: [4] },
+  win: { desk: [1, 5], cli: [2], ide: [0], dev: [2], bot: [0], team: [0], forge: [0, 1], node: [2] },
+};
 
 const Glyph = ({ k }: { k: string }) => (
   <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
@@ -104,6 +176,7 @@ const Down = ({ s = 16 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-
 /* ---------- the dial: the one button, and every other build fanned out around it by product ---------- */
 // the arc each product's builds sit on (degrees, clockwise from 3 o'clock): Desktop top-left, CLI top-right, extension
 // bottom-right, editors bottom-left; spaced so no two chips touch in the 1152 px container whichever build is the main one
+const DIAL_PRODUCTS = PRODUCTS.slice(0, 4);
 const ARC = [[182, 249], [271, 358], [17, 74], [103, 163]];
 const RX = 44, RY = 41;
 const r2 = (n: number) => Math.round(n * 100) / 100; // rounded: server and browser print the same style
@@ -182,8 +255,8 @@ function Dial({ os }: { os: Os }) {
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => { const t = setTimeout(() => setOut(true), 160); return () => clearTimeout(t); }, []);
   let n = 0;
-  const groups = PRODUCTS.map((p, pi) => {
-    const list = p.builds.map((b, bi) => ({ b, bi })).filter((x) => !(pi === mp && x.bi === mb));
+  const groups = DIAL_PRODUCTS.map((p, pi) => {
+    const list = p.builds.map((b, bi) => ({ b, bi })).filter((x) => !(pi === mp && x.bi === mb) && !(pi === 0 && x.bi === 5));
     const [a0, a1] = ARC[pi];
     return list.map((x, j) => {
       const a = ((a0 + (list.length === 1 ? (a1 - a0) / 2 : (j * (a1 - a0)) / (list.length - 1))) * Math.PI) / 180;
@@ -193,7 +266,7 @@ function Dial({ os }: { os: Os }) {
   const main = PRODUCTS[mp].builds[mb];
   const shown = hot || { p: PRODUCTS[mp], b: main };
   const [flat, setFlat] = useState<Spot[]>([]);
-  useEffect(() => { setFlat(groups.flatMap((g, pi) => g.map(({ b, x, y }) => ({ x, y, b, p: PRODUCTS[pi] })))); }, [os]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { setFlat(groups.flatMap((g, pi) => g.map(({ b, x, y }) => ({ x, y, b, p: DIAL_PRODUCTS[pi] })))); }, [os]); // eslint-disable-line react-hooks/exhaustive-deps
   const rest = useTour(box, out, flat, setHot);
   return (
     <div ref={box} className={'dl-dial' + (out ? ' out' : '')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') rest(true); }} onPointerLeave={() => rest(false)}>
@@ -215,7 +288,7 @@ function Dial({ os }: { os: Os }) {
           <A to="/chat" data-cta="download-browser">Or open Hanzo in your browser</A>
         </div>
       </div>
-      {PRODUCTS.map((p, pi) => (
+      {DIAL_PRODUCTS.map((p, pi) => (
         <div key={p.k} className={'dl-grp q' + pi + ' k-' + p.k}>
           <Peek i={pi} />
           <p className="dl-grp-k"><span className="dl-grp-i"><Glyph k={p.k} /></span><b>{p.name}</b> <span className="x-mono">{p.v}</span></p>
@@ -240,7 +313,7 @@ function Hero({ os }: { os: Os }) {
       <div className="av-wrap">
         <div className="av-grid dl-top">
           <Lines as="h1" id="dl-h1" className="av-display dl-top-l" lines={['Download Hanzo']} now delay={0.05} />
-          <p className="av-lede dl-top-r">The desktop app, the CLI, and the extension for your browser and editor. One account signs in to all of them.</p>
+          <p className="av-lede dl-top-r">Desktop, IDE, Bot, Team, CLI, Dev, and extensions for every OS, browser, and editor. One account signs in to all of them.</p>
         </div>
         <Dial os={os} />
       </div>
@@ -248,7 +321,7 @@ function Hero({ os }: { os: Os }) {
   );
 }
 
-/* ---------- every build: four cards; three of them open into their own page ---------- */
+/* ---------- every build ---------- */
 function Art({ k }: { k: string }) {
   if (k === 'desk') return (
     <div className="dl-m dl-m-win" aria-hidden="true">
@@ -263,6 +336,7 @@ function Art({ k }: { k: string }) {
     <div className="dl-m dl-m-term x-mono" aria-hidden="true">
       <span className="dl-mt-bar"><i /><i /><i /></span>
       <span className="dl-mt-l"><em>$</em> curl -fsSL hanzo.sh | sh</span>
+      <span className="dl-mt-l"><em>&gt;</em> irm hanzo.sh/install.ps1 | iex</span>
       <span className="dl-mt-l"><em>$</em> npm i -g hanzo</span>
       <span className="dl-mt-l"><em>$</em> hanzo<i className="dl-mt-c" /></span>
     </div>
@@ -277,9 +351,57 @@ function Art({ k }: { k: string }) {
       </span>
     </div>
   );
+  if (k === 'ide') return (
+    <div className="dl-m dl-m-win" aria-hidden="true">
+      <span className="dl-mw-bar"><i /><i /><i /><span className="dl-mw-t"><b>IDE</b> — Hanzo</span></span>
+      <span className="dl-mw-body">
+        <span className="dl-mw-side x-mono"><span>src</span><span className="on">main.ts</span><span>tests</span></span>
+        <span className="dl-mw-chat"><span className="you">Review diff across 4 files.</span><span className="ai"><Mark size={10} />Indexed repository.</span><span className="ai"><Mark size={10} />Build ready.</span></span>
+      </span>
+    </div>
+  );
+  if (k === 'dev') return (
+    <div className="dl-m dl-m-term x-mono" aria-hidden="true">
+      <span className="dl-mt-bar"><i /><i /><i /></span>
+      <span className="dl-mt-l"><em>$</em> curl -fsSL hanzo.sh | sh</span>
+      <span className="dl-mt-l"><em>$</em> npm i -g @hanzo/dev</span>
+      <span className="dl-mt-l"><em>$</em> dev<i className="dl-mt-c" /></span>
+    </div>
+  );
+  if (k === 'bot') return (
+    <div className="dl-m dl-m-term x-mono" aria-hidden="true">
+      <span className="dl-mt-bar"><i /><i /><i /></span>
+      <span className="dl-mt-l"><em>$</em> npm i -g @hanzo/bot</span>
+      <span className="dl-mt-l"><em>$</em> hanzo bot start</span>
+      <span className="dl-mt-l"><em>$</em> gateway :18789 ready<i className="dl-mt-c" /></span>
+    </div>
+  );
+  if (k === 'team') return (
+    <div className="dl-m dl-m-win" aria-hidden="true">
+      <span className="dl-mw-bar"><i /><i /><i /><span className="dl-mw-t"><b>Team</b> — Hanzo</span></span>
+      <span className="dl-mw-body">
+        <span className="dl-mw-side x-mono"><span>triage</span><span className="on">release</span><span>docs</span></span>
+        <span className="dl-mw-chat"><span className="you">Ship Desktop v1.1.55 across OSes.</span><span className="ai"><Mark size={10} />3 agents assigned.</span><span className="ai"><Mark size={10} />All checks green.</span></span>
+      </span>
+    </div>
+  );
+  if (k === 'forge') return (
+    <div className="dl-m dl-m-ed" aria-hidden="true">
+      <span className="dl-me-tabs x-mono"><span className="on">hanzo.codes</span><span>Pulls</span><span>Actions</span></span>
+      <span className="dl-me-list"><span><Mark size={10} />Git hosting &amp; code review</span><span><Mark size={10} />CI runners</span><span><Mark size={10} />Release registry</span></span>
+    </div>
+  );
+  if (k === 'node') return (
+    <div className="dl-m dl-m-term x-mono" aria-hidden="true">
+      <span className="dl-mt-bar"><i /><i /><i /></span>
+      <span className="dl-mt-l"><em>$</em> hanzod start</span>
+      <span className="dl-mt-l"><em>$</em> hanzod status</span>
+      <span className="dl-mt-l"><em>$</em> network synced<i className="dl-mt-c" /></span>
+    </div>
+  );
   return (
     <div className="dl-m dl-m-ed" aria-hidden="true">
-      <span className="dl-me-tabs x-mono"><span className="on">VS Code</span><span>Cursor</span><span>JetBrains</span></span>
+      <span className="dl-me-tabs x-mono"><span className="on">VS Code</span><span>Cursor</span><span>Antigravity</span></span>
       <span className="dl-me-list"><span><Mark size={10} />Completions</span><span><Mark size={10} />chat</span><span><Mark size={10} />agentic edits</span></span>
     </div>
   );
@@ -319,9 +441,9 @@ function Card({ p, os, br }: { p: Product; os: Os; br: number }) {
     <article ref={arrive} className={'dl-card k-' + p.k}>
       {p.to ? <A to={p.to} className="dl-card-a" data-cta={'download-open-' + p.k}>{head}</A> : <div className="dl-card-a">{head}</div>}
       <p className="dl-card-d">{p.d}</p>
-      {p.k === 'cli' && (
+      {p.cmds && (
         <div className="dl-cmds">
-          {['curl -fsSL hanzo.sh | sh', 'npm i -g hanzo'].map((c) => (
+          {p.cmds.map((c) => (
             <div key={c} className="dl-cmd"><code className="x-mono">{c}</code><Copy text={c} /></div>
           ))}
         </div>
@@ -338,7 +460,7 @@ function Card({ p, os, br }: { p: Product; os: Os; br: number }) {
           </li>
         ))}
       </ul>
-      {p.k === 'cli' && <p className="dl-all"><A to="https://github.com/hanzoai/cli/releases/latest" data-cta="download-cli-all">All builds and checksums →</A></p>}
+      {p.all && <p className="dl-all"><A to={p.all} data-cta={'download-' + p.k + '-all'}>All builds and checksums →</A></p>}
     </article>
   );
 }
@@ -357,8 +479,8 @@ function Builds({ os, br }: { os: Os; br: number }) {
 }
 
 /* ---------- Your kit (Beyond), the dark room: say what you use, get exactly your files ---------- */
-// [label, Desktop build index (-1: none on Windows), CLI build index]; Linux x86_64 gets the AppImage, the deb stays in Every build
-const SYSTEMS: [string, number, number][] = [['macOS · Apple Silicon', 0, 0], ['macOS · Intel', 0, 1], ['Windows', -1, 2], ['Linux · x86_64', 1, 3], ['Linux · arm64', 3, 4]];
+// [label, Desktop build index, CLI/Dev build index]; Linux x86_64 gets the AppImage, the deb stays in Every build
+const SYSTEMS: [string, number, number][] = [['macOS · Apple Silicon', 0, 0], ['macOS · Intel', 0, 1], ['Windows', 1, 2], ['Linux · x86_64', 2, 3], ['Linux · arm64', 4, 4]];
 const SYS_OF: Record<Os, number> = { mac: 0, win: 2, linux: 3, linuxarm: 4 };
 
 function Pick({ label, list, at, set, id }: { label: string; list: string[]; at: number; set: (i: number) => void; id: string }) {
@@ -383,10 +505,20 @@ function Kit({ os, br }: { os: Os; br: number }) {
   const [ed, setEd] = useState(0);
   useEffect(() => { setSys(SYS_OF[os] ?? 0); }, [os]);
   useEffect(() => { setB(br); }, [br]);
-  const desk = SYSTEMS[sys][1];
-  const rows: [Product, Build][] = [];
-  if (desk >= 0) rows.push([PRODUCTS[0], PRODUCTS[0].builds[desk]]);
-  rows.push([PRODUCTS[1], PRODUCTS[1].builds[SYSTEMS[sys][2]]], [PRODUCTS[2], PRODUCTS[2].builds[b]], [PRODUCTS[3], PRODUCTS[3].builds[ed]]);
+  const [, desk, cliIdx] = SYSTEMS[sys];
+  const rows: [Product, Build][] = [
+    [PRODUCTS[0], PRODUCTS[0].builds[desk]],
+    [PRODUCTS[1], PRODUCTS[1].builds[cliIdx]],
+    [PRODUCTS[5], PRODUCTS[5].builds[cliIdx]],
+  ];
+  if (sys === 2) {
+    rows.push(
+      [PRODUCTS[4], PRODUCTS[4].builds[0]],
+      [PRODUCTS[6], PRODUCTS[6].builds[0]],
+      [PRODUCTS[7], PRODUCTS[7].builds[0]],
+    );
+  }
+  rows.push([PRODUCTS[2], PRODUCTS[2].builds[b]], [PRODUCTS[3], PRODUCTS[3].builds[ed]]);
   return (
     <section className="av-sec av-dark dl-kit" data-room="dark" aria-labelledby="dl-kit-h">
       <div className="av-wrap av-grid">
@@ -398,7 +530,6 @@ function Kit({ os, br }: { os: Os; br: number }) {
         </div>
         <div className="dl-kit-r">
           <ol className="dl-kit-list" aria-live="polite">
-            {sys === 2 && <li className="dl-kit-note">Desktop ships for macOS and Linux; on Windows the one native build is the CLI.</li>}
             {rows.map(([p, [o, size, path]], i) => (
               <li key={p.k}>
                 <a href={GH + path} className="dl-kit-a">

@@ -54,13 +54,13 @@
 .dl-main-l a { display: inline-flex; align-items: center; min-height: 44px; color: light-dark(#525252, #a3a3a3); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: transform .09s var(--dl-out); }
 .dl-main-l a:active { transform: translateY(1px); }
 
-/* every build: a 7/5 then 5/7 bento of flat tiles; three open into their page */
+/* every build: alternating 7/5 and 5/7 bento rows of flat tiles */
 .dl-b-top { margin-bottom: clamp(27px, 3vw, 44px); }
 .dl-b-h { grid-column: 1 / span 8; }
 .dl-bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; }
 .dl-card { container-type: inline-size; display: flex; flex-direction: column; padding: 12px 12px 27px; border-radius: 24px; background: light-dark(#f2f2f2, #171717); }
-.dl-card.k-desk, .dl-card.k-ed { grid-column: span 7; }
-.dl-card.k-cli, .dl-card.k-ext { grid-column: span 5; }
+.dl-card.k-desk, .dl-card.k-ed, .dl-card.k-ide, .dl-card.k-team, .dl-card.k-forge { grid-column: span 7; }
+.dl-card.k-cli, .dl-card.k-ext, .dl-card.k-dev, .dl-card.k-bot, .dl-card.k-node { grid-column: span 5; }
 .dl-card-a { flex: 1; display: flex; flex-direction: column; border-radius: 12px; color: var(--ink); text-decoration: none; transition: transform .09s var(--dl-out); }
 a.dl-card-a:active { transform: scale(.98); }
 a.dl-card-a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
@@ -95,9 +95,9 @@ a.dl-card-a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; 
 /* the four product pictures, each drawn from Hanzo's own lines */
 .dl-m { position: relative; height: min(76%, 300px); aspect-ratio: 16 / 10; max-width: 88%; border-radius: 12px; transition: transform .3s var(--dl-in); }
 /* the two wide cards: the picture grows with its card, so it is not a small window in a big empty tile */
-.dl-card.k-desk .dl-m, .dl-card.k-ed .dl-m { height: min(80%, 400px); max-width: 90%; }
-.dl-card.k-desk .dl-mw-chat, .dl-card.k-desk .dl-mw-side, .dl-card.k-ed .dl-me-list span { font-size: 14px; }
-.dl-card.k-desk .dl-mw-bar { height: 36px; }
+.dl-card.k-desk .dl-m, .dl-card.k-ed .dl-m, .dl-card.k-ide .dl-m, .dl-card.k-team .dl-m, .dl-card.k-forge .dl-m { height: min(80%, 400px); max-width: 90%; }
+.dl-card.k-desk .dl-mw-chat, .dl-card.k-desk .dl-mw-side, .dl-card.k-ed .dl-me-list span, .dl-card.k-ide .dl-mw-chat, .dl-card.k-ide .dl-mw-side, .dl-card.k-team .dl-mw-chat, .dl-card.k-team .dl-mw-side, .dl-card.k-forge .dl-me-list span { font-size: 14px; }
+.dl-card.k-desk .dl-mw-bar, .dl-card.k-ide .dl-mw-bar, .dl-card.k-team .dl-mw-bar { height: 36px; }
 .dl-m-win, .dl-m-ed { display: flex; flex-direction: column; overflow: hidden; background: var(--x-raised); box-shadow: 0 0 0 1px var(--x-e10); }
 .dl-mw-bar { flex: none; display: flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; background: light-dark(#f5f5f5, #171717); border-bottom: 1px solid var(--line); }
 .dl-mw-bar i { width: 8px; height: 8px; border-radius: 50%; background: light-dark(#d4d4d4, #404040); }
@@ -227,7 +227,7 @@ a.dl-card-a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; 
   .dl-grp ul { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); }
   .dl-chip { scroll-snap-align: start; }
   .dl-bento { grid-template-columns: minmax(0, 1fr); }
-  .dl-card.k-desk, .dl-card.k-ed, .dl-card.k-cli, .dl-card.k-ext { grid-column: 1 / -1; }
+  .dl-card.k-desk, .dl-card.k-ed, .dl-card.k-cli, .dl-card.k-ext, .dl-card.k-ide, .dl-card.k-dev, .dl-card.k-bot, .dl-card.k-team, .dl-card.k-forge, .dl-card.k-node { grid-column: 1 / -1; }
   .dl-card { padding: 8px 8px 22px; border-radius: 20px; }
   .dl-vis { flex: none; min-height: 0; height: 220px; }
   .dl-m { height: 74%; max-width: 92%; }
