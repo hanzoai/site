@@ -29,6 +29,9 @@ const H = 1200;
 interface CategoryScene {
   slug: string;
   seconds: number;
+  outDir?: string;
+  width?: number;
+  height?: number;
   nimPrompt: string;
   shader: string;
 }
@@ -655,12 +658,627 @@ float scene(vec2 f) {
 }
 `,
   },
+  {
+    slug: 'engineering',
+    seconds: 6,
+    nimPrompt:
+      'Precision isometric smoked glass and brushed titanium structural Warren space-frame truss with an articulated laser caliper gantry scanning across tolerance joints on pure black background, dark cinema loop',
+    shader: `
+// Engineering: Precision isometric 3D cantilevered Warren space-frame truss & articulated
+// vernier laser gantry scanning across structural joints, gusset plates, and blueprint datum lines.
+const float C30 = 0.8660254;
+const float S30 = 0.5;
+vec2 isoE(vec3 q) { return vec2((q.x - q.z) * C30, (q.x + q.z) * S30 - q.y); }
+float segE(vec2 p, vec2 a, vec2 b, out float h) {
+  vec2 pa = p - a, ba = b - a;
+  h = clamp(dot(pa, ba) / max(dot(ba, ba), 1e-6), 0.0, 1.0);
+  return length(pa - ba * h);
+}
+bool quadE(vec2 p, vec2 a, vec2 b, vec2 c, vec2 d) {
+  vec2 e0 = b - a, e1 = c - b, e2 = d - c, e3 = a - d;
+  float s0 = e0.x * (p.y - a.y) - e0.y * (p.x - a.x);
+  float s1 = e1.x * (p.y - b.y) - e1.y * (p.x - b.x);
+  float s2 = e2.x * (p.y - c.y) - e2.y * (p.x - c.x);
+  float s3 = e3.x * (p.y - d.y) - e3.y * (p.x - d.x);
+  return (s0 >= 0.0 && s1 >= 0.0 && s2 >= 0.0 && s3 >= 0.0) || (s0 <= 0.0 && s1 <= 0.0 && s2 <= 0.0 && s3 <= 0.0);
+}
+void beamE(vec2 p, vec3 a3, vec3 b3, float w, float bright, float scanX, float px, inout float L) {
+  float h;
+  vec2 a = isoE(a3), b = isoE(b3);
+  float d = segE(p, a, b, h) / px;
+  float xAt = mix(a3.x, b3.x, h);
+  float scan = exp(-pow((xAt - scanX) * 8.5, 2.0));
+  L += line(d, w) * (bright + 0.85 * scan) + exp(-d * 0.17) * (0.04 * bright + 0.16 * scan);
+}
+float scene(vec2 f) {
+  float px = 1.0 / R.y;
+  vec2 p = (f - vec2(0.64 * R.x, 0.48 * R.y)) / R.y;
+  float L = 0.0;
+
+  // Articulated gantry position sweeping smoothly along the span
+  float scanX = 0.21 * sin(TAU * P);
+
+  // Subtle CAD datum grid & dimension witness lines below the truss
+  float yDatum = -0.19;
+  for (int k = -4; k <= 4; k++) {
+    float fk = float(k) * 0.085;
+    float h;
+    float dX = segE(p, isoE(vec3(fk, yDatum, -0.22)), isoE(vec3(fk, yDatum, 0.22)), h) / px;
+    float scan = exp(-pow((fk - scanX) * 7.5, 2.0));
+    L += line(dX, 0.45) * (0.08 + 0.22 * scan);
+  }
+  for (int m = -2; m <= 2; m++) {
+    float fm = float(m) * 0.09;
+    float h;
+    float dZ = segE(p, isoE(vec3(-0.34, yDatum, fm)), isoE(vec3(0.34, yDatum, fm)), h) / px;
+    L += line(dZ, 0.45) * 0.075;
+  }
+
+  // Precision dimension callout rail in foreground (+z)
+  {
+    float h;
+    vec2 da = isoE(vec3(-0.30, yDatum, 0.21)), db = isoE(vec3(0.30, yDatum, 0.21));
+    float dDim = segE(p, da, db, h) / px;
+    L += line(dDim, 0.52) * 0.24;
+    for (int t = 0; t <= 6; t++) {
+      float xt = -0.30 + float(t) * 0.10;
+      float dt = segE(p, isoE(vec3(xt, yDatum, 0.19)), isoE(vec3(xt, yDatum, 0.23)), h) / px;
+      L += line(dt, 0.55) * 0.34;
+    }
+  }
+
+  // 3D Cantilevered Warren Space-Frame Truss (6 bays along X, depth Z in [-0.085, +0.085], height Y in [-0.055, +0.075])
+  float zB = -0.082, zF = 0.082;
+  float yLo = -0.052, yHi = 0.074;
+
+  // Smoked-glass structural deck & web panes inside each bay
+  for (int b = 0; b < 6; b++) {
+    float x0 = -0.30 + float(b) * 0.10;
+    float x1 = x0 + 0.10;
+    float bayLift = 0.004 * sin(TAU * P + float(b) * 0.7);
+    vec2 t0 = isoE(vec3(x0, yHi + bayLift, zB));
+    vec2 t1 = isoE(vec3(x1, yHi + bayLift, zB));
+    vec2 t2 = isoE(vec3(x1, yHi + bayLift, zF));
+    vec2 t3 = isoE(vec3(x0, yHi + bayLift, zF));
+    if (quadE(p, t0, t1, t2, t3)) {
+      L *= 0.62;
+      float xm = 0.5 * (x0 + x1);
+      float sc = exp(-pow((xm - scanX) * 6.5, 2.0));
+      L += 0.032 + 0.065 * sc;
+    }
+    vec2 f0 = isoE(vec3(x0, yHi + bayLift, zF));
+    vec2 f1 = isoE(vec3(x1, yHi + bayLift, zF));
+    vec2 f2 = isoE(vec3(x1, yLo + bayLift, zF));
+    vec2 f3 = isoE(vec3(x0, yLo + bayLift, zF));
+    if (quadE(p, f0, f1, f2, f3)) {
+      L *= 0.68;
+      L += 0.022;
+    }
+  }
+
+  // Back truss plane (z = zB) chords & Warren diagonals
+  beamE(p, vec3(-0.32, yHi, zB), vec3(0.32, yHi, zB), 0.62, 0.36, scanX, px, L);
+  beamE(p, vec3(-0.32, yLo, zB), vec3(0.32, yLo, zB), 0.55, 0.26, scanX, px, L);
+  for (int i = 0; i < 6; i++) {
+    float x0 = -0.30 + float(i) * 0.10;
+    float x1 = x0 + 0.10;
+    bool up = mod(float(i), 2.0) < 0.5;
+    vec3 pA = vec3(x0, up ? yLo : yHi, zB);
+    vec3 pB = vec3(x1, up ? yHi : yLo, zB);
+    beamE(p, pA, pB, 0.52, 0.28, scanX, px, L);
+    // Cross-depth lateral struts
+    beamE(p, vec3(x0, yHi, zB), vec3(x0, yHi, zF), 0.55, 0.34, scanX, px, L);
+    beamE(p, vec3(x0, yLo, zB), vec3(x0, yLo, zF), 0.48, 0.22, scanX, px, L);
+    // Internal K-brace diagonal across depth
+    beamE(p, vec3(x0, yLo, zB), vec3(x1, yHi, zF), 0.44, 0.18, scanX, px, L);
+  }
+  beamE(p, vec3(0.30, yHi, zB), vec3(0.30, yHi, zF), 0.55, 0.34, scanX, px, L);
+  beamE(p, vec3(0.30, yLo, zB), vec3(0.30, yLo, zF), 0.48, 0.22, scanX, px, L);
+
+  // Front truss plane (z = zF) razor-lit chords, verticals & Warren diagonals
+  beamE(p, vec3(-0.32, yHi, zF), vec3(0.32, yHi, zF), 0.78, 0.68, scanX, px, L);
+  beamE(p, vec3(-0.32, yLo, zF), vec3(0.32, yLo, zF), 0.68, 0.48, scanX, px, L);
+  for (int i = 0; i < 6; i++) {
+    float x0 = -0.30 + float(i) * 0.10;
+    float x1 = x0 + 0.10;
+    bool up = mod(float(i), 2.0) < 0.5;
+    beamE(p, vec3(x0, up ? yLo : yHi, zF), vec3(x1, up ? yHi : yLo, zF), 0.68, 0.54, scanX, px, L);
+    beamE(p, vec3(x0, yLo, zF), vec3(x0, yHi, zF), 0.56, 0.38, scanX, px, L);
+  }
+  beamE(p, vec3(0.30, yLo, zF), vec3(0.30, yHi, zF), 0.56, 0.38, scanX, px, L);
+
+  // Pin-joint precision nodes on front & top chords
+  for (int n = 0; n <= 6; n++) {
+    float xn = -0.30 + float(n) * 0.10;
+    float sc = exp(-pow((xn - scanX) * 8.0, 2.0));
+    vec2 jHi = isoE(vec3(xn, yHi, zF));
+    vec2 jLo = isoE(vec3(xn, yLo, zF));
+    float dHi = length(p - jHi) / px;
+    float dLo = length(p - jLo) / px;
+    L += exp(-dHi * dHi * 0.055) * (0.42 + 0.95 * sc);
+    L += exp(-dLo * dLo * 0.065) * (0.28 + 0.75 * sc);
+  }
+
+  // Articulated Smoked-Glass Vernier Caliper Gantry Portal at x = scanX
+  float gZ0 = -0.135, gZ1 = 0.135;
+  float gY0 = -0.145, gY1 = 0.145;
+  vec2 g0 = isoE(vec3(scanX, gY1, gZ0));
+  vec2 g1 = isoE(vec3(scanX, gY1, gZ1));
+  vec2 g2 = isoE(vec3(scanX, gY0, gZ1));
+  vec2 g3 = isoE(vec3(scanX, gY0, gZ0));
+  if (quadE(p, g0, g1, g2, g3)) {
+    L += 0.075;
+  }
+  float hG;
+  float dG0 = segE(p, g0, g1, hG) / px;
+  float dG1 = segE(p, g1, g2, hG) / px;
+  float dG2 = segE(p, g2, g3, hG) / px;
+  float dG3 = segE(p, g3, g0, hG) / px;
+  float dGMin = min(min(dG0, dG1), min(dG2, dG3));
+  L += line(dGMin, 0.85) * 1.05 + exp(-dGMin * 0.14) * 0.22;
+
+  // Vertical laser plumb line dropping from gantry to blueprint datum
+  float dPlumb = segE(p, isoE(vec3(scanX, gY0, gZ1)), isoE(vec3(scanX, yDatum, gZ1)), hG) / px;
+  L += line(dPlumb, 0.55) * 0.55 + exp(-dPlumb * 0.18) * 0.10;
+  float sparkD = length(p - isoE(vec3(scanX, yDatum, gZ1))) / px;
+  L += exp(-sparkD * sparkD * 0.05) * 0.75;
+
+  L *= mix(0.06, 1.0, smoothstep(0.14, 0.46, f.x / R.x));
+  L *= mix(0.16, 1.0, smoothstep(0.04, 0.34, 1.0 - f.y / R.y));
+  return pow(tone(L * 1.22), 0.92);
+}
+`,
+  },
+  {
+    slug: 'open-source',
+    seconds: 6,
+    nimPrompt:
+      'Translucent open smoked glass octahedron crystal with curved 3D silver optical git branches forking outward to floating diamond repository nodes and merging back on pure black background, dark cinema loop',
+    shader: `
+// Open Source: A transparent open-core smoked-glass octahedron with 8 graceful 3D
+// curved fork/merge conduits linking orbiting diamond repository nodes in seamless symmetry.
+vec2 projOS(vec3 q) {
+  float cp = cos(0.42), sp = sin(0.42);
+  vec3 r = vec3(q.x, q.y * cp - q.z * sp, q.y * sp + q.z * cp);
+  float z = 2.55 + r.z;
+  return r.xy / z * 2.15;
+}
+float segOS(vec2 p, vec2 a, vec2 b, out float t) {
+  vec2 pa = p - a, ba = b - a;
+  t = clamp(dot(pa, ba) / max(dot(ba, ba), 1e-6), 0.0, 1.0);
+  return length(pa - ba * t);
+}
+bool triOS(vec2 p, vec2 a, vec2 b, vec2 c) {
+  vec2 e0 = b - a, e1 = c - b, e2 = a - c;
+  float s0 = e0.x * (p.y - a.y) - e0.y * (p.x - a.x);
+  float s1 = e1.x * (p.y - b.y) - e1.y * (p.x - b.x);
+  float s2 = e2.x * (p.y - c.y) - e2.y * (p.x - c.x);
+  return (s0 >= 0.0 && s1 >= 0.0 && s2 >= 0.0) || (s0 <= 0.0 && s1 <= 0.0 && s2 <= 0.0);
+}
+vec3 bezOS(vec3 a, vec3 b, vec3 c, vec3 d, float t) {
+  float u = 1.0 - t;
+  return u*u*u*a + 3.0*u*u*t*b + 3.0*u*t*t*c + t*t*t*d;
+}
+void drawMiniOct(vec2 p, vec3 c, float s, float rotY, float glow, float px, inout float L) {
+  float ca = cos(rotY), sa = sin(rotY);
+  vec3 top = c + vec3(0.0, s * 1.25, 0.0);
+  vec3 bot = c + vec3(0.0, -s * 1.25, 0.0);
+  vec3 r0 = c + vec3( s * ca, 0.0,  s * sa);
+  vec3 r1 = c + vec3(-s * sa, 0.0,  s * ca);
+  vec3 r2 = c + vec3(-s * ca, 0.0, -s * sa);
+  vec3 r3 = c + vec3( s * sa, 0.0, -s * ca);
+  vec2 pt = projOS(top), pb = projOS(bot);
+  vec2 p0 = projOS(r0), p1 = projOS(r1), p2 = projOS(r2), p3 = projOS(r3);
+
+  if (triOS(p, pt, p0, p1) || triOS(p, pt, p1, p2) || triOS(p, pb, p0, p1) || triOS(p, pb, p1, p2)) {
+    L *= 0.65;
+    L += 0.045 + 0.065 * glow;
+  }
+  float h;
+  float d = 1e5;
+  d = min(d, segOS(p, pt, p0, h)); d = min(d, segOS(p, pt, p1, h));
+  d = min(d, segOS(p, pt, p2, h)); d = min(d, segOS(p, pt, p3, h));
+  d = min(d, segOS(p, pb, p0, h)); d = min(d, segOS(p, pb, p1, h));
+  d = min(d, segOS(p, pb, p2, h)); d = min(d, segOS(p, pb, p3, h));
+  d = min(d, segOS(p, p0, p1, h)); d = min(d, segOS(p, p1, p2, h));
+  d = min(d, segOS(p, p2, p3, h)); d = min(d, segOS(p, p3, p0, h));
+  d /= px;
+  L += line(d, 0.68) * (0.58 + 0.62 * glow) + exp(-d * 0.18) * (0.08 + 0.14 * glow);
+  float cd = length(p - projOS(c)) / px;
+  L += exp(-cd * cd * 0.045) * (0.38 + 0.85 * glow);
+}
+float scene(vec2 f) {
+  float px = 1.0 / R.y;
+  vec2 p = (f - vec2(0.64 * R.x, 0.47 * R.y)) / R.y;
+  p.y = -p.y;
+  float L = 0.0;
+
+  // Quarter-turn symmetry over P in [0,1) -> 4-fold symmetric crystal & 8-branch constellation loop with zero seam!
+  float yaw = 0.24 + TAU * P * 0.25;
+
+  // 8 curved 3D fork & merge branches radiating between the central open core and satellite repo crystals
+  for (int b = 0; b < 8; b++) {
+    float fb = float(b);
+    bool upper = b < 4;
+    float idx = mod(fb, 4.0);
+    float ang = yaw + idx * (TAU * 0.25) + (upper ? 0.12 : 0.90);
+    float rad = upper ? 0.285 : 0.265;
+    float yEnd = upper ? (0.168 + 0.014 * sin(TAU * P)) : (-0.162 - 0.014 * sin(TAU * P));
+
+    vec3 start = vec3(0.052 * cos(ang), upper ? 0.048 : -0.048, 0.052 * sin(ang));
+    vec3 c1 = vec3(0.125 * cos(ang - 0.18), upper ? 0.02 : -0.02, 0.125 * sin(ang - 0.18));
+    vec3 c2 = vec3(rad * 0.72 * cos(ang + 0.08), yEnd * 1.06, rad * 0.72 * sin(ang + 0.08));
+    vec3 endP = vec3(rad * cos(ang), yEnd, rad * sin(ang));
+
+    float depth = clamp(0.72 - endP.z * 0.85, 0.36, 1.18);
+    float pulsePos = upper ? fract(P + idx * 0.25) : (1.0 - fract(P + idx * 0.25));
+
+    const int SEG = 20;
+    vec2 prev = projOS(start);
+    for (int s = 1; s <= SEG; s++) {
+      float t0 = float(s - 1) / float(SEG);
+      float t1 = float(s) / float(SEG);
+      vec2 cur = projOS(bezOS(start, c1, c2, endP, t1));
+      float h;
+      float d = segOS(p, prev, cur, h) / px;
+      float tAt = mix(t0, t1, h);
+      float pkt = exp(-pow((tAt - pulsePos) * 4.8, 2.0));
+      L += depth * (line(d, 0.68) * (0.30 + 0.98 * pkt) + exp(-d * 0.17) * (0.055 + 0.17 * pkt));
+      prev = cur;
+    }
+
+    float nodeGlow = exp(-pow((upper ? (1.0 - pulsePos) : pulsePos) * 3.2, 2.0));
+    drawMiniOct(p, endP, 0.032, ang * 2.0, nodeGlow * depth, px, L);
+  }
+
+  // Central Open-Core Smoked Glass Octahedron (4-fold rotational symmetry around Y -> quarter turn is exact loop!)
+  float s = 0.135;
+  float ca = cos(yaw), sa = sin(yaw);
+  vec3 top = vec3(0.0,  s * 1.32, 0.0);
+  vec3 bot = vec3(0.0, -s * 1.32, 0.0);
+  vec3 v0 = vec3( s * ca, 0.0,  s * sa);
+  vec3 v1 = vec3(-s * sa, 0.0,  s * ca);
+  vec3 v2 = vec3(-s * ca, 0.0, -s * sa);
+  vec3 v3 = vec3( s * sa, 0.0, -s * ca);
+  vec2 pt = projOS(top), pb = projOS(bot);
+  vec2 q0 = projOS(v0), q1 = projOS(v1), q2 = projOS(v2), q3 = projOS(v3);
+
+  bool inOct = triOS(p, pt, q0, q1) || triOS(p, pt, q1, q2) || triOS(p, pt, q2, q3) || triOS(p, pt, q3, q0)
+            || triOS(p, pb, q0, q1) || triOS(p, pb, q1, q2) || triOS(p, pb, q2, q3) || triOS(p, pb, q3, q0);
+  if (inOct) {
+    L *= 0.72;
+    float sheen = exp(-pow((p.x + p.y * 0.7) * 8.5 + 0.35 * sin(TAU * P), 2.0));
+    L += 0.045 + 0.095 * sheen;
+  }
+
+  float h;
+  float dEdge = 1e5;
+  dEdge = min(dEdge, segOS(p, pt, q0, h)); dEdge = min(dEdge, segOS(p, pt, q1, h));
+  dEdge = min(dEdge, segOS(p, pt, q2, h)); dEdge = min(dEdge, segOS(p, pt, q3, h));
+  dEdge = min(dEdge, segOS(p, pb, q0, h)); dEdge = min(dEdge, segOS(p, pb, q1, h));
+  dEdge = min(dEdge, segOS(p, pb, q2, h)); dEdge = min(dEdge, segOS(p, pb, q3, h));
+  dEdge = min(dEdge, segOS(p, q0, q1, h)); dEdge = min(dEdge, segOS(p, q1, q2, h));
+  dEdge = min(dEdge, segOS(p, q2, q3, h)); dEdge = min(dEdge, segOS(p, q3, q0, h));
+  dEdge /= px;
+  L += line(dEdge, 0.85) * 0.98 + exp(-dEdge * 0.15) * 0.18;
+
+  float dAxis = segOS(p, pt, pb, h) / px;
+  L += line(dAxis, 0.50) * 0.36;
+  float coreD = length(p - projOS(vec3(0.0))) / px;
+  float breath = 0.78 + 0.22 * sin(TAU * P * 2.0);
+  L += exp(-coreD * coreD * 0.010) * 1.05 * breath + exp(-coreD * 0.055) * 0.24 * breath;
+
+  L *= mix(0.06, 1.0, smoothstep(0.14, 0.46, f.x / R.x));
+  L *= mix(0.16, 1.0, smoothstep(0.04, 0.34, 1.0 - f.y / R.y));
+  return pow(tone(L * 1.22), 0.92);
+}
+`,
+  },
+  {
+    slug: 'trust',
+    seconds: 6,
+    nimPrompt:
+      'Crystal-clear bevelled triangular optical quartz prism and parallel transparent glass audit panes refracting a coherent silver inspection beam into five verified parallel rays on pure black background, dark cinema loop',
+    shader: `
+// Trust & Transparency ("Security you can read"): A 3D optically clear bevelled triangular
+// quartz prism and parallel transparent audit panes refracting a coherent silver beam cleanly
+// into 5 verified parallel rays with internal etched ledger lines visible right through the glass.
+float segT(vec2 p, vec2 a, vec2 b, out float t) {
+  vec2 pa = p - a, ba = b - a;
+  t = clamp(dot(pa, ba) / max(dot(ba, ba), 1e-6), 0.0, 1.0);
+  return length(pa - ba * t);
+}
+bool quadT(vec2 p, vec2 a, vec2 b, vec2 c, vec2 d) {
+  vec2 e0 = b - a, e1 = c - b, e2 = d - c, e3 = a - d;
+  float s0 = e0.x * (p.y - a.y) - e0.y * (p.x - a.x);
+  float s1 = e1.x * (p.y - b.y) - e1.y * (p.x - b.x);
+  float s2 = e2.x * (p.y - c.y) - e2.y * (p.x - c.x);
+  float s3 = e3.x * (p.y - d.y) - e3.y * (p.x - d.x);
+  return (s0 >= 0.0 && s1 >= 0.0 && s2 >= 0.0 && s3 >= 0.0) || (s0 <= 0.0 && s1 <= 0.0 && s2 <= 0.0 && s3 <= 0.0);
+}
+bool triT(vec2 p, vec2 a, vec2 b, vec2 c) {
+  vec2 e0 = b - a, e1 = c - b, e2 = a - c;
+  float s0 = e0.x * (p.y - a.y) - e0.y * (p.x - a.x);
+  float s1 = e1.x * (p.y - b.y) - e1.y * (p.x - b.x);
+  float s2 = e2.x * (p.y - c.y) - e2.y * (p.x - c.x);
+  return (s0 >= 0.0 && s1 >= 0.0 && s2 >= 0.0) || (s0 <= 0.0 && s1 <= 0.0 && s2 <= 0.0);
+}
+float scene(vec2 f) {
+  float px = 1.0 / R.y;
+  vec2 p = (f - vec2(0.58 * R.x, 0.47 * R.y)) / R.y;
+  float L = 0.0;
+
+  float breath = 0.009 * sin(TAU * P);
+  vec2 dep = vec2(0.082, -0.058);
+
+  vec2 fTop = vec2(-0.085, -0.168 + breath);
+  vec2 fBL  = vec2(-0.212,  0.108 + breath);
+  vec2 fBR  = vec2( 0.042,  0.108 + breath);
+  vec2 bTop = fTop + dep;
+  vec2 bBL  = fBL  + dep;
+  vec2 bBR  = fBR  + dep;
+
+  // 1. Coherent incident silver beam entering the left prism face cleanly from upper-left
+  vec2 hitIn = mix(fTop, fBL, 0.50);
+  vec2 srcIn = hitIn + vec2(-0.30, 0.105);
+  {
+    float h;
+    float dIn = segT(p, srcIn, hitIn, h) / px;
+    float pkt = 0.65 + 0.35 * cos(TAU * (h * 2.0 - P * 2.0));
+    float env = smoothstep(0.0, 0.28, h);
+    L += env * (line(dIn, 0.82) * (0.78 + 0.45 * pkt) + exp(-dIn * 0.13) * 0.22);
+  }
+
+  // 2. Rear prism edges visible right through the crystal-clear glass
+  {
+    float h;
+    float dRear = min(min(segT(p, bTop, bBL, h), segT(p, bBL, bBR, h)), segT(p, bBR, bTop, h)) / px;
+    L += line(dRear, 0.52) * 0.32;
+  }
+
+  // 3. Internal refracted dispersion fan + 5 parallel verified exit beams through 2 crystal audit panes
+  float paneX1 = 0.148;
+  float paneX2 = 0.242;
+  for (int r = 0; r < 5; r++) {
+    float fr = (float(r) - 2.0) / 2.0;
+    vec2 hitOut = mix(bTop, bBR, 0.50 + fr * 0.165);
+    float hI;
+    float dInt = segT(p, hitIn, hitOut, hI) / px;
+    L += line(dInt, 0.65) * 0.58 + exp(-dInt * 0.16) * 0.13;
+
+    vec2 rayDir = normalize(vec2(0.96, fr * 0.085 - 0.04));
+    vec2 rayEnd = hitOut + rayDir * 0.34;
+    float hE;
+    float dExt = segT(p, hitOut, rayEnd, hE) / px;
+    float pulse = exp(-pow((hE - fract(P * 1.0 + float(r) * 0.14)) * 5.0, 2.0));
+    float fadeOut = smoothstep(1.0, 0.52, hE);
+    L += fadeOut * (line(dExt, 0.68) * (0.44 + 0.85 * pulse) + exp(-dExt * 0.17) * (0.07 + 0.15 * pulse));
+  }
+
+  // 4. Two downstream transparent glass verification / audit ledger panes standing in perspective
+  for (int k = 0; k < 2; k++) {
+    float xC = k == 0 ? paneX1 : paneX2;
+    float yShift = (k == 0 ? -0.014 : -0.036) - breath * 0.5;
+    vec2 pTL = vec2(xC - 0.022, -0.162 + yShift);
+    vec2 pTR = vec2(xC + 0.024, -0.198 + yShift);
+    vec2 pBR = vec2(xC + 0.024,  0.118 + yShift);
+    vec2 pBL = vec2(xC - 0.022,  0.154 + yShift);
+
+    if (quadT(p, pTL, pTR, pBR, pBL)) {
+      float sheen = exp(-pow((p.y - yShift + 0.08 * sin(TAU * P + float(k))) * 7.5, 2.0));
+      L += 0.036 + 0.065 * sheen;
+      float vRel = (p.y - pTL.y) / (pBL.y - pTL.y);
+      float rule = abs(fract(vRel * 11.0) - 0.5) * (pBL.y - pTL.y) / 11.0 / px;
+      if (vRel > 0.08 && vRel < 0.92) {
+        L += line(rule, 0.42) * 0.16;
+      }
+    }
+    float hP;
+    float dPane = min(min(segT(p, pTL, pTR, hP), segT(p, pTR, pBR, hP)), min(segT(p, pBR, pBL, hP), segT(p, pBL, pTL, hP))) / px;
+    L += line(dPane, 0.68) * 0.68 + exp(-dPane * 0.16) * 0.11;
+
+    for (int r = 0; r < 5; r++) {
+      float fr = (float(r) - 2.0) / 2.0;
+      vec2 hitOut = mix(bTop, bBR, 0.50 + fr * 0.165);
+      vec2 rayDir = normalize(vec2(0.96, fr * 0.085 - 0.04));
+      float tHit = (xC - hitOut.x) / rayDir.x;
+      vec2 pt = hitOut + rayDir * tHit;
+      float sd = length(p - pt) / px;
+      float spPulse = 0.55 + 0.45 * cos(TAU * (P - float(r) * 0.14 - float(k) * 0.2));
+      L += exp(-sd * sd * 0.055) * (0.48 + 0.62 * spPulse);
+    }
+  }
+
+  // 5. Front & top optical prism glass faces + razor-lit crystal bevels + entry caustic
+  if (quadT(p, fTop, bTop, bBR, fBR)) {
+    float sweep = exp(-pow((p.x + p.y * 0.6 - 0.06 * sin(TAU * P)) * 8.0, 2.0));
+    L += 0.052 + 0.095 * sweep;
+  }
+  if (triT(p, fTop, fBL, fBR)) {
+    float grad = clamp((0.12 - p.y) / 0.30, 0.0, 1.0);
+    L += 0.032 + 0.065 * grad;
+  }
+  {
+    float h;
+    float dFront = min(min(segT(p, fTop, fBL, h), segT(p, fBL, fBR, h)), segT(p, fBR, fTop, h)) / px;
+    float dStruts = min(min(segT(p, fTop, bTop, h), segT(p, fBR, bBR, h)), segT(p, fBL, bBL, h)) / px;
+    L += line(dFront, 0.88) * 1.08 + exp(-dFront * 0.14) * 0.20;
+    L += line(dStruts, 0.72) * 0.78 + exp(-dStruts * 0.16) * 0.12;
+  }
+  float inD = length(p - hitIn) / px;
+  L += exp(-inD * inD * 0.028) * 1.15 + exp(-inD * 0.09) * 0.24;
+
+  L *= mix(0.06, 1.0, smoothstep(0.14, 0.46, f.x / R.x));
+  L *= mix(0.16, 1.0, smoothstep(0.04, 0.34, 1.0 - f.y / R.y));
+  return pow(tone(L * 1.22), 0.92);
+}
+`,
+  },
+  {
+    slug: 'zen-7',
+    seconds: 8,
+    outDir: path.join(ROOT, 'public', 'models'),
+    width: 1200,
+    height: 1500,
+    nimPrompt:
+      'Minimalist dark graphite-pearl levitating split-core sphere with a glowing silver equatorial horizon seam and razor-thin orbital halo ring hovering above concentric harmonic black water ripples, raking upper-left studio light, newer generation of Zen 6, 8k dark cinema loop',
+    shader: `
+// Zen 7: Direct generational evolution of Zen 6 (public/models/zen.mp4) — exact same studio
+// camera, raking top-left key light, black void, and concentric Zen ripple ground plane,
+// evolved from Zen 6's solid matte sphere into Zen 7's precision-cleaved luminous-core
+// obsidian sphere + razor-thin inclined silver horizon ring & dual-harmonic interference ripples.
+float mapZen7(vec3 p, vec3 c, vec3 nSlice, float gap, out int mat) {
+  vec3 q = p - c;
+  float sph = length(q) - 0.148;
+  float h = dot(q, nSlice);
+  // Primary precision-chamfered equatorial horizon split + subtle upper & lower harmonic latitude grooves
+  float shell = max(sph, gap - abs(h));
+  float latGroove = 0.0018 - abs(abs(h) - 0.064) - max(0.140 - length(q), 0.0) * 3.5;
+  shell = max(shell, latGroove);
+  float lip = length(vec2(length(q - nSlice * h) - 0.145, abs(h) - gap)) - 0.0026;
+  shell = min(shell, max(sph - 0.0012, lip));
+
+  // Inner Zen 7 pearl-titanium core revealed inside the cleaved horizon
+  float core = length(q) - 0.125;
+
+  // Razor-thin brushed-silver horizon halo ring hovering around the equator
+  vec3 uAxis = normalize(cross(nSlice, vec3(0.0, 0.0, 1.0)));
+  vec3 vAxis = cross(nSlice, uAxis);
+  vec3 qRing = vec3(dot(q, uAxis), h, dot(q, vAxis));
+  float ring = sdTorus(qRing, vec2(0.196, 0.0021));
+
+  float d = min(shell, min(core, ring));
+  if (ring <= d + 1e-5) mat = 3;
+  else if (core <= d + 1e-5) mat = 2;
+  else mat = 1;
+  return d;
+}
+vec3 calcNZ7(vec3 p, vec3 c, vec3 nSlice, float gap) {
+  int m; float e = 0.0006;
+  return normalize(vec3(
+    mapZen7(p + vec3(e,0,0), c, nSlice, gap, m) - mapZen7(p - vec3(e,0,0), c, nSlice, gap, m),
+    mapZen7(p + vec3(0,e,0), c, nSlice, gap, m) - mapZen7(p - vec3(0,e,0), c, nSlice, gap, m),
+    mapZen7(p + vec3(0,0,e), c, nSlice, gap, m) - mapZen7(p - vec3(0,0,e), c, nSlice, gap, m)
+  ));
+}
+float rippleH(vec2 xz) {
+  float r = length(xz);
+  // Match Zen 6's tight, silky ~18 concentric Zen ripples + subtle Zen 7 second harmonic
+  float w1 = sin(r * 136.0 - TAU * P * 4.0);
+  float w2 = 0.20 * sin(r * 272.0 - TAU * P * 8.0 + 0.8);
+  float env = smoothstep(0.12, 0.30, r) * exp(-r * 0.56);
+  return (w1 + w2) * env * 0.0068;
+}
+float scene(vec2 f) {
+  // Exact look-at camera so vec3(0) projects dead-on (0.670*W, 0.485*H) matching zen.webp!
+  vec2 uv = (f - vec2(0.670 * R.x, 0.485 * R.y)) / R.y;
+  uv.y = -uv.y;
+
+  vec3 ro = vec3(0.0, 0.82, 2.30);
+  vec3 fwd = normalize(-ro);
+  vec3 right = normalize(cross(fwd, vec3(0.0, 1.0, 0.0)));
+  vec3 up = cross(right, fwd);
+  vec3 rd = normalize(uv.x * right + uv.y * up + 1.88 * fwd);
+
+  float bob = 0.008 * sin(TAU * P);
+  vec3 sphC = vec3(0.0, bob, 0.0);
+  vec3 nSlice = normalize(vec3(0.15 + 0.045 * cos(TAU * P), 0.98, -0.11 + 0.045 * sin(TAU * P)));
+  float gap = 0.0082 + 0.0018 * sin(TAU * P * 2.0);
+
+  vec3 keyL = normalize(vec3(-0.84, 0.48, 0.34));
+  vec3 rimL = normalize(vec3(-0.45, 0.25, -0.86));
+
+  float L = 0.0;
+  float haloGlow = 0.0;
+
+  float t = 1.6;
+  int mat = 0;
+  bool hitObj = false;
+  for (int i = 0; i < 88; i++) {
+    vec3 p = ro + rd * t;
+    float d = mapZen7(p, sphC, nSlice, gap, mat);
+    vec3 q = p - sphC;
+    float seamProx = max(abs(length(q) - 0.132), abs(dot(q, nSlice)));
+    haloGlow += exp(-seamProx * 72.0) * 0.0020;
+    if (mat == 3) haloGlow += exp(-abs(d) * 95.0) * 0.0018;
+    if (d < 0.0005) { hitObj = true; break; }
+    if (t > 3.3) break;
+    t += d * 0.82;
+  }
+
+  if (hitObj) {
+    vec3 p = ro + rd * t;
+    vec3 n = calcNZ7(p, sphC, nSlice, gap);
+    vec3 q = p - sphC;
+    float diff = max(dot(n, keyL), 0.0);
+    float wrap = max((dot(n, keyL) + 0.20) / 1.20, 0.0);
+    float fres = pow(1.0 - max(dot(n, -rd), 0.0), 3.5);
+    vec3 hVec = normalize(keyL - rd);
+
+    if (mat == 1) {
+      float spec = pow(max(dot(n, hVec), 0.0), 22.0);
+      float rim = pow(max(dot(n, rimL), 0.0), 3.0) * fres;
+      float seamBounce = exp(-abs(dot(q, nSlice) / max(gap, 0.001) - sign(dot(q, nSlice))) * 1.9) * (0.35 + 0.65 * wrap);
+      L += pow(wrap, 1.42) * 0.56 + diff * 0.14 + spec * 0.13 + rim * 0.14 + seamBounce * 0.22;
+    } else if (mat == 2) {
+      float corePulse = 0.85 + 0.15 * sin(TAU * P * 2.0);
+      L += (0.20 + 0.64 * wrap + 0.42 * fres) * corePulse;
+    } else {
+      float ang = atan(q.z, q.x);
+      float orbit = pow(0.5 + 0.5 * cos(ang - TAU * P), 6.0);
+      float specR = pow(max(dot(n, hVec), 0.0), 48.0);
+      L += 0.14 + wrap * 0.58 + fres * 0.55 + specR * 1.05 + orbit * 0.72;
+    }
+    L += haloGlow;
+  } else {
+    L += haloGlow;
+    float planeY = -0.185;
+    if (rd.y < -0.004) {
+      float tp = (planeY - ro.y) / rd.y;
+      if (tp > 0.0 && tp < 12.0) {
+        vec3 gp = ro + rd * tp;
+        vec2 xz = gp.xz;
+        float r = length(xz);
+        float e = 0.0018;
+        float hc = rippleH(xz);
+        float hx = rippleH(xz + vec2(e, 0.0));
+        float hz = rippleH(xz + vec2(0.0, e));
+        vec3 gn = normalize(vec3(hc - hx, e, hc - hz));
+
+        // Soft shadow pool directly beneath the levitating Zen 7 sphere matching zen.webp
+        float shadow = smoothstep(0.11, 0.30, length(xz - vec2(0.045, -0.015)));
+        vec3 viewV = -rd;
+
+        // Silky raking studio highlights across the 18+ concentric ripple rings (exact match to zen.webp)
+        vec3 gLight1 = normalize(vec3(-0.74, 0.34, 0.58));
+        vec3 gLight2 = normalize(vec3( 0.68, 0.32, 0.62));
+        float s1 = pow(max(dot(gn, normalize(gLight1 + viewV)), 0.0), 14.0);
+        float s2 = pow(max(dot(gn, normalize(gLight2 + viewV)), 0.0), 16.0);
+        float crest = pow(clamp(hc / 0.0068 * 0.5 + 0.5, 0.0, 1.0), 1.35);
+        float slopeAmt = clamp(length(gn.xz) * 4.5, 0.0, 1.4);
+
+        float coreRefl = exp(-pow((r - 0.30) * 10.0, 2.0)) * crest * 0.11;
+        float distFade = exp(-r * 0.58) * smoothstep(3.4, 0.65, r);
+        float planeL = shadow * distFade * ((s1 * 1.18 + s2 * 0.78) * crest * (0.32 + 0.95 * slopeAmt) + coreRefl);
+        L += planeL;
+      }
+    }
+  }
+
+  L *= mix(0.10, 1.0, smoothstep(0.02, 0.32, f.x / R.x));
+  L *= mix(0.20, 1.0, smoothstep(0.01, 0.16, 1.0 - f.y / R.y));
+  return pow(tone(L * 1.22), 0.94);
+}
+`,
+  },
 ];
 
 function buildHtml(scene: CategoryScene, ss: number): string {
+  const sW = scene.width || W;
+  const sH = scene.height || H;
   return `<!doctype html>
 <html><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style>
-<body><canvas id="c" width="${W}" height="${H}"></canvas>
+<body><canvas id="c" width="${sW}" height="${sH}"></canvas>
 <script>
 const canvas = document.getElementById('c');
 const gl = canvas.getContext('webgl2', { antialias: false, preserveDrawingBuffer: true, alpha: false });
@@ -700,8 +1318,8 @@ gl.enableVertexAttribArray(loc);
 gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 const uR = gl.getUniformLocation(prog, 'R');
 const uP = gl.getUniformLocation(prog, 'P');
-gl.viewport(0, 0, ${W}, ${H});
-gl.uniform2f(uR, ${W}, ${H});
+gl.viewport(0, 0, ${sW}, ${sH});
+gl.uniform2f(uR, ${sW}, ${sH});
 window.drawFrame = (p) => {
   gl.uniform1f(uP, p - Math.floor(p));
   gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -811,7 +1429,7 @@ async function generateViaNimOrHanzo(scene: CategoryScene) {
   fs.rmSync(rawMp4, { force: true });
 }
 
-function resolveChromium() {
+async function launchGpuBrowser(): Promise<{ newPage: (w: number, h: number) => Promise<any>; close: () => Promise<void> }> {
   const candidates = [
     path.join(ROOT, 'package.json'),
     path.resolve(ROOT, '../../hanzo-inc/app/package.json'),
@@ -820,28 +1438,61 @@ function resolveChromium() {
     if (!fs.existsSync(pkg)) continue;
     try {
       const req = createRequire(pkg);
-      return req('@playwright/test').chromium;
+      const chromium = req('@playwright/test').chromium;
+      const browser = await chromium.launch({
+        args: ['--enable-gpu', '--ignore-gpu-blocklist'],
+      });
+      return {
+        newPage: (w: number, h: number) => browser.newPage({ viewport: { width: w, height: h, deviceScaleFactor: 1 } }),
+        close: () => browser.close(),
+      };
     } catch {
-      // try next
+      // try puppeteer-core fallback
     }
   }
-  throw new Error('Could not resolve @playwright/test chromium');
+  const req = createRequire(path.join(ROOT, 'package.json'));
+  const puppeteer = req('puppeteer-core');
+  const chromePaths = [
+    process.env.CHROME_PATH,
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/usr/bin/google-chrome',
+    '/usr/bin/chromium',
+  ].filter((p): p is string => Boolean(p && fs.existsSync(p)));
+  if (!chromePaths.length) throw new Error('Could not resolve @playwright/test or local Google Chrome');
+  const gpuFlag = process.platform === 'darwin' ? '--use-angle=metal' : '--use-angle=vulkan';
+  const browser = await puppeteer.launch({
+    executablePath: chromePaths[0],
+    headless: 'new',
+    args: [gpuFlag, '--enable-webgl', '--enable-gpu', '--ignore-gpu-blocklist'],
+  });
+  return {
+    newPage: async (w: number, h: number) => {
+      const page = await browser.newPage();
+      await page.setViewport({ width: w, height: h, deviceScaleFactor: 1 });
+      return page;
+    },
+    close: () => browser.close(),
+  };
 }
 
-async function renderGpuScene(browser: any, scene: CategoryScene, lookOnly: boolean) {
+async function renderGpuScene(browser: { newPage: (w: number, h: number) => Promise<any> }, scene: CategoryScene, lookOnly: boolean) {
   const started = Date.now();
-  const page = await browser.newPage({ viewport: { width: W, height: H, deviceScaleFactor: 1 } });
+  const sW = scene.width || W;
+  const sH = scene.height || H;
+  const outDir = scene.outDir || OUT_DIR;
+  fs.mkdirSync(outDir, { recursive: true });
+  const page = await browser.newPage(sW, sH);
   await page.setContent(buildHtml(scene, 4), { waitUntil: 'load' });
   await page.waitForFunction(() => document.body.dataset.ready === '1');
 
-  const outWebp = path.join(OUT_DIR, `${scene.slug}.webp`);
-  const outWebm = path.join(OUT_DIR, `${scene.slug}.webm`);
-  const outMp4 = path.join(OUT_DIR, `${scene.slug}.mp4`);
+  const outWebp = path.join(outDir, `${scene.slug}.webp`);
+  const outWebm = path.join(outDir, `${scene.slug}.webm`);
+  const outMp4 = path.join(outDir, `${scene.slug}.mp4`);
 
   // Capture frame 0 still (.webp) directly from the canvas
   const firstDataUrl: string = await page.evaluate(() => (window as any).drawFrame(0));
   const firstJpg = Buffer.from(firstDataUrl.split(',')[1], 'base64');
-  const tmpFirst = path.join(OUT_DIR, `.tmp-${scene.slug}-0.jpg`);
+  const tmpFirst = path.join(outDir, `.tmp-${scene.slug}-0.jpg`);
   fs.writeFileSync(tmpFirst, firstJpg);
   runFfmpeg(['-i', tmpFirst, '-c:v', 'libwebp', '-quality', '84', outWebp]);
   fs.rmSync(tmpFirst, { force: true });
@@ -854,7 +1505,7 @@ async function renderGpuScene(browser: any, scene: CategoryScene, lookOnly: bool
 
   // Stream all N frames over image2pipe into temporary lossless-ish H.264 master, then cut VP9 .webm and H.264 .mp4
   const totalFrames = scene.seconds * FPS;
-  const masterMp4 = path.join(OUT_DIR, `.tmp-${scene.slug}-master.mp4`);
+  const masterMp4 = path.join(outDir, `.tmp-${scene.slug}-master.mp4`);
   const ff = spawn(
     'ffmpeg',
     [
@@ -945,10 +1596,7 @@ async function main() {
     return;
   }
 
-  const chromium = resolveChromium();
-  const browser = await chromium.launch({
-    args: ['--use-angle=vulkan', '--enable-gpu', '--ignore-gpu-blocklist'],
-  });
+  const browser = await launchGpuBrowser();
   try {
     // Run up to 4 GPU scenes concurrently on DGX
     const concurrency = 4;

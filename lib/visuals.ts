@@ -9,6 +9,8 @@ export interface NavPreviewSpec {
   video?: string;
   screen?: string;
   windowBar?: string;
+  live?: 'desktop' | 'machines';
+  summary?: string;
   tags?: string[];
   pos?: string;
   scale?: number;
@@ -79,8 +81,11 @@ export type CategoryFilmSlug =
   | 'company'
   | 'research'
   | 'safety'
+  | 'trust'
   | 'cloud'
   | 'developers'
+  | 'open-source'
+  | 'engineering'
   | 'solutions'
   | 'learn'
   | 'products';
@@ -89,7 +94,7 @@ const MODEL_META: Record<string, { kicker: string; tags: string[]; slug: string 
   enso: { slug: 'enso', kicker: 'Flagship Router', tags: ['Routing', 'Agents'] },
   kai: { slug: 'kai', kicker: 'Decision Model', tags: ['Logic', 'Calibrated'] },
   zen: { slug: 'zen', kicker: 'Foundation LLM', tags: ['Reasoning', 'Apache 2.0'] },
-  'zen-7': { slug: 'zen', kicker: 'Research Preview', tags: ['Frontier', 'Open Weights'] },
+  'zen-7': { slug: 'zen-7', kicker: 'Next-Gen Frontier', tags: ['Preview', 'Open Weights'] },
   koma: { slug: 'koma', kicker: 'Creative AI', tags: ['Video', 'World Sim'] },
   iro: { slug: 'iro', kicker: 'Creative AI', tags: ['Images', 'Vision'] },
   mori: { slug: 'mori', kicker: 'Creative AI', tags: ['3D', 'Spatial'] },
@@ -216,7 +221,7 @@ export function resolveNavPreview(
   if (clean === '/enso') return modelSpec('enso');
   if (clean === '/kai' || lower.includes('introducing-kai')) return modelSpec('kai');
   if (clean === '/zen') return modelSpec('zen');
-  if (clean === '/zen/7') return modelSpec('zen-7', { pos: '50% 56%', scale: 1.14 });
+  if (clean === '/zen/7') return modelSpec('zen-7');
   if (clean === '/koma') return modelSpec('koma');
   if (clean === '/iro') return modelSpec('iro');
   if (clean === '/mori') return modelSpec('mori');
@@ -235,7 +240,11 @@ export function resolveNavPreview(
     return productSpec('Apps & Tools', '/shots/app-builder-1440.webp', 'hanzo.app', 'products', ['Web', 'Desktop']);
   }
   if (clean === '/desktop') {
-    return productSpec('Install', '/shots/chat-1440.webp', 'Hanzo Desktop', 'products', ['macOS', 'Linux']);
+    return {
+      ...productSpec('Install', '/shots/chat-1440.webp', 'Hanzo Desktop', 'developers', ['macOS', 'Win', 'Linux']),
+      live: 'desktop',
+      summary: 'Run local models, MCP tools, and agents natively on macOS, Windows, and Linux.',
+    };
   }
   if (clean === '/extension') {
     return productSpec('Install', '/home/products/app-dark.webp', 'hanzo://extension', 'products', ['Chrome', 'Brave']);
@@ -276,7 +285,14 @@ export function resolveNavPreview(
       ['Unified Key', 'Low Latency'],
     );
   }
-  if (clean === '/platform' || clean === '/playground' || clean === '/base' || clean === '/machines') {
+  if (clean === '/machines') {
+    return {
+      ...productSpec('Compute', '/shots/docs-api-1440.webp', 'api.hanzo.ai/v1/compute', 'cloud', ['H100 GPU', 'Bare Metal']),
+      live: 'machines',
+      summary: 'Rent dedicated H100 GPU clusters by the hour with live API quotes and NVMe.',
+    };
+  }
+  if (clean === '/platform' || clean === '/playground' || clean === '/base') {
     return productSpec(
       'API Platform',
       '/shots/docs-api-1440.webp',
@@ -325,9 +341,20 @@ export function resolveNavPreview(
   if (clean === '/research') return categoryFilmSpec('Explore Research', 'research', href, ['Papers', 'Architectures']);
   if (clean === '/compare') return categoryFilmSpec('Explore Research', 'research', href, ['Quality', 'Cost']);
   if (lower.includes('hips.hanzo.ai')) return categoryFilmSpec('Specifications', 'developers', href, ['HIP Standards', 'Protocols'], true);
-  if (clean === '/open-source') return categoryFilmSpec('Open Ecosystem', 'developers', href, ['1,700+ Repos', 'Apache 2.0']);
-  if (clean === '/security' || clean === '/trust') {
-    return categoryFilmSpec('Safety', 'safety', href, ['Zero-Trust', 'SOC 2 · KMS'], clean === '/security');
+  if (clean === '/open-source') {
+    return {
+      ...categoryFilmSpec('Open Ecosystem', 'open-source', href, ['1,700+ Repos', 'Apache 2.0'], true),
+      summary: '1,700+ open-source repositories across foundation models, MCP, and cloud.',
+    };
+  }
+  if (clean === '/security') {
+    return categoryFilmSpec('Safety', 'safety', href, ['Zero-Trust', 'SOC 2 · KMS'], true);
+  }
+  if (clean === '/trust') {
+    return {
+      ...categoryFilmSpec('Safety', 'trust', href, ['Attested', 'SOC 2 · KMS'], true),
+      summary: 'Enterprise compliance, KMS key isolation, access controls, and continuous audits.',
+    };
   }
 
   // Solutions
@@ -338,7 +365,13 @@ export function resolveNavPreview(
   if (clean === '/solutions/cybersecurity' || clean === '/solutions/law' || clean === '/solutions/government') {
     return categoryFilmSpec(head || 'Regulated', 'safety', href, ['Air-Gapped', 'Sovereign']);
   }
-  if (clean === '/solutions/data' || clean === '/solutions/engineering' || clean === '/solutions/operations') {
+  if (clean === '/solutions/engineering') {
+    return {
+      ...categoryFilmSpec(head || 'Teams', 'engineering', href, ['Agents', 'Sandboxes'], true),
+      summary: 'Agents that plan, edit, and open PRs — backed by unified models and sandboxes.',
+    };
+  }
+  if (clean === '/solutions/data' || clean === '/solutions/operations') {
     return categoryFilmSpec(head || 'Infrastructure', 'cloud', href, ['High Throughput', 'VPC']);
   }
   if (clean === '/solutions/design' || clean === '/solutions/marketing' || clean === '/solutions/content-creation' || clean === '/solutions/retail') {
