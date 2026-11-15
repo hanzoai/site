@@ -1,12 +1,11 @@
 'use client';
-/* 404. Signature: every wrong address draws its own living contour map (the Sigil seeded by the missing path), with a
-   pin where you are. Beyond: hanzo.ai's 404 offers four links; this one reads the address you tried, suggests the pages
-   you most likely meant, and searches every page as you type (lib/search.json: all of content/pages.json). Words are
-   Hanzo's own. app/not-found.jsx renders it for every unknown address; pages need nothing. */
-import { useEffect, useMemo, useState } from 'react';
-import { motion } from 'motion/react';
-import type { MotionProps } from 'motion/react';
-import Sigil from '../Sigil';
+/* 404. Matches the homepage's 3D topological halftone dot wave field (Dots), centered and calm, with zero blinking
+   map pin. Reads the address you tried, suggests the pages you most likely meant, and searches every page as you type
+   (lib/search.json: all of content/pages.json). Words are Hanzo's own. app/not-found.tsx renders it for every unknown
+   address; pages need nothing. */
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { motion, type MotionProps } from 'motion/react';
+import Dots from '../Dots';
 import { A } from '../kit';
 import { EASE } from '../ui';
 import './Lost.css';
@@ -15,18 +14,21 @@ import './Lost.css';
 type Entry = string[];
 
 const words = (s: string) => s.toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 1);
-function rank(SEARCH: Entry[] | null, q: string, path: string) {
+function rank(SEARCH: Entry[] | null, q: string, path: string, typed: boolean) {
   const ws = words(q);
   if (!SEARCH || !ws.length) return [];
+  const minScore = typed ? 0.5 : 2.5;
+  const limit = typed ? 5 : 3;
   return SEARCH.map(([p, t, d]): [number, string, string, string] => {
     const hay = (p + ' ' + t).toLowerCase(), desc = (d || '').toLowerCase();
     let s = 0;
     for (const w of ws) s += (p.toLowerCase().includes(w) ? 3 : 0) + (t.toLowerCase().includes(w) ? 2 : 0) + (desc.includes(w) ? 0.5 : 0) + (hay.split(/[^a-z0-9]+/).some((x) => x.startsWith(w.slice(0, 4))) ? 0.5 : 0);
     return [s - p.length / 400, p, t, d];
-  }).filter((r) => r[0] > 0.5 && r[1] !== path).sort((a, b) => b[0] - a[0]).slice(0, 6);
+  }).filter((r) => r[0] > minScore && r[1] !== path).sort((a, b) => b[0] - a[0]).slice(0, limit);
 }
 
 export default function Lost() {
+  const host = useRef<HTMLElement>(null);
   const [path, setPath] = useState('');
   const [q, setQ] = useState('');
   const [back, setBack] = useState(false);
@@ -40,35 +42,52 @@ export default function Lost() {
     setPath(p);
     setBack(history.length > 1 && !!document.referrer && new URL(document.referrer).origin === location.origin);
   }, []);
-  const hits = useMemo(() => rank(index, q || path.replace(/[/-]+/g, ' '), path), [index, q, path]);
-  const rise = (d: number): MotionProps => ({ initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.9, ease: EASE, delay: d } });
+  const typed = q.trim().length > 0;
+  const hits = useMemo(() => rank(index, typed ? q : path.replace(/[/-]+/g, ' '), path, typed), [index, q, path, typed]);
+  const rise = (d: number): MotionProps => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.75, ease: EASE, delay: d } });
   return (
-    <main className="xlo" data-room="dark" data-ask="off">
-      <div className="xlo-map" aria-hidden="true">
-        {path && <Sigil seed={path} data={[path.length, words(path).length]} className="xlo-sigil" />}
-        <motion.span className="xlo-pin" initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.5 }}><i /></motion.span>
-      </div>
+    <main ref={host} className="xlo" data-ask="off">
+      <Dots host={host} drift />
       <section className="xlo-in x-wrap">
-        <motion.p className="xlo-code x-mono" {...rise(0.05)}>404</motion.p>
-        <h1 className="xlo-h1"><span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>Page not found.</motion.span></span></h1>
-        <motion.p className="xlo-lede" {...rise(0.25)}>This page doesn&apos;t exist, or it has moved.</motion.p>
-        {path && <motion.p className="xlo-path x-mono" {...rise(0.3)}>{path}</motion.p>}
-        <motion.div className="xlo-acts" {...rise(0.35)}>
+        <motion.div className="xlo-pill" {...rise(0.04)}>
+          <span className="xlo-code x-mono">404</span>
+          {path && (
+            <>
+              <span className="xlo-sep" aria-hidden="true" />
+              <span className="xlo-path x-mono">{path}</span>
+            </>
+          )}
+        </motion.div>
+        <h1 className="xlo-h1">
+          <span className="x-line">
+            <motion.span className="x-line-in" initial={{ y: '105%' }} animate={{ y: 0 }} transition={{ duration: 0.95, ease: EASE, delay: 0.08 }}>
+              Page not found.
+            </motion.span>
+          </span>
+        </h1>
+        <motion.p className="xlo-lede" {...rise(0.18)}>This page doesn&apos;t exist, or it has moved.</motion.p>
+        <motion.div className="xlo-acts" {...rise(0.25)}>
           <A to="/" className="x-btn solid">Go home</A>
           {back && <button type="button" className="x-btn" onClick={() => history.back()}>Go back</button>}
         </motion.div>
-        <motion.div className="xlo-find" {...rise(0.45)}>
-          <label htmlFor="xlo-q" className="x-vh">Search every page</label>
-          <input id="xlo-q" type="search" placeholder="Search every page" value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" />
+        <motion.div className="xlo-find" {...rise(0.32)}>
+          <div className="xlo-field">
+            <svg className="xlo-mag" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+              <circle cx="7" cy="7" r="4.8" fill="none" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M10.6 10.6 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+            <label htmlFor="xlo-q" className="x-vh">Search every page</label>
+            <input id="xlo-q" type="search" placeholder="Search every page" value={q} onChange={(e) => setQ(e.target.value)} autoComplete="off" />
+          </div>
           <ul className="xlo-hits" aria-live="polite">
             {hits.map(([, p, t, d], i) => (
-              <motion.li key={p} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, ease: EASE, delay: i * 0.04 }}>
+              <motion.li key={p} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.32, ease: EASE, delay: i * 0.03 }}>
                 <A to={p} className="xlo-hit"><b>{t}</b><span>{d}</span><i className="x-mono">{p}</i></A>
               </motion.li>
             ))}
           </ul>
         </motion.div>
-        <motion.nav className="xlo-more" aria-label="Elsewhere" {...rise(0.55)}>
+        <motion.nav className="xlo-more" aria-label="Elsewhere" {...rise(0.4)}>
           <A to="/products">Products</A><A to="https://docs.hanzo.ai">Documentation</A><A to="/contact">Contact</A><A to="https://status.hanzo.ai">Status</A>
         </motion.nav>
       </section>

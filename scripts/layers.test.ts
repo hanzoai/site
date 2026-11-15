@@ -196,23 +196,23 @@ if (FULL) {
 // a page whose cards are plain links (the legal index) proves card → hero wherever the pages above use the WebGL opener
 await morph('/legal', true);
 
-// 2. Sigil and 5. the 404 room
-const sig = (page: Tab) => page.evaluate(() => { const c = document.querySelector<HTMLCanvasElement>('canvas.x-sigil'); if (!c) return null; const d = c.getContext('2d')!.getImageData(0, 0, c.width, c.height).data; let h = 0; for (let i = 0; i < d.length; i += 97) h = (h * 31 + d[i]) | 0; return h; });
-await step('404 room + sigil', () => withPage('/no-such-page-hz-test', {}, '404 desktop', async (page) => {
+// 2. Dots field and 5. the 404 room
+const sig = (page: Tab) => page.evaluate(() => { const c = document.querySelector<HTMLCanvasElement>('canvas.x-dots'); if (!c) return null; const d = c.getContext('2d')!.getImageData(0, 0, c.width, c.height).data; let h = 0; for (let i = 0; i < d.length; i += 97) h = (h * 31 + d[i]) | 0; return h; });
+await step('404 room + dots', () => withPage('/no-such-page-hz-test', {}, '404 desktop', async (page) => {
   check('404 room answers 404', page.status === 404, `status ${page.status}`);
   const a = await sig(page); await wait(1200); const bb = await sig(page);
-  check('sigil moves by itself', a !== null && a !== bb, `frames ${a} → ${bb}`);
-  await page.evaluate(() => { const c = document.querySelector<HTMLCanvasElement>('canvas.x-sigil')!; c.style.position = 'fixed'; c.style.top = '200vh'; });
+  check('dots field moves by itself', a !== null && a !== bb, `frames ${a} → ${bb}`);
+  await page.evaluate(() => { const c = document.querySelector<HTMLCanvasElement>('canvas.x-dots')!; c.style.position = 'fixed'; c.style.top = '200vh'; });
   await wait(400); const off1 = await sig(page); await wait(1000); const off2 = await sig(page);
-  check('sigil pauses off screen', off1 === off2, `frames ${off1} → ${off2}`);
+  check('dots field pauses off screen', off1 === off2, `frames ${off1} → ${off2}`);
   await page.type('.xlo-find input', 'zen');
   await wait(400);
   const hits = await page.$$eval('.xlo-hit', (h) => h.map((x) => x.getAttribute('href')));
   check('404 searches every page', hits.length >= 3, `"zen" → ${hits.slice(0, 4).join(', ')}`);
 }));
-await step('sigil reduced motion', () => withPage('/no-such-page-hz-test', { reduce: true }, '404 reduced', async (page) => {
+await step('dots reduced motion', () => withPage('/no-such-page-hz-test', { reduce: true }, '404 reduced', async (page) => {
   const f1 = await sig(page); await wait(1200); const f2 = await sig(page);
-  check('sigil freezes for reduced motion', f1 !== null && f1 === f2 && f1 !== 0, `frames ${f1} → ${f2}`);
+  check('dots field freezes for reduced motion', f1 !== null && f1 === f2 && f1 !== 0, `frames ${f1} → ${f2}`);
 }));
 await step('404 room phone', () => withPage('/no-such-page-hz-test', { phone: true }, '404 phone', async (page) => {
   const r = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, W: innerWidth, h: document.querySelector('.xlo-find input')?.getBoundingClientRect().height }));
