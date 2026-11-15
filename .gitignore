@@ -4,7 +4,8 @@ out/
 .DS_Store
 *.log
 .next-dev/
-shots/
+/shots/
+!public/shots/
 __pycache__/
 CLAUDE.md
 AGENTS.md
