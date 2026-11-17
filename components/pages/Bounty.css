@@ -34,6 +34,9 @@
 .xbo-iss-r { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--soft); }
 .xbo-iss-r em { font-style: normal; padding: 3px 8px; border-radius: 999px; border: 1px solid light-dark(var(--hz-200), var(--border-strong)); color: light-dark(var(--hz-700), var(--text-secondary)); }
 .xbo-say { min-height: 420px; display: grid; place-content: center; justify-items: center; gap: 20px; padding: 32px 24px; text-align: center; }
+.xbo-amt { font-weight: 600; color: var(--ink); }
+.xbo-chip { font-size: 11px; padding: 1px 7px; border-radius: 999px; border: 1px solid light-dark(var(--hz-200), var(--border-strong)); color: light-dark(var(--hz-600), var(--text-secondary)); }
+.xbo-updated { margin: 0 0 8px 22px; font-size: 12px; color: light-dark(var(--hz-500), var(--muted-foreground)); }
 .xbo-say p { margin: 0; max-width: 32ch; font-size: 17px; line-height: 1.5; color: var(--soft); }
 .xbo-ghosts { display: grid; gap: 10px; width: min(320px, 80%); }
 .xbo-ghosts i { height: 14px; border-radius: 7px; background: var(--card); }
