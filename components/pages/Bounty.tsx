@@ -6,6 +6,7 @@ import LineReveal, { NoJs } from '../v2/LineReveal';
 import { SEARCH, SEARCH_CLOSED, REPOS, CONTRIBUTING, useBounties } from './Bounty.github';
 import type { Bounty as BountyItem, BountyState } from './Bounty.github';
 import { SNAP } from './Bounty.snapshot';
+import { EasySocialBounties, GamificationShowcase, ReferralProgramMerge } from './bounty/UnifiedRewards';
 import '../v2/ProgramScale.css';
 import './Bounty.css';
 
@@ -74,14 +75,15 @@ function Hero({ openTotal }: { openTotal: number }) {
     <section className="xbo-hero" aria-labelledby="xbo-h1">
       <div className="xp-wrap xp-grid">
         <div className="xbo-copy">
-          <p className="xp-kick">Bounties &amp; AI Credit Rewards</p>
-          <LineReveal as="h1" id="xbo-h1" className="xp-display md" lines={['Ship code.', 'Get paid in AI credits.']} />
+          <p className="xp-kick">Bounties, Social Quests &amp; AI Credit Rewards</p>
+          <LineReveal as="h1" id="xbo-h1" className="xp-display md" lines={['Ship code or share Hanzo.', 'Earn AI credits & badges.']} />
           <div className="xbo-in" style={{ '--d': '.1s' } as React.CSSProperties}>
             <p className="xp-lede xbo-lede">
-              Pick an open GitHub issue, report a reproducible bug, or merge a pull request across Hanzo’s repositories. You get paid automatically in AI credits — redeemable across all Hanzo models (Zen, Enso, Kai) and 600+ top frontier models in Hanzo Chat, Dev, CLI, and API.
+              Complete 60-second social bounties, invite builders with 3-tier referral rewards, report bugs, or merge pull requests across Hanzo’s repositories. Earn points, rarity badges, and AI credits redeemable across Zen, Enso, Kai, and 600+ frontier models.
             </p>
             <div className="xbo-acts">
               <Cta to="#issues" id="bounty.hero" thumb className="xp-cta">{`Browse ${n(openTotal)} bounties`}</Cta>
+              <a href="#social-bounties" className="xbo-link">Easy social bounties</a>
               <A to={SEARCH} className="xbo-link" data-cta="bounty.github">Open on GitHub</A>
               <A to="https://console.hanzo.ai" className="xbo-link" data-cta="bounty.console">Link GitHub account</A>
             </div>
@@ -90,30 +92,30 @@ function Hero({ openTotal }: { openTotal: number }) {
         <div className="xbo-hero-win xbo-in" style={{ '--d': '.05s', '--y': '20px' } as React.CSSProperties}>
           <div className="xbo-summary xp-obj">
             <div className="xbo-sum-top">
-              <span className="xbo-sum-k x-mono">Program Overview</span>
-              <span className="xbo-sum-badge x-mono">600+ Models</span>
+              <span className="xbo-sum-k x-mono">Unified Rewards Overview</span>
+              <span className="xbo-sum-badge x-mono">600+ Models · 5 Pillars</span>
             </div>
             <ul className="xbo-tiers">
               <li>
                 <div className="xbo-tier-h">
-                  <b>Merged bounty pull request</b>
+                  <b>Easy social &amp; community bounties</b>
+                  <span className="xbo-cr x-mono">Stars · 14 Socials · Badges</span>
+                </div>
+                <p>Star repos, follow <code>@hanzoai</code> / <code>@zenlm</code> / <code>@luxfi</code> / <code>@zooai</code>, share across 14 social networks, or add a README badge.</p>
+              </li>
+              <li>
+                <div className="xbo-tier-h">
+                  <b>Invite builders &amp; 3-tier referrals</b>
+                  <span className="xbo-cr x-mono">+50 pts · +$5 cr · 10/5/2%</span>
+                </div>
+                <p>Share your <code>?ref=</code> link for +25 activated + 25 retained pts, +$5 AI credits, and 3-level network upline (+10 welcome pts for invitees).</p>
+              </li>
+              <li>
+                <div className="xbo-tier-h">
+                  <b>Merged PRs &amp; verified bug reports</b>
                   <span className="xbo-cr x-mono">+$20 – $500 AI credits</span>
                 </div>
-                <p>Open a PR referencing a bounty issue (<code>Fixes #123</code>). Automatically credited to your linked GitHub account on merge.</p>
-              </li>
-              <li>
-                <div className="xbo-tier-h">
-                  <b>Verified bug report or QA issue</b>
-                  <span className="xbo-cr x-mono">+$20 AI credits</span>
-                </div>
-                <p>File a reproducible bug report or QA failure. Automatically rewarded when a maintainer labels it <code>bounty</code> or <code>accepted</code>, or when its fix merges.</p>
-              </li>
-              <li>
-                <div className="xbo-tier-h">
-                  <b>Redeemable on all Hanzo &amp; 600+ models</b>
-                  <span className="xbo-cr x-mono">100% usage credit</span>
-                </div>
-                <p>Use your earned credits across Hanzo Zen, Enso, Kai, Claude, GPT, Gemini, DeepSeek, Llama, and Qwen via Chat, Dev, CLI, or <code>api.hanzo.ai</code>.</p>
+                <p>Merge a bounty PR (<code>Fixes #123</code>) or file a reproducible bug report. Credited automatically across Chat, Dev, CLI, Bot, and <code>api.hanzo.ai</code>.</p>
               </li>
             </ul>
           </div>
@@ -487,7 +489,10 @@ export default function Bounty() {
     <main className="xp xbo">
       <NoJs />
       <Hero openTotal={openTotal} />
+      <EasySocialBounties from="bounty" />
       <IssuesBoard st={st} />
+      <ReferralProgramMerge />
+      <GamificationShowcase from="bounty" />
       <HowItWorks />
       <Close />
     </main>

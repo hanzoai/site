@@ -16,7 +16,7 @@
 .xbo-summary { overflow: hidden; }
 .xbo-sum-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 24px; border-bottom: 1px solid var(--line); }
 .xbo-sum-k { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); }
-.xbo-sum-badge { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: light-dark(var(--hz-100), var(--secondary)); color: var(--ink); }
+.xbo-sum-badge { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: light-dark(var(--hz-100), var(--secondary)); color: var(--ink); white-space: nowrap; flex-shrink: 0; }
 .xbo-tiers { list-style: none; margin: 0; padding: 0 24px; }
 .xbo-tiers li { padding: 18px 0; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
 .xbo-tiers li:last-child { border-bottom: 0; }

@@ -5,8 +5,8 @@ import Referral from '../../components/pages/Referral';
 import JsonLd from '../../components/JsonLd';
 
 export const metadata = {
-  title: 'Bring a builder to Hanzo — Hanzo AI',
-  description: 'One link counts everyone who signs up through it, and who goes on to use Hanzo.',
+  title: 'Referrals, Social Bounties & Rewards Hub — Hanzo AI',
+  description: 'Bring builders to Hanzo, complete easy social bounties across 14 networks, stack open GitHub bounties, and level up across 5 reward pillars and collectible badges.',
 };
 
 export default function Page() {

@@ -19,6 +19,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties, ElementType, PointerEvent, RefObject } from 'react';
 import { motion, AnimatePresence, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { A, Cta } from '../kit';
+import { EasySocialBounties, GamificationShowcase, OpenBountiesMerge } from './bounty/UnifiedRewards';
 import '../v2/ProgramScale.css';
 import './Referral.css';
 
@@ -30,7 +31,7 @@ const STEPS = [
   ['Share it anywhere: every way out carries your link.', 'share'],
   ['An account that signs up through it is yours, once and for good.', 'lock'],
   ['It qualifies with its first metered spend.', 'meter'],
-  ['Each one moves you up the beta waitlist.', 'up'],
+  ['Each one earns +50 points, AI credits, and 10% · 5% · 2% network upline.', 'up'],
 ];
 const useIso = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
@@ -144,12 +145,12 @@ function Hero() {
         <div className="xrf-words">
           <SlotH1 />
           <div className="xrf-rest">
-            <p className="xp-lede xrf-lede">One link counts everyone who signs up through it, and who goes on to use Hanzo.</p>
+            <p className="xp-lede xrf-lede">One link counts everyone who signs up through it — earning +50 referral points, AI credits, 3-tier network bonuses, and collectible badges alongside open-source bounties.</p>
             <div className="xrf-acts">
               <Cta to={SIGNUP} id="referral.hero" thumb className="xp-cta">Get your link</Cta>
               <Cta to={LOGIN} kind="quiet" id="referral.signin" className={'xp-ghost xrf-si' + (pulse ? ' pulse p' + (pulse % 2) : '')}>Sign in</Cta>
             </div>
-            <p className="xp-kick plain xrf-cap">Referrals</p>
+            <p className="xp-kick plain xrf-cap">Referrals · Social Bounties · Standing</p>
           </div>
         </div>
         <div className="xrf-card"><Card onCopy={() => setPulse((n) => n + 1)} /></div>
@@ -312,8 +313,8 @@ function Which() {
   const leave = () => stage.current?.classList.remove('lens');
   const seen = on;
   const words = (link: boolean) => <>
-    <span className="xrf-half a">A referral pays nothing. </span>
-    <span className="xrf-half b">{link ? <A to="/affiliate">Affiliates</A> : <u>Affiliates</u>} <span>are paid on what their referrals spend.</span></span>
+    <span className="xrf-half a">Referrals earn AI credits &amp; points. </span>
+    <span className="xrf-half b">{link ? <A to="/affiliate">Affiliates</A> : <u>Affiliates</u>} <span>earn 15% cash on what their referrals spend.</span></span>
   </>;
   return (
     <section className="xp-sec xp-dark xrf-which" data-room="dark" ref={box} aria-labelledby="xrf-which-h">
@@ -402,7 +403,10 @@ export default function Referral() {
   return (
     <main className="xp xrf">
       <Hero />
+      <EasySocialBounties from="referral" />
       <Flow />
+      <GamificationShowcase from="referral" />
+      <OpenBountiesMerge />
       <Which />
       <Deal />
       <Close />
