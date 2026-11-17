@@ -27,7 +27,7 @@ export async function bounty() {
   if (!token) { console.log('bounty snapshot kept: no GITHUB_TOKEN'); return; }
   const c = new AbortController();
   const t = setTimeout(() => c.abort(), 120000);
-  let o: Awaited<ReturnType<typeof load>['openBounties']> | null = null;
+  let o: Awaited<ReturnType<typeof load>>['openBounties'] | null = null;
   try { o = await (await load()).openBounties(c.signal); }
   catch (e) { console.log(`bounty snapshot kept: ${(e as Error).message}`); }
   finally { clearTimeout(t); }

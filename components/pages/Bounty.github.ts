@@ -94,7 +94,7 @@ export function useBounties() {
   const [st, setSt] = useState<BountyState>({ kind: 'reading' });
   useEffect(() => {
     const c = new AbortController();
-    let timer = 0;
+    let timer: any = 0;
     let backoffUntil = 0;
     let lastGood: { total: number; items: Bounty[] } | null = null;
     let reading = false;

@@ -17,7 +17,7 @@ import { A, Cta } from '../kit';
 import { Count } from '../ui';
 import LineReveal, { NoJs } from '../v2/LineReveal';
 import { SEARCH, REPOS, CONTRIBUTING, useBounties, SAY } from './Bounty.github';
-import type { BountyState } from './Bounty.github';
+import type { Bounty, BountyState, OpenBounties } from './Bounty.github';
 import { SNAP } from './Bounty.snapshot';
 import { useEnter } from './bounty/enter';
 import './bounty/enter.css';
@@ -44,8 +44,8 @@ interface OpenProps {
 }
 function Open({ st }: OpenProps) {
   const live = st.kind === 'ready';
-  const data = live ? st.open : SNAP;
-  const items = data.items.slice(0, 6);
+  const data = (live ? st.open : SNAP) as OpenBounties;
+  const items = data.items as Bounty[];
   const total = data.total;
   const more = Math.max(0, total - items.length);
   const calm = useReducedMotion();
