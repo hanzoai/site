@@ -1,103 +1,54 @@
 'use client';
-/* Bounties & Rewards. Its idea is the ledger of what a contribution earns.
-   Persona: a developer who wants to contribute to Hanzo's open repositories. Goal: take an open bounty.
-   CTA: "Every open bounty" (GitHub search of Hanzo's bounty issues). Metric: github_click.
-   V2: 8/10 grey deck: display hero beside the GitHub window of open bounties (live, or the build snapshot) where the newest bounty arrives once and the count ticks up, then a reader walks the rows; countable reward tiles; the standings as big totals; the awards as one deck that deals; the token race as one pinned scene in the dark room; how a bounty is taken as the PR itself, pinned while it goes open → pull request → merged; a closing band with the page's headline and its one ask, held in the header to the footer.
-   Signature: the token race: in the dark room the ten organizations' bars race out on a log line as you scroll.
-   Beyond: count on the tiles: steppers on each way to earn add up the points and AI credits Hanzo's rates give, with a
-   marker placed against the standings Hanzo lists. No words but Hanzo's.
-   Motion: scrubbed race with @hanzo's figure growing 52→84px while it is the moment (scroll, the signature) + open
-   bounty arriving and the count ticking (time, idle) + the awards deck dealing (time) + steppers gliding the marker (pointer,
-   state) + line-mask headline (arrival) + the PR changing state as it is read (state). 0 UI hues. */
 import type React from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { motion, animate, useInView, useReducedMotion, useTransform, useMotionValue, useMotionValueEvent } from 'motion/react';
-import type { MotionValue } from 'motion/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { A, Cta } from '../kit';
-import { Count } from '../ui';
 import LineReveal, { NoJs } from '../v2/LineReveal';
-import { SEARCH, REPOS, CONTRIBUTING, useBounties, SAY } from './Bounty.github';
-import type { BountyState } from './Bounty.github';
+import { SEARCH, SEARCH_CLOSED, REPOS, CONTRIBUTING, useBounties } from './Bounty.github';
+import type { Bounty as BountyItem, BountyState } from './Bounty.github';
 import { SNAP } from './Bounty.snapshot';
-import { useEnter } from './bounty/enter';
-import './bounty/enter.css';
 import '../v2/ProgramScale.css';
 import './Bounty.css';
 
-const EASE = [0.16, 1, 0.3, 1];
 const n = (v: number) => v.toLocaleString('en-US');
 
-/* The live window: open bounties straight from GitHub, the build snapshot until it answers (or when it does not).
-   Once the list is in, the newest bounty arrives at the top and the count ticks up by one; then a quiet reader walks
-   the rows (paused under the pointer, off screen and under reduced motion). */
-interface OpenProps {
-  st: BountyState;
+function rewardFor(it: BountyItem): { label: string; cents: number } {
+  const ls = (it.labels || []).map((l) => l.toLowerCase());
+  const t = (it.tier || '').toLowerCase();
+  if (t === 'p0' || t === 'advanced' || t === 'l' || ls.includes('bounty:p0') || ls.includes('priority: p0') || ls.includes('research')) {
+    return { label: '+$100 AI credits', cents: 10000 };
+  }
+  if (t === 'starter' || t === 's' || t === 'p2' || ls.includes('bounty:starter') || ls.includes('starter')) {
+    return { label: '+$20 AI credits', cents: 2000 };
+  }
+  return { label: '+$50 AI credits', cents: 5000 };
 }
-function Open({ st }: OpenProps) {
-  const live = st.kind === 'ready';
-  const data = live ? st.open : SNAP;
-  const items = data.items.slice(0, 6);
-  const total = data.total;
-  const more = Math.max(0, total - items.length);
-  const calm = useReducedMotion();
-  const box = useRef<HTMLDivElement>(null);
-  const seen = useInView(box, { amount: 0.4 });
-  const [arrived, setArrived] = useState(false);
-  const [walk, setWalk] = useState(-1);
-  const [hold, setHold] = useState(false);
-  useEffect(() => {
-    if (calm) { setArrived(true); return; }
-    const t = setTimeout(() => setArrived(true), 2400);
-    return () => clearTimeout(t);
-  }, [calm]);
-  useEffect(() => {
-    if (!arrived || calm || !seen || hold || !items.length) return;
-    const t = setTimeout(() => setWalk((w) => (w + 1) % items.length), walk < 0 ? 2600 : 3200);
-    return () => clearTimeout(t);
-  }, [arrived, calm, seen, hold, walk, items.length]);
-  const say = SAY.none;
+
+function OpenIssueIcon() {
   return (
-    <div ref={box} className="xbo-win xp-obj" data-state={live && !total ? 'none' : 'ready'}
-      onPointerEnter={() => setHold(true)} onPointerLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)}>
-      <div className="xbo-win-bar">
-        <i className="xbo-live" aria-hidden="true" />
-        <span className="xbo-win-k">Bounties &amp; Rewards</span>
-        <b>Open bounties</b>
-        {total > 0 && (
-          <span className="xbo-n x-mono" aria-hidden="true">
-            <span className="xbo-roll" data-on={arrived ? 'y' : 'n'}><i>{n(Math.max(0, total - 1))}</i><i>{n(total)}</i></span>
-          </span>
-        )}
-      </div>
-      {items.length ? (
-        <ul className="xbo-issues">
-          {items.map((it, i) => (
-            <li key={it.url} style={{ '--i': i }} className={(i === 0 ? (arrived ? 'fresh' : 'pend') : '') + (walk === i ? ' walk' : '')}>
-              <div className="xbo-iss-in">
-                <a href={it.url} target="_blank" rel="noopener noreferrer" tabIndex={i === 0 && !arrived ? -1 : undefined}>
-                  <span className="xbo-dot" aria-hidden="true" />
-                  <span className="xbo-iss-t">{it.title}</span>
-                  <span className="xbo-iss-r x-mono"><span>{`${it.repo}#${it.number}`}</span>{it.tier && <em>{it.tier}</em>}</span>
-                </a>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="xbo-say" role={st.kind === 'reading' ? 'status' : undefined} aria-live="polite">
-          <span className="xbo-ghosts" aria-hidden="true"><i /><i /><i /><i /></span>
-          {say && <p className="xbo-shimmer">{say}</p>}
-          <Cta to="#propose" kind="quiet" id="bounty.propose" className="xp-ghost">Propose a bounty</Cta>
-        </div>
-      )}
-      <p className="xbo-asking x-mono" role="status" data-on={st.kind === 'reading' ? 'y' : 'n'} aria-hidden={st.kind === 'reading' ? undefined : true}><span>{SAY.reading}</span></p>
-      {more > 0 && <a className="xbo-more" href={SEARCH} target="_blank" rel="noopener noreferrer" data-cta="bounty.window"><span>Every open bounty</span><i aria-hidden="true">↗</i></a>}
-    </div>
+    <svg className="xbo-gh-ic open" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="8" cy="8" r="2" fill="currentColor" />
+    </svg>
   );
 }
 
-/* Phones keep Hanzo's "Try Hanzo" solid in the header; while this hero's own solid ask is on screen the header's
-   button reads as an outline (the same html[data-ask=quiet] the shell sets on desktop), so one solid shows at a time. */
+function ClosedIssueIcon() {
+  return (
+    <svg className="xbo-gh-ic closed" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M5.2 8.1 7.1 10l3.8-4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CommentIcon() {
+  return (
+    <svg className="xbo-gh-cmt-ic" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <path d="M2.75 2.5h10.5c.69 0 1.25.56 1.25 1.25v6.5c0 .69-.56 1.25-1.25 1.25H7.5l-3.25 2.5v-2.5H2.75c-.69 0-1.25-.56-1.25-1.25v-6.5c0-.69.56-1.25 1.25-1.25Z" fill="none" stroke="currentColor" strokeWidth="1.35" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function useOneSolidOnPhone() {
   useEffect(() => {
     const H = document.documentElement;
@@ -111,137 +62,60 @@ function useOneSolidOnPhone() {
     };
     const io = new IntersectionObserver(([e]) => { vis = e.isIntersecting; apply(); });
     io.observe(el);
-    const timers = [300, 1400].map((ms) => setTimeout(apply, ms)); // after the shell's own first pass
+    const timers = [300, 1400].map((ms) => setTimeout(apply, ms));
     mq.addEventListener('change', apply);
     return () => { io.disconnect(); timers.forEach(clearTimeout); mq.removeEventListener('change', apply); if (mine) delete H.dataset.ask; };
   }, []);
 }
 
-/* Desktop: once the hero's ask has gone by, the header's button says "Every open bounty" down to the footer. The shell
-   writes it once and caches that it did; when the header's text is put back under it (a header re-render), the shell
-   does not notice and "Try Hanzo" returns mid-page. This re-asserts the page's ask, only while the hero's ask is above
-   the header, and leaves everything else to the shell (docs/build-notes/requests/bounty.md). */
-function useHoldHeaderAsk() {
-  useEffect(() => {
-    const mq = matchMedia('(min-width: 701px)');
-    const hero = document.querySelector('main.xbo [data-cta="bounty.hero"]');
-    const head = document.querySelector('header[data-slot=masthead]');
-    if (!hero || !head) return;
-    const label = hero.textContent.trim();
-    const to = hero.getAttribute('href');
-    let t: ReturnType<typeof setTimeout> | undefined;
-    const fix = () => {
-      const btn = head.querySelector('a[data-x-ask]');
-      if (!btn || !mq.matches || hero.getBoundingClientRect().bottom >= 60) return;
-      if (btn.textContent !== label) btn.textContent = label;
-      if (to !== null && btn.getAttribute('href') !== to) btn.setAttribute('href', to);
-      if (btn.getAttribute('data-cta') !== 'header-ask') btn.setAttribute('data-cta', 'header-ask');
-    };
-    const soon = () => { clearTimeout(t); t = setTimeout(fix, 120); };
-    addEventListener('scroll', soon, { passive: true });
-    const mo = new MutationObserver(soon);
-    mo.observe(head, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['href'] });
-    return () => { clearTimeout(t); removeEventListener('scroll', soon); mo.disconnect(); };
-  }, []);
-}
-
-interface HeroProps {
-  st: BountyState;
-}
-function Hero({ st }: HeroProps) {
+function Hero({ openTotal }: { openTotal: number }) {
   useOneSolidOnPhone();
-  useHoldHeaderAsk();
   return (
     <section className="xbo-hero" aria-labelledby="xbo-h1">
       <div className="xp-wrap xp-grid">
         <div className="xbo-copy">
-          <LineReveal as="h1" id="xbo-h1" className="xp-display md" lines={['Take an issue.', 'Ship the fix.']} />
-          <div className="xbo-in" style={{ '--d': '.12s' }}>
-            <p className="xp-lede xbo-lede">Open issues and bug reports across Hanzo’s repositories. Ship a fix or report a verified bug to earn AI credits and climb the global leaderboard.</p>
+          <p className="xp-kick">Bounties &amp; AI Credit Rewards</p>
+          <LineReveal as="h1" id="xbo-h1" className="xp-display md" lines={['Ship code.', 'Get paid in AI credits.']} />
+          <div className="xbo-in" style={{ '--d': '.1s' } as React.CSSProperties}>
+            <p className="xp-lede xbo-lede">
+              Pick an open GitHub issue, report a reproducible bug, or merge a pull request across Hanzo’s repositories. You get paid automatically in AI credits — redeemable across all Hanzo models (Zen, Enso, Kai) and 600+ top frontier models in Hanzo Chat, Dev, CLI, and API.
+            </p>
             <div className="xbo-acts">
-              <Cta to={SEARCH} id="bounty.hero" thumb className="xp-cta">Every open bounty</Cta>
-              <A to="/leaderboard" className="xbo-link" data-cta="bounty.leaderboard">Leaderboard</A>
-              <A to={CONTRIBUTING} className="xbo-link" data-cta="bounty.contributing">How to contribute</A>
+              <Cta to="#issues" id="bounty.hero" thumb className="xp-cta">{`Browse ${n(openTotal)} bounties`}</Cta>
+              <A to={SEARCH} className="xbo-link" data-cta="bounty.github">Open on GitHub</A>
+              <A to="https://console.hanzo.ai" className="xbo-link" data-cta="bounty.console">Link GitHub account</A>
             </div>
           </div>
         </div>
-        <div className="xbo-hero-win xbo-in" style={{ '--d': '.05s', '--y': '32px' }}>
-          <Open st={st} />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-type Way = [title: string, pts: number, credit: string | null, desc: string];
-const WAYS = ([
-  ['Verified bug report', 50, '+$20 AI credits', 'Report a reproducible bug in Hanzo Dev, Cloud, Console, or SDKs. Earn +50 bounty points and up to $20 in AI credits.'],
-  ['Merged bounty pull request', 100, '+$20 AI credits', 'Ship a merged pull request fixing an open GitHub issue labelled bounty. Earn +100 to +500 points and AI credits.'],
-  ['Qualified referral', 20, '+$5 AI credits', 'Invite a builder who activates a paid plan or trial. Earn +20 leaderboard points and $5 in AI credits.'],
-  ['100K tokens processed', 1, null, 'Every 100,000 tokens processed across Hanzo Cloud models automatically adds +1 point to your global standing.'],
-] satisfies Way[]);
-
-type Stand = [who: string, role: string, line: string, pts: number, up: string | null];
-const STAND = ([
-  ['Zach Kelling (@zeekay)', 'Founding Maintainer · #1 Fleet', '1 bugs reported · +450 bounty pts · 106,039,884 tokens (Global #1)', 1510, null],
-  ['zlatan mioslav (@valerypetrov)', 'Bug Hunter · Top 10', '3 bugs reported · +150 bounty pts · +$20 AI credits · 4,252,634 tokens (Global #7)', 192, '▲ +5 ranks'],
-  ['Antje Worring (@zooqueen)', 'Core Contributor', '0 bugs reported · +200 bounty pts · 5,212,081 tokens (Global #3)', 252, null],
-] satisfies Stand[]);
-
-/* The four ways to earn, as tiles you can count on: a stepper on each adds to the total by Hanzo's own rates, and the
-   marker on the line sits against the standings Hanzo lists. */
-const STEP = [1, 1, 1, 1];
-function Rewards() {
-  const [v, setV] = useState([1, 1, 0, 10]); // bug reports, merged bounty pull requests, qualified referrals, 100K-token blocks
-  const [mine, setMine] = useState(false);
-  const box = useRef<HTMLElement>(null);
-  const seen = useInView(box, { amount: 0.3 });
-  const calm = useReducedMotion();
-  const DEMO = [[1, 1, 0, 10], [2, 1, 1, 20], [3, 2, 1, 50], [0, 1, 2, 5]];
-  const [d, setD] = useState(0);
-  useEffect(() => {
-    if (mine || calm || !seen) return;
-    const t = setTimeout(() => { const nx = (d + 1) % DEMO.length; setD(nx); setV(DEMO[nx]); }, 2800);
-    return () => clearTimeout(t);
-  }, [d, mine, calm, seen]); // eslint-disable-line react-hooks/exhaustive-deps
-  const [bugs, prs, refs, blocks] = v;
-  const lo = bugs * 50 + prs * 100 + refs * 20 + blocks;
-  const hi = bugs * 50 + prs * 500 + refs * 20 + blocks;
-  const credits = bugs * 20 + prs * 20 + refs * 5;
-  const set = (i: number, x: number) => { setMine(true); setV((o) => o.map((y, j) => (j === i ? Math.max(0, Math.min(i === 3 ? 1000 : 99, x)) : y))); };
-  const MAX = 1700;
-  const pos = (p: number) => Math.min(100, (p / MAX) * 100) + '%';
-  return (
-    <section className="xp-sec xbo-rewards" aria-labelledby="xbo-rw" ref={box}>
-      <div className="xp-wrap">
-        <div className="xp-grid xbo-rw-head">
-          <h2 id="xbo-rw" className="xp-head xbo-rw-h">Rewards &amp; points</h2>
-          <p className="xp-lede xbo-rw-l">Every verified bug report, merged pull request, and token processed on Hanzo Cloud builds your standing and awards AI credits.</p>
-        </div>
-        <ul className="xbo-ways" data-enter="fold-out">
-          {WAYS.map(([t, pts, cr, d2], i) => (
-            <li key={t} className={'xbo-way w' + i} style={{ '--k': i }}>
-              <span className="xbo-way-fig xp-fig"><span className="xbo-plus">+</span><Count to={pts} /><small> pts</small></span>
-              <span className="x-sr">{`+${pts} pts`}</span>
-              <div className="xbo-way-b">
-                <h3 className="xp-title">{t}</h3>
-                {cr && <span className="xbo-cr x-mono">{cr}</span>}
-                <p className="xp-body">{d2}</p>
-              </div>
-              <span className="xbo-step-c">
-                <button type="button" onClick={() => set(i, v[i] - STEP[i])} aria-label={'− ' + t} disabled={!v[i]}>−</button>
-                <output className="x-mono" aria-live="polite" aria-label={t}>{i === 3 ? n(v[i] * 100000) : v[i]}</output>
-                <button type="button" onClick={() => set(i, v[i] + STEP[i])} aria-label={'+ ' + t}>+</button>
-              </span>
-            </li>
-          ))}
-        </ul>
-        <div className="xbo-total" aria-live="polite">
-          <div className="xbo-total-n"><b className="xp-fig">{lo === hi ? n(lo) : `${n(lo)} – ${n(hi)}`}</b><span className="x-mono">pts</span></div>
-          <div className="xbo-total-c"><b className="xp-fig">{`+$${n(credits)}`}</b><span className="x-mono">AI credits</span></div>
-          <div className="xbo-track" aria-hidden="true">
-            <motion.i className="xbo-you" animate={{ left: pos(lo), width: `calc(${pos(hi)} - ${pos(lo)} + 8px)` }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }} />
-            {STAND.map((st, i) => <span key={st[0]} className="xbo-mk" style={{ left: pos(st[3]) }}><b className="x-mono">#{i + 1}</b></span>)}
+        <div className="xbo-hero-win xbo-in" style={{ '--d': '.05s', '--y': '20px' } as React.CSSProperties}>
+          <div className="xbo-summary xp-obj">
+            <div className="xbo-sum-top">
+              <span className="xbo-sum-k x-mono">Program Overview</span>
+              <span className="xbo-sum-badge x-mono">600+ Models</span>
+            </div>
+            <ul className="xbo-tiers">
+              <li>
+                <div className="xbo-tier-h">
+                  <b>Merged bounty pull request</b>
+                  <span className="xbo-cr x-mono">+$20 – $500 AI credits</span>
+                </div>
+                <p>Open a PR referencing a bounty issue (<code>Fixes #123</code>). Automatically credited to your linked GitHub account on merge.</p>
+              </li>
+              <li>
+                <div className="xbo-tier-h">
+                  <b>Verified bug report or QA issue</b>
+                  <span className="xbo-cr x-mono">+$20 AI credits</span>
+                </div>
+                <p>File a reproducible bug report or QA failure. Automatically rewarded when a maintainer labels it <code>bounty</code> or <code>accepted</code>, or when its fix merges.</p>
+              </li>
+              <li>
+                <div className="xbo-tier-h">
+                  <b>Redeemable on all Hanzo &amp; 600+ models</b>
+                  <span className="xbo-cr x-mono">100% usage credit</span>
+                </div>
+                <p>Use your earned credits across Hanzo Zen, Enso, Kai, Claude, GPT, Gemini, DeepSeek, Llama, and Qwen via Chat, Dev, CLI, or <code>api.hanzo.ai</code>.</p>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -249,276 +123,341 @@ function Rewards() {
   );
 }
 
-const AWARDS = [
-  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#index-lock', '+50 pts · +$20 AI credits', 'Reported stale .git/index.lock failure during post-turn sandbox delivery on large C++ repositories (ClickHouse PR 115724).'],
-  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#repo-fallback', '+50 pts', 'Reported Try Again / follow-up repository resolution failure when Forge workspace exists alongside a GitHub fork.'],
-  ['zlatan mioslav (@valerypetrov) · hanzo-inc/cloud#slack-thread-pr-review', '+50 pts', 'Reported Slack @Hanzo thread parent context loss and multi-repo PR review handling in channel threads.'],
+const LABEL_FILTERS = [
+  { id: 'all', label: 'All labels' },
+  { id: 'p0', label: 'bounty:P0 / Priority', match: (ls: string[]) => ls.some((l) => l.includes('p0')) },
+  { id: 'research', label: 'research / HIP', match: (ls: string[]) => ls.includes('research') },
+  { id: 'qa', label: 'qa / tests', match: (ls: string[]) => ls.includes('qa') || ls.includes('tests') },
+  { id: 'bugfix', label: 'bugfix / perf', match: (ls: string[]) => ls.includes('bugfix') || ls.includes('bug') || ls.includes('perf') },
+  { id: 'starter', label: 'starter', match: (ls: string[]) => ls.some((l) => l.includes('starter')) },
 ];
 
-/* The awards as one deck: the front report is read, the two behind it peek; it deals the next one every 5s while in
-   view (paused under the pointer or focus), and the three bars below pick one and show its time running. */
-const DEAL = 5000;
-function Awards() {
-  const [cur, setCur] = useState(0);
-  const [hold, setHold] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const seen = useInView(ref, { amount: 0.5 });
-  const calm = useReducedMotion();
-  const run = seen && !hold && !calm;
+function IssuesBoard({ st }: { st: BountyState }) {
+  const [stateFilter, setStateFilter] = useState<'open' | 'closed' | 'all'>('open');
+  const [repoFilter, setRepoFilter] = useState<string>('all');
+  const [labelFilter, setLabelFilter] = useState<string>('all');
+  const [query, setQuery] = useState<string>('');
+  const [sortBy, setSortBy] = useState<'newest' | 'comments' | 'reward'>('newest');
+  const [visibleCount, setVisibleCount] = useState<number>(15);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
-    if (!run) return;
-    const t = setTimeout(() => setCur((c) => (c + 1) % AWARDS.length), DEAL);
-    return () => clearTimeout(t);
-  }, [cur, run]);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const allItems = useMemo(() => {
+    const snapItems = (SNAP.items || []) as BountyItem[];
+    if (st.kind !== 'ready' || !st.open.items.length) return snapItems;
+    const byUrl = new Map<string, BountyItem>();
+    for (const it of snapItems) byUrl.set(it.url, it);
+    for (const it of st.open.items) {
+      const prev = byUrl.get(it.url);
+      byUrl.set(it.url, { ...prev, ...it, labels: it.labels?.length ? it.labels : prev?.labels, body: it.body || prev?.body });
+    }
+    return Array.from(byUrl.values());
+  }, [st]);
+
+  const counts = useMemo(() => {
+    let open = 0, closed = 0;
+    for (const it of allItems) {
+      if (it.state === 'closed') closed++;
+      else open++;
+    }
+    return {
+      open: Math.max(open, SNAP.total || open),
+      closed: Math.max(closed, (SNAP as { closedTotal?: number }).closedTotal || closed),
+      loadedOpen: open,
+      loadedClosed: closed,
+    };
+  }, [allItems]);
+
+  const repos = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const it of allItems) {
+      if (stateFilter !== 'all' && (it.state || 'open') !== stateFilter) continue;
+      map.set(it.repo, (map.get(it.repo) || 0) + 1);
+    }
+    return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+  }, [allItems, stateFilter]);
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const lf = LABEL_FILTERS.find((f) => f.id === labelFilter);
+    const list = allItems.filter((it) => {
+      const itemState = it.state || 'open';
+      if (stateFilter !== 'all' && itemState !== stateFilter) return false;
+      if (repoFilter !== 'all' && it.repo !== repoFilter) return false;
+      const ls = (it.labels || ['bounty', ...(it.tier ? [`bounty:${it.tier}`] : [])]).map((x) => x.toLowerCase());
+      if (lf && lf.match && !lf.match(ls)) return false;
+      if (q) {
+        const hay = `${it.repo} #${it.number} ${it.title} ${it.body || ''} ${ls.join(' ')} ${it.author || ''}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    if (sortBy === 'comments') {
+      return [...list].sort((a, b) => (b.comments || 0) - (a.comments || 0));
+    }
+    if (sortBy === 'reward') {
+      return [...list].sort((a, b) => rewardFor(b).cents - rewardFor(a).cents);
+    }
+    return list;
+  }, [allItems, stateFilter, repoFilter, labelFilter, query, sortBy]);
+
+  const shown = filtered.slice(0, visibleCount);
+  const hasFilters = repoFilter !== 'all' || labelFilter !== 'all' || query.trim() !== '';
+
   return (
-    <div className="xbo-deck" ref={ref} onPointerEnter={() => setHold(true)} onPointerLeave={() => setHold(false)} onFocus={() => setHold(true)} onBlur={() => setHold(false)}>
-      <ul className="xp-obj xbo-aw">
-        {AWARDS.map(([h, prize, d], i) => {
-          const pos = (i - cur + AWARDS.length) % AWARDS.length;
-          return (
-            <li key={h} data-pos={pos} onClick={() => pos && setCur(i)}>
-              <span className="xbo-wire-k x-mono">{h}</span>
-              <p>{d}</p>
-              <span className="xbo-wire-p x-mono">{prize}</span>
-            </li>
-          );
-        })}
-      </ul>
-      <div className="xbo-deck-pg">
-        {AWARDS.map(([h], i) => (
-          <button key={h} type="button" aria-label={h} aria-pressed={i === cur} data-sound="tick" onClick={() => setCur(i)}>
-            <i key={i === cur ? 'on' + cur : 'off'} data-run={i === cur && run ? 'y' : 'n'} />
-          </button>
-        ))}
+    <section className="xp-sec tight xbo-board" id="issues" aria-labelledby="xbo-issues-h">
+      <div className="xp-wrap">
+        <div className="xbo-board-top">
+          <div>
+            <h2 id="xbo-issues-h" className="xp-head">Bounty issues</h2>
+            <p className="xp-body">Search, filter by repository or label, and click any open issue to take it on GitHub.</p>
+          </div>
+          <div className="xbo-gh-search">
+            <svg className="xbo-gh-s-ic" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+              <circle cx="7" cy="7" r="4.75" fill="none" stroke="currentColor" strokeWidth="1.5" />
+              <path d="m10.5 10.5 3.25 3.25" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+            <input
+              ref={searchInputRef}
+              type="search"
+              value={query}
+              onChange={(e) => { setQuery(e.target.value); setVisibleCount(15); }}
+              placeholder="Filter issues by keyword, repo, #number, or label…"
+              aria-label="Filter bounty issues"
+            />
+            {query ? (
+              <button type="button" className="xbo-gh-clear" onClick={() => setQuery('')} aria-label="Clear search">×</button>
+            ) : (
+              <kbd className="xbo-gh-kbd x-mono" aria-hidden="true">/</kbd>
+            )}
+          </div>
+        </div>
+
+        <div className="xbo-gh-layout">
+          <aside className="xbo-gh-side" aria-label="Issue filters">
+            <div className="xbo-gh-group">
+              <h3 className="xbo-gh-side-h">State</h3>
+              <ul className="xbo-gh-nav">
+                <li>
+                  <button type="button" aria-pressed={stateFilter === 'open'} onClick={() => { setStateFilter('open'); setVisibleCount(15); }}>
+                    <OpenIssueIcon />
+                    <span>Open</span>
+                    <em className="x-mono">{n(counts.open)}</em>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" aria-pressed={stateFilter === 'closed'} onClick={() => { setStateFilter('closed'); setVisibleCount(15); }}>
+                    <ClosedIssueIcon />
+                    <span>Closed</span>
+                    <em className="x-mono">{n(counts.closed)}</em>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" aria-pressed={stateFilter === 'all'} onClick={() => { setStateFilter('all'); setVisibleCount(15); }}>
+                    <span>All issues</span>
+                    <em className="x-mono">{n(counts.open + counts.closed)}</em>
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <div className="xbo-gh-group">
+              <h3 className="xbo-gh-side-h">Label / Track</h3>
+              <ul className="xbo-gh-nav">
+                {LABEL_FILTERS.map((f) => (
+                  <li key={f.id}>
+                    <button type="button" aria-pressed={labelFilter === f.id} onClick={() => { setLabelFilter(f.id); setVisibleCount(15); }}>
+                      <span>{f.label}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="xbo-gh-group">
+              <h3 className="xbo-gh-side-h">Repositories</h3>
+              <ul className="xbo-gh-nav xbo-gh-repos">
+                <li>
+                  <button type="button" aria-pressed={repoFilter === 'all'} onClick={() => { setRepoFilter('all'); setVisibleCount(15); }}>
+                    <span>All repositories</span>
+                    <em className="x-mono">{n(repos.reduce((acc, r) => acc + r[1], 0))}</em>
+                  </button>
+                </li>
+                {repos.slice(0, 12).map(([r, c]) => (
+                  <li key={r}>
+                    <button type="button" aria-pressed={repoFilter === r} onClick={() => { setRepoFilter(r); setVisibleCount(15); }}>
+                      <span className="x-mono">{r}</span>
+                      <em className="x-mono">{c}</em>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </aside>
+
+          <div className="xbo-gh-main">
+            <div className="xbo-gh-bar">
+              <div className="xbo-gh-count">
+                <b>{`${n(filtered.length)} ${filtered.length === 1 ? 'result' : 'results'}`}</b>
+                {hasFilters && (
+                  <button
+                    type="button"
+                    className="xbo-gh-reset"
+                    onClick={() => { setRepoFilter('all'); setLabelFilter('all'); setQuery(''); setVisibleCount(15); }}
+                  >
+                    Clear filters
+                  </button>
+                )}
+              </div>
+              <div className="xbo-gh-sort">
+                <label htmlFor="xbo-sort" className="x-mono">Sort by:</label>
+                <select id="xbo-sort" value={sortBy} onChange={(e) => setSortBy(e.target.value as 'newest' | 'comments' | 'reward')}>
+                  <option value="newest">Newest</option>
+                  <option value="reward">Highest reward</option>
+                  <option value="comments">Most commented</option>
+                </select>
+              </div>
+            </div>
+
+            {shown.length > 0 ? (
+              <ul className="xbo-gh-list">
+                {shown.map((it) => {
+                  const isClosed = it.state === 'closed';
+                  const rw = rewardFor(it);
+                  const labels = it.labels?.length ? it.labels : ['bounty', ...(it.tier ? [`bounty:${it.tier}`] : [])];
+                  return (
+                    <li key={it.url} className="xbo-gh-card">
+                      <div className="xbo-gh-card-top">
+                        <button type="button" className="xbo-gh-repo x-mono" onClick={() => setRepoFilter(repoFilter === it.repo ? 'all' : it.repo)}>
+                          {it.repo}
+                        </button>
+                        <span className="xbo-gh-reward x-mono">{rw.label}</span>
+                      </div>
+
+                      <h3 className="xbo-gh-title">
+                        {isClosed ? <ClosedIssueIcon /> : <OpenIssueIcon />}
+                        <a href={it.url} target="_blank" rel="noopener noreferrer">{it.title}</a>
+                      </h3>
+
+                      {it.body && <p className="xbo-gh-desc">{it.body}</p>}
+
+                      <div className="xbo-gh-labels">
+                        {labels.map((lbl) => (
+                          <span key={lbl} className={'xbo-gh-lbl x-mono' + (lbl.toLowerCase().startsWith('bounty') ? ' primary' : '')}>
+                            {lbl}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="xbo-gh-meta x-mono">
+                        <div className="xbo-gh-meta-l">
+                          <span>{it.author || 'hanzoai'}</span>
+                          {typeof it.comments === 'number' && (
+                            <span className="xbo-gh-cmt"><CommentIcon /> {it.comments}</span>
+                          )}
+                          {it.createdAt && <span>{`Opened ${it.createdAt}`}</span>}
+                          <span>{`#${it.number}`}</span>
+                        </div>
+                        <a href={it.url} target="_blank" rel="noopener noreferrer" className="xbo-gh-take">
+                          {isClosed ? 'View issue ↗' : 'Take issue ↗'}
+                        </a>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <div className="xbo-gh-empty xp-obj">
+                <p>No bounty issues match your current filters.</p>
+                <button
+                  type="button"
+                  className="xbo-gh-reset-btn"
+                  onClick={() => { setStateFilter('all'); setRepoFilter('all'); setLabelFilter('all'); setQuery(''); }}
+                >
+                  Show all issues
+                </button>
+              </div>
+            )}
+
+            <div className="xbo-gh-foot">
+              {filtered.length > visibleCount && (
+                <button type="button" className="xbo-gh-more" onClick={() => setVisibleCount((c) => c + 20)}>
+                  {`Show more issues (${n(filtered.length - visibleCount)} remaining)`}
+                </button>
+              )}
+              <a
+                className="xbo-gh-ext x-mono"
+                href={stateFilter === 'closed' ? SEARCH_CLOSED : SEARCH}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View full search on GitHub ↗
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
-function Standings() {
+const STEPS = [
+  [
+    '01',
+    'Link GitHub to your Hanzo account',
+    'Sign in at console.hanzo.ai with your GitHub account. Hanzo matches every merged PR and accepted issue to your numeric GitHub user ID so rewards land in your account automatically.',
+  ],
+  [
+    '02',
+    'Take an issue or file a bug report',
+    'Comment on an open bounty issue to claim it and open a pull request with "Fixes #number" in the description — or open a reproducible bug report that a maintainer tags with bounty.',
+  ],
+  [
+    '03',
+    'Automatic AI credits on merge',
+    'When a maintainer merges your pull request into the default branch, our GitHub webhook verifies the merge and automatically credits both the PR author and the issue reporter.',
+  ],
+];
+
+function HowItWorks() {
   return (
-    <section className="xp-sec tight xbo-stand" aria-labelledby="xbo-st">
+    <section className="xp-sec tight xbo-how" aria-labelledby="xbo-how-h">
       <div className="xp-wrap">
-        <div className="xp-grid xbo-rw-head">
-          <h2 id="xbo-st" className="xp-head xbo-rw-h">Top bug hunters &amp; contributors</h2>
-          <p className="xp-lede xbo-rw-l">Builders climbing the ranks through verified bug reports, merged bounties, and global token volume.</p>
+        <div className="xp-grid xbo-how-head">
+          <h2 id="xbo-how-h" className="xp-head">How it works</h2>
+          <p className="xp-body">Three steps from picking an issue to spending your AI credits across Zen, Enso, Kai, and 600+ frontier models.</p>
         </div>
-        <ol className="xbo-podium" data-enter="domino">
-          {STAND.map(([who, role, line, pts, up], i) => (
-            <li key={who} style={{ '--k': i }}>
-              <span className="xbo-pos x-mono">{`#${i + 1}`}</span>
-              <span className="xbo-who">
-                <b><span>{who}</span></b>
-                <span className="xbo-role"><span>{role}</span>{up && <em className="xbo-up">{up}</em>}</span>
-                <span className="xbo-line x-mono">{line}</span>
-              </span>
-              <span className="xbo-pts xp-fig">{n(pts)}<small> pts</small></span>
+        <ol className="xbo-steps">
+          {STEPS.map(([num, title, body]) => (
+            <li key={num} className="xbo-step xp-obj">
+              <span className="xbo-step-n x-mono">{num}</span>
+              <h3 className="xp-title">{title}</h3>
+              <p className="xp-body">{body}</p>
             </li>
           ))}
         </ol>
-        <div className="xp-grid xbo-wire">
-          <div className="xbo-wire-h">
-            <h3 className="xp-title">Recent verified bug reports &amp; awards</h3>
-            <A to="/leaderboard" className="xbo-link">View global token &amp; bounty leaderboard</A>
+        <div className="xbo-propose xp-obj" id="propose">
+          <div className="xbo-propose-l">
+            <h3 className="xp-title">Found a bug not listed yet?</h3>
+            <p className="xp-body">
+              Open an issue in the relevant Hanzo repository explaining how to reproduce it. When a maintainer labels your issue <code>bounty</code> or <code>accepted</code> — or when a PR fixing your issue is merged — your linked GitHub account is rewarded automatically. Security vulnerabilities should be reported privately to <a href="mailto:security@hanzo.ai">security@hanzo.ai</a>.
+            </p>
           </div>
-          <Awards />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-type Org = [handle: string, badge: string, req: string, tokens: number];
-const ORGS = ([
-  ['@hanzo', 'Core Fleet', '2,152 requests', 106039884],
-  ['@lux', 'Power Builder', '162 requests', 6361400],
-  ['@zoo', 'Power Builder', '874 requests', 5212081],
-  ['@dissoupov', 'Power Builder', '229 requests', 5008719],
-  ['@Darkhorse7stars', 'Power Builder', '342 requests', 4826492],
-  ['@TopTech126', 'Power Builder', '193 requests', 4797773],
-  ['zlatan mioslav (@valerypetrov)', 'Bug Hunter · Top 10', '375 requests · 3 verified bug reports · +150 bounty pts · +$20 AI credits', 4252634],
-  ['@BDTung', '1M+ Club', '65 requests', 1963129],
-  ['@venuswhispers', 'Active Builder', '340 requests', 590242],
-  ['@Aeonaby', 'Active Builder', '79 requests', 521279],
-] satisfies Org[]);
-const LOG = (t: number) => Math.log10(t) - 5; // 100K tokens sits at the left edge; @hanzo's 106M at the right
-const TOP = LOG(ORGS[0][3]);
-
-interface LaneProps {
-  p: MotionValue<number>;
-  i: number;
-  org: Org;
-}
-function Lane({ p, i, org }: LaneProps) {
-  const [h, badge, req, t] = org;
-  const to = LOG(t) / TOP;
-  const scaleX = useTransform(p, [0.05 + i * 0.035, 0.55 + i * 0.03], [0, 1], { clamp: true });
-  return (
-    <li className="xbo-lane">
-      <span className="xbo-org-n x-mono">{`#${i + 1}`}</span>
-      <span className="xbo-org-w"><b><span>{h}</span></b><span className="xbo-badge">{badge}</span><span className="xbo-req x-mono">{req}</span></span>
-      <span className="xbo-org-bar" aria-hidden="true"><motion.i style={{ scaleX, width: (to * 100).toFixed(1) + '%' }} /></span>
-      <span className="xbo-org-t x-mono">{n(t)} tokens</span>
-    </li>
-  );
-}
-
-/* @hanzo's figure counts with the race; the server and no-JS page carry the real figure. */
-function Tally({ p, to }: { p: MotionValue<number>; to: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const v = useTransform(p, [0.05, 0.55], [0, to], { clamp: true });
-  useMotionValueEvent(v, 'change', (x: number) => { if (ref.current) ref.current.textContent = n(Math.round(x)); });
-  useEffect(() => { if (ref.current) ref.current.textContent = n(Math.round(v.get())); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  return <span ref={ref}>{n(to)}</span>;
-}
-
-/* The token race, a plain section on a log line: once it is in view the ten bars race out in time (2.6s) while
-   @hanzo's figure counts and grows; reduced motion shows the finished race. */
-function Volume() {
-  const ref = useRef<HTMLDivElement>(null);
-  const p = useMotionValue(0);
-  const seen = useInView(ref, { amount: 0.3, once: true });
-  useEffect(() => {
-    if (!seen) return;
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { p.set(1); return; }
-    const c = animate(p, 1, { duration: 2.6, ease: [0.33, 0, 0.2, 1], delay: 0.35 });
-    return () => c.stop();
-  }, [seen, p]);
-  const grow = useTransform(p, [0.05, 0.55], [0.62, 1], { clamp: true }); // 52px while the race waits, 84px once it has run
-  return (
-    <section className="xp-sec xp-dark xbo-vol" data-room="dark" aria-labelledby="xbo-vol-h">
-      <div className="xbo-vpin" ref={ref}>
-      <div className="xp-wrap xbo-vstage" data-enter="blinds">
-        <div className="xp-grid xbo-vol-head">
-          <div className="xbo-vol-hl">
-            <motion.p className="xbo-vol-fig xp-fig" style={{ scale: grow }}><Tally p={p} to={ORGS[0][3]} /></motion.p>
-            <p className="xbo-vol-u x-mono"><span>@hanzo</span><span>Core Fleet</span><span>tokens</span></p>
-          </div>
-          <div className="xbo-vol-hr">
-            <h2 id="xbo-vol-h" className="xp-head">Global token volume leaderboard</h2>
-            <p className="xp-body">Top 10 active organizations across 217 organizations on Hanzo Cloud by total tokens processed.</p>
-          </div>
-        </div>
-        <ol className="xbo-orgs">
-          {ORGS.map((o, i) => <Lane key={o[0]} p={p} i={i} org={o} />)}
-        </ol>
-        <div className="xbo-scale x-mono" aria-hidden="true"><span className="xbo-scale-in">{['100K', '1M'].map((t, i) => <span key={t} style={{ left: (i / TOP) * 100 + '%' }}>{t}</span>)}</span></div>
-      </div>
-      </div>
-    </section>
-  );
-}
-
-const TAKE = ['Say on the issue that you are taking it.', 'Open a pull request that says Fixes and the issue’s number.', 'A maintainer reviews it, merges it, and credits your account with points and AI credits.'];
-const PROPOSE = 'Propose a bounty';
-
-function Glyph() {
-  return (
-    <svg className="xbo-gl" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-      <g className="g0" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none" /></g>
-      <g className="g1" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="6.5" cy="5.5" r="2.2" /><circle cx="6.5" cy="18.5" r="2.2" /><circle cx="17.5" cy="18.5" r="2.2" /><path d="M6.5 7.7v8.6M17.5 16.3V9.5a3 3 0 0 0-3-3H11" /><path d="m13 4.3-2.2 2.2L13 8.7" /></g>
-      <g className="g2"><circle cx="12" cy="12" r="11" fill="currentColor" /><path d="m7.2 12.3 3.1 3.1 6.5-6.6" fill="none" stroke="var(--xbo-gl-on, #fff)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></g>
-    </svg>
-  );
-}
-
-/* The signature, one question at a time: how a bounty is taken, one step per screen, sliding to the next, with the
-   answer summarised as it builds in the PR beside it (the issue you picked, the "Fixes" line, what a merge credits).
-   It never submits anything: picking an issue only fills the summary, and the only ways out are links to GitHub.
-   Keyboard: every choice and arrow is a button; ← → move between steps when the flow has focus. Touch: swipe. JS off:
-   every step is shown in order. Reduced motion: steps change without the slide. */
-interface TakeProps {
-  st: BountyState;
-}
-function Take({ st }: TakeProps) {
-  const issues = ((st.kind === 'ready' && st.open.items.length) ? st.open.items : SNAP.items).slice(0, 3);
-  const [q, setQ] = useState(0);
-  const [pick, setPick] = useState<number | null>(null);
-  const [ready, setReady] = useState(false);
-  useEffect(() => setReady(true), []);
-  const it = pick != null ? issues[pick] || issues[0] : null;
-  const last = TAKE.length; // the 4th screen is "Propose a bounty"
-  const go = (i: number) => setQ(Math.max(0, Math.min(last, i)));
-  const choose = (i: number) => { setPick(i); setTimeout(() => setQ((x) => (x === 0 ? 1 : x)), 420); };
-  const sx = useRef<number | null>(null);
-  const onDown = (e: React.PointerEvent<HTMLDivElement>) => { sx.current = e.clientX; };
-  const onUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (sx.current == null) return;
-    const dx = e.clientX - sx.current; sx.current = null;
-    if (Math.abs(dx) > 56) go(q + (dx < 0 ? (q === 0 && !it ? 0 : 1) : -1));
-  };
-  const onKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.target instanceof Element && e.target.closest('a')) return;
-    if (e.key === 'ArrowRight' && !(q === 0 && !it)) { e.preventDefault(); go(q + 1); }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); go(q - 1); }
-  };
-  const ref = it ? `${it.repo}#${it.number}` : '';
-  const merged = WAYS[1];
-  const off = (i: number) => (ready && q !== i ? true : undefined);
-  const name = (i: number) => (i < TAKE.length ? TAKE[i] : PROPOSE);
-  return (
-    <section className="xp-sec xbo-take" aria-labelledby="xbo-take-h">
-      <div className="xp-wrap">
-        <div className="xp-grid xbo-take-head">
-          <h2 id="xbo-take-h" className="xp-head">How a bounty is taken</h2>
-          <p className="xp-body xbo-take-note">Verified bug reports and merged bounties earn Hanzo AI credits and leaderboard points, with email notifications sent as you climb ranks.</p>
-        </div>
-        <div className="xp-grid xbo-flow" data-enter="conveyor">
-          <div className="xbo-q xp-obj" style={{ '--k': 0 }} onKeyDown={onKey} onPointerDown={onDown} onPointerUp={onUp} onPointerCancel={() => { sx.current = null; }}>
-            <div className="xbo-q-track" style={{ '--q': q }}>
-              <div className="xbo-q-step" inert={off(0)} aria-hidden={off(0)}>
-                <p className="xbo-q-prompt">{TAKE[0]}</p>
-                <ul className="xbo-q-pick">
-                  {issues.map((x, i) => (
-                    <li key={x.url}>
-                      <button type="button" aria-pressed={pick === i} data-sound="tick" onClick={() => choose(i)}>
-                        <span className="xbo-dot" aria-hidden="true" />
-                        <span className="xbo-q-t">{x.title}</span>
-                        <span className="xbo-q-r x-mono"><span>{`${x.repo}#${x.number}`}</span>{x.tier && <em>{x.tier}</em>}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="xbo-q-step" inert={off(1)} aria-hidden={off(1)}>
-                <p className="xbo-q-prompt">{TAKE[1]}</p>
-                <p className="xbo-q-code x-mono"><span>Fixes</span> <b>{ref || '#'}</b><i className="xbo-caret" aria-hidden="true" /></p>
-              </div>
-              <div className="xbo-q-step" inert={off(2)} aria-hidden={off(2)}>
-                <p className="xbo-q-prompt">{TAKE[2]}</p>
-                <p className="xbo-q-earn"><span className="xp-fig">{`+${merged[1]}`}<small> pts</small></span><span className="xbo-cr x-mono">{merged[2]}</span></p>
-              </div>
-              <div className="xbo-q-step xbo-propose" id="propose" inert={off(3)} aria-hidden={off(3)}>
-                <h3 className="xbo-q-prompt">{PROPOSE}</h3>
-                <p className="xp-body">Found something worth fixing? Open an issue in its repository saying what is wrong, where, and how a fix is checked, and ask for the bounty label. A maintainer decides.</p>
-                <A to={REPOS} className="xbo-link">Hanzo’s repositories</A>
-                <p className="xbo-sec xp-body">A security issue goes to <a href="mailto:security@hanzo.ai">security@hanzo.ai</a>, never to a public issue.</p>
-              </div>
-            </div>
-            <div className="xbo-q-nav">
-              <button type="button" className="xbo-q-arrow" aria-label={name(Math.max(0, q - 1))} disabled={q === 0} onClick={() => go(q - 1)}>←</button>
-              <span className="xbo-q-dots">
-                {[0, 1, 2, 3].map((i) => (
-                  <button key={i} type="button" aria-label={name(i)} aria-current={q === i ? 'step' : undefined} disabled={i > 0 && i < 3 && !it} data-sound="tick" onClick={() => go(i)}><i /></button>
-                ))}
-              </span>
-              <button type="button" className="xbo-q-arrow" aria-label={name(Math.min(last, q + 1))} disabled={q === last || (q === 0 && !it)} onClick={() => go(q + 1)}>→</button>
-            </div>
-          </div>
-          <div className="xbo-pr xp-obj" style={{ '--k': 1 }} data-step={Math.min(2, q)} data-has={it ? 'y' : 'n'} aria-live="polite">
-            <div className="xbo-pr-head">
-              <Glyph />
-              {it ? (
-                <a className="xbo-pr-t" href={it.url} target="_blank" rel="noopener noreferrer"><b>{it.title}</b><span className="x-mono">{ref}</span></a>
-              ) : (
-                <span className="xbo-pr-t xbo-pr-wait" aria-hidden="true"><b /><span /></span>
-              )}
-            </div>
-            <ol className="xbo-sum">
-              <li className={it ? 'on' : ''}><span className="xbo-tl-m" aria-hidden="true" /><span className="x-mono">{ref || '—'}</span></li>
-              <li className={it && q >= 1 ? 'on' : ''}><span className="xbo-tl-m" aria-hidden="true" /><span className="x-mono">{it && q >= 1 ? `Fixes ${ref}` : '—'}</span></li>
-              <li className={it && q >= 2 ? 'on' : ''}><span className="xbo-tl-m" aria-hidden="true" /><span className="x-mono">{it && q >= 2 ? `+${merged[1]} pts · ${merged[2]}` : '—'}</span></li>
-            </ol>
+          <div className="xbo-propose-r">
+            <A to={REPOS} className="xbo-link">Hanzo repositories</A>
+            <A to={CONTRIBUTING} className="xbo-link">Contributing guide</A>
+            <A to="/leaderboard" className="xbo-link">Global leaderboard</A>
           </div>
         </div>
       </div>
@@ -526,17 +465,15 @@ function Take({ st }: TakeProps) {
   );
 }
 
-/* The closing band: the page's own headline types itself out, then its one ask. */
 function Close() {
   return (
     <section className="x-band xbo-band" data-room="dark" aria-labelledby="xbo-band-h">
       <div className="xp-wrap">
-        <h2 id="xbo-band-h" className="xbo-band-h" data-enter="typewriter">
-          <span className="xbo-tw"><span>Take an issue.</span></span>
-          <span className="xbo-tw"><span>Ship the fix.</span></span>
+        <h2 id="xbo-band-h" className="xbo-band-h">
+          <span>Ship code. Get paid in AI credits.</span>
         </h2>
         <div className="x-band-act">
-          <Cta to={SEARCH} id="bounty.band" size="lg" className="xp-cta">Every open bounty</Cta>
+          <Cta to={SEARCH} id="bounty.band" size="lg" className="xp-cta">Every open bounty on GitHub</Cta>
         </div>
       </div>
     </section>
@@ -545,16 +482,13 @@ function Close() {
 
 export default function Bounty() {
   const st = useBounties();
-  const main = useRef<HTMLElement>(null);
-  useEnter(main);
+  const openTotal = st.kind === 'ready' ? Math.max(st.open.total, SNAP.total || 179) : (SNAP.total || 179);
   return (
-    <main className="xp xbo" ref={main}>
+    <main className="xp xbo">
       <NoJs />
-      <Hero st={st} />
-      <Take st={st} />
-      <Rewards />
-      <Standings />
-      <Volume />
+      <Hero openTotal={openTotal} />
+      <IssuesBoard st={st} />
+      <HowItWorks />
       <Close />
     </main>
   );

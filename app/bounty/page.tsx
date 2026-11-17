@@ -9,8 +9,8 @@ import Bounty from '../../components/pages/Bounty';
 import JsonLd from '../../components/JsonLd';
 
 export const metadata = {
-  title: 'Bounties — Hanzo AI',
-  description: 'Open issues in Hanzo’s public repositories, each one scoped: what to change, where, and how the fix is checked.',
+  title: 'Bounties & AI Credit Rewards — Hanzo AI',
+  description: 'Take an open GitHub issue, fix a bug, or ship a pull request across Hanzo repositories to earn AI credits redeemable across all Hanzo models and 600+ frontier models.',
 };
 
 export default function Page() {
