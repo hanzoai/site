@@ -41,24 +41,42 @@ export function issue(e: GitHubItem | null | undefined): Bounty | null {
 }
 
 // amountOf: only when a label states it, never guessed. bounty:$500, $500, 500 USD, bounty-500
-const AMOUNT_RE = /(?:^|[^-])(?:bounty-?\$?|\$)(\d{1,3}(?:,\d{3})*(?:\.\d+)?|\d+(?:\.\d+)?)\s*(?:USD|usd)?$/;
+const MONEY_RE = /\d{1,3}(?:,\d{3})*(?:\.\d+)?|\d+(?:\.\d+)?/;
 export function amountOf(label: string): string | null {
-  const m = AMOUNT_RE.exec(label);
+  const plain = /^\s*\d[\d,]*(\.\d+)?\s*USD\s*$/i.test(label.trim());
+  const m = /(?:bounty[:-]?\$?|\$)/i.test(label) ? MONEY_RE.exec(label.replace(/^.*?(?:bounty[:-]?\$?|\$)/i, '')) : plain ? MONEY_RE.exec(label.trim()) : null;
   if (!m) return null;
-  return m[1] + (label.includes('USD') || label.includes('usd') ? ' USD' : '');
+  return m[0] + (/\bUSD\b/i.test(label) ? ' USD' : '');
 }
 
 export function markStatus(items: Bounty[], prNumbers: Set<number>): Bounty[] {
   return items.map((b) => ({ ...b, status: prNumbers.has(b.number) ? 'has-pr' : b.status }));
 }
 
+// search issues, paginating (per_page=100) until all are read, cap 1000. status is 'open' until markStatus runs.
+export async function searchPages(q: string, signal: AbortSignal, limit = 1000): Promise<{ total: number; items: Bounty[] } | null> {
+  const headers = { accept: 'application/vnd.github+json' };
+  let page = 1;
+  let items: Bounty[] = [];
+  let total = 0;
+  for (;;) {
+    const r = await fetch(`https://api.github.com/search/issues?q=${encodeURIComponent(q)}&sort=created&order=desc&per_page=100&page=${page++}`, { headers, signal });
+    if (!r.ok) return null;
+    const d: { total_count?: unknown; items?: unknown } | null = await r.json();
+    if (!d || typeof d.total_count !== 'number' || !Array.isArray(d.items)) return null;
+    total = d.total_count;
+    items = items.concat(d.items.map(issue).filter((b): b is Bounty => b !== null));
+    if (d.items.length < 100 || items.length >= limit) break;
+  }
+  return { total, items: items.slice(0, limit) };
+}
+
 export async function openBounties(signal: AbortSignal): Promise<OpenBounties | null> {
-  const r = await fetch(`https://api.github.com/search/issues?q=${encodeURIComponent(Q)}&sort=created&order=desc&per_page=50`, { headers: { accept: 'application/vnd.github+json' }, signal });
-  if (!r.ok) return null;
-  const d: { total_count?: unknown; items?: unknown } | null = await r.json();
-  if (!d || typeof d.total_count !== 'number' || !Array.isArray(d.items)) return null;
-  const items = d.items.map(issue).filter((b): b is Bounty => b !== null);
-  return { total: Math.max(d.total_count, items.length), items };
+  const first = await searchPages(Q, signal);
+  if (!first) return null;
+  const pr = await searchPages(Q_PR, signal);
+  const prNumbers = new Set(pr ? pr.items.map((b) => b.number) : []);
+  return { total: first.total, items: markStatus(first.items, prNumbers) };
 }
 
 // { kind: 'reading' | 'ready' | 'unreachable', open? } — 'ready' with no items means none is open
