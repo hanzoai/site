@@ -26,6 +26,15 @@ import './Bounty.css';
 
 const EASE = [0.16, 1, 0.3, 1];
 const n = (v: number) => v.toLocaleString('en-US');
+const relative = (t: number) => {
+  const s = Math.max(0, Math.round((Date.now() - t) / 1000));
+  if (s < 60) return 'just now';
+  const m = Math.floor(s / 60);
+  if (m < 60) return `updated ${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `updated ${h}h ago`;
+  return `updated ${Math.floor(h / 24)}d ago`;
+};
 
 /* The live window: open bounties straight from GitHub, the build snapshot until it answers (or when it does not).
    Once the list is in, the newest bounty arrives at the top and the count ticks up by one; then a quiet reader walks
@@ -69,6 +78,9 @@ function Open({ st }: OpenProps) {
           </span>
         )}
       </div>
+      {st.kind === 'ready' && st.updated && (
+        <p className="xbo-updated x-mono">updated {relative(st.updated)}</p>
+      )}
       {items.length ? (
         <ul className="xbo-issues">
           {items.map((it, i) => (
@@ -77,7 +89,7 @@ function Open({ st }: OpenProps) {
                 <a href={it.url} target="_blank" rel="noopener noreferrer" tabIndex={i === 0 && !arrived ? -1 : undefined}>
                   <span className="xbo-dot" aria-hidden="true" />
                   <span className="xbo-iss-t">{it.title}</span>
-                  <span className="xbo-iss-r x-mono"><span>{`${it.repo}#${it.number}`}</span>{it.tier && <em>{it.tier}</em>}</span>
+                  <span className="xbo-iss-r x-mono"><span>{`${it.repo}#${it.number}`}</span>{it.amount && <span className="xbo-amt">{it.amount}</span>}{it.tier && <em>{it.tier}</em>}<span className="xbo-chip x-mono">{it.status === 'has-pr' ? 'PR open' : it.status === 'claimed' ? 'Claimed' : 'Open'}</span></span>
                 </a>
               </div>
             </li>
