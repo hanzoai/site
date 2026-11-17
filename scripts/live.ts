@@ -22,6 +22,7 @@ import type { Listed, Plan } from '../lib/liveSources.ts';
 import { estate, github, combine } from '../lib/oss.ts';
 import type { Held } from '../lib/oss.ts';
 import { why } from './why.ts';
+import { bounty } from './bounty.ts';
 import { shape } from '../components/pages/openSource/shape.ts';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -151,6 +152,7 @@ async function figures() {
     run('_research.json', research, (d) => `${d.repair.length} coding.repair · ${d.latency.length} decision.latency · ${d.gpqa.length} enso.gpqa_diamond runs`),
     run('_models.json', models, (d) => `${d.models.length} models · ${Object.keys(d.names).length} names`),
   ]);
+  await bounty();
   if (failed.length) {
     console.error(`\nLIVE FIGURES FAILED (${failed.length}): the build stops rather than ship stale figures.\n  ${failed.join('\n  ')}\nFix the source, or set HZ_LIVE_OFFLINE=1 to build from the snapshots on purpose.`);
     process.exit(1);
