@@ -3,20 +3,30 @@
 import { useEffect, useState } from 'react';
 export const ORGS = ['hanzoai', 'hanzo-apps', 'hanzo-go', 'hanzo-js'];
 const Q = ['is:issue', 'is:open', 'label:bounty', 'archived:false', ...ORGS.map((o) => `org:${o}`)].join(' ');
+const Q_PR = Q + ' linked:pr';
 export const SEARCH = `https://github.com/search?type=issues&s=created&o=desc&q=${encodeURIComponent(Q)}`;
 export const REPOS = `https://github.com/orgs/${ORGS[0]}/repositories?type=public`;
 export const CONTRIBUTING = `https://github.com/${ORGS[0]}/.github/blob/main/CONTRIBUTING.md`;
 const URL_RE = new RegExp(`^https://github\\.com/(${ORGS.join('|')})/([A-Za-z0-9._-]+)/issues/(\\d+)$`);
 
-export interface Bounty { repo: string; number: number; title: string; url: string; tier: string | null }
+export interface Bounty {
+  repo: string;
+  number: number;
+  title: string;
+  url: string;
+  tier: string | null;
+  amount: string | null;
+  status: 'open' | 'has-pr' | 'claimed';
+  opened: string;
+}
 export interface OpenBounties { total: number; items: Bounty[] }
 export type BountyState = { kind: 'reading' } | { kind: 'ready'; open: OpenBounties } | { kind: 'unreachable' };
 
 // the fields read from one item of GitHub's issue search
 interface Label { name?: unknown }
-interface GitHubItem { pull_request?: unknown; html_url?: unknown; title?: unknown; labels?: unknown }
+interface GitHubItem { pull_request?: unknown; html_url?: unknown; title?: unknown; labels?: unknown; assignee?: unknown; created_at?: unknown }
 
-// one GitHub item -> { repo, number, title, url, tier } or null (pull requests, other orgs, unlabelled are dropped)
+// one GitHub item -> { repo, number, title, url, tier, amount, status, opened } or null (pull requests, other orgs, unlabelled are dropped)
 export function issue(e: GitHubItem | null | undefined): Bounty | null {
   if (!e || typeof e !== 'object' || e.pull_request) return null;
   const url = typeof e.html_url === 'string' ? e.html_url : '';
@@ -25,7 +35,21 @@ export function issue(e: GitHubItem | null | undefined): Bounty | null {
   const labels = Array.isArray(e.labels) ? e.labels.map((l: Label | string | null) => (l && typeof l === 'object' ? String(l.name ?? '') : String(l))) : [];
   if (!labels.includes('bounty')) return null;
   const tier = labels.map((l: string) => /^bounty:(.+)$/.exec(l)?.[1]?.trim()).find(Boolean) ?? null;
-  return { repo: `${m[1]}/${m[2]}`, number: Number(m[3]), title: e.title.trim(), url, tier };
+  const amount = labels.map(amountOf).find(Boolean) ?? null;
+  const opened = typeof e.created_at === 'string' ? e.created_at : '';
+  return { repo: `${m[1]}/${m[2]}`, number: Number(m[3]), title: e.title.trim(), url, tier, amount, status: 'open', opened };
+}
+
+// amountOf: only when a label states it, never guessed. bounty:$500, $500, 500 USD, bounty-500
+const AMOUNT_RE = /(?:^|[^-])(?:bounty-?\$?|\$)(\d{1,3}(?:,\d{3})*(?:\.\d+)?|\d+(?:\.\d+)?)\s*(?:USD|usd)?$/;
+export function amountOf(label: string): string | null {
+  const m = AMOUNT_RE.exec(label);
+  if (!m) return null;
+  return m[1] + (label.includes('USD') || label.includes('usd') ? ' USD' : '');
+}
+
+export function markStatus(items: Bounty[], prNumbers: Set<number>): Bounty[] {
+  return items.map((b) => ({ ...b, status: prNumbers.has(b.number) ? 'has-pr' : b.status }));
 }
 
 export async function openBounties(signal: AbortSignal): Promise<OpenBounties | null> {
