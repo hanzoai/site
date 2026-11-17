@@ -68,10 +68,23 @@ export async function searchPages(q: string, signal: AbortSignal, limit = 1000):
   let items: Bounty[] = [];
   let total = 0;
   for (;;) {
-    const r = await fetch(`https://api.github.com/search/issues?q=${encodeURIComponent(q)}&sort=created&order=desc&per_page=100&page=${page++}`, { headers, signal });
+    const n = page++;
+    let r: Response;
+    try {
+      r = await fetch(`https://api.github.com/search/issues?q=${encodeURIComponent(q)}&sort=created&order=desc&per_page=100&page=${n}`, { headers, signal });
+    } catch {
+      // a thrown fetch (network error, CORS, abort) is a failure
+      return { total, items, status: 0 };
+    }
     if (!r.ok) return { total, items, status: r.status };
-    const d: { total_count?: unknown; items?: unknown } | null = await r.json();
-    if (!d || typeof d.total_count !== 'number' || !Array.isArray(d.items)) return { total, items, status: null };
+    let d: { total_count?: unknown; items?: unknown } | null;
+    try {
+      d = await r.json();
+    } catch {
+      d = null;
+    }
+    // a malformed body on any page after the first is a failure, not a success with a partial list
+    if (!d || typeof d.total_count !== 'number' || !Array.isArray(d.items)) return { total, items, status: n > 1 ? 0 : null };
     total = d.total_count;
     items = items.concat(d.items.map(issue).filter((b): b is Bounty => b !== null));
     if (d.items.length < 100 || items.length >= limit) break;
@@ -102,9 +115,15 @@ export function useBounties() {
     const read = async () => {
       if (c.signal.aborted || reading) return;
       reading = true;
-      const o = await openBounties(c.signal);
-      if (c.signal.aborted) { reading = false; return; }
-      reading = false;
+      let o: { total: number; items: Bounty[]; status: number | null } | null = null;
+      try {
+        o = await openBounties(c.signal);
+      } catch {
+        o = null;
+      } finally {
+        reading = false;
+      }
+      if (c.signal.aborted) return;
       const now = Date.now();
       if (o && o.status === null) {
         lastGood = { total: o.total, items: o.items };
@@ -113,8 +132,8 @@ export function useBounties() {
       } else {
         const status = o?.status ?? null;
         if (status === 403 || status === 429) backoffUntil = now + 5 * 60 * 1000;
-        // never replace a good list with an empty or failed one
-        if (!lastGood && st.kind !== 'ready') setSt({ kind: 'unreachable' });
+        // never replace a good list with an empty or failed one; rely on lastGood (not a stale st.kind)
+        if (!lastGood) setSt({ kind: 'unreachable' });
       }
       schedule();
     };

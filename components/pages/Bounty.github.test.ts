@@ -87,4 +87,44 @@ test('real-time hook stubs', () => {
   assert.equal(typeof m.searchPages, 'function');
 });
 
+test('fetch throws -> openBounties returns failure, hook does not get stuck', async () => {
+  mock.method(globalThis, 'fetch', async () => { throw new Error('network down'); });
+  const c = new AbortController();
+  const o = await m.openBounties(c.signal);
+  assert.equal(o!.status, 0); // thrown fetch treated as failure, not null
+  // hook: a failed read does not leave reading stuck; it schedules again
+  mock.method(globalThis, 'fetch', async () => new Response(JSON.stringify({ total_count: 0, items: [] }), { status: 200, headers: { 'content-type': 'application/json' } }));
+  const o2 = await m.openBounties(c.signal);
+  assert.equal(o2!.status, null);
+});
+
+test('malformed page 2 -> failure (status 0)', async () => {
+  const good = { total_count: 200, items: Array.from({ length: 100 }, (_, i) => ({ html_url: `https://github.com/hanzoai/x/issues/${i}`, title: `t${i}`, labels: [{ name: 'bounty' }] })) };
+  let calls = 0;
+  mock.method(globalThis, 'fetch', async (): Promise<Response> => {
+    calls += 1;
+    if (calls === 1) return new Response(JSON.stringify(good), { status: 200, headers: { 'content-type': 'application/json' } });
+    if (calls === 2) return new Response('not json', { status: 200, headers: { 'content-type': 'application/json' } });
+    return new Response(JSON.stringify({ total_count: 0, items: [] }), { status: 200, headers: { 'content-type': 'application/json' } });
+  });
+  const c = new AbortController();
+  const o = await m.searchPages('q', c.signal, 1000);
+  assert.equal(o!.status, 0); // malformed page 2 is a failure, not a partial success
+  assert.equal(calls, 2); // stopped at page 2
+});
+
+test('thrown fetch on page 2 -> failure', async () => {
+  const good = { total_count: 200, items: Array.from({ length: 100 }, (_, i) => ({ html_url: `https://github.com/hanzoai/x/issues/${i}`, title: `t${i}`, labels: [{ name: 'bounty' }] })) };
+  let calls = 0;
+  mock.method(globalThis, 'fetch', async (): Promise<Response> => {
+    calls += 1;
+    if (calls === 1) return new Response(JSON.stringify(good), { status: 200, headers: { 'content-type': 'application/json' } });
+    throw new Error('page 2 blew up');
+  });
+  const c = new AbortController();
+  const o = await m.searchPages('q', c.signal, 1000);
+  assert.equal(o!.status, 0); // thrown fetch on page 2+ is a failure
+  assert.equal(calls, 2);
+});
+
 console.log('bounty tests ok');
