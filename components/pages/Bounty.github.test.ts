@@ -25,8 +25,8 @@ test('parser keeps labelled open issues of hanzoai/hanzo-apps/hanzo-go', (t) => 
 test('amountOf cases (bounty:$500, $500, 500 USD, bounty-500, none)', () => {
   assert.equal(m.amountOf('bounty:$500'), '500');
   assert.equal(m.amountOf('$500'), '500');
-  assert.equal(m.amountOf('$500'), '500');
   assert.equal(m.amountOf('bounty-500'), '500');
+  assert.equal(m.amountOf('500 USD'), '500 USD');
   assert.equal(m.amountOf('bug'), null);
   assert.equal(m.amountOf('bounty:starter'), null);
   assert.equal(m.amountOf('bounty: $500'), '500');
