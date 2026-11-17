@@ -22,6 +22,7 @@ import type { Listed, Plan } from '../lib/liveSources.ts';
 import { estate, github, combine } from '../lib/oss.ts';
 import type { Held } from '../lib/oss.ts';
 import { why } from './why.ts';
+import { bounty } from './bounty.ts';
 import { shape } from '../components/pages/openSource/shape.ts';
 import fs from 'node:fs';
 import path from 'node:path';
