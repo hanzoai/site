@@ -31,7 +31,7 @@ const observe = typeof window === 'undefined' ? null : import('@hanzo/observe/re
 const Observe = dynamic(() => (observe ?? import('@hanzo/observe/react')).then(({ ObserveProvider }) => function Observe() { return <ObserveProvider nav={false}>{null}</ObserveProvider>; }), { ssr: false });
 
 /** The sites one visit can cross; GA4 keeps it one session across them (@hanzo/app lib/tags). */
-const DOMAINS = ['hanzo.ai', 'hanzo.app', 'hanzo.chat', 'pay.hanzo.ai', 'hanzo.id', 'hanzo.build', 'docs.hanzo.ai', 'platform.hanzo.ai', 'cal.hanzo.ai'];
+const DOMAINS = ['hanzo.ai', 'hanzo.app', 'hanzo.bot', 'hanzo.team', 'hanzo.chat', 'pay.hanzo.ai', 'hanzo.id', 'hanzo.build', 'docs.hanzo.ai', 'platform.hanzo.ai', 'cal.hanzo.ai'];
 
 /** The funnel moment a click to one of these is: a host, or a host and the path it is mounted at. */
 const INTENT: Record<string, string> = { 'hanzo.app/pay': 'checkout_started', 'hanzo.ai/pay': 'checkout_started', 'billing.hanzo.ai': 'checkout_started', 'cal.com/hanzo': 'sales_contacted' };
@@ -111,7 +111,16 @@ function Wiring() {
       if (!a || a.hasAttribute('data-ga')) return;
       const href = new URL(a.getAttribute('href') || '', document.baseURI).href;
       const name = intent(href);
-      if (name) track(name, { link_url: href, page_path: location.pathname, cta: a.getAttribute('data-cta') || undefined });
+      if (name) {
+        const destination = new URL(href);
+        track(name, {
+          link_url: destination.origin + destination.pathname,
+          destination_host: destination.hostname,
+          page_host: location.hostname,
+          page_path: location.pathname,
+          cta: a.getAttribute('data-cta') || undefined,
+        });
+      }
     };
     document.addEventListener('click', click, { capture: true });
     return () => document.removeEventListener('click', click, { capture: true });
