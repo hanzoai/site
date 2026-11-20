@@ -2,8 +2,10 @@
 // file this repo lacks — Hanzo's /public images and media — is fetched from hanzo.ai so pages look complete. Only files
 // are proxied; an unknown page shows this repo's own 404, as it will in production.
 const dev = !!process.env.HZ_DEV;
+// The build's release, stamped on every event by @hanzo/event.
+const env = { NEXT_PUBLIC_HANZO_RELEASE: (process.env.GITHUB_SHA ?? '').slice(0, 12) };
 export default dev
   ? { distDir: '.next-dev', turbopack: { root: import.meta.dirname }, images: { unoptimized: true }, devIndicators: false, agentRules: false, async rewrites() { return { fallback: [{ source: '/:file(.+\\.[a-zA-Z0-9]{2,5})', destination: 'https://hanzo.ai/:file' }] }; } }
   // The build's own files are served under /assets: hanzo.ai's /_next is the app's, whose sign-in pages the edge
   // serves here (universe sites.yaml hanzo-ai). The build writes them to out/_next; `build` moves them under it.
-  : { output: 'export', assetPrefix: '/assets', images: { unoptimized: true }, devIndicators: false };
+  : { output: 'export', env, assetPrefix: '/assets', images: { unoptimized: true }, devIndicators: false };
