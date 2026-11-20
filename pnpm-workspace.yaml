@@ -1,5 +1,5 @@
 minimumReleaseAgeExclude:
   - '@hanzo/appearance@0.2.15'
   - '@hanzo/design@0.5.43'
-  - '@hanzo/event@0.3.67'
+  - '@hanzo/event@0.3.69'
   - '@hanzo/events@0.3.4'

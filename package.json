@@ -18,7 +18,7 @@
   "dependencies": {
     "@hanzo/appearance": "0.2.15",
     "@hanzo/design": "0.5.43",
-    "@hanzo/event": "0.3.67",
+    "@hanzo/event": "0.3.69",
     "@hanzo/observe": "0.1.17",
     "@hanzo/replay": "0.1.4",
     "@hanzo/tokens": "1.1.3",
