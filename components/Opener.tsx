@@ -109,7 +109,9 @@ function makeGL(canvas: HTMLCanvasElement) {
 }
 
 const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
-const toTop = () => (window.__lenis ? window.__lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo(0, 0));
+// instant, whatever the page's CSS says: hanzo.css sets `scroll-behavior: smooth` on html, which turned a plain
+// scrollTo(0, 0) into a second-long glide from the middle of the next page to its top
+const toTop = () => (window.__lenis ? window.__lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo({ top: 0, left: 0, behavior: 'instant' }));
 const mix = (A: Rect, B: Rect, k: number): Rect => ({ x: lerp(A.x, B.x, k), y: lerp(A.y, B.y, k), w: lerp(A.w, B.w, k), h: lerp(A.h, B.h, k) });
 const rectOf = (el: Element): Rect => { const b = el.getBoundingClientRect(); return { x: b.left, y: b.top, w: b.width, h: b.height }; };
 const heroRect = (): Rect => ({ x: 0, y: HERO_TOP, w: innerWidth, h: innerHeight - HERO_TOP });
@@ -184,11 +186,11 @@ export function OpenerProvider({ children }: { children?: ReactNode }) {
         fly(from, heroRect(), 0.65),
         (async () => {
           await waitFor(() => document.querySelector(`[data-hero="${key}"][data-ready]`), 900);
-          window.__lenis ? window.__lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo(0, 0);
+          toTop();
         })(),
       ]);
       window.__lenis?.start();
-      window.__lenis ? window.__lenis.scrollTo(0, { immediate: true }) : scrollTo(0, 0);
+      toTop();
       const fade: KeyframeAnimationOptions = { duration: 220, easing: 'ease-out', fill: 'forwards' };
       canvas.current!.animate([{ opacity: 1 }, { opacity: 0 }], fade).finished.then(() => { canvas.current!.classList.remove('on'); canvas.current!.getAnimations().forEach((a) => a.cancel()); gl.current!.clear(); });
       veil.current!.animate([{ opacity: 1 }, { opacity: 0 }], fade);
