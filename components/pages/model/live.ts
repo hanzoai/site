@@ -1,9 +1,14 @@
 'use client';
 /* Shared engine for the model demos: a frame loop that runs only while its element is on screen and the tab is
-   visible (reduced motion draws one final frame instead), a seeded random source (server and browser agree), a canvas
-   sizer, and a lazily opened audio context (browsers allow sound only after a press). */
+   visible (reduced motion and Data Saver draw one final frame instead, as the films keep their posters), a seeded
+   random source (server and browser agree), a canvas sizer, and a lazily opened audio context (browsers allow sound
+   only after a press). */
 import { useEffect, useRef } from 'react';
 import type { KeyboardEvent, RefObject } from 'react';
+
+// the Network Information API is not in the DOM typings yet
+const saveData = () => !!(navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches || saveData();
 
 export function useLoop(ref: RefObject<Element | null>, frame: (t: number, dt: number, still: boolean) => void, deps: unknown[] = []) {
   const fn = useRef(frame);
@@ -11,7 +16,7 @@ export function useLoop(ref: RefObject<Element | null>, frame: (t: number, dt: n
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { // one final frame, redrawn on resize
+    if (still()) { // one final frame, redrawn on resize
       const ro = new ResizeObserver(() => fn.current(Infinity, 0, true));
       ro.observe(el);
       return () => ro.disconnect();
@@ -28,8 +33,8 @@ export function useLoop(ref: RefObject<Element | null>, frame: (t: number, dt: n
     document.addEventListener('visibilitychange', sync);
     return () => { io.disconnect(); document.removeEventListener('visibilitychange', sync); cancelAnimationFrame(raf); };
   }, deps); // eslint-disable-line react-hooks/exhaustive-deps
-  // reduced motion: repaint the final frame whenever a control changes state
-  useEffect(() => { if (ref.current && matchMedia('(prefers-reduced-motion: reduce)').matches) fn.current(Infinity, 0, true); });
+  // reduced motion or Data Saver: repaint the final frame whenever a control changes state
+  useEffect(() => { if (ref.current && still()) fn.current(Infinity, 0, true); });
 }
 
 // films inside root play only while on screen; reduced motion keeps them still on their poster. [data-own] films run themselves.

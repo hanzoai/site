@@ -8,6 +8,9 @@
      layer. No cursor label: nothing floats over content (MASTER 3.3). */
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { bootScript } from '@hanzo/appearance/state';
 import '@hanzo/tokens/css'; // the tokens: colour ramps (dark by default, .light for light), radii, type, spacing and the data hues; hanzo.css keeps only what it states differently
 import './globals.css';
@@ -44,6 +47,11 @@ export const viewport: Viewport = { width: 'device-width', initialScale: 1, view
    writes these classes (the server sends live's class="t_dark" and suppressHydrationWarning), so hydration keeps them. */
 const BOOT = bootScript({ base: { theme: 'system' } });
 
+/* hanzo.css is a file of public/ with a plain name, and the edge gives every .css a year (`immutable`, universe
+   sites.yaml `cache: hashed`), which is right for Next's hashed chunks and wrong here: a changed hanzo.css would not reach
+   a returning reader for a year. Its address carries its own hash, so each version is a new address. */
+const HANZO_CSS = '/hanzo.css?v=' + createHash('sha256').update(readFileSync(path.join(process.cwd(), 'public', 'hanzo.css'))).digest('hex').slice(0, 12);
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" data-brand="hanzo" className="t_dark" suppressHydrationWarning>
@@ -51,7 +59,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* the theme, before anything paints */}
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />
         {/* Hanzo's own stylesheet: their header, footer and page content render exactly as they ship them */}
-        <link rel="stylesheet" href="/hanzo.css" />
+        <link rel="stylesheet" href={HANZO_CSS} />
         {/* both faces preload, and both use font-display: block, so text paints once in Zen: no visible swap */}
         <link rel="preload" href="/fonts/Zen-Variable.woff2" as="font" type="font/woff2" crossOrigin="" />
         <link rel="preload" href="/fonts/ZenMono-Variable.woff2" as="font" type="font/woff2" crossOrigin="" />
