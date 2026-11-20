@@ -1,8 +1,13 @@
 'use client';
 /* The open transition. A card's picture lifts off the page as a WebGL plane, bends like pulled paper while it grows
    to fill the screen, and lands exactly where the next page's hero sits; the page swaps underneath and the plane
-   dissolves into it. Close runs it backwards into the card it came from. Without WebGL or with reduced motion,
-   links simply navigate. */
+   dissolves into it. Close runs it backwards into the card it came from. Without WebGL, with reduced motion, under
+   Data Saver or on a touch screen, links simply navigate.
+   Why not on a touch screen: the next page's render takes a phone's main thread the moment the route changes, and the
+   flight froze on its first frame over the veil. A tap on Mori's card showed its picture (a wireframe mountain on
+   black) and nothing else for seconds while every tap and pinch was ignored (hanzo-inc/app#445). The page's hero
+   shows the same poster with its name from its first paint, so a plain navigation loses nothing there.
+   And it never waits on the network: a card whose picture is not in hand within IMG_MS navigates at once. */
 import { createContext, useCallback, useContext, useEffect, useRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { animate } from 'motion';
@@ -110,6 +115,9 @@ const load = (src: string, el?: Element | null) => {
 };
 const waitFor = <T,>(fn: () => T, ms = 900) => new Promise<T>((ok) => { const t0 = performance.now(); const f = () => { const v = fn(); if (v || performance.now() - t0 > ms) ok(v); else requestAnimationFrame(f); }; f(); });
 const EASE: [number, number, number, number] = [0.76, 0, 0.24, 1];
+const IMG_MS = 400;
+// the Network Information API is not in the DOM typings yet
+const plain = () => matchMedia('(prefers-reduced-motion: reduce), (pointer: coarse)').matches || !!(navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
 
 export function OpenerProvider({ children }: { children?: ReactNode }) {
   const router = useRouter();
@@ -120,7 +128,7 @@ export function OpenerProvider({ children }: { children?: ReactNode }) {
 
   // the context is made on the first open, not on load: most visits never open a card
   const off = () => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+    if (plain()) return true;
     if (gl.current === undefined) gl.current = makeGL(canvas.current!);
     return !gl.current;
   };
@@ -147,7 +155,8 @@ export function OpenerProvider({ children }: { children?: ReactNode }) {
       router.prefetch(href);
       sessionStorage.setItem('hz:ret:' + key, JSON.stringify({ y: scrollY, from: location.pathname })); // close returns to the page and card it opened from
       el.setAttribute('data-opening', '');
-      const img = await load(src, el);
+      const img = await Promise.race([load(src, el), new Promise<null>((ok) => setTimeout(() => ok(null), IMG_MS))]);
+      if (!img) { router.push(href); return; }
       gl.current!.image(img);
       const from = rectOf(el);
       gl.current!.draw(from, 0, 0, 1, 1);
@@ -169,8 +178,14 @@ export function OpenerProvider({ children }: { children?: ReactNode }) {
       canvas.current!.animate([{ opacity: 1 }, { opacity: 0 }], fade).finished.then(() => { canvas.current!.classList.remove('on'); canvas.current!.getAnimations().forEach((a) => a.cancel()); gl.current!.clear(); });
       veil.current!.animate([{ opacity: 1 }, { opacity: 0 }], fade);
     } catch {
+      // whatever failed, nothing of the flight stays over the page: the plane, the veil and the stopped scroll go
+      canvas.current!.classList.remove('on');
+      canvas.current!.getAnimations().forEach((a) => a.cancel());
+      veil.current!.getAnimations().forEach((a) => a.cancel());
+      gl.current?.clear();
       router.push(href);
     } finally {
+      window.__lenis?.start();
       el.removeAttribute('data-opening'); el.removeAttribute('data-lifted');
       busy.current = false;
     }

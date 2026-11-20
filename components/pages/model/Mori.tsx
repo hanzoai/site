@@ -11,7 +11,7 @@
    then the model cards, so the two card grids never sit back to back.
    No chapter pane is ever empty: each object rests on its settled frame until its chapter arrives, then draws in.
    V2: Request access is the one solid at both widths; the capabilities ride a snapping carousel, each card its own drawn object, never a blank pane; words through the settle; labels fit at 375; five page-local entrances (MoriMotion.jsx). */
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { PointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import HeroDither from '../HeroDither';
@@ -24,14 +24,18 @@ import { poly, dense, focus } from '../../v2/Launch';
 import { useLoop, fit, rng, arrows } from './live';
 import './Mori.css';
 
-const U = 72, V = 26;
+// the mesh's grid, U around and V across: 72 x 26 points on a wide screen, 48 x 18 on a phone or a touch screen (the
+// same shape with under half the points, so each of its frames costs under half). Built on the viewport's first frame,
+// never while the page hydrates: the canvas is well below the stage and many visits never reach it (hanzo-inc/app#445).
+const GRID = { wide: [72, 26], phone: [48, 18] } as const;
 const MODES = ['wireframe', 'shaded', 'normals'];
 
 interface Pt { x: number; y: number }
 interface Drag extends Pt { t: number }
-interface State { yaw: number; pitch: number; vy: number; vp: number; drag: Drag | null; born: number; q: Float32Array; proj: Float32Array; nz: Float32Array; ox: Float32Array; oy: Float32Array; ptr: Pt | null; tap: Drag | null }
+interface Geo { U: number; V: number; P: Float32Array; N: Float32Array; S: Float32Array; q: Float32Array; proj: Float32Array; nz: Float32Array; ox: Float32Array; oy: Float32Array }
+interface State { yaw: number; pitch: number; vy: number; vp: number; drag: Drag | null; born: number; geo: Geo | null; ptr: Pt | null; tap: Drag | null }
 
-function mesh() {
+function mesh(U: number, V: number): Geo {
   const P = new Float32Array(U * V * 3), N = new Float32Array(U * V * 3), S = new Float32Array(U * V * 3), r0 = rng(42);
   const at = (u: number, v: number): [number, number, number] => {
     const a = (u / U) * Math.PI * 2, b = (v / V) * Math.PI * 2 + a; // a whole turn of twist, so the seam at u = U meets u = 0
@@ -48,14 +52,13 @@ function mesh() {
     let q: number[]; do { q = [r0() * 2 - 1, r0() * 2 - 1, r0() * 2 - 1]; } while (q[0] * q[0] + q[1] * q[1] + q[2] * q[2] > 1);
     S.set(q.map((x) => x * 1.9), i);
   }
-  return { P, N, S };
+  return { U, V, P, N, S, q: new Float32Array(U * V * 3), proj: new Float32Array(U * V * 3), nz: new Float32Array(U * V * 3), ox: new Float32Array(U * V), oy: new Float32Array(U * V) };
 }
 
 function Viewport() {
   const stage = useRef<HTMLDivElement>(null), cv = useRef<HTMLCanvasElement>(null), deg = useRef<HTMLElement>(null);
-  const geo = useMemo(mesh, []);
   const [mode, setMode] = useState(0);
-  const S = useRef<State>({ yaw: 0.6, pitch: 0.42, vy: 0, vp: 0, drag: null, born: 0, q: new Float32Array(U * V * 3), proj: new Float32Array(U * V * 3), nz: new Float32Array(U * V * 3), ox: new Float32Array(U * V), oy: new Float32Array(U * V), ptr: null, tap: null });
+  const S = useRef<State>({ yaw: 0.6, pitch: 0.42, vy: 0, vp: 0, drag: null, born: 0, geo: null, ptr: null, tap: null });
 
   const paused = usePaused();
   const pausedRef = useRef(paused);
@@ -74,8 +77,9 @@ function Viewport() {
     const wide = w / d > 760;
     const cx = w * 0.5, cy = h * (wide ? 0.5 : 0.48), sc = Math.min(w * (wide ? 0.5 : 0.9), h) * 0.32;
     const cyw = Math.cos(s.yaw), syw = Math.sin(s.yaw), cp = Math.cos(s.pitch), sp = Math.sin(s.pitch);
-    const { P, N, S: start } = geo, q = s.q, n = U * V;
-    const { proj, nz } = s;
+    let geo = s.geo;
+    if (!geo) { const [gu, gv] = matchMedia('(max-width: 700px), (pointer: coarse)').matches ? GRID.phone : GRID.wide; geo = s.geo = mesh(gu, gv); }
+    const { U, V, P, N, S: start, q, proj, nz } = geo, n = U * V;
     for (let i = 0; i < n; i++) {
       const k = i * 3, delay = (i % V) / V * 0.5 + Math.floor(i / V) / U * 0.4;
       const e = Math.min(1, Math.max(0, (s.born - delay) / 1.4)), f = 1 - Math.pow(1 - e, 3);
@@ -90,7 +94,7 @@ function Viewport() {
     }
     // the cursor scatters the cloud: points near it are pushed out along the line from the cursor and ease back into
     // the shape once it moves on (a finger does the same while it rests on the canvas)
-    const ptr = s.ptr, R = 120 * d, ox = s.ox, oy = s.oy, k8 = Math.min(1, (still ? 1 : dt) * 9);
+    const ptr = s.ptr, R = 120 * d, { ox, oy } = geo, k8 = Math.min(1, (still ? 1 : dt) * 9);
     for (let i = 0; i < n; i++) {
       const k = i * 3;
       let tx = 0, ty = 0;

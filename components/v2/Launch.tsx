@@ -7,9 +7,14 @@
        {…chapters, demo, chart, spec, <ModelCards slug="enso" />, <Band … />}
      </Launch>
    - Stage: the model card's film lands full-bleed (the WebGL opener's contract: data-hero={slug}, then data-ready once
-     the poster decodes). On wide screens it settles into the page's own shape as you scroll (a pinned scene); on
-     phones nothing pins: it settles by itself a moment after arrival. Clip-path, pan and zoom only. The page's
-     headline then rises beside it, line by line. No eyebrow above the h1 (JAMES.md).
+     the poster decodes, or after READY_MS if it never does). On wide screens it settles into the page's own shape as you
+     scroll (a pinned scene); on phones nothing pins: it settles by itself a moment after arrival. Clip-path, pan and
+     zoom only. The page's headline then rises beside it, line by line. No eyebrow above the h1 (JAMES.md).
+   - The name, its line, its tags and the ask rise in by CSS from the first paint (Launch.css): they never wait for the
+     page's script. They used to wait for hydration and the poster, which on a phone was seconds of bare film with no
+     words and a page that ignored taps (hanzo-inc/app#445).
+   - The body hydrates apart from the stage: each child of Launch is its own Suspense boundary, so React hydrates them in
+     separate tasks after the stage and a tap is answered between them, not after the whole page.
    - shape(t, W, H, wide) returns a CSS clip-path for t in 0..1 (0 = full-bleed). Helpers below: ring, box, poly.
    - over(W, H, wide) (optional) draws a layer over the settled film (e.g. a cube's edges); it fades in with the headline.
    - pos (optional): the film's object-position, e.g. '50% 88%' when the subject sits low in Hanzo's 4:5 frame.
@@ -24,7 +29,7 @@
    - One pause (the shared FilmPause, bottom right of the stage) stops every film and self-running demo on the page.
    - Close runs the film back into the card it opened from. Reduced motion and JS off share one calm layout: the full
      film with the name and the ask, then the headline, lede and actions below it, nothing pinned or hidden. */
-import { useEffect, useRef, useState } from 'react';
+import { Children, Suspense, useEffect, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { motion, animate, useScroll, useTransform, useMotionValue, useMotionValueEvent, useReducedMotion, useInView } from 'motion/react';
 import { EASE } from '../ui';
@@ -40,6 +45,10 @@ export const film = (slug: string, ext: string) => media(slug, ext);
 export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 export const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
 const settle = (t: number) => { const x = clamp01(t); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+
+// the poster is preloaded at high priority and normally decodes long before this; if it does not (a stalled request,
+// a decode that never settles), the stage stops waiting for it and settles on the black ground
+const READY_MS = 2500;
 
 type Point = readonly [number, number];
 /* a clip-path for t in 0..1 (0 = full-bleed) on a stage W by H px; wide is the desktop layout */
@@ -163,12 +172,13 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
     const img = stage.current?.querySelector<HTMLImageElement>('.lv-film img');
     if (!img || !pin.current) return;
     const done = () => setReady(true);
+    const late = setTimeout(done, READY_MS);
     if (img.complete && img.naturalWidth > 0) done();
     else if (img.complete) img.decode().then(done, done);
     else { img.addEventListener('load', done, { once: true }); img.addEventListener('error', done, { once: true }); }
     const ro = new ResizeObserver(([e]) => { const r = e.contentRect; setSize({ W: r.width, H: r.height, wide: r.width > 900 }); });
     ro.observe(pin.current);
-    return () => ro.disconnect();
+    return () => { ro.disconnect(); clearTimeout(late); };
   }, []);
   useEffect(() => { if (still || t.get() > 0.7) setOn(true); }, [still, t, size]);
   const [gone, setGone] = useState(false);
@@ -188,11 +198,11 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
           </motion.div>
           <motion.div className="lv-name x-wrap" style={{ opacity: nameO, y: nameY }} data-gone={gone ? '' : undefined}>
             <h1 className="lv-name-h">
-              <span className="x-line"><motion.span className="x-line-in" initial={{ y: '105%' }} animate={ready ? { y: 0 } : {}} transition={{ duration: 1.1, ease: EASE, delay: 0.1 }}>{m.name}</motion.span></span>
+              <span className="x-line"><span className="x-line-in">{m.name}</span></span>
             </h1>
-            <p className="lv-name-d" data-on={ready ? '' : undefined}>{m.desc}</p>
-            <p className="x-mtags static lv-name-t" data-on={ready ? '' : undefined}>{m.tags.map((x) => <span key={x}>{x}</span>)}</p>
-            {ask && <p className="lv-name-ask" data-on={ready ? '' : undefined}><Cta to={ask.to} kind="quiet" id={ask.id}>{ask.label}</Cta></p>}
+            <p className="lv-name-d">{m.desc}</p>
+            <p className="x-mtags static lv-name-t">{m.tags.map((x) => <span key={x}>{x}</span>)}</p>
+            {ask && <p className="lv-name-ask"><Cta to={ask.to} kind="quiet" id={ask.id}>{ask.label}</Cta></p>}
           </motion.div>
           {over && size && <div className="lv-over" data-on={on ? '' : undefined} aria-hidden="true">{over(size.W, size.H, size.wide)}</div>}
           <div className={'lv-head ' + headClass} data-on={on ? '' : undefined}>{head}</div>
@@ -209,7 +219,7 @@ export default function Launch({ slug, shape, aim, over, head, headClass = '', l
           <FilmPause className="dark lv-pause" />
         </div>
       </section>
-      <div className="x-model-body lv-body">{children}</div>
+      <div className="x-model-body lv-body">{Children.map(children, (c) => <Suspense>{c}</Suspense>)}</div>
     </main>
   );
 }
