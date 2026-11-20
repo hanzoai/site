@@ -508,6 +508,11 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
 .x-veil { position: fixed; inset: 0; z-index: 950; background: var(--bg); opacity: 0; pointer-events: none; }
 .x-mbtn .x-mtext, .x-mbtn .x-mtags { transition: opacity .3s var(--ease); }
 .x-mbtn[data-opening] .x-mtext, .x-mbtn[data-opening] .x-mtags { opacity: 0; }
+/* a plain open (a touch screen, Data Saver, reduced motion; components/Opener.tsx): the card answers the tap at once
+   with a bar along its foot until its page is there. A transform, so it keeps moving while the next page renders. */
+.x-mbtn[data-opening=plain]::after { content: ''; position: absolute; left: 24px; right: 24px; bottom: 16px; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .9); transform-origin: 0 50%; animation: x-open 1.4s cubic-bezier(.16, 1, .3, 1) infinite; pointer-events: none; z-index: 2; }
+@keyframes x-open { from { transform: scaleX(0); opacity: 1; } 75% { transform: scaleX(1); opacity: 1; } to { transform: scaleX(1); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .x-mbtn[data-opening=plain]::after { animation: none; opacity: .6; } }
 [data-lifted] { visibility: hidden; }
 a.x-mbtn { color: inherit; text-decoration: none; }
 

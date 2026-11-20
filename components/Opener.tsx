@@ -7,6 +7,10 @@
    flight froze on its first frame over the veil. A tap on Mori's card showed its picture (a wireframe mountain on
    black) and nothing else for seconds while every tap and pinch was ignored (hanzo-inc/app#445). The page's hero
    shows the same poster with its name from its first paint, so a plain navigation loses nothing there.
+   A plain open still answers the tap at once: the card's words step back and a bar runs along its foot
+   ([data-opening=plain], globals.css), a compositor animation that keeps moving while the next page renders. The scroll
+   is placed from a MutationObserver, which runs in the task that inserts the hero, so the next page's first frame is its
+   top, never the middle of it at the scroll the card was tapped from.
    And it never waits on the network: a card whose picture is not in hand within IMG_MS navigates at once. */
 import { createContext, useCallback, useContext, useEffect, useRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
@@ -105,6 +109,7 @@ function makeGL(canvas: HTMLCanvasElement) {
 }
 
 const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
+const toTop = () => (window.__lenis ? window.__lenis.scrollTo(0, { immediate: true, force: true }) : scrollTo(0, 0));
 const mix = (A: Rect, B: Rect, k: number): Rect => ({ x: lerp(A.x, B.x, k), y: lerp(A.y, B.y, k), w: lerp(A.w, B.w, k), h: lerp(A.h, B.h, k) });
 const rectOf = (el: Element): Rect => { const b = el.getBoundingClientRect(); return { x: b.left, y: b.top, w: b.width, h: b.height }; };
 const heroRect = (): Rect => ({ x: 0, y: HERO_TOP, w: innerWidth, h: innerHeight - HERO_TOP });
@@ -134,6 +139,16 @@ export function OpenerProvider({ children }: { children?: ReactNode }) {
   };
   const prefetch = useCallback((href: string) => { try { router.prefetch(href); } catch {} }, [router]);
 
+  /* card -> page without the flight: the card answers at once, the page arrives at its top */
+  const plainOpen = useCallback((el: Element, href: string, key: string) => {
+    el.setAttribute('data-opening', 'plain');
+    const mo = new MutationObserver(() => { if (document.querySelector(`[data-hero="${key}"]`)) end(true); });
+    const end = (arrived: boolean) => { mo.disconnect(); clearTimeout(late); el.removeAttribute('data-opening'); if (arrived) toTop(); };
+    const late = setTimeout(() => end(false), 15000);
+    mo.observe(document.body, { childList: true, subtree: true });
+    router.push(href, { scroll: false });
+  }, [router]);
+
   const fly = useCallback((from: Rect, to: Rect, dur: number) => new Promise<void>((ok) => {
     const t0 = performance.now();
     animate(0, 1, {
@@ -147,7 +162,7 @@ export function OpenerProvider({ children }: { children?: ReactNode }) {
   const open = useCallback(async (e: Click, { el, src, href, key }: OpenArgs) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return; // new-tab clicks behave like links
     e.preventDefault();
-    if (off()) { router.push(href); return; }
+    if (off()) { plainOpen(el, href, key); return; }
     if (busy.current) return;
     busy.current = true;
     play('whoosh'); // a card opening into its page (JAMES rule 10)
@@ -189,7 +204,7 @@ export function OpenerProvider({ children }: { children?: ReactNode }) {
       el.removeAttribute('data-opening'); el.removeAttribute('data-lifted');
       busy.current = false;
     }
-  }, [router, fly]);
+  }, [router, fly, plainOpen]);
 
   /* page -> card, when the page was opened from one */
   const close = useCallback(async (e: { preventDefault?: () => void } | null | undefined, { key, src, home: fallback = '/' }: CloseArgs) => {
