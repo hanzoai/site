@@ -19,6 +19,13 @@ for (const scheme of ['light', 'dark'] as const) {
     expect(box.x + box.width).toBeLessThanOrEqual(390)
     const cta = (await page.locator('header a[data-slot="header-primary"], header a[href="https://hanzo.ai/signup"]').first().boundingBox())!
     expect(box.x + box.width).toBeLessThanOrEqual(cta.x + 1)
+    // the header gives it room without pushing the page sideways, at the narrowest phones too
+    for (const width of [390, 375, 360]) {
+      await page.setViewportSize({ width, height: 844 })
+      expect(await page.evaluate(() => document.documentElement.scrollWidth), `${width}px: horizontal overflow`).toBeLessThanOrEqual(width)
+      await expect(link).toBeVisible()
+    }
+    await page.setViewportSize({ width: 390, height: 844 })
     await link.tap()
     await page.waitForURL(/^https:\/\/hanzo\.ai\/login/, { timeout: 30_000 })
     await context.close()

@@ -701,7 +701,9 @@ header a.x-signin[hidden] { display: none; }
 header a.x-signin:hover { background: rgba(127, 127, 127, .14); }
 header a.x-signin::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: max(100%, 44px); transform: translateY(-50%); }
 @media (min-width: 1024px) { header a.x-signin { display: none; } }
-@media (max-width: 440px) { header [data-slot="language"] [data-slot="text"] { display: none; } }
+/* the language choice is in the help corner (Corner, "Language") at any width; the phone header gives its room to Sign in */
+@media (max-width: 440px) { header button[data-slot="language"] { display: none; } }
+@media (max-width: 380px) { header a.x-signin { padding: 0 6px; } }
 @media (pointer: coarse) {
   header button[aria-controls="menu-company"] { position: relative; }
   header button[aria-controls="menu-company"]::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
