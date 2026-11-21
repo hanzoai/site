@@ -8,7 +8,6 @@ import { motion, type MotionProps } from 'motion/react';
 import Dots from '../Dots';
 import { A } from '../kit';
 import { EASE } from '../ui';
-import './Lost.css';
 
 // a page of the site: its path, title and description
 type Entry = string[];

@@ -6,7 +6,6 @@ import { motion } from 'motion/react';
 import Dots from '../components/Dots';
 import { A } from '../components/kit';
 import { EASE } from '../components/ui';
-import '../components/pages/Lost.css';
 
 export default function PageError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const host = useRef<HTMLElement>(null);
