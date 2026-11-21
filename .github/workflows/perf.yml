@@ -1,0 +1,34 @@
+name: perf
+on:
+  push:
+    branches: [perf/hero]
+jobs:
+  compare:
+    runs-on: [linux-amd64]
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '24' }
+      - name: Build main
+        run: |
+          corepack enable
+          git worktree add "$RUNNER_TEMP/main" origin/main
+          cd "$RUNNER_TEMP/main"
+          pnpm install --frozen-lockfile
+          pnpm build
+          mv out "$RUNNER_TEMP/base"
+      - name: Build the branch
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          mv out "$RUNNER_TEMP/new"
+      - name: Install Chromium
+        working-directory: perf
+        run: |
+          npm install --no-audit --no-fund
+          echo "PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/pw" >> "$GITHUB_ENV"
+          PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/pw npx playwright install chromium
+      - name: Compare
+        working-directory: perf
+        run: node cmp.mts "$RUNNER_TEMP/base" "$RUNNER_TEMP/new"
