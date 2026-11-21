@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test'
 import { join } from 'node:path'
+import { BASE, OUT } from './env'
 
-const OUT = process.env.SWEEP_OUT ?? join(import.meta.dirname, '.out')
 
 /**
  * One harness, four projects: `pages` is the sweep of every route (sweep.spec.ts), `edge` holds the address
@@ -11,11 +11,11 @@ const OUT = process.env.SWEEP_OUT ?? join(import.meta.dirname, '.out')
 export default defineConfig({
   testDir: '.',
   outputDir: join(OUT, 'results'),
-  workers: Number(process.env.SWEEP_WORKERS ?? 4),
+  workers: 4,
   retries: 0,
   timeout: 120_000,
   reporter: [['list', { printSteps: false }], [join(import.meta.dirname, 'report.ts'), { out: OUT }]],
-  use: { baseURL: process.env.BASE_URL ?? 'https://hanzo.ai', ignoreHTTPSErrors: false, actionTimeout: 10_000 },
+  use: { baseURL: BASE, actionTimeout: 10_000 },
   projects: [
     { name: 'edge', testMatch: ['edge.spec.ts', 'models.spec.ts', 'phone.spec.ts'] },
     { name: 'pages', testMatch: 'sweep.spec.ts', use: { browserName: 'chromium' } },

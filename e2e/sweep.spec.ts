@@ -4,19 +4,16 @@
  * route x viewport x theme; a test passes only with no finding, and every finding is written for the report
  * (e2e/report.ts) with its class.
  *
- *   BASE_URL=https://hanzo.ai pnpm e2e --project=pages
- *   SWEEP_ROUTES='^/(pricing|models)' SWEEP_SLUGS=all SWEEP_WORKERS=2 pnpm e2e --project=pages
+ *   pnpm e2e --project=pages --grep '^/pricing '          one page
+ *   pnpm e2e --project=pages --grep 'mobile dark'         one width and theme
  */
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { expect, test } from '@playwright/test'
+import { OUT } from './env'
 import { audit, links, pressAll, settle, timing, watch, type Finding } from './probe'
 import { every, sampled, THEMES, unlistedRoutes, VIEWPORTS, type Theme, type Viewport } from './routes'
 
-const OUT = process.env.SWEEP_OUT ?? join(import.meta.dirname, '.out')
-const FILTER = process.env.SWEEP_ROUTES ? new RegExp(process.env.SWEEP_ROUTES) : null
-// SWEEP_ONLY='mobile/dark' (or 'desktop', 'dark'...) narrows the matrix to the combinations whose name contains it
-const ONLY = process.env.SWEEP_ONLY ? new RegExp(process.env.SWEEP_ONLY) : null
 // Buttons are pressed on one theme per width: the theme changes no handler.
 const PRESS: Record<Viewport, Theme> = { desktop: 'light', mobile: 'dark' }
 
@@ -24,10 +21,9 @@ mkdirSync(join(OUT, 'links'), { recursive: true })
 
 test.describe.configure({ mode: 'parallel' })
 
-for (const route of sampled.filter((r) => !FILTER || FILTER.test(r))) {
+for (const route of sampled) {
   for (const vp of Object.keys(VIEWPORTS) as Viewport[]) {
     for (const theme of THEMES) {
-      if (ONLY && !ONLY.test(`${vp}/${theme}`)) continue
       test(`${route} ${vp} ${theme}`, async ({ browser, baseURL }, info) => {
         test.setTimeout(180_000)
         const context = await browser.newContext({ ...VIEWPORTS[vp], colorScheme: theme, baseURL })

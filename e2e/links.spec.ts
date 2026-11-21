@@ -6,10 +6,10 @@
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { expect, test } from '@playwright/test'
+import { BASE, OUT } from './env'
 import type { Finding } from './probe'
 
-const OUT = process.env.SWEEP_OUT ?? join(import.meta.dirname, '.out')
-const here = new URL(process.env.BASE_URL ?? 'https://hanzo.ai')
+const here = new URL(BASE)
 const HOME = new Set(['hanzo.ai', 'www.hanzo.ai', here.hostname])
 
 interface Seen { pages: Set<string>; via: string }

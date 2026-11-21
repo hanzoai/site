@@ -48,8 +48,8 @@ for (const route of listed) {
 export const orphans = listed.filter((r) => !fixed.includes(r) && ![...families.values()].some((f) => f.includes(r)))
 export const unlisted = fixed.filter((r) => !listed.includes(r))
 
-/** How many members of each dynamic family the browser sweep takes; `all` takes every one. */
-const TAKE = process.env.SWEEP_SLUGS === 'all' ? Infinity : Number(process.env.SWEEP_SLUGS ?? 2)
+/** How many members of each dynamic family the browser sweep opens. */
+const TAKE = 2
 
 /** Spread the picks across the family: its first, its last and the ones between, the same on every run. */
 function pick(members: string[], n: number): string[] {
@@ -72,4 +72,3 @@ export const THEMES = ['light', 'dark'] as const
 export type Viewport = keyof typeof VIEWPORTS
 export type Theme = (typeof THEMES)[number]
 
-export { families }

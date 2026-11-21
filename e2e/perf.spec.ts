@@ -8,14 +8,13 @@ import { expect, test } from '@playwright/test'
 import { timing, watch, settle, type Finding } from './probe'
 import { sampled, VIEWPORTS, type Viewport } from './routes'
 
-const FILTER = process.env.SWEEP_ROUTES ? new RegExp(process.env.SWEEP_ROUTES) : null
 // The load event and the largest paint of a cold open, and the first byte of the page.
 const BUDGET = { desktop: { load: 3000, lcp: 3000 }, mobile: { load: 4000, lcp: 4000 } } as const
 const TTFB = 800
 
 test.describe.configure({ mode: 'serial' })
 
-for (const route of sampled.filter((r) => !FILTER || FILTER.test(r))) {
+for (const route of sampled) {
   for (const vp of Object.keys(VIEWPORTS) as Viewport[]) {
     test(`${route} ${vp}`, async ({ browser, baseURL }, info) => {
       test.setTimeout(120_000)

@@ -4,9 +4,10 @@
  * exist. Each is one request without following, so a chain longer than the hop that is wanted shows.
  */
 import { expect, test } from '@playwright/test'
+import { BASE } from './env'
 import { orphans, unlisted } from './routes'
 
-const origin = new URL(process.env.BASE_URL ?? 'https://hanzo.ai')
+const origin = new URL(BASE)
 const APEX = 'https://hanzo.ai'
 
 // [address, status of a GET, where it goes]. A HEAD is answered 308/307 where a GET is 301/302.

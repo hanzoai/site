@@ -1,11 +1,5 @@
-/**
- * What the sweep asks of a page. A finding is one thing wrong: a class (what kind), the page it is on, and detail.
- *
- * Nothing here is ignored by habit. The only requests the harness stops are the writes a sweep must not make on
- * the live site (every non-GET, so no form is ever sent and no event is recorded) and the telemetry the site's own
- * policy sends (`ANALYTICS`); both are counted and named in the report, never silently dropped.
- */
-import type { BrowserContext, ConsoleMessage, Page, Request } from '@playwright/test'
+/** A finding is one thing wrong on a page: its class, where, and what. */
+import type { BrowserContext, Page, Request } from '@playwright/test'
 
 export interface Finding {
   class: string
@@ -15,76 +9,49 @@ export interface Finding {
   detail: string
 }
 
-/** The telemetry hanzo.ai sends on purpose. The sweep blocks it so it records no visits; it is not a finding. */
-export const ANALYTICS = [/\/v1\/event\b/, /\/v1\/observe\b/, /\/v1\/replay\b/, /\/v1\/analytics\b/, /\/v1\/insights\b/, /\/v1\/telemetry\b/, /\/v1\/project\/tags\b/, /googletagmanager\.com/, /google-analytics\.com/, /facebook\.net/, /connect\.facebook/, /snap\.licdn\.com/, /px\.ads\.linkedin\.com/, /static\.cloudflareinsights\.com/, /cloudflareinsights\.com\/cdn-cgi/]
-
-export const analytic = (url: string) => ANALYTICS.some((rx) => rx.test(url))
+/** What a sweep must not record as a visit: the site's own telemetry and tag loader. Blocked, so it is not a finding. */
+const TELEMETRY = /\/v1\/(event|observe|replay|analytics|insights|telemetry|project\/tags)\b|googletagmanager\.com|google-analytics\.com|facebook\.net|snap\.licdn\.com|px\.ads\.linkedin\.com|cloudflareinsights\.com/
 
 export interface Seen {
   console: string[]
   failed: string[]
   bad: string[]
   mixed: string[]
-  blocked: { analytics: number; writes: number }
-  prefetch: number
-  media: number
-  /** `load` while the page arrives; `press` while the sweep presses its buttons, which moves the pointer over the page */
+  /** `press` while buttons are pressed: the pointer opens menus and closes them, and the browser cancels what they loaded */
   phase: 'load' | 'press'
-  cancelled: number
-  /** writes the harness answered itself */
-  writes: Set<string>
-  requests: number
 }
 
-/** Collect what the page says and asks for, from before it navigates. */
+/** Collect what the page says and asks for. Writes (non-GET) are answered 204: a sweep sends no form and records no event. */
 export async function watch(context: BrowserContext, page: Page): Promise<Seen> {
-  const seen: Seen = { console: [], failed: [], bad: [], mixed: [], blocked: { analytics: 0, writes: 0 }, prefetch: 0, media: 0, phase: 'load', cancelled: 0, writes: new Set(), requests: 0 }
+  const seen: Seen = { console: [], failed: [], bad: [], mixed: [], phase: 'load' }
+  const written = new Set<string>()
   await context.route('**/*', (route) => {
-    const req = route.request()
-    const url = req.url()
-    if (analytic(url)) {
-      seen.blocked.analytics++
-      return route.abort('blockedbyclient')
-    }
-    if (req.method() !== 'GET' && req.method() !== 'HEAD' && req.method() !== 'OPTIONS') {
-      seen.blocked.writes++
-      seen.writes.add(url)
+    const { method, url } = { method: route.request().method(), url: route.request().url() }
+    if (TELEMETRY.test(url)) return route.abort('blockedbyclient')
+    if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+      written.add(url)
       return route.fulfill({ status: 204, body: '' })
     }
     return route.continue()
   })
-  page.on('console', (m: ConsoleMessage) => {
-    const t = m.type()
-    if (t !== 'error' && t !== 'warning') return
-    const loc = m.location()
-    // the browser's own note that a request this harness blocked on purpose did not arrive
-    if (/ERR_BLOCKED_BY_CLIENT/.test(m.text()) && analytic(loc.url)) return
-    seen.console.push(`${t}: ${m.text().slice(0, 300)}${loc.url ? ` (${loc.url.replace(/^https?:\/\/[^/]+/, '')}:${loc.lineNumber})` : ''}`)
+  page.on('console', (m) => {
+    if (m.type() !== 'error' && m.type() !== 'warning') return
+    const at = m.location()
+    if (/ERR_BLOCKED_BY_CLIENT/.test(m.text()) && TELEMETRY.test(at.url)) return
+    seen.console.push(`${m.type()}: ${m.text().slice(0, 300)}${at.url ? ` (${at.url.replace(/^https?:\/\/[^/]+/, '')}:${at.lineNumber})` : ''}`)
   })
-  page.on('pageerror', (e) => seen.console.push(`uncaught: ${String(e.message).slice(0, 300)}`))
+  page.on('pageerror', (e) => seen.console.push(`uncaught: ${e.message.slice(0, 300)}`))
   page.on('request', (r: Request) => {
-    seen.requests++
     if (new URL(page.url() === 'about:blank' ? r.url() : page.url()).protocol === 'https:' && r.url().startsWith('http://')) seen.mixed.push(r.url())
   })
   page.on('requestfailed', (r: Request) => {
-    if (analytic(r.url()) || (seen.writes.has(r.url()) && r.method() !== 'GET')) return
     const why = r.failure()?.errorText ?? 'failed'
-    // A pointer that passes over a menu opens it and closes it again; the browser cancels what the menu was loading.
-    if (seen.phase === 'press' && why === 'net::ERR_ABORTED') {
-      seen.cancelled++
-      return
-    }
-    // Next's router prefetches a static export's pages with a HEAD and cancels it when its link scrolls out of view
-    // (next/dist/client/components/segment-cache). That is the framework at work, counted and never a finding.
-    if (r.method() === 'HEAD' && why === 'net::ERR_ABORTED' && r.resourceType() === 'fetch' && new URL(r.url()).origin === new URL(page.url()).origin) {
-      seen.prefetch++
-      return
-    }
-    // A <video> or <audio> that the browser has buffered enough of, or that scrolled away, has its request closed:
-    // Chrome reports that as ERR_ABORTED on the media request. A media file that FAILS is a 4xx/5xx or another error.
-    if (r.resourceType() === 'media' && why === 'net::ERR_ABORTED') {
-      seen.media++
-      return
+    if (TELEMETRY.test(r.url()) || written.has(r.url())) return
+    if (why === 'net::ERR_ABORTED') {
+      // cancelled by the browser or the framework, not failed: a press's menu closing, a media element that has buffered
+      // enough, Next's HEAD prefetch of a link that scrolled away
+      if (seen.phase === 'press' || r.resourceType() === 'media') return
+      if (r.method() === 'HEAD' && r.resourceType() === 'fetch' && new URL(r.url()).origin === new URL(page.url()).origin) return
     }
     seen.failed.push(`${r.method()} ${r.url().slice(0, 200)} ${why}`)
   })
