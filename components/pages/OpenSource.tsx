@@ -16,7 +16,7 @@ import type { CSSProperties, FocusEvent as RFocusEvent, KeyboardEvent as RKeyboa
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { A, More } from '../kit';
 import { Count } from '../ui';
-import { href } from '../../lib/route';
+import { has } from '../../lib/route';
 import DetailSheet from '../v2/x-pascal/DetailSheet';
 import { SnapIn, Gather, Tilt, Cascade, Ripple } from './openSource/entrances';
 import SNAP from './openSource/snapshot';
@@ -183,7 +183,7 @@ function Sky({ paused = false }: { paused?: boolean }) {
   };
   const up = (e: RPointerEvent<HTMLCanvasElement>) => {
     const S = st.current, was = S.drag; S.drag = null;
-    if (was && S.moved < 6) { const i = pick(e); if (i >= 0) window.location.assign(href('/oss/' + world.clusters[i].login)); }
+    if (was && S.moved < 6) { const i = pick(e); if (i >= 0 && has('/oss/' + world.clusters[i].login)) window.location.assign('/oss/' + world.clusters[i].login); }
   };
   return (
     <div className="xos-sky" ref={wrap}>
@@ -435,7 +435,7 @@ function Orgs() {
               <ul className="xos-ocards">
                 {top.map((o, j) => (
                   <li key={o.login} style={{ '--k': j } as CSSProperties}>
-                    <A to={'/oss/' + o.login} className="xos-ocard" onPointerMove={lean} onPointerLeave={rest}>
+                    <A to={has('/oss/' + o.login) ? '/oss/' + o.login : undefined} className="xos-ocard" onPointerMove={lean} onPointerLeave={rest}>
                       <span className="xos-oc-top"><span className="xos-oc-name" data-morph>{o.name}</span><span className="pf-mono xos-oc-login">{o.login}</span></span>
                       <span className="xos-oc-n">{o.repos}</span>
                       <span className="xos-oc-bar" aria-hidden="true"><i style={{ transform: `scaleX(${Math.max(0.02, num(o.repos) / max)})` }} /></span>
@@ -451,7 +451,7 @@ function Orgs() {
                 <ol className="xos-sh-orgs">
                   {x.orgs.map((o) => (
                     <li key={o.login}>
-                      <A to={'/oss/' + o.login}>
+                      <A to={has('/oss/' + o.login) ? '/oss/' + o.login : undefined}>
                         <span><span className="xos-sh-on">{o.name}</span><span className="pf-mono xos-sh-ol">{o.login}</span></span>
                         <span className="pf-mono">{o.repos}</span>
                         <span className="pf-mono">{o.commits || ''}</span>

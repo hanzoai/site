@@ -71,10 +71,7 @@ export function providerCards(slug: string): Sibling[] {
     found = leaves.map(cardOf);
   } catch { /* a provider without a page */ }
   // each sibling's live rate, as hanzo.ai printed it
-  const cards: Sibling[] = found.map((c) => { const t = live(c.href.slice(1)); const pr = after(t, 'Price'); return { ...c, price: pr || null, rate: rate(pr), tokens: tokens(c.ctx), id: c.href.split('/').slice(2).join('/') }; });
-  // a model hanzo.ai lists that this rebuild has no page for (one added since the content capture, e.g. a :free
-  // variant) opens Hanzo's own page in a new tab rather than a 404 here
-  cards.forEach((c) => { if (!exists(c.href)) c.href = 'https://hanzo.ai' + c.href; });
+  const cards: Sibling[] = found.filter((c) => exists(c.href)).map((c) => { const t = live(c.href.slice(1)); const pr = after(t, 'Price'); return { ...c, price: pr || null, rate: rate(pr), tokens: tokens(c.ctx), id: c.href.split('/').slice(2).join('/') }; });
   providerCache.set(slug, cards);
   return cards;
 }

@@ -28,7 +28,7 @@
 },
 {
 "a": "Slack integration docs",
-"href": "https://docs.hanzo.ai/docs/openapi/channel"
+"href": "https://docs.hanzo.ai/docs/openapi/provider"
 },
 {
 "p": "Organization-scoped security: Hanzo Tag only reads channels where @Hanzo is added, uses federated workload identities instead of personal accounts, and never trains on your Slack data."

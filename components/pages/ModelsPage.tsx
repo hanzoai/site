@@ -25,6 +25,7 @@ import type { Opener } from './ModelsStudioTypes';
 import { BOARD } from './benchmarksData';
 import { CopyStatus } from './models/parts';
 import { track } from '../../lib/track';
+import { has } from '../../lib/route';
 import './ModelsPage.css';
 
 /* Kai's suites won against Jev, counted from Hanzo's research runs (the rows /benchmarks reads, api.hanzo.ai/v1/research/runs),
@@ -409,7 +410,7 @@ function Row({ m, hide }: { m: Entry; hide: boolean }) {
     <li className="xmo-row" hidden={hide}>
       <Thumb fam={m.thumb} seed={m.id} />
       <div className="xmo-row-m">
-        <A to={m.to} className="xmo-row-n"><b>{m.name}</b></A>
+        <A to={has(m.to) ? m.to : undefined} className="xmo-row-n"><b>{m.name}</b></A>
         <p className="xmo-row-id x-mono"><span>{slashes(m.id)}</span>{m.ep && <span>{slashes(m.ep)}</span>}</p>
       </div>
       <div className="xmo-row-d">

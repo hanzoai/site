@@ -28,7 +28,7 @@ export const HERO = {
   acts: [
     ['Set up Hanzo Tag', '/settings/organization/products?tab=tag'],
     ['Configure Federated Access (WIMSE)', '/settings/organization/products?tab=tag&sub=federated'],
-    ['Slack integration docs', 'https://docs.hanzo.ai/docs/openapi/channel'],
+    ['Slack integration docs', 'https://docs.hanzo.ai/docs/openapi/provider'],
   ],
   safe: 'Organization-scoped security: Hanzo Tag only reads channels where @Hanzo is added, uses federated workload identities instead of personal accounts, and never trains on your Slack data.',
 };
