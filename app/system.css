@@ -267,8 +267,7 @@ footer a[href='#choices'] svg path:not([fill='#0072CE']) { fill: var(--backgroun
 /* ---------- utilities ---------- */
 .x-tnum { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
 .x-vh { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-/* Long sections far below the fold skip layout and paint until they near the screen; `auto` keeps the height they
-   had once drawn. The home's sections after the hero all take it: laid out with the hero they were most of its first layout. */
+/* long sections far below the fold skip layout and paint until they near the screen; give the expected height */
 .x-cv { content-visibility: auto; contain-intrinsic-size: auto 900px; }
 .x-ratio { position: relative; aspect-ratio: var(--ratio, 16 / 9); overflow: hidden; }
 .x-ratio > img, .x-ratio > video, .x-ratio > picture > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }

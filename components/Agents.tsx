@@ -149,7 +149,7 @@ function Steps() {
 
 export default function Agents() {
   return (
-    <section className="x-sec x-agents x-cv" id="compatible" data-hz-view="compatible" aria-labelledby="compatible-h">
+    <section className="x-sec x-agents" id="compatible" data-hz-view="compatible" aria-labelledby="compatible-h">
       <div className="x-wrap">
         <Head id="compatible-h" title="Works with every agent, bot and CLI tool." lede="Claude Code, Codex, Cursor and the rest, every model behind one key. Or let your agent sign itself up." />
         <ul className="x-dock" data-hz-view="works-with">

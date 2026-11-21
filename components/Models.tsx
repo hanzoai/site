@@ -62,7 +62,7 @@ function Card({ m, i, live, setLive }: { m: (typeof MODELS)[number]; i: number; 
 export default function Models() {
   const [live, setLive] = useState<string | null>(null);
   return (
-    <section className="x-sec x-models x-cv" id="models" data-hz-view="models" aria-labelledby="models-h">
+    <section className="x-sec x-models" id="models" data-hz-view="models" aria-labelledby="models-h">
       <div className="x-wrap">
         <Head id="models-h" title="Frontier AI for everything you build." lede="Language, routing, decisions and creative models." />
         <ul className="x-mgrid">{MODELS.map((x, i) => <Card key={x.slug} m={x} i={i} live={live} setLive={setLive} />)}</ul>

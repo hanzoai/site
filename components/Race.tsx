@@ -65,7 +65,7 @@ function RaceCard({ kicker, big, decimals, cap, note, title, lanes, extra, link 
 export default function Race() {
   const { CODING: K1, KAI: K2 } = useFigures()!;
   return (
-    <section className="x-sec x-faster x-cv" data-room="dark" id="faster" data-hz-view="faster" aria-labelledby="faster-h">
+    <section className="x-sec x-faster" data-room="dark" id="faster" data-hz-view="faster" aria-labelledby="faster-h">
       <div className="x-wrap">
         <Head id="faster-h" dark title="Faster where the work happens." lede="Hanzo Dev and Kai, each measured side by side." />
         <div className="x-races">

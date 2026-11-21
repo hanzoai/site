@@ -12,7 +12,7 @@ const site = (addr: string) => (addr.startsWith('hanzo.ai/') ? addr.slice(8) : '
 
 export default function Platform() {
   return (
-    <section className="x-sec x-platform x-cv" id="products" data-hz-view="products" aria-labelledby="products-h">
+    <section className="x-sec x-platform" id="products" data-hz-view="products" aria-labelledby="products-h">
       <div className="x-wrap">
         <Head id="products-h" title="Hanzo is the AI-native company platform." />
         <ul className="xp-grid">

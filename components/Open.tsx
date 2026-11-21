@@ -102,7 +102,7 @@ function Tile({ t, i }: { t: TileData; i: number }) {
 
 export default function Open() {
   return (
-    <section className="x-sec x-oss x-cv" id="open-source" data-hz-view="open-source" aria-labelledby="open-source-h">
+    <section className="x-sec x-oss" id="open-source" data-hz-view="open-source" aria-labelledby="open-source-h">
       <div className="x-wrap">
         <Head id="open-source-h" title="We ship every day. Fork anything. Build your own." />
         <div className="x-tiles">{TILES.map((t, i) => <Tile key={i} t={t} i={i} />)}</div>
