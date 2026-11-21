@@ -54,6 +54,11 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   once Hanzo took the answers. A form that keeps its answers in the browser alone is a fake. The bodies are built in
   `*.send.js` / `*.apply.js` beside the page, each with a node test, and checked end to end in a browser with the API
   intercepted (route + fulfill), never against production.
+- A page is served `no-transform` (universe `hashed-pages`): the zone's Cloudflare Email Address Obfuscation would otherwise rewrite
+  an address in the HTML to `[email protected]` and decode it by script after the browser has parsed the page, so React reads text
+  it did not render (error #418) and a failed decode leaves the placeholder on screen. `next/link` prefetches nothing as it scrolls
+  into view (`A` in `components/kit.tsx`, `Nav`): every prefetch makes React preload that page's CSS, which Chrome warns about when the
+  page is not opened. Morph's `warm` (pointerover, touchstart) is the one prefetch.
 - No sign-in, sign-up, card or code is collected here. Those are hanzo.app's.
 - Copy is Hanzo's: change wording only on purpose.
 - The hero demo draws each device as its product draws itself, in the product's own words: the desktop is @hanzo/app's
@@ -126,6 +131,27 @@ new name for a page is added there and in that file, never in a page of this rep
 
 `hanzo.dev`, `hanzo.io`, `hanzo.co` and `hanzo.studio` are not Hanzo's: never link them. `/admin` answers 404 until the owner
 says which admin it is (universe `docs/urls.md`, open question 7).
+
+## The sweep: `e2e/`
+
+One Playwright harness holds the whole site to "no error, no warning, no broken thing" on the live address.
+`pnpm e2e` runs three projects against `BASE_URL` (default `https://hanzo.ai`), four workers, never the writes or the
+telemetry of a real visit (the harness aborts `/v1/event` and the analytics scripts and answers any non-GET with 204, and counts both):
+
+| Project | File | Asks |
+|---|---|---|
+| `pages` | `sweep.spec.ts` | every route x desktop 1440x900 / phone 390x844 x light / dark, cold: console errors and warnings, 4xx/5xx and failed requests, mixed content, broken images, fonts and videos, alt, overflow and text past the screen edge, tap targets (44 px where a finger lands, phone only), links to nowhere, title/lang/canonical, the theme the page wears, files over their weight (still 300 KB, script 500 KB, style 200 KB, film 2 MB), and every button of the page pressed once (desktop light, phone dark): one that changes nothing is dead |
+| `perf` | `perf.spec.ts` | last, alone: each page cold three times in fresh contexts, the fastest counts: first byte 800 ms, load and largest paint 3 s desktop / 4 s phone |
+| `edge` | `edge.spec.ts` | www, http, trailing slash, `.html`, case, the guessed names (universe `docs/urls.md`), the branded 404, and that `app/` and `lib/routes.json` agree |
+| `links` | `links.spec.ts` | after `pages`: every link it met, once: this site's 200 after at most one redirect; another site's not 404/5xx (401/403/429/999 are listed in `.out/refused.txt`, not counted); mailto/tel well formed |
+
+The routes are derived, never listed (`e2e/routes.ts`): the `page.tsx` files under `app/`, and for `[slug]` and `[...mod]` the
+members `lib/routes.json` holds; `SWEEP_SLUGS=all` opens every member, default 2 per family, spread first to last.
+`scripts/routes.test.ts` (in `pnpm test`) fails when a page is unlisted or a listed route has no page. A page that is
+a short address of another (`lib/unlisted.json`) names that page as its canonical. `SWEEP_ROUTES='^/pricing'` narrows a run,
+`SWEEP_WORKERS`, `SWEEP_OUT` (default `e2e/.out`: `findings.json` is the table, one row per route x width x theme x class).
+The harness counts but does not report Next's HEAD prefetches that are cancelled when their link scrolls out of view, and the media requests a browser closes once it has buffered enough (`ERR_ABORTED` on a `<video>`).
+Run `pnpm exec playwright install chromium` once, and from a worktree whose `node_modules` has `@playwright/test`.
 
 ## Ship
 
