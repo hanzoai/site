@@ -292,7 +292,8 @@ export async function pressAll(
           if (r.width === 0 || r.height === 0 || s.visibility === 'hidden' || s.display === 'none') return false
           if ((el as HTMLButtonElement).disabled || el.getAttribute('aria-disabled') === 'true') return false
           if (el.closest('[aria-hidden=true], [inert]')) return false
-          if (el.matches('[aria-selected=true], [aria-current]')) return false
+          // the option already chosen answers nothing when pressed again
+          if (el.matches('[aria-selected=true], [aria-current], [data-on], [data-active], .on, .active')) return false
           return (scopeName === 'chrome') === inChrome(el)
         })
         .map((el) => el.getAttribute('data-qa')!)
