@@ -290,7 +290,7 @@ export async function pressAll(
   page: Page,
   scope: 'page' | 'chrome',
   from = 0,
-  limit = 24,
+  limit = 10,
 ): Promise<{ dead: string[]; covered: string[]; next: number; left: boolean; total: number }> {
   const dead: string[] = []
   const covered: string[] = []
@@ -334,7 +334,7 @@ export async function pressAll(
     const name = await loc.evaluate((el) => `${el.tagName.toLowerCase()} "${((el as HTMLElement).innerText || el.getAttribute('aria-label') || el.getAttribute('title') || el.id || '').trim().replace(/\s+/g, ' ').slice(0, 40)}"`)
     // what the page does by itself in the time a press is watched, so a demo that animates is not mistaken for an answer
     const m0 = await page.evaluate(() => (window as any).__qa.mut as number)
-    await page.waitForTimeout(450)
+    await page.waitForTimeout(250)
     const noise = (await page.evaluate(() => (window as any).__qa.mut as number)) - m0
     const before = await state(page)
     const held = await loc.evaluate((el) => { const f = el.closest('form'); return !!f && (el as HTMLButtonElement).type !== 'button' && !f.checkValidity() })
@@ -354,8 +354,8 @@ export async function pressAll(
     }
     // a press is given up to two seconds to answer: a client navigation on a slow machine is not a dead button
     let after = await state(page)
-    for (let waited = 0; waited < 2400 && !moved(before, after, noise); waited += 300) {
-      await page.waitForTimeout(300)
+    for (let waited = 0; waited < 1500 && !moved(before, after, noise); waited += 250) {
+      await page.waitForTimeout(250)
       after = await state(page)
     }
     // a submit on a form that is not yet valid is answered by the browser: it holds the form and focuses the first field to fix

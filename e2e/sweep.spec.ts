@@ -15,6 +15,8 @@ import { every, sampled, THEMES, unlistedRoutes, VIEWPORTS, type Theme, type Vie
 
 const OUT = process.env.SWEEP_OUT ?? join(import.meta.dirname, '.out')
 const FILTER = process.env.SWEEP_ROUTES ? new RegExp(process.env.SWEEP_ROUTES) : null
+// SWEEP_ONLY='mobile/dark' (or 'desktop', 'dark'...) narrows the matrix to the combinations whose name contains it
+const ONLY = process.env.SWEEP_ONLY ? new RegExp(process.env.SWEEP_ONLY) : null
 // Buttons are pressed on one theme per width: the theme changes no handler.
 const PRESS: Record<Viewport, Theme> = { desktop: 'light', mobile: 'dark' }
 
@@ -25,6 +27,7 @@ test.describe.configure({ mode: 'parallel' })
 for (const route of sampled.filter((r) => !FILTER || FILTER.test(r))) {
   for (const vp of Object.keys(VIEWPORTS) as Viewport[]) {
     for (const theme of THEMES) {
+      if (ONLY && !ONLY.test(`${vp}/${theme}`)) continue
       test(`${route} ${vp} ${theme}`, async ({ browser, baseURL }, info) => {
         test.setTimeout(180_000)
         const context = await browser.newContext({ ...VIEWPORTS[vp], colorScheme: theme, baseURL })
