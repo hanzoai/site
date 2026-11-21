@@ -176,7 +176,7 @@ function Roll() {
 }
 
 // Hanzo's own picture on the monitor (its alt, word for word); if hanzo.ai's image can't load, Uta's still stands in
-const SPLASH = 'https://hanzo.ai/images/creative/uta-splash-web.jpg';
+const SPLASH = 'https://hanzo.ai/images/creative/uta-splash.jpg';
 function Splash() {
   const [bad, setBad] = useState(false);
   return <Img src={bad ? film('uta', 'webp') : SPLASH} alt="Uta Live Philharmonic Orchestra and Music Video Trailer" w={1600} h={1000} onError={() => setBad(true)} />;

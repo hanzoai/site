@@ -124,7 +124,7 @@ export default function UniversityCoding() {
         <div className="xuv-lab-grid">
           <figure className="xuv-shot">
             <figcaption className="xuv-shot-h">LABORATORY TERMINAL · ISOLATED RUNSC BOUNDARY</figcaption>
-            <Img src="/university/developer-terminal-web.jpg" w={1376} h={768} alt="Close-up of developer hands on mechanical keyboard in front of terminal debugger and autonomous agent test harness" />
+            <Img src="/university/developer-terminal.jpg" w={1376} h={768} alt="Close-up of developer hands on mechanical keyboard in front of terminal debugger and autonomous agent test harness" />
             <p className="xuv-shot-f">Real-time terminal feedback: students inspect agent AST diffs, Cap’n Proto trace records, and micro-USD budget meters.</p>
           </figure>
           <div className="xuv-stack">
