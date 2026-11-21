@@ -257,7 +257,7 @@
   .xpr-trust .x-arrow, .xpr-band-note a { display: inline-flex; align-items: center; min-height: 44px; }
   .xpr-tabs { padding: 10px 0; }
   .xpr-tabs .x-tablist { display: flex; width: 100%; }
-  .xpr-tabs .x-tab { flex: 1; }
+  .xpr-tabs .x-tab { flex: 1; justify-content: center; }
   /* phones: the rail sits across the top of the panel, one column per plan of the set */
   .xpr-morph { grid-template-columns: minmax(0, 1fr); border-radius: 20px; }
   .xpr-rail { flex-direction: row; gap: 4px; padding: 6px; border-right: 0; border-bottom: 1px solid var(--line); }

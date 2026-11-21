@@ -192,6 +192,8 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
 
 .x-setup { --lift: 0px; position: absolute; left: 50%; bottom: -76px; translate: -50% var(--lift); display: inline-flex; align-items: stretch; width: max-content; z-index: 5; --mx: -50%; transition: translate .32s var(--ease), scale .16s var(--ease); }
 .x-setup.inline { position: relative; left: auto; bottom: auto; translate: 0 var(--lift); align-self: flex-start; --mx: 0px; }
+.x-setup { max-width: 100%; }
+.x-setup-main { min-width: 0; overflow: hidden; }
 @media (hover: hover) {
   .x-setup:has(> .x-setup-main:hover, > .x-setup-chev:hover) { --lift: -2px; }
   .x-setup:has(> .x-setup-main:hover, > .x-setup-chev:hover) > :is(.x-setup-main, .x-setup-chev) { border-color: var(--x-e15); box-shadow: 0 16px 34px -14px rgba(0, 0, 0, .32); }
