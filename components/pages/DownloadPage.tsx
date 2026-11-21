@@ -140,16 +140,19 @@ const GLIDE: Transition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
 
 /* Which build is yours. Desktop ships natively for macOS, Windows, and Linux. */
 function useSystem() {
-  const [s, setS] = useState<{ os: Os; br: number }>({ os: 'mac', br: 0 }); // the page ships with macOS, as hanzo.ai does
+  const [s, setS] = useState<{ os: Os; br: number; phone: boolean }>({ os: 'mac', br: 0, phone: false }); // the page ships with macOS, as hanzo.ai does
   useEffect(() => {
-    const nav: Navigator & { userAgentData?: { platform?: string } } = navigator; // userAgentData is in no DOM typing yet
+    const nav: Navigator & { userAgentData?: { platform?: string; mobile?: boolean } } = navigator; // userAgentData is in no DOM typing yet
     const p = ((nav.userAgentData
  && nav.userAgentData.platform) || navigator.platform || navigator.userAgent || '').toLowerCase();
     const ua = navigator.userAgent;
     const l = ua.toLowerCase();
     const os: Os = /win/.test(p) ? 'win' : /linux|x11/.test(p) && !/android/.test(l) ? (/aarch64|arm/.test(l) ? 'linuxarm' : 'linux') : 'mac';
     const br = /Edg\//.test(ua) ? 3 : /Firefox|FxiOS/.test(ua) ? 1 : /Safari/.test(ua) && !/Chrome|Chromium|CriOS|Edg/.test(ua) ? 2 : 0;
-    setS({ os, br });
+    // a phone has no Desktop build: the button opens the app in the browser instead (hanzo.app/app said so, and
+    // sends its visitors here now, hanzo-inc/app#320)
+    const phone = !!(nav.userAgentData && nav.userAgentData.mobile) || /android|iphone|ipod|mobile/.test(l);
+    setS({ os, br, phone });
   }, []);
   return s;
 }
@@ -247,7 +250,9 @@ function Peek({ i }: { i: number }) {
   return <i ref={ref} hidden />;
 }
 
-function Dial({ os }: { os: Os }) {
+const WEB = 'https://hanzo.app'; // the app in a browser: Chat, Dev and the rest, nothing to install
+
+function Dial({ os, phone }: { os: Os; phone: boolean }) {
   const PRODUCTS = useProducts();
   const DIAL_PRODUCTS = PRODUCTS.slice(0, DIAL);
   const [label, mp, mb] = MAIN[os];
@@ -278,15 +283,24 @@ function Dial({ os }: { os: Os }) {
       </svg>
       <div className="dl-core">
         <Magnetic strength={0.18}>
-          <Cta to={GH + main[2]} id="download-main" thumb size="lg" className="dl-main"><Down s={22} /><span>Download for {label}</span></Cta>
+          {phone
+            ? <Cta to={WEB} id="download-main" thumb size="lg" className="dl-main"><span>Open Hanzo in your browser</span></Cta>
+            : <Cta to={GH + main[2]} id="download-main" thumb size="lg" className="dl-main"><Down s={22} /><span>Download for {label}</span></Cta>}
         </Magnetic>
-        <p className="dl-read x-mono">
-          <span className="dl-read-a"><span>{shown.p.name}</span>{hot && <> · <span>{shown.b[0]}</span></>} · <span>{shown.p.v}</span>{shown.b[1] && <> · <span>{shown.b[1]}</span></>}</span>
-          <span className="dl-read-f">{FILE(shown.b[2])}</span>
-        </p>
+        {phone && !hot ? (
+          <p className="dl-read x-mono">
+            <span className="dl-read-a">No install on a phone: Hanzo runs in the browser</span>
+            <span className="dl-read-f">Hanzo Desktop is for macOS, Windows and Linux</span>
+          </p>
+        ) : (
+          <p className="dl-read x-mono">
+            <span className="dl-read-a"><span>{shown.p.name}</span>{hot && <> · <span>{shown.b[0]}</span></>} · <span>{shown.p.v}</span>{shown.b[1] && <> · <span>{shown.b[1]}</span></>}</span>
+            <span className="dl-read-f">{FILE(shown.b[2])}</span>
+          </p>
+        )}
         <div className="dl-main-l">
           <A to="#builds" data-cta="download-every-build">Every build</A>
-          <A to="/chat" data-cta="download-browser">Or open Hanzo in your browser</A>
+          {!phone && <A to={WEB} data-cta="download-browser">Or open Hanzo in your browser</A>}
         </div>
       </div>
       {DIAL_PRODUCTS.map((p, pi) => (
@@ -308,7 +322,7 @@ function Dial({ os }: { os: Os }) {
   );
 }
 
-function Hero({ os }: { os: Os }) {
+function Hero({ os, phone }: { os: Os; phone: boolean }) {
   return (
     <section className="dl-hero" aria-labelledby="dl-h1">
       <div className="av-wrap">
@@ -316,7 +330,7 @@ function Hero({ os }: { os: Os }) {
           <Lines as="h1" id="dl-h1" className="av-display dl-top-l" lines={['Download Hanzo']} now delay={0.05} />
           <p className="av-lede dl-top-r">Hanzo Desktop is the Hanzo app for your computer. Download it, open it, sign in: no terminal needed. Tools for developers are further down.</p>
         </div>
-        <Dial os={os} />
+        <Dial os={os} phone={phone} />
       </div>
     </section>
   );
@@ -600,7 +614,7 @@ function Kit({ os, br }: { os: Os; br: number }) {
 }
 
 /* ---------- the one closing band: the hero's ask again ---------- */
-function End({ os }: { os: Os }) {
+function End({ os, phone }: { os: Os; phone: boolean }) {
   const PRODUCTS = useProducts();
   const [label, mp, mb] = MAIN[os];
   return (
@@ -608,8 +622,12 @@ function End({ os }: { os: Os }) {
       <div className="av-wrap dl-band-in">
         <h2 id="dl-end-h" className="av-display m dl-end-t">One account signs in to all of them.</h2>
         <div className="dl-band-acts">
-          <Cta to={GH + PRODUCTS[mp].builds[mb][2]} id="download-main-end" size="lg">Download for {label}</Cta>
-          <Cta to="/chat" id="download-browser-end" kind="link">Or open Hanzo in your browser</Cta>
+          {phone
+            ? <Cta to={WEB} id="download-main-end" size="lg">Open Hanzo in your browser</Cta>
+            : <>
+                <Cta to={GH + PRODUCTS[mp].builds[mb][2]} id="download-main-end" size="lg">Download for {label}</Cta>
+                <Cta to={WEB} id="download-browser-end" kind="link">Or open Hanzo in your browser</Cta>
+              </>}
         </div>
       </div>
     </section>
@@ -645,7 +663,7 @@ function useLatestDesktop(built?: Desktop) {
 type Tags = Partial<Record<'cli' | 'dev' | 'node', string>>;
 
 export default function DownloadPage({ desktop, tags = {} }: { desktop?: Desktop; tags?: Tags }) {
-  const { os, br } = useSystem();
+  const { os, br, phone } = useSystem();
   const desk = useLatestDesktop(desktop);
   const products = useMemo(() => PRODUCTS.map((p) => {
     if (p.k === 'desk') return { ...p, v: desk.v, builds: desk.builds };
@@ -655,11 +673,11 @@ export default function DownloadPage({ desktop, tags = {} }: { desktop?: Desktop
   return (
     <Products.Provider value={products}>
       <main className="av dl" style={{ '--ac': '#a3a3a3' }}>
-        <Hero os={os} />
+        <Hero os={os} phone={phone} />
         <Which os={os} />
         <Builds os={os} br={br} />
         <Kit os={os} br={br} />
-        <End os={os} />
+        <End os={os} phone={phone} />
       </main>
     </Products.Provider>
   );
