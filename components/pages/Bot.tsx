@@ -816,7 +816,7 @@ const botPlansOf = (P: Derived['plans']): PlanRow[] => [
   [P.pro.name, '$' + P.pro.price, '3x', ['3x more usage than Go', '3x higher limits than Go', ...(P.pro.hasTeam ? ['Hanzo Team (hanzo.team) workspace included'] : [])], P.pro.id, true],
   [P.dev.name, '$' + P.dev.price, '5x', ['5x more usage than Go', '5x higher limits than Go', ...(P.dev.hasTeam ? ['Hanzo Team (hanzo.team) workspace included'] : [])], P.dev.id, true],
   [P.max.name, '$' + P.max.price, '15x', ['15x more usage than Go', '15x higher limits than Go', ...(P.max.hasTeam ? ['Hanzo Team (hanzo.team) workspace included'] : [])], P.max.id, true],
-  [P.ultra.name, '$' + P.ultra.price, '∞', ['Unlimited usage across every model', '25x higher limits than Go & priority queue', ...(P.ultra.hasTeam ? ['Hanzo Team (hanzo.team) workspace included'] : [])], P.ultra.id, true],
+  [P.ultra.name, '$' + P.ultra.price, '25x', ['25x more usage than Go', '25x higher limits than Go every 5 hours and every day', 'Priority queue across all frontier models', ...(P.ultra.hasTeam ? ['Hanzo Team (hanzo.team) workspace included'] : [])], P.ultra.id, true],
 ];
 const FEATS = [
   ['Dedicated Cloud Sandbox', 'Each bot runs in its own isolated Linux environment with dedicated memory and compute.'],
@@ -827,7 +827,7 @@ const FEATS = [
 const whyOf = (P: Derived['plans'], F: Derived['floor']) => [
   ['Compute Floor', `Why a ${usd(F.bot)}/mo entry floor?`, 'Not a chat window. A resident cloud computer.', `Standard chat models terminate compute as soon as tokens finish streaming. A resident Hanzo Bot lives in an active cloud sandbox with its own Chromium browser, bash terminal, isolated filesystem, and scheduled cron jobs. The ${usd(F.bot)}/month floor unlocks hanzo.bot with unlimited bots.`],
   ['Token Economics', 'Routine work at 1/5th the token cost', 'Intelligent routing through Enso & Kai.', 'Up to 90% of a resident bot’s daily work consists of triaging inboxes, summarizing documents, parsing receipts, and scraping pages. Rather than burning expensive frontier reasoning on routine tasks, Hanzo Bot routes routine loops through Enso Flash & Kai at a fraction of frontier token cost.'],
-  ['Frontier Autonomy', `Ultra tier for massive workloads (${usd(P.ultra.price)}/mo)`, 'Unlimited usage across every model, 25x higher rate limits.', `When your bots need deep multi-hour research, autonomous software engineering, or multi-step strategic analysis, the Ultra tier (${usd(P.ultra.price)}/mo) includes unlimited usage across every model with 25x higher rate limits than Go and priority queue access.`],
+  ['Frontier Autonomy', `Ultra tier for massive workloads (${usd(P.ultra.price)}/mo)`, '25x Go’s usage, and 25x its limits every 5 hours and every day.', `When your bots need deep multi-hour research, autonomous software engineering, or multi-step strategic analysis, the Ultra tier (${usd(P.ultra.price)}/mo) includes 25x Go’s usage and 25x its limits every 5 hours and every day, with priority queue access across all frontier models.`],
   ['Auditable Memory', 'Plain Markdown files you can inspect & edit', 'No black-box fine-tuning or opaque vector locks.', 'Hanzo Bot records what it learns in human-readable Markdown files in its workspace (`MEMORY.md`, `SKILLS.md`). You can open them, audit them, version-control them in Git, or delete them anytime. The bot begins every session from what you leave.'],
 ];
 
