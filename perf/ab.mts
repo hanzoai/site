@@ -18,10 +18,10 @@ const old = readFileSync('old.html', 'utf8')
 
 for (const [profile, p] of Object.entries(PROFILES)) {
   const fresh = await (await fetch('https://hanzo.ai/', { headers: p.mobile ? { 'user-agent': UA } : {} })).text()
-  const html = { before: old, after: fresh }
-  const rows: Record<string, Record<string, number[]>> = { before: {}, after: {} }
+  const html = { before: old, after: fresh, 'hero only': fresh.replace(/ x-cv\b/g, '') }
+  const rows: Record<string, Record<string, number[]>> = { before: {}, after: {}, 'hero only': {} }
   for (let i = 0; i < N + 1; i++) {
-    for (const name of ['before', 'after'] as const) {
+    for (const name of ['before', 'after', 'hero only'] as const) {
       const ctx = await browser.newContext(p.mobile ? { ...devices['iPhone 14'], serviceWorkers: 'block' } : { viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' })
       await ctx.addInitScript(`(() => { window.__m = { lcp: 0 }; new PerformanceObserver(l => { for (const e of l.getEntries()) window.__m.lcp = e.startTime }).observe({ type: 'largest-contentful-paint', buffered: true }) })()`)
       const page = await ctx.newPage()
@@ -52,11 +52,11 @@ for (const [profile, p] of Object.entries(PROFILES)) {
     }
   }
   console.log(`\n### ${profile} (${N} cold loads each, alternating; ms; median [min])`)
-  console.log('| metric | before | after | change |'); console.log('|---|---|---|---|')
+  console.log('| metric | before | all of it | hero only (no x-cv) |'); console.log('|---|---|---|---|')
   for (const k of ['fcp', 'lcp', 'busy', 'layout', 'style', 'parse']) {
-    const a = rows.before[k] ?? [], b = rows.after[k] ?? []
-    if (!a.length || !b.length) continue
-    console.log(`| ${k} | ${med(a).toFixed(0)} [${Math.min(...a).toFixed(0)}] | ${med(b).toFixed(0)} [${Math.min(...b).toFixed(0)}] | ${(med(b) - med(a)).toFixed(0)} |`)
+    const a = rows.before[k] ?? [], b = rows.after[k] ?? [], c = rows['hero only'][k] ?? []
+    if (!a.length || !b.length || !c.length) continue
+    console.log(`| ${k} | ${med(a).toFixed(0)} [${Math.min(...a).toFixed(0)}] | ${med(b).toFixed(0)} [${Math.min(...b).toFixed(0)}] | ${med(c).toFixed(0)} [${Math.min(...c).toFixed(0)}] |`)
   }
 }
 await browser.close()
