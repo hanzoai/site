@@ -72,6 +72,7 @@ export default function SetupMenu({ up = false, inline = false, where, ...rest }
       <a
         href="https://hanzo.ai/skill.md"
         className="x-setup-main"
+        aria-label={ok ? 'Copied' : 'Copy setup prompt'}
         aria-live="polite"
         onClick={async (e) => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); await copy(); flash(); }}
       >

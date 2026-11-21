@@ -349,11 +349,12 @@ a.xag-chip:active { transform: translateY(1px); }
   .xag-split[data-kind='sdk'] .xag-views { width: 140%; transform: scale(.714); transform-origin: top center; align-self: start; margin-top: 10px; }
   .xag-h1 { font-size: 40px; }
   .xag-lede { font-size: 17px; margin-top: 17px; }
-  .xag-ring { --R: 128px; --s: min(46px, calc(var(--R) * 6.2832 / var(--n, 10) * .86)); }
-  .xag-seat::after { content: ''; position: absolute; inset: -8px; border-radius: 50%; } /* a finger-sized hit area round each small seat */
+  /* a phone has no ring wide enough for every seat at a thumb's 44px: the seats wrap in rows under the one named */
+  .xag-ring { --s: 44px; width: auto; height: auto; aspect-ratio: auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+  .xag-orbit, .xag-baton { display: none; }
+  .xag-seat { position: relative; left: auto; top: auto; margin: 0; transform: none; }
   .xag-face b { font-size: 18px; }
-  .xag-baton i { height: calc(var(--R) - var(--s) - 44px); }
-  .xag-hub { width: 132px; }
+  .xag-hub { position: static; order: -1; width: 100%; transform: none; margin-bottom: 17px; }
   .xag-hub b { font-size: 21px; }
   .xag-hub span { font-size: 13px; min-height: 2.6em; }
   .xag-pil .xag-sheet-n { font-size: 44px; }

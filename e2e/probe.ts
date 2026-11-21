@@ -173,8 +173,9 @@ export const audit = ({ vw, isMobile }: { vw: number; isMobile: boolean }) => {
   if (isMobile) {
     const bad: string[] = []
     for (const el of Array.from(document.querySelectorAll('a[href], button, [role=button], input:not([type=hidden]), select, textarea, summary'))) {
-      if (!visible(el)) continue
       const s = getComputedStyle(el)
+      // a picture of a control (pointer-events off) is not a target
+      if (!visible(el) || s.pointerEvents === 'none') continue
       const text = (el as HTMLElement).parentElement
       // an inline link inside a sentence is exempt, as in WCAG 2.5.8
       if (s.display === 'inline' && text && Array.from(text.childNodes).some((c) => c.nodeType === 3 && (c.nodeValue ?? '').trim().length > 3)) continue

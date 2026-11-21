@@ -708,7 +708,12 @@ header a.x-signin::after { content: ''; position: absolute; left: 0; right: 0; t
 @media (max-width: 380px) { header a.x-signin { padding: 0 6px; } }
 @media (pointer: coarse) {
   .x-link { min-width: 44px; }
-  .xag-seat::after, .xii-sat::after, .xtg-node::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
+  .xii-sat::after, .xtg-node::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); border-radius: 50%; transform: translate(-50%, -50%); }
+  /* a control a finger presses is 44px tall; a breadcrumb's short word is 44px wide as well */
+  .x-copy, .bdg-stageTargetLink, .bdg-stagePublicLink, .bdg-ghBtn, .xcf-open, .eo-pc-buy, .eo-l { display: inline-flex; align-items: center; min-height: 44px; }
+  .xtg-node.step, .xtb-pane-acts button, .xmf-crumbs a, .zx-crumb a, .z7-crumb a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; }
+  /* the app windows drawn smaller than life are pictures of the app on a touch screen, not its controls */
+  .x-win *, .xag-split[data-kind='sdk'] .xag-views * { pointer-events: none; }
   header button[aria-label="Company"] { position: relative; }
   header button[aria-label="Company"]::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
 }
