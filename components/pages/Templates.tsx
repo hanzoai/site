@@ -23,6 +23,7 @@ import NoJs from '../v2/x-gauss/NoJs';
 import { usePause } from '../v2/x-gauss/Pause';
 import '../v2/Scale.css';
 import '../v2/x-gauss/Rhythm.css';
+import { APP } from '../../lib/app';
 import './Templates.css';
 
 // [slug, title, kind, what it is] — Hanzo's list as live hanzo.ai/templates shows it (9 Nov update: 29 templates, in live's order)
@@ -80,7 +81,7 @@ function Shot({ slug, title, kind, priority, alt }: { slug: string; title: strin
     <Ghost title={title} kind={kind} />
     {/* data-t feeds the image's own ::before, which only paints when the image is broken: a blocked preview shows a
         drawn page with the template's name from the first paint, with or without JS, never a broken-image icon */}
-    <Img ref={ref} src={`https://hanzo.ai/templates/${slug}.webp`} alt={alt} data-t={title} w={1280} h={800} draggable={false} priority={priority} className={bad ? 'xtp-bad' : ''} onError={() => setBad(true)} />
+    <Img ref={ref} src={`${APP}/templates/${slug}.webp`} alt={alt} data-t={title} w={1280} h={800} draggable={false} priority={priority} className={bad ? 'xtp-bad' : ''} onError={() => setBad(true)} />
   </>);
 }
 

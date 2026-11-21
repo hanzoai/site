@@ -17,7 +17,7 @@ export interface Seen {
   failed: string[]
   bad: string[]
   mixed: string[]
-  /** `press` while buttons are pressed: the pointer opens menus and closes them, and the browser cancels what they loaded */
+  /** `press` once buttons are being pressed: the pointer then opens menus, closes them and warms links */
   phase: 'load' | 'press'
 }
 
@@ -38,6 +38,8 @@ export async function watch(context: BrowserContext, page: Page): Promise<Seen> 
     if (m.type() !== 'error' && m.type() !== 'warning') return
     const at = m.location()
     if (/ERR_BLOCKED_BY_CLIENT/.test(m.text()) && TELEMETRY.test(at.url)) return
+    // a button pressed inside a link warms that link's page (Morph), and Chrome warns of the CSS it preloaded if the page is not opened
+    if (seen.phase === 'press' && /preloaded using link preload/.test(m.text())) return
     seen.console.push(`${m.type()}: ${m.text().slice(0, 300)}${at.url ? ` (${at.url.replace(/^https?:\/\/[^/]+/, '')}:${at.lineNumber})` : ''}`)
   })
   page.on('pageerror', (e) => seen.console.push(`uncaught: ${e.message.slice(0, 300)}`))
@@ -180,8 +182,8 @@ export const audit = ({ vw, isMobile }: { vw: number; isMobile: boolean }) => {
       const cx = r.left + r.width / 2
       const cy = r.top + r.height / 2
       if (cy < 0 || cy > innerHeight || cx < 0 || cx > innerWidth) continue
-      // the four corners of a 44px square, one pixel in, so a box that is exactly 44px is not missed by a rounding
-      const hits = [[-21, -21], [21, -21], [-21, 21], [21, 21]].filter(([dx, dy]) => {
+      // the four edge midpoints of a 44px square, one pixel in: a round button is hit there, a narrow one only if something borrows space
+      const hits = [[-21, 0], [21, 0], [0, -21], [0, 21]].filter(([dx, dy]) => {
         const x = cx + dx
         const y = cy + dy
         if (x < 0 || y < 0 || x >= innerWidth || y >= innerHeight) return true
@@ -270,6 +272,8 @@ export async function pressAll(
     w.alert = note('alert'); w.confirm = note('confirm'); w.prompt = note('prompt')
     try { Object.defineProperty(navigator, 'clipboard', { value: { writeText: () => { w.__qa.calls.push('clipboard'); return Promise.resolve() }, write: () => { w.__qa.calls.push('clipboard'); return Promise.resolve() } }, configurable: true }) } catch {}
     try { (navigator as any).share = () => { w.__qa.calls.push('share'); return Promise.resolve() } } catch {}
+    const play = HTMLMediaElement.prototype.play
+    HTMLMediaElement.prototype.play = function () { w.__qa.calls.push('play'); return play.call(this) }
     w.__qa.mut = 0
     // what the page changes of itself, bar its animation: attributes but `style`, nodes added or removed, text
     new MutationObserver((rs) => {
@@ -288,6 +292,7 @@ export async function pressAll(
           if (r.width === 0 || r.height === 0 || s.visibility === 'hidden' || s.display === 'none') return false
           if ((el as HTMLButtonElement).disabled || el.getAttribute('aria-disabled') === 'true') return false
           if (el.closest('[aria-hidden=true], [inert]')) return false
+          if (el.matches('[aria-selected=true], [aria-current]')) return false
           return (scopeName === 'chrome') === inChrome(el)
         })
         .map((el) => el.getAttribute('data-qa')!)
