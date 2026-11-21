@@ -23,6 +23,8 @@ import { SPRING } from '../lib/motion';
    sight, which Chrome warns about when the page is not opened. Morph's `warm` fetches a page on the pointer's way to its link. */
 export function A({ to, children, className, ...rest }: Omit<ComponentPropsWithRef<'a'>, 'href'> & { to?: string }) {
   const h = to === undefined ? undefined : href(to);
+  // no page to go to: the words stay, as words, not a link to nowhere
+  if (h === undefined) return <span className={className}>{children}</span>;
   // a bare link, no wrapper: pages lay links out as grid and flex items, and Morph and Cursor read the <a> itself
   if (h && h.startsWith('/')) return <Link href={h} prefetch={false} className={className} {...rest}>{children}</Link>;
   const ext = h && !h.startsWith('https://hanzo.ai');
