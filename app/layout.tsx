@@ -62,6 +62,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="stylesheet" href={HANZO_CSS} />
         {/* Zen preloads at high priority and Zen Mono (small labels) at low; hanzo.css declares both with font-display: swap
             over the metric-matched stand-ins (system.css), so the words paint at once and nothing moves when the face lands */}
+        {/* the way in is hanzo.app: its connection (DNS, TCP, TLS: three round trips) is open before the first press */}
+        <link rel="preconnect" href="https://hanzo.app" />
         <link rel="preload" href="/fonts/Zen-Variable.woff2" as="font" type="font/woff2" crossOrigin="" />
         <link rel="preload" href="/fonts/ZenMono-Variable.woff2" as="font" type="font/woff2" crossOrigin="" fetchPriority="low" />
         {/* html.js is set before first paint when JS runs, so pages can hide entrance states only then:
