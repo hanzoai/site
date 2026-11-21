@@ -1,9 +1,7 @@
 'use client';
-/* The hero's three devices on a phone are a deck you swipe (app/globals.css `.x-deck`, components/home/demo.css): the stage
-   is the scroller, snapping one slide at a time. This draws the dots under it and says what the slide in view is for. It
-   follows the scroll (a swipe, a tap on a dot, the clock) and moves nothing itself but through `scrollTo`. The clock turns
-   a slide every few seconds while the deck is on screen and the tab is in front, waits ten seconds after a touch, and does
-   not run under reduced motion or when the stage is not a scroller (a wider screen). */
+/* The dots and the one-line pitch under the hero's deck of devices on a phone (app/globals.css `.x-hero-stage` is the scroller). They
+   follow its scroll and move it only through `scrollTo`; the clock turns a slide while the deck is on screen and the tab in front,
+   waits after a touch, and does not run under reduced motion or where the stage is not a scroller. */
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useReducedMotion } from 'motion/react';
 

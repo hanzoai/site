@@ -9,7 +9,6 @@ interface GoogleIdentity {
     nonce: string;
     callback: (response: GoogleCredential) => void;
     auto_select: boolean;
-    prompt_parent_id?: string;
     cancel_on_tap_outside: boolean;
     use_fedcm_for_prompt: boolean;
     itp_support: boolean;

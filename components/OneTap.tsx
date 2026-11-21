@@ -19,10 +19,6 @@ import { APP } from '../lib/app';
 /** IAM's provider-google client. Public: it is in the authorize address IAM sends a browser to. */
 export const CLIENT = '113591532635-s8pvqrebprkbndluhftddmdap4htvu1p.apps.googleusercontent.com';
 const SCRIPT = 'https://accounts.google.com/gsi/client';
-/** Where the prompt is drawn when the browser lets the page place it (not Chrome's own FedCM sheet): a transparent, pointer-through
-    box in the corner (app/globals.css `.x-onetap`), so on a phone the card floats over the page as it does on a laptop, with no
-    white band behind it. */
-const PARENT = 'hz-onetap';
 /** Where the tap waits for the sign-in page (hanzo-inc/app components/auth/tap.ts `carried`). */
 export const TAP = 'hanzo:tap';
 /** Where a tap signs in: hanzo.app's sign-in, which builds its request and goes on to hanzo.ai, landing on Chat at hanzo.app/. */
@@ -52,7 +48,6 @@ export default function OneTap() {
         nonce,
         callback: ({ credential }: GoogleCredential) => hand(credential, nonce),
         auto_select: false,
-        prompt_parent_id: PARENT,
         cancel_on_tap_outside: true,
         use_fedcm_for_prompt: true,
         itp_support: true,
@@ -83,5 +78,5 @@ export default function OneTap() {
       window.google?.accounts?.id?.cancel();
     };
   }, []);
-  return <div id={PARENT} className="x-onetap" />;
+  return null;
 }

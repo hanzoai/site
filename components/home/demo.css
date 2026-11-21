@@ -288,13 +288,11 @@
 
 @media (prefers-reduced-motion: reduce) { .xs-scene.on, .xs-sh.on p, .xt-out > [data-shown], .xm-turn[data-on] { animation: none; } .xm-leaf, .xm-base, .xm-face-front, .xm-face-back, .xm-crease, .x-phone-dl { transition: none; } }
 
-/* Mobile stage (<= 640px): native 360px width (k ~ 1.0 on iPhones, zero shrink), stacked cleanly with zero overlap:
-   1. Full-width Hanzo Desktop app at top (360 x 248) with full-width chat + AppCard + composer
-   2. Prominent centered iPhone (240 x 328) that unfolds into full-bleed 360 x 328 Duo + Download App pill below
-   3. Full-width unclipped Terminal underneath (360 x 174) so every CLI command and output line is 100% readable */
+/* Mobile (<= 640px): the devices are the slides of the deck (app/globals.css `.x-hero-stage`): the window, the phone (closed, 9:16) with
+   its Download App pill, the terminal; each --slide wide and centred in the frame. */
 @media (max-width: 640px) {
   .x-3d, .x-win, .x-term, .x-phone { transform-style: flat; }
-  .x-win { left: 15px; top: 70px; width: 360px; height: 232px; border-radius: 15px; scroll-snap-align: center; }
+  .x-win { --h: 232px; left: var(--lead); top: calc((var(--sh) - var(--h)) / 2); width: var(--slide); height: var(--h); border-radius: 15px; scroll-snap-align: center; }
   .x-win-bar { height: 32px; padding: 0 10px; }
   .x-win .x-win-body { grid-template-columns: 36px minmax(0, 1fr); }
   .x-win .x-side, .x-win .xs-sidet { display: none; }
@@ -309,8 +307,8 @@
   .x-input { margin: 0 9px 7px 9px; min-height: 32px; border-radius: 12px; font-size: 11.5px; }
   .x-send { width: 24px; height: 24px; }
 
-  .x-phone { left: 387px; right: auto; top: 0; width: 360px; height: 340px; scroll-snap-align: center; }
-  .xm-face-front { left: -95px; width: 190px; right: auto; } /* closed, 9:16 like a phone (the box is 340 tall) */
+  .x-phone { --h: calc(var(--sh) - 32px); --face: calc(var(--h) * 9 / 16); left: calc(var(--lead) + var(--slide) + var(--gap)); right: auto; top: 0; width: var(--slide); height: var(--h); scroll-snap-align: center; }
+  .xm-face-front { left: calc(var(--face) / -2); width: var(--face); right: auto; }
   .xm-cover .xm-status-cover { height: 26px; padding: 3px 16px 0 20px; }
   .xm-cover .xm-status-cover b { font-size: 10.5px; }
   .xm-cover .xm-main { gap: 8px; padding: 6px 12px 6px; }
@@ -326,11 +324,11 @@
   .xm-cover .xm-pill-comp { height: 29px; padding: 0 4px 0 11px; }
   .xm-cover .xm-pill-comp input, .xm-cover .xm-pill-comp > span:first-child { font-size: 10px; }
   .xm-cover .xm-pill-send { width: 21px; height: 21px; }
-  .x-phone:not(.duo) .xm-hinge { left: 85px; width: 24px; }
+  .x-phone:not(.duo) .xm-hinge { left: calc((var(--slide) - var(--face)) / 2); width: 24px; }
   .x-phone.duo .xm-hinge { left: 50%; width: 24px; }
   .x-phone-dl { left: 50%; top: calc(100% + 4px); }
 
-  .x-term { left: 759px; top: 99px; width: 360px; height: 174px; border-radius: 14px; scroll-snap-align: center; }
+  .x-term { --h: 174px; left: calc(var(--lead) + 2 * (var(--slide) + var(--gap))); top: calc((var(--sh) - var(--h)) / 2); width: var(--slide); height: var(--h); border-radius: 14px; scroll-snap-align: center; }
   .x-term-bar { height: 32px; gap: 4px; padding: 0 10px; }
   .x-term-bar > i { width: 8.5px; height: 8.5px; }
   .xt-tab { padding-inline: 6.5px; font-size: 10.5px; }

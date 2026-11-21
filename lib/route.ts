@@ -1,6 +1,5 @@
-// Links to pages this site has stay inside it; /pay and the account pages are hanzo.ai's own; /login and /signup go to the
-// app's host, where Hanzo starts the sign-in (hanzo.ai's own copy of those two only hands the visitor on to hanzo.app, a
-// second page load); anything else is the app's (chat, the rooms) on hanzo.app.
+// Links to pages this site has stay inside it; /pay and the account pages are hanzo.ai's own; anything else, /login and /signup
+// included (hanzo.app starts the sign-in), is the app's on hanzo.app.
 import ROUTES from './routes.json';
 import { APP, SIGNIN } from './app';
 const HAS = new Set(ROUTES);
