@@ -16,7 +16,6 @@ jobs:
           npm install --no-audit --no-fund
           echo "PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/pw" >> "$GITHUB_ENV"
           PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/pw npx playwright install chromium
-      - name: Trace the live home, three cold loads of each profile
+      - name: The home before and after
         working-directory: perf
-        run: |
-          for i in 1 2 3; do echo "## pass $i"; node trace.mts; done
+        run: node ab.mts
