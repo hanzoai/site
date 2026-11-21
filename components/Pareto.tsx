@@ -105,7 +105,7 @@ export default function Pareto() {
   const flip = VW * 0.8;
 
   return (
-    <section className="x-sec x-pareto" id="pareto" data-hz-view="pareto" aria-labelledby="pareto-h">
+    <section className="x-sec x-pareto x-cv" id="pareto" data-hz-view="pareto" aria-labelledby="pareto-h">
       <div className="x-wrap">
         <Head id="pareto-h" title="A New Pareto Frontier of Intelligence" lede="GPQA Diamond challenges AI with 198 graduate-level science questions. See how Enso balances accuracy and cost across 1,000 answers." />
         <div className="x-plot" data-tilt="" ref={box} onPointerDown={(e) => { if (!(e.target as Element).closest('.pt, .x-tip')) setHot(null); }}>

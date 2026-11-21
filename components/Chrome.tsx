@@ -116,7 +116,7 @@ export function Footer() {
 
 /* An endless strip of logos. CSS drifts it (a transform on the compositor, nothing runs per frame in script); it rests under
    the pointer and on focus, turns the other way with `reverse`, and stands still under reduced motion and off screen. */
-export function Marquee({ items, label, reverse = false, view, still = false }: { items: { name: string; src: string; href?: string; w?: number; h?: number; hang?: number }[]; label: string; reverse?: boolean; view?: string; still?: boolean }) {
+export function Marquee({ items, label, reverse = false, view, still = false, far = false }: { items: { name: string; src: string; href?: string; w?: number; h?: number; hang?: number }[]; label: string; reverse?: boolean; view?: string; still?: boolean; far?: boolean }) {
   // each half holds the list twice so one half is always wider than the screen
   const row = (k: number) => items.map((l) => {
     const hidden = k > 0;
@@ -127,7 +127,7 @@ export function Marquee({ items, label, reverse = false, view, still = false }: 
     );
   });
   return (
-    <section className={'x-marquee' + (still ? ' still' : '')} aria-label={label} data-hz-view={view}>
+    <section className={'x-marquee' + (still ? ' still' : '') + (far ? ' x-cv' : '')} aria-label={label} data-hz-view={view}>
       <p className="x-kicker">{label}</p>
       <div className="x-mq-view">
         <div className={'x-mq-track' + (reverse ? ' rev' : '')}>
