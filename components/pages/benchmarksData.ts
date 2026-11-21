@@ -262,7 +262,6 @@ export const METHODS = [
 ];
 
 export const PAPERS = [
-  ['Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention', 'Distilled & Native Latent Sparse Attention (D-LSA / N-LSA) on 27B Dense Transformers', 'zen6-latent-sparse-attention'],
   ['Kai: Calibrated Discrete Decision Intelligence for Autonomous Agent Loops', 'Factorized Discrete Choice, Calibrated Distributions, and Deterministic Policy Governance', 'kai-decision-model'],
   ['Linkage, Not Similarity', 'What long-term agent memory has to retrieve, and how it is measured', 'hanzo-context-memory'],
   ['Hanzo AI Chain (AIVM)', 'Useful-Work Mining, the Native AI Coin, and Post-Quantum Omnichain Settlement', 'hanzo-ai-chain'],

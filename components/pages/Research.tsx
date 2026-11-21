@@ -40,7 +40,6 @@ interface Sheet { it: Item; from: HTMLElement; lid: string }
 type OpenFn = (it: Item, from: HTMLElement, lid: string) => void;
 const P = (t: string, date: string, sub: string, slug: string): Paper => ({ kind: 'Papers', t, date, sub, to: `https://papers.hanzo.ai/${slug}/` });
 const PAPERS = [
-  P('Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention', 'Nov 2026', 'Distilled & Native Latent Sparse Attention (D-LSA / N-LSA) on 27B Dense Transformers', 'zen6-latent-sparse-attention'),
   P('Kai: Calibrated Discrete Decision Intelligence for Autonomous Agent Loops', 'Oct 2026', 'Factorized Discrete Choice, Calibrated Distributions, and Deterministic Policy Governance', 'kai-decision-model'),
   P('Linkage, Not Similarity', 'Sep 2026', 'What long-term agent memory has to retrieve, and how it is measured', 'hanzo-context-memory'),
   P('Hanzo AI Chain (AIVM)', 'Aug 2026', 'Useful-Work Mining, the Native AI Coin, and Post-Quantum Omnichain Settlement', 'hanzo-ai-chain'),

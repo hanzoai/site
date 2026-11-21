@@ -373,8 +373,6 @@
 .xbm-dial-ticks li:first-child button { text-align: left; min-width: 0; padding: 0; }
 .xbm-dial-ticks li:last-child button { text-align: right; min-width: 0; padding: 0; }
 @media (hover: hover) { .xbm-dial-ticks button:hover, .xbm-dial-ticks button.on { color: #fafafa; } }
-.xbm-paper { margin: 0; font-size: 17px; line-height: 1.45; letter-spacing: -.01em; }
-.xbm-paper a { text-underline-offset: 5px; text-decoration-color: rgba(255, 255, 255, .3); }
 
 /* ---------- 8. harness ---------- */
 .xbm-h-top { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); gap: 27px 44px; align-items: end; }
@@ -587,8 +585,8 @@
 @media (hover: hover) { .xbm-jump-p a:hover span { transform: translateX(2px); } }
 .xbm-rail-l a::after { content: ''; position: absolute; left: 14px; right: 14px; bottom: 4px; height: 1.5px; border-radius: 2px; background: currentColor; transform: scaleX(0); transform-origin: 0 50%; transition: transform 300ms var(--ease); }
 @media (hover: hover) { .xbm-rail-l a:hover:not([aria-current])::after { transform: scaleX(1); } }
-.xbm-src a, .xbm-duel-l a, .xbm-duel-d a, .xbm-run, .xbm-srcl a, .xbm-runl a, .xbm-laws a, .xbm-papers .pf-body a, .xbm-paper a { text-underline-offset: 3px; transition: text-underline-offset 150ms var(--ease), color 150ms, text-decoration-color 150ms; }
-@media (hover: hover) { .xbm-src a:hover, .xbm-duel-l a:hover, .xbm-duel-d a:hover, .xbm-run:hover, .xbm-srcl a:hover, .xbm-runl a:hover, .xbm-laws a:hover, .xbm-papers .pf-body a:hover, .xbm-paper a:hover { text-underline-offset: 6px; text-decoration-color: currentColor; } }
+.xbm-src a, .xbm-duel-l a, .xbm-duel-d a, .xbm-run, .xbm-srcl a, .xbm-runl a, .xbm-laws a, .xbm-papers .pf-body a { text-underline-offset: 3px; transition: text-underline-offset 150ms var(--ease), color 150ms, text-decoration-color 150ms; }
+@media (hover: hover) { .xbm-src a:hover, .xbm-duel-l a:hover, .xbm-duel-d a:hover, .xbm-run:hover, .xbm-srcl a:hover, .xbm-runl a:hover, .xbm-laws a:hover, .xbm-papers .pf-body a:hover { text-underline-offset: 6px; text-decoration-color: currentColor; } }
 
 /* ---------- 12. the close ---------- */
 .xbm-close { color: #fafafa; padding: clamp(72px, 11vw, 188px) 0; }

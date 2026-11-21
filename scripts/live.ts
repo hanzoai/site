@@ -130,6 +130,18 @@ async function figures() {
   const research = async () => ({ source: RUNS + '&benchmark={coding.repair,decision.latency,enso.gpqa_diamond}&view=summary&limit=200', fetched_at, ...(await readResearch(get)) });
   const models = async () => ({ source: MODELS + ' and ' + PRICES, fetched_at, ...(await readModels(get)) });
 
+  // GitHub accounts the site links to whose pages answer 404 to a signed-out visitor: their links are words (lib/route.ts).
+  const dark = async () => {
+    const logins = new Set([...fs.readFileSync(path.join(ROOT, 'components/pages/openSource/snapshot.ts'), 'utf8').matchAll(/github\.com\/([A-Za-z0-9-]+)/g)].map((m) => m[1].toLowerCase()));
+    for (const f of fs.readdirSync(path.join(OUT, 'oss'))) logins.add(f.replace(/\.json$/, '').toLowerCase());
+    const out: string[] = [];
+    for (const l of [...logins].sort()) {
+      const r = await fetch(`https://github.com/${l}`, { method: 'HEAD', redirect: 'manual', signal: AbortSignal.timeout(15000) }).catch(() => null);
+      if (r?.status === 404) out.push(l);
+    }
+    return { source: 'https://github.com/{login}', fetched_at, logins: out };
+  };
+
   const run = async <T>(name: string, job: () => Promise<T>, say: (data: T) => string) => {
     const file = path.join(OUT, name);
     try {
@@ -151,6 +163,7 @@ async function figures() {
     run('_research.json', research, (d) => `${d.repair.length} coding.repair · ${d.latency.length} decision.latency · ${d.gpqa.length} enso.gpqa_diamond runs`),
     run('_models.json', models, (d) => `${d.models.length} models · ${Object.keys(d.names).length} names`),
   ]);
+  await run('_dark.json', dark, (d) => `${d.logins.length} accounts with no page for a signed-out visitor`);
   if (failed.length) {
     console.error(`\nLIVE FIGURES FAILED (${failed.length}): the build stops rather than ship stale figures.\n  ${failed.join('\n  ')}\nFix the source, or set HZ_LIVE_OFFLINE=1 to build from the snapshots on purpose.`);
     process.exit(1);

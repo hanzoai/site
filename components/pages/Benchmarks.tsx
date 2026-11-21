@@ -1249,7 +1249,6 @@ function Zen() {
     {
       title: <>Subquadratic <span className="xbm-nb">Ultra-Long Context</span></>,
       body: <>
-        <p className="xbm-paper"><A to="https://papers.hanzo.ai/zen6-latent-sparse-attention/">Zen 6: Subquadratic Ultra-Long Context via Hierarchical Latent Sparse Attention →</A></p>
         <Sheet label="Context length" ghost title="Zen 6 throughput & Latent Sparse Attention" wide>
           <In><Table caption="Zen 6 throughput & Latent Sparse Attention" head={['Context length', 'Hardware · method', 'Prefill', 'Decode']} rows={D.LSA.map((l) => [l[0], l[1], l[2], l[4]])} /></In>
         </Sheet>

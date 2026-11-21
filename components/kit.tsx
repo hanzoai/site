@@ -16,7 +16,7 @@ import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { motion, AnimatePresence, useInView, useReducedMotion, type PanInfo, type Transition } from 'motion/react';
 import { EASE, Words, Rise, Magnetic, Copy } from './ui';
-import { href } from '../lib/route';
+import { href, unseen } from '../lib/route';
 import { SPRING } from '../lib/motion';
 
 /* A link that stays inside the site when it can. It is not prefetched as it scrolls into view: that preloaded the CSS of every page in
@@ -24,7 +24,7 @@ import { SPRING } from '../lib/motion';
 export function A({ to, children, className, ...rest }: Omit<ComponentPropsWithRef<'a'>, 'href'> & { to?: string }) {
   const h = to === undefined ? undefined : href(to);
   // no page to go to: the words stay, as words, not a link to nowhere
-  if (h === undefined) return <span className={className}>{children}</span>;
+  if (h === undefined || unseen(h)) return <span className={className}>{children}</span>;
   // a bare link, no wrapper: pages lay links out as grid and flex items, and Morph and Cursor read the <a> itself
   if (h && h.startsWith('/')) return <Link href={h} prefetch={false} className={className} {...rest}>{children}</Link>;
   const ext = h && !h.startsWith('https://hanzo.ai');
