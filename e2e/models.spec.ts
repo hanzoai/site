@@ -4,8 +4,10 @@
  * /zen/models catalog still lists the Zen 5 rows, whose sizes Zen 6 has no published figures for: see LLM.md.)
  */
 import { expect, test } from '@playwright/test'
+import { every } from './routes'
 
-const ROUTES = ['/sdks', '/models', '/zen/models']
+// the three model pages, and every integration page, whose samples configure a client with a model id
+const ROUTES = ['/sdks', '/models', '/zen/models', ...every.filter((r) => r.startsWith('/integrations/'))]
 const OLD = /\b(zen[-_ ]?4|qwen[-_ ]?2(?:\.\d)?(?![\d]))\b/i
 
 async function served(request: import('@playwright/test').APIRequestContext): Promise<Set<string>> {
