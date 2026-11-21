@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
+import { liveToken } from '../../lib/session';
 import './Badge.css';
 
 const API = 'https://api.hanzo.ai';
@@ -499,9 +500,13 @@ export default function Badge() {
   const [format, setFormat] = useState('markdown');
   const [copiedKey, setCopiedKey] = useState('');
 
+  // the handle and referral code of the person signed in, to fill the form: asked only when someone is
   useEffect(() => {
+    const token = liveToken();
+    if (!token) return;
+    const init = { credentials: 'include', headers: { Authorization: `Bearer ${token}` } } as const;
     let alive = true;
-    fetch(`${API}/v1/reward/me/profile`, { credentials: 'include' })
+    fetch(`${API}/v1/reward/me/profile`, init)
       .then((r) => (r.ok ? r.json() : null))
       .then((p) => {
         if (!alive || !p || !p.handle) return;
@@ -509,7 +514,7 @@ export default function Badge() {
       })
       .catch(() => undefined);
 
-    fetch(`${API}/v1/referral`, { credentials: 'include' })
+    fetch(`${API}/v1/referral`, init)
       .then((r) => (r.ok ? r.json() : null))
       .then((r) => {
         if (!alive || !r || !r.code) return;

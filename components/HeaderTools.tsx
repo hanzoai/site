@@ -10,6 +10,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboa
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useDragControls, type HTMLMotionProps } from 'motion/react';
 import { read as readAppearance, write as writeAppearance, apply as applyAppearance, current as currentAppearance, CHANGE as APPEARANCE_CHANGE, type Preference } from '@hanzo/appearance';
+import { hasLiveSession } from '../lib/session';
 import { acceptAll, asks, consentPolicy, consentSheet, CONSENT_EVENT, declined, notice, noticed, POLICY_EVENT, readConsent, rejectAll, saveConsent } from '@hanzo/event';
 import { LOGIN, LANGS, SEARCH, COOKIES } from '../lib/header';
 import { ask } from '../lib/app';
@@ -569,18 +570,6 @@ function Corner({ lang, setLang, router }: { lang: string; setLang: (code: strin
       </button>
     </div>
   );
-}
-
-function hasLiveSession() {
-  try {
-    const tok = localStorage.getItem('hanzo_iam_access_token');
-    if (!tok) return false;
-    const exp = Number(localStorage.getItem('hanzo_iam_expires_at') || 0);
-    if (exp && exp < Date.now()) return false;
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 export default function HeaderTools({ headerRef }: { headerRef: Shell }) {
