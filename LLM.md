@@ -104,6 +104,29 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   corner), `newsletter_confirmed` (no `/newsletter/confirm`), `video_shown`/`video_rated` (no video on `/beta`),
   `beta_closed`, `beta_feedback_sent`.
 
+## One front door
+
+A static export has no redirects of its own: the edge answers every other name for a page of this site, in one hop,
+from hanzo-inc/universe `infra/sites/sites.yaml` (`hanzo-ai`, `hanzo-app`, the `hanzo-names` chain), and
+`scripts/ci/front-door_test.py` there replays it. The whole map of public addresses is universe `docs/urls.md`; a
+new name for a page is added there and in that file, never in a page of this repo.
+
+| Intent | The one address | Other names, all one hop |
+|---|---|---|
+| Learn what Hanzo is | `hanzo.ai` | `www.hanzo.ai` (301), `hanzo.ai/index.html`, any trailing slash or `.html` (301) |
+| Sign in / create an account | `hanzo.ai/login`, `hanzo.ai/signup` | `/sign-in`, `/log-in`, `/sign-up`, `/register`, `/get-started`; `hanzo.id`, `id.hanzo.ai`, `login.hanzo.ai`, `signup.hanzo.ai` |
+| Pricing, download, careers, team | `/pricing`, `/download`, `/careers`, `/team` | `/plans`, `/price`, `/downloads`, `/jobs`, `/hiring`, `/teams`, `jobs.hanzo.ai`, `careers.hanzo.ai` |
+| Browser extension, news | `/extension`, `/blog` | `/extensions`, `/browser`, `/news` |
+| Contact, about, sales | `/contact`, `/about`, `/contact-sales` | `/contact-us`, `/about-us`, `/sales`, `/demo`, `/book-a-demo`, `sales.hanzo.ai`, `contact.hanzo.ai` |
+| Legal | `/privacy`, `/terms`, `/cookies` | `/privacy-policy`, `/terms-of-service`, `/tos`, `/terms-and-conditions`, `/cookie-policy` |
+| Docs | `docs.hanzo.ai` | `/docs`, `/documentation`, `/doc`, `/developers` |
+| Chat, Dev, Studio, account, rooms | `hanzo.app` (`/dev`, `/studio`, `/account`, ...) | `hanzo.ai/chat?q=`, a deep `/dev?run=`, every app room on `hanzo.ai`; `hanzo.build`, `build.hanzo.ai` |
+| Billing | `platform.hanzo.ai/billing` | `hanzo.app/billing` |
+| Elsewhere | `github.com/hanzoai`, `x.com/hanzoai`, `discord.gg/XthHQQj` | `/github`, `/x`, `/twitter`, `/discord` |
+
+`hanzo.dev`, `hanzo.io`, `hanzo.co` and `hanzo.studio` are not Hanzo's: never link them. `/admin` answers 404 until the owner
+says which admin it is (universe `docs/urls.md`, open question 7).
+
 ## Ship
 
 `.github/workflows/cicd.yml` calls hanzoai/ci build.yml with `hanzo.yml`: every push and pull request runs the test
