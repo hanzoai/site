@@ -707,6 +707,7 @@ header a.x-signin::after { content: ''; position: absolute; left: 0; right: 0; t
 @media (max-width: 440px) { header button[data-slot="language"] { display: none; } }
 @media (max-width: 380px) { header a.x-signin { padding: 0 6px; } }
 @media (pointer: coarse) {
+  .x-link { min-width: 44px; }
   .xag-seat::after, .xii-sat::after, .xtg-node::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
   header button[aria-label="Company"] { position: relative; }
   header button[aria-label="Company"]::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
