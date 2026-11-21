@@ -809,3 +809,13 @@ html .x-plot[data-tilt][data-lit] { transform: perspective(1200px) rotateX(calc(
 .x-onetap { position: fixed; z-index: 2147483000; top: calc(env(safe-area-inset-top, 0px) + 12px); right: 12px; width: min(368px, calc(100vw - 24px)); background: transparent; pointer-events: none; }
 .x-onetap iframe { pointer-events: auto; background: transparent; color-scheme: normal; border: 0; }
 @media (max-width: 640px) { .x-onetap { left: 12px; right: 12px; width: auto; } }
+
+/* The phone header holds Hanzo AI, the menu, search, Sign in, language and Try Hanzo in one row, 403px of it: tighter from 440px down,
+   and from 410px down language steps out of the row (it stays in the corner menu), so Try Hanzo is never past the screen's edge. */
+@media (max-width: 440px) {
+  header[data-slot=masthead] a[aria-label="Hanzo AI home"] { padding-inline: 8px !important; }
+  header[data-slot=masthead] button[aria-label="Search Hanzo or ask AI"] { padding-inline: 8px !important; }
+  header a.x-signin { padding: 0 7px; }
+  header[data-slot=masthead] a[data-slot=header-primary] { padding-inline: 12px !important; }
+}
+@media (max-width: 410px) { header[data-slot=masthead] button[aria-label^="Language"] { display: none; } }
