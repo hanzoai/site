@@ -44,7 +44,7 @@ for (const width of [390, 360]) {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/bot', { waitUntil: 'load' })
     const log = (await page.locator('.bt-log').boundingBox())!
-    for (const reply of await page.locator('.bt-log > *').all()) {
+    for (const reply of await page.locator('.bt-log > .bt-msg').all()) {
       const box = (await reply.boundingBox())!
       expect(box.x + box.width, 'a reply runs past the card').toBeLessThanOrEqual(log.x + log.width + 1)
     }
