@@ -1,0 +1,21 @@
+name: perf
+on:
+  push:
+    branches: [perf/live]
+  workflow_dispatch:
+jobs:
+  live:
+    runs-on: [linux-amd64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '24' }
+      - name: Install Chromium
+        working-directory: perf
+        run: |
+          npm install --no-audit --no-fund
+          echo "PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/pw" >> "$GITHUB_ENV"
+          PLAYWRIGHT_BROWSERS_PATH=$RUNNER_TEMP/pw npx playwright install chromium
+      - name: Load the live home
+        working-directory: perf
+        run: node live.mts https://hanzo.ai/
