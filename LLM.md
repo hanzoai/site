@@ -15,6 +15,8 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   `pnpm test` (node --test).
 - `pnpm build` runs `scripts/live.mjs` first: figures and plan prices from api.hanzo.ai into `content/live/_*.json`;
   any failed source stops the build. `HZ_LIVE_OFFLINE=1` builds from the snapshots.
+  `_dark.json` lists the GitHub accounts whose page answers 404 to a signed-out visitor (probed each build); `A` shows a link to
+  one as plain words, so no page links where a visitor cannot go.
 - The open-source figures (home band, `/open-source`) are `lib/oss.mjs`, a port of hanzo-inc/app `scripts/sync-oss.ts`:
   the estate from `GET /v1/git/activity` every build, and GitHub's half (stars, forks, languages, contributors, cards)
   into `content/live/_github.json` when `GITHUB_TOKEN` is set (CI passes the runner's `GIT_TOKEN`), else kept; a push
@@ -118,10 +120,10 @@ hanzo-inc/universe `infra/sites/sites.yaml` and mapped in its `docs/urls.md`; `s
 ## The sweep: `e2e/`
 
 `pnpm e2e` holds the live site (`BASE_URL`, default https://hanzo.ai) to no error, no warning, no broken thing. Projects: `pages`
-(`sweep.spec.ts`: every route x 1440 / 390 x light / dark, cold: console, requests, images, fonts, overflow, tap targets under 24 x 24 (WCAG 2.2 AA; the 44 above is the design bar), links to
+(`sweep.spec.ts`: every route x 1440 / 390 x light / dark, cold: console, requests, images, fonts, overflow, tap targets under 44 x 44, links to
 nowhere, head, weight, every button pressed once), `edge` (address variants, the 404, model ids, the phone header), `links` (every
 link `pages` met, once), `perf` (cold open, best of three, last and alone). `--grep` narrows a run (`' /pricing '`, `'mobile dark'`);
-`e2e/.out/findings.json` is the table. The harness blocks telemetry and answers any non-GET with 204, and does not report what the
+`e2e/.out/findings.json` is the table. The harness blocks telemetry and answers any non-GET to an API with 204 (it intercepts nothing else: an intercepted film is fetched again and the weight reads double), and does not report what the
 browser or Next cancels (a closed menu's request, a buffered video, a scrolled-away HEAD prefetch).
 
 Routes are derived (`e2e/routes.ts`): the `page.tsx` files under `app/`, and for `[slug]` and `[...mod]` the members of `lib/routes.json`
