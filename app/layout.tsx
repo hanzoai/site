@@ -26,6 +26,7 @@ import { ARRIVE } from '../components/arrival';
 import Appearance from '../components/Appearance';
 import Telemetry from '../components/Telemetry';
 import OneTap from '../components/OneTap';
+import { WEBMCP } from '../lib/webmcp';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://hanzo.ai'),
@@ -66,6 +67,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* html.js is set before first paint when JS runs, so pages can hide entrance states only then:
             .js .my-step:not(.on) { opacity: 0 }  →  with JS off every step stays readable */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        {/* the site's WebMCP tools on the page's modelContext as the head is parsed, not after hydration (lib/webmcp.ts) */}
+        <script dangerouslySetInnerHTML={{ __html: WEBMCP }} />
+        {/* the agentic resources this host publishes (ARD: public/.well-known/ard.json; ai-catalog is its earlier name) */}
+        <link rel="ard" href="/.well-known/ard.json" type="application/json" />
+        <link rel="ai-catalog" href="/.well-known/ai-catalog.json" type="application/json" />
         {/* JS off: every word is legible. Entrance states written into the server HTML (opacity 0, a rising transform, a
             clip) are cleared, so readers and crawlers without JS see the final page (PLAN 2.3 "server-rendered text") */}
         <noscript><style>{'main [style*="opacity:0"],main [style*="opacity: 0"]{opacity:1!important}main [style*="translate"],main [style*="transform"]{transform:none!important;translate:none!important}main [style*="clip-path"]{clip-path:none!important}main [style*="visibility:hidden"]{visibility:visible!important}.x-rv{opacity:1!important;transform:none!important}'}</style></noscript>

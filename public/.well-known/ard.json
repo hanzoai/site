@@ -1,0 +1,90 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Hanzo AI",
+    "identifier": "did:web:hanzo.ai",
+    "documentationUrl": "https://docs.hanzo.ai",
+    "logoUrl": "https://hanzo.ai/icon.svg"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:hanzo.ai:server:hanzo-api",
+      "displayName": "Hanzo API over MCP",
+      "type": "application/mcp-server-card+json",
+      "url": "https://hanzo.ai/.well-known/mcp/server-card.json",
+      "description": "Hanzo's API as MCP tools at https://api.hanzo.ai/v1/mcp (streamable HTTP): one tool per capability, its operations named by an argument. Models, agents, storage, compute and the rest of the API, with the caller's own credential.",
+      "tags": [
+        "mcp",
+        "llm",
+        "inference",
+        "agents",
+        "cloud"
+      ],
+      "representativeQueries": [
+        "call frontier language models through one MCP server",
+        "give my agent tools for storage, compute and model inference",
+        "connect an MCP client to Hanzo's API"
+      ]
+    },
+    {
+      "identifier": "urn:air:hanzo.ai:agent:hanzo",
+      "displayName": "Hanzo assistant (A2A)",
+      "type": "application/a2a-agent-card+json",
+      "url": "https://hanzo.ai/.well-known/agent-card.json",
+      "description": "Hanzo's assistant over A2A (JSON-RPC at https://api.hanzo.ai/v1/agent/a2a): it answers with Hanzo's cloud as its tools, acting with the caller's own credential.",
+      "tags": [
+        "a2a",
+        "assistant",
+        "agents"
+      ],
+      "representativeQueries": [
+        "ask an agent to run a task on Hanzo's cloud",
+        "delegate a request to Hanzo's assistant over A2A"
+      ]
+    },
+    {
+      "identifier": "urn:air:hanzo.ai:api:hanzo-api",
+      "displayName": "Hanzo API (OpenAPI)",
+      "type": "application/vnd.oai.openapi+json",
+      "url": "https://api.hanzo.ai/v1/openapi.json",
+      "description": "The OpenAPI document for https://api.hanzo.ai/v1: one base URL and one key for every model, agent and service. OpenAI-compatible chat completions.",
+      "tags": [
+        "openapi",
+        "rest",
+        "llm",
+        "openai-compatible"
+      ],
+      "representativeQueries": [
+        "OpenAI-compatible API for many models with one key",
+        "the REST API reference for Hanzo",
+        "which endpoints does api.hanzo.ai serve"
+      ]
+    },
+    {
+      "identifier": "urn:air:hanzo.ai:catalog:api-catalog",
+      "displayName": "Hanzo API catalog",
+      "type": "application/linkset+json",
+      "url": "https://hanzo.ai/.well-known/api-catalog",
+      "description": "RFC 9727 API catalog: each Hanzo API with its description, documentation, OAuth metadata and status page.",
+      "representativeQueries": [
+        "list the APIs Hanzo publishes",
+        "where is Hanzo's API documentation and status page"
+      ]
+    },
+    {
+      "identifier": "urn:air:hanzo.ai:skill:hanzo-cloud-api",
+      "displayName": "hanzo-cloud-api",
+      "type": "application/agent-skills+md",
+      "url": "https://hanzo.ai/.well-known/agent-skills/hanzo-cloud-api/SKILL.md",
+      "description": "What Hanzo Cloud serves and how to call it, written for an agent working in someone else's codebase.",
+      "tags": [
+        "skill",
+        "api"
+      ],
+      "representativeQueries": [
+        "teach my coding agent how to call Hanzo's API",
+        "what can Hanzo Cloud do and how do I authenticate"
+      ]
+    }
+  ]
+}
