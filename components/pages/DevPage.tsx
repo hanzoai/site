@@ -533,7 +533,9 @@ const WAYS = [
 ];
 const SIGNIN = 'dev login                 # pick an account: Hanzo is the default\ndev login --hanzo         # straight to your Hanzo account\ndev login --with-api-key  # or paste a Hanzo API key, hidden';
 
-/* Dev's latest release: app/dev/page.jsx reads it from GitHub at build; RELEASE is the last one seen (8 Nov) */
+/* Dev's releases are published on hanzoai/dev-v1, the repository hanzo.sh installs from. app/dev/page.tsx reads the latest at
+   build (lib/desktop `latestTag('dev-v1')`); RELEASE is the last one seen (8 Nov) */
+const RELEASES = 'hanzoai/dev-v1';
 const RELEASE = 'v0.7.20';
 
 function Setup({ release }: { release?: string }) {
@@ -564,7 +566,7 @@ function Setup({ release }: { release?: string }) {
             <p className="v2a-title">Then sign in. Hanzo IAM links the machine to your account.</p>
             <CodeBlock code={SIGNIN} label="bash" />
             <div className="xdv-in-links">
-              <Lk to={"https://github.com/hanzoai/dev/releases/tag/" + tag} id="dev.release">{"Latest release " + tag}</Lk>
+              <Lk to={`https://github.com/${RELEASES}/releases/tag/${tag}`} id="dev.release">{"Latest release " + tag}</Lk>
               <Lk to={DOCS} id="dev.start">Getting started</Lk>
             </div>
           </div>
@@ -585,7 +587,7 @@ const QA = [
 const READ: [string, [string, string | null, string][]][] = [
   ['Start', [['Docs', 'Install, sign in, the first session.', DOCS], ['Install', 'hanzo.sh, npm or Homebrew.', '#install'], ['Hanzo CLI', 'hanzo, and the session it opens.', '/cli']]],
   ['Models', [['Enso', 'The default.', '/enso'], ['Kai', 'The controller.', '/kai'], ['Every model', null, '/models']]],
-  ['Source', [['hanzoai/dev', 'Apache-2.0.', 'https://github.com/hanzoai/dev'], ['Releases', null, 'https://github.com/hanzoai/dev/releases'], ['Hanzo Gen', 'The harness for every agent.', '/gen'], ['Hanzo Kata', 'Test, repair, and the pull request.', '/kata']]],
+  ['Source', [['hanzoai/dev', 'Apache-2.0.', 'https://github.com/hanzoai/dev'], ['Releases', null, `https://github.com/${RELEASES}/releases`], ['Hanzo Gen', 'The harness for every agent.', '/gen'], ['Hanzo Kata', 'Test, repair, and the pull request.', '/kata']]],
 ];
 function Source() {
   return (
@@ -598,7 +600,7 @@ function Source() {
         </div>
         <div className="xdv-oss-r">
           <p className="xdv-oss-p">Dev is Apache-2.0 on GitHub. Build it, change it, send a pull request — <A to="https://github.com/hanzoai/dev">hanzoai/dev</A>.</p>
-          <div className="xdv-oss-links"><Lk to="https://github.com/hanzoai/dev" id="dev.source">The source</Lk><Lk to="https://github.com/hanzoai/dev/releases" id="dev.releases">Releases</Lk></div>
+          <div className="xdv-oss-links"><Lk to="https://github.com/hanzoai/dev" id="dev.source">The source</Lk><Lk to={`https://github.com/${RELEASES}/releases`} id="dev.releases">Releases</Lk></div>
         </div>
       </div>
       {/* the repository as an object: its name, licence and latest release, all words already on this page */}
