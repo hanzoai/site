@@ -1,6 +1,6 @@
 /**
  * The phone header has a way in: at 390px the home page shows "Sign in" beside "Try Hanzo", light and dark, and it
- * goes to hanzo.ai/login, the one address of sign-in (universe docs/urls.md).
+ * goes to hanzo.ai/login, the one address of sign-in (universe docs/urls.md). On /bot the demo's replies fit the card.
  */
 import { expect, test } from '@playwright/test'
 
@@ -38,3 +38,15 @@ test('1440px home has no Sign in link: the Log in menu is the desktop way in', a
   await expect(page.locator('header a[data-slot="signin"]')).toBeHidden()
   await expect(page.locator('header button[data-slot="login"]')).toBeVisible()
 })
+
+for (const width of [390, 360]) {
+  test(`${width}px /bot: every reply in the demo fits inside its card`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 })
+    await page.goto('/bot', { waitUntil: 'load' })
+    const log = (await page.locator('.bt-log').boundingBox())!
+    for (const reply of await page.locator('.bt-log > *').all()) {
+      const box = (await reply.boundingBox())!
+      expect(box.x + box.width, 'a reply runs past the card').toBeLessThanOrEqual(log.x + log.width + 1)
+    }
+  })
+}

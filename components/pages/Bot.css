@@ -567,7 +567,7 @@ html:not(.js) .bt .x-line-in { transform: none !important; }
   .bt-row { margin-top: 12px; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px 0; }
   .bt-row li > b { display: none; }
   .bt-row .bt-face { --s: 30px; }
-  .bt-log { grid-template-columns: 1fr; padding: 0 8px 8px; gap: 8px; }
+  .bt-log { grid-template-columns: minmax(0, 1fr); padding: 0 8px 8px; gap: 8px; }
   .bt-msg { min-height: 0; padding: 14px; }
   /* phone: the second card stays one line (face, name, dots) until its reply arrives */
   .js .bt-msg + .bt-msg:not(.on) .bt-reply { display: none; }
