@@ -452,8 +452,13 @@ function Table() {
   );
 }
 
-/* ---------- the Band: the ask once more, with the two next doors folded under it as text rows ---------- */
-const NEXT = [['API reference', 'Every endpoint, parameter and response shape.', DOCS], ['Getting started', 'An empty project to a first call that works.', 'https://docs.hanzo.ai/docs/quickstart']];
+/* ---------- the Band: the ask once more, with the next doors (Models, Workbench, first request, reference) folded under it as text rows ---------- */
+const NEXT = [
+  ['Models', 'Every model id, its context window and its rate.', '/models'],
+  ['Workbench', 'Send a first request to a model from the console.', 'https://platform.hanzo.ai/workbench'],
+  ['Getting started', 'An empty project to a first call that works.', 'https://docs.hanzo.ai/docs/quickstart'],
+  ['API reference', 'Every endpoint, parameter and response shape.', DOCS],
+];
 function Next() {
   return (
     <section className="av-sec tight api-next" data-enter="swing-door">
