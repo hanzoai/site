@@ -135,6 +135,8 @@ function Hero() {
               <code><span aria-hidden="true">$ </span>{INSTALL}</code>
               <Copy text={INSTALL} />
             </div>
+            {/* the CLI is a developer's tool; everyone else gets the app (issue 318) */}
+            <p className="av-body cli-not-dev">For developers: it runs in a terminal. Not one? <A to="/download">Download Hanzo Desktop</A>, open it and sign in.</p>
           </div>
           <div className={'cli-open' + (done ? ' on' : '')}>
             <Cta to="https://hanzo.team/" kind="link" id="cli.hero-console">Open in the console</Cta>

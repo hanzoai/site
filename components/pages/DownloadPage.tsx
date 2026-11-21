@@ -10,39 +10,34 @@
    Motion: the one delight = the fan-out from the button (CSS, plays once) and the ray. Supporting: segmented pickers
    that glide (layoutId), magnetic ask, line-masked headline (components/v2/x-edison/AppLines).
    Greys only. Every word, size and link is Hanzo's. */
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { Dispatch, ElementType, RefObject, SetStateAction } from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import type { Transition } from 'motion/react';
 import { Copy, Magnetic, Mark } from '../ui';
 import { A, Cta, Img } from '../kit';
+import { DESKTOP_API, DESKTOP_FALLBACK, fromRelease } from '../../lib/desktop';
+import type { Build, Desktop } from '../../lib/desktop';
 import '../v2/AppType.css';
 import './DownloadPage.css';
 
 const GH = 'https://github.com/hanzoai/';
-type Build = [name: string, size: string, path: string]; // path is under github.com/hanzoai/
-interface Product { k: string; name: string; v: string; to?: string; d: string; cmds?: string[]; all?: string; builds: Build[] }
+// a Build's path is under github.com/hanzoai/. `term`: it runs in a terminal, so it sits under For developers (issue 318)
+interface Product { k: string; name: string; v: string; to?: string; d: string; cmds?: string[]; all?: string; term?: boolean; builds: Build[] }
 type Os = 'mac' | 'linux' | 'linuxarm' | 'win';
 /* a build the dial points at (the tour or the pointer), with where its chip sits */
 interface Spot { x: number; y: number; p: Product; b: Build; tour?: boolean }
 
 const PRODUCTS: Product[] = [
   {
-    k: 'desk', name: 'Desktop', v: 'v1.1.55', to: '/desktop',
-    d: 'A native app with a global hotkey. Talk to Hanzo from any window, capture a region of the screen, and put the answer back where you were typing.',
+    k: 'desk', name: 'Hanzo Desktop', v: DESKTOP_FALLBACK.v, to: '/desktop',
+    d: 'The Hanzo app on your computer: Chat, Dev, Studio and your agents in one window, and a hotkey that brings Hanzo to whatever you are doing. Install it like any other app, open it, and sign in. No terminal. Start here if you are not sure which one you need.',
     all: GH + 'desktop/releases/latest',
-    builds: [
-      ['macOS', '602 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_universal.dmg'],
-      ['Windows', '480 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_x64-setup.exe'],
-      ['Linux (AppImage)', '634 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_amd64.AppImage'],
-      ['Linux (deb)', '566 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_amd64.deb'],
-      ['Linux (arm64)', '632 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_arm64.AppImage'],
-      ['Windows (Portable)', '573 MB', 'desktop/releases/download/v1.1.55/Hanzo_Desktop_1.1.55_x64-portable.zip'],
-    ],
+    builds: DESKTOP_FALLBACK.builds, // replaced by the latest release, at build time and again in the browser
   },
   {
-    k: 'cli', name: 'Hanzo CLI', v: 'v8.5.927', to: '/cli',
-    d: 'The coding agent, in your terminal. It reads the repo you are in, writes and runs code, and drives every product of the Hanzo cloud from one binary.',
+    k: 'cli', name: 'Hanzo CLI', v: 'v8.5.930', to: '/cli', term: true,
+    d: 'For developers. The hanzo command for your terminal. Run it in a project and it opens Hanzo Dev, the coding agent (hanzo and hanzo dev are the same session); hanzo auth login, hanzo billing and the rest drive your account and every Hanzo cloud product from scripts. Desktop does not need it.',
     cmds: ['curl -fsSL hanzo.sh | sh', 'irm hanzo.sh/install.ps1 | iex', 'npm i -g hanzo'],
     all: GH + 'cli/releases/latest',
     builds: [
@@ -55,7 +50,7 @@ const PRODUCTS: Product[] = [
   },
   {
     k: 'ext', name: 'Browser extension', v: 'v1.9.31', to: '/extension',
-    d: 'Ask Hanzo about the page you are on. It reads the tab for context, captures what you select, and runs agents from the toolbar.',
+    d: 'Ask Hanzo about the page you are on. It reads the tab for context, captures what you select, and runs agents from the toolbar. It installs in your browser; no terminal.',
     all: GH + 'extension/releases/latest',
     builds: [
       ['Chrome', '976 KB', 'extension/releases/download/v1.9.31/hanzo-ai-chrome-v1.9.31.zip'],
@@ -66,7 +61,7 @@ const PRODUCTS: Product[] = [
   },
   {
     k: 'ed', name: 'Editors', v: 'v1.9.31',
-    d: 'Completions, chat and agentic edits where you already write code. One extension, every editor that takes one.',
+    d: 'Completions, chat and agentic edits where you already write code. One extension, every editor that takes one: install the file from your editor’s extensions menu.',
     all: GH + 'extension/releases/latest',
     builds: [
       ['VS Code', '1.5 MB', 'extension/releases/download/v1.9.31/hanzo-ai-vscode-v1.9.31.vsix'],
@@ -85,21 +80,21 @@ const PRODUCTS: Product[] = [
     ],
   },
   {
-    k: 'dev', name: 'Hanzo Dev', v: 'v0.7.20', to: '/dev',
-    d: 'Standalone autonomous software engineering agent. Multi-file edits, sandboxes, and automated verification in one binary.',
+    k: 'dev', name: 'Hanzo Dev', v: 'v0.7.23', to: '/dev', term: true,
+    d: 'For developers. Hanzo Dev, the coding agent, on its own: the dev command (hanzo-dev is the same file). It is the agent hanzo dev starts, so with the Hanzo CLI you already have it. Without installing anything, Dev is a tab in the Hanzo app.',
     cmds: ['curl -fsSL hanzo.sh | sh', 'npm i -g @hanzo/dev'],
     all: GH + 'dev/releases/latest',
     builds: [
-      ['macOS (Apple Silicon)', '106 MB', 'dev/releases/download/v0.7.20/dev-darwin-arm64.tar.gz'],
-      ['macOS (Intel)', '112 MB', 'dev/releases/download/v0.7.20/dev-darwin-amd64.tar.gz'],
-      ['Windows', '122 MB', 'dev/releases/download/v0.7.20/dev-windows-amd64.tar.gz'],
-      ['Linux (x86_64)', '118 MB', 'dev/releases/download/v0.7.20/dev-linux-amd64.tar.gz'],
-      ['Linux (arm64)', '112 MB', 'dev/releases/download/v0.7.20/dev-linux-arm64.tar.gz'],
+      ['macOS (Apple Silicon)', '106 MB', 'dev/releases/latest/download/dev-darwin-arm64.tar.gz'],
+      ['macOS (Intel)', '112 MB', 'dev/releases/latest/download/dev-darwin-amd64.tar.gz'],
+      ['Windows', '122 MB', 'dev/releases/latest/download/dev-windows-amd64.tar.gz'],
+      ['Linux (x86_64)', '118 MB', 'dev/releases/latest/download/dev-linux-amd64.tar.gz'],
+      ['Linux (arm64)', '112 MB', 'dev/releases/latest/download/dev-linux-arm64.tar.gz'],
     ],
   },
   {
-    k: 'bot', name: 'Hanzo Bot', v: 'v2026.6.7', to: '/bot',
-    d: 'Multi-channel AI gateway and desktop control surface for Slack, Discord, Telegram, WhatsApp, and local workflows.',
+    k: 'bot', name: 'Hanzo Bot', v: 'v2026.6.7', to: '/bot', term: true,
+    d: 'For developers. A gateway you run yourself that puts Hanzo agents in Slack, Discord, Telegram and WhatsApp. To use bots without installing anything, open hanzo.bot.',
     cmds: ['npm i -g @hanzo/bot'],
     all: GH + 'bot/releases/latest',
     builds: [
@@ -108,15 +103,15 @@ const PRODUCTS: Product[] = [
   },
   {
     k: 'team', name: 'Hanzo Team', v: 'v1.0.0', to: '/team',
-    d: 'Shared native workspace for coordinating multi-agent tasks, shared repositories, approvals, and live status across your organization.',
+    d: 'A shared workspace where your team and its agents coordinate tasks, repositories, approvals and live status. This is the Windows app; on any system it is at hanzo.team in your browser.',
     all: GH + 'team/releases/latest',
     builds: [
       ['Windows', '17 MB', 'team/releases/download/v1.0.0/Hanzo_Team_1.0.0_x64-setup.exe'],
     ],
   },
   {
-    k: 'forge', name: 'Hanzo Forge', v: 'v1.0.0', to: 'https://hanzo.codes',
-    d: 'Self-hostable Git forge, code review, CI pipelines, and package registry powering hanzo.codes.',
+    k: 'forge', name: 'Hanzo Forge', v: 'v1.0.0', to: 'https://hanzo.codes', term: true,
+    d: 'For developers. The self-hostable Git forge, code review, CI pipelines and package registry behind hanzo.codes. You only need it to run your own.',
     all: GH + 'forge/releases/latest',
     builds: [
       ['Windows (Archive)', '70 MB', 'forge/releases/download/v1.0.0/forge-windows-amd64.tar.gz'],
@@ -124,19 +119,23 @@ const PRODUCTS: Product[] = [
     ],
   },
   {
-    k: 'node', name: 'Hanzo Node', v: 'v0.2.5', to: '/node',
-    d: 'Decentralized AI compute and network daemon connecting local GPUs, inference, and agent identity to the Hanzo network.',
+    k: 'node', name: 'Hanzo Node', v: 'v0.2.5', to: '/node', term: true,
+    d: 'For operators. hanzod, the network daemon: it connects your GPUs, inference and agent identity to the Hanzo network.',
     all: GH + 'node/releases/latest',
     builds: [
-      ['macOS (Apple Silicon)', '2.7 MB', 'node/releases/download/v0.2.5/hanzod-darwin-arm64.tar.gz'],
-      ['macOS (Intel)', '2.8 MB', 'node/releases/download/v0.2.5/hanzod-darwin-amd64.tar.gz'],
-      ['Windows', '2.7 MB', 'node/releases/download/v0.2.5/hanzod-windows-amd64.tar.gz'],
-      ['Linux (x86_64)', '2.8 MB', 'node/releases/download/v0.2.5/hanzod-linux-amd64.tar.gz'],
-      ['Linux (arm64)', '2.8 MB', 'node/releases/download/v0.2.5/hanzod-linux-arm64.tar.gz'],
+      ['macOS (Apple Silicon)', '2.7 MB', 'node/releases/latest/download/hanzod-darwin-arm64.tar.gz'],
+      ['macOS (Intel)', '2.8 MB', 'node/releases/latest/download/hanzod-darwin-amd64.tar.gz'],
+      ['Windows', '2.7 MB', 'node/releases/latest/download/hanzod-windows-amd64.tar.gz'],
+      ['Linux (x86_64)', '2.8 MB', 'node/releases/latest/download/hanzod-linux-amd64.tar.gz'],
+      ['Linux (arm64)', '2.8 MB', 'node/releases/latest/download/hanzod-linux-arm64.tar.gz'],
     ],
   },
 ];
 const FILE = (p: string) => p.split('/').pop();
+const BY = (ps: Product[], k: string) => ps.find((p) => p.k === k)!;
+// The page's products, with Desktop's builds from its latest release and the tools' latest tags (DownloadPage)
+const Products = createContext<Product[]>(PRODUCTS);
+const useProducts = () => useContext(Products);
 const GLIDE: Transition = { duration: 0.3, ease: [0.16, 1, 0.3, 1] };
 
 /* Which build is yours. Desktop ships natively for macOS, Windows, and Linux. */
@@ -176,7 +175,7 @@ const Down = ({ s = 16 }) => <svg viewBox="0 0 16 16" width={s} height={s} aria-
 /* ---------- the dial: the one button, and every other build fanned out around it by product ---------- */
 // the arc each product's builds sit on (degrees, clockwise from 3 o'clock): Desktop top-left, CLI top-right, extension
 // bottom-right, editors bottom-left; spaced so no two chips touch in the 1152 px container whichever build is the main one
-const DIAL_PRODUCTS = PRODUCTS.slice(0, 4);
+const DIAL = 4; // the first four products sit on the dial
 const ARC = [[182, 249], [271, 358], [17, 74], [103, 163]];
 const RX = 44, RY = 41;
 const r2 = (n: number) => Math.round(n * 100) / 100; // rounded: server and browser print the same style
@@ -249,6 +248,8 @@ function Peek({ i }: { i: number }) {
 }
 
 function Dial({ os }: { os: Os }) {
+  const PRODUCTS = useProducts();
+  const DIAL_PRODUCTS = PRODUCTS.slice(0, DIAL);
   const [label, mp, mb] = MAIN[os];
   const [out, setOut] = useState(false);
   const [hot, setHot] = useState<Spot | null>(null);
@@ -266,7 +267,7 @@ function Dial({ os }: { os: Os }) {
   const main = PRODUCTS[mp].builds[mb];
   const shown = hot || { p: PRODUCTS[mp], b: main };
   const [flat, setFlat] = useState<Spot[]>([]);
-  useEffect(() => { setFlat(groups.flatMap((g, pi) => g.map(({ b, x, y }) => ({ x, y, b, p: DIAL_PRODUCTS[pi] })))); }, [os]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { setFlat(groups.flatMap((g, pi) => g.map(({ b, x, y }) => ({ x, y, b, p: DIAL_PRODUCTS[pi] })))); }, [os, PRODUCTS]); // eslint-disable-line react-hooks/exhaustive-deps
   const rest = useTour(box, out, flat, setHot);
   return (
     <div ref={box} className={'dl-dial' + (out ? ' out' : '')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') rest(true); }} onPointerLeave={() => rest(false)}>
@@ -280,7 +281,7 @@ function Dial({ os }: { os: Os }) {
           <Cta to={GH + main[2]} id="download-main" thumb size="lg" className="dl-main"><Down s={22} /><span>Download for {label}</span></Cta>
         </Magnetic>
         <p className="dl-read x-mono">
-          <span className="dl-read-a"><span>{shown.p === PRODUCTS[0] && !hot ? 'Desktop' : shown.p.name}</span>{hot && <> · <span>{shown.b[0]}</span></>} · <span>{shown.p.v}</span> · <span>{shown.b[1]}</span></span>
+          <span className="dl-read-a"><span>{shown.p.name}</span>{hot && <> · <span>{shown.b[0]}</span></>} · <span>{shown.p.v}</span>{shown.b[1] && <> · <span>{shown.b[1]}</span></>}</span>
           <span className="dl-read-f">{FILE(shown.b[2])}</span>
         </p>
         <div className="dl-main-l">
@@ -291,7 +292,7 @@ function Dial({ os }: { os: Os }) {
       {DIAL_PRODUCTS.map((p, pi) => (
         <div key={p.k} className={'dl-grp q' + pi + ' k-' + p.k}>
           <Peek i={pi} />
-          <p className="dl-grp-k"><span className="dl-grp-i"><Glyph k={p.k} /></span><b>{p.name}</b> <span className="x-mono">{p.v}</span></p>
+          <p className="dl-grp-k"><span className="dl-grp-i"><Glyph k={p.k} /></span><b>{p.name}</b> <span className="x-mono">{p.v}</span>{p.term && <span className="dl-term">Terminal</span>}</p>
           <ul>
             {groups[pi].map(({ b, i, x, y }) => (
               <li key={b[0]} className={'dl-chip' + (hot && hot.tour && hot.b === b ? ' hot' : '')} style={{ left: x + '%', top: y + '%', '--dx': r2(50 - x) + 'cqw', '--dy': r2(50 - y) + 'cqh', '--i': i }}>
@@ -313,7 +314,7 @@ function Hero({ os }: { os: Os }) {
       <div className="av-wrap">
         <div className="av-grid dl-top">
           <Lines as="h1" id="dl-h1" className="av-display dl-top-l" lines={['Download Hanzo']} now delay={0.05} />
-          <p className="av-lede dl-top-r">Desktop, IDE, Bot, Team, CLI, Dev, and extensions for every OS, browser, and editor. One account signs in to all of them.</p>
+          <p className="av-lede dl-top-r">Hanzo Desktop is the Hanzo app for your computer. Download it, open it, sign in: no terminal needed. Tools for developers are further down.</p>
         </div>
         <Dial os={os} />
       </div>
@@ -433,6 +434,7 @@ function Card({ p, os, br }: { p: Product; os: Os; br: number }) {
       <span className="dl-card-h">
         <h3 className="av-title">{p.name}</h3>
         <span className="dl-v x-mono">{p.v}</span>
+        {p.term && <span className="dl-term">Terminal</span>}
         {p.to && <span className="dl-open" aria-hidden="true"><svg viewBox="0 0 16 16" width="18" height="18"><path d="M4.5 11.5 11.5 4.5M5.5 4.5h6v6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg></span>}
       </span>
     </>
@@ -466,13 +468,68 @@ function Card({ p, os, br }: { p: Product; os: Os; br: number }) {
 }
 
 function Builds({ os, br }: { os: Os; br: number }) {
+  const PRODUCTS = useProducts();
   return (
-    <section className="av-sec dl-builds" id="builds">
+    <>
+      <section className="av-sec dl-builds" id="builds" aria-labelledby="dl-apps-h">
+        <div className="av-wrap">
+          <div className="av-grid dl-b-top">
+            <h2 className="av-head dl-b-h" id="dl-apps-h">Apps</h2>
+            <p className="av-body dl-b-d">Download, open, sign in. Nothing here needs a terminal.</p>
+          </div>
+          <div className="dl-bento">{PRODUCTS.filter((p) => !p.term).map((p) => <Card key={p.k} p={p} os={os} br={br} />)}</div>
+        </div>
+      </section>
+      <section className="av-sec dl-builds dl-devs" id="developers" aria-labelledby="dl-devs-h">
+        <div className="av-wrap">
+          <div className="av-grid dl-b-top">
+            <h2 className="av-head dl-b-h" id="dl-devs-h">For developers</h2>
+            <p className="av-body dl-b-d">These run in a terminal. You do not need any of them to use Hanzo Desktop or hanzo.app.</p>
+          </div>
+          <div className="dl-bento">{PRODUCTS.filter((p) => p.term).map((p) => <Card key={p.k} p={p} os={os} br={br} />)}</div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+/* ---------- which one: what each product is for, in a line, and whether it needs a terminal (issue 319) ---------- */
+function Which({ os }: { os: Os }) {
+  const PRODUCTS = useProducts();
+  const [, mp, mb] = MAIN[os];
+  const rows: [want: string, name: string, cmd: string, to: string, term: boolean][] = [
+    ['Use Hanzo on your computer: Chat, Dev, Studio and your agents in one window', 'Hanzo Desktop', '', GH + PRODUCTS[mp].builds[mb][2], false],
+    ['Use Hanzo without installing anything', 'hanzo.app', 'in your browser', 'https://hanzo.app', false],
+    ['Ask Hanzo about the page you are reading', 'Browser extension', '', '/extension', false],
+    ['AI help inside VS Code, Cursor or JetBrains', 'Editor extension', '', '#builds', false],
+    ['A coding agent in your terminal, and Hanzo from scripts', 'Hanzo CLI', 'hanzo', '/cli', true],
+    ['Only the coding agent, without the rest of the CLI', 'Hanzo Dev', 'dev', '/dev', true],
+    ['Run a node on the Hanzo network', 'Hanzo Node', 'hanzod', '/node', true],
+  ];
+  return (
+    <section className="av-sec dl-which" aria-labelledby="dl-which-h">
       <div className="av-wrap">
         <div className="av-grid dl-b-top">
-          <h2 className="av-head dl-b-h">Every build</h2>
+          <h2 className="av-head dl-b-h" id="dl-which-h">Which one do I need?</h2>
+          <p className="av-body dl-b-d">If you are not sure, Hanzo Desktop. One Hanzo account signs in to all of them.</p>
         </div>
-        <div className="dl-bento">{PRODUCTS.map((p) => <Card key={p.k} p={p} os={os} br={br} />)}</div>
+        <ul className="dl-which-l">
+          {rows.map(([want, name, cmd, to, term]) => (
+            <li key={name}>
+              <A to={to} className="dl-which-a" data-cta={'download-which-' + name.toLowerCase().replace(/[^a-z]+/g, '-')}>
+                <span className="dl-which-q">{want}</span>
+                <span className="dl-which-p"><b>{name}</b>{cmd && <code className="x-mono">{cmd}</code>}</span>
+                <span className={'dl-which-t' + (term ? ' term' : '')}>{term ? 'Terminal · developers' : 'No terminal'}</span>
+              </A>
+            </li>
+          ))}
+        </ul>
+        <p className="av-body dl-which-n">
+          <b>One agent, several doors.</b> Hanzo Dev is the coding agent. In the Hanzo app it is the Dev tab. In a terminal
+          it is <code className="x-mono">hanzo dev</code> (plain <code className="x-mono">hanzo</code> opens the same session),
+          or <code className="x-mono">dev</code> when installed on its own (<code className="x-mono">hanzo-dev</code> is the same
+          file). No Hanzo tool is called <code className="x-mono">hz</code>.
+        </p>
       </div>
     </section>
   );
@@ -500,25 +557,19 @@ function Pick({ label, list, at, set, id }: { label: string; list: string[]; at:
 }
 
 function Kit({ os, br }: { os: Os; br: number }) {
+  const PRODUCTS = useProducts();
   const [sys, setSys] = useState(0);
   const [b, setB] = useState(0);
   const [ed, setEd] = useState(0);
   useEffect(() => { setSys(SYS_OF[os] ?? 0); }, [os]);
   useEffect(() => { setB(br); }, [br]);
   const [, desk, cliIdx] = SYSTEMS[sys];
-  const rows: [Product, Build][] = [
-    [PRODUCTS[0], PRODUCTS[0].builds[desk]],
-    [PRODUCTS[1], PRODUCTS[1].builds[cliIdx]],
-    [PRODUCTS[5], PRODUCTS[5].builds[cliIdx]],
-  ];
-  if (sys === 2) {
-    rows.push(
-      [PRODUCTS[4], PRODUCTS[4].builds[0]],
-      [PRODUCTS[6], PRODUCTS[6].builds[0]],
-      [PRODUCTS[7], PRODUCTS[7].builds[0]],
-    );
-  }
-  rows.push([PRODUCTS[2], PRODUCTS[2].builds[b]], [PRODUCTS[3], PRODUCTS[3].builds[ed]]);
+  const P = (k: string) => BY(PRODUCTS, k);
+  // the apps first, then the tools that run in a terminal (marked), as the page lists them
+  const rows: [Product, Build][] = [[P('desk'), P('desk').builds[desk]], [P('ext'), P('ext').builds[b]], [P('ed'), P('ed').builds[ed]]];
+  if (sys === 2) rows.push([P('ide'), P('ide').builds[0]], [P('team'), P('team').builds[0]]);
+  rows.push([P('cli'), P('cli').builds[cliIdx]], [P('dev'), P('dev').builds[cliIdx]]);
+  if (sys === 2) rows.push([P('bot'), P('bot').builds[0]]);
   return (
     <section className="av-sec av-dark dl-kit" data-room="dark" aria-labelledby="dl-kit-h">
       <div className="av-wrap av-grid">
@@ -534,9 +585,9 @@ function Kit({ os, br }: { os: Os; br: number }) {
               <li key={p.k}>
                 <a href={GH + path} className="dl-kit-a">
                   <span className="dl-kit-i x-mono av-num">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="dl-kit-n"><b>{p.name}</b><span>{o} · {p.v}</span></span>
+                  <span className="dl-kit-n"><b>{p.name}</b><span>{o} · {p.v}{p.term ? ' · terminal, for developers' : ''}</span></span>
                   <span className="dl-kit-f x-mono"><span>{FILE(path)}</span></span>
-                  <span className="dl-kit-s x-mono av-num">{size}</span>
+                  <span className="dl-kit-s x-mono av-num">{size || '—'}</span>
                   <span className="dl-kit-d"><Down s={16} /></span>
                 </a>
               </li>
@@ -550,7 +601,7 @@ function Kit({ os, br }: { os: Os; br: number }) {
 
 /* ---------- the one closing band: the hero's ask again ---------- */
 function End({ os }: { os: Os }) {
-
+  const PRODUCTS = useProducts();
   const [label, mp, mb] = MAIN[os];
   return (
     <section className="x-band dl-band" aria-labelledby="dl-end-h">
@@ -565,14 +616,51 @@ function End({ os }: { os: Os }) {
   );
 }
 
-export default function DownloadPage() {
+/* Desktop's latest release: the build's (page.tsx), then GitHub's answer in the browser, so a release published since
+   the page was built is the one offered. Kept for the tab's session; a failure (offline, rate-limited) keeps the build's. */
+const LATEST_KEY = 'hz:desktop-latest';
+function useLatestDesktop(built?: Desktop) {
+  const [desk, setDesk] = useState<Desktop>(built || DESKTOP_FALLBACK);
+  useEffect(() => {
+    let live = true;
+    const use = (d: Desktop | null) => { if (live && d) setDesk(d); };
+    try {
+      const kept = sessionStorage.getItem(LATEST_KEY);
+      if (kept) { use(fromRelease(JSON.parse(kept))); return () => { live = false; }; }
+    } catch {}
+    fetch(DESKTOP_API, { headers: { Accept: 'application/vnd.github+json' } })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        const d = fromRelease(j);
+        if (!d) return;
+        try { sessionStorage.setItem(LATEST_KEY, JSON.stringify({ tag_name: j.tag_name, assets: j.assets.map((a: { name: string; size: number }) => ({ name: a.name, size: a.size })) })); } catch {}
+        use(d);
+      })
+      .catch(() => {});
+    return () => { live = false; };
+  }, []);
+  return desk;
+}
+
+type Tags = Partial<Record<'cli' | 'dev' | 'node', string>>;
+
+export default function DownloadPage({ desktop, tags = {} }: { desktop?: Desktop; tags?: Tags }) {
   const { os, br } = useSystem();
+  const desk = useLatestDesktop(desktop);
+  const products = useMemo(() => PRODUCTS.map((p) => {
+    if (p.k === 'desk') return { ...p, v: desk.v, builds: desk.builds };
+    const tag = tags[p.k as keyof Tags];
+    return tag ? { ...p, v: tag } : p;
+  }), [desk, tags.cli, tags.dev, tags.node]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <main className="av dl" style={{ '--ac': '#a3a3a3' }}>
-      <Hero os={os} />
-      <Builds os={os} br={br} />
-      <Kit os={os} br={br} />
-      <End os={os} />
-    </main>
+    <Products.Provider value={products}>
+      <main className="av dl" style={{ '--ac': '#a3a3a3' }}>
+        <Hero os={os} />
+        <Which os={os} />
+        <Builds os={os} br={br} />
+        <Kit os={os} br={br} />
+        <End os={os} />
+      </main>
+    </Products.Provider>
   );
 }

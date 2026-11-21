@@ -2,12 +2,16 @@
 // Beyond: Your kit: the page already guessed your system and browser; confirm them and your editor, and it lists exactly your files across Desktop, CLI, Dev, Bot, Team, IDE, browser, and editor
 import DownloadPage from '../../components/pages/DownloadPage';
 import JsonLd from '../../components/JsonLd';
+import { latestDesktop, latestTag } from '../../lib/desktop';
 
 export const metadata = {
   title: 'Download Hanzo — Hanzo AI',
-  description: 'Download Hanzo Desktop, IDE, Bot, Team, CLI, Dev, and extensions for macOS, Windows, Linux, browsers, and editors. One account signs in to all of them.',
+  description: 'Download Hanzo Desktop for macOS, Windows, or Linux: open it, sign in, and start, no terminal needed. Browser and editor extensions, and the CLI and Dev for developers.',
 };
 
-export default function Page() {
-  return <><JsonLd route="/download" /><DownloadPage /></>;
+// Desktop's latest release and the developer tools' latest tags, read from GitHub when the page is built (the browser
+// asks again for Desktop). Any failure keeps DownloadPage's own last-seen values.
+export default async function Page() {
+  const [desktop, cli, dev, node] = await Promise.all([latestDesktop(), latestTag('cli'), latestTag('dev'), latestTag('node')]);
+  return <><JsonLd route="/download" /><DownloadPage desktop={desktop} tags={{ cli, dev, node }} /></>;
 }

@@ -24,6 +24,7 @@ import '../v2/AppType.css';
 import './DesktopPage.css';
 
 const DOCS = 'https://docs.hanzo.ai/docs/apps/desktop';
+const DOWNLOAD = '/download'; // the installer for the visitor's system, one click, always the latest release (issue 318)
 const GH = 'https://github.com/hanzoai';
 type Os = 'mac' | 'win' | 'linux';
 const OSES: [Os, string, string][] = [['mac', 'macOS', 'arm64 + intel'], ['win', 'Windows', 'x64 + arm64'], ['linux', 'Linux', 'deb + rpm + AppImage']];
@@ -172,7 +173,7 @@ function Hero({ os, setOs, mine }: OsProps) {
         <div className="dk-row">
           <p className="av-lede dk-lede">Build agents on your own machine</p>
           <div className="dk-acts">
-            <Magnetic strength={0.2}><Cta to={DOCS} id="desktop-download" thumb size="lg">Download</Cta></Magnetic>
+            <Magnetic strength={0.2}><Cta to={DOWNLOAD} id="desktop-download" thumb size="lg">Download</Cta></Magnetic>
             <Cta to={GH} id="desktop-github" kind="link">GitHub</Cta>
           </div>
         </div>
@@ -331,7 +332,8 @@ function Everywhere({ os, setOs, mine }: OsProps) {
             <dl className="av-spec dk-spec">
               <dt>Systems</dt><dd>{OSES.map(([k, n, a]) => <span key={k} className="dk-spec-os"><b>{n}</b> <span className="x-mono">{a}</span></span>)}</dd>
               <dt>Installers</dt><dd>Native installers for macOS (Apple Silicon + Intel), Windows, and Linux.</dd>
-              <dt>Version</dt><dd><span className="x-mono">v1.1.55</span> · <A to="/download">Every build</A></dd>
+              <dt>Version</dt><dd>The latest release · <A to="/download">Download</A> · <A to="https://github.com/hanzoai/desktop/releases/latest">Every build and checksum</A></dd>
+              <dt>Terminal</dt><dd>Not needed. Install it like any other app, open it, and sign in with your Hanzo account, or continue without one on a local model.</dd>
               <dt>Models</dt><dd>Point one agent at a model running on your machine and another at one on Hanzo Cloud.</dd>
               <dt>Offline</dt><dd>With a local model pinned, an agent keeps running when the connection goes.</dd>
               <dt>Account</dt><dd>If the model is a local one, the whole thing runs without an account.</dd>
@@ -404,7 +406,7 @@ function End() {
         <Lines as="h2" id="dk-end-h" className="av-display m" lines={['Download it', 'and build one']} />
         <p className="av-lede">Pick a model, describe the job, hand it the tools. If the model is a local one, the whole thing runs without an account.</p>
         <div className="dk-band-acts">
-          <Cta to={DOCS} id="desktop-download-end" size="lg">Download</Cta>
+          <Cta to={DOWNLOAD} id="desktop-download-end" size="lg">Download</Cta>
           <Cta to={GH} id="desktop-github-end" kind="link">View on GitHub</Cta>
         </div>
       </div>

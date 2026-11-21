@@ -548,7 +548,7 @@ function Setup({ release }: { release?: string }) {
             <p className="v2a-folio xdv-kick">Install</p>
             <h2 id="xdv-in-h"><Roll text="One line, three ways." /></h2>
           </div>
-          <p className="v2a-body xdv-in-hr">Linux, macOS and Windows. Dev updates itself the way it was installed.</p>
+          <p className="v2a-body xdv-in-hr">Linux, macOS and Windows. Dev updates itself the way it was installed. These are terminal installs, for developers; with the Hanzo CLI, <code>hanzo dev</code> starts the same agent. Not one? Dev is a tab in the Hanzo app: <a href="https://hanzo.app/dev">hanzo.app/dev</a>, or <a href="/download">Hanzo Desktop</a>.</p>
         </div>
         <div className="v2a-grid xdv-in-body zf-lift zf-dots">
           <div className="xdv-in-l">
