@@ -10,7 +10,7 @@
 .st2-lane.ln2 .st2-strip { animation-duration: 24s; }
 .st2-lane.ln3 .st2-strip { animation-duration: 40s; }
 .st2-lane.still .st2-strip { animation-play-state: paused; }
-.st2-pause { top: auto !important; bottom: 28px; right: 24px !important; }
+@media (min-width: 901px) { .st2-pause { top: auto !important; bottom: 28px; right: 24px !important; } }
 @keyframes st2-run { to { transform: translateX(-50%); } }
 .st2-run { display: flex; gap: 8px; padding-right: 8px; }
 .st2-run i { display: flex; align-items: flex-end; width: clamp(96px, 9vw, 132px); height: clamp(36px, 5svh, 56px); padding: 8px 10px; border-radius: 10px; background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .05)); border: 1px solid rgba(255, 255, 255, .2); }

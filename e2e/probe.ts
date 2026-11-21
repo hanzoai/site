@@ -182,15 +182,15 @@ export const audit = ({ vw, isMobile }: { vw: number; isMobile: boolean }) => {
       const cx = r.left + r.width / 2
       const cy = r.top + r.height / 2
       if (cy < 0 || cy > innerHeight || cx < 0 || cx > innerWidth) continue
-      // the four edge midpoints of a 24px square (WCAG 2.2, 2.5.8 AA), one pixel in: a round button is hit there, a narrow one only if something borrows space
-      const hits = [[-11, 0], [11, 0], [0, -11], [0, 11]].filter(([dx, dy]) => {
+      // the four edge midpoints of a 44px square, one pixel in: a round button is hit there, a narrow one only if something borrows space
+      const hits = [[-21, 0], [21, 0], [0, -21], [0, 21]].filter(([dx, dy]) => {
         const x = cx + dx
         const y = cy + dy
         if (x < 0 || y < 0 || x >= innerWidth || y >= innerHeight) return true
         const at = document.elementFromPoint(x, y)
         return !!at && (el === at || el.contains(at) || at.contains(el))
       }).length
-      if (hits < 4 && (r.width < 24 || r.height < 24)) bad.push(`${label(el)} ${Math.round(r.width)}x${Math.round(r.height)}`)
+      if (hits < 4 && (r.width < 44 || r.height < 44)) bad.push(`${label(el)} ${Math.round(r.width)}x${Math.round(r.height)}`)
     }
     for (const b of bad.slice(0, 12)) add('target', b)
     if (bad.length > 12) add('target', `and ${bad.length - 12} more`)
@@ -293,7 +293,7 @@ export async function pressAll(
           if ((el as HTMLButtonElement).disabled || el.getAttribute('aria-disabled') === 'true' || s.pointerEvents === 'none') return false
           if (el.closest('[aria-hidden=true], [inert]')) return false
           // the option already chosen answers nothing when pressed again
-          if (el.matches('[aria-selected=true], [aria-pressed=true], [role=radio][aria-checked=true], [aria-current], [data-on], [data-active], .on, .active')) return false
+          if (el.matches('[aria-selected=true], [aria-pressed=true], [aria-expanded=true], [role=radio][aria-checked=true], [aria-current], [data-on], [data-active], .on, .active')) return false
           return (scopeName === 'chrome') === inChrome(el)
         })
         .map((el) => el.getAttribute('data-qa')!)
@@ -309,10 +309,11 @@ export async function pressAll(
     const m0 = await page.evaluate(() => (window as any).__qa.mut as number)
     await page.waitForTimeout(250)
     const noise = (await page.evaluate(() => (window as any).__qa.mut as number)) - m0
-    const before = await state(page)
+    const before = await state(page, ids[next])
     const held = await loc.evaluate((el) => { const f = el.closest('form'); return !!f && (el as HTMLButtonElement).type !== 'button' && !f.checkValidity() })
     try {
       await loc.scrollIntoViewIfNeeded({ timeout: 6000 })
+      await loc.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'center' }))
       // where the pointer reaches it: stacked sheets and overlapping cards cover part of a control, not all of it
       const position = await loc.evaluate((el) => {
         const r = el.getBoundingClientRect()
@@ -338,10 +339,10 @@ export async function pressAll(
       continue
     }
     // a press is given up to two seconds to answer: a client navigation on a slow machine is not a dead button
-    let after = await state(page)
+    let after = await state(page, ids[next])
     for (let waited = 0; waited < 1500 && !moved(before, after, noise); waited += 250) {
       await page.waitForTimeout(250)
-      after = await state(page)
+      after = await state(page, ids[next])
     }
     // a submit on a form that is not yet valid is answered by the browser: it holds the form and focuses the first field to fix
     const validated = await page.evaluate(() => { const a = document.activeElement; return !!a && a.matches?.(':invalid') === true })
@@ -358,8 +359,8 @@ export async function pressAll(
 }
 
 /** The observable state of the page, as far as a press can change it. */
-async function state(page: Page) {
-  return page.evaluate(() => {
+async function state(page: Page, qa: string) {
+  return page.evaluate((id) => {
     const w = window as any
     const aria = Array.from(document.querySelectorAll('[aria-expanded],[aria-pressed],[aria-checked],[aria-selected],[aria-current],[aria-hidden],[open],[data-state],[data-open],[data-active]'))
       .map((el) => `${el.getAttribute('aria-expanded')}${el.getAttribute('aria-pressed')}${el.getAttribute('aria-checked')}${el.getAttribute('aria-selected')}${el.getAttribute('aria-current')}${el.getAttribute('aria-hidden')}${el.hasAttribute('open')}${el.getAttribute('data-state')}${el.getAttribute('data-open')}${el.getAttribute('data-active')}`)
@@ -382,9 +383,12 @@ async function state(page: Page) {
       calls: w.__qa?.calls.length ?? 0,
       resources: performance.getEntriesByType('resource').length,
       mut: w.__qa?.mut ?? 0,
+      // what a press starts on the page's own timeline (a pad's ring, a ripple), and what it paints on its own canvas
+      animations: document.getAnimations().length,
+      canvas: Array.from(document.querySelectorAll(`[data-qa="${id}"] canvas`)).map((c) => { try { return (c as HTMLCanvasElement).toDataURL().length } catch { return 0 } }).join(','),
     }
-  })
+  }, qa)
 }
 
 const moved = (a: Awaited<ReturnType<typeof state>>, b: Awaited<ReturnType<typeof state>>, noise: number) =>
-  a.url !== b.url || Math.abs(a.scrollY - b.scrollY) > 20 || a.aria !== b.aria || a.dialogs !== b.dialogs || a.body !== b.body || a.invalid !== b.invalid || a.calls !== b.calls || a.resources !== b.resources || b.mut - a.mut > noise * 1.5 + 1
+  a.url !== b.url || Math.abs(a.scrollY - b.scrollY) > 20 || a.aria !== b.aria || a.dialogs !== b.dialogs || a.body !== b.body || a.invalid !== b.invalid || a.calls !== b.calls || a.resources !== b.resources || b.animations > a.animations || a.canvas !== b.canvas || b.mut - a.mut > noise * 1.5 + 1

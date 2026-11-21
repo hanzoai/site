@@ -112,7 +112,7 @@ a.z7-node:focus-visible { outline: 2px solid var(--z7-ink); outline-offset: 3px;
   .z7-crumb ol { margin-top: 6.5px; }
   .z7-seven { position: relative; display: block; right: auto; top: auto; width: 96px; margin: 0 auto 17px; }
   .z7-pause { position: relative; order: 4; right: auto; bottom: auto; align-self: flex-end; margin: 10.5px var(--z7-gut) 0 0; }
-  .z7-brings { height: auto; }
+  .z7-brings { height: auto; margin-top: 0; }
   .z7-brings-pin { position: relative; min-height: 0; padding: var(--z7-pad) 0; }
   .z7-brings-g { grid-template-columns: minmax(0, 1fr); gap: 17px; }
   .z7-para { font-size: 17px; }
