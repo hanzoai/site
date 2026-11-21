@@ -752,6 +752,7 @@
 
 .bdg-stageTargetLink {
   min-width: 0;
+  min-height: 24px;
   flex: 1;
   display: inline-flex;
   align-items: center;
@@ -774,6 +775,7 @@
 
 .bdg-stagePublicLink {
   flex-shrink: 0;
+  min-height: 24px;
   display: inline-flex;
   align-items: center;
   gap: 5px;

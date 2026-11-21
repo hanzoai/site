@@ -14,7 +14,7 @@
 .x-win-bar { height: 34px; flex: none; display: flex; align-items: center; gap: 7px; padding: 0 12px; }
 .x-win-bar > i, .x-term-bar > i { width: 10px; height: 10px; border-radius: 50%; background: #d9d9de; }
 .xw-nav { display: flex; gap: 2px; color: var(--faint); }
-.xw-nav-b { display: grid; place-items: center; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 6px; background: none; color: var(--soft); cursor: pointer; transition: background-color .16s var(--ease), color .16s var(--ease), transform .12s var(--ease); }
+.xw-nav-b { display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 6px; background: none; color: var(--soft); cursor: pointer; transition: background-color .16s var(--ease), color .16s var(--ease), transform .12s var(--ease); }
 @media (hover: hover) { .xw-nav-b:hover { background: light-dark(#ededed, var(--muted)); color: var(--ink); } }
 .xw-nav-b:active { transform: scale(.92); }
 .xs-sidet { position: relative; display: grid; place-items: center; width: 24px; height: 24px; margin-left: 8px; padding: 0; border: 0; border-radius: 6px; background: none; color: var(--soft); cursor: pointer; }
@@ -51,7 +51,7 @@
 .xw-side small { padding: 9px 8px 3px; color: var(--faint); font-size: 10.5px; }
 .xw-side-t { padding: 4px 8px 8px; font: 600 13px/1.2 var(--sans); letter-spacing: -.01em; color: var(--ink); } /* the place's name, as the app heads its sidebar */
 /* the window's way out, as the phone's Download App: shown while the window is pointed at */
-.x-win-open { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--x-e15); background: var(--x-raised); color: var(--ink); font: 500 11px/1 var(--sans); text-decoration: none; opacity: 0; translate: 0 -2px; pointer-events: none; transition: opacity .2s var(--ease), translate .2s var(--ease); }
+.x-win-open { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; height: 24px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--x-e15); background: var(--x-raised); color: var(--ink); font: 500 11px/1 var(--sans); text-decoration: none; opacity: 0; translate: 0 -2px; pointer-events: none; transition: opacity .2s var(--ease), translate .2s var(--ease); }
 .x-win:hover .x-win-open, .x-win-open:focus-visible { opacity: 1; translate: 0 0; pointer-events: auto; }
 @media (hover: hover) { .x-win-open:hover { border-color: var(--ink); } }
 @media (hover: none) { .x-win-open { opacity: 1; translate: 0 0; pointer-events: auto; } }
@@ -95,7 +95,7 @@
 .x-appcard b { display: block; }
 .x-appcard small { color: var(--faint); font-size: 10.5px; }
 .x-appicon { width: 28px; height: 28px; border-radius: 8px; background: var(--ink); color: var(--x-on-ink); display: grid; place-items: center; }
-.x-open { margin-left: 8px; padding: 5px 10px; border: 0; border-radius: 999px; background: light-dark(#f1f1f3, var(--muted)); color: var(--ink); font: 500 11px/1 var(--sans); cursor: pointer; transition: background-color .16s var(--ease), transform .12s var(--ease); }
+.x-open { margin-left: 8px; padding: 7px 10px; border: 0; border-radius: 999px; background: light-dark(#f1f1f3, var(--muted)); color: var(--ink); font: 500 11px/1 var(--sans); cursor: pointer; transition: background-color .16s var(--ease), transform .12s var(--ease); }
 @media (hover: hover) { .x-open:hover { background: light-dark(#e5e5e8, rgba(255, 255, 255, .14)); } }
 .x-open:active { transform: scale(.95); }
 .x-input { flex: none; display: flex; align-items: center; gap: 8px; min-height: 38px; margin: 0 72px 10px 12px; padding: 4px 5px 4px 11px; border-radius: 14px; border: 1px solid var(--x-e12); background: var(--x-raised); box-shadow: 0 8px 24px -14px rgba(0, 0, 0, .25); font-size: 12px; color: var(--faint); }
