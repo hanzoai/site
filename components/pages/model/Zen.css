@@ -175,6 +175,22 @@
 }
 @media (prefers-reduced-motion: reduce) { .ze-dot[data-on], .ze-dots i { animation: none; } }
 
+/* run the weights: each model's licence, machine, download and serving command, side by side, one above the other on a phone */
+.ze-run { padding-block: 44px 72px; }
+.ze-run-h { margin: 0 0 32px; font-size: clamp(28px, 3.4vw, 44px); font-weight: 497; letter-spacing: -.02em; text-wrap: balance; }
+.ze-run-g { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 27px; }
+.ze-run-c { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.ze-run-c h3 { margin: 0; font-size: 26px; font-weight: 497; letter-spacing: -.02em; }
+.ze-run-c dl { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 20px; font-size: 16px; line-height: 1.5; color: light-dark(#525252, var(--muted-foreground)); }
+.ze-run-c dt { color: var(--ink); }
+.ze-run-c dd { margin: 0; overflow-wrap: anywhere; }
+.ze-run-c dd a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 900px) {
+  .ze-run { padding-block: 27px 44px; }
+  .ze-run-g { grid-template-columns: 1fr; gap: 44px; }
+  .ze-run-c h3 { font-size: 21px; }
+}
+
 /* elite bar: type floor, balanced headings, thumb-sized taps */
 .ze-family :is(h1, h2) { text-wrap: balance; }
 @media (max-width: 900px) {

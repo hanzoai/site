@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { CSSProperties, PointerEvent, ReactNode } from 'react';
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { Magnetic } from '../../ui';
-import { A, More, Cta, Img, Stat } from '../../kit';
+import { A, More, Cta, CodeBlock, Img, Stat } from '../../kit';
 import Sigil from '../../Sigil';
 import useScheme from './scheme';
 import { arrows } from './live';
@@ -165,7 +165,7 @@ const cardBody = (c: (typeof CARDS)[number]) => (
   </>
 );
 const CHAPTERS: { k: string; title: string; art: (on: boolean) => ReactNode; body: ReactNode }[] = [
-  { k: 'Open weights', title: 'Open weights', art: (on: boolean) => <CardArt open z={1.1} on={on} />, body: <><p>Download the weights, or call them on Hanzo Cloud.</p><p><More to="https://github.com/zenlm">Docs on GitHub</More></p></> },
+  { k: 'Open weights', title: 'Open weights', art: (on: boolean) => <CardArt open z={1.1} on={on} />, body: <><p>Download the weights, or call them on Hanzo Cloud.</p><p><More to="https://huggingface.co/zenlm">Weights on Hugging Face</More></p><p><More to="https://github.com/zenlm">Docs on GitHub</More></p></> },
   { k: CARDS[0].name, title: CARDS[0].name, art: (on: boolean) => <CardArt ci={0} z={1.35} on={on} />, body: cardBody(CARDS[0]) },
   { k: CARDS[1].name, title: CARDS[1].name, art: (on: boolean) => <CardArt ci={1} z={1.7} on={on} />, body: cardBody(CARDS[1]) },
 ];
@@ -215,6 +215,37 @@ function SwarmRoom() {
           <Stat value="5.95 GB" label={CARDS[0].name} />
           <Stat value="27.3B" label={CARDS[1].name} />
           <Stat value="$2.28" label="in · per 1M tokens" note="$7.26 out" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// what a reader needs to run the weights, one entry for each CARDS row: the licence and the machine as the model's own
+// Hugging Face card says them, and the command that serves it (that card's, and `hanzo engine serve` for the compact build)
+const RUN = [
+  { hardware: 'An Apple Silicon laptop or one GPU: hanzo-engine on CUDA, Metal, ROCm, Vulkan or CPU, or llama.cpp.', serve: 'hanzo engine serve zenlm/zen6-flash' },
+  { hardware: 'NVIDIA Blackwell, on SGLang. Measured on one DGX Spark with 128 GB of unified memory.', serve: 'python3 -m sglang.launch_server --model-path ./zen6 --speculative-draft-model-path ./zen6/dflash2 --speculative-num-steps 3 --speculative-algorithm DFLASH --kv-cache-dtype fp8_e5m2 --context-length 1048576 --port 30000' },
+];
+
+function Run() {
+  return (
+    <section className="lv-sec ze-run" aria-labelledby="ze-run-h">
+      <div className="x-wrap">
+        <h2 id="ze-run-h" className="ze-run-h">Run the weights.</h2>
+        <div className="ze-run-g">
+          {CARDS.map((c, i) => (
+            <article key={c.code} className="ze-run-c">
+              <h3>{c.name}</h3>
+              <dl>
+                <dt>License</dt><dd>Apache-2.0</dd>
+                <dt>Runs on</dt><dd>{RUN[i].hardware}</dd>
+                <dt>Weights</dt><dd>{c.size}, at <A to={`https://huggingface.co/zenlm/${c.code}`}>huggingface.co/zenlm/{c.code}</A></dd>
+              </dl>
+              <CodeBlock code={`hf download zenlm/${c.code} --local-dir ${c.code}`} label="Download" prompt />
+              <CodeBlock code={RUN[i].serve} label="Serve" prompt />
+            </article>
+          ))}
         </div>
       </div>
     </section>
@@ -304,6 +335,7 @@ export default function Zen() {
       <SwarmRoom />
       <TraceRoom />
       <Parts />
+      <Run />
       <Family />
       <FocusPull><ModelCards slug="zen" /></FocusPull>
       {/* the closing band, page-local: the same words as the kit Band, cut in by line mask (no blur), final with JS off */}
