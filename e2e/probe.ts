@@ -21,11 +21,12 @@ export interface Seen {
   phase: 'load' | 'press'
 }
 
-/** Collect what the page says and asks for. Writes (non-GET) are answered 204: a sweep sends no form and records no event. */
+/** Collect what the page says and asks for. Writes (non-GET) to an API are answered 204: a sweep sends no form and records no event. */
 export async function watch(context: BrowserContext, page: Page): Promise<Seen> {
   const seen: Seen = { console: [], failed: [], bad: [], mixed: [], phase: 'load' }
   const written = new Set<string>()
-  await context.route('**/*', (route) => {
+  // only what a sweep must answer itself: intercepting a film makes the browser fetch all of it again, so no weight could be read
+  await context.route((url) => TELEMETRY.test(url.href) || url.pathname.startsWith('/v1/'), (route) => {
     const { method, url } = { method: route.request().method(), url: route.request().url() }
     if (TELEMETRY.test(url)) return route.abort('blockedbyclient')
     if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
