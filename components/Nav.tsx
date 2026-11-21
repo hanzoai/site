@@ -6,6 +6,7 @@
    links; Tab past the last link closes it and goes on to the next heading; Shift+Tab from the first link goes back to
    the heading; Escape closes and returns focus. The items and words are Hanzo's own (lib/nav.js); pages add nothing. */
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react';
+import { APP } from '../lib/app';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence, type MotionStyle } from 'motion/react';
@@ -410,7 +411,7 @@ export default function Nav({ headerRef }: { headerRef: Shell }) {
               <div className="x-sheet-login">
                 {LOGIN.map((l) => <a key={l.label} href={l.href} onClick={close}><b>{l.label}</b><span>{l.sub}</span></a>)}
               </div>
-              <a href="https://hanzo.ai/signup" className="x-btn solid lg x-sheet-ask" onClick={close}>Try Hanzo</a>
+              <a href={`${APP}/signup`} className="x-btn solid lg x-sheet-ask" onClick={close}>Try Hanzo</a>
             </motion.div>
           </motion.nav>
         )}

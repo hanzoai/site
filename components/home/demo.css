@@ -294,7 +294,7 @@
    3. Full-width unclipped Terminal underneath (360 x 174) so every CLI command and output line is 100% readable */
 @media (max-width: 640px) {
   .x-3d, .x-win, .x-term, .x-phone { transform-style: flat; }
-  .x-win { left: 0; top: 0; width: 360px; height: 248px; border-radius: 15px; }
+  .x-win { left: 15px; top: 70px; width: 360px; height: 232px; border-radius: 15px; scroll-snap-align: center; }
   .x-win-bar { height: 32px; padding: 0 10px; }
   .x-win .x-win-body { grid-template-columns: 36px minmax(0, 1fr); }
   .x-win .x-side, .x-win .xs-sidet { display: none; }
@@ -309,8 +309,8 @@
   .x-input { margin: 0 9px 7px 9px; min-height: 32px; border-radius: 12px; font-size: 11.5px; }
   .x-send { width: 24px; height: 24px; }
 
-  .x-phone { left: 0; right: auto; top: 260px; width: 360px; height: 328px; }
-  .xm-face-front { left: -120px; width: 240px; right: auto; }
+  .x-phone { left: 387px; right: auto; top: 0; width: 360px; height: 340px; scroll-snap-align: center; }
+  .xm-face-front { left: -95px; width: 190px; right: auto; } /* closed, 9:16 like a phone (the box is 340 tall) */
   .xm-cover .xm-status-cover { height: 26px; padding: 3px 16px 0 20px; }
   .xm-cover .xm-status-cover b { font-size: 10.5px; }
   .xm-cover .xm-main { gap: 8px; padding: 6px 12px 6px; }
@@ -326,11 +326,11 @@
   .xm-cover .xm-pill-comp { height: 29px; padding: 0 4px 0 11px; }
   .xm-cover .xm-pill-comp input, .xm-cover .xm-pill-comp > span:first-child { font-size: 10px; }
   .xm-cover .xm-pill-send { width: 21px; height: 21px; }
-  .x-phone:not(.duo) .xm-hinge { left: 60px; width: 24px; }
+  .x-phone:not(.duo) .xm-hinge { left: 85px; width: 24px; }
   .x-phone.duo .xm-hinge { left: 50%; width: 24px; }
-  .x-phone-dl { left: 50%; top: calc(100% + 8px); }
+  .x-phone-dl { left: 50%; top: calc(100% + 4px); }
 
-  .x-term { left: 0; top: 636px; width: 360px; height: 174px; border-radius: 14px; }
+  .x-term { left: 759px; top: 99px; width: 360px; height: 174px; border-radius: 14px; scroll-snap-align: center; }
   .x-term-bar { height: 32px; gap: 4px; padding: 0 10px; }
   .x-term-bar > i { width: 8.5px; height: 8.5px; }
   .xt-tab { padding-inline: 6.5px; font-size: 10.5px; }

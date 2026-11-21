@@ -44,7 +44,7 @@ function Card({ m, i, live, setLive }: { m: (typeof MODELS)[number]; i: number; 
       >
         <span className="x-mtilt" data-tilt="">
           <span className="x-mmedia">
-            <img src={media(m.slug, 'webp')} alt="" />
+            <img src={media(m.slug, 'webp')} alt="" loading="lazy" decoding="async" />
             <video ref={vid} src={media(m.slug, 'webm')} muted loop playsInline preload="none" aria-hidden="true" onPlaying={(e) => e.currentTarget.classList.add('on')} />
           </span>
           <span className="x-mtext">
