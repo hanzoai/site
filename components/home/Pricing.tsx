@@ -136,7 +136,7 @@ export default function Pricing() {
   // one view per tab a reader looks at, with the prices it shows
   useEffect(() => { viewed(tabName, LIST[tabName]); }, [tabName]);
   return (
-    <section className="x-sec x-pricing" id="pricing" data-hz-view="plans" aria-labelledby="pricing-h">
+    <section className="x-sec x-pricing x-cv" id="pricing" data-hz-view="plans" aria-labelledby="pricing-h">
       <div className="x-wrap">
         <header className="x-head center"><h2 id="pricing-h">Pricing</h2></header>
         <div className="x-center"><Seg opts={['Personal', 'Team', 'API']} val={tab} set={setTab} id="price-tab" /></div>

@@ -89,6 +89,15 @@ export default function Hero() {
     copyT.current = setTimeout(() => setCopied(false), 1600);
   };
 
+  // the scenes after the opening are mounted once the page has painted, not sent with it
+  const [rest, setRest] = useState(false);
+  useEffect(() => {
+    const idle = window.requestIdleCallback ?? ((f: () => void) => window.setTimeout(f, 200));
+    const stop = window.cancelIdleCallback ?? window.clearTimeout;
+    const id = idle(() => setRest(true));
+    return () => stop(id);
+  }, []);
+
   // the landing is counted once, when the hero is first drawn; a press on Download App is read where the page transition reads it
   useEffect(() => { capture('home_viewed'); }, []);
   useEffect(() => press('.x-phone-dl', () => track('hero_demo', { control: 'phone-download' })), []);
@@ -202,9 +211,9 @@ export default function Hero() {
           <div className="x-hero-stage" ref={stageRef}>
             <div className="x-fit">
               <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
-                <Desk sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} side={side} onSide={() => setSide((v) => !v)} promptEl={promptEl} full={typed === PROMPT.length} />
+                <Desk rest={rest} sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} side={side} onSide={() => setSide((v) => !v)} promptEl={promptEl} full={typed === PROMPT.length} />
                 <Term onSelectScene={selectScene} calm={calm} inView={inView} copy={copy} copied={copied} />
-                <Phone sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} />
+                <Phone rest={rest} sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} />
               </motion.div>
             </div>
           </div>
