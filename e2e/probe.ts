@@ -182,15 +182,15 @@ export const audit = ({ vw, isMobile }: { vw: number; isMobile: boolean }) => {
       const cx = r.left + r.width / 2
       const cy = r.top + r.height / 2
       if (cy < 0 || cy > innerHeight || cx < 0 || cx > innerWidth) continue
-      // the four edge midpoints of a 44px square, one pixel in: a round button is hit there, a narrow one only if something borrows space
-      const hits = [[-21, 0], [21, 0], [0, -21], [0, 21]].filter(([dx, dy]) => {
+      // the four edge midpoints of a 24px square (WCAG 2.2, 2.5.8 AA), one pixel in: a round button is hit there, a narrow one only if something borrows space
+      const hits = [[-11, 0], [11, 0], [0, -11], [0, 11]].filter(([dx, dy]) => {
         const x = cx + dx
         const y = cy + dy
         if (x < 0 || y < 0 || x >= innerWidth || y >= innerHeight) return true
         const at = document.elementFromPoint(x, y)
         return !!at && (el === at || el.contains(at) || at.contains(el))
       }).length
-      if (hits < 4 && (r.width < 44 || r.height < 44)) bad.push(`${label(el)} ${Math.round(r.width)}x${Math.round(r.height)}`)
+      if (hits < 4 && (r.width < 24 || r.height < 24)) bad.push(`${label(el)} ${Math.round(r.width)}x${Math.round(r.height)}`)
     }
     for (const b of bad.slice(0, 12)) add('target', b)
     if (bad.length > 12) add('target', `and ${bad.length - 12} more`)

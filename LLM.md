@@ -117,7 +117,7 @@ hanzo-inc/universe `infra/sites/sites.yaml` and mapped in its `docs/urls.md`; `s
 ## The sweep: `e2e/`
 
 `pnpm e2e` holds the live site (`BASE_URL`, default https://hanzo.ai) to no error, no warning, no broken thing. Projects: `pages`
-(`sweep.spec.ts`: every route x 1440 / 390 x light / dark, cold: console, requests, images, fonts, overflow, tap targets, links to
+(`sweep.spec.ts`: every route x 1440 / 390 x light / dark, cold: console, requests, images, fonts, overflow, tap targets under 24 x 24 (WCAG 2.2 AA; the 44 above is the design bar), links to
 nowhere, head, weight, every button pressed once), `edge` (address variants, the 404, model ids, the phone header), `links` (every
 link `pages` met, once), `perf` (cold open, best of three, last and alone). `--grep` narrows a run (`'^/pricing '`, `'mobile dark'`);
 `e2e/.out/findings.json` is the table. The harness blocks telemetry and answers any non-GET with 204, and does not report what the

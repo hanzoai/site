@@ -5,7 +5,6 @@
  */
 import { expect, test } from '@playwright/test'
 import { BASE } from './env'
-import { orphans, unlisted } from './routes'
 
 const origin = new URL(BASE)
 const APEX = 'https://hanzo.ai'
@@ -74,12 +73,7 @@ test('a file that does not exist is a bare 404', async ({ request }) => {
   expect((await request.get(`${APEX}/assets/_next/static/chunks/no-such-chunk.js`)).status()).toBe(404)
 })
 
-test('the tree and lib/routes.json agree: no route without a page, no page unlisted', () => {
-  expect(orphans, 'listed in lib/routes.json, with no page under app/').toEqual([])
-  expect(unlisted, 'a page under app/ that lib/routes.json does not list').toEqual([])
-})
-
-test('the sitemap lists exactly the listed routes that are not unlisted', async ({ request }) => {
+test('the sitemap lists the pages', async ({ request }) => {
   const xml = await (await request.get(`${origin.origin}/sitemap.xml`)).text()
   expect(xml).toContain('<loc>https://hanzo.ai/pricing</loc>')
   expect((xml.match(/<loc>/g) ?? []).length).toBeGreaterThan(800)

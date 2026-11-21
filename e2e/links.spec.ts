@@ -34,7 +34,7 @@ const last = new Map<string, number>()
 async function polite(host: string) {
   const at = Math.max(Date.now(), (last.get(host) ?? 0) + 250)
   last.set(host, at)
-  await wait(at - Date.now())
+  await wait(Math.max(0, at - Date.now()))
 }
 
 test('every link the sweep met resolves', async ({ request }, info) => {
@@ -58,27 +58,30 @@ test('every link the sweep met resolves', async ({ request }, info) => {
           if (!/^tel:\+?[0-9\-.() ]{5,}$/.test(href)) add('link', href, 'malformed tel')
           continue
         }
-        if (!/^https?:$/.test(u.protocol)) { add('link', href, `unexpected scheme ${u.protocol}`); continue }
+        // an app's deep link (claude-cli:, codex:) names no server to ask
+        if (!/^https?:$/.test(u.protocol)) continue
         const mine = HOME.has(u.hostname)
         const target = mine ? new URL(u.pathname + u.search, here.origin).href : href
         await polite(u.hostname)
+        // one range of the first byte: a release asset is checked, not downloaded; a second try for a busy host
+        const get = (url: string) => request.get(url, { maxRedirects: 0, timeout: 20_000, headers: { 'user-agent': 'Mozilla/5.0 (compatible; hanzo-site-sweep)', ...(mine ? {} : { range: 'bytes=0-0' }) } })
+        const ask = (url: string) => get(url).catch(() => wait(2000).then(() => get(url)))
         try {
-          let r = await request.get(target, { maxRedirects: 0, timeout: 20_000, headers: { 'user-agent': 'Mozilla/5.0 (compatible; hanzo-site-sweep)' } })
+          let r = await ask(target)
           let hops = 0
           while (r.status() >= 300 && r.status() < 400 && r.headers().location && hops < 6) {
             hops++
             await polite(new URL(r.headers().location, r.url()).hostname)
-            r = await request.get(new URL(r.headers().location, r.url()).href, { maxRedirects: 0, timeout: 20_000, headers: { 'user-agent': 'Mozilla/5.0 (compatible; hanzo-site-sweep)' } })
+            r = await ask(new URL(r.headers().location, r.url()).href)
           }
           const s = r.status()
           if (mine) {
             if (s !== 200) add('link', href, `answers ${s}`)
             else if (hops > 1) add('link', href, `takes ${hops} redirects to ${r.url()}`)
-          } else if (s === 404 || s === 410 || s >= 500) add('link', href, `answers ${s}`)
-          else if ([401, 403, 429, 999].includes(s)) refused.push(`${s} ${href}`)
+          } else if ([401, 403, 429, 999].includes(s)) refused.push(`${s} ${href}`)
+          else if (s === 404 || s === 410 || s >= 500) add('link', href, `answers ${s}`)
         } catch (e) {
-          if (mine) add('link', href, `unreachable: ${String((e as Error).message).split('\n')[0].slice(0, 100)}`)
-          else add('link', href, `unreachable: ${String((e as Error).message).split('\n')[0].slice(0, 100)}`)
+          add('link', href, `unreachable: ${String((e as Error).message).split('\n')[0].slice(0, 100)}`)
         }
       }
     }),
