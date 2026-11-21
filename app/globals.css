@@ -177,6 +177,9 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
 .x-hero-stage::before { content: ''; display: block; height: calc(var(--sh) * var(--k)); }
 .x-fit { position: absolute; left: calc((100% - var(--sw) * var(--k)) / 2); top: 0; width: var(--sw); height: var(--sh); transform: scale(var(--k)); transform-origin: 0 0; perspective: 1700px; } /* centred when k stops at 1.15 */
 .x-3d { position: absolute; inset: 0; transform-style: preserve-3d; }
+/* the stage, the deck's dots under it and the setup prompt hanging below both: one grid item */
+.x-hero-show { position: relative; min-width: 0; }
+.x-deck { display: none; }
 .x-ann { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; background: var(--x-fill); border-bottom: 1px solid var(--line); color: var(--ink); font: 500 13.5px/1.3 var(--sans); text-decoration: none; text-align: center; }
 .x-ann svg { flex: none; transition: transform .35s var(--ease); }
 .x-ann:hover svg { transform: translateX(3px); }
@@ -467,19 +470,32 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
   .x-mcard:not(.big) { height: 260px; }
 }
 @media (max-width: 900px) {
-  .x-hero { min-height: 0; padding: 32px 0 64px; }
-  /* one column: the product first, then its words; the gap holds the setup prompt hanging under the stage */
-  .x-hero-grid { grid-template-columns: 1fr; gap: 112px; }
-  .x-hero-stage { order: -1; }
+  .x-hero { min-height: 0; padding: 28px 0 64px; }
+  /* one column: the words and the way in first, then the product (a phone shows the sign-up before the scene); the show's bottom margin holds the setup prompt hanging under the stage */
+  .x-hero-grid { grid-template-columns: 1fr; gap: 36px; }
+  .x-hero-show { margin-bottom: 76px; }
   .x-panels, .x-races, .x-plans.n3, .x-plans.n2 { grid-template-columns: 1fr; }
   .x-modal { grid-template-columns: 1fr; grid-template-rows: 46% 1fr; height: min(720px, 100%); }
 }
 @media (max-width: 640px) {
   .x-wrap { width: min(100% - 28px, var(--wrap)); }
-  .x-hero-stage { --sw: 360px; --sh: 810px; }
-  .x-hero-grid { gap: 86px; }
-  .x-fit { width: 360px; height: 810px; perspective: none; }
-  .x-setup { bottom: -58px; }
+  .x-hero { padding: 20px 0 28px; }
+  .x-hero-grid { gap: 28px; }
+  /* the deck: three slides of 360 units (desktop window 16:10, phone 9:16, terminal), 12 apart, 15 of the next one showing at each
+     edge; the stage's width is 390 units, so a 390px phone draws them at their own size (k = 1) and a narrower one scales them.
+     The stage is the scroller: scroll-snap, no scrollbar, a swipe moves one slide. */
+  .x-hero-show { margin: 0 -14px; display: flex; flex-direction: column; align-items: center; }
+  .x-hero-stage { --sw: 390px; --sh: 372px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .x-hero-stage::-webkit-scrollbar { display: none; }
+  .x-fit { left: 0; width: 1134px; height: 372px; perspective: none; }
+  .x-deck { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 10px; }
+  .x-deck-dots { display: flex; gap: 2px; }
+  .x-deck-dot { position: relative; width: 22px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; }
+  .x-deck-dot::before { content: ''; position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 99px; background: var(--faint); opacity: .5; transition: width .24s var(--ease), margin .24s var(--ease), opacity .24s; }
+  .x-deck-dot::after { content: ''; position: absolute; inset: -11px -4px; }
+  .x-deck-dot[aria-current='true']::before { width: 18px; margin-left: -9px; background: var(--ink); opacity: 1; }
+  .x-deck-cap { margin: 0; min-height: 20px; font: 500 13.5px/1.4 var(--sans); color: var(--soft); text-align: center; }
+  .x-hero-show .x-setup { position: relative; left: auto; bottom: auto; translate: 0 0; margin-top: 12px; }
   .x-mgrid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .x-mcard.big { grid-column: span 2; height: 340px; }
   .x-mcard:not(.big) { height: 220px; }
@@ -787,3 +803,9 @@ html .x-plot[data-tilt][data-lit] { transform: perspective(1200px) rotateX(calc(
 .x-corner-opt[aria-selected='true'] { font-weight: 600; }
 .x-corner-opt small { color: var(--faint); font-weight: 400; margin-left: 4px; }
 @media (pointer: coarse) { .x-corner-item, .x-corner-row, .x-corner-opt { min-height: 44px; } }
+
+/* Google One Tap (components/OneTap.tsx): the card sits in the top corner on a phone as on a laptop, over a box with no ground of
+   its own that lets every press through but the card's. Chrome's own account sheet (FedCM) is the browser's and takes none of this. */
+.x-onetap { position: fixed; z-index: 2147483000; top: calc(env(safe-area-inset-top, 0px) + 12px); right: 12px; width: min(368px, calc(100vw - 24px)); background: transparent; pointer-events: none; }
+.x-onetap iframe { pointer-events: auto; background: transparent; color-scheme: normal; border: 0; }
+@media (max-width: 640px) { .x-onetap { left: 12px; right: 12px; width: auto; } }

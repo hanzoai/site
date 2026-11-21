@@ -5,7 +5,9 @@ import { fine, copyText } from './ui';
 import Dots from './Dots';
 import SetupMenu from './SetupMenu';
 import { Desk, MORE, Phone, Term } from './home/Devices';
+import Deck from './home/Deck';
 import { press } from '../lib/press';
+import { APP } from '../lib/app';
 import { capture, track } from '../lib/track';
 import './home/demo.css';
 
@@ -99,7 +101,7 @@ export default function Hero() {
       const w = el.clientWidth;
       if (!w) return;
       const rawSw = parseFloat(getComputedStyle(el).getPropertyValue('--sw'));
-      const sw = rawSw > 0 ? rawSw : (window.innerWidth <= 640 ? 360 : 720);
+      const sw = rawSw > 0 ? rawSw : (window.innerWidth <= 640 ? 390 : 720);
       const k = Math.min(1.15, w / sw);
       el.style.setProperty('--k-js', k.toFixed(4));
     };
@@ -180,30 +182,33 @@ export default function Hero() {
           </p>
           <div className="x-auth">
             <div className="x-auth-row">
-              <a href="https://hanzo.ai/signup?provider=google" className="x-auth-b">
+              <a href={`${APP}/signup?provider=google`} className="x-auth-b">
                 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h6a5.1 5.1 0 0 1-2.2 3.4v2.8h3.6c2.1-2 3.2-4.9 3.2-8.2z" /><path fill="currentColor" d="M12 23c3 0 5.5-1 7.4-2.7l-3.6-2.8c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2v2.9A11 11 0 0 0 12 23z" /><path fill="currentColor" d="M5.7 14c-.2-.7-.4-1.3-.4-2s.1-1.4.4-2V7.1H2a11 11 0 0 0 0 9.8L5.7 14z" /><path fill="currentColor" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2 7.1L5.7 10C6.6 7.4 9.1 5.4 12 5.4z" /></svg>
                 Continue with Google
               </a>
-              <a href="https://hanzo.ai/signup?provider=github" className="x-auth-b">
+              <a href={`${APP}/signup?provider=github`} className="x-auth-b">
                 <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.7 18.3 5 18.3 5c.7 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z" /></svg>
                 Continue with GitHub
               </a>
             </div>
             <div className="x-or"><span>or</span></div>
             <div className="x-auth-mag">
-              <a href="https://hanzo.ai/signup" className="x-auth-b solid">Continue with email</a>
+              <a href={`${APP}/signup`} className="x-auth-b solid">Continue with email</a>
             </div>
           </div>
         </div>
 
-        <div className="x-hero-stage" ref={stageRef}>
-          <div className="x-fit">
-            <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
-              <Desk sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} side={side} onSide={() => setSide((v) => !v)} promptEl={promptEl} full={typed === PROMPT.length} />
-              <Term onSelectScene={selectScene} calm={calm} inView={inView} copy={copy} copied={copied} />
-              <Phone sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} />
-            </motion.div>
+        <div className="x-hero-show">
+          <div className="x-hero-stage" ref={stageRef}>
+            <div className="x-fit">
+              <motion.div className="x-3d" style={{ rotateX: rx, rotateY: ry }}>
+                <Desk sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} side={side} onSide={() => setSide((v) => !v)} promptEl={promptEl} full={typed === PROMPT.length} />
+                <Term onSelectScene={selectScene} calm={calm} inView={inView} copy={copy} copied={copied} />
+                <Phone sc={sc} navPick={navPick} onSelectScene={selectScene} phase={phase} />
+              </motion.div>
+            </div>
           </div>
+          <Deck stage={stageRef} />
           <SetupMenu up />
         </div>
       </div>
