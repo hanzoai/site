@@ -13,15 +13,19 @@ const here = new URL(process.env.BASE_URL ?? 'https://hanzo.ai')
 const HOME = new Set(['hanzo.ai', 'www.hanzo.ai', here.hostname])
 
 interface Seen { pages: Set<string>; via: string }
-const seen = new Map<string, Seen>()
-const dir = join(OUT, 'links')
-for (const f of readdirSync(dir).filter((x) => x.endsWith('.json'))) {
-  const { route, links } = JSON.parse(readFileSync(join(dir, f), 'utf8')) as { route: string; links: { href: string; via: string }[] }
-  for (const l of links) {
-    const s = seen.get(l.href) ?? { pages: new Set(), via: l.via }
-    s.pages.add(route)
-    seen.set(l.href, s)
+/** What the `pages` project wrote: read when the test runs, after it, never when the file is loaded. */
+function met(): Map<string, Seen> {
+  const seen = new Map<string, Seen>()
+  const dir = join(OUT, 'links')
+  for (const f of readdirSync(dir).filter((x) => x.endsWith('.json'))) {
+    const { route, links } = JSON.parse(readFileSync(join(dir, f), 'utf8')) as { route: string; links?: { href: string; via: string }[] }
+    for (const l of links ?? []) {
+      const s = seen.get(l.href) ?? { pages: new Set(), via: l.via }
+      s.pages.add(route)
+      seen.set(l.href, s)
+    }
   }
+  return seen
 }
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
@@ -35,6 +39,7 @@ async function polite(host: string) {
 
 test('every link the sweep met resolves', async ({ request }, info) => {
   test.setTimeout(30 * 60_000)
+  const seen = met()
   const found: Finding[] = []
   const refused: string[] = []
   const where = (href: string) => [...seen.get(href)!.pages].slice(0, 3).join(' ')
