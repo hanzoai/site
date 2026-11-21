@@ -44,7 +44,7 @@
 "h2": "LangChain Python"
 },
 {
-"code": "pip install langchain langchain-openai from langchain_openai import ChatOpenAI llm = ChatOpenAI ( model= \" zen4-pro \" , openai_api_key= \" your-hanzo-api-key \" , openai_api_base= \" https://api.hanzo.ai/v1 \" , ) response = llm . invoke ( \" What is the capital of France? \" ) print ( response . content )"
+"code": "pip install langchain langchain-openai from langchain_openai import ChatOpenAI llm = ChatOpenAI ( model= \" zen6 \" , openai_api_key= \" your-hanzo-api-key \" , openai_api_base= \" https://api.hanzo.ai/v1 \" , ) response = llm . invoke ( \" What is the capital of France? \" ) print ( response . content )"
 },
 {
 "h2": "Chain with prompt"
@@ -56,13 +56,13 @@
 "h2": "LangChain TypeScript"
 },
 {
-"code": "import { ChatOpenAI } from \" @langchain/openai \" ; const model = new ChatOpenAI ({ modelName : \" zen4-pro \" , openAIApiKey : process.env.HANZO_API_KEY , configuration : { baseURL : \" https://api.hanzo.ai/v1 \" , }, }); const response = await model. invoke ( \" Hello! \" );"
+"code": "import { ChatOpenAI } from \" @langchain/openai \" ; const model = new ChatOpenAI ({ modelName : \" zen6 \" , openAIApiKey : process.env.HANZO_API_KEY , configuration : { baseURL : \" https://api.hanzo.ai/v1 \" , }, }); const response = await model. invoke ( \" Hello! \" );"
 },
 {
 "h2": "RAG with Hanzo"
 },
 {
-"code": "from langchain_openai import ChatOpenAI , OpenAIEmbeddings embeddings = OpenAIEmbeddings ( openai_api_key= \" your-hanzo-api-key \" , openai_api_base= \" https://api.hanzo.ai/v1 \" , model= \" openai/text-embedding-3-large \" , ) llm = ChatOpenAI ( model= \" zen4-pro \" , openai_api_key= \" your-hanzo-api-key \" , openai_api_base= \" https://api.hanzo.ai/v1 \" , )"
+"code": "from langchain_openai import ChatOpenAI , OpenAIEmbeddings embeddings = OpenAIEmbeddings ( openai_api_key= \" your-hanzo-api-key \" , openai_api_base= \" https://api.hanzo.ai/v1 \" , model= \" zen-embedding \" , ) llm = ChatOpenAI ( model= \" zen6 \" , openai_api_key= \" your-hanzo-api-key \" , openai_api_base= \" https://api.hanzo.ai/v1 \" , )"
 },
 {
 "h2": "Ready to get started?"

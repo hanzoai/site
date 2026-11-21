@@ -10,10 +10,11 @@
     "preview": "node scripts/serve.ts 4181",
     "capture": "python3 scripts/capture.py",
     "extract": "python3 scripts/extract.py",
-    "test": "node --test lib/webmcp.test.ts lib/desktop.test.ts scripts/catalog.test.ts scripts/nav-unique.test.ts scripts/plans.test.ts scripts/oss.test.ts scripts/heat.test.ts scripts/investors.test.ts components/lab.test.ts components/pages/BuyingSpecialist.test.ts components/pages/Calculator.test.ts components/pages/Reviews.test.ts components/pages/BetaApply.send.test.ts components/pages/Careers.apply.test.ts components/pages/ContactSales.send.test.ts",
+    "test": "node --test lib/webmcp.test.ts lib/desktop.test.ts scripts/catalog.test.ts scripts/nav-unique.test.ts scripts/routes.test.ts scripts/plans.test.ts scripts/oss.test.ts scripts/heat.test.ts scripts/investors.test.ts components/lab.test.ts components/pages/BuyingSpecialist.test.ts components/pages/Calculator.test.ts components/pages/Reviews.test.ts components/pages/BetaApply.send.test.ts components/pages/Careers.apply.test.ts components/pages/ContactSales.send.test.ts",
     "film:categories": "node scripts/film-categories.ts",
     "events": "node scripts/events.ts",
-    "ladder": "node scripts/ladder.ts"
+    "ladder": "node scripts/ladder.ts",
+    "e2e": "playwright test -c e2e/playwright.config.ts"
   },
   "dependencies": {
     "@hanzo/appearance": "0.2.15",
@@ -31,6 +32,7 @@
     "node": ">=22.18"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "puppeteer-core": "^23.11.1",

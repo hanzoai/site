@@ -24,6 +24,7 @@ import useCalm from '../v2/useCalm';
 import { WORKFLOWS, TOOLS } from './Bot.data';
 import type { FaceProps } from './bot/types';
 import { play } from '../../lib/sound';
+import { APP } from '../../lib/app';
 import '../v2/AppType.css';
 import './Bot.css';
 import { PLANS as PLAN, FLOOR, checkout, usd } from '../../lib/plans';
@@ -670,7 +671,7 @@ function Tools() {
           </div>
           {TOOL_KINDS.map(([c, list], i) => (
             <ul key={c} id={'bt-tc' + i} role="tabpanel" aria-labelledby={'bt-tt' + i} className="bt-names" hidden={i !== cat}>
-              {list.map(([f, n]) => <li key={f} data-cell=""><span className="bt-logo"><b aria-hidden="true">{n.replace(/[^A-Za-z0-9]/g, '').slice(0, 1)}</b><Pic src={`https://hanzo.ai/connectors/${f}.png`} alt={n} /></span><span>{n}</span><i aria-hidden="true">✓</i></li>)}
+              {list.map(([f, n]) => <li key={f} data-cell=""><span className="bt-logo"><b aria-hidden="true">{n.replace(/[^A-Za-z0-9]/g, '').slice(0, 1)}</b><Pic src={`${APP}/connectors/${f}.png`} alt={n} /></span><span>{n}</span><i aria-hidden="true">✓</i></li>)}
             </ul>
           ))}
         </div>

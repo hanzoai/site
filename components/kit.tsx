@@ -19,11 +19,12 @@ import { EASE, Words, Rise, Magnetic, Copy } from './ui';
 import { href } from '../lib/route';
 import { SPRING } from '../lib/motion';
 
-/* A link that stays inside the site when it can. */
+/* A link that stays inside the site when it can. It is not prefetched as it scrolls into view: that preloaded the CSS of every page in
+   sight, which Chrome warns about when the page is not opened. Morph's `warm` fetches a page on the pointer's way to its link. */
 export function A({ to, children, className, ...rest }: Omit<ComponentPropsWithRef<'a'>, 'href'> & { to?: string }) {
   const h = to === undefined ? undefined : href(to);
   // a bare link, no wrapper: pages lay links out as grid and flex items, and Morph and Cursor read the <a> itself
-  if (h && h.startsWith('/')) return <Link href={h} className={className} {...rest}>{children}</Link>;
+  if (h && h.startsWith('/')) return <Link href={h} prefetch={false} className={className} {...rest}>{children}</Link>;
   const ext = h && !h.startsWith('https://hanzo.ai');
   return <a href={h} className={className} {...(ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})} {...rest}>{children}</a>;
 }

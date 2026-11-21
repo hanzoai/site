@@ -44,7 +44,7 @@
 "h2": "DSPy + Hanzo setup"
 },
 {
-"code": "pip install dspy import dspy lm = dspy . LM ( model= \" openai/zen4-pro \" , api_key= \" your-hanzo-api-key \" , api_base= \" https://api.hanzo.ai/v1 \" , ) dspy . configure ( lm=lm )"
+"code": "pip install dspy import dspy lm = dspy . LM ( model= \" openai/zen6 \" , api_key= \" your-hanzo-api-key \" , api_base= \" https://api.hanzo.ai/v1 \" , ) dspy . configure ( lm=lm )"
 },
 {
 "h2": "Signature and module"

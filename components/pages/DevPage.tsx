@@ -400,7 +400,7 @@ function Places() {
 }
 
 /* ---------- 4. how it works: sheets that stack ---------- */
-const PICKS = [['dev', '# enso-auto, through api.hanzo.ai', 'enso-auto'], ['dev --model enso-ultra', '# name any model Hanzo serves', 'enso-ultra'], ['/model zen5-coder', '# or switch inside a session', 'zen5-coder']];
+const PICKS = [['dev', '# enso-auto, through api.hanzo.ai', 'enso-auto'], ['dev --model enso-ultra', '# name any model Hanzo serves', 'enso-ultra'], ['/model zen6-coder', '# or switch inside a session', 'zen6-coder']];
 const LADDER = [
   ['An action applies', 'One candidate, its preconditions hold: it runs, and no model is asked.'],
   ['Kai decides', 'Where to fix, what to do and how hard to try, asked of Kai in one structured call.'],

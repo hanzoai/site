@@ -44,19 +44,19 @@
 "h2": "Haystack + Hanzo"
 },
 {
-"code": "pip install haystack-ai from haystack . components . generators . chat import OpenAIChatGenerator from haystack . dataclasses import ChatMessage from haystack . utils import Secret generator = OpenAIChatGenerator ( model= \" zen4-pro \" , api_key=Secret . from_token ( \" your-hanzo-api-key \" ), api_base_url= \" https://api.hanzo.ai/v1 \" , ) messages = [ ChatMessage . from_user ( \" What is RAG? \" )] result = generator . run ( messages=messages )"
+"code": "pip install haystack-ai from haystack . components . generators . chat import OpenAIChatGenerator from haystack . dataclasses import ChatMessage from haystack . utils import Secret generator = OpenAIChatGenerator ( model= \" zen6 \" , api_key=Secret . from_token ( \" your-hanzo-api-key \" ), api_base_url= \" https://api.hanzo.ai/v1 \" , ) messages = [ ChatMessage . from_user ( \" What is RAG? \" )] result = generator . run ( messages=messages )"
 },
 {
 "h2": "RAG pipeline"
 },
 {
-"code": "from haystack import Pipeline from haystack . components . builders import PromptBuilder from haystack . components . generators . chat import OpenAIChatGenerator prompt_template = \"\"\" Context: {% for doc in documents %}{{ doc.content }}{% endfor %} Question: {{ question }} Answer: \"\"\" pipeline = Pipeline () pipeline . add_component ( \" prompt \" , PromptBuilder ( template=prompt_template )) pipeline . add_component ( \" llm \" , OpenAIChatGenerator ( model= \" zen4-pro \" , api_key=Secret . from_token ( \" your-hanzo-api-key \" ), api_base_url= \" https://api.hanzo.ai/v1 \" , ))"
+"code": "from haystack import Pipeline from haystack . components . builders import PromptBuilder from haystack . components . generators . chat import OpenAIChatGenerator prompt_template = \"\"\" Context: {% for doc in documents %}{{ doc.content }}{% endfor %} Question: {{ question }} Answer: \"\"\" pipeline = Pipeline () pipeline . add_component ( \" prompt \" , PromptBuilder ( template=prompt_template )) pipeline . add_component ( \" llm \" , OpenAIChatGenerator ( model= \" zen6 \" , api_key=Secret . from_token ( \" your-hanzo-api-key \" ), api_base_url= \" https://api.hanzo.ai/v1 \" , ))"
 },
 {
 "h2": "Embeddings"
 },
 {
-"code": "from haystack . components . embedders import OpenAITextEmbedder embedder = OpenAITextEmbedder ( model= \" openai/text-embedding-3-large \" , api_key=Secret . from_token ( \" your-hanzo-api-key \" ), api_base_url= \" https://api.hanzo.ai/v1 \" , )"
+"code": "from haystack . components . embedders import OpenAITextEmbedder embedder = OpenAITextEmbedder ( model= \" zen-embedding \" , api_key=Secret . from_token ( \" your-hanzo-api-key \" ), api_base_url= \" https://api.hanzo.ai/v1 \" , )"
 },
 {
 "h2": "Install"

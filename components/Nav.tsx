@@ -6,6 +6,7 @@
    links; Tab past the last link closes it and goes on to the next heading; Shift+Tab from the first link goes back to
    the heading; Escape closes and returns focus. The items and words are Hanzo's own (lib/nav.js); pages add nothing. */
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react';
+import { APP } from '../lib/app';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence, type MotionStyle } from 'motion/react';
@@ -33,7 +34,7 @@ function Item({ l, head, i, onGo, onPeek }: { l: NavLink; head: string; i: numbe
   return (
     <motion.li initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE, delay: 0.04 + i * 0.018 }}>
       {isLocal(l.href)
-        ? <Link href={l.href} className={cls} onClick={onGo} {...peek}>{body}</Link>
+        ? <Link href={l.href} prefetch={false} className={cls} onClick={onGo} {...peek}>{body}</Link>
         : <a href={l.href} className={cls} onClick={onGo} {...peek} {...(l.ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{body}</a>}
     </motion.li>
   );
@@ -379,7 +380,7 @@ export default function Nav({ headerRef }: { headerRef: Shell }) {
             transition={{ duration: 0.7, ease: EASE }}
           >
             <div className="x-sheet-top">
-              <Link href="/" className="x-sheet-home" onClick={close} aria-label="Hanzo AI home">Hanzo AI</Link>
+              <Link href="/" prefetch={false} className="x-sheet-home" onClick={close} aria-label="Hanzo AI home">Hanzo AI</Link>
               <button type="button" className="x-sheet-s" onClick={search} aria-label="Search Hanzo or ask AI">
                 <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="m13.2 13.2 3.6 3.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
               </button>
@@ -401,7 +402,7 @@ export default function Nav({ headerRef }: { headerRef: Shell }) {
                 </motion.li>
               ))}
               <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE, delay: 0.5 }}>
-                <Link href="/pricing" className="x-sheet-b" onClick={close}>Pricing</Link>
+                <Link href="/pricing" prefetch={false} className="x-sheet-b" onClick={close}>Pricing</Link>
               </motion.li>
             </ul>
             {/* pinned under the thumb: Hanzo's own Log in choices and its ask, in the header's words */}
@@ -410,7 +411,7 @@ export default function Nav({ headerRef }: { headerRef: Shell }) {
               <div className="x-sheet-login">
                 {LOGIN.map((l) => <a key={l.label} href={l.href} onClick={close}><b>{l.label}</b><span>{l.sub}</span></a>)}
               </div>
-              <a href="https://hanzo.ai/signup" className="x-btn solid lg x-sheet-ask" onClick={close}>Try Hanzo</a>
+              <a href={`${APP}/signup`} className="x-btn solid lg x-sheet-ask" onClick={close}>Try Hanzo</a>
             </motion.div>
           </motion.nav>
         )}

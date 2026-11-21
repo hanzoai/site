@@ -52,9 +52,8 @@ hanzo.ai's sitemap, plus the home page) and adds 9 sign-up and checkout pages. F
 - **The rest of the page:** Backed by / Trusted by logo marquees, open source as a bento (tiles, commit calendar,
   repository cards), then pricing from `lib/plans.js`. Switching Personal, Team or API replays the plans' entrance.
 - **An "On this page" index** sits on the right edge. It is written from the section headings and jumps to any section.
-- **Arrival curtain.** On a first visit to the home page, Hanzo's mark assembles on black, then lifts within 700 ms
-  (`components/arrival.js`). It is skipped for 7 days after that, on deep links, with Save-Data or 2G/3G, under reduced
-  motion, and for bots.
+- **No arrival curtain.** The home page paints at once on a first visit: the mark-on-black hold (420 to 700 ms) it had cost
+  the largest paint more than the half second a page may take.
 
 ### Every page
 

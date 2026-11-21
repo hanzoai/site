@@ -44,19 +44,19 @@
 "h2": "OpenAI SDK"
 },
 {
-"code": "npm install openai import OpenAI from \" openai \" ; const client = new OpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : process.env.HANZO_API_KEY , }); const response = await client.chat.completions. create ({ model : \" zen4-pro \" , messages : [{ role : \" user \" , content : \" Hello! \" }], }); console. log ( response.choices [ 0 ] .message.content );"
+"code": "npm install openai import OpenAI from \" openai \" ; const client = new OpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : process.env.HANZO_API_KEY , }); const response = await client.chat.completions. create ({ model : \" zen6 \" , messages : [{ role : \" user \" , content : \" Hello! \" }], }); console. log ( response.choices [ 0 ] .message.content );"
 },
 {
 "h2": "Streaming"
 },
 {
-"code": "const stream = await client.chat.completions. create ({ model : \" zen4-pro \" , messages : [{ role : \" user \" , content : \" Stream this \" }], stream : true , }); for await ( const chunk of stream ) { process.stdout. write ( chunk.choices [ 0 ] ?.delta?.content ?? \"\" ); }"
+"code": "const stream = await client.chat.completions. create ({ model : \" zen6 \" , messages : [{ role : \" user \" , content : \" Stream this \" }], stream : true , }); for await ( const chunk of stream ) { process.stdout. write ( chunk.choices [ 0 ] ?.delta?.content ?? \"\" ); }"
 },
 {
 "h2": "Next.js route"
 },
 {
-"code": "// app/v1/generate/route.ts import OpenAI from \" openai \" ; import { NextResponse } from \" next/server \" ; const client = new OpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : process.env.HANZO_API_KEY , }); export async function POST ( req: Request ) { const { prompt } = await req. json (); const response = await client.chat.completions. create ({ model : \" zen4-pro \" , messages : [{ role : \" user \" , content : prompt }], }); return NextResponse. json ( response.choices [ 0 ] .message ); }"
+"code": "// app/v1/generate/route.ts import OpenAI from \" openai \" ; import { NextResponse } from \" next/server \" ; const client = new OpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : process.env.HANZO_API_KEY , }); export async function POST ( req: Request ) { const { prompt } = await req. json (); const response = await client.chat.completions. create ({ model : \" zen6 \" , messages : [{ role : \" user \" , content : prompt }], }); return NextResponse. json ( response.choices [ 0 ] .message ); }"
 },
 {
 "h2": "List models"

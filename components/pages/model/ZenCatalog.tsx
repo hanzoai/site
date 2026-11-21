@@ -40,14 +40,14 @@ const EMPH: [number, number, number, number] = [0.16, 1, 0.3, 1];
 const EXIT: [number, number, number, number] = [0.4, 0, 0.2, 1];
 const GLIDE = { duration: T.base, ease: EMPH };
 
-const NAMES = ['zen6', 'zen6-flash', 'zen5-coder'];
+const NAMES = ['zen6', 'zen6-flash', 'zen6-coder'];
 const code = (m: string) => `from hanzoai import Hanzo
 
 client = Hanzo()
 
 # Use any Zen model
 response = client.chat.completions.create(
-    model="${m}",           # or zen6-flash, zen5-coder, etc.
+    model="${m}",           # or zen6-flash, zen6-coder, etc.
     messages=[{"role": "user", "content": "Hello!"}],
 )
 print(response.choices[0].message.content)`;

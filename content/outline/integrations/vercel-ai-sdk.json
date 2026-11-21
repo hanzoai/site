@@ -50,13 +50,13 @@
 "h2": "generateText"
 },
 {
-"code": "import { generateText } from \" ai \" ; import { createOpenAI } from \" @ai-sdk/openai \" ; const hanzo = createOpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : process.env.HANZO_API_KEY , }); const { text } = await generateText ({ model : hanzo ( \" zen4-pro \" ), prompt : \" Write a poem about AI \" , });"
+"code": "import { generateText } from \" ai \" ; import { createOpenAI } from \" @ai-sdk/openai \" ; const hanzo = createOpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : process.env.HANZO_API_KEY , }); const { text } = await generateText ({ model : hanzo ( \" zen6 \" ), prompt : \" Write a poem about AI \" , });"
 },
 {
 "h2": "Streaming route handler"
 },
 {
-"code": "// app/v1/chat/route.ts import { streamText } from \" ai \" ; import { createOpenAI } from \" @ai-sdk/openai \" ; const hanzo = createOpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : process.env.HANZO_API_KEY , }); export async function POST ( req: Request ) { const { messages } = await req. json (); const result = streamText ({ model : hanzo ( \" zen4-pro \" ), messages , }); return result. toDataStreamResponse (); }"
+"code": "// app/v1/chat/route.ts import { streamText } from \" ai \" ; import { createOpenAI } from \" @ai-sdk/openai \" ; const hanzo = createOpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : process.env.HANZO_API_KEY , }); export async function POST ( req: Request ) { const { messages } = await req. json (); const result = streamText ({ model : hanzo ( \" zen6 \" ), messages , }); return result. toDataStreamResponse (); }"
 },
 {
 "h2": "useChat hook"

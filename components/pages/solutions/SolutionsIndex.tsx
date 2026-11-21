@@ -90,10 +90,10 @@ function Tile({ it, d, w, k, n }: { it: Item; d: Near; w: number; k: number; n: 
   const [mid, setMid] = useState(false);
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches || !li.current) return;
-    const io = new IntersectionObserver(([x]) => { setMid(x.isIntersecting); if (x.isIntersecting) prefetchTile(it.href, router); }, { rootMargin: '-49% -44% -49% -44%' });
+    const io = new IntersectionObserver(([x]) => setMid(x.isIntersecting), { rootMargin: '-49% -44% -49% -44%' });
     io.observe(li.current);
     return () => io.disconnect();
-  }, [it.href, router]);
+  }, []);
   return (
     <motion.li ref={li} layout="position" className={'xso-tile w' + w + (mid ? ' mid' : '')} style={{ '--k': k } as CSSProperties}
       initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.22 } }}

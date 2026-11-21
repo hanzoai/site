@@ -4,7 +4,7 @@
      that gives it its canonical link, share card (Open Graph, X) and schema.org data.
    - Styles load in this order: @hanzo/tokens' css, globals.css, system.css (the site's roles and states), the page's own CSS,
      then Hanzo's hanzo.css (a <link>, so last: where it states a token differently, it wins).
-   - Layers mounted once here: arrival, progress, morph (page transitions), the phone ask, the sound kit, the phone
+   - Layers mounted once here: progress, morph (page transitions), the phone ask, the sound kit, the phone
      layer. No cursor label: nothing floats over content (MASTER 3.3). */
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
@@ -22,7 +22,6 @@ import Morph from '../components/Morph';
 import Phone from '../components/Phone';
 import Ask from '../components/Ask';
 import Sound from '../components/Sound';
-import { ARRIVE } from '../components/arrival';
 import Appearance from '../components/Appearance';
 import Telemetry from '../components/Telemetry';
 import OneTap from '../components/OneTap';
@@ -61,9 +60,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: BOOT }} />
         {/* Hanzo's own stylesheet: their header, footer and page content render exactly as they ship them */}
         <link rel="stylesheet" href={HANZO_CSS} />
-        {/* both faces preload, and both use font-display: block, so text paints once in Zen: no visible swap */}
+        {/* Zen (the words) preloads high, Zen Mono (the labels) low; hanzo.css swaps both in over the stand-ins in system.css */}
+        {/* the way in is hanzo.app: its connection is open before the first press */}
+        <link rel="preconnect" href="https://hanzo.app" />
         <link rel="preload" href="/fonts/Zen-Variable.woff2" as="font" type="font/woff2" crossOrigin="" />
-        <link rel="preload" href="/fonts/ZenMono-Variable.woff2" as="font" type="font/woff2" crossOrigin="" />
+        <link rel="preload" href="/fonts/ZenMono-Variable.woff2" as="font" type="font/woff2" crossOrigin="" fetchPriority="low" />
         {/* html.js is set before first paint when JS runs, so pages can hide entrance states only then:
             .js .my-step:not(.on) { opacity: 0 }  →  with JS off every step stays readable */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
@@ -79,8 +80,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         {/* the first tab stop: jumps past the header to the page */}
         <a href="#main" className="x-skip">Skip to content</a>
-        {/* arrival: runs before React, outside <body>; see components/arrival.js */}
-        <script dangerouslySetInnerHTML={{ __html: ARRIVE }} />
         <Smooth>
           <OpenerProvider>
             <Appearance />

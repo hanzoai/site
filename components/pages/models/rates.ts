@@ -6,10 +6,8 @@
 export const ROWS = [
   ['enso-auto', 'Enso Auto', 0.33, 1.65, 900000], ['enso-flash', 'Enso Flash', 0.33, 1.65, 900000],
   ['enso-pro', 'Enso Pro', 3.3, 16.5, 1000000], ['enso-max', 'Enso Max', 4.3, 21.5, 1000000], ['enso-ultra', 'Enso Ultra', 5.236, 26.18, 1000000],
-  ['zen6', 'Zen6', 0.6, 2.4, 1048576], ['zen6-flash', 'Zen6 Flash', 0.6, 2.4, 1048576], ['zen6-coder', 'Zen6 Coder', 1.65, 13, 1048576],
+  ['zen6', 'Zen6', 0.6, 2.4, 1048576], ['zen6-flash', 'Zen6 Flash', 0.15, 0.6, 1048576], ['zen6-coder', 'Zen6 Coder', 1.65, 13, 1048576],
   ['zen6-free', 'Zen6 Free', 0, 0, 1000000], ['zen6-max', 'Zen6 Max', 28, 168, 1048576],
-  ['zen5', 'Zen5', 0, 0, 1000000], ['zen5-pro', 'Zen5 Pro', 0, 0, 1000000], ['zen5-coder', 'Zen5 Coder', 0, 0, 1000000], ['zen5-flash', 'Zen5 Flash', 0, 0, 1000000],
-  ['zen5-evo', 'Zen5 Evo', 0, 0, 1000000], ['zen5-mini', 'Zen5 Mini', 0, 0, 1000000], ['zen5-spark', 'Zen5 Spark', 0, 0, 1000000],
   ['zen-vl', 'Zen VL — Vision-Language', 0, 0, 1000000], ['zen-embedding', 'Zen Embedding', 0.01, 0.01, 32768], ['zen-embedding-3', 'Zen Embedding 3', 0.17, 0.17, 32768],
   ['zen-free', 'Zen Free', 0, 0, 1000000], ['zen-guard', 'Zen Guard — Content Safety', 0, 0, 128000], ['zen-scribe', 'Zen Scribe', null, null, null], ['zen-voice-mini', 'Zen Voice Mini', null, null, null],
   ['kai', 'Kai', 0.021, 0, 32768], ['hanzo/zen', 'Zen', 0, 0, 1000000],

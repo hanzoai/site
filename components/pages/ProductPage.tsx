@@ -37,7 +37,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { KeyboardEvent as RKeyboardEvent, RefObject } from 'react';
 import { useInView, motion } from 'motion/react';
-import { useRouter } from 'next/navigation';
 import { Copy, Magnetic, useCalm } from '../ui';
 import { A, More } from '../kit';
 import Sigil from '../Sigil';
@@ -288,16 +287,10 @@ function Measured({ m }: { m: NonNullable<Product['measured']> }) {
 }
 
 export default function ProductPage({ p, peek = {} }: { p: Product; peek?: Record<string, Peek> }) {
-  const router = useRouter();
   useEnter('.xpd');
   const nums = [p.api.ops.length, p.os.length, ...(p.measured ? p.measured.links.flatMap((l) => (l.text.match(/\d[\d,]*(?:\.\d+)?/g) || []).map((x) => +x.replace(/,/g, ''))) : [])];
   const intro = (function flat(ns: Child[]): string { return ns.map((x) => (typeof x === 'string' ? x : flat(x.c || []))).join(''); })(p.intro).replace(/\s+/g, ' ').trim();
   const sents = split(intro);
-  // the other layers are fetched while you read, so a row opens its page at once (the title flies into its h1)
-  useEffect(() => {
-    const t = setTimeout(() => p.os.filter((o) => !o.current).forEach((o) => router.prefetch(o.href)), 1500);
-    return () => clearTimeout(t);
-  }, [p.slug]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <main className="v2f xpd">
       <section className="xpd-hero" aria-labelledby="xpd-h1" data-ask-name={p.title}>

@@ -1,0 +1,25 @@
+import { defineConfig } from '@playwright/test'
+import { join } from 'node:path'
+import { BASE, OUT } from './env'
+
+
+/**
+ * One harness, four projects: `pages` is the sweep of every route (sweep.spec.ts), `edge` holds the address
+ * variants (edge.spec.ts), the model ids (models.spec.ts) and the phone header (phone.spec.ts), `perf` times a cold open of each page (perf.spec.ts, run alone with one worker), `links` resolves every link `pages` met (links.spec.ts, after it). Modest by default:
+ * four workers, because it runs against the live site.
+ */
+export default defineConfig({
+  testDir: '.',
+  outputDir: join(OUT, 'results'),
+  workers: 4,
+  retries: 0,
+  timeout: 120_000,
+  reporter: [['list', { printSteps: false }], [join(import.meta.dirname, 'report.ts'), { out: OUT }]],
+  use: { baseURL: BASE, actionTimeout: 10_000 },
+  projects: [
+    { name: 'edge', testMatch: ['edge.spec.ts', 'models.spec.ts', 'phone.spec.ts'] },
+    { name: 'pages', testMatch: 'sweep.spec.ts', use: { browserName: 'chromium' } },
+    { name: 'perf', testMatch: 'perf.spec.ts', dependencies: ['links'], use: { browserName: 'chromium' } },
+    { name: 'links', testMatch: 'links.spec.ts', dependencies: ['pages'] },
+  ],
+})

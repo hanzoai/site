@@ -14,15 +14,15 @@
    app's, which offer their own. */
 import { useEffect } from 'react';
 import { CONSENT_EVENT, POLICY_EVENT, readConsent } from '@hanzo/event';
-import { SIGNIN } from '../lib/app';
+import { APP } from '../lib/app';
 
 /** IAM's provider-google client. Public: it is in the authorize address IAM sends a browser to. */
 export const CLIENT = '113591532635-s8pvqrebprkbndluhftddmdap4htvu1p.apps.googleusercontent.com';
 const SCRIPT = 'https://accounts.google.com/gsi/client';
 /** Where the tap waits for the sign-in page (hanzo-inc/app components/auth/tap.ts `carried`). */
 export const TAP = 'hanzo:tap';
-/** Where a tap signs in: hanzo.ai's sign-in page, landing on Chat at hanzo.app/. */
-const ENTRY = `${SIGNIN}/login`;
+/** Where a tap signs in: hanzo.app's sign-in, which builds its request and goes on to hanzo.ai, landing on Chat at hanzo.app/. */
+const ENTRY = `${APP}/login`;
 
 const offered = () =>
   (location.hostname === 'hanzo.ai' || location.hostname === 'www.hanzo.ai') && navigator.webdriver !== true && readConsent().marketing;

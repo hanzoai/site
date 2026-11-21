@@ -10,6 +10,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboa
 import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence, useDragControls, type HTMLMotionProps } from 'motion/react';
 import { read as readAppearance, write as writeAppearance, apply as applyAppearance, current as currentAppearance, CHANGE as APPEARANCE_CHANGE, type Preference } from '@hanzo/appearance';
+import { hasLiveSession } from '../lib/session';
 import { acceptAll, asks, consentPolicy, consentSheet, CONSENT_EVENT, declined, notice, noticed, POLICY_EVENT, readConsent, rejectAll, saveConsent } from '@hanzo/event';
 import { LOGIN, LANGS, SEARCH, COOKIES } from '../lib/header';
 import { ask } from '../lib/app';
@@ -571,18 +572,6 @@ function Corner({ lang, setLang, router }: { lang: string; setLang: (code: strin
   );
 }
 
-function hasLiveSession() {
-  try {
-    const tok = localStorage.getItem('hanzo_iam_access_token');
-    if (!tok) return false;
-    const exp = Number(localStorage.getItem('hanzo_iam_expires_at') || 0);
-    if (exp && exp < Date.now()) return false;
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 export default function HeaderTools({ headerRef }: { headerRef: Shell }) {
   const [open, setOpen] = useState<'search' | 'lang' | 'login' | null>(null);
   const [lang, setLang] = useState('en-US');
@@ -612,6 +601,9 @@ export default function HeaderTools({ headerRef }: { headerRef: Shell }) {
     const loginBtn = h.querySelector('button[data-slot="login"]') as HTMLButtonElement | null;
     const ctaLink = h.querySelector('a[href="https://hanzo.ai/signup"], a[data-slot="header-primary"]') as HTMLAnchorElement | null;
     if (ctaLink) ctaLink.setAttribute('data-slot', 'header-primary');
+    // phones have no Log in menu (it is the desktop header's): Sign in is a link, for a visitor who is not signed in
+    const signin = h.querySelector<HTMLElement>('a[data-slot="signin"]');
+    if (signin) signin.hidden = signedIn;
     const isTeam = pathname === '/team' || pathname?.startsWith('/team/');
     const isBot = pathname === '/bot' || pathname?.startsWith('/bot/');
 

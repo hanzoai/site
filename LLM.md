@@ -54,6 +54,9 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
   once Hanzo took the answers. A form that keeps its answers in the browser alone is a fake. The bodies are built in
   `*.send.js` / `*.apply.js` beside the page, each with a node test, and checked end to end in a browser with the API
   intercepted (route + fulfill), never against production.
+- A page is served `no-transform` (universe `hashed-pages`): Cloudflare's email obfuscation otherwise rewrites an address in the HTML and
+  React reads text it did not render (error #418). `next/link` does not prefetch as it scrolls into view (`A`, `Nav`): each prefetch makes
+  React preload that page's CSS and Chrome warns it was unused. Morph's `warm` (pointerover, touchstart) is the one prefetch.
 - No sign-in, sign-up, card or code is collected here. Those are hanzo.app's.
 - Copy is Hanzo's: change wording only on purpose.
 - The hero demo draws each device as its product draws itself, in the product's own words: the desktop is @hanzo/app's
@@ -106,26 +109,25 @@ hanzo-inc/app on **hanzo.app**, and this site links there for all of it.
 
 ## One front door
 
-A static export has no redirects of its own: the edge answers every other name for a page of this site, in one hop,
-from hanzo-inc/universe `infra/sites/sites.yaml` (`hanzo-ai`, `hanzo-app`, the `hanzo-names` chain), and
-`scripts/ci/front-door_test.py` there replays it. The whole map of public addresses is universe `docs/urls.md`; a
-new name for a page is added there and in that file, never in a page of this repo.
+A static export has no redirects of its own: every other name for a page of this site answers one hop at the edge, declared in
+hanzo-inc/universe `infra/sites/sites.yaml` and mapped in its `docs/urls.md`; `scripts/ci/front-door_test.py` there pins it and
+`e2e/edge.spec.ts` asks the live site. Add a name for a page there, never in a page of this repo. `hanzo.dev`, `hanzo.io`,
+`hanzo.co` and `hanzo.studio` are not Hanzo's: never link them.
 
-| Intent | The one address | Other names, all one hop |
-|---|---|---|
-| Learn what Hanzo is | `hanzo.ai` | `www.hanzo.ai` (301), `hanzo.ai/index.html`, any trailing slash or `.html` (301) |
-| Sign in / create an account | `hanzo.ai/login`, `hanzo.ai/signup` | `/sign-in`, `/log-in`, `/sign-up`, `/register`, `/get-started`; `hanzo.id`, `id.hanzo.ai`, `login.hanzo.ai`, `signup.hanzo.ai` |
-| Pricing, download, careers, team | `/pricing`, `/download`, `/careers`, `/team` | `/plans`, `/price`, `/downloads`, `/jobs`, `/hiring`, `/teams`, `jobs.hanzo.ai`, `careers.hanzo.ai` |
-| Browser extension, news | `/extension`, `/blog` | `/extensions`, `/browser`, `/news` |
-| Contact, about, sales | `/contact`, `/about`, `/contact-sales` | `/contact-us`, `/about-us`, `/sales`, `/demo`, `/book-a-demo`, `sales.hanzo.ai`, `contact.hanzo.ai` |
-| Legal | `/privacy`, `/terms`, `/cookies` | `/privacy-policy`, `/terms-of-service`, `/tos`, `/terms-and-conditions`, `/cookie-policy` |
-| Docs | `docs.hanzo.ai` | `/docs`, `/documentation`, `/doc`, `/developers` |
-| Chat, Dev, Studio, account, rooms | `hanzo.app` (`/dev`, `/studio`, `/account`, ...) | `hanzo.ai/chat?q=`, a deep `/dev?run=`, every app room on `hanzo.ai`; `hanzo.build`, `build.hanzo.ai` |
-| Billing | `platform.hanzo.ai/billing` | `hanzo.app/billing` |
-| Elsewhere | `github.com/hanzoai`, `x.com/hanzoai`, `discord.gg/XthHQQj` | `/github`, `/x`, `/twitter`, `/discord` |
+## The sweep: `e2e/`
 
-`hanzo.dev`, `hanzo.io`, `hanzo.co` and `hanzo.studio` are not Hanzo's: never link them. `/admin` answers 404 until the owner
-says which admin it is (universe `docs/urls.md`, open question 7).
+`pnpm e2e` holds the live site (`BASE_URL`, default https://hanzo.ai) to no error, no warning, no broken thing. Projects: `pages`
+(`sweep.spec.ts`: every route x 1440 / 390 x light / dark, cold: console, requests, images, fonts, overflow, tap targets, links to
+nowhere, head, weight, every button pressed once), `edge` (address variants, the 404, model ids, the phone header), `links` (every
+link `pages` met, once), `perf` (cold open, best of three, last and alone). `--grep` narrows a run (`'^/pricing '`, `'mobile dark'`);
+`e2e/.out/findings.json` is the table. The harness blocks telemetry and answers any non-GET with 204, and does not report what the
+browser or Next cancels (a closed menu's request, a buffered video, a scrolled-away HEAD prefetch).
+
+Routes are derived (`e2e/routes.ts`): the `page.tsx` files under `app/`, and for `[slug]` and `[...mod]` the members of `lib/routes.json`
+(two per family). `scripts/routes.test.ts`, in `pnpm test`, fails when a page is unlisted or a listed route has no page. A short address
+of another page is in `lib/unlisted.json` and names that page as its canonical. Model ids in a sample are ones `GET /v1/models` serves;
+`/zen/models` still lists the five Zen 5 rows, whose bars need Zen 6's published sizes. The phone header's Sign in is a line in
+`content/shell.ts` (the captured header; `scripts/extract.py` would drop it).
 
 ## Ship
 

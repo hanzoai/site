@@ -44,13 +44,13 @@
 "h2": "Basic setup"
 },
 {
-"code": "pip install llama-index llama-index-llms-openai from llama_index . llms . openai import OpenAI from llama_index . core import Settings Settings . llm = OpenAI ( model= \" zen4-pro \" , api_key= \" your-hanzo-api-key \" , api_base= \" https://api.hanzo.ai/v1 \" , )"
+"code": "pip install llama-index llama-index-llms-openai from llama_index . llms . openai import OpenAI from llama_index . core import Settings Settings . llm = OpenAI ( model= \" zen6 \" , api_key= \" your-hanzo-api-key \" , api_base= \" https://api.hanzo.ai/v1 \" , )"
 },
 {
 "h2": "RAG pipeline"
 },
 {
-"code": "from llama_index . core import VectorStoreIndex , SimpleDirectoryReader from llama_index . llms . openai import OpenAI from llama_index . embeddings . openai import OpenAIEmbedding Settings . llm = OpenAI ( model= \" zen4-pro \" , api_key= \" your-hanzo-api-key \" , api_base= \" https://api.hanzo.ai/v1 \" , ) Settings . embed_model = OpenAIEmbedding ( api_key= \" your-hanzo-api-key \" , api_base= \" https://api.hanzo.ai/v1 \" , ) documents = SimpleDirectoryReader ( \" ./data \" ). load_data () index = VectorStoreIndex . from_documents ( documents ) query_engine = index . as_query_engine () response = quer"
+"code": "from llama_index . core import VectorStoreIndex , SimpleDirectoryReader from llama_index . llms . openai import OpenAI from llama_index . embeddings . openai import OpenAIEmbedding Settings . llm = OpenAI ( model= \" zen6 \" , api_key= \" your-hanzo-api-key \" , api_base= \" https://api.hanzo.ai/v1 \" , ) Settings . embed_model = OpenAIEmbedding ( api_key= \" your-hanzo-api-key \" , api_base= \" https://api.hanzo.ai/v1 \" , ) documents = SimpleDirectoryReader ( \" ./data \" ). load_data () index = VectorStoreIndex . from_documents ( documents ) query_engine = index . as_query_engine () response = quer"
 },
 {
 "h2": "Chat engine"

@@ -44,13 +44,13 @@
 "h2": "~/.continue/config.json"
 },
 {
-"code": "{ \" models \" : [ { \" title \" : \" Hanzo zen4-pro \" , \" provider \" : \" openai \" , \" model \" : \" zen4-pro \" , \" apiKey \" : \" your-hanzo-api-key \" , \" apiBase \" : \" https://api.hanzo.ai/v1 \" }, { \" title \" : \" Hanzo zen4-coder \" , \" provider \" : \" openai \" , \" model \" : \" zen4-coder \" , \" apiKey \" : \" your-hanzo-api-key \" , \" apiBase \" : \" https://api.hanzo.ai/v1 \" } ], \" tabAutocompleteModel \" : { \" title \" : \" Hanzo Autocomplete \" , \" provider \" : \" openai \" , \" model \" : \" zen4-coder \" , \" apiKey \" : \" your-hanzo-api-key \" , \" apiBase \" : \" https://api.hanzo.ai/v1 \" } }"
+"code": "{ \" models \" : [ { \" title \" : \" Hanzo zen6 \" , \" provider \" : \" openai \" , \" model \" : \" zen6 \" , \" apiKey \" : \" your-hanzo-api-key \" , \" apiBase \" : \" https://api.hanzo.ai/v1 \" }, { \" title \" : \" Hanzo zen6-coder \" , \" provider \" : \" openai \" , \" model \" : \" zen6-coder \" , \" apiKey \" : \" your-hanzo-api-key \" , \" apiBase \" : \" https://api.hanzo.ai/v1 \" } ], \" tabAutocompleteModel \" : { \" title \" : \" Hanzo Autocomplete \" , \" provider \" : \" openai \" , \" model \" : \" zen6-coder \" , \" apiKey \" : \" your-hanzo-api-key \" , \" apiBase \" : \" https://api.hanzo.ai/v1 \" } }"
 },
 {
 "h2": "Embeddings config"
 },
 {
-"code": "{ \" embeddingsProvider \" : { \" provider \" : \" openai \" , \" model \" : \" openai/text-embedding-3-large \" , \" apiKey \" : \" your-hanzo-api-key \" , \" apiBase \" : \" https://api.hanzo.ai/v1 \" } }"
+"code": "{ \" embeddingsProvider \" : { \" provider \" : \" openai \" , \" model \" : \" zen-embedding \" , \" apiKey \" : \" your-hanzo-api-key \" , \" apiBase \" : \" https://api.hanzo.ai/v1 \" } }"
 },
 {
 "h2": "Install Continue"
@@ -62,7 +62,7 @@
 "h2": "Test API"
 },
 {
-"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -d ' {\"model\":\"zen4-coder\",\"messages\":[{\"role\":\"user\",\"content\":\"Complete this: def hello():\"}]} '"
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -d ' {\"model\":\"zen6-coder\",\"messages\":[{\"role\":\"user\",\"content\":\"Complete this: def hello():\"}]} '"
 },
 {
 "h2": "Ready to get started?"

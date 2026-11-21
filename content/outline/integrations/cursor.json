@@ -44,7 +44,7 @@
 "h2": "Cursor settings"
 },
 {
-"code": "// Settings > Models > Add custom model { \" provider \" : \" openai-compatible \" , \" name \" : \" Hanzo AI \" , \" baseUrl \" : \" https://api.hanzo.ai/v1 \" , \" apiKey \" : \" your-hanzo-api-key \" , \" models \" : [ \" zen4-pro \" , \" zen4-max \" , \" openai/gpt-4.1 \" , \" anthropic/claude-sonnet-4-6 \" ] }"
+"code": "// Settings > Models > Add custom model { \" provider \" : \" openai-compatible \" , \" name \" : \" Hanzo AI \" , \" baseUrl \" : \" https://api.hanzo.ai/v1 \" , \" apiKey \" : \" your-hanzo-api-key \" , \" models \" : [ \" zen6 \" , \" zen6-max \" , \" openai/gpt-4.1 \" , \" anthropic/claude-sonnet-4.6 \" ] }"
 },
 {
 "h2": "Available models"
@@ -56,13 +56,13 @@
 "h2": "Test connection"
 },
 {
-"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"model\":\"zen4-pro\",\"messages\":[{\"role\":\"user\",\"content\":\"Hello from Cursor!\"}],\"max_tokens\":50} '"
+"code": "curl https://api.hanzo.ai/v1/chat/completions \\ -H \" Authorization: Bearer $ HANZO_API_KEY \" \\ -H \" Content-Type: application/json \" \\ -d ' {\"model\":\"zen6\",\"messages\":[{\"role\":\"user\",\"content\":\"Hello from Cursor!\"}],\"max_tokens\":50} '"
 },
 {
 "h2": "Tips"
 },
 {
-"code": "# zen4-pro: best for code generation # zen4-coder: specialized code model # zen4-thinking: step-by-step reasoning # openai/gpt-4.1: advanced reasoning # All available at api.hanzo.ai/v1"
+"code": "# zen6: best for code generation # zen6-coder: specialized code model # zen6-max: step-by-step reasoning # openai/gpt-4.1: advanced reasoning # All available at api.hanzo.ai/v1"
 },
 {
 "h2": "Ready to get started?"

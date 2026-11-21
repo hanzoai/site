@@ -44,6 +44,7 @@ html.light { color-scheme: light; } html:not(.light) { color-scheme: dark; }
    while it shows. The container is sized to the frame, so the edge follows the card in every state. A phone keeps
    Google's own placement. */
 #credential_picker_container { background: transparent !important; }
+#credential_picker_container iframe { color-scheme: normal; } /* its page is light: matched, the frame is transparent over a dark page at every width */
 @media (min-width: 640px) {
   #credential_picker_container { top: 8px !important; right: 8px !important; height: auto !important; }
   #credential_picker_container iframe { display: block; clip-path: inset(6px 8px 10px 8px round 24px); }
@@ -177,6 +178,9 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
 .x-hero-stage::before { content: ''; display: block; height: calc(var(--sh) * var(--k)); }
 .x-fit { position: absolute; left: calc((100% - var(--sw) * var(--k)) / 2); top: 0; width: var(--sw); height: var(--sh); transform: scale(var(--k)); transform-origin: 0 0; perspective: 1700px; } /* centred when k stops at 1.15 */
 .x-3d { position: absolute; inset: 0; transform-style: preserve-3d; }
+/* the stage, the deck's dots under it and the setup prompt hanging below both: one grid item */
+.x-hero-show { position: relative; min-width: 0; }
+.x-deck { display: none; }
 .x-ann { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; background: var(--x-fill); border-bottom: 1px solid var(--line); color: var(--ink); font: 500 13.5px/1.3 var(--sans); text-decoration: none; text-align: center; }
 .x-ann svg { flex: none; transition: transform .35s var(--ease); }
 .x-ann:hover svg { transform: translateX(3px); }
@@ -467,19 +471,31 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
   .x-mcard:not(.big) { height: 260px; }
 }
 @media (max-width: 900px) {
-  .x-hero { min-height: 0; padding: 32px 0 64px; }
-  /* one column: the product first, then its words; the gap holds the setup prompt hanging under the stage */
-  .x-hero-grid { grid-template-columns: 1fr; gap: 112px; }
-  .x-hero-stage { order: -1; }
+  .x-hero { min-height: 0; padding: 28px 0 64px; }
+  /* one column: the words and the way in first, then the product (a phone shows the sign-up before the scene); the show's bottom margin holds the setup prompt hanging under the stage */
+  .x-hero-grid { grid-template-columns: 1fr; gap: 36px; }
+  .x-hero-show { margin-bottom: 76px; }
   .x-panels, .x-races, .x-plans.n3, .x-plans.n2 { grid-template-columns: 1fr; }
   .x-modal { grid-template-columns: 1fr; grid-template-rows: 46% 1fr; height: min(720px, 100%); }
 }
 @media (max-width: 640px) {
   .x-wrap { width: min(100% - 28px, var(--wrap)); }
-  .x-hero-stage { --sw: 360px; --sh: 810px; }
-  .x-hero-grid { gap: 86px; }
-  .x-fit { width: 360px; height: 810px; perspective: none; }
-  .x-setup { bottom: -58px; }
+  .x-hero { padding: 20px 0 28px; }
+  .x-hero-grid { gap: 28px; }
+  /* The three devices are a deck: the stage is the scroller (snap, no scrollbar); a slide is --slide wide, --gap from the next,
+     centred in the stage's --sw so the next shows at the edge (components/home/demo.css places them); k scales --sw to the screen. */
+  .x-hero-show { margin: 0 -14px; display: flex; flex-direction: column; align-items: center; }
+  .x-hero-stage { --sw: 390px; --sh: 372px; --slide: 360px; --gap: 12px; --lead: calc((var(--sw) - var(--slide)) / 2); overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .x-hero-stage::-webkit-scrollbar { display: none; }
+  .x-fit { left: 0; width: calc(var(--lead) * 2 + var(--slide) * 3 + var(--gap) * 2); height: var(--sh); perspective: none; }
+  .x-deck { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 10px; }
+  .x-deck-dots { display: flex; gap: 2px; }
+  .x-deck-dot { position: relative; width: 22px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; }
+  .x-deck-dot::before { content: ''; position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 99px; background: var(--faint); opacity: .5; transition: width .24s var(--ease), margin .24s var(--ease), opacity .24s; }
+  .x-deck-dot::after { content: ''; position: absolute; inset: -11px -4px; }
+  .x-deck-dot[aria-current='true']::before { width: 18px; margin-left: -9px; background: var(--ink); opacity: 1; }
+  .x-deck-cap { margin: 0; min-height: 20px; font: 500 13.5px/1.4 var(--sans); color: var(--soft); text-align: center; }
+  .x-hero-show .x-setup { position: relative; left: auto; bottom: auto; translate: 0 0; margin-top: 12px; }
   .x-mgrid { grid-template-columns: 1fr 1fr; gap: 10px; }
   .x-mcard.big { grid-column: span 2; height: 340px; }
   .x-mcard:not(.big) { height: 220px; }
@@ -679,6 +695,15 @@ a.x-mbtn { color: inherit; text-decoration: none; }
   .x-pop-sheet .x-pop-i { min-height: 48px; }
 }
 /* 44 px touch targets for Hanzo's own small header controls, without moving a pixel of their header */
+/* Sign in: the phone header's way in, where the desktop header has its Log in menu (from 1024px up) */
+header a.x-signin { display: inline-flex; align-items: center; height: 34px; padding: 0 10px; border-radius: 999px; font: 500 15px/20px var(--sans); white-space: nowrap; color: inherit; text-decoration: none; position: relative; }
+header a.x-signin[hidden] { display: none; }
+header a.x-signin:hover { background: rgba(127, 127, 127, .14); }
+header a.x-signin::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: max(100%, 44px); transform: translateY(-50%); }
+@media (min-width: 1024px) { header a.x-signin { display: none; } }
+/* the language choice is in the help corner (Corner, "Language") at any width; the phone header gives its room to Sign in */
+@media (max-width: 440px) { header button[data-slot="language"] { display: none; } }
+@media (max-width: 380px) { header a.x-signin { padding: 0 6px; } }
 @media (pointer: coarse) {
   header button[aria-controls="menu-company"] { position: relative; }
   header button[aria-controls="menu-company"]::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }
@@ -780,3 +805,12 @@ html .x-plot[data-tilt][data-lit] { transform: perspective(1200px) rotateX(calc(
 .x-corner-opt[aria-selected='true'] { font-weight: 600; }
 .x-corner-opt small { color: var(--faint); font-weight: 400; margin-left: 4px; }
 @media (pointer: coarse) { .x-corner-item, .x-corner-row, .x-corner-opt { min-height: 44px; } }
+
+/* The phone header's row is 403px wide: tighter from 440px down, and language leaves the row (it stays in the corner menu) from 410px. */
+@media (max-width: 440px) {
+  header[data-slot=masthead] a[aria-label="Hanzo AI home"] { padding-inline: 8px !important; }
+  header[data-slot=masthead] button[aria-label="Search Hanzo or ask AI"] { padding-inline: 8px !important; }
+  header a.x-signin { padding: 0 7px; }
+  header[data-slot=masthead] a[data-slot=header-primary] { padding-inline: 12px !important; }
+}
+@media (max-width: 410px) { header[data-slot=masthead] button[aria-label^="Language"] { display: none; } }

@@ -44,13 +44,13 @@
 "h2": "Hanzo API alongside Copilot"
 },
 {
-"code": "# Use GitHub Copilot in editor, Hanzo API in code from openai import OpenAI # Hanzo for programmatic access client = OpenAI ( base_url= \" https://api.hanzo.ai/v1 \" , api_key= \" your-hanzo-api-key \" , ) # Access the models Copilot does not carry response = client . chat . completions . create ( model= \" zen4-pro \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Review this code... \" }], )"
+"code": "# Use GitHub Copilot in editor, Hanzo API in code from openai import OpenAI # Hanzo for programmatic access client = OpenAI ( base_url= \" https://api.hanzo.ai/v1 \" , api_key= \" your-hanzo-api-key \" , ) # Access the models Copilot does not carry response = client . chat . completions . create ( model= \" zen6 \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Review this code... \" }], )"
 },
 {
 "h2": "GitHub Actions with Hanzo"
 },
 {
-"code": "// In CI: use Hanzo AI for code review import OpenAI from \" openai \" ; const client = new OpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : process.env.HANZO_API_KEY , }); const review = await client.chat.completions. create ({ model : \" zen4-pro \" , messages : [{ role : \" user \" , content : ` Review this PR diff: ${ diff }` , }], });"
+"code": "// In CI: use Hanzo AI for code review import OpenAI from \" openai \" ; const client = new OpenAI ({ baseURL : \" https://api.hanzo.ai/v1 \" , apiKey : process.env.HANZO_API_KEY , }); const review = await client.chat.completions. create ({ model : \" zen6 \" , messages : [{ role : \" user \" , content : ` Review this PR diff: ${ diff }` , }], });"
 },
 {
 "h2": "GitHub Actions workflow"
