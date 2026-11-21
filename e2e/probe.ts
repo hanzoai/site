@@ -290,10 +290,10 @@ export async function pressAll(
           const r = el.getBoundingClientRect()
           const s = getComputedStyle(el)
           if (r.width === 0 || r.height === 0 || s.visibility === 'hidden' || s.display === 'none') return false
-          if ((el as HTMLButtonElement).disabled || el.getAttribute('aria-disabled') === 'true') return false
+          if ((el as HTMLButtonElement).disabled || el.getAttribute('aria-disabled') === 'true' || s.pointerEvents === 'none') return false
           if (el.closest('[aria-hidden=true], [inert]')) return false
           // the option already chosen answers nothing when pressed again
-          if (el.matches('[aria-selected=true], [aria-current], [data-on], [data-active], .on, .active')) return false
+          if (el.matches('[aria-selected=true], [aria-pressed=true], [aria-current], [data-on], [data-active], .on, .active')) return false
           return (scopeName === 'chrome') === inChrome(el)
         })
         .map((el) => el.getAttribute('data-qa')!)
@@ -313,16 +313,28 @@ export async function pressAll(
     const held = await loc.evaluate((el) => { const f = el.closest('form'); return !!f && (el as HTMLButtonElement).type !== 'button' && !f.checkValidity() })
     try {
       await loc.scrollIntoViewIfNeeded({ timeout: 6000 })
-      await loc.click({ timeout: 6000 }).catch(async () => {
+      // where the pointer reaches it: stacked sheets and overlapping cards cover part of a control, not all of it
+      const position = await loc.evaluate((el) => {
+        const r = el.getBoundingClientRect()
+        for (const [fx, fy] of [[0.5, 0.5], [0.25, 0.5], [0.75, 0.5], [0.5, 0.25], [0.5, 0.75], [0.15, 0.15], [0.85, 0.15], [0.15, 0.85], [0.85, 0.85]]) {
+          const x = r.left + r.width * fx
+          const y = r.top + r.height * fy
+          if (x < 0 || y < 0 || x >= innerWidth || y >= innerHeight) continue
+          const at = document.elementFromPoint(x, y)
+          if (at && (el === at || el.contains(at))) return { x: r.width * fx, y: r.height * fy }
+        }
+        return undefined
+      })
+      await loc.click({ timeout: 6000, position }).catch(async () => {
         // busy machines and arrival animations make a first try fail; the second is the answer
         await page.waitForTimeout(1500)
-        await loc.click({ timeout: 10_000 })
+        await loc.click({ timeout: 10_000, position })
       })
     } catch (e) {
       const m = String((e as Error).message)
       const by = m.match(/(<[^>\n]{1,100}>)[^\n]{0,60}?intercepts pointer events/)?.[1]
       if (by) covered.push(`${name} is covered by ${by}`)
-      else if (/not visible|outside of the viewport/.test(m)) covered.push(`${name}: ${m.split('\n')[0].slice(0, 100)}`)
+      else if (/outside of the viewport/.test(m)) covered.push(`${name}: ${m.split('\n')[0].slice(0, 100)}`)
       continue
     }
     // a press is given up to two seconds to answer: a client navigation on a slow machine is not a dead button
