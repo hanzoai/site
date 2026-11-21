@@ -361,6 +361,9 @@ export async function pressAll(
     // a submit on a form that is not yet valid is answered by the browser: it holds the form and focuses the first field to fix
     const validated = await page.evaluate(() => { const a = document.activeElement; return !!a && a.matches?.(':invalid') === true })
     if (!moved(before, after, noise) && !(held && validated)) dead.push(name)
+    // what the press opened (a palette, a dialog, a menu) is closed again, as a person would, before the next press
+    await page.keyboard.press('Escape')
+    await page.waitForTimeout(200)
     if (page.url().split('#')[0] !== start.split('#')[0]) {
       next++
       return { dead, covered, next, left: true, total: ids.length }
