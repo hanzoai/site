@@ -67,7 +67,7 @@ client = OpenAI(
 )
 
 resp = client.chat.completions.create(
-    model="zen5",  # any model on the gateway
+    model="zen6",  # any model on the gateway
     messages=[{"role": "user", "content": "Hello!"}],
 )
 print(resp.choices[0].message.content)`],
@@ -79,7 +79,7 @@ const client = new OpenAI({
 });
 
 const resp = await client.chat.completions.create({
-  model: "zen5",
+  model: "zen6",
   messages: [{ role: "user", content: "Hello!" }],
 });
 console.log(resp.choices[0].message.content);`],
@@ -87,7 +87,7 @@ console.log(resp.choices[0].message.content);`],
   -H "Authorization: Bearer $HANZO_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "model": "zen5",
+    "model": "zen6",
     "messages": [{"role": "user", "content": "Hello!"}]
   }'`],
   },
@@ -101,7 +101,7 @@ client = Anthropic(
 )
 
 msg = client.messages.create(
-    model="zen5",
+    model="zen6",
     max_tokens=1024,
     messages=[{"role": "user", "content": "Hello!"}],
 )
@@ -114,7 +114,7 @@ const client = new Anthropic({
 });
 
 const msg = await client.messages.create({
-  model: "zen5",
+  model: "zen6",
   max_tokens: 1024,
   messages: [{ role: "user", content: "Hello!" }],
 });
@@ -124,7 +124,7 @@ console.log(msg.content[0].text);`],
   -H "anthropic-version: 2023-06-01" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "model": "zen5",
+    "model": "zen6",
     "max_tokens": 1024,
     "messages": [{"role": "user", "content": "Hello!"}]
   }'`],

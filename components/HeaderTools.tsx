@@ -601,6 +601,9 @@ export default function HeaderTools({ headerRef }: { headerRef: Shell }) {
     const loginBtn = h.querySelector('button[data-slot="login"]') as HTMLButtonElement | null;
     const ctaLink = h.querySelector('a[href="https://hanzo.ai/signup"], a[data-slot="header-primary"]') as HTMLAnchorElement | null;
     if (ctaLink) ctaLink.setAttribute('data-slot', 'header-primary');
+    // phones have no Log in menu (it is the desktop header's): Sign in is a link, for a visitor who is not signed in
+    const signin = h.querySelector<HTMLElement>('a[data-slot="signin"]');
+    if (signin) signin.hidden = signedIn;
     const isTeam = pathname === '/team' || pathname?.startsWith('/team/');
     const isBot = pathname === '/bot' || pathname?.startsWith('/bot/');
 

@@ -142,7 +142,7 @@ telemetry of a real visit (the harness aborts `/v1/event` and the analytics scri
 |---|---|---|
 | `pages` | `sweep.spec.ts` | every route x desktop 1440x900 / phone 390x844 x light / dark, cold: console errors and warnings, 4xx/5xx and failed requests, mixed content, broken images, fonts and videos, alt, overflow and text past the screen edge, tap targets (44 px where a finger lands, phone only), links to nowhere, title/lang/canonical, the theme the page wears, files over their weight (still 300 KB, script 500 KB, style 200 KB, film 2 MB), and every button of the page pressed once (desktop light, phone dark): one that changes nothing is dead |
 | `perf` | `perf.spec.ts` | last, alone: each page cold three times in fresh contexts, the fastest counts: first byte 800 ms, load and largest paint 3 s desktop / 4 s phone |
-| `edge` | `edge.spec.ts` | www, http, trailing slash, `.html`, case, the guessed names (universe `docs/urls.md`), the branded 404, and that `app/` and `lib/routes.json` agree |
+| `edge` | `edge.spec.ts`, `models.spec.ts`, `phone.spec.ts` | www, http, trailing slash, `.html`, case, the guessed names (universe `docs/urls.md`), the branded 404, and that `app/` and `lib/routes.json` agree; the model ids on /sdks, /models and /zen/models are ids the gateway serves (no Zen 4, Qwen 2 or Zen 5 in a sample); the phone header shows Sign in beside Try Hanzo and it reaches /login |
 | `links` | `links.spec.ts` | after `pages`: every link it met, once: this site's 200 after at most one redirect; another site's not 404/5xx (401/403/429/999 are listed in `.out/refused.txt`, not counted); mailto/tel well formed |
 
 The routes are derived, never listed (`e2e/routes.ts`): the `page.tsx` files under `app/`, and for `[slug]` and `[...mod]` the
@@ -152,6 +152,11 @@ a short address of another (`lib/unlisted.json`) names that page as its canonica
 `SWEEP_WORKERS`, `SWEEP_OUT` (default `e2e/.out`: `findings.json` is the table, one row per route x width x theme x class).
 The harness counts but does not report Next's HEAD prefetches that are cancelled when their link scrolls out of view, and the media requests a browser closes once it has buffered enough (`ERR_ABORTED` on a `<video>`).
 Run `pnpm exec playwright install chromium` once, and from a worktree whose `node_modules` has `@playwright/test`.
+
+Model ids: a code sample names a model `GET https://api.hanzo.ai/v1/models` serves (zen6, zen6-flash, zen6-coder, zen6-max, enso-*, kai), never zen4, zen5 or qwen2.
+`/zen/models` (`components/pages/model/ZenCatalog.tsx`) still lists the five Zen 5 rows: the gateway publishes no sizes or descriptions for
+Zen 6, and a row's bars are drawn from its parameter counts, so those rows wait for Zen 6's published figures (the owner's).
+The header's phone-only "Sign in" link is a line added to `content/shell.ts` (the captured header; `scripts/extract.py` would drop it).
 
 ## Ship
 

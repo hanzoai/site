@@ -217,13 +217,13 @@ export function buildModelGroups(modelsSnap: Models = SNAP_MODELS): Group[] {
       };
     }),
     {
-      id: 'zen5',
-      name: 'Zen 5 Open Weights',
-      tags: ['zen5', 'apache-2.0'],
-      d: 'Zen 5, Zen 5 Coder (80B MoE), Zen 5 Mini (230B MoE), Zen 5 Pro (284B MoE), Zen VL, and Zen Guard — free open weights.',
+      id: 'zen6',
+      name: 'Zen 6 Open Weights',
+      tags: ['zen6', 'apache-2.0'],
+      d: 'Zen 6, Zen 6 Flash and Zen 6 Nano: free open weights on Hugging Face (zenlm), Apache-2.0.',
       chips: ['Open weights', 'Apache-2.0'],
       price: ['Free', 'Free', 'Free', 'Free'],
-      cta: 'Explore Zen 5',
+      cta: 'Explore Zen 6',
       to: '/zen/models',
     },
     {

@@ -679,6 +679,13 @@ a.x-mbtn { color: inherit; text-decoration: none; }
   .x-pop-sheet .x-pop-i { min-height: 48px; }
 }
 /* 44 px touch targets for Hanzo's own small header controls, without moving a pixel of their header */
+/* Sign in: the phone header's way in, where the desktop header has its Log in menu (from 1024px up) */
+header a.x-signin { display: inline-flex; align-items: center; height: 34px; padding: 0 10px; border-radius: 999px; font: 500 15px/20px var(--sans); white-space: nowrap; color: inherit; text-decoration: none; position: relative; }
+header a.x-signin[hidden] { display: none; }
+header a.x-signin:hover { background: rgba(127, 127, 127, .14); }
+header a.x-signin::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: max(100%, 44px); transform: translateY(-50%); }
+@media (min-width: 1024px) { header a.x-signin { display: none; } }
+@media (max-width: 440px) { header [data-slot="language"] [data-slot="text"] { display: none; } }
 @media (pointer: coarse) {
   header button[aria-controls="menu-company"] { position: relative; }
   header button[aria-controls="menu-company"]::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }

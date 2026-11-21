@@ -293,8 +293,7 @@ const dollars = (v: number | null) => (v == null ? '—' : '$' + (v > 0 && v < 1
    content/live/models/<lab>/, content/live/models.json's price list and /pricing's API tab. Zen6, Zen6 Flash,
    Claude Fable 5, GPT-3.5 Turbo 0613, Grok 4.20, the rest of the Zen6 family, Zen Embedding 3, the creative models and
    Zen 7 print no price of their own, so the rows show none ("—"). Never a guessed price. */
-const PRICED = new Set(['enso-auto', 'enso-flash', 'enso-pro', 'enso-max', 'enso-ultra', 'zen5', 'zen5-pro', 'zen5-coder', 'zen5-flash', 'zen5-mini',
-  'zen-vl', 'zen-embedding', 'zen-guard', 'kai', 'google/gemini-2.5-pro', 'deepseek/deepseek-chat', 'meta/muse-glimmer-30b', 'cohere/command-a']);
+const PRICED = new Set(['enso-auto', 'enso-flash', 'enso-pro', 'enso-max', 'enso-ultra', 'zen-vl', 'zen-embedding', 'zen-guard', 'kai', 'google/gemini-2.5-pro', 'deepseek/deepseek-chat', 'meta/muse-glimmer-30b', 'cohere/command-a', 'zen6', 'zen6-flash', 'zen6-coder', 'zen6-max']);
 const cost = (r: RateRow | undefined, i: 2 | 3) => (!r || !PRICED.has(r[0]) || r[2] == null ? '—' : r[2] === 0 && r[3] === 0 ? 'Free' : dollars(r[i]));
 const side = (v: number | null) => (v === 0 ? 'Free' : dollars(v));
 // a model's own rate as one line, the way Hanzo's model pages print it ("$0.021 in · Free out"); null without a source
@@ -319,10 +318,8 @@ const ENSO: Record<string, Words> = {
 const ZEN: Record<string, Words> = {
   zen6: ['Zen6', '1M', null, ['text']],
   'zen6-flash': ['Zen6 Flash', '1M', null, ['text']],
-  zen5: ['Zen5 (Default)', '1M', 'Canonical Zen5 default. a 35B frontier MoE (3B active) (35B total / 3B active per token, released Apr 2026, Apache-2.0). 256K context, agentic-trained, OpenAI + Anthropic API. The everyday Zen5 chat model.', ['text']],
-  'zen5-pro': ['Zen5 Pro', '1M', 'Zen Flash IQ2_XXS-imatrix weights (81 GB GGUF on zenlm/zen-5-pro-gguf). 284B total / 37B active per token, 1M context, asymmetric routed-MoE quant. Fits a single 128 GB Apple Silicon / DGX Spark / H100 80 GB.', ['text']],
-  'zen5-coder': ['Zen5 Coder', '1M', 'Code-specialized Zen5 tier. 80B sparse MoE tuned for repo-scale code understanding, agentic refactoring, and tool-use coding loops.', ['text']],
-  'zen5-flash': ['Zen5 Flash', '1M', 'Smallest and cheapest text-only Zen5 chat tier. 4B-class dense, sub-100ms TTFT, 32K context. For high-volume routing and simple agent loops.', ['text']],
+  'zen6-coder': ['Zen6 Coder', '1M', null, ['text']],
+  'zen6-max': ['Zen6 Max', '1M', null, ['text']],
   'zen-vl': ['Zen VL — Vision-Language', '1M', 'Reads images and reasons over them — visual Q&A, document and chart understanding, grounded captioning.', ['text']],
   'zen-embedding': ['Zen Embedding', '33K', 'Dense text embeddings for semantic search, retrieval, and clustering.', ['embeddings']],
 };

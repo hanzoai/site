@@ -5,7 +5,7 @@ const OUT = process.env.SWEEP_OUT ?? join(import.meta.dirname, '.out')
 
 /**
  * One harness, four projects: `pages` is the sweep of every route (sweep.spec.ts), `edge` holds the address
- * variants (edge.spec.ts), `perf` times a cold open of each page (perf.spec.ts, run alone with one worker), `links` resolves every link `pages` met (links.spec.ts, after it). Modest by default:
+ * variants (edge.spec.ts), the model ids (models.spec.ts) and the phone header (phone.spec.ts), `perf` times a cold open of each page (perf.spec.ts, run alone with one worker), `links` resolves every link `pages` met (links.spec.ts, after it). Modest by default:
  * four workers, because it runs against the live site.
  */
 export default defineConfig({
@@ -17,7 +17,7 @@ export default defineConfig({
   reporter: [['list', { printSteps: false }], [join(import.meta.dirname, 'report.ts'), { out: OUT }]],
   use: { baseURL: process.env.BASE_URL ?? 'https://hanzo.ai', ignoreHTTPSErrors: false, actionTimeout: 10_000 },
   projects: [
-    { name: 'edge', testMatch: 'edge.spec.ts' },
+    { name: 'edge', testMatch: ['edge.spec.ts', 'models.spec.ts', 'phone.spec.ts'] },
     { name: 'pages', testMatch: 'sweep.spec.ts', use: { browserName: 'chromium' } },
     { name: 'perf', testMatch: 'perf.spec.ts', dependencies: ['links'], use: { browserName: 'chromium' } },
     { name: 'links', testMatch: 'links.spec.ts', dependencies: ['pages'] },
