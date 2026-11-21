@@ -44,7 +44,7 @@ export default function Home({ figures }: { figures: ComponentProps<typeof Figur
       <Pareto />
       <Open />
       <Pricing />
-      <Marquee items={LOGOS.trusted} label="Trusted by" reverse view="trusted" far />
+      <Marquee items={LOGOS.trusted} label="Trusted by" reverse view="trusted" />
     </main>
     </FiguresProvider>
   );

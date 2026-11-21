@@ -11,9 +11,8 @@
    - the phone: hanzo.app on a phone, @hanzo/app's mobile layout (what people use): the bar's round glass buttons, the
      conversation, the composer pinned above the home indicator. hanzo/mobile, the native app, is used only where it
      agrees with it.
-   The day they play is hanzo.ai's own (hero-scenes.json); a scene lights the place it happens in. The page is sent with
-   the one that shows and the places it is in, and the rest are mounted once it has painted (`rest`): they are drawn by
-   the demo and by nothing before it, and a browser parses and styles what it is sent. */
+   The day they play is hanzo.ai's own (hero-scenes.json); a scene lights the place it happens in. Every scene is in the
+   page from the first paint (search engines, screen readers); one shows at a time. */
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { motion } from 'motion/react';
 import AGENTS from '../../content/agents';
@@ -306,7 +305,7 @@ function Side({ sc, onSelectScene }: { sc: number; onSelectScene?: SelectScene }
   );
 }
 
-// The demo reveals what is in the page: the opening is sent with it, the scenes after it once it has painted (`rest`).
+// Every demo part is in the page from the first paint; the demo only reveals them.
 function Bubble({ children, on = true }: { children?: ReactNode; on?: boolean }) {
   return (
     <motion.div className="x-bub me" initial={false} animate={on ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.96 }} aria-hidden={on ? undefined : true} transition={{ type: 'spring', stiffness: 380, damping: 30 }}>
@@ -383,8 +382,6 @@ function Composer({ phase, promptEl, full, typing, onSend }: ComposerProps) {
 }
 
 interface DeskProps {
-  /** The scenes and places after the one shown are mounted: the page has painted. */
-  rest: boolean;
   sc: number;
   navPick?: string | null;
   onSelectScene?: SelectScene;
@@ -394,7 +391,7 @@ interface DeskProps {
   promptEl: RefObject<HTMLSpanElement | null>;
   full: boolean;
 }
-export function Desk({ rest, sc, navPick, onSelectScene, phase, side, onSide, promptEl, full }: DeskProps) {
+export function Desk({ sc, navPick, onSelectScene, phase, side, onSide, promptEl, full }: DeskProps) {
   const basePlace = placeOf(sc);
   const railAt = navPick || basePlace;
   const viewPlace = railAt === 'design' ? 'design' : basePlace;
@@ -411,8 +408,8 @@ export function Desk({ rest, sc, navPick, onSelectScene, phase, side, onSide, pr
     const nextIdx = (curIdx + delta + total) % total;
     onSelectScene?.(nextIdx - 1, null);
   };
-  const view = (p: string, children: ReactNode) => (rest || viewPlace === p) ? <section className="xw-view" data-p={p} aria-hidden={viewPlace === p ? undefined : true}>{children}</section> : null;
-  const scenes = (p: Place) => MORE.map((s, i) => (placeOf(i) === p && (rest || i === sc) ? <Scene key={i} s={s} on={i === sc} /> : null));
+  const view = (p: string, children: ReactNode) => <section className="xw-view" data-p={p} aria-hidden={viewPlace === p ? undefined : true}>{children}</section>;
+  const scenes = (p: Place) => MORE.map((s, i) => (placeOf(i) === p ? <Scene key={i} s={s} on={i === sc} /> : null));
   return (
     <div className={'x-win' + (side ? '' : ' xs-noside')} data-place={viewPlace}>
       <div className="x-win-bar">
@@ -771,14 +768,12 @@ function PhoneComposer({ id }: { id: string }) {
 /* The phone is hanzo.app on an iPhone Duo / Fold (9:16 closed on its right half, turning open on its center hinge via
    3D rotateY(-180deg) into the 9:8 Duo split-screen with hanzo.app on the left half and live maxpower on the right half). */
 interface PhoneProps {
-  /** The scenes after the one shown are mounted: the page has painted. */
-  rest: boolean;
   sc: number;
   navPick?: string | null;
   onSelectScene?: SelectScene;
   phase: number;
 }
-export function Phone({ rest, sc, navPick, onSelectScene, phase }: PhoneProps) {
+export function Phone({ sc, navPick, onSelectScene, phase }: PhoneProps) {
   const [foldPick, setFoldPick] = useState<boolean | null>(null);
   const [pickedArt, setPickedArt] = useState(0);
   const [off, setOff] = useState(() => new Set<string>());
@@ -918,7 +913,7 @@ export function Phone({ rest, sc, navPick, onSelectScene, phase }: PhoneProps) {
         {isInner && <pre className="xm-code x-mono">{OPEN_TRACE.join('\n')}</pre>}
         {duoCard(isInner)}
       </Turn>
-      {MORE.map((s, i) => (rest || i === sc ? renderSceneTurn(s, i, isInner) : null))}
+      {MORE.map((s, i) => renderSceneTurn(s, i, isInner))}
     </>
   );
 
