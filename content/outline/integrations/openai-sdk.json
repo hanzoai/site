@@ -44,7 +44,7 @@
 "h2": "Install & configure"
 },
 {
-"code": "pip install openai from openai import OpenAI client = OpenAI ( api_key= \" your-hanzo-api-key \" , base_url= \" https://api.hanzo.ai/v1 \" , ) response = client . chat . completions . create ( model= \" zen4-pro \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }], ) print ( response . choices [ 0 ]. message . content )"
+"code": "pip install openai from openai import OpenAI client = OpenAI ( api_key= \" your-hanzo-api-key \" , base_url= \" https://api.hanzo.ai/v1 \" , ) response = client . chat . completions . create ( model= \" zen6 \" , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello! \" }], ) print ( response . choices [ 0 ]. message . content )"
 },
 {
 "h2": "Streaming"

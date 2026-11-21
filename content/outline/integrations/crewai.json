@@ -44,7 +44,7 @@
 "h2": "CrewAI with Hanzo"
 },
 {
-"code": "pip install crewai import os os . environ [ \" OPENAI_API_KEY \" ] = \" your-hanzo-api-key \" os . environ [ \" OPENAI_API_BASE \" ] = \" https://api.hanzo.ai/v1 \" os . environ [ \" OPENAI_MODEL_NAME \" ] = \" zen4-pro \" from crewai import Agent , Task , Crew researcher = Agent ( role= \" Researcher \" , goal= \" Find accurate information on AI trends \" , backstory= \" Expert AI researcher with deep knowledge \" , ) writer = Agent ( role= \" Writer \" , goal= \" Write compelling summaries \" , backstory= \" Technical writer specializing in AI \" , )"
+"code": "pip install crewai import os os . environ [ \" OPENAI_API_KEY \" ] = \" your-hanzo-api-key \" os . environ [ \" OPENAI_API_BASE \" ] = \" https://api.hanzo.ai/v1 \" os . environ [ \" OPENAI_MODEL_NAME \" ] = \" zen6 \" from crewai import Agent , Task , Crew researcher = Agent ( role= \" Researcher \" , goal= \" Find accurate information on AI trends \" , backstory= \" Expert AI researcher with deep knowledge \" , ) writer = Agent ( role= \" Writer \" , goal= \" Write compelling summaries \" , backstory= \" Technical writer specializing in AI \" , )"
 },
 {
 "h2": "Tasks and Crew"
@@ -56,7 +56,7 @@
 "h2": "Custom LLM config"
 },
 {
-"code": "from crewai import LLM hanzo_llm = LLM ( model= \" zen4-pro \" , api_key= \" your-hanzo-api-key \" , base_url= \" https://api.hanzo.ai/v1 \" , ) agent = Agent ( role= \" Analyst \" , goal= \" Analyze data \" , backstory= \" Data analyst \" , llm=hanzo_llm , )"
+"code": "from crewai import LLM hanzo_llm = LLM ( model= \" zen6 \" , api_key= \" your-hanzo-api-key \" , base_url= \" https://api.hanzo.ai/v1 \" , ) agent = Agent ( role= \" Analyst \" , goal= \" Analyze data \" , backstory= \" Data analyst \" , llm=hanzo_llm , )"
 },
 {
 "h2": "Quick start"

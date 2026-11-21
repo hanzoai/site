@@ -44,7 +44,7 @@
 "h2": "AutoGen setup"
 },
 {
-"code": "pip install pyautogen import autogen config_list = [{ \" model \" : \" zen4-pro \" , \" api_key \" : \" your-hanzo-api-key \" , \" base_url \" : \" https://api.hanzo.ai/v1 \" , }] assistant = autogen . AssistantAgent ( name= \" assistant \" , llm_config= { \" config_list \" : config_list }, ) user_proxy = autogen . UserProxyAgent ( name= \" user_proxy \" , human_input_mode= \" NEVER \" , ) user_proxy . initiate_chat ( assistant , message= \" Write a Python script to sort a list. \" )"
+"code": "pip install pyautogen import autogen config_list = [{ \" model \" : \" zen6 \" , \" api_key \" : \" your-hanzo-api-key \" , \" base_url \" : \" https://api.hanzo.ai/v1 \" , }] assistant = autogen . AssistantAgent ( name= \" assistant \" , llm_config= { \" config_list \" : config_list }, ) user_proxy = autogen . UserProxyAgent ( name= \" user_proxy \" , human_input_mode= \" NEVER \" , ) user_proxy . initiate_chat ( assistant , message= \" Write a Python script to sort a list. \" )"
 },
 {
 "h2": "Multi-agent conversation"

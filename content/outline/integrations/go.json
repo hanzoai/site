@@ -44,19 +44,19 @@
 "h2": "OpenAI Go client"
 },
 {
-"code": "go get github . com/openai/openai- go package main import ( \" context \" \" fmt \" \" github.com/openai/openai-go \" \" github.com/openai/openai-go/option \" ) func main () { client := openai . NewClient ( option . WithBaseURL ( \" https://api.hanzo.ai/v1 \" ), option . WithAPIKey ( \" your-hanzo-api-key \" ), ) resp , _ := client . Chat . Completions . New ( context . Background (), openai . ChatCompletionNewParams { Model : openai . F ( \" zen4-pro \" ), Messages : openai . F ([] openai . ChatCompletionMessageParamUnion { openai . UserMessage ( \" Hello from Go! \" ), }), }, ) fmt . Println ( resp . Choice"
+"code": "go get github . com/openai/openai- go package main import ( \" context \" \" fmt \" \" github.com/openai/openai-go \" \" github.com/openai/openai-go/option \" ) func main () { client := openai . NewClient ( option . WithBaseURL ( \" https://api.hanzo.ai/v1 \" ), option . WithAPIKey ( \" your-hanzo-api-key \" ), ) resp , _ := client . Chat . Completions . New ( context . Background (), openai . ChatCompletionNewParams { Model : openai . F ( \" zen6 \" ), Messages : openai . F ([] openai . ChatCompletionMessageParamUnion { openai . UserMessage ( \" Hello from Go! \" ), }), }, ) fmt . Println ( resp . Choice"
 },
 {
 "h2": "Raw HTTP client"
 },
 {
-"code": "package main import ( \" bytes \" \" encoding/json \" \" fmt \" \" io \" \" net/http \" \" os \" ) func main () { body , _ := json . Marshal ( map [ string ] any { \" model \" : \" zen4-pro \" , \" messages \" : [] map [ string ] string {{ \" role \" : \" user \" , \" content \" : \" Hello! \" }}, }) req , _ := http . NewRequest ( \" POST \" , \" https://api.hanzo.ai/v1/chat/completions \" , bytes . NewReader ( body )) req . Header . Set ( \" Authorization \" , \" Bearer \" +os . Getenv ( \" HANZO_API_KEY \" )) req . Header . Set ( \" Content-Type \" , \" application/json \" ) resp , _ := http . DefaultClient . Do ( req ) defer resp"
+"code": "package main import ( \" bytes \" \" encoding/json \" \" fmt \" \" io \" \" net/http \" \" os \" ) func main () { body , _ := json . Marshal ( map [ string ] any { \" model \" : \" zen6 \" , \" messages \" : [] map [ string ] string {{ \" role \" : \" user \" , \" content \" : \" Hello! \" }}, }) req , _ := http . NewRequest ( \" POST \" , \" https://api.hanzo.ai/v1/chat/completions \" , bytes . NewReader ( body )) req . Header . Set ( \" Authorization \" , \" Bearer \" +os . Getenv ( \" HANZO_API_KEY \" )) req . Header . Set ( \" Content-Type \" , \" application/json \" ) resp , _ := http . DefaultClient . Do ( req ) defer resp"
 },
 {
 "h2": "Streaming"
 },
 {
-"code": "stream , _ := client . Chat . Completions . NewStreaming ( context . Background (), openai . ChatCompletionNewParams { Model : openai . F ( \" zen4-pro \" ), Messages : openai . F ([] openai . ChatCompletionMessageParamUnion { openai . UserMessage ( \" Write a poem \" ), }), }, ) defer stream . Close () for stream . Next () { chunk := stream . Current () if len ( chunk . Choices ) > 0 { fmt . Print ( chunk . Choices [ 0 ]. Delta . Content ) } }"
+"code": "stream , _ := client . Chat . Completions . NewStreaming ( context . Background (), openai . ChatCompletionNewParams { Model : openai . F ( \" zen6 \" ), Messages : openai . F ([] openai . ChatCompletionMessageParamUnion { openai . UserMessage ( \" Write a poem \" ), }), }, ) defer stream . Close () for stream . Next () { chunk := stream . Current () if len ( chunk . Choices ) > 0 { fmt . Print ( chunk . Choices [ 0 ]. Delta . Content ) } }"
 },
 {
 "h2": "Environment"
