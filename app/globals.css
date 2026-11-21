@@ -44,6 +44,7 @@ html.light { color-scheme: light; } html:not(.light) { color-scheme: dark; }
    while it shows. The container is sized to the frame, so the edge follows the card in every state. A phone keeps
    Google's own placement. */
 #credential_picker_container { background: transparent !important; }
+#credential_picker_container iframe { color-scheme: normal; } /* its page is light: matched, the frame is transparent over a dark page at every width */
 @media (min-width: 640px) {
   #credential_picker_container { top: 8px !important; right: 8px !important; height: auto !important; }
   #credential_picker_container iframe { display: block; clip-path: inset(6px 8px 10px 8px round 24px); }
@@ -481,13 +482,12 @@ html.light .x-badge-shine::before, html.light .x-badge-shine::after { background
   .x-wrap { width: min(100% - 28px, var(--wrap)); }
   .x-hero { padding: 20px 0 28px; }
   .x-hero-grid { gap: 28px; }
-  /* the deck: three slides of 360 units (desktop window 16:10, phone 9:16, terminal), 12 apart, 15 of the next one showing at each
-     edge; the stage's width is 390 units, so a 390px phone draws them at their own size (k = 1) and a narrower one scales them.
-     The stage is the scroller: scroll-snap, no scrollbar, a swipe moves one slide. */
+  /* The three devices are a deck: the stage is the scroller (snap, no scrollbar); a slide is --slide wide, --gap from the next,
+     centred in the stage's --sw so the next shows at the edge (components/home/demo.css places them); k scales --sw to the screen. */
   .x-hero-show { margin: 0 -14px; display: flex; flex-direction: column; align-items: center; }
-  .x-hero-stage { --sw: 390px; --sh: 372px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .x-hero-stage { --sw: 390px; --sh: 372px; --slide: 360px; --gap: 12px; --lead: calc((var(--sw) - var(--slide)) / 2); overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
   .x-hero-stage::-webkit-scrollbar { display: none; }
-  .x-fit { left: 0; width: 1134px; height: 372px; perspective: none; }
+  .x-fit { left: 0; width: calc(var(--lead) * 2 + var(--slide) * 3 + var(--gap) * 2); height: var(--sh); perspective: none; }
   .x-deck { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 10px; }
   .x-deck-dots { display: flex; gap: 2px; }
   .x-deck-dot { position: relative; width: 22px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; }
@@ -806,14 +806,7 @@ html .x-plot[data-tilt][data-lit] { transform: perspective(1200px) rotateX(calc(
 .x-corner-opt small { color: var(--faint); font-weight: 400; margin-left: 4px; }
 @media (pointer: coarse) { .x-corner-item, .x-corner-row, .x-corner-opt { min-height: 44px; } }
 
-/* Google One Tap (components/OneTap.tsx): the card sits in the top corner on a phone as on a laptop, over a box with no ground of
-   its own that lets every press through but the card's. Chrome's own account sheet (FedCM) is the browser's and takes none of this. */
-.x-onetap { position: fixed; z-index: 2147483000; top: calc(env(safe-area-inset-top, 0px) + 12px); right: 12px; width: min(368px, calc(100vw - 24px)); background: transparent; pointer-events: none; }
-.x-onetap iframe { pointer-events: auto; background: transparent; color-scheme: normal; border: 0; }
-@media (max-width: 640px) { .x-onetap { left: 12px; right: 12px; width: auto; } }
-
-/* The phone header holds Hanzo AI, the menu, search, Sign in, language and Try Hanzo in one row, 403px of it: tighter from 440px down,
-   and from 410px down language steps out of the row (it stays in the corner menu), so Try Hanzo is never past the screen's edge. */
+/* The phone header's row is 403px wide: tighter from 440px down, and language leaves the row (it stays in the corner menu) from 410px. */
 @media (max-width: 440px) {
   header[data-slot=masthead] a[aria-label="Hanzo AI home"] { padding-inline: 8px !important; }
   header[data-slot=masthead] button[aria-label="Search Hanzo or ask AI"] { padding-inline: 8px !important; }
