@@ -45,6 +45,7 @@ for (const [profile, p] of Object.entries(PROFILES)) {
   const rows: Record<string, Record<string, number[]>> = { base: {}, new: {} }
   for (let i = 0; i < N + 1; i++) {
     for (const [name, port] of [['base', 4191], ['new', 4192]] as const) {
+      const began = Date.now()
       const ctx = await browser.newContext(p.mobile ? { ...devices['iPhone 14'], serviceWorkers: 'block' } : { viewport: { width: 1440, height: 900 }, serviceWorkers: 'block' })
       await ctx.addInitScript(`(() => { window.__m = { lcp: 0 }; new PerformanceObserver(l => { for (const e of l.getEntries()) window.__m.lcp = e.startTime }).observe({ type: 'largest-contentful-paint', buffered: true }) })()`)
       const page = await ctx.newPage()
@@ -54,13 +55,15 @@ for (const [profile, p] of Object.entries(PROFILES)) {
       await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: p.latency, downloadThroughput: p.down, uploadThroughput: p.up })
       if (p.cpu > 1) await cdp.send('Emulation.setCPUThrottlingRate', { rate: p.cpu })
       const file = join(dir, `${name}-${profile}-${i}.json`)
-      await browser.startTracing(page, { path: file, categories: ['devtools.timeline', 'loading', 'disabled-by-default-devtools.timeline'] })
-      await page.goto(`http://127.0.0.1:${port}/`, { waitUntil: 'load', timeout: 60000 }).catch(() => {})
-      await page.waitForTimeout(1500)
+      await browser.startTracing(page, { path: file, categories: ['devtools.timeline', 'loading'] })
+      await page.goto(`http://127.0.0.1:${port}/`, { waitUntil: 'commit', timeout: 30000 }).catch(() => {})
+      await page.waitForFunction(() => (window as any).__m?.lcp > 0, null, { timeout: 20000 }).catch(() => {})
+      await page.waitForTimeout(800)
       const lcp = await page.evaluate(() => (window as any).__m.lcp).catch(() => 0)
       await browser.stopTracing()
       await ctx.close()
       if (i === 0) continue // the first pair warms the disk cache and the JIT of this process
+      console.log(`  ${profile} ${name} run ${i}: lcp ${Math.round(lcp)} ms, ${((Date.now() - began) / 1000).toFixed(1)} s`)
       const events: any[] = JSON.parse(readFileSync(file, 'utf8')).traceEvents
       const main = events.find((e) => e.name === 'thread_name' && e.args?.name === 'CrRendererMain')
       const nav = events.find((e) => e.name === 'navigationStart' && e.pid === main?.pid)
