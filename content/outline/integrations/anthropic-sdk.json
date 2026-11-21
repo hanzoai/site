@@ -44,13 +44,13 @@
 "h2": "Python setup"
 },
 {
-"code": "pip install anthropic import anthropic client = anthropic . Anthropic ( api_key= \" your-hanzo-api-key \" , base_url= \" https://api.hanzo.ai/v1 \" , ) message = client . messages . create ( model= \" anthropic/claude-sonnet-4-6 \" , max_tokens= 1024 , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello, Claude! \" }], ) print ( message . content [ 0 ]. text )"
+"code": "pip install anthropic import anthropic client = anthropic . Anthropic ( api_key= \" your-hanzo-api-key \" , base_url= \" https://api.hanzo.ai/v1 \" , ) message = client . messages . create ( model= \" anthropic/claude-sonnet-4.6 \" , max_tokens= 1024 , messages= [{ \" role \" : \" user \" , \" content \" : \" Hello, Claude! \" }], ) print ( message . content [ 0 ]. text )"
 },
 {
 "h2": "TypeScript setup"
 },
 {
-"code": "import Anthropic from \" @anthropic-ai/sdk \" ; const client = new Anthropic ({ apiKey : process.env.HANZO_API_KEY , baseURL : \" https://api.hanzo.ai/v1 \" , }); const message = await client.messages. create ({ model : \" anthropic/claude-sonnet-4-6 \" , max_tokens : 1024 , messages : [{ role : \" user \" , content : \" Hello! \" }], });"
+"code": "import Anthropic from \" @anthropic-ai/sdk \" ; const client = new Anthropic ({ apiKey : process.env.HANZO_API_KEY , baseURL : \" https://api.hanzo.ai/v1 \" , }); const message = await client.messages. create ({ model : \" anthropic/claude-sonnet-4.6 \" , max_tokens : 1024 , messages : [{ role : \" user \" , content : \" Hello! \" }], });"
 },
 {
 "h2": "Streaming"
@@ -62,7 +62,7 @@
 "h2": "cURL test"
 },
 {
-"code": "curl https://api.hanzo.ai/v1/messages \\ -H \" x-api-key: $ HANZO_API_KEY \" \\ -H \" anthropic-version: 2023-06-01 \" \\ -H \" content-type: application/json \" \\ -d ' {\"model\":\"anthropic/claude-sonnet-4-6\",\"max_tokens\":100,\"messages\":[{\"role\":\"user\",\"content\":\"Hi\"}]} '"
+"code": "curl https://api.hanzo.ai/v1/messages \\ -H \" x-api-key: $ HANZO_API_KEY \" \\ -H \" anthropic-version: 2023-06-01 \" \\ -H \" content-type: application/json \" \\ -d ' {\"model\":\"anthropic/claude-sonnet-4.6\",\"max_tokens\":100,\"messages\":[{\"role\":\"user\",\"content\":\"Hi\"}]} '"
 },
 {
 "h2": "Ready to get started?"

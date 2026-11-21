@@ -50,7 +50,7 @@
 "h2": "Embeddings config"
 },
 {
-"code": "{ \" embeddingsProvider \" : { \" provider \" : \" openai \" , \" model \" : \" openai/text-embedding-3-large \" , \" apiKey \" : \" your-hanzo-api-key \" , \" apiBase \" : \" https://api.hanzo.ai/v1 \" } }"
+"code": "{ \" embeddingsProvider \" : { \" provider \" : \" openai \" , \" model \" : \" zen-embedding \" , \" apiKey \" : \" your-hanzo-api-key \" , \" apiBase \" : \" https://api.hanzo.ai/v1 \" } }"
 },
 {
 "h2": "Install Continue"

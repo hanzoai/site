@@ -44,7 +44,7 @@
 "h2": "Cursor settings"
 },
 {
-"code": "// Settings > Models > Add custom model { \" provider \" : \" openai-compatible \" , \" name \" : \" Hanzo AI \" , \" baseUrl \" : \" https://api.hanzo.ai/v1 \" , \" apiKey \" : \" your-hanzo-api-key \" , \" models \" : [ \" zen6 \" , \" zen6-max \" , \" openai/gpt-4.1 \" , \" anthropic/claude-sonnet-4-6 \" ] }"
+"code": "// Settings > Models > Add custom model { \" provider \" : \" openai-compatible \" , \" name \" : \" Hanzo AI \" , \" baseUrl \" : \" https://api.hanzo.ai/v1 \" , \" apiKey \" : \" your-hanzo-api-key \" , \" models \" : [ \" zen6 \" , \" zen6-max \" , \" openai/gpt-4.1 \" , \" anthropic/claude-sonnet-4.6 \" ] }"
 },
 {
 "h2": "Available models"

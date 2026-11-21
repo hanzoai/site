@@ -19,7 +19,11 @@ async function served(request: import('@playwright/test').APIRequestContext): Pr
 
 /** The ids a code sample names: model="x", model: "x", "model": "x", --model x, /model x. */
 const idsIn = (code: string) =>
-  [...code.matchAll(/(?:\bmodel\s*[=:]\s*|"model"\s*:\s*|--model[ =]|\/model )["']?([A-Za-z0-9][A-Za-z0-9._:/-]*)/g)].map((m) => m[1]).filter((id) => !/^(your|\$|\{|<)/i.test(id))
+  [...code.matchAll(/(?:\bmodel\s*[=:]\s*|"model"\s*:\s*|--model[ =]|\/model )["']?([A-Za-z0-9][A-Za-z0-9._:/-]*)(?!["']?\()/g)]
+    .map((m) => m[1])
+    // a client's own provider prefix (LiteLLM's `openai/zen6`) is not part of the id; a variable (`model = new Foo`) is no id
+    .map((id) => id.replace(/^openai\/(?=zen|enso|kai)/, ''))
+    .filter((id) => !/^(your|\$|\{|<|new$|hanzo$)/i.test(id))
 
 for (const route of ROUTES) {
   test(`${route}: no Zen 4 or Qwen 2, and every id in a code sample is served`, async ({ page, request }) => {

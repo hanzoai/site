@@ -56,7 +56,7 @@
 "h2": "Embeddings"
 },
 {
-"code": "from haystack . components . embedders import OpenAITextEmbedder embedder = OpenAITextEmbedder ( model= \" openai/text-embedding-3-large \" , api_key=Secret . from_token ( \" your-hanzo-api-key \" ), api_base_url= \" https://api.hanzo.ai/v1 \" , )"
+"code": "from haystack . components . embedders import OpenAITextEmbedder embedder = OpenAITextEmbedder ( model= \" zen-embedding \" , api_key=Secret . from_token ( \" your-hanzo-api-key \" ), api_base_url= \" https://api.hanzo.ai/v1 \" , )"
 },
 {
 "h2": "Install"

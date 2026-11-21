@@ -62,7 +62,7 @@
 "h2": "RAG with Hanzo"
 },
 {
-"code": "from langchain_openai import ChatOpenAI , OpenAIEmbeddings embeddings = OpenAIEmbeddings ( openai_api_key= \" your-hanzo-api-key \" , openai_api_base= \" https://api.hanzo.ai/v1 \" , model= \" openai/text-embedding-3-large \" , ) llm = ChatOpenAI ( model= \" zen6 \" , openai_api_key= \" your-hanzo-api-key \" , openai_api_base= \" https://api.hanzo.ai/v1 \" , )"
+"code": "from langchain_openai import ChatOpenAI , OpenAIEmbeddings embeddings = OpenAIEmbeddings ( openai_api_key= \" your-hanzo-api-key \" , openai_api_base= \" https://api.hanzo.ai/v1 \" , model= \" zen-embedding \" , ) llm = ChatOpenAI ( model= \" zen6 \" , openai_api_key= \" your-hanzo-api-key \" , openai_api_base= \" https://api.hanzo.ai/v1 \" , )"
 },
 {
 "h2": "Ready to get started?"
