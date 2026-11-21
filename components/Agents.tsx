@@ -162,6 +162,7 @@ export default function Agents() {
             <Cmd bin="curl" rest="-fsSL https://hanzo.sh | sh" copy="curl -fsSL https://hanzo.sh | sh" onCopy={() => capture('home_copied', { block: 'install' })} />
             <div className="x-or small"><span>or</span></div>
             <Cmd bin="npm" rest="i -g hanzo" copy="npm i -g hanzo" onCopy={() => capture('home_copied', { block: 'install', command: 'npm i -g hanzo' })} />
+            <p className="x-panel-k x-panel-alt">For developers, in a terminal. Not one? <a href="/download">Download Hanzo Desktop</a>.</p>
             <Accel />
             <p className="x-panel-k">Set up Codex, Cursor and more</p>
             <SetupMenu inline where="compatible" />

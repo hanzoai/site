@@ -54,13 +54,35 @@
 .dl-main-l a { display: inline-flex; align-items: center; min-height: 44px; color: light-dark(#525252, #a3a3a3); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; transition: transform .09s var(--dl-out); }
 .dl-main-l a:active { transform: translateY(1px); }
 
-/* every build: alternating 7/5 and 5/7 bento rows of flat tiles */
-.dl-b-top { margin-bottom: clamp(27px, 3vw, 44px); }
-.dl-b-h { grid-column: 1 / span 8; }
+/* the apps, then the developer tools: each a run of alternating 7/5 and 5/7 bento rows of flat tiles; an odd last
+   tile takes the whole row */
+.dl-b-top { margin-bottom: clamp(27px, 3vw, 44px); align-items: end; }
+.dl-b-h { grid-column: 1 / span 6; }
+.dl-b-d { grid-column: 7 / -1; margin: 0; max-width: 52ch; }
 .dl-bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; }
 .dl-card { container-type: inline-size; display: flex; flex-direction: column; padding: 12px 12px 27px; border-radius: 24px; background: light-dark(#f2f2f2, #171717); }
-.dl-card.k-desk, .dl-card.k-ed, .dl-card.k-ide, .dl-card.k-team, .dl-card.k-forge { grid-column: span 7; }
-.dl-card.k-cli, .dl-card.k-ext, .dl-card.k-dev, .dl-card.k-bot, .dl-card.k-node { grid-column: span 5; }
+.dl-card:nth-child(4n + 1), .dl-card:nth-child(4n + 4) { grid-column: span 7; }
+.dl-card:nth-child(4n + 2), .dl-card:nth-child(4n + 3) { grid-column: span 5; }
+.dl-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.dl-devs { padding-top: 0; }
+/* a tool that runs in a terminal says so wherever it is named (issue 318) */
+.dl-term { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--x-e12, rgba(127, 127, 127, .35)); font: 500 12px/1 var(--sans); color: light-dark(#525252, #a3a3a3); white-space: nowrap; }
+
+/* which one do I need: one line each, what it is for, and whether it needs a terminal (issue 319) */
+.dl-which { padding-bottom: 0; }
+.dl-which-l { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--x-e10); }
+.dl-which-l li { border-bottom: 1px solid var(--x-e10); }
+.dl .dl-which-a { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 170px; align-items: center; gap: 16px; min-height: 64px; padding: 10px 4px; color: var(--ink); text-decoration: none; transition: transform .09s var(--dl-out); }
+.dl-which-a:active { transform: translateY(1px); }
+.dl-which-a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 8px; }
+.dl-which-q { font-size: 17px; line-height: 1.4; }
+.dl-which-p { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; font-size: 17px; }
+.dl-which-p b { font-weight: 600; }
+.dl-which-p code, .dl-which-n code { font-size: 14px; color: light-dark(#525252, #a3a3a3); }
+.dl-which-t { justify-self: end; display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: 999px; background: var(--x-raised); box-shadow: 0 0 0 1px var(--x-e10); font: 500 13px/1 var(--sans); white-space: nowrap; }
+.dl-which-t.term { background: none; color: light-dark(#525252, #a3a3a3); }
+.dl-which-n { margin: 22px 0 0; max-width: 78ch; }
+.dl-which-n b { color: var(--ink); font-weight: 600; }
 .dl-card-a { flex: 1; display: flex; flex-direction: column; border-radius: 12px; color: var(--ink); text-decoration: none; transition: transform .09s var(--dl-out); }
 a.dl-card-a:active { transform: scale(.98); }
 a.dl-card-a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
@@ -227,7 +249,13 @@ a.dl-card-a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; 
   .dl-grp ul { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); }
   .dl-chip { scroll-snap-align: start; }
   .dl-bento { grid-template-columns: minmax(0, 1fr); }
-  .dl-card.k-desk, .dl-card.k-ed, .dl-card.k-cli, .dl-card.k-ext, .dl-card.k-ide, .dl-card.k-dev, .dl-card.k-bot, .dl-card.k-team, .dl-card.k-forge, .dl-card.k-node { grid-column: 1 / -1; }
+  .dl-card:nth-child(n) { grid-column: 1 / -1; }
+  .dl-b-h, .dl-b-d { grid-column: 1 / -1; }
+  .dl-b-top { row-gap: 8px; }
+  .dl .dl-which-a { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 14px 0; }
+  .dl-which-q { grid-column: 1 / -1; font-size: 16px; color: light-dark(#525252, #a3a3a3); }
+  .dl-which-p { font-size: 16px; }
+  .dl-which-t { height: 26px; font-size: 12px; }
   .dl-card { padding: 8px 8px 22px; border-radius: 20px; }
   .dl-vis { flex: none; min-height: 0; height: 220px; }
   .dl-m { height: 74%; max-width: 92%; }
